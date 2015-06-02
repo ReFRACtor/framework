@@ -15,9 +15,9 @@ namespace FullPhysics {
   Base class for both Vegetative and Soil types which share the 
   same mechanisms but are implemented differently in RT codes
 *******************************************************************/
-class GroundBreon: public SubStateVectorArray<Ground> {
+class GroundBrdf: public SubStateVectorArray<Ground> {
 public:
-    GroundBreon(const blitz::Array<double, 2>& Coeffs,
+    GroundBrdf(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
                 const std::vector<std::string>& Desc_band_names);
 
@@ -40,7 +40,7 @@ public:
    
     /// Returns hard coded value of 1.5 since that is the value hardcoded into LIDORT
     virtual const double refractive_index(const int Spec_idx) const { return 1.5; }
-  
+
     /// String describing which type of Breon surface type, also makes this class abstract
     virtual const std::string breon_type() const = 0;
     
@@ -50,11 +50,11 @@ public:
   
     virtual void print(std::ostream& Os) const;
   
-    virtual std::string desc() const { return "GroundBreon"; }
+    virtual std::string desc() const { return "GroundBrdf"; }
 
 protected:
 
-    GroundBreon(const blitz::Array<double, 1>& Spec_coeffs,
+    GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
                 const blitz::Array<bool, 1>& Flag, 
                 const std::vector<std::string>& Desc_band_names);
 
@@ -62,42 +62,42 @@ protected:
 };
 
 
-class GroundBreonVeg: public GroundBreon {
+class GroundBrdfVeg: public GroundBrdf {
 public:
-    GroundBreonVeg(const blitz::Array<double, 2>& Coeffs,
+    GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
                 const std::vector<std::string>& Desc_band_names) :
-        GroundBreon(Coeffs, Flag, Desc_band_names) {}
+        GroundBrdf(Coeffs, Flag, Desc_band_names) {}
 
     virtual const std::string breon_type() const { return "Vegetative"; }
 
     virtual boost::shared_ptr<Ground> clone() const {
-      return boost::shared_ptr<Ground>(new GroundBreonVeg(coefficient().value(), used_flag_value(), desc_band_names));
+      return boost::shared_ptr<Ground>(new GroundBrdfVeg(coefficient().value(), used_flag_value(), desc_band_names));
     }
 private:
-    GroundBreonVeg(const blitz::Array<double, 1>& Spec_coeffs,
+    GroundBrdfVeg(const blitz::Array<double, 1>& Spec_coeffs,
                 const blitz::Array<bool, 1>& Flag, 
                 const std::vector<std::string>& Desc_band_names) :
-        GroundBreon(Spec_coeffs, Flag, Desc_band_names) {}
+        GroundBrdf(Spec_coeffs, Flag, Desc_band_names) {}
 };
 
-class GroundBreonSoil: public GroundBreon {
+class GroundBrdfSoil: public GroundBrdf {
 public:
-    GroundBreonSoil(const blitz::Array<double, 2>& Coeffs,
+    GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
                 const std::vector<std::string>& Desc_band_names) :
-        GroundBreon(Coeffs, Flag, Desc_band_names) {}
+        GroundBrdf(Coeffs, Flag, Desc_band_names) {}
 
     virtual const std::string breon_type() const { return "Soil"; }
 
     virtual boost::shared_ptr<Ground> clone() const {
-      return boost::shared_ptr<Ground>(new GroundBreonSoil(coefficient().value(), used_flag_value(), desc_band_names));
+      return boost::shared_ptr<Ground>(new GroundBrdfSoil(coefficient().value(), used_flag_value(), desc_band_names));
     }
 private:
-    GroundBreonSoil(const blitz::Array<double, 1>& Spec_coeffs,
+    GroundBrdfSoil(const blitz::Array<double, 1>& Spec_coeffs,
                 const blitz::Array<bool, 1>& Flag, 
                 const std::vector<std::string>& Desc_band_names) :
-        GroundBreon(Spec_coeffs, Flag, Desc_band_names) {}
+        GroundBrdf(Spec_coeffs, Flag, Desc_band_names) {}
 };
 
 } // End of namespace

@@ -4,21 +4,21 @@
 %include "common.i"
 
 %{
-#include "ground_breon.h"
+#include "ground_brdf.h"
 #include "sub_state_vector_array.h"
 %}
 
 %base_import(ground)
 %base_import(sub_state_vector_array)
 
-%fp_shared_ptr(FullPhysics::GroundBreonVeg);
-%fp_shared_ptr(FullPhysics::GroundBreonSoil);
+%fp_shared_ptr(FullPhysics::GroundBrdfVeg);
+%fp_shared_ptr(FullPhysics::GroundBrdfSoil);
 
 namespace FullPhysics {
 
-class GroundBreonVeg: public Ground {
+class GroundBrdfVeg: public Ground {
 public:
-    GroundBreonVeg(const blitz::Array<double, 2>& Coeffs,
+    GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
                 const std::vector<std::string>& Desc_band_names);
     virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
@@ -41,9 +41,9 @@ public:
     virtual std::string desc() const;
 };
 
-class GroundBreonSoil: public Ground {
+class GroundBrdfSoil: public Ground {
 public:
-    GroundBreonSoil(const blitz::Array<double, 2>& Coeffs,
+    GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
                 const std::vector<std::string>& Desc_band_names);
     virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;

@@ -1,4 +1,4 @@
-#include "ground_breon.h"
+#include "ground_brdf.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -6,11 +6,11 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(GroundBreonVeg, Ground)
+REGISTER_LUA_DERIVED_CLASS(GroundBrdfVeg, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&, const blitz::Array<bool, 2>&, const std::vector<std::string>&>())
 REGISTER_LUA_END()
 
-REGISTER_LUA_DERIVED_CLASS(GroundBreonSoil, Ground)
+REGISTER_LUA_DERIVED_CLASS(GroundBrdfSoil, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&, const blitz::Array<bool, 2>&, const std::vector<std::string>&>())
 REGISTER_LUA_END()
 #endif
@@ -30,7 +30,7 @@ REGISTER_LUA_END()
   4: Breon kernel factor
  *******************************************************************/
 
-GroundBreon::GroundBreon(const blitz::Array<double, 2>& Coeffs,
+GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
                          const blitz::Array<bool, 2>& Flag,
                          const std::vector<std::string>& Desc_band_names) 
 : desc_band_names(Desc_band_names)
@@ -69,14 +69,14 @@ GroundBreon::GroundBreon(const blitz::Array<double, 2>& Coeffs,
 }
 
 /// Protected constructor that matches the dimensionality of coeff and flag arrays
-GroundBreon::GroundBreon(const blitz::Array<double, 1>& Spec_coeffs,
+GroundBrdf::GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
                          const blitz::Array<bool, 1>& Flag, 
                          const std::vector<std::string>& Desc_band_names)
 : desc_band_names(Desc_band_names), SubStateVectorArray<Ground>(Spec_coeffs, Flag)
 {
 }
 
-ArrayAd<double, 1> GroundBreon::surface_parameter(const double wn, const int spec_index) const
+ArrayAd<double, 1> GroundBrdf::surface_parameter(const double wn, const int spec_index) const
 {
     ArrayAd<double, 1> spars;
     spars.resize(NUM_COEFF, coefficient().number_variable());
@@ -88,77 +88,77 @@ ArrayAd<double, 1> GroundBreon::surface_parameter(const double wn, const int spe
     return spars;
 }
 
-const AutoDerivative<double> GroundBreon::rahman_factor(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::rahman_factor(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + 0);
 }
 
-const AutoDerivative<double> GroundBreon::overall_amplitude(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::overall_amplitude(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + 1);
 }
 
-const AutoDerivative<double> GroundBreon::asymmetry_parameter(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::asymmetry_parameter(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + 2);
 }
 
-const AutoDerivative<double> GroundBreon::geometric_factor(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::geometric_factor(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + 3);
 }
 
-const AutoDerivative<double> GroundBreon::breon_factor(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::breon_factor(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + 4);
 }
 
-void GroundBreon::rahman_factor(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::rahman_factor(const int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + 0) = val;
 }
 
-void GroundBreon::overall_amplitude(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::overall_amplitude(const int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + 1) = val;
 }
 
-void GroundBreon::asymmetry_parameter(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::asymmetry_parameter(const int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + 2) = val;
 }
 
-void GroundBreon::geometric_factor(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::geometric_factor(const int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + 3) = val;
 }
 
-void GroundBreon::breon_factor(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::breon_factor(const int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + 4) = val;
 }
 
-std::string GroundBreon::state_vector_name_i(int i) const {
+std::string GroundBrdf::state_vector_name_i(int i) const {
     int b_idx = int(i / NUM_COEFF);
     int c_idx = i - NUM_COEFF * b_idx;
 
@@ -187,10 +187,10 @@ std::string GroundBreon::state_vector_name_i(int i) const {
     return name.str();
 }
 
-void GroundBreon::print(std::ostream& Os) const
+void GroundBrdf::print(std::ostream& Os) const
 {
     OstreamPad opad(Os, "        ");
-    Os << "GroundBreon:\n";
+    Os << "GroundBrdf:\n";
     for(int spec_idx = 0; spec_idx < number_spectrometer(); spec_idx++) {
         Os << "    " << desc_band_names[spec_idx] << ":" << std::endl;
         opad << "Rahman Factor: " << rahman_factor(spec_idx).value() << std::endl
