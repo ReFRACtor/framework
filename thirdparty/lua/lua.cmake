@@ -1,10 +1,10 @@
 set(LUA_NAME lua-5.2.2)
 
-set(LUA_URL ${CMAKE_CURRENT_SOURCE_DIR}/${LUA_NAME}.tar.gz)
+set(LUA_URL ${CMAKE_CURRENT_SOURCE_DIR}/lua/${LUA_NAME}.tar.gz)
 
 # This patch was taken from gentoo. It add support in the Makefile for building
 # a shared library version.
-set(LUA_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/lua-make.patch)
+set(LUA_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/lua/lua-make.patch)
 
 # Since these depend on other variables and have a space in them, we
 # have to define a new variable so that the values are passed to make below correctly
