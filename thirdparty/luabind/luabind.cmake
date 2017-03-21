@@ -1,6 +1,6 @@
-set(LUABIND_NAME luabind-0.9.1)
+set(LUABIND_NAME luabind)
 
-set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/${LUABIND_NAME}.tar.gz)
+set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-0.9.1.tar.gz)
 
 # This patch was taken from https://gist.github.com/2011636. This fixes a 
 # problem with building with boost 1.49 and gcc-4.6.3. This problem is 

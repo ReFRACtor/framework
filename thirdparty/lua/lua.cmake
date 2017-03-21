@@ -1,6 +1,6 @@
-set(LUA_NAME lua-5.2.2)
+set(LUA_NAME lua)
 
-set(LUA_URL ${CMAKE_CURRENT_SOURCE_DIR}/lua/${LUA_NAME}.tar.gz)
+set(LUA_URL ${CMAKE_CURRENT_SOURCE_DIR}/lua/lua-5.2.2.tar.gz)
 
 # This patch was taken from gentoo. It add support in the Makefile for building
 # a shared library version.

@@ -12,6 +12,11 @@ set(THIRDPARTY_BIN_DIR ${THIRDPARTY_INSTALL_PREFIX}/bin)
 set(THIRDPARTY_LIB_DIR ${THIRDPARTY_INSTALL_PREFIX}/lib)
 set(THIRDPARTY_INCLUDE_DIR ${THIRDPARTY_INSTALL_PREFIX}/include)
 
+# Completely external 
 include(blitz/blitz.cmake)
 include(lua/lua.cmake)
 include(luabind/luabind.cmake)
+
+# Want these built with same configurations as the rest of the code
+add_subdirectory(2stream)
+add_subdirectory(lidort-3.6)

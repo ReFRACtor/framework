@@ -1,7 +1,7 @@
-set(BLITZ_NAME blitz-0.9)
+set(BLITZ_NAME blitz)
 
 # Location of tar file to build
-set(BLITZ_URL ${CMAKE_CURRENT_SOURCE_DIR}/blitz/${BLITZ_NAME}.tar.gz)
+set(BLITZ_URL ${CMAKE_CURRENT_SOURCE_DIR}/blitz/blitz-0.9.tar.gz)
 
 # This patch is described at 
 # http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=455661. This adds some
