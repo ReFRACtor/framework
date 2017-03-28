@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include "absorber_vmr_scaled.h"
 #include "linear_interpolate.h"
 

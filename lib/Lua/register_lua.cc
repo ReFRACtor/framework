@@ -205,9 +205,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(SolarAbsorptionAndContinuum);
   REGISTER_LUA_LIST(SolarDopplerShiftPolynomial);
   REGISTER_LUA_LIST(SolarDopplerShiftL1b);
-  REGISTER_LUA_LIST(SolarAbsorptionOcoFile);
   REGISTER_LUA_LIST(SolarAbsorptionTable);
-  REGISTER_LUA_LIST(SolarContinuumPolynomial);
   REGISTER_LUA_LIST(SolarContinuumTable);
   REGISTER_LUA_LIST(CostFunction);
   REGISTER_LUA_LIST(RegisterOutputBase);
@@ -349,9 +347,10 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(IterativeSolver);
   REGISTER_LUA_LIST(IterativeSolverDer);
   REGISTER_LUA_LIST(NLLSSolver);
-  REGISTER_LUA_LIST(NLLSSolverGSL);
-  REGISTER_LUA_LIST(NLLSSolverGSLLMDER);
-  REGISTER_LUA_LIST(NLLSSolverGSLLMSDER);
+  //Disabled due to conflict with newer GSL versions
+  //REGISTER_LUA_LIST(NLLSSolverGSL);
+  //REGISTER_LUA_LIST(NLLSSolverGSLLMDER);
+  //REGISTER_LUA_LIST(NLLSSolverGSLLMSDER);
   REGISTER_LUA_LIST(ConnorSolverMAP);
   REGISTER_LUA_LIST(CostMinimizer);
   REGISTER_LUA_LIST(CostMinimizerGSL);

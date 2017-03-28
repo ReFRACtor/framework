@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include "temperature_offset.h"
 #include "linear_interpolate.h"
 

@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include "temperature_fixed_level.h"
 #include "fp_exception.h"
 #include "pressure_fixed_level.h"

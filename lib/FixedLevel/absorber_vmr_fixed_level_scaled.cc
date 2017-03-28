@@ -1,3 +1,4 @@
+#include <boost/bind.hpp>
 #include "absorber_vmr_fixed_level_scaled.h"
 #include "ostream_pad.h"
 #include "linear_interpolate.h"

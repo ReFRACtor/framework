@@ -1,10 +1,14 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
-    lua_blitz.cc
-    lua_callback.cc
-    lua_state.cc
-    luabind_object.cc
-    register_lua.cc
+    absorber_vmr_fixed_level.cc
+    absorber_vmr_fixed_level_output.cc
+    absorber_vmr_fixed_level_scaled.cc
+    absorber_vmr_fixed_level_scaled_output.cc
+    pressure_fixed_level.cc
+    pressure_fixed_level_output.cc
+    pressure_level_input.cc
+    temperature_fixed_level.cc
+    temperature_fixed_level_output.cc
 )
 
 # Add current source directory to source file names

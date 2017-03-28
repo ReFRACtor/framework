@@ -1,5 +1,6 @@
 #include "bad_sample_noise_model.h"
 #include "ostream_pad.h"
+#include "fp_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
