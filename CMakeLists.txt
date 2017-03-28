@@ -39,9 +39,6 @@ include_directories(${CMAKE_BINARY_DIR}/modules)
 # Add thirdparty packages to build
 add_subdirectory(thirdparty)
 
-# Add include directories from third party installation
-include_directories(${THIRDPARTY_INCLUDE_DIR})
-
 # Set up the full_physics library
 add_subdirectory(lib)
 
@@ -51,7 +48,7 @@ add_dependencies(full_physics thirdparty)
 # add the binary tree to the search path for include files
 # so that we will find version.h
 # Also include paths set from lib/ dir
-include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES})
+include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES} ${THIRDPARTY_INCLUDES})
 
 add_executable(l2_fp bin/l2_fp.cc)
-target_link_libraries(l2_fp full_physics ${FP_LIBRARIES})
+target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
