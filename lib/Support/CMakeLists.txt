@@ -43,10 +43,61 @@ set(DIR_SOURCES
     uq_sounding_id.cc
 )
 
+set(TEST_SOURCES
+    acos_sounding_id_test.cc
+    array_ad_cache_test.cc
+    array_ad_test.cc
+    auto_derivative_test.cc
+    bin_map_test.cc
+    closest_point_test.cc
+    ecmwf_test.cc
+    environment_substitute_test.cc
+    fp_exception_test.cc
+    fp_gsl_integrate_test.cc
+    fp_gsl_matrix_test.cc
+    fp_time_test.cc
+    fstream_compress_test.cc
+    fts_run_log_test.cc
+    global_fixture.cc
+    global_fixture_default.cc
+    hdf_file_test.cc
+    heritage_file_test.cc
+    heritage_matrix_write_test.cc
+    ifstream_cs_test.cc
+    linear_algebra_test.cc
+    linear_interpolate_test.cc
+    log_interpolate_test.cc
+    logger_test.cc
+    observer_test.cc
+    oco_sim_met_ecmwf_test.cc
+    oco_sounding_id_test.cc
+    ostream_pad_test.cc
+    polynomial_eval_test.cc
+    printable_test.cc
+    rayleigh_greek_moment_test.cc
+    spectral_bound_test.cc
+    spectral_domain_test.cc
+    state_vector_test.cc
+    unit_test.cc
+)
+
 # Add current source directory to source file names
 foreach(source_name ${DIR_SOURCES})
     set(FP_SOURCE_FILES ${FP_SOURCE_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/${source_name})
 endforeach(source_name)
 
+foreach(source_name ${TEST_SOURCES})
+    set(FP_TEST_FILES ${FP_TEST_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/${source_name})
+endforeach(source_name)
+
+# Create test case fixtures default properties file from CMake variables
+configure_file (
+    global_fixture_default.cc.in 
+    "${PROJECT_BINARY_DIR}/global_fixture_default.cc"
+)
+
+set(FP_TEST_FILES ${FP_TEST_FILES} "${PROJECT_BINARY_DIR}/global_fixture_default.cc")
+
 # Expose the list of source files to the parent cmake file
 set(FP_SOURCE_FILES ${FP_SOURCE_FILES} PARENT_SCOPE)
+set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)

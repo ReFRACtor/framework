@@ -52,3 +52,6 @@ include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES} ${THIRDPARTY_INCLUDES})
 
 add_executable(l2_fp bin/l2_fp.cc)
 target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
+
+add_executable(test_all EXCLUDE_FROM_ALL lib/test_all.cc ${FP_TEST_FILES})
+target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
