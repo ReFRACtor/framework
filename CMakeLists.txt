@@ -45,13 +45,14 @@ add_subdirectory(lib)
 # Add thirdparty dependencies to full_physics library
 add_dependencies(full_physics thirdparty)
 
-# add the binary tree to the search path for include files
-# so that we will find version.h
+# Add the binary tree to the search path for include files so that we will find version.h
 # Also include paths set from lib/ dir
 include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES} ${THIRDPARTY_INCLUDES})
 
+# Create main executable 
 add_executable(l2_fp bin/l2_fp.cc)
 target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 
+# Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL lib/test_all.cc ${FP_TEST_FILES})
 target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
