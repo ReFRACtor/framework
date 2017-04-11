@@ -85,7 +85,7 @@
 
 !  Maximum number of computational layers
 
-   INTEGER, PARAMETER :: MAXLAYERS = @lidort_maxlayer@
+   INTEGER, PARAMETER :: MAXLAYERS = @LIDORT_MAXLAYER@
 
 !  Maximum number of fine layers used in single scattering corrections
 
@@ -157,7 +157,7 @@
 
 !  Maximum number of profile/column weighting functions
 
-   INTEGER, PARAMETER :: MAX_ATMOSWFS = @lidort_maxatmoswfs@
+   INTEGER, PARAMETER :: MAX_ATMOSWFS = @LIDORT_MAXATMOSWFS@
 
 !  Maximum number of surface property weighting functions
 
