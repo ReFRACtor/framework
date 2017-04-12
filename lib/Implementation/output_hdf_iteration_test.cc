@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-class CalcData {
+class CalcDataIter {
 public:
   int d_val() const {return d;}
   Array<int, 2> a_val() const {return a;}
@@ -21,9 +21,9 @@ BOOST_AUTO_TEST_CASE(basic)
     hf(new HdfFileGenerating("output_hdf_iteration.h5"));
   add_file_to_cleanup("output_hdf_iteration.h5");
   OutputHdfIteration h(hf);
-  boost::shared_ptr<CalcData> c1(new CalcData);
-  h.register_data_source("/Test/d_val", &CalcData::d_val, c1);
-  h.register_data_source("/Test/a_val", &CalcData::a_val, c1);
+  boost::shared_ptr<CalcDataIter> c1(new CalcDataIter);
+  h.register_data_source("/Test/d_val", &CalcDataIter::d_val, c1);
+  h.register_data_source("/Test/a_val", &CalcDataIter::a_val, c1);
   c1->d = 1;
   c1->a.resize(2, 3);
   c1->a = 
