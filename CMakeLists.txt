@@ -15,10 +15,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # By default install into the build directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "..." FORCE)
-    message("Setting install prefix to: " ${CMAKE_INSTALL_PREFIX})
-    message("Specify -DCMAKE_INSTALL_PREFIX to cmake to change")
+    message(STATUS "Setting install prefix to: " ${CMAKE_INSTALL_PREFIX})
+    message(STATUS "Specify -DCMAKE_INSTALL_PREFIX to cmake to change")
 else()
-    message("Using install prefix: " ${CMAKE_INSTALL_PREFIX})
+    message(STATUS "Using install prefix: " ${CMAKE_INSTALL_PREFIX})
 endif()
 
 # Obtain the CM version of the source code

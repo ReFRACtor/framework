@@ -7,7 +7,6 @@ set(DIST_VERSION 3.6)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB_RECURSE LIDORT_SRC "*.F90")
-message("LIDORT_SRC = " ${LIDORT_SRC})
 
 # Configure overridable LIDORT parameters file
 if(NOT LIDORT_MAXLAYER)

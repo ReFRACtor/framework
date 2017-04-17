@@ -19,12 +19,15 @@ set(LUABIND_PATCH2 ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind_lua5.2.patch)
 # See https://github.com/rpavlik/luabind/pull/23 for details
 set(LUABIND_PATCH3 ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind_boost_1_57.patch)
 
+# Set up arguments to cmake call
+set(CMAKE_ARGS -DLUA_INCLUDE_DIR=${LUA_INCLUDE_DIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX})
+
 # Build and install manually to avoid dependence on bjam
 ExternalProject_Add(${LUABIND_NAME}
     URL ${LUABIND_URL}
     PATCH_COMMAND patch -p1 < ${LUABIND_PATCH1} &&
         patch -p1 < ${LUABIND_PATCH2} &&
         patch -p1 < ${LUABIND_PATCH3}
-        CONFIGURE_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/luabind/CMakeLists.txt . && cmake -DLUA_INCLUDE_DIR=${THIRDPARTY_INCLUDE_DIR} -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} . 
+        CONFIGURE_COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/luabind/CMakeLists.txt . && cmake ${CMAKE_ARGS} . 
     BUILD_IN_SOURCE 1
 )
