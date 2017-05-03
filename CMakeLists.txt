@@ -56,3 +56,23 @@ target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES}
 # Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL lib/test_all.cc ${FP_TEST_FILES})
 target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
+
+# Include Lua configs and input rules
+add_subdirectory(input)
+
+# Create installation rule for binary
+install(TARGETS l2_fp
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib)
+
+# Install support utils
+install(DIRECTORY "support/utils/" DESTINATION bin
+    USE_SOURCE_PERMISSIONS)
+
+# Configure and install enviroment setup script
+configure_file (
+    "${PROJECT_SOURCE_DIR}/script/setup_fp_env.sh.in"
+    "${PROJECT_BINARY_DIR}/setup_fp_env.sh"
+)
+
+install(FILES "setup_fp_env.sh" DESTINATION bin)

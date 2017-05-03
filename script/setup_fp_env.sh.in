@@ -1,37 +1,21 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-configdir=@configdir@
-export PATH=@bindir@:${PATH}
-export L2_EXE_PATH=@bindir@
-export L2_FP_SRC_PATH=@abs_top_srcdir@
-export abscodir=@abscodir@
-export merradir=@merradir@
-export L2_INPUT_PATH=@configdir@
-if [ -n "@rubygemdir" ]; then
-  if [ -n "$GEM_PATH" ]; then
-    export GEM_PATH=@rubygemdir@:${GEM_PATH}
-  else
-    export GEM_PATH=@rubygemdir@
-  fi
-fi
+prefix=@CMAKE_INSTALL_PREFIX@
+export L2_EXE_PATH=$prefix/bin
+export L2_FP_SRC_PATH=@PROJECT_SOURCE_DIR@
+export L2_INPUT_PATH=$prefix/install/etc/full_physics/config
+export abscodir=@ABSCO_DIR@
+export merradir=@MERRA_DIR@
+
 if [ -n "$PYTHONPATH" ]; then
-  export PYTHONPATH=@pythondir@:@pyexecdir@:${PYTHONPATH}
+  export PYTHONPATH=@INSTALL_PYTHON_DIR@:$PYTHONPATH
 else
-  export PYTHONPATH=@pythondir@:@pyexecdir@
+  export PYTHONPATH=@INSTALL_PYTHON_DIR@
 fi
+
 if [ -n "$LUA_PATH" ]; then
-    export LUA_PATH="@configdir@/?.lua;${LUA_PATH}"
+    export LUA_PATH="$L2_INPUT_PATH/?.lua;$LUA_PATH"
 else
-    export LUA_PATH="@configdir@/?.lua;"
+    export LUA_PATH="$L2_INPUT_PATH/?.lua;"
 fi
-# Use same version of python that we used when we built the system
-alias python=@PYTHON@
-if [ -e `dirname @PYTHON@`/ipython ]; then
-  alias ipython=`dirname @PYTHON@`/ipython
-fi
-# And use same version of ruby
-# Use same version of python that we used when we built the system
-alias ruby=@RUBY@
 
 # For Pleiades, we do this slightly differently
 # Note if you update this, also update ../pleiades_build.script
@@ -40,7 +24,3 @@ if [ -e /usr/share/modules/init/bash ]; then
     module load python/2.7.8
     module load ruby/1.9.1-p376
 fi
-
-    
-
-

@@ -1,0 +1,6 @@
+version = {
+    major_version = "@REFRACTOR_MAJOR_VERSION@",
+    cm_version = "@REFRACTOR_CM_VERSION@",
+    source_directory = "@PROJECT_SOURCE_DIR@",
+    build_user = "$ENV{USER}",
+}
