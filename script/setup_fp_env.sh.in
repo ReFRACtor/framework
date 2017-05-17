@@ -5,10 +5,20 @@ export L2_INPUT_PATH=$prefix/install/etc/full_physics/config
 export abscodir=@ABSCO_DIR@
 export merradir=@MERRA_DIR@
 
-if [ -n "$PYTHONPATH" ]; then
-  export PYTHONPATH=@INSTALL_PYTHON_DIR@:$PYTHONPATH
+if [ -n "@PYTHON_INSTALL_DIR@" ]; then
+    L2_PYTHON_PATH=$prefix/@PYTHON_INSTALL_DIR@
+fi
+
+if [ -n "$LD_LIBRARY_PATH" ]; then
+  export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
 else
-  export PYTHONPATH=@INSTALL_PYTHON_DIR@
+  export LD_LIBRARY_PATH=$prefix/lib
+fi
+
+if [ -n "$PYTHONPATH" ]; then
+  export PYTHONPATH=$L2_PYTHON_PATH:$PYTHONPATH
+else
+  export PYTHONPATH=$L2_PYTHON_PATH
 fi
 
 if [ -n "$LUA_PATH" ]; then

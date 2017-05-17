@@ -60,6 +60,9 @@ target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARI
 # Include Lua configs and input rules
 add_subdirectory(input)
 
+# Add Python binding rules
+add_subdirectory(bindings/python)
+
 # Create installation rule for binary
 install(TARGETS l2_fp
         RUNTIME DESTINATION bin
@@ -70,9 +73,10 @@ install(DIRECTORY "support/utils/" DESTINATION bin
     USE_SOURCE_PERMISSIONS)
 
 # Configure and install enviroment setup script
+# Install to base of installation prefix
 configure_file (
     "${PROJECT_SOURCE_DIR}/script/setup_fp_env.sh.in"
     "${PROJECT_BINARY_DIR}/setup_fp_env.sh"
 )
 
-install(FILES "setup_fp_env.sh" DESTINATION bin)
+install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTALL_PREFIX}")
