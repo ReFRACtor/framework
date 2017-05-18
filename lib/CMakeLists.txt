@@ -5,6 +5,7 @@ add_definitions(-DHAVE_LUA)
 # Initialize variables used in subdirectories
 set(FP_SOURCE_FILES "")
 set(FP_TEST_FILES "")
+set(SWIG_INTERFACE_FILES "")
 
 foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support Deprecated)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
@@ -30,9 +31,16 @@ include_directories(${FP_INCLUDES})
 add_library(full_physics SHARED ${FP_SOURCE_FILES})
 target_link_libraries(full_physics ${THIRDPARTY_LIBRARIES})
 
+# Add SWIG files included in lib directory
+list(APPEND SWIG_INTERFACE_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/swig_std.i
+    ${CMAKE_CURRENT_SOURCE_DIR}/swig_array.i
+    ${CMAKE_CURRENT_SOURCE_DIR}/swig_rational.i)
+
 # Expose to the parent scope
 set(FP_INCLUDES ${FP_INCLUDES} PARENT_SCOPE)
 set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
+set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
 
 # Create installation rules
 install(TARGETS full_physics

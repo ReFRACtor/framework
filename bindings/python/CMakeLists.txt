@@ -6,6 +6,7 @@ include_directories(${PYTHON_INCLUDE_PATH})
 # Find SWIG
 find_package(SWIG 3.0)
 
+# ${SWIG_INTERFACE_FILES} is defined by CMakeLists.txt files in the lib/ directory
 if(${SWIG_FOUND})
     # Include SWIG macros
     include(UseSWIG)
@@ -17,34 +18,21 @@ if(${SWIG_FOUND})
     # Inlcude SWIG distribution Python *.i files, including top level dir SWIG_DIR is incorrect
     include_directories(${PROJECT_SOURCE_DIR}/lib ${SWIG_DIR}/python)
 
-    # Find interface files in lib/ directory
-    # Specify subdirectories to look into so that the *.i files at the top
-    # level are not used since they are meant to be included.
-    file(GLOB_RECURSE SWIG_INTERFACE_FILES
-        ${PROJECT_SOURCE_DIR}/lib/FixedLevel/*.i
-        ${PROJECT_SOURCE_DIR}/lib/Implementation/*.i
-        ${PROJECT_SOURCE_DIR}/lib/Interface/*.i
-        ${PROJECT_SOURCE_DIR}/lib/RegisterOutput/*.i
-        ${PROJECT_SOURCE_DIR}/lib/Support/*.i
-        ${PROJECT_SOURCE_DIR}/lib/Deprecated/*.i)
-
-    # Pick and choose Lua directory .i files
-    # One of the .i files there is included in the other
-    list(APPEND SWIG_INTERFACE_FILES 
-        ${PROJECT_SOURCE_DIR}/lib/Lua/lua_state.i
-        ${PROJECT_SOURCE_DIR}/lib/Lua/luabind_object.i)
-
     # Use C++ mode for SWIG
     set_source_files_properties(${SWIG_INTERFACE_FILES} PROPERTIES CPLUSPLUS ON)
     
     # Add the -module option to each *.i file based on it's base name without extention
     foreach(swig_file ${SWIG_INTERFACE_FILES})
         get_filename_component(module_name ${swig_file} NAME_WE)
+        list(APPEND SWIG_MODULE_NAMES ${module_name})
         set_source_files_properties(${swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn")
     endforeach()
 
+    # Create swig_wrap.cc
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_swig_wrap.py ${CMAKE_CURRENT_SOURCE_DIR}/swig/swig_wrap.cxx ${SWIG_MODULE_NAMES})
+
     # Create full_physics SWIG library
-    swig_add_module(swig_wrap python ${SWIG_INTERFACE_FILES})
+    swig_add_module(swig_wrap python ${SWIG_INTERFACE_FILES} swig/swig_wrap.cxx)
    
     # Link with main library, which is also called full_physics!
     swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} full_physics)
@@ -66,3 +54,6 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py" DESTINATION ${PYTHON_INS
 
 # Expose Python install path to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
+
+# Make a custom target to allow doing: make python
+add_custom_target(python DEPENDS _swig_wrap)
