@@ -28,7 +28,7 @@ include_directories(${THIRDPARTY_INCLUDES})
 include_directories(${FP_INCLUDES})
 
 add_library(full_physics SHARED ${FP_SOURCE_FILES})
-target_link_libraries(full_physics ${THIDRTPARTY_LIBRARIES})
+target_link_libraries(full_physics ${THIRDPARTY_LIBRARIES})
 
 # Expose to the parent scope
 set(FP_INCLUDES ${FP_INCLUDES} PARENT_SCOPE)
