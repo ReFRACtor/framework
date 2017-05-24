@@ -6,17 +6,23 @@ include_directories(${PYTHON_INCLUDE_PATH})
 # Find SWIG
 find_package(SWIG 3.0)
 
+# Generate swig output into the source tree
+set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/swig)
+
+# Include /lib directory since it also contains some *.i files
+# Inlcude SWIG distribution Python *.i files, including top level dir SWIG_DIR is incorrect
+include_directories(${PROJECT_SOURCE_DIR}/lib ${SWIG_DIR}/python)
+
 # ${SWIG_INTERFACE_FILES} is defined by CMakeLists.txt files in the lib/ directory
 if(${SWIG_FOUND})
+    # Use SWIG to update generated SWIG files if necessary and to build the library
+    message(STATUS "Using SWIG directly to build Python bindings")
+
+    ## Save and reset this after SWIG macros operate so that it does not clean up our SWIG generated files
+    get_directory_property(orig_addl_make_clean_files ADDITIONAL_MAKE_CLEAN_FILES)
+
     # Include SWIG macros
     include(UseSWIG)
-
-    # Generate swig output into the source tree
-    set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/swig)
-
-    # Include /lib directory since it also contains some *.i files
-    # Inlcude SWIG distribution Python *.i files, including top level dir SWIG_DIR is incorrect
-    include_directories(${PROJECT_SOURCE_DIR}/lib ${SWIG_DIR}/python)
 
     # Use C++ mode for SWIG
     set_source_files_properties(${SWIG_INTERFACE_FILES} PROPERTIES CPLUSPLUS ON)
@@ -36,6 +42,29 @@ if(${SWIG_FOUND})
    
     # Link with main library, which is also called full_physics!
     swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} full_physics)
+
+    # Don't delete the generated files on a make clean
+    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${orig_addl_make_clean_files}")
+    set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
+
+else()
+    # Build _swig_wrap.so manually without using SWIG if it is not found
+    message(STATUS "Using cached generated SWIG sources to build Python bindings")
+    
+    # Include only the wrapper files for which there is a corresponding interface file
+    # Also it seems that order does matter in terms of compilation or else errors can occur in
+    # setting up swig types
+    foreach(swig_file ${SWIG_INTERFACE_FILES})
+        get_filename_component(module_name ${swig_file} NAME_WE)
+        set(SWIG_GEN_FILES ${SWIG_GEN_FILES} "${CMAKE_SWIG_OUTDIR}/${module_name}PYTHON_wrap.cxx")
+    endforeach()
+
+    add_library(_swig_wrap MODULE ${SWIG_GEN_FILES} swig/swig_wrap.cxx)
+    target_link_libraries(_swig_wrap ${PYTHON_LIBRARIES} full_physics)
+
+    # Set the generated libary name to conform with how SWIG creates it
+    set_target_properties(_swig_wrap PROPERTIES NO_SONAME ON)
+    set_target_properties(_swig_wrap PROPERTIES PREFIX "")
 endif()
 
 # Find where Python distribution libaries should be located by querying distutils
