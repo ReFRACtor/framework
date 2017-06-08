@@ -67,6 +67,9 @@ else()
     set_target_properties(_swig_wrap PROPERTIES PREFIX "")
 endif()
 
+# Ensure that only this module has access to the SWIG type information
+target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=full_physics)
+
 # Find where Python distribution libaries should be located by querying distutils
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
