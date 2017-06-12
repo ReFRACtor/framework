@@ -6,6 +6,9 @@ include_directories(${PYTHON_INCLUDE_PATH})
 # Find SWIG
 find_package(SWIG 3.0)
 
+# Check for Doxygen for adding documentation to SWIG files
+find_package(Doxygen)
+
 # Generate swig output into the source tree
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_SOURCE_DIR}/swig)
 
@@ -24,21 +27,39 @@ if(${SWIG_FOUND})
     # Include SWIG macros
     include(UseSWIG)
 
-    # Use C++ mode for SWIG
-    set_source_files_properties(${SWIG_INTERFACE_FILES} PROPERTIES CPLUSPLUS ON)
-    
+    # Process each interface to include documentation if DOXYGEN is available
+    set(BUILD_USED_SWIG_FILES "")
+   
     # Add the -module option to each *.i file based on it's base name without extention
-    foreach(swig_file ${SWIG_INTERFACE_FILES})
-        get_filename_component(module_name ${swig_file} NAME_WE)
+    foreach(input_swig_file ${SWIG_INTERFACE_FILES})
+        get_filename_component(module_name ${input_swig_file} NAME_WE)
         list(APPEND SWIG_MODULE_NAMES ${module_name})
-        set_source_files_properties(${swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn")
+
+        if(DOXYGEN_FOUND)
+            set(module_out_dir "${CMAKE_CURRENT_BINARY_DIR}/doc/${module_name}")
+            set(build_swig_file "${module_out_dir}/${module_name}.i")
+
+            # Create a file that includes both the Doxygen SWIG information and source SWIG interface file
+            add_custom_command(OUTPUT "${build_swig_file}"
+                COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/interface_file_with_doc.sh ${DOXYGEN_EXECUTABLE} ${module_out_dir} ${input_swig_file} ${build_swig_file}
+                COMMENT "Generating documentation for ${module_name}")
+        else()
+            # No Doxygen so use the input_swig_file as the one used in the build
+            set(build_swig_file $input_swig_file)
+        endif()
+
+        list(APPEND BUILD_USED_SWIG_FILES ${build_swig_file})
+        set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn")
     endforeach()
 
+    # Use C++ mode for SWIG
+    set_source_files_properties(${BUILD_USED_SWIG_FILES} PROPERTIES CPLUSPLUS ON)
+ 
     # Create swig_wrap.cc
     execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_swig_wrap.py ${CMAKE_CURRENT_SOURCE_DIR}/swig/swig_wrap.cxx ${SWIG_MODULE_NAMES})
 
     # Create full_physics SWIG library
-    swig_add_module(swig_wrap python ${SWIG_INTERFACE_FILES} swig/swig_wrap.cxx)
+    swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} swig/swig_wrap.cxx)
    
     # Link with main library, which is also called full_physics!
     swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} full_physics)
