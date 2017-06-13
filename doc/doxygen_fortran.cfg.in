@@ -652,7 +652,8 @@ WARN_LOGFILE           = @CMAKE_CURRENT_BINARY_DIR@/doxygen_fortran.log
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @PROJECT_SOURCE_DIR@/lib \
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/doxygen.h \
+                         @PROJECT_SOURCE_DIR@/lib \
                          @PROJECT_SOURCE_DIR@/thirdparty/2stream \
                          @PROJECT_SOURCE_DIR@/thirdparty/lidort-3.6
 
