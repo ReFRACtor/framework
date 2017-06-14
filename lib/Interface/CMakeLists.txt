@@ -32,6 +32,7 @@ set(DIR_SOURCES
     level_1b_hdf.cc
     max_a_posteriori.cc
     max_likelihood.cc
+    meteorology.cc
     model_measure.cc
     model_state.cc
     nlls_problem.cc

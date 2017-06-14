@@ -838,35 +838,35 @@ end
 --- Get various a priori values from ECMWF
 ------------------------------------------------------------
 
-function ConfigCommon:ecmwf_pressure()
+function ConfigCommon:met_pressure()
    local r = Blitz_double_array_1d(1)
-   r:set(0,self.config.ecmwf:surface_pressure())
+   r:set(0,self.config.met:surface_pressure())
    return r
 end
 
-function ConfigCommon:ecmwf_windspeed()
+function ConfigCommon:met_windspeed()
    local r = Blitz_double_array_1d(1)
-   r:set(0,self.config.ecmwf:windspeed())
+   r:set(0,self.config.met:windspeed())
    return r
 end
 
-function ConfigCommon:ecmwf_temperature()
-   return self.config.ecmwf:temperature(self.config.pinp:pressure_level())
+function ConfigCommon:met_temperature()
+   return self.config.met:temperature(self.config.pinp:pressure_level())
 end
 
-function ConfigCommon:ecmwf_h2o_vmr()
-   return self.config.ecmwf:h2o_vmr(self.config.pinp:pressure_level())
+function ConfigCommon:met_h2o_vmr()
+   return self.config.met:vmr("H2O", self.config.pinp:pressure_level())
 end
 
 ------------------------------------------------------------
 --- Load the TCCON apriori object using ECMWF data
 ------------------------------------------------------------
 
-function ConfigCommon:tccon_apriori_ecmwf()
-    if(not self.tccon_ap_ecmwf_obj) then
-        self.tccon_ap_ecmwf_obj = TcconApriori(self.ecmwf, self.l1b)
+function ConfigCommon:tccon_apriori_met()
+    if(not self.tccon_ap_met_obj) then
+        self.tccon_ap_met_obj = TcconApriori(self.met, self.l1b)
     end
-    return self.tccon_ap_ecmwf_obj
+    return self.tccon_ap_met_obj
 end
 
 ------------------------------------------------------------
@@ -875,18 +875,18 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:tccon_apriori_pressure()
-    if(not self.tccon_ap_ecmwf_obj) then
-        self.tccon_ap_ecmwf_obj = TcconApriori(self.l1b, self.pressure, self.temperature)
+    if(not self.tccon_ap_met_obj) then
+        self.tccon_ap_met_obj = TcconApriori(self.l1b, self.pressure, self.temperature)
     end
-    return self.tccon_ap_ecmwf_obj
+    return self.tccon_ap_met_obj
 end
 
 ------------------------------------------------------------
 --- Get tccon co2 apriori from tccon using ECMWF file
 ------------------------------------------------------------
 
-function ConfigCommon:tccon_co2_apriori_ecmwf()
-   local t = self.config:tccon_apriori_ecmwf()
+function ConfigCommon:tccon_co2_apriori_met()
+   local t = self.config:tccon_apriori_met()
    return t:co2_vmr_grid(self.config.pressure)
 end
 
@@ -903,9 +903,9 @@ end
 --- Load the CO2 VMR object
 ------------------------------------------------------------
 
-function ConfigCommon:reference_co2_apriori_ecmwf_obj()
+function ConfigCommon:reference_co2_apriori_met_obj()
     if (not self.ref_co2_ap_obj) then
-        self.ref_co2_ap_obj = GasVmrApriori(self.ecmwf, self.l1b, self.altitude:value(0), self:h(), "/Reference_Atmosphere", "CO2")
+        self.ref_co2_ap_obj = GasVmrApriori(self.met, self.l1b, self.altitude:value(0), self:h(), "/Reference_Atmosphere", "CO2")
     end
 
     return self.ref_co2_ap_obj 
@@ -915,8 +915,8 @@ end
 --- Get co2 apriori using reference apriori method
 ------------------------------------------------------------
 
-function ConfigCommon:reference_co2_apriori_ecmwf_apriori()
-   local t = self.config:reference_co2_apriori_ecmwf_obj()
+function ConfigCommon:reference_co2_apriori_met_apriori()
+   local t = self.config:reference_co2_apriori_met_obj()
    return t:apriori_vmr(self.config.pressure)
 end
 
@@ -1235,7 +1235,9 @@ function ConfigCommon.instrument_correction_list:create_parent_object(sub_object
       local icorr_vec = VectorInstrumentCorrection()
       local j, s
       for j, s in ipairs(sub_object) do
-         icorr_vec:push_back(s[i])
+	 if(s[i] ~= nil) then
+	    icorr_vec:push_back(s[i])
+	 end
       end
       res:push_back(icorr_vec)
    end
@@ -1323,7 +1325,9 @@ function ConfigCommon.empirical_orthogonal_function:create()
 
    for i=1,self.config.number_pixel:rows() do
       local fit_scale = self:retrieval_flag(i)
-      if(self.by_pixel) then
+      if(self.eof_used ~= nil and self.eof_used[i] == false) then
+	 res[i] = nil
+      elseif(self.by_pixel) then
 	 if(self.scale_uncertainty) then
     -- Luabind can only handle up to 10 arguments per function. As an easy
     -- work around we put various values into an array
@@ -1368,9 +1372,22 @@ end
 
 function ConfigCommon.empirical_orthogonal_function:register_output(ro)
    for i=1,self.config.number_pixel:rows() do
-      ro:push_back(EmpiricalOrthogonalFunctionOutput.create(self.eof[i], 
-                           self.config.common.hdf_band_name:value(i-1)))
+      if(self.eof[i] ~= nil) then
+	 ro:push_back(EmpiricalOrthogonalFunctionOutput.create(self.eof[i], 
+	              self.config.common.hdf_band_name:value(i-1)))
+      end
    end
+end
+
+function ConfigCommon.empirical_orthogonal_function:retrieval_flag(i)
+   --- Use CreatorMultiSpec
+   local flag
+   flag = CreatorMultiSpec.retrieval_flag(self, i)
+   --- But override to make sure we don't retrieve EOFs we aren't using
+   if(self.eof_used ~= nil and self.eof_used[i] == false) then
+      flag:set(Range.all(), false)
+   end
+   return flag
 end
 
 ------------------------------------------------------------
@@ -1645,10 +1662,10 @@ end
 
 ConfigCommon.l1b_input = CreatorInput:new()
 
-ConfigCommon.l1b_ecmwf_input = CreatorInput:new()
+ConfigCommon.l1b_met_input = CreatorInput:new()
 
-function ConfigCommon.l1b_ecmwf_input:sub_object_key()
-   return {"l1b", "ecmwf"}
+function ConfigCommon.l1b_met_input:sub_object_key()
+   return {"l1b", "met"}
 end
 
 ------------------------------------------------------------
@@ -2026,15 +2043,15 @@ end
 --- offset.
 ------------------------------------------------------------
 
-ConfigCommon.temperature_ecmwf = CreatorApriori:new {}
+ConfigCommon.temperature_met = CreatorApriori:new {}
 
-function ConfigCommon.temperature_ecmwf:create()
-   return TemperatureEcmwf(self.config.ecmwf, self.config.pressure,
-                           self:apriori()(0), self:retrieval_flag()(0))
+function ConfigCommon.temperature_met:create()
+   return TemperatureMet(self.config.met, self.config.pressure,
+                         self:apriori()(0), self:retrieval_flag()(0))
 end
 
-function ConfigCommon.temperature_ecmwf:register_output(ro)
-   ro:push_back(TemperatureEcmwfOutput.create(self.config.temperature))
+function ConfigCommon.temperature_met:register_output(ro)
+   ro:push_back(TemperatureMetOutput.create(self.config.temperature))
 end
 
 ------------------------------------------------------------
@@ -2173,26 +2190,22 @@ function ConfigCommon.ground_coxmunk_plus_lamb:register_output(ro)
 end
 
 ------------------------------------------------------------
---- Modify the GroundBrdf a_priori, scaling by the black
---- sky albedo
+--- Modify the GroundBrdf a_priori, scaling by the 
+--- kernel value
 ------------------------------------------------------------
 
 function ConfigCommon.brdf_weight(self, brdf_class, ap, i)
-   local signal = self.config:meas_cont_signal(i).value
-   local solar_strength = self.config.fm.atmosphere.ground.solar_strength[i+1]
    local sza_d = self.config.l1b:sza()(i) 
    local vza_d = self.config.l1b:zen()(i) 
    local azm_d = self.config.l1b:azm()(i) 
-   local sza_r = sza_d * math.pi / 180.0
-   local stokes_coef = self.config.l1b:stokes_coef()(i, Range.all())
-   local alb_cont = math.pi * signal / (math.cos(sza_r) * solar_strength)
+   local alb_cont = self.config:albedo_from_signal_level(1)(self, i)(0)
 
    -- Extract all but the slope portion of the apriori to feed into the
    -- albedo calculation function
    local params = Blitz_double_array_1d(5)
    params:set(Range.all(), ap(Range(2, 6)))
 
-   local alb_calc = brdf_class.albedo(params, sza_d, vza_d, azm_d, stokes_coef)
+   local alb_calc = brdf_class.kernel_value(params, sza_d, vza_d, azm_d)
    local weight = alb_cont / alb_calc
 
    return weight
@@ -2273,10 +2286,7 @@ function ConfigCommon.ground_brdf_veg:create_parent_object(sub_object)
 end
 
 function ConfigCommon.ground_brdf_veg:register_output(ro)
-   local sza = self.config.l1b:sza()
-   local cos_solar_zenith  = self.config:h():read_double_1d("/Ground/Brdf/Effective_Albedo_Table/cos_solar_zenith")
-   local intensity_scaling = self.config:h():read_double_1d("/Ground/Brdf/Effective_Albedo_Table/intensity_scaling")
-   ro:push_back(GroundBrdfOutput.create(self.config.brdf_veg, sza, cos_solar_zenith, intensity_scaling, self.config.common.hdf_band_name))
+   ro:push_back(GroundBrdfOutput.create(self.config.brdf_veg, self.config.l1b, self.config.common.hdf_band_name))
 end
 
 ------------------------------------------------------------
@@ -2314,10 +2324,7 @@ function ConfigCommon.ground_brdf_soil:create_parent_object(sub_object)
 end
 
 function ConfigCommon.ground_brdf_soil:register_output(ro)
-   local sza = self.config.l1b:sza()
-   local cos_solar_zenith  = self.config:h():read_double_1d("/Ground/Brdf/Effective_Albedo_Table/cos_solar_zenith")
-   local intensity_scaling = self.config:h():read_double_1d("/Ground/Brdf/Effective_Albedo_Table/intensity_scaling")
-   ro:push_back(GroundBrdfOutput.create(self.config.brdf_soil, sza, cos_solar_zenith, intensity_scaling, self.config.common.hdf_band_name))
+   ro:push_back(GroundBrdfOutput.create(self.config.brdf_soil, self.config.l1b, self.config.common.hdf_band_name))
 end
 
 ------------------------------------------------------------
@@ -2453,6 +2460,16 @@ function ConfigCommon:albedo_from_signal_level(polynomial_degree)
         local signal = self.config:meas_cont_signal(spec_idx).value
         local solar_strength = self.config.fm.atmosphere.ground.solar_strength[spec_idx+1]
         local sza_r = self.config.l1b:sza()(spec_idx) * math.pi / 180.0
+
+        -- Account for solar distance Fsun = Fsun0 / (solar_distance_meters/AU)^2
+        -- Create SolarDopplerShiftPolynomial so we can compute solar distance
+        local solar_doppler_shift = SolarDopplerShiftPolynomial.create_from_l1b(self.config.l1b, spec_idx, true)
+        local solar_dist = solar_doppler_shift:solar_distance().value
+        solar_strength = solar_strength / solar_dist^2
+     
+        -- Account for stokes element for I
+        local stokes_coef = self.config.l1b:stokes_coef()
+        solar_strength = solar_strength * stokes_coef(spec_idx, 0)
 
         local offset = math.pi * signal / (math.cos(sza_r) * solar_strength)
 
@@ -2706,11 +2723,12 @@ function ConfigCommon.merra_aerosol_creator:initial_guess()
 end
 
 function ConfigCommon.merra_aerosol_creator:register_output(ro)
-   ro:push_back(AerosolAodOutput(self.config.aerosol, true))
-
-   for i=0, self.config.aerosol:number_particle() - 1 do
-      ro:push_back(AerosolParamOutput.create(self.config.aerosol:aerosol_extinction(i), "" .. (i + 1)))
+   local all_aer_names = self.config:merra_file():read_string_vector("/COMPOSITE_NAME")
+   for i, aer_name in ipairs(self.aerosols) do
+       all_aer_names:push_back(aer_name)
    end
+ 
+   ro:push_back(AerosolConsolidatedOutput(self.config.aerosol, all_aer_names))
 end
 
 ------------------------------------------------------------
@@ -2942,31 +2960,31 @@ end
 --- Create an absorber ECMWF, where we fit for a scale.
 ------------------------------------------------------------
 
-ConfigCommon.vmr_ecmwf = CreatorVmr:new()
+ConfigCommon.vmr_met = CreatorVmr:new()
 
-function ConfigCommon.vmr_ecmwf:apriori_v()
+function ConfigCommon.vmr_met:apriori_v()
    local r = Blitz_double_array_1d(1)
    r:set(0, function_or_simple_value(self.scale_apriori, self))
    return r
 end
 
-function ConfigCommon.vmr_ecmwf:covariance_v()
+function ConfigCommon.vmr_met:covariance_v()
    local r = Blitz_double_array_2d(1, 1)
    r:set(0, 0, function_or_simple_value(self.scale_cov, self))
    return r
 end
 
-function ConfigCommon.vmr_ecmwf:create_vmr()
-   self.vmr = AbsorberVmrEcmwf(self.config.ecmwf,
-                               self.config.pressure,
-                               function_or_simple_value(self.scale_apriori, self), 
-                               self:retrieval_flag()(0),
-                               self.name)
+function ConfigCommon.vmr_met:create_vmr()
+   self.vmr = AbsorberVmrMet(self.config.met,
+                             self.config.pressure,
+                             function_or_simple_value(self.scale_apriori, self), 
+                             self:retrieval_flag()(0),
+                             self.name)
    return self.vmr
 end
 
-function ConfigCommon.vmr_ecmwf:register_output(ro)
-   ro:push_back(AbsorberVmrEcmwfOutput.create(self.vmr))
+function ConfigCommon.vmr_met:register_output(ro)
+   ro:push_back(AbsorberVmrMetOutput.create(self.vmr))
 end
 
 ------------------------------------------------------------
@@ -3463,7 +3481,7 @@ function ConfigCommon.oco_forward_model:register_output(ro)
 
    -- Add source data files
    for i,var_ds in ipairs({ { "L1BFile", "spectrum_file"},
-                            { "ResampledMetFile", "ecmwf_file" },
+                            { "ResampledMetFile", "met_file" },
 			    { "StaticInput", "static_file"},
 			    { "SolarFile", "static_solar_file"},
 			    { "AerosolFile", "static_aerosol_file"},

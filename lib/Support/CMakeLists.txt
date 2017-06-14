@@ -8,7 +8,6 @@ set(DIR_SOURCES
     constants.F90
     default_constant.cc
     double_with_unit.cc
-    ecmwf.cc
     environment_substitute.cc
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
@@ -24,7 +23,7 @@ set(DIR_SOURCES
     linear_algebra.cc
     logger.cc
     logger_f.F90
-    oco_ecmwf.cc
+    oco_met_file.cc
     oco_sim_met_ecmwf.cc
     oco_sounding_id.cc
     old_constant.cc

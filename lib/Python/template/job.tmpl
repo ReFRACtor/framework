@@ -25,8 +25,6 @@ export merradir={0.merradir}
 # The rest of this should not need to be changed.
 cd ${{processing_dir}}
 id_list=( `cat ${{sounding_id_list_filename}}` )
-mkdir -p ${{log_directory}}
-mkdir -p ${{output_directory}}
 
 keep_exit="no"
 print_help="no"
@@ -89,6 +87,20 @@ export do_tee
 
 {0.addl_var_run_export}
 
+# Break up log and output directories so they don't get too big. Just
+# use the job index padded with 0's for this. Skip if we aren't grouping
+# data into large enough groups - we don't want directories with a single
+# file in them.
+use_subdir={0.use_subdirectory}
+do_aggregate={0.aggregate}
+if [ "$use_subdir" = "True" ]; then
+    mkdir -p ${{log_directory}}/qsub
+    log_directory=${{log_directory}}/$(printf "%04d" $job_index)
+    output_directory=${{output_directory}}/$(printf "%04d" $job_index)
+fi
+mkdir -p ${{log_directory}}
+mkdir -p ${{output_directory}}
+
 run_job_index() {{
     id_index=$1
     id_list=( `cat ${{sounding_id_list_filename}}` )
@@ -136,6 +148,50 @@ if [ ${{end_id_index}} -gt ${{#id_list[@]}} ]; then
 fi
 
 seq ${{beg_id_index}} ${{end_id_index}} | parallel --gnu -j {0.parallel_size} --ungroup --env run_job_index 'run_job_index {{}}'
+
+# Aggregate the soundings together, if we have enough to be worth doing this
+if [ "$do_aggregate" = "True" ]; then
+    input_files_tmp=$(mktemp)
+    l2_agg_fn=${{output_directory}}/l2_aggregate_$(printf "%04d" $job_index).h5
+    l1_agg_fn=${{output_directory}}/l1_aggregate_$(printf "%04d" $job_index).h5
+    for i in `seq ${{beg_id_index}} ${{end_id_index}}`; do
+	ls ${{output_directory}}/l2_${{id_list[$i]}}.h5 >> $input_files_tmp
+    done
+    {0.l2_support_path}/utils/splice_product_files.py --single-file-type -o $l2_agg_fn -i $input_files_tmp -l ${{log_directory}}/l2_aggregate_$(printf "%04d" $job_index).log
+    rm $input_files_tmp
+
+    # Extract sounding ids, and reformat into a format that can be used by 
+    # splice tool Take sounding ids from L2 aggregate so we know which 
+    # soundings actually completed. Otherwise we will have empty values
+    # for L2 datasets when we include IMAP or ABO2 data.
+    l2_snd_id_tmp1=$(mktemp)
+    l2_snd_id_tmp2=$(mktemp)
+    h5dump --noindex -o $l2_snd_id_tmp1 -d RetrievalHeader/sounding_id_reference ${{l2_agg_fn}} > /dev/null
+    # This line below, turns commas into new lines, removes empty spaces and blank lines
+    cat $l2_snd_id_tmp1 | sed 's|,|\n|g' | sed -r 's|^[ ]*||' | grep -v '^$' > $l2_snd_id_tmp2
+    rm $l2_snd_id_tmp1
+    # Combine L1B and L2 files into one file
+    # with IMAP and ABand files if they are supplied
+    inp_files_tmp=$(mktemp)
+    if [ ! -z "$input_file_mapping" ] && [ -e "$input_file_mapping" ]; then
+        # Set up input files from file mapping
+	while read -r sounding_id; do
+	    eval $(grep $sounding_id $input_file_mapping | tr ' ' '\n' | tail -1 | tr ';' '\n')
+            if [ ! -z "$spectrum_file" ] && [ ! -z "$imap_file" ] && [ ! -z "$aband_file" ]; then
+                echo $spectrum_file
+                echo $imap_file 
+                echo $aband_file 
+            fi
+        done < $l2_snd_id_tmp2 | sort | uniq > $inp_files_tmp
+    else
+        # Use input files from script variables
+        for fn in $spectrum_file $imap_file $aband_file; do
+            echo $fn > $inp_files_tmp
+        done
+    fi
+    {0.l2_support_path}/utils/splice_product_files.py --multiple-file-types --splice-all --rename-mapping --agg-names-filter -o $l1_agg_fn -i $inp_files_tmp -s $l2_snd_id_tmp2 -l ${{log_directory}}/l1_aggregate_$(printf "%04d" $job_index).log
+    rm $l2_snd_id_tmp2 $inp_files_tmp
+fi
 
 if [ "$keep_exit" = "yes" ]; then
    exit ${{l2_run_status}}

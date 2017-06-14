@@ -29,7 +29,7 @@ config.sid_string = "2014101812360378"
 
 config.spectrum_file = "../input/oco2_L1bScTG_01576a_141018_B5000x4_150210000451s_spliced.h5"
 config.imap_file = "../input/oco2_L2IDPTG_01576a_141018_B5000x4_150210002838s_spliced.h5"
-config.ecmwf_file = "../input/oco2_ECMWFTG_01576a_141018_B5000x4_150210001017s_spliced.h5"
+config.met_file = "../input/oco2_ECMWFTG_01576a_141018_B5000x4_150210001017s_spliced.h5"
 
 -- Additional functions used by rmgr snippets
 require "helper_functions"
@@ -47,5 +47,12 @@ function use_brdf:get_creator()
 end
 
 config.fm.atmosphere.ground.creator = use_brdf
+
+-- For now, suppress use of EOFs. These are in bit of flux, and there is
+-- no reason to change the output from this test each time we change the
+-- EOFs.
+config.fm.instrument.instrument_correction.ic_nadir = {}
+config.fm.instrument.instrument_correction.ic_glint = {}
+config.fm.instrument.instrument_correction.ic_target = {}
 
 config:do_config()

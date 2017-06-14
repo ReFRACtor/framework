@@ -16,7 +16,7 @@ set(DIR_SOURCES
     l_rad_fortran/l_sscorr_pp.F90
     absco_hdf.cc
     absorber_absco.cc
-    absorber_vmr_ecmwf.cc
+    absorber_vmr_met.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
     aerosol_extinction_linear.cc
@@ -142,7 +142,7 @@ set(DIR_SOURCES
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
     tccon_apriori.cc
-    temperature_ecmwf.cc
+    temperature_met.cc
     temperature_level_offset.cc
     twostream_driver.cc
     twostream_interface.F90
@@ -156,7 +156,7 @@ set(DIR_SOURCES
 set(TEST_SOURCES
     absco_hdf_test.cc
     absorber_absco_test.cc
-    absorber_vmr_ecmwf_test.cc
+    absorber_vmr_met_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     aerosol_optical_test.cc
@@ -248,7 +248,7 @@ set(TEST_SOURCES
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
     tccon_apriori_test.cc
-    temperature_ecmwf_test.cc
+    temperature_met_test.cc
     temperature_level_offset_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc

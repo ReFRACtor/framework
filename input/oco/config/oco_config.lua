@@ -69,21 +69,21 @@ end
 --- Create the ECMWF  fileif we have one
 ------------------------------------------------------------
 
-OcoConfig.oco_ecmwf = Creator:new()
+OcoConfig.oco_met = Creator:new()
 
-function OcoConfig.oco_ecmwf:create()
+function OcoConfig.oco_met:create()
    local sid = self.config:l1b_sid_list()
-   if (self.config.ecmwf_file) then
-       local ecmwf = OcoEcmwf(self.config.ecmwf_file, self.config:l1b_sid_list())
+   if (self.config.met_file) then
+       local met = OcoMetFile(self.config.met_file, self.config:l1b_sid_list())
        self.config.input_file_description = self.config.input_file_description .. 
-          "ECMWF input file:    " .. self.config.ecmwf_file .. "\n"
-       return ecmwf
+          "Meteorology input file:    " .. self.config.met_file .. "\n"
+       return met
    end
 end
 
-function OcoConfig.oco_ecmwf:register_output(ro)
-    if (self.config.ecmwf) then
-        ro:push_back(EcmwfPassThroughOutput(self.config.ecmwf))
+function OcoConfig.oco_met:register_output(ro)
+    if (self.config.met) then
+        ro:push_back(MetPassThroughOutput(self.config.met))
     end
 end
 
@@ -111,7 +111,7 @@ end
 
 function bad_sample_mask_outside_window(self)
    local bad_sample_mask = self:bad_sample_mask_before_window()
-   local window = {{100,888}, {211, 863}, {100, 911}}
+   local window = {{90,925}, {211, 863}, {100, 911}}
    for i=1,3 do
       local lb = window[i][1]
       local ub = window[i][2]
@@ -159,21 +159,53 @@ function OcoConfig.oco_noise:create()
 end
 
 ------------------------------------------------------------
---- Retrieves a bad pixel mask out of an extra dimension
---- in the snr_coef dataset
+--- Get bad sample from either snr_coef or bad_sample_list,
+--- depending on what we find in the file.
 ------------------------------------------------------------
 
-function OcoConfig:snr_coef_bad_sample_mask()
+function OcoConfig.l1b_bad_sample_mask(self)
+   local l1b_hdf_file = self.config:l1b_hdf_file()
+   if(l1b_hdf_file:has_object("/InstrumentHeader/bad_sample_list")) then
+      return self.config.bad_sample_list_bad_sample_mask(self)
+   else
+      return self.config.snr_coef_bad_sample_mask(self)
+   end
+end   
+
+------------------------------------------------------------
+--- Retrieve a bad pixel mask from the bad_sample_list field.
+--- This was added in B8.00
+------------------------------------------------------------
+
+function OcoConfig.bad_sample_list_bad_sample_mask(self)
+    self.config:diagnostic_message("Using bad_sample_list field for bad sample mask")
+    local l1b_hdf_file = self.config:l1b_hdf_file()
+    local sid = self.config:l1b_sid_list()
+    local sounding_num = sid:sounding_number()
+    local bad_sample_mask = l1b_hdf_file:read_double_3d("/InstrumentHeader/bad_sample_list")(Range.all(), sounding_num, Range.all())
+    
+    return bad_sample_mask
+end
+
+------------------------------------------------------------
+--- Retrieves a bad pixel mask out of an extra dimension
+--- in the snr_coef dataset. This was how things were done
+--- pre B8.00
+------------------------------------------------------------
+
+function OcoConfig.snr_coef_bad_sample_mask(self)
     local l1b_hdf_file = self.config:l1b_hdf_file()
     local sid = self.config:l1b_sid_list()
     local sounding_num = sid:sounding_number()
     local snr_coef = l1b_hdf_file:read_double_4d_sounding("/InstrumentHeader/snr_coef", sounding_num)
 
     if (snr_coef:depth() > 2) then
+        self.config:diagnostic_message("Using snr_coeff third component for bad sample data")
         local bad_sample_mask = snr_coef(Range.all(), Range.all(), 2)
         return bad_sample_mask
     end
     
+    self.config:diagnostic_message("No bad sample data found in snr_coeff")
     return nil
 end
 
@@ -251,11 +283,11 @@ function OcoConfig.oco_offset_scaling(field)
 end
 
 ------------------------------------------------------------
---- Defines the ground type name we should use, based on
---- land water fag
+--- Determine if we are land or water. Return "land" or 
+--- "water"
 ------------------------------------------------------------
 
-function OcoConfig:ground_type_name()
+function OcoConfig:land_or_water()
    local lf
    if (self.unscaled_l1b ~= nil) then
       lf = self.unscaled_l1b:land_fraction()
@@ -264,11 +296,38 @@ function OcoConfig:ground_type_name()
    end
 
    if(lf > 80.0) then
-      return "lambertian"
+      return "land"
    elseif(lf < 20.0) then
-      return "coxmunk"
+      return "water"
    else
       error("Invalid land fraction value read from L1B file: " .. lf .. " (must be > 80 or < 20 to process Level 2)")
+   end
+end
+
+------------------------------------------------------------
+--- Defines the ground type name we should use, based on
+--- land water fag
+------------------------------------------------------------
+
+function OcoConfig:ground_type_name()
+   if(self:land_or_water() == "land") then
+      return "brdf_soil"
+   else
+      return "coxmunk"
+   end
+end
+
+------------------------------------------------------------
+--- Fluorescence only for land runs
+------------------------------------------------------------
+
+OcoConfig.fluorescence_effect_land_only = ConfigCommon.fluorescence_effect:new()
+function OcoConfig.fluorescence_effect_land_only:create()
+   -- Only use this for land runs
+   if(self.config:land_or_water() == "land") then
+      return ConfigCommon.fluorescence_effect.create(self)
+   else
+      return nil
    end
 end
 
@@ -276,13 +335,17 @@ end
 --- Create ground based on the surface type
 ------------------------------------------------------------
 
-OcoConfig.ground_land_water_indicator = DispatchCreator:new()
+OcoConfig.ground_from_ground_type = DispatchCreator:new()
 
-function OcoConfig.ground_land_water_indicator:get_creator()
+function OcoConfig.ground_from_ground_type:get_creator()
    local ground_type = self.config:ground_type_name()
 
    if (ground_type == "lambertian") then
       return ConfigCommon.ground_lambertian
+   elseif (ground_type == "brdf_soil") then
+      return ConfigCommon.ground_brdf_soil
+   elseif (ground_type == "brdf_veg") then
+      return ConfigCommon.ground_brdf_veg
    elseif (ground_type == "coxmunk") then
       if(self.config.using_radiance_scaling ~= nil) then
          return ConfigCommon.ground_coxmunk
@@ -405,21 +468,21 @@ end
 --- file. 
 ------------------------------------------------------------
 
-OcoConfig.oco_ecmwf_meteorology = Creator:new()
+OcoConfig.oco_meteorology = Creator:new()
 
-function OcoConfig.oco_ecmwf_meteorology:create()
+function OcoConfig.oco_meteorology:create()
    local sid = self.config:l1b_sid_list()
-   if (self.config.ecmwf_file) then
-       local ecmwf = OcoSimMetEcmwf(self.config.ecmwf_file, self.config:l1b_sid_list())
+   if (self.config.met_file) then
+       local met = OcoSimMetEcmwf(self.config.met_file, self.config:l1b_sid_list())
        self.config.input_file_description = self.config.input_file_description .. 
-          "ECMWF input file:    " .. self.config.ecmwf_file .. "\n"
-       return ecmwf
+          "Meteorology input file:    " .. self.config.met_file .. "\n"
+       return met
    end
 end
 
-function OcoConfig.oco_ecmwf_meteorology:register_output(ro)
-    if (self.config.ecmwf) then
-        ro:push_back(EcmwfPassThroughOutput(self.config.ecmwf))
+function OcoConfig.oco_meteorology:register_output(ro)
+    if (self.config.met) then
+        ro:push_back(MetPassThroughOutput(self.config.met))
     end
 end
 
@@ -435,4 +498,19 @@ end
 function OcoConfig:co2_apriori_from_scene()
    local t = OcoSimApriori(self.config.scene_file, self.config:l1b_sid_list())
    return t:co2_vmr_grid(self.config.pressure)
+end
+
+------------------------------------------------------------
+--- Use tropopause height for initial guess as cirrus ice
+--- height
+------------------------------------------------------------
+
+function OcoConfig.tropopause_height_ap(self, base, type, aer_name)
+    local ap = self:apriori_initial(base, type, aer_name)
+    
+    local t = self.config:reference_co2_apriori_met_obj()
+    local psurf = self.config.met:surface_pressure()
+    ap:set(1, (t:tropopause_pressure() - 100) / psurf)
+    
+    return ap
 end

@@ -33,10 +33,18 @@ Options:
       After generating level 2 output files, aggregate them into one
       common file.
 
+  --use-subdirectory
+      Break log and output files into subdirectories by the grouping given
+      with -g. We also aggregate the subdirectories separately, which can
+      significantly reduce the time it takes to do aggregation.
+
   --skip-check
       Skip check to see if data is processable. This can take a while, and
       is unnecessary if we already know the data is processable (e.g., we
       generated the QTS data by looking at real data file).
+
+  --email-address=d
+      Email address to mail when aggregation starts and ends.
 
   -g, --group_size=NUM
       Number of L2 jobs to group together in a single instance
@@ -49,7 +57,7 @@ Options:
     
   --absco-version=V
       Version of ABSCO to use. This is only used by Pleiades runs.
-      [default: v4.2.0_unscaled]
+      [default: v5.0.0]
 
   -t, --target_cluster=NAME
       Name of cluster management system to be run on.
@@ -86,7 +94,11 @@ if(args.binary):
 if(args.l2_config):
     populate_options["l2_config_filename"] = args.l2_config
 populate_options["skip_check"] = args.skip_check
+populate_options["email_address"] = ""
+if(args.email_address is not None):
+    populate_options["email_address"] = args.email_address
 populate_options["aggregate"] = args.aggregate
+populate_options["use_subdirectory"] = args.use_subdirectory
 populate_options["abscoversion"] = args.absco_version
 populate_options["target_cluster"] = args.target_cluster
 populate_options["group_size"] = int(args.group_size)

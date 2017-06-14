@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 # Copy data needed to run Level 2 on Pleiades system.
 
 usage()
@@ -46,7 +46,7 @@ set -e
 mkdir -p $2
 
 # Copy absco data used in runs
-rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm/l2_fp/absco/v4.2.0_unscaled $2/absco/
+rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm/l2_fp/absco/v5.0.0 $2/absco/
 
 # Copy merra data used in runs
 rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm/l2_fp/merra_composite/ $2/merra/
@@ -60,6 +60,8 @@ rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm
 
 mkdir -p $2/absco/v4.1.1
 rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm/l2_fp/absco/v4.1.1/lowres $2/absco/v4.1.1/
+
+rsync -avz --progress --inplace --rsh ssh $1@soot.jpl.nasa.gov:/groups/algorithm/l2_fp/absco/v4.2.0_unscaled $2/absco/
 
 # Copy integration test data
 mkdir -p $2/integration_test

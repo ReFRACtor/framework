@@ -1,17 +1,18 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     absorber_absco_output.cc
-    absorber_vmr_ecmwf_output.cc
+    absorber_vmr_met_output.cc
     absorber_vmr_level_output.cc
     absorber_vmr_level_scaled_output.cc
     aerosol_aod_output.cc
+    aerosol_consolidated_output.cc
     aerosol_param_output.cc
     altitude_output.cc
     connor_convergence_output.cc
     connor_solver_output.cc
     dispersion_fit_output.cc
     dispersion_polynomial_output.cc
-    ecmwf_pass_through_output.cc
+    met_pass_through_output.cc
     empirical_orthogonal_function_output.cc
     error_analysis_output.cc
     fluorescence_effect_output.cc
@@ -32,7 +33,7 @@ set(DIR_SOURCES
     source_files_output.cc
     state_vector_output.cc
     stokes_coefficient_fraction_output.cc
-    temperature_ecmwf_output.cc
+    temperature_met_output.cc
     temperature_level_offset_output.cc
     zero_offset_waveform_output.cc
 )
@@ -40,6 +41,7 @@ set(DIR_SOURCES
 set(TEST_SOURCES
     absorber_absco_output_test.cc
     aerosol_aod_output_test.cc
+    aerosol_consolidated_output_test.cc
     aerosol_param_output_test.cc
     connor_convergence_output_test.cc
     connor_solver_output_test.cc
@@ -59,7 +61,7 @@ set(TEST_SOURCES
     radiance_scaling_output_test.cc
     state_vector_output_test.cc
     stokes_coefficient_fraction_output_test.cc
-    temperature_ecmwf_output_test.cc
+    temperature_met_output_test.cc
     temperature_level_offset_output_test.cc
     zero_offset_waveform_output_test.cc
 )

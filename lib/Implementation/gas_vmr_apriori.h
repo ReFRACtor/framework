@@ -3,7 +3,7 @@
 
 #include <blitz/array.h>
 
-#include "ecmwf.h"
+#include "meteorology.h"
 #include "level_1b.h"
 #include "altitude.h"
 #include "hdf_file.h"
@@ -27,7 +27,7 @@ namespace FullPhysics {
 
 class GasVmrApriori : public Printable<GasVmrApriori> {
 public:
-    GasVmrApriori(const boost::shared_ptr<Ecmwf>& Ecmwf_file,
+    GasVmrApriori(const boost::shared_ptr<Meteorology>& Met_file,
                   const boost::shared_ptr<Level1b>& L1b_file,
                   const boost::shared_ptr<Altitude>& Alt,
                   const HdfFile& Hdf_static_input,
@@ -40,7 +40,7 @@ public:
 
     const boost::shared_ptr<ReferenceVmrApriori> reference() const { return ref_apriori; }
 
-    const double tropopause_altitude() const { return ref_apriori->model_tropopause_altitude(); }
+    const DoubleWithUnit tropopause_altitude() const { return ref_apriori->model_tropopause_altitude(); }
     const double tropopause_pressure() const;
 
     void print(std::ostream& Os) const { Os << "GasVmrApriori"; }

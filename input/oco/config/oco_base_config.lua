@@ -18,7 +18,7 @@ OcoBaseConfig = OcoConfig:new {
    -- variables.
    sid_string = os.getenv("sounding_id"),
    spectrum_file = os.getenv("spectrum_file"),
-   ecmwf_file = os.getenv("ecmwf_file"),
+   met_file = os.getenv("met_file"),
    imap_file = os.getenv("imap_file"),
    --- Scene file is only used it we are trying to match a simulator
    --- run. So for a real data, this will be a empty string, and will
@@ -130,7 +130,7 @@ OcoBaseConfig = OcoConfig:new {
       spec_win = {
          creator = ConfigCommon.spectral_window_hdf,
          bad_sample_mask = OcoConfig.bad_sample_mask_with_saa,
-         bad_sample_mask_before_saa = OcoConfig.snr_coef_bad_sample_mask,
+         bad_sample_mask_before_saa = OcoConfig.l1b_bad_sample_mask,
          latitude_min = -50,
          latitude_max = 0,
          longitude_min = -90,
@@ -138,7 +138,7 @@ OcoBaseConfig = OcoConfig:new {
          saa_tolerance = 6,
       },
       input = {
-         creator = ConfigCommon.l1b_ecmwf_input,
+         creator = ConfigCommon.l1b_met_input,
          l1b = {
             creator = OcoConfig.level1b_hdf,
             noise = {
@@ -165,8 +165,8 @@ OcoBaseConfig = OcoConfig:new {
             --    max_ms = { 7.00e20, 2.45e20, 1.25e20 },
             -- },
          },
-         ecmwf = {
-            creator = OcoConfig.oco_ecmwf,
+         met = {
+            creator = OcoConfig.oco_met,
          },
       },
       stokes_coefficient = {
@@ -198,9 +198,9 @@ OcoBaseConfig = OcoConfig:new {
             -- If we end up doing this all the time in the future, we should
             -- consider just adding a new creator that doesn't pick the EOF
             -- base on mode. But for now leave this functionality in.
-            ic_nadir = { "eof_glint_1", "eof_glint_2","eof_glint_3",},
-            ic_glint = { "eof_glint_1", "eof_glint_2","eof_glint_3",},
-            ic_target = { "eof_glint_1", "eof_glint_2","eof_glint_3",},
+            ic_nadir = { "eof_glint_1", "eof_glint_2","eof_glint_3","eof_glint_4",},
+            ic_glint = { "eof_glint_1", "eof_glint_2","eof_glint_3","eof_glint_4",},
+            ic_target = { "eof_glint_1", "eof_glint_2","eof_glint_3","eof_glint_4",},
             --ic_nadir = { "eof_nadir_1", "eof_nadir_2", "eof_nadir_3",},
             --ic_glint = { "eof_glint_1", "eof_glint_2", "eof_glint_3",},
             --ic_target = { "eof_target_1", "eof_target_2", "eof_target_3",},
@@ -210,12 +210,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 1 - 1),
                order = 1,
                by_pixel = true,
-	       -- We will want to change this for B8, but wait until we
-	       -- update the EOF
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_nadir_2 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Nadir",
@@ -223,10 +222,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 2 - 1),
                order = 2,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_nadir_3 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Nadir",
@@ -234,10 +234,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 3 - 1),
                order = 3,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_glint_1 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Glint",
@@ -245,10 +246,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 1 - 1),
                order = 1,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_glint_2 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Glint",
@@ -256,10 +258,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 2 - 1),
                order = 2,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_glint_3 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Glint",
@@ -267,10 +270,23 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 3 - 1),
                order = 3,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
+            },
+            eof_glint_4 = {
+               hdf_group = "Instrument/EmpiricalOrthogonalFunction/Glint",
+               apriori = ConfigCommon.hdf_eof_apriori_i_j("Instrument/EmpiricalOrthogonalFunction", 4 - 1),
+               covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 4 - 1),
+               order = 4,
+               by_pixel = true,
+               scale_uncertainty = true,
+               scale_to_stddev = 1e19,
+               creator = ConfigCommon.empirical_orthogonal_function,
+               retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_target_1 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Target",
@@ -278,10 +294,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 1 - 1),
                order = 1,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_target_2 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Target",
@@ -289,10 +306,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 2 - 1),
                order = 2,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
             eof_target_3 = {
                hdf_group = "Instrument/EmpiricalOrthogonalFunction/Target",
@@ -300,10 +318,11 @@ OcoBaseConfig = OcoConfig:new {
                covariance = ConfigCommon.hdf_eof_covariance_i_j("Instrument/EmpiricalOrthogonalFunction", 3 - 1),
                order = 3,
                by_pixel = true,
-	       scale_uncertainty = false,
+	       scale_uncertainty = true,
 	       scale_to_stddev = 1e19,
                creator = ConfigCommon.empirical_orthogonal_function,
                retrieve_bands = { true, true, true },
+	       eof_used = {true, true, true},
             },
 
             -- Disabled by default, add "radiance_scaling" to 
@@ -342,7 +361,7 @@ OcoBaseConfig = OcoConfig:new {
             apriori = ConfigCommon.fluorescence_apriori("Fluorescence"),
             sif_sigma_scale = 1.0 / 3,
             covariance = ConfigCommon.fluorescence_covariance("Fluorescence"),
-            creator = ConfigCommon.fluorescence_effect_lambertian_only,
+            creator = OcoConfig.fluorescence_effect_land_only,
             reference_point = ConfigCommon.hdf_read_double_with_unit("Fluorescence/reference_point"),
             retrieved = true,
          },
@@ -378,7 +397,7 @@ OcoBaseConfig = OcoConfig:new {
             creator = ConfigCommon.default_constant,
          },
          pressure = {
-            apriori = ConfigCommon.ecmwf_pressure,
+            apriori = ConfigCommon.met_pressure,
             covariance = ConfigCommon.hdf_covariance("Surface_Pressure"),
             a = ConfigCommon.hdf_read_double_1d("Pressure/Pressure_sigma_a"),
             b = ConfigCommon.hdf_read_double_1d("Pressure/Pressure_sigma_b"),
@@ -387,7 +406,7 @@ OcoBaseConfig = OcoConfig:new {
          temperature = {
             apriori = ConfigCommon.hdf_apriori("Temperature/Offset"),
             covariance = ConfigCommon.hdf_covariance("Temperature/Offset"),
-            creator = ConfigCommon.temperature_ecmwf,
+            creator = ConfigCommon.temperature_met,
          },
          ground = {
             -- Instrument specific solar strengths used for ground calculations 
@@ -404,7 +423,7 @@ OcoBaseConfig = OcoConfig:new {
             -- Coxmunk windspeed and refractive index inputs
             coxmunk = {
                refractive_index = ConfigCommon.hdf_apriori("Ground/Refractive_Index"),
-               apriori = ConfigCommon.ecmwf_windspeed,
+               apriori = ConfigCommon.met_windspeed,
                covariance = ConfigCommon.hdf_covariance("Ground/Windspeed"),
                creator = ConfigCommon.coxmunk_retrieval,
             },
@@ -433,7 +452,7 @@ OcoBaseConfig = OcoConfig:new {
                creator = ConfigCommon.brdf_soil_retrieval,
             },
 
-            creator = OcoConfig.ground_land_water_indicator,
+            creator = OcoConfig.ground_from_ground_type,
          },
          aerosol = {
             creator = ConfigCommon.merra_aerosol_creator,
@@ -448,7 +467,7 @@ OcoBaseConfig = OcoConfig:new {
             covariance = ConfigCommon.hdf_covariance("/Aerosol/Merra/Gaussian/Log"),
             -- Lua doesn't preserve order in a table, so we have a list
             -- saying what order we want the Aerosols in
-            aerosols = {"Ice", "Water"},
+            aerosols = {"Ice", "Water", "ST"},
             Water = {
                creator = ConfigCommon.aerosol_log_shape_gaussian,
                apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
@@ -457,30 +476,41 @@ OcoBaseConfig = OcoConfig:new {
             },
             Ice = {
                creator = ConfigCommon.aerosol_log_shape_gaussian,
-               apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
+               apriori_initial = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
+	       apriori = OcoConfig.tropopause_height_ap,
                covariance = ConfigCommon.hdf_aerosol_covariance("Aerosol", "Gaussian/Log"),
                property = ConfigCommon.hdf_aerosol_property("ice_cloud_MODIS6_deltaM_1000"),
             },
+	    ST = {
+	       creator = ConfigCommon.aerosol_log_shape_gaussian,
+	       apriori = function(self)
+		  return ConfigCommon.lua_to_blitz_double_1d({-5.11599580975408205124,0.03,0.04})
+	       end,
+	       covariance = function(self)
+		  return ConfigCommon.lua_to_blitz_double_2d({{3.24,0,0},{0,1e-8,0},{0,0,1e-4}})
+	       end,
+	       property = ConfigCommon.hdf_aerosol_property("strat"),
+	    },
          },
          absorber = {
             creator = ConfigCommon.absorber_creator,
             gases = {"CO2", "H2O", "O2"},
             CO2 = {
-               apriori = ConfigCommon.tccon_co2_apriori_ecmwf,
+               apriori = ConfigCommon.reference_co2_apriori_met_apriori,
                covariance = ConfigCommon.hdf_covariance("Gas/CO2"),
-               absco = "v4.2.0_unscaled/co2_v4.2.0_with_ctm.hdf",
-               table_scale = {1.0, 1.0038, 0.9946},
+               absco = "v5.0.0/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
+               table_scale = {1.0, 1.0, 1.004},
                creator = ConfigCommon.vmr_level,
             },
             H2O = {
                scale_apriori = 1.0,
                scale_cov = 0.25,
-               absco = "v4.2.0_unscaled/h2o_v4.2.0.hdf",
-               creator = ConfigCommon.vmr_ecmwf,
+               absco = "v5.0.0/h2o_hitran12.h5",
+               creator = ConfigCommon.vmr_met,
             },
             O2 = {
                apriori = ConfigCommon.hdf_read_double_1d("Gas/O2/average_mole_fraction"),
-               absco = "v4.2.0_unscaled/o2_v4.2.0_drouin.hdf",
+               absco = "v5.0.0/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
                table_scale = 1.0,
                creator = ConfigCommon.vmr_level_constant_well_mixed,
             },
