@@ -1,0 +1,13 @@
+When debugging unit tests it can be usefull to run the test_all binary directly.
+
+If using valgrind, it is suggested to use the following options along with the suppresions file in this directory.
+valgrind --max-stackframe=5000000 --error-exitcode=1 --track-origins=yes --suppressions=valgrind.suppressions
+
+Note valgrind *hates* ifort, you'll get lots of fortran errors if you use that. If you are going to use valgrind, you should used gfortran-4.5 rather than ifort.
+
+Useful options to test_all are:
+* --log_level=test_suite - Show each test suite as it is entered and exits
+* --run_test=<pattern> - Match a specific set of tests using a pattern
+* --show_progress - When not doing test_suite show a progress bar
+
+More information can be found in the Boost Unit Test documentation.
