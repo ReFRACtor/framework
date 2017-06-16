@@ -10,18 +10,18 @@ file(GLOB_RECURSE LIDORT_SRC "*.F90")
 
 # Configure overridable LIDORT parameters file
 if(NOT LIDORT_MAXLAYER)
-    set(LIDORT_MAXLAYER 23 CACHE STRING "Maximum number of LIDORT layers" FORCE)
+    set(LIDORT_MAXLAYER 23 CACHE STRING "Maximum number of LIDORT layers")
 endif()
 
 if(NOT LIDORT_MAXATMOSWFS)
-    set(LIDORT_MAXATMOSWFS 7 CACHE STRING "Maximum number of LIDORT atmospheric weighting functions" FORCE)
+    set(LIDORT_MAXATMOSWFS 7 CACHE STRING "Maximum number of LIDORT atmospheric weighting functions")
 endif()
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/lidort_def/lidort_pars.F90.in"
     "${PROJECT_BINARY_DIR}/lidort_pars.F90"
 )
-set(LIDORT_SRC ${LIDORT_SRC} "${PROJECT_BINARY_DIR}/lidort_pars.F90")
+list(APPEND LIDORT_SRC "${PROJECT_BINARY_DIR}/lidort_pars.F90")
 
 add_library(lidort SHARED ${LIDORT_SRC})
 

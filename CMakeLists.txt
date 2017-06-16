@@ -1,3 +1,6 @@
+# This must be called before project() since it sets this variable as empty into the cache
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
+
 cmake_minimum_required(VERSION 3.2)
 enable_language(Fortran)
 project(refractor)
