@@ -92,16 +92,7 @@ foreach(source_name ${TEST_SOURCES})
     set(FP_TEST_FILES ${FP_TEST_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/${source_name})
 endforeach(source_name)
 
-# Create test case fixtures default properties file from CMake variables
-configure_file (
-    global_fixture_default.cc.in 
-    "${PROJECT_BINARY_DIR}/global_fixture_default.cc"
-)
-
-set(FP_TEST_FILES ${FP_TEST_FILES} "${PROJECT_BINARY_DIR}/global_fixture_default.cc")
-
 # Expose the list of source files to the parent cmake file
 set(FP_SOURCE_FILES ${FP_SOURCE_FILES} PARENT_SCOPE)
 set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
 set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
-
