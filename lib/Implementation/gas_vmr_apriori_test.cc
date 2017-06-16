@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(apriori_calc)
         boost::shared_ptr<OcoSoundingId> sid (new OcoSoundingId(*sfile, curr_sid));
         boost::shared_ptr<OcoMetFile> ecmwf(new OcoMetFile(test_data_dir() + "in/oco2_ecmwf_apriori_check.h5", sid));
         boost::shared_ptr<Level1bOco> l1b(new Level1bOco(sfile, sid));
-        HdfFile hdf_static_input(test_data_dir() + "../input/oco/input/l2_oco_static_input.h5");
+        HdfFile hdf_static_input(test_data_dir() + "../../../input/oco/input/l2_oco_static_input.h5");
 
         // Create pressure/temp and hence altitude just like done in the production software
         blitz::Array<double, 1> sigma_a = hdf_static_input.read_field<double, 1>("Pressure/Pressure_sigma_a");

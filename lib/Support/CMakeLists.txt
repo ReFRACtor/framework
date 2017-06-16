@@ -58,7 +58,6 @@ set(TEST_SOURCES
     fstream_compress_test.cc
     fts_run_log_test.cc
     global_fixture.cc
-    global_fixture_default.cc
     hdf_file_test.cc
     heritage_file_test.cc
     heritage_matrix_write_test.cc

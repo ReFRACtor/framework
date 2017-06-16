@@ -1,4 +1,4 @@
-test_data_dir = os.getenv("abs_top_srcdir") .. "/unit_test_data/"
+test_data_dir = os.getenv("abs_top_srcdir") .. "/test/unit/data/"
 sid_string = "20090725020316"
 
 l1b_fname = test_data_dir .. "l1b.h5"

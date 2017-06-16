@@ -91,7 +91,7 @@ std::string GlobalFixture::test_data_dir() const
 	       "done if you are running 'make check', but you need to\n"
 	       "manually set this if you are running outside of make (e.g.,\n"
 	       "running in a debugger");
-  return std::string(srcdir) + "/unit_test_data/";
+  return std::string(srcdir) + "/test/unit/data/";
 }
 
 //-----------------------------------------------------------------------

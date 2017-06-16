@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(solspec_comparison)
                                             elevation, constant, false));
 
   HdfFile hdf_abs_table(test_data_dir() + "smoothed_pseudo_trans_spectra.h5");
-  HdfFile hdf_cont_table(test_data_dir() + "../input/common/input/l2_solar_model.h5");
+  HdfFile hdf_cont_table(test_data_dir() + "../../../input/common/input/l2_solar_model.h5");
 
   for(int spec = 0; spec < 3; spec++) {
     // Read in and use smoothed pseudo transmission spectrum that matches the SOLSPEC resolution

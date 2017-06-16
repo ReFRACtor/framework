@@ -14,8 +14,9 @@ void GlobalFixture::set_default_value()
   // Note that we set the "overwrite" flag to 0 so that we do *not*
   // overwrite existing variable. This means we don't need to bother
   // checking if this is set before we assign a value to it.
-  setenv("abs_top_srcdir", "@PROJECT_SOURCE_DIR@", 0);
   setenv("abscodir", "@ABSCO_DIR@", 0);
-  setenv("LUA_PATH", "@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/input/gosat/config/?.lua;@PROJECT_SOURCE_DIR@/input/oco/config/?.lua;@PROJECT_SOURCE_DIR@/input/fts/config/?.lua;@PROJECT_SOURCE_DIR@/unit_test_data/?.lua;", 0);
+  setenv("merradir", "@MERRA_DIR@", 0);
+  setenv("abs_top_srcdir", "@PROJECT_SOURCE_DIR@", 1);
+  setenv("LUA_PATH", "@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/input/gosat/config/?.lua;@PROJECT_SOURCE_DIR@/input/oco/config/?.lua;@PROJECT_SOURCE_DIR@/input/fts/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/?.lua;", 1);
 }
 

@@ -3,7 +3,7 @@ enable_language(Fortran)
 project(refractor)
 
 # Version number
-set (REFRACTOR_MAJOR_VERSION "8.0.0")
+set(REFRACTOR_MAJOR_VERSION "8.0.0")
 
 # Global setting: Use C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -19,6 +19,16 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     message(STATUS "Specify -DCMAKE_INSTALL_PREFIX to cmake to change")
 else()
     message(STATUS "Using install prefix: " ${CMAKE_INSTALL_PREFIX})
+endif()
+
+# Expose options that user should supply
+set(ABSCO_DIR $ENV{abscodir} CACHE PATH "Base path of Absoprtion Coefficient tables are located")
+if(NOT ABSCO_DIR)
+    message(WARNING "ABSCO_DIR option not supplied, tests will fail")
+endif()
+set(MERRA_DIR $ENV{merradir} CACHE PATH "Base path of MERRA Composite files are located")
+if(NOT MERRA_DIR)
+    message(WARNING "MERRA_DIR option not supplied, some tests will fail")
 endif()
 
 # Obtain the CM version of the source code
@@ -53,10 +63,6 @@ include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES} ${THIRDPARTY_INCLUDES})
 add_executable(l2_fp bin/l2_fp.cc)
 target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 
-# Create unit test binary, do not include it in the make all target
-add_executable(test_all EXCLUDE_FROM_ALL lib/test_all.cc ${FP_TEST_FILES})
-target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
-
 # Include Lua configs and input rules
 add_subdirectory(input)
 
@@ -83,3 +89,6 @@ install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTA
 
 # Build documentation for project
 add_subdirectory(doc)
+
+# Add unit and full tests
+add_subdirectory(test)
