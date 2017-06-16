@@ -8,7 +8,7 @@ $(out_dir)/fts_fts_test.config:
 	-rm -rf $(out_dir)/output
 	srcdir="${srcdir}" val="${val}" cmd="${cmd}" $(srcdir)/test/fts/do_populate.sh	
 
-$(out_dir)/stdout: $(out_dir)/fts_fts_test.config l2_fp $(srcdir)/input/fts/config/config.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
+$(out_dir)/stdout: $(out_dir)/fts_fts_test.config $(L2_FP) $(srcdir)/input/fts/config/config.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
 	$(out_dir)/l2_fp_job.sh -e 0
 
 compare: $(out_dir)/stdout
@@ -22,7 +22,7 @@ compare: $(out_dir)/stdout
 
 update_expected:
 	-rm -r $(out_dir)
-	$(MAKE) -f $(base_dir)/Makefile $(out_dir)/stdout cmd=l2_fp && \
+	$(MAKE) -f $(base_dir)/Makefile $(out_dir)/stdout cmd=$(L2_FP) && \
         cp $(out_dir)/output/l2_008.h5 $(base_dir)/out.expected.h5 && exit 0; exit 1
 
 all: compare

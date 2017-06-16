@@ -2,12 +2,12 @@
 
 out_dir = l2_full_run_test
 
-$(out_dir)/stdout: l2_fp $(base_dir)/config.lua $(srcdir)/unit_test_data/l2_fixed_level_static_input.h5 $(srcdir)/input/gosat/config/acos_config.lua $(srcdir)/unit_test_data/fixed_level_base_config.lua $(srcdir)/input/common/config/config_common.lua
+$(out_dir)/stdout: $(L2_FP) $(base_dir)/config.lua $(srcdir)/test/unit/data/l2_fixed_level_static_input.h5 $(srcdir)/input/gosat/config/acos_config.lua $(srcdir)/test/unit/data/fixed_level_base_config.lua $(srcdir)/input/common/config/config_common.lua
 	mkdir -p $(out_dir)
 	echo $(abscodir)
 	echo "# This is the command used to run the full run test, if you want to run it by hand" > $(out_dir)/run_command.txt
-	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) ./l2_fp $(base_dir)/config.lua $(out_dir)/out.h5" >> $(out_dir)/run_command.txt
-	(time ./l2_fp $(base_dir)/config.lua $(out_dir)/out.h5) 2>&1 | tee $(out_dir)/stdout
+	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) $(L2_FP) $(base_dir)/config.lua $(out_dir)/out.h5" >> $(out_dir)/run_command.txt
+	(time $(L2_FP) $(base_dir)/config.lua $(out_dir)/out.h5) 2>&1 | tee $(out_dir)/stdout
 
 compare: $(out_dir)/stdout
 	$(HDF5_BIN)/h5ls -r $(base_dir)/out.expected.h5 | \

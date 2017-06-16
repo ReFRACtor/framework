@@ -2,19 +2,19 @@
 
 out_dir = fts_sim_test
 
-$(out_dir)/stdout_sim: l2_fp $(base_dir)/config_sim.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
+$(out_dir)/stdout_sim: $(L2_FP) $(base_dir)/config_sim.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
 	mkdir -p $(out_dir)
 	echo $(abscodir)
 	echo "# This is the command used to run the full run test, if you want to run it by hand" > $(out_dir)/run_command_sim.txt
-	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) ./l2_fp $(base_dir)/config_sim.lua $(out_dir)/out_sim.h5" >> $(out_dir)/run_command_sim.txt
-	(time ./l2_fp $(base_dir)/config_sim.lua $(out_dir)/out_sim.h5) 2>&1 | tee $(out_dir)/stdout_sim
+	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) $(L2_FP) $(base_dir)/config_sim.lua $(out_dir)/out_sim.h5" >> $(out_dir)/run_command_sim.txt
+	(time $(L2_FP) $(base_dir)/config_sim.lua $(out_dir)/out_sim.h5) 2>&1 | tee $(out_dir)/stdout_sim
 
-$(out_dir)/stdout_ret: $(out_dir)/stdout_sim l2_fp $(base_dir)/config_ret.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
+$(out_dir)/stdout_ret: $(out_dir)/stdout_sim $(L2_FP) $(base_dir)/config_ret.lua $(srcdir)/input/fts/config/fts_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/fts/config/fts_config.lua
 	mkdir -p $(out_dir)
 	echo $(abscodir)
 	echo "# This is the command used to run the full run test, if you want to run it by hand" > $(out_dir)/run_command_ret.txt
-	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) ./l2_fp $(base_dir)/config_ret.lua $(out_dir)/out_ret.h5" >> $(out_dir)/run_command_ret.txt
-	(time ./l2_fp $(base_dir)/config_ret.lua $(out_dir)/out_ret.h5) 2>&1 | tee $(out_dir)/stdout_ret
+	echo "LUA_PATH='$(LUA_PATH)' abscodir=$(abscodir) $(L2_FP) $(base_dir)/config_ret.lua $(out_dir)/out_ret.h5" >> $(out_dir)/run_command_ret.txt
+	(time $(L2_FP) $(base_dir)/config_ret.lua $(out_dir)/out_ret.h5) 2>&1 | tee $(out_dir)/stdout_ret
 
 compare: $(out_dir)/stdout_ret
 	$(HDF5_BIN)/h5ls -r $(base_dir)/out_sim.expected.h5 | \

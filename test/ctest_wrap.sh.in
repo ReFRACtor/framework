@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export MAKE=@MAKE_BIN@
+export HDF5_BIN=@HDF5_BIN@
+export RUBY=@RUBY_BIN@
+export srcdir=@PROJECT_SOURCE_DIR@
+export abscodir=@ABSCO_DIR@
+export merradir=@MERRA_DIR@
+export L2_FP=@L2_FP_BIN@
+export LUA_PATH="@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/input/gosat/config/?.lua;@PROJECT_SOURCE_DIR@/input/oco/config/?.lua;@PROJECT_SOURCE_DIR@/input/fts/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/?.lua"
+
+@CMAKE_CTEST_COMMAND@ $*
