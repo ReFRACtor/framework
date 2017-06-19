@@ -6,7 +6,7 @@ rm -r oco2_sounding_${v}_test
 set -e
 
 # Setup data to run
-$MAKE -f ${srcdir}/test/oco2_small_set/Makefile all job_index=$1 cmd=$2
+$MAKE -f ${srcdir}/test/full/oco2_small_set/Makefile all job_index=$1
 
 # Run orbit
 if [[ $# -lt 1 ]]; then
@@ -27,5 +27,4 @@ if test ! -e oco2_sounding_${v}_test/output/l2_${sid}.h5; then
     exit 1
 fi
 cp oco2_sounding_${v}_test/output/l2_${sid}.h5 \
-${srcdir}/test/oco2_small_set/expected/l2_${sid}.h5
-
+${srcdir}/test/full/oco2_small_set/expected/l2_${sid}.h5

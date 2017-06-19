@@ -6,7 +6,7 @@ rm -r tccon_sounding_${v}_test
 set -e
 
 # Setup data to run
-$MAKE -f ${srcdir}/test/tccon_small_set/Makefile all job_index=$1 cmd=$2
+$MAKE -f ${srcdir}/test/full/tccon_small_set/Makefile all job_index=$1
 
 # Run orbit
 if [[ $# -lt 1 ]]; then
@@ -27,5 +27,5 @@ if test ! -e tccon_sounding_${v}_test/output/l2_${sid}.h5; then
     exit 1
 fi
 cp tccon_sounding_${v}_test/output/l2_${sid}.h5 \
-${srcdir}/test/tccon_small_set/expected/l2_${sid}.h5
+${srcdir}/test/full/tccon_small_set/expected/l2_${sid}.h5
 

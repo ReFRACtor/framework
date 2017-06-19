@@ -7,4 +7,4 @@ tccon_sounding_$(val)_test/gosat_tccon_sounding_$(val)_test.config: $(L2_FP) $(s
 	mkdir -p tccon_sounding_$(val)_test
 	-rm -rf tccon_sounding_$(val)_test/log
 	-rm -rf tccon_sounding_$(val)_test/output
-	srcdir="${srcdir}" val="${val}" cmd="${cmd}" $(srcdir)/test/tccon_small_set/do_populate.sh
+	srcdir="${srcdir}" val="${val}" $(srcdir)/test/full/tccon_small_set/do_populate.sh

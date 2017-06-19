@@ -7,4 +7,4 @@ oco2_sounding_$(val)_test/oco_oco2_sounding_$(val)_test.config: $(L2_FP) $(srcdi
 	mkdir -p oco2_sounding_$(val)_test
 	-rm -rf oco2_sounding_$(val)_test/log
 	-rm -rf oco2_sounding_$(val)_test/output
-	srcdir="${srcdir}" val="${val}" cmd="${cmd}" $(srcdir)/test/oco2_small_set/do_populate.sh
+	srcdir="${srcdir}" val="${val}" $(srcdir)/test/full/oco2_small_set/do_populate.sh

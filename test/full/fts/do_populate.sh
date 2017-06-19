@@ -4,9 +4,9 @@
 source ${srcdir}/setup_env.sh && PYTHONPATH=${srcdir}/support && \
     cd fts_test && \
     ${srcdir}/support/utils/create_config.py -t fts \
-    ${srcdir}/test/fts/input/pa20091103saaaaa_100223160344.008 \
-    ${srcdir}/test/fts/input/pa20091103saaaab_100223160344.008 \
-    ${srcdir}/test/fts/input/atmosphere_fts.dat \
-    ${srcdir}/test/fts/input/tccon_runlog.grl && \
-    ${srcdir}/support/utils/populate.py -b `pwd`/../${cmd} fts_fts_test.config && exit 0
+    ${srcdir}/test/full/fts/input/pa20091103saaaaa_100223160344.008 \
+    ${srcdir}/test/full/fts/input/pa20091103saaaab_100223160344.008 \
+    ${srcdir}/test/full/fts/input/atmosphere_fts.dat \
+    ${srcdir}/test/full/fts/input/tccon_runlog.grl && \
+    ${srcdir}/support/utils/populate.py -b $L2_FP fts_fts_test.config && exit 0
 exit 1
