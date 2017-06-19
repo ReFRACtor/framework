@@ -42,7 +42,8 @@ if(${SWIG_FOUND})
             # Create a file that includes both the Doxygen SWIG information and source SWIG interface file
             add_custom_command(OUTPUT "${build_swig_file}"
                 COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/interface_file_with_doc.sh ${DOXYGEN_EXECUTABLE} ${module_out_dir} ${input_swig_file} ${build_swig_file}
-                COMMENT "Generating documentation for ${module_name}")
+                COMMENT "Generating documentation for ${module_name}"
+                DEPENDS ${input_swig_file})
         else()
             # No Doxygen so use the input_swig_file as the one used in the build
             set(build_swig_file $input_swig_file)
