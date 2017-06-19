@@ -89,7 +89,7 @@ def test_header_only_class():
     for .h vs .h and .cc files'''
     if(not have_full_physics_swig):
         raise SkipTest
-    t = Exception("My exception")
+    t = FpException("My exception")
     assert t.what() == "My exception"
 
 def test_class_using_another():

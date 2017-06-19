@@ -13,6 +13,9 @@
   FullPhysics::no_gsl_abort();
 }
 
+// Rename to avoid conflict with built in Python Exception object
+%rename(FpException) Exception;
+
 %fp_shared_ptr(FullPhysics::Exception)
 namespace FullPhysics {
   class Exception : public GenericObject {
@@ -24,5 +27,4 @@ namespace FullPhysics {
 
 void no_gsl_abort();
 }
-
 
