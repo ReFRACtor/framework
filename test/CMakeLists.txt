@@ -47,15 +47,37 @@ add_custom_target(unit_test COMMAND ${CTEST_WRAP} -R ^unit/ DEPENDS test_all)
 set(FULL_TEST_RUN_DIR ${CMAKE_CURRENT_BINARY_DIR}/full)
 file(MAKE_DIRECTORY ${FULL_TEST_RUN_DIR})
 
-
 # Get lists of full tests
-include(${CMAKE_CURRENT_SOURCE_DIR}/full/test_list.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/full/test_regular_list.cmake)
 
-foreach(test_name ${FULL_TEST_LIST})
-    add_test(NAME full/${test_name}
+foreach(test_name ${FULL_TEST_REGULAR_LIST})
+    add_test(NAME full/regular/${test_name}
         COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/full/${test_name}/run_test
         WORKING_DIRECTORY ${FULL_TEST_RUN_DIR})
 endforeach()
 
-# Target to run only full tests
-add_custom_target(full_test COMMAND ${CTEST_WRAP} -R ^full/ DEPENDS l2_fp)
+# Target to run only regular full tests
+add_custom_target(full_test_regular COMMAND ${CTEST_WRAP} -R ^full/regular DEPENDS l2_fp)
+
+# Add full test target that depends on regular and Python tests if Python bindings are built
+add_custom_target(full_test DEPENDS full_test_regular)
+
+# Include Python tests if building bindings
+if(BUILD_PYTHON_BINDING)
+    message("-including python tests")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/full/test_python_list.cmake)
+
+    foreach(test_name ${FULL_TEST_PYTHON_LIST})
+        add_test(NAME full/python/${test_name}
+            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/full/${test_name}/run_test
+            WORKING_DIRECTORY ${FULL_TEST_RUN_DIR})
+    endforeach()
+
+    # Run a Make install so that Python bindings are installed before running these tests
+    add_custom_target(full_test_python 
+        COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target install
+        COMMAND ${CTEST_WRAP} -R ^full/python
+        DEPENDS python)
+    add_dependencies(full_test full_test_python)
+endif()
+

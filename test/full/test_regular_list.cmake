@@ -1,4 +1,4 @@
-list(APPEND FULL_TEST_LIST
+list(APPEND FULL_TEST_REGULAR_LIST
     sample
     l2_full
     fts

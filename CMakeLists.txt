@@ -70,7 +70,10 @@ target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES}
 add_subdirectory(input)
 
 # Add Python binding rules
-add_subdirectory(bindings/python)
+option(BUILD_PYTHON_BINDING "Build Python SWIG bindings" ON)
+if(BUILD_PYTHON_BINDING) 
+    add_subdirectory(bindings/python)
+endif()
 
 # Create installation rule for binary
 install(TARGETS l2_fp

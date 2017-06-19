@@ -1,12 +1,21 @@
 #!/bin/bash
 
+# Expose variables needed for full tests to run correctly
 export MAKE=@MAKE_BIN@
 export HDF5_BIN=@HDF5_BIN@
 export RUBY=@RUBY_BIN@
+export PYTHON=@PYTHON_EXECUTABLE@
 export srcdir=@PROJECT_SOURCE_DIR@
 export abscodir=@ABSCO_DIR@
 export merradir=@MERRA_DIR@
 export L2_FP=@L2_FP_BIN@
 export LUA_PATH="@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/input/gosat/config/?.lua;@PROJECT_SOURCE_DIR@/input/oco/config/?.lua;@PROJECT_SOURCE_DIR@/input/fts/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/?.lua"
+export INSTALL_PREFIX=@CMAKE_INSTALL_PREFIX@
 
-@CMAKE_CTEST_COMMAND@ $*
+# Set up conditional options to ctest passed through make
+addl_ctest_commands=""
+if [ ! -z "$RUN_TESTS" ]; then
+    addl_ctest_commands="$addl_ctest_commands -R $RUN_TESTS"
+fi
+
+@CMAKE_CTEST_COMMAND@ $* $addl_ctest_commands

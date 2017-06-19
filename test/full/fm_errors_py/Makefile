@@ -3,16 +3,16 @@
 out_dir = fm_errors_py
 SHELL := /bin/bash
 
-$(out_dir)/stdout: $(srcdir)/support/utils/l2_fp_fm_errors.py  $(base_dir)/config/config.lua $(srcdir)/input/oco/config/oco_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/oco/config/oco_config.lua $(prefix)/setup_fp_env.sh
+$(out_dir)/stdout: $(srcdir)/support/utils/l2_fp_fm_errors.py  $(base_dir)/config/config.lua $(srcdir)/input/oco/config/oco_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/oco/config/oco_config.lua $(INSTALL_PREFIX)/setup_fp_env.sh
 	mkdir -p $(out_dir)
 	cp $(base_dir)/out.initial.h5 $(out_dir)/out.h5 # Prime the SV to make test case shorter and to test -u option
-	source $(prefix)/setup_fp_env.sh && \
-	$(srcdir)/support/utils/l2_fp_fm_errors.py -u -r --num_perturbed 1 -f ils/ABO2 -f spectroscopy/temperature/o2 $(base_dir)/config/config.lua $(out_dir)/out.h5 2>&1 | tee $(out_dir)/stdout
+	source $(INSTALL_PREFIX)/setup_fp_env.sh && \
+	$(PYTHON) $(srcdir)/support/utils/l2_fp_fm_errors.py -u -r --num_perturbed 1 -f ils/ABO2 -f spectroscopy/temperature/o2 $(base_dir)/config/config.lua $(out_dir)/out.h5 2>&1 | tee $(out_dir)/stdout
 
-$(out_dir)/stdout_full: $(srcdir)/support/utils/l2_fp_fm_errors.py  $(base_dir)/config/config.lua $(srcdir)/input/oco/config/oco_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/oco/config/oco_config.lua $(prefix)/setup_fp_env.sh
+$(out_dir)/stdout_full: $(srcdir)/support/utils/l2_fp_fm_errors.py  $(base_dir)/config/config.lua $(srcdir)/input/oco/config/oco_base_config.lua $(srcdir)/input/common/config/config_common.lua $(srcdir)/input/oco/config/oco_config.lua $(INSTALL_PREFIX)/setup_fp_env.sh
 	mkdir -p $(out_dir)
-	source $(prefix)/setup_fp_env.sh && \
-	$(srcdir)/support/utils/l2_fp_fm_errors.py -r --num_perturbed 1 -f ils/ABO2 -f spectroscopy/temperature/o2 $(base_dir)/config/config.lua $(out_dir)/out.h5 2>&1 | tee $(out_dir)/stdout_full
+	source $(INSTALL_PREFIX)/setup_fp_env.sh && \
+	$(PYTHON) $(srcdir)/support/utils/l2_fp_fm_errors.py -r --num_perturbed 1 -f ils/ABO2 -f spectroscopy/temperature/o2 $(base_dir)/config/config.lua $(out_dir)/out.h5 2>&1 | tee $(out_dir)/stdout_full
 
 compare: $(out_dir)/stdout
     # Compare output with expected
