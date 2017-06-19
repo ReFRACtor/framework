@@ -7,8 +7,8 @@ from .acos_file import *
 from nose.plugins.skip import Skip, SkipTest
 import numpy as np
 
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
-l2_full_test_data = os.path.dirname(__file__) + "/../../test/l2_full"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
+l2_full_test_data = os.path.dirname(__file__) + "/../../test/full/l2_full"
 
 # We can't have both h5py and HdfFile work in the same program (never
 # have been able to figure out the underlying reason for this). As a work

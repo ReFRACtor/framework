@@ -8,7 +8,7 @@ from nose.plugins.skip import Skip, SkipTest
 import os
 import pickle
 
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
 
 def test_hdf_file_pickle():
     '''Test pickling of HdfFile class.'''

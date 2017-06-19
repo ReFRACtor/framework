@@ -7,7 +7,7 @@ import filecmp
 from .populator_base import *
 import logging
 
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
 expected_dir = test_data + "expected/create_run_scripts/"
 
 class FakePopulator(PopulatorBase):

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from nose.tools import *
 import os
 from .l2_input import *
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
 
 def test_get_all_section_names():
     '''Make sure we can get all the section names from a XML file.'''

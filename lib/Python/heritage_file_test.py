@@ -3,7 +3,7 @@ from full_physics import *
 from nose.plugins.skip import Skip, SkipTest
 import os
 
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
 
 def test_heritage_file():
     if(not have_full_physics_swig):

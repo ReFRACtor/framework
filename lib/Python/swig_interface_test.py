@@ -13,7 +13,7 @@ import numpy as np
 from nose.plugins.skip import Skip, SkipTest
 import os
 
-test_data = os.path.dirname(__file__) + "/../../unit_test_data/"
+test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
 
 # Start some tests using HeritageFile. This is a particularly simple class,
 # because it doesn't depend on anything else.
@@ -42,7 +42,7 @@ def test_exception_handled():
     '''Test that a C++ exception gets translated to a RuntimeError'''
     if(not have_full_physics_swig):
         raise SkipTest
-    f = HeritageFile("/home/smyth/Local/Level2/unit_test_data/heritage_file_test.run")
+    f = HeritageFile("/home/smyth/Local/Level2/test/unit/data/heritage_file_test.run")
     f.value_bool("WINDOW_INFO/spectral_window_file")
 
 def my_func(self):
