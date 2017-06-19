@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 
 gosat_config = os.path.dirname(__file__) + "/../../input/gosat/config/config.lua"
-tccon_small_set = os.path.dirname(__file__) + "/../../test/tccon_small_set/"
+tccon_small_set = os.path.dirname(__file__) + "/../../test/full/tccon_small_set/"
 ecmwf_file = tccon_small_set + "acos_EcmB2900_tccon_5_good_qual.h5"
 spectrum_file = tccon_small_set + "acos_L1bB2900_tccon_5_good_qual.h5"
 cloud_file = tccon_small_set + "acos_CldB2900_tccon_5_good_qual.h5"

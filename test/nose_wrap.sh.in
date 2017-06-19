@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source @CMAKE_INSTALL_PREFIX@/setup_fp_env.sh
+@PYTHON_EXECUTABLE@ -m nose $*
