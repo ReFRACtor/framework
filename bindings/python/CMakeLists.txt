@@ -3,6 +3,10 @@ find_package(PythonLibs 3.0 REQUIRED)
 find_package(PythonInterp 3.0 REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH})
 
+# Find NumPy
+find_package(NumPy REQUIRED)
+include_directories(${NUMPY_INCLUDE_DIRS})
+
 # Find SWIG
 find_package(SWIG 3.0)
 
