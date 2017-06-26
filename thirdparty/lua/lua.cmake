@@ -9,7 +9,9 @@ set(LUA_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/lua/lua-make.patch)
 # Since these depend on other variables and have a space in them, we
 # have to define a new variable so that the values are passed to make below correctly
 set(LUA_LIBTOOL "${CMAKE_LIBTOOL} --tag=CC")
-set(LUA_CFLAGS  "${CMAKE_C_FLAGS} -DLUA_USE_LINUX")
+
+# Add a CFLAG necessary for compilation
+set(LUA_CFLAGS  "-DLUA_USE_LINUX ${LUA_CFLAGS}")
 
 ExternalProject_Add(${LUA_NAME}
     URL ${LUA_URL}
@@ -20,7 +22,8 @@ ExternalProject_Add(${LUA_NAME}
         CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} F77=${CMAKE_Fortran_COMPILER} 
         RPATH=${THIRDPARTY_LIB_DIR}
         LIBTOOL=${LUA_LIBTOOL}
-        CFLAGS=${LUA_CFLAGS}
+        MYCFLAGS=${LUA_CFLAGS}
+        MYLDFLAGS=${LUA_LDFLAGS}
         LUA_LIBS="-lreadline -lncurses"
         LIB_LIBS="-lm -ldl" && cd ..
     INSTALL_COMMAND make gentoo_install INSTALL_TOP=${THIRDPARTY_INSTALL_PREFIX}

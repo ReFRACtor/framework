@@ -13,6 +13,12 @@ set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-60e576e.tar
 # 5. Set the install path to the third party install path
 set(CMAKE_ARGS -DLUA_FOUND=1 -DLUA_INCLUDE_DIRS=${LUA_INCLUDE_DIR} -DLUABIND_DYNAMIC_LINK=1 -DLUABIND_APPEND_VERSION_SUFFIX=0 -DBUILD_TESTING=0 -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX})
 
+# If BOOST_ROOT has been specified for finding boost, then supply this to the third party cmake as well
+# Don't want to supply it with an empty location if the variable is not defined
+if(BOOST_ROOT)
+    list(APPEND CMAKE_ARGS -DBOOST_ROOT=${BOOST_ROOT})
+endif()
+
 # Build and install manually to avoid dependence on bjam
 ExternalProject_Add(${LUABIND_NAME}
     URL ${LUABIND_URL}
