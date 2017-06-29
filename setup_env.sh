@@ -12,7 +12,7 @@ else
     package_dir=`readlink -f $package_dir | sed 's/\/$//'`
 fi
 
-source $package_dir/config/setup_compiler_env.sh $package_dir/bin
+source $package_dir/script/setup_compiler_env.sh $package_dir/bin
 source $package_dir/input/setup_env.sh $package_dir/input/
 source $package_dir/support/setup_env.sh $package_dir/support
 export L2_TCCON_SMALL_SET_PATH=$package_dir/test/tccon_small_set
