@@ -3,7 +3,6 @@
 #include "wgs84_constant.h"
 #include "fp_exception.h"
 #include "level_1b.h"
-#include "level_1b_fts.h"
 #include <vector>
 
 using namespace FullPhysics;
@@ -27,19 +26,10 @@ boost::shared_ptr<SolarDopplerShift> create_from_l1b(const Level1b& l1b, int spe
                                          do_doppler_shift));
 }
 
-boost::shared_ptr<SolarDopplerShift> create_from_runlog(const Level1bFts& l1b, int spec_index, bool do_doppler_shift)
-{
-  double ds = l1b.run_log(spec_index).observer_sun_doppler_shift * 1e-6;
-  return boost::shared_ptr<SolarDopplerShift>
-    (new SolarDopplerShiftPolynomial(ds, l1b.time(spec_index), 
-                                     DefaultConstant(), do_doppler_shift));
-}
-
 REGISTER_LUA_DERIVED_CLASS(SolarDopplerShiftPolynomial, SolarDopplerShift)
 .scope
 [
- luabind::def("create_from_l1b", &create_from_l1b),
- luabind::def("create_from_runlog", &create_from_runlog)
+ luabind::def("create_from_l1b", &create_from_l1b)
 ]
 REGISTER_LUA_END()
 #endif

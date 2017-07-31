@@ -1,3 +1,5 @@
+#include <boost/algorithm/string.hpp>
+
 #include "absorber_vmr_fixed_level_scaled_output.h"
 using namespace FullPhysics;
 using namespace blitz;

@@ -1,6 +1,4 @@
 #include "error_analysis.h"
-#include "hdf_file.h"
-#include "hdf_sounding_id.h"
 #include "absorber_absco.h"
 #include <new> // std::bad_alloc
 using namespace FullPhysics;

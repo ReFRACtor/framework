@@ -17,7 +17,6 @@ set(DIR_SOURCES
     error_analysis_output.cc
     fluorescence_effect_output.cc
     forward_model_output.cc
-    fts_run_log_output.cc
     gas_vmr_apriori_output.cc
     ground_brdf_output.cc
     ground_coxmunk_output.cc
@@ -35,7 +34,6 @@ set(DIR_SOURCES
     stokes_coefficient_fraction_output.cc
     temperature_met_output.cc
     temperature_level_offset_output.cc
-    zero_offset_waveform_output.cc
 )
 
 set(TEST_SOURCES
@@ -50,7 +48,6 @@ set(TEST_SOURCES
     error_analysis_output_test.cc
     fluorescence_effect_output_test.cc
     forward_model_output_test.cc
-    fts_run_log_output_test.cc
     ground_brdf_output_test.cc
     ground_coxmunk_output_test.cc
     ground_coxmunk_plus_lambertian_output_test.cc
@@ -63,7 +60,6 @@ set(TEST_SOURCES
     stokes_coefficient_fraction_output_test.cc
     temperature_met_output_test.cc
     temperature_level_offset_output_test.cc
-    zero_offset_waveform_output_test.cc
 )
 
 # Full path already included

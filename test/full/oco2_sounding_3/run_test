@@ -1,3 +1,0 @@
-#! /bin/bash
-
-${srcdir}/test/full/oco2_small_set/run_test 2 l2_fp

@@ -1,6 +1,6 @@
 #ifndef NONUNIFORM_SPECTRUM_SAMPLING_H
 #define NONUNIFORM_SPECTRUM_SAMPLING_H
-#include "heritage_file.h"
+#include <boost/shared_ptr.hpp>
 #include "spectrum_sampling.h"
 #include "fp_exception.h"
 #include <vector>
@@ -37,21 +37,6 @@ public:
      const SpectralDomain& Grid3,
      const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
 
-  NonuniformSpectrumSampling(const HeritageFile& Grid_file,
-     const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
-  NonuniformSpectrumSampling(const HeritageFile& Grid_file1,
-     const HeritageFile& Grid_file2,
-     const HeritageFile& Grid_file3,
-     const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
-
-  NonuniformSpectrumSampling(const std::string& Grid_file,
-     const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
-  NonuniformSpectrumSampling(const std::string& Grid_file1,
-     const std::string& Grid_file2,
-     const std::string& Grid_file3,
-     const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
-
-
   virtual ~NonuniformSpectrumSampling() {}
 
   virtual SpectralDomain spectral_domain_interpolated(int Spec_index, 
@@ -68,7 +53,6 @@ public:
   virtual void print(std::ostream& Os) const;
 private:
   SpectralDomain sort_sd(const SpectralDomain& In) const;
-  SpectralDomain sort_sd(const HeritageFile& In) const;
   boost::shared_ptr<SpectrumSampling> interpolated_sampling;
   std::vector<SpectralDomain> spec_domain;
 };

@@ -1,5 +1,0 @@
-#! /bin/bash
-
-${srcdir}/test/tccon_small_set/clean_test 1
-
-

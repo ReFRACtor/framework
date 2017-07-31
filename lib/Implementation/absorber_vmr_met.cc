@@ -1,3 +1,5 @@
+#include <boost/algorithm/string.hpp>
+
 #include "absorber_vmr_met.h"
 #include "ostream_pad.h"
 #include "old_constant.h"

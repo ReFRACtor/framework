@@ -1,3 +1,5 @@
+#include <boost/algorithm/string.hpp>
+
 #include "meteorology.h"
 #include "log_interpolate.h"
 #include "old_constant.h"
@@ -52,7 +54,7 @@ double Meteorology::windspeed() const
 blitz::Array<double, 1> Meteorology::vmr(const std::string& Species) const
 {
     std::string species_upper = Species;
-    boost::algorithm::to_upper(species_upper);
+    boost::to_upper(species_upper);
     if (species_upper == "H2O") {
         return h2o_vmr();
     } else {

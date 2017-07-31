@@ -1,7 +1,6 @@
 #ifndef PRESSURE_LEVEL_INPUT_H
 #define PRESSURE_LEVEL_INPUT_H
 #include "printable.h"
-#include "heritage_file.h"
 #include "hdf_file.h"
 #include <blitz/array.h>
 
@@ -31,15 +30,6 @@ public:
   PressureLevelInput(const blitz::Array<double, 1>& Press_level)
     : press_level(Press_level.copy()) {}
 
-//-----------------------------------------------------------------------
-/// Constructor.
-/// \param Heritage_file The HeritageFile to read. This takes the
-/// column marked "Pressure".
-//-----------------------------------------------------------------------
-
-  PressureLevelInput(const HeritageFile& Heritage_file)
-    : press_level(Heritage_file.data("Pressure")) {}
-  
 //-----------------------------------------------------------------------
 /// Constructor.
 /// \param Hdf_file The HdfFile to read. This reads the given HDF

@@ -1,3 +1,0 @@
-#! /bin/sh
-rm -rf fts_sim_test
-

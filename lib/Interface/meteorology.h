@@ -1,6 +1,5 @@
 #ifndef METEOROLOGY_H
 #define METEOROLOGY_H
-#include "hdf_sounding_id.h"
 #include "hdf_file.h"
 #include "array_ad.h"
 #include "printable.h"

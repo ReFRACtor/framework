@@ -1,12 +1,9 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
-    solar_absorption_oco_file.cc
-    solar_absorption_oco_file_f.F90
     solar_continuum_polynomial.cc
 )
 
 set(TEST_SOURCES
-    solar_absorption_oco_file_test.cc
     solar_continuum_polynomial_test.cc
 )
 

@@ -9,14 +9,6 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(NonuniformSpectrumSampling, SpectrumSampling)
-.def(luabind::constructor<const HeritageFile&,
-                          const HeritageFile&,
-                          const HeritageFile&,
-                          const boost::shared_ptr<SpectrumSampling>&>())
-.def(luabind::constructor<const std::string&,
-                          const std::string&,
-                          const std::string&,
-                          const boost::shared_ptr<SpectrumSampling>&>())
 .def(luabind::constructor<const SpectralDomain&,
                           const SpectralDomain&,
                           const SpectralDomain&,
@@ -56,97 +48,6 @@ const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling
   spec_domain.push_back(sort_sd(Grid1));
   spec_domain.push_back(sort_sd(Grid2));
   spec_domain.push_back(sort_sd(Grid3));
-}
-
-//-----------------------------------------------------------------------
-/// Constructor. This creates a grid with no assumption made
-/// on the uniformity of the spacing. Grid points are read
-/// from a text file with heritage-file format.
-//-----------------------------------------------------------------------
-
-NonuniformSpectrumSampling::NonuniformSpectrumSampling(
-const HeritageFile& Grid_file,
-const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling
-)
-: SpectrumSampling(1), interpolated_sampling(Interpolated_sampling)
-{
-  spec_domain.push_back(sort_sd(Grid_file.data("grid_points_wn")));
-}
-
-//-----------------------------------------------------------------------
-/// Another constructor for 3 spectrum (this is a useful case, 
-/// because it matches GOSAT)
-//-----------------------------------------------------------------------
-
-NonuniformSpectrumSampling::NonuniformSpectrumSampling(
-const HeritageFile& Grid_file1,
-const HeritageFile& Grid_file2,
-const HeritageFile& Grid_file3,
-const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling
-)
-: SpectrumSampling(3), interpolated_sampling(Interpolated_sampling)
-{
-  spec_domain.push_back(sort_sd(Grid_file1.data("grid_points_wn")));
-  spec_domain.push_back(sort_sd(Grid_file2.data("grid_points_wn")));
-  spec_domain.push_back(sort_sd(Grid_file3.data("grid_points_wn")));
-}
-
-
-//-----------------------------------------------------------------------
-/// Constructor. This creates a grid with no assumption made
-/// on the uniformity of the spacing. Grid points are read
-/// from a text file with heritage-file format.
-//-----------------------------------------------------------------------
-
-NonuniformSpectrumSampling::NonuniformSpectrumSampling(
-const std::string& Grid_file,
-const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling
-)
-: SpectrumSampling(1), interpolated_sampling(Interpolated_sampling)
-{
-  if(Grid_file == "") {
-    Array<double, 1> empty;
-    spec_domain.push_back(SpectralDomain(empty));
-  } else {
-    HeritageFile f(Grid_file);
-    spec_domain.push_back(sort_sd(f.data("grid_points_wn")));
-  }
-}
-
-//-----------------------------------------------------------------------
-/// Another constructor for 3 spectrum (this is a useful case, 
-/// because it matches GOSAT)
-//-----------------------------------------------------------------------
-
-NonuniformSpectrumSampling::NonuniformSpectrumSampling(
-const std::string& Grid_file1,
-const std::string& Grid_file2,
-const std::string& Grid_file3,
-const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling
-)
-: SpectrumSampling(3), interpolated_sampling(Interpolated_sampling)
-{
-  if(Grid_file1 == "") {
-    Array<double, 1> empty;
-    spec_domain.push_back(SpectralDomain(empty));
-  } else {
-    HeritageFile f(Grid_file1);
-    spec_domain.push_back(sort_sd(f.data("grid_points_wn")));
-  }
-  if(Grid_file2 == "") {
-    Array<double, 1> empty;
-    spec_domain.push_back(SpectralDomain(empty));
-  } else {
-    HeritageFile f(Grid_file2);
-    spec_domain.push_back(sort_sd(f.data("grid_points_wn")));
-  }
-  if(Grid_file3 == "") {
-    Array<double, 1> empty;
-    spec_domain.push_back(SpectralDomain(empty));
-  } else {
-    HeritageFile f(Grid_file3);
-    spec_domain.push_back(sort_sd(f.data("grid_points_wn")));
-  }
 }
 
 SpectralDomain NonuniformSpectrumSampling::sort_sd

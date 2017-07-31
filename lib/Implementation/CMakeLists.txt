@@ -53,7 +53,6 @@ set(DIR_SOURCES
     fp_logger.cc
     freudenstein_roth_nlls_problem.cc
     gas_vmr_apriori.cc
-    gosat_noise_model.cc
     ground_brdf.cc
     ground_coxmunk.cc
     ground_coxmunk_plus_lambertian.cc
@@ -63,8 +62,6 @@ set(DIR_SOURCES
     hdf_constant.cc
     helical_valley_nlls_problem.cc
     ils_convolution.cc
-    ils_fts.cc
-    ils_fts_f.F90
     ils_gaussian.cc
     ils_instrument.cc
     ils_table.cc
@@ -75,15 +72,9 @@ set(DIR_SOURCES
     l_rad_driver.cc
     l_rad_driver_f.F90
     l_rad_rt.cc
-    level_1b_acos.cc
     level_1b_average.cc
     level_1b_cache.cc
-    level_1b_fts.cc
-    level_1b_fts_f.F90
-    level_1b_heritage.cc
-    level_1b_oco.cc
     level_1b_scale_radiance.cc
-    level_1b_uq.cc
     absco.cc
     nlls_max_a_posteriori.cc
     nlls_max_likelihood.cc
@@ -96,27 +87,21 @@ set(DIR_SOURCES
     lidort_rt.cc
     log_timing.cc
     lsi_rt.cc
-    max_a_posteriori_oco.cc
-    max_likelihood_oco.cc
     merra_aerosol.cc
     meyer_ml_problem.cc
     meyer_nlls_problem.cc
     model_measure_bard.cc
     model_measure_meyer.cc
-    model_measure_oco.cc
     # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses
     #nlls_solver_gsl.cc
     #nlls_solver_gsl_lmder.cc
     #nlls_solver_gsl_lmsder.cc
     nonuniform_spectrum_sampling.cc
     oco_forward_model.cc
-    oco_noise_model.cc
-    oco_sim_apriori.cc
     output_hdf.cc
     output_hdf_iteration.cc
     powell_nlls_problem.cc
     powell_singular_nlls_problem.cc
-    precomputed_noise_model.cc
     pressure_sigma.cc
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
@@ -141,16 +126,12 @@ set(DIR_SOURCES
     spectrum_sampling_fixed_spacing.cc
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
-    tccon_apriori.cc
     temperature_met.cc
     temperature_level_offset.cc
     twostream_driver.cc
     twostream_interface.F90
     twostream_rt.cc
     uniform_spectrum_sampling.cc
-    uplooking_raytracing.cc
-    uq_noise_model.cc
-    zero_offset_waveform.cc
 )
 
 set(TEST_SOURCES
@@ -187,14 +168,12 @@ set(TEST_SOURCES
     fp_logger_test.cc
     full_output_test.cc
     gas_vmr_apriori_test.cc
-    gosat_noise_model_test.cc
     ground_brdf_test.cc
     ground_coxmunk_plus_lambertian_test.cc
     ground_coxmunk_test.cc
     ground_lambertian_test.cc
     hdf_constant_test.cc
     ils_convolution_test.cc
-    ils_fts_test.cc
     ils_gaussian_test.cc
     ils_instrument_test.cc
     ils_table_test.cc
@@ -202,12 +181,8 @@ set(TEST_SOURCES
     instrument_doppler_test.cc
     l_rad_driver_test.cc
     l_rad_rt_test.cc
-    level_1b_acos_test.cc
     level_1b_average_test.cc
     level_1b_cache_test.cc
-    level_1b_fts_test.cc
-    level_1b_heritage_test.cc
-    level_1b_oco_test.cc
     level_1b_scale_radiance_test.cc
     lidort_driver_test.cc
     lidort_fixture.cc
@@ -223,11 +198,8 @@ set(TEST_SOURCES
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
     oco_forward_model_test.cc
-    oco_noise_model_test.cc
-    oco_sim_apriori_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
-    precomputed_noise_model_test.cc
     pressure_sigma_test.cc
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
@@ -247,14 +219,12 @@ set(TEST_SOURCES
     spectrum_sampling_fixed_spacing_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
-    tccon_apriori_test.cc
     temperature_met_test.cc
     temperature_level_offset_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
     uniform_spectrum_sampling_test.cc
-    zero_offset_waveform_test.cc
 )
 
 # Full path already included

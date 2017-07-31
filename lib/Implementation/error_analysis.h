@@ -4,7 +4,6 @@
 #include "max_a_posteriori.h"
 #include "atmosphere_oco.h"
 #include "forward_model.h"
-#include "hdf_sounding_id.h"
 #include "fe_disable_exception.h"
 
 namespace FullPhysics {

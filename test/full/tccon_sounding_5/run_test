@@ -1,5 +1,0 @@
-#! /bin/bash
-
-${srcdir}/test/full/tccon_small_set/run_test 4
-
-

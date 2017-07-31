@@ -1,6 +1,5 @@
 #ifndef SPECTRAL_WINDOW_RANGE_H
 #define SPECTRAL_WINDOW_RANGE_H
-#include "heritage_file.h"
 #include "spectral_window.h"
 #include "array_with_unit.h"
 
