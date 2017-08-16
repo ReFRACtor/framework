@@ -62,7 +62,7 @@ set(DIR_SOURCES
 
 set(TEST_SOURCES
     composite_initial_guess_test.cc
-    forward_model_spectral_grid_test.cc
+    #UT#forward_model_spectral_grid_test.cc
     output_test.cc
 )
 

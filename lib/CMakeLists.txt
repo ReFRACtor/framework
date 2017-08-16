@@ -7,7 +7,7 @@ set(FP_SOURCE_FILES "")
 set(FP_TEST_FILES "")
 set(SWIG_INTERFACE_FILES "")
 
-foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support Deprecated)
+foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support Deprecated Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
     add_subdirectory(${sub_dir})
 
