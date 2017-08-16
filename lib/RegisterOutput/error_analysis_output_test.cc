@@ -1,7 +1,6 @@
 #include "unit_test_support.h"
 #include "error_analysis_output.h"
 #include "output_hdf.h"
-#include "heritage_file.h"
 #include "solver_finished_fixture.h"
 
 using namespace FullPhysics;

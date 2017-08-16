@@ -1,7 +1,6 @@
 #include "absco_hdf.h"
 #include "unit_test_support.h"
 #include "ifstream_cs.h"
-#include "heritage_file.h"
 #include "spectral_bound.h"
 #include <boost/timer.hpp>
 

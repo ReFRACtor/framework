@@ -2,7 +2,6 @@
 #include "aerosol_aod_output.h"
 #include "configuration_fixture.h"
 #include "output_hdf.h"
-#include "heritage_file.h"
 
 using namespace FullPhysics;
 using namespace blitz;

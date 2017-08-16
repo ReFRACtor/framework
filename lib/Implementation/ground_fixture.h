@@ -1,4 +1,4 @@
- #include "ground_lambertian.h"
+#include "ground_lambertian.h"
 #include "ground_coxmunk.h"
 #include "ground_brdf.h"
 #include "configuration_fixture.h"

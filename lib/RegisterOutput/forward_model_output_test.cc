@@ -2,7 +2,6 @@
 #include "forward_model_output.h"
 #include "solver_finished_fixture.h"
 #include "output_hdf.h"
-#include "heritage_file.h"
 
 using namespace FullPhysics;
 using namespace blitz;
