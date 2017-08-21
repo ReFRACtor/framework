@@ -20,8 +20,8 @@ BOOST_AUTO_TEST_CASE(apriori_calc)
 
     for (auto curr_sid : test_sounding_id) {
         // Match setup used in TcconApriori test
-        boost::shared_ptr<HdfFile> l1b_file(new HdfFile(test_data_dir() + "in/gas_vmr_apriori/l1b_vmr_apriori_check.h5"));
-        boost::shared_ptr<HdfFile> met_file(new HdfFile(test_data_dir() + "in/gas_vmr_apriori/met_vmr_apriori_check.h5"));
+        boost::shared_ptr<HdfFile> l1b_file(new HdfFile(test_data_dir() + "in/common/l1b_example_data.h5"));
+        boost::shared_ptr<HdfFile> met_file(new HdfFile(test_data_dir() + "in/common/met_example_data.h5"));
 
         boost::shared_ptr<Level1b> l1b(new ExampleLevel1b(l1b_file, curr_sid));
         boost::shared_ptr<Meteorology> met(new ExampleMetFile(met_file, curr_sid));
