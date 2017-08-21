@@ -1,10 +1,12 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
+    example_level_1b.cc
     example_met_file.cc
     observation_id.cc
 )
 
 set(TEST_SOURCES
+    example_level_1b_test.cc
     example_met_file_test.cc
 )
 
@@ -25,4 +27,3 @@ endforeach(source_name)
 set(FP_SOURCE_FILES ${FP_SOURCE_FILES} PARENT_SCOPE)
 set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
 set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
-

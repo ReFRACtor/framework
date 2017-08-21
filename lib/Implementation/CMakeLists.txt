@@ -167,7 +167,7 @@ set(TEST_SOURCES
     forward_model_cost_function_test.cc
     fp_logger_test.cc
     full_output_test.cc
-    #UT#gas_vmr_apriori_test.cc
+    gas_vmr_apriori_test.cc
     ground_brdf_test.cc
     ground_coxmunk_plus_lambertian_test.cc
     ground_coxmunk_test.cc

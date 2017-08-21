@@ -216,22 +216,6 @@ public:
     rad[i] = SpectralRange(rnew, V.units(), unew);
   }
   
-  virtual int64_t sounding_id() const
-  { return sid; }
-
-//-----------------------------------------------------------------------
-/// Change value.
-//-----------------------------------------------------------------------
-
-  void set_sounding_id(int64_t V) { sid = V;}
-  virtual int exposure_index() const
-  { return expind; }
-
-//-----------------------------------------------------------------------
-/// Change value.
-//-----------------------------------------------------------------------
-
-  void set_exposure_index(int V) { expind = V;}
 private:
   std::vector<DoubleWithUnit> lat, lon, szen, sazm, solzen, solazm, alt,
 						    rvel;
@@ -239,8 +223,6 @@ private:
   std::vector<ArrayWithUnit<double, 1> > spec_coeff;
   std::vector<Time> tm;
   std::vector<SpectralRange> rad;
-  int64_t sid;
-  int expind;
 };
 }
 #endif

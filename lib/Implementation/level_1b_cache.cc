@@ -7,8 +7,6 @@ using namespace FullPhysics;
 
 Level1bCache::Level1bCache(const Level1b& L1_in)
 {
-  sid = L1_in.sounding_id();
-  expind = L1_in.exposure_index();
   for(int i = 0; i < L1_in.number_spectrometer(); ++i) {
     lat.push_back(L1_in.latitude(i));
     lon.push_back(L1_in.longitude(i));

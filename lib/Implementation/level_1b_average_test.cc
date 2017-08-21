@@ -48,8 +48,6 @@ BOOST_AUTO_TEST_CASE(basic)
   }
   BOOST_CHECK_CLOSE(h.relative_velocity(0).value, -398.8081, 1e-4);
   BOOST_CHECK_CLOSE(h.time(0).pgs_time(), 5.226410045967183e8, 1e-4);
-  BOOST_CHECK_EQUAL(h.sounding_id(), (int64_t) 20090725020316);
-  BOOST_CHECK_EQUAL(h.exposure_index(), 152);
 
   BOOST_CHECK_EQUAL(h.radiance(0).data().extent(blitz::firstDim), 1805);
   BOOST_CHECK_CLOSE(h.radiance(0).data()(402 + 10), 5.2663784799733548e-07, 

@@ -23,7 +23,6 @@ set(DIR_SOURCES
     ground_coxmunk_plus_lambertian_output.cc
     ground_lambertian_output.cc
     high_res_spectrum_output.cc
-    level_1b_output.cc
     max_a_posteriori_output.cc
     oco_forward_model_output.cc
     pressure_output.cc
@@ -53,7 +52,6 @@ set(TEST_SOURCES
     ground_coxmunk_plus_lambertian_output_test.cc
     ground_lambertian_output_test.cc
     high_res_spectrum_output_test.cc
-    #UT#level_1b_output_test.cc
     oco_forward_model_output_test.cc
     radiance_scaling_output_test.cc
     state_vector_output_test.cc

@@ -18,9 +18,6 @@ BOOST_AUTO_TEST_CASE(basic)
 
   BOOST_CHECK_EQUAL(l1b_cache.number_spectrometer(), 3);
 
-  BOOST_CHECK_EQUAL(l1b_cache.sounding_id(), (int64_t) 2010090900133834);
-  BOOST_CHECK_EQUAL(l1b_cache.exposure_index(), 3);
-
   BOOST_CHECK_CLOSE(l1b_cache.latitude(0).value, -72.2772216796875, 1e-4);
   BOOST_CHECK_CLOSE(l1b_cache.latitude(1).value, -72.2772216796875, 1e-4);
   BOOST_CHECK_CLOSE(l1b_cache.latitude(2).value, -72.2772216796875, 1e-4);

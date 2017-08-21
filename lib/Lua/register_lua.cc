@@ -284,7 +284,6 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(ConnorSolver);
   REGISTER_LUA_LIST(ErrorAnalysis);
   REGISTER_LUA_LIST(StateVectorOutput);
-  REGISTER_LUA_LIST(Level1bOutput);
   REGISTER_LUA_LIST(DispersionPolynomialOutput);
   REGISTER_LUA_LIST(StokesCoefficientFractionOutput);
   REGISTER_LUA_LIST(ErrorAnalysisOutput);

@@ -38,7 +38,5 @@ public:
   void set_radiance(int i, const SpectralRange& V);
   void set_radiance(int i, const SpectralRange& V,
 		    const std::vector<int>& Plist);
-  void set_sounding_id(int64_t V);
-  void set_exposure_index(int V);
 };
 }

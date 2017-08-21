@@ -26,12 +26,6 @@ public:
     virtual Time time(int Spec_index) const
     { return l1b->time(Spec_index); }
 
-    virtual int64_t sounding_id() const
-    { return l1b->sounding_id(); }
-
-    virtual int exposure_index() const
-    { return l1b->exposure_index(); }
-
     virtual DoubleWithUnit latitude(int i) const
     { return l1b->latitude(i); }
 

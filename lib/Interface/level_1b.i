@@ -32,8 +32,6 @@ public:
   virtual DoubleWithUnit relative_velocity(int i) const = 0;
   virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
   virtual Time time(int Spec_index) const = 0;
-  %python_attribute(sounding_id, int64_t);
-  %python_attribute(exposure_index, int);
   virtual SpectralRange radiance(int Spec_index) const = 0;
 };
 }

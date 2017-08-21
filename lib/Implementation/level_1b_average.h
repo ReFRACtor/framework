@@ -21,10 +21,6 @@ public:
   {return l1b[0]->relative_velocity(Spec_index);}
   virtual Time time(int Spec_index) const
   {return l1b[0]->time(Spec_index);}
-  virtual int64_t sounding_id() const
-  {return l1b[0]->sounding_id();}
-  virtual int exposure_index() const
-  {return l1b[0]->exposure_index();}
 
   virtual DoubleWithUnit latitude(int i) const;
   virtual DoubleWithUnit longitude(int i) const;
