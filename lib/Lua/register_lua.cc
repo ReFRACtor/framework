@@ -327,6 +327,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(SolarAbsorptionGfitFile);
   REGISTER_LUA_LIST(FluorescenceEffectOutput);
   REGISTER_LUA_LIST(RadianceScalingOutput);
+  REGISTER_LUA_LIST(ExampleLevel1b);
+  REGISTER_LUA_LIST(ExampleMetFile);
 }
 }
 

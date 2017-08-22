@@ -30,10 +30,10 @@ BOOST_FIXTURE_TEST_SUITE(lua_state, GlobalFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   boost::shared_ptr<LuaState> ls =
-    LuaState::load_file(test_data_dir() + "lua_file_test.lua");
+    LuaState::load_file(test_data_dir() + "/lua/lua_file_test.lua");
   LuabindObject lf = ls->globals();
   BOOST_CHECK_EQUAL(lf["l1b_hdf"].value_ptr<HdfFile>()->file_name(), 
-		    lf["l1b_fname"].value<std::string>());
+                lf["l1b_fname"].value<std::string>());
   boost::shared_ptr<GenericObject> gobj = 
     lf["l1b_hdf"].value_generic_object();
   BOOST_CHECK(gobj);
@@ -56,14 +56,13 @@ BOOST_AUTO_TEST_CASE(basic)
   ls->run("v:func()");
   BOOST_CHECK_EQUAL(v["call_back"].value<int>(), 34);
   ls->run("function test_func(v1, v2)\n  return v1 + 2 * v2\nend\n");
-  BOOST_CHECK_EQUAL(lf["test_func"].call(1, 2).value<int>(),
-		    1 + 2 * 2);
+  BOOST_CHECK_EQUAL(lf["test_func"].call(1, 2).value<int>(), 1 + 2 * 2);
 }
 
 BOOST_AUTO_TEST_CASE(array)
 {
   boost::shared_ptr<LuaState> ls =
-    LuaState::load_file(test_data_dir() + "lua_file_test.lua");
+    LuaState::load_file(test_data_dir() + "lua/lua_file_test.lua");
   LuabindObject lf = ls->globals();
   blitz::Array<double, 1> t(3);
   t = 1, 2, 3;

@@ -1,3 +1,1 @@
-print "hello world"
-
-
+test = "hello world"
