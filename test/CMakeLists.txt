@@ -38,7 +38,7 @@ foreach(test_file ${FP_TEST_FILES})
     foreach(suite ${suite_names})
         set(test_name unit/${suite})
         add_test(NAME ${test_name}
-            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_all --run_test=${suite})
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_all --log_level=test_suite --run_test=${suite})
     endforeach()
 endforeach()
 
