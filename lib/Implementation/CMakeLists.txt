@@ -147,7 +147,7 @@ set(TEST_SOURCES
     altitude_hydrostatic_test.cc
     atmosphere_fixture.cc
     atmosphere_oco_test.cc
-    #UT#bad_sample_noise_model_test.cc
+    bad_sample_noise_model_test.cc
     chapman_boa_rt_test.cc
     chapman_boa_test.cc
     chisq_convergence_test.cc
@@ -181,8 +181,8 @@ set(TEST_SOURCES
     instrument_doppler_test.cc
     l_rad_driver_test.cc
     l_rad_rt_test.cc
-    #UT#level_1b_average_test.cc
-    #UT#level_1b_cache_test.cc
+    level_1b_average_test.cc
+    level_1b_cache_test.cc
     level_1b_scale_radiance_test.cc
     lidort_driver_test.cc
     lidort_fixture.cc
