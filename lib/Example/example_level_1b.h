@@ -48,7 +48,7 @@ public:
         { return read_scalar_with_unit(group_name + "/relative_velocity", i, units::deg); }
 
     virtual ArrayWithUnit<double, 1> spectral_coefficient(int i) const
-        { return read_array_with_unit(group_name + "/spectral_coefficient", i, units::deg); }
+        { return read_array_with_unit(group_name + "/spectral_coefficient", i, units::micron); }
 
     virtual Time time(int i) const
         { return Time::time_pgs(read_scalar(group_name + "/time_tai93", i)); }

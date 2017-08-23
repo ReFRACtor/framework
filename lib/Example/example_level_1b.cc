@@ -77,14 +77,17 @@ double ExampleLevel1b::read_scalar(const std::string& dataset_name, int i) const
 ArrayWithUnit<double, 1> ExampleLevel1b::read_array_with_unit(const std::string& dataset_name, int i, const Unit& default_unit) const
 {
     range_check(i, 0, number_spectrometer());
+
     TinyVector<int, 3> ds_shape = input->read_shape<3>(dataset_name);
     TinyVector<int, 3> start, size;
     start = data_index, i, 0;
     size = 1, 1, ds_shape(2);
+
     ArrayWithUnit<double, 3> val_arr = input->read_field_with_unit<double, 3>(dataset_name, default_unit, start, size);
 
     ArrayWithUnit<double, 1> ret_val;
     ret_val.units = val_arr.units;
+    ret_val.value.resize(ds_shape(2));
     ret_val.value = val_arr.value(0, 0, Range::all());
 
     return ret_val;
