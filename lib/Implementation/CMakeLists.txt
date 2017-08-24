@@ -209,7 +209,7 @@ set(TEST_SOURCES
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
     relative_humidity_test.cc
-    #UT#solar_absorption_and_continuum_test.cc
+    solar_absorption_and_continuum_test.cc
     solar_absorption_gfit_file_test.cc
     solar_absorption_table_test.cc
     solar_continuum_table_test.cc
