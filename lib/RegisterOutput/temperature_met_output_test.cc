@@ -1,7 +1,6 @@
 #include "unit_test_support.h"
 #include "met_data_fixture.h"
 #include "output_hdf.h"
-#include "pressure_sigma.h"
 #include "temperature_met_output.h"
 
 using namespace FullPhysics;
@@ -10,8 +9,7 @@ BOOST_FIXTURE_TEST_SUITE(temperature_met_output, MetDataFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  boost::shared_ptr<Pressure> pressure_sigma(new PressureSigma(pressure_in, psurf_in, false));
-  TemperatureMetOutput po(boost::shared_ptr<TemperatureMet>(new TemperatureMet(met_data, pressure_sigma, 0, true)));
+  TemperatureMetOutput po(boost::shared_ptr<TemperatureMet>(new TemperatureMet(met_data, pressure, 0, true)));
   boost::shared_ptr<OutputHdf> out(new OutputHdf("temperature_output.h5", 20, 112, 5, 3));
   add_file_to_cleanup("temperature_output.h5");
   po.register_output(out);

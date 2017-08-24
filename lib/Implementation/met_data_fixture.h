@@ -11,8 +11,7 @@ using namespace blitz;
 class MetDataFixture : public GlobalFixture {
 public:
     boost::shared_ptr<Meteorology> met_data;
-    blitz::Array<double, 1> pressure_in;
-    double psurf_in;
+    boost::shared_ptr<Pressure> pressure;
     MetDataFixture();
 };
 
