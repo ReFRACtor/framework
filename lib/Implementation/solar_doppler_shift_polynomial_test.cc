@@ -3,7 +3,6 @@
 #include "fp_exception.h"
 #include "old_constant.h"
 #include "default_constant.h"
-#include "fts_run_log.h"
 
 using namespace FullPhysics;
 using namespace boost::posix_time;
@@ -122,19 +121,6 @@ BOOST_AUTO_TEST_CASE(out_of_range)
                     (t, lat, solar_zen, 
                      DoubleWithUnit(361,units::deg), elevation, constant),
                     Exception);
-}
-
-BOOST_AUTO_TEST_CASE(compare_tccon)
-{
-  FtsRunLog f(test_data_dir() + "in/tccon_runlog.grl");
-  const FtsRunLogRecord& fr = f.read("pa20091103saaaaa_100223160344.008");
-  SolarDopplerShiftPolynomial d(fr.time, 
-                                DoubleWithUnit(fr.latitude, Unit("deg")),
-                                DoubleWithUnit(fr.solar_zenith, Unit("deg")),
-                                DoubleWithUnit(fr.solar_azimuth, Unit("deg")),
-                                DoubleWithUnit(fr.altitude, Unit("meter")));
-  BOOST_CHECK(fabs(fr.observer_sun_doppler_shift -
-                   d.doppler_shift() / 1e-6) < 0.05);
 }
 
 BOOST_AUTO_TEST_CASE(compare_horizons)

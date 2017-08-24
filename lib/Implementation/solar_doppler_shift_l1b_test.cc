@@ -3,7 +3,6 @@
 #include "fp_exception.h"
 #include "old_constant.h"
 #include "default_constant.h"
-#include "fts_run_log.h"
 
 using namespace FullPhysics;
 using namespace boost::posix_time;

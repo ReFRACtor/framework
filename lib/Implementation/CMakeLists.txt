@@ -213,8 +213,8 @@ set(TEST_SOURCES
     solar_absorption_gfit_file_test.cc
     solar_absorption_table_test.cc
     solar_continuum_table_test.cc
-    #UT#solar_doppler_shift_l1b_test.cc
-    #UT#solar_doppler_shift_polynomial_test.cc
+    solar_doppler_shift_l1b_test.cc
+    solar_doppler_shift_polynomial_test.cc
     solver_finished_fixture.cc
     spectral_window_range_test.cc
     spectrum_sampling_fixed_spacing_test.cc
