@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(basic)
   // Dummy RelativeHumidity, we need to create Aerosol but not
   // actually used.
   boost::shared_ptr<RelativeHumidity> rh_dummy;
-  HdfFile aprop(test_data_dir() + "l2_merra_aerosol.h5");
+  HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
   mclimate.reset(new HdfFile(merra_data_dir() + "MERRA_Composite_Selection_M02_O2A.hdf5"));
   Array<double, 2> cov(3, 3);
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(dateline)
   double psurf = 10;
   boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
-  HdfFile aprop(test_data_dir() + "l2_merra_aerosol.h5");
+  HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
   mclimate.reset(new HdfFile(merra_data_dir() + "MERRA_Composite_Selection_M02_O2A.hdf5"));
   Array<double, 2> cov(3, 3);
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(dateline2)
   double psurf = 10;
   boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
-  HdfFile aprop(test_data_dir() + "l2_merra_aerosol.h5");
+  HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
   mclimate.reset(new HdfFile(merra_data_dir() + "MERRA_Composite_Selection_M02_O2A.hdf5"));
   Array<double, 2> cov(3, 3);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(dejian_example)
   double psurf = 10;
   boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
-  HdfFile aprop(test_data_dir() + "l2_merra_aerosol.h5");
+  HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
   mclimate.reset(new HdfFile(merra_data_dir() + "MERRA_Composite_Selection_M01_O2A.hdf5"));
   Array<double, 2> cov(3, 3);

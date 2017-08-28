@@ -287,25 +287,25 @@ ExampleBaseConfig = ConfigCommon:new {
                 -- saying what order we want the Aerosols in
                 aerosols = {"Kahn_2b", "Kahn_3b", "Water", "Ice"},
                 Kahn_2b = {
-                    creator = ConfigCommon.aerosol_log_profile,
+                    creator = ConfigCommon.aerosol_log_shape_gaussian,
                     apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
                     covariance = ConfigCommon.hdf_aerosol_covariance("Aerosol", "Gaussian/Log"),
                     property = ConfigCommon.hdf_aerosol_property("kahn_2b"),
                 },
                 Kahn_3b = {
-                    creator = ConfigCommon.aerosol_log_profile,
+                    creator = ConfigCommon.aerosol_log_shape_gaussian,
                     apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
                     covariance = ConfigCommon.hdf_aerosol_covariance("Aerosol", "Gaussian/Log"),
                     property = ConfigCommon.hdf_aerosol_property("kahn_3b"),
                 },
                 Water = {
-                    creator = ConfigCommon.aerosol_log_profile,
+                    creator = ConfigCommon.aerosol_log_shape_gaussian,
                     apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
                     covariance = ConfigCommon.hdf_aerosol_covariance("Aerosol", "Gaussian/Log"),
                     property = ConfigCommon.hdf_aerosol_property("wc_008"),
                 },
                 Ice = {
-                    creator = ConfigCommon.aerosol_log_profile,
+                    creator = ConfigCommon.aerosol_log_shape_gaussian,
                     apriori = ConfigCommon.hdf_aerosol_apriori("Aerosol", "Gaussian/Log"),
                     covariance = ConfigCommon.hdf_aerosol_covariance("Aerosol", "Gaussian/Log"),
                     property = ConfigCommon.hdf_aerosol_property("ice_cloud_MODIS6_deltaM_1000"),

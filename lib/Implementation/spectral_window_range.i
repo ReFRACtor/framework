@@ -6,7 +6,6 @@
 %}
 %base_import(spectral_window)
 %import "array_with_unit.i"
-%import "heritage_file.i"
 %import "double_with_unit.i"
 %fp_shared_ptr(FullPhysics::SpectralWindowRange);
 
