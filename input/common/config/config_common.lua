@@ -15,8 +15,7 @@
 --- call below. Check each function for details.
 ------------------------------------------------------------
 
-ConfigCommon = { diagnostic = false, input_file_description = "",
-		 wrote_atmsphere_desc = false}
+ConfigCommon = { diagnostic = false, input_file_description = "", wrote_atmsphere_desc = false}
 
 function ConfigCommon:new (o)
    o = o or {}   -- create object if user does not provide one
@@ -471,15 +470,6 @@ function ConfigCommon:l1b_hdf_file()
 end
 
 ------------------------------------------------------------
--- Determine sounding id list from HDF file
--- Contents is instrument specific and not defined here
-------------------------------------------------------------
-
-function ConfigCommon:l1b_sid_list()
-   error("l1b_sid_list definition is instrument specific and not defined in ConfigCommon.")
-end
-
-------------------------------------------------------------
 -- Allows an apriori or covariance to be a function
 -- that returns the value or a simple type
 ------------------------------------------------------------
@@ -631,12 +621,6 @@ function ConfigCommon.hdf_aerosol_apriori(base, type, aer_name)
           end
 end
 
-function ConfigCommon.ascii_aerosol_apriori(file)
-   return function(self, a)
-             return HeritageFile(file):data(a)
-          end
-end
-
 function ConfigCommon.hdf_aerosol_covariance(base, type, aer_name)
    return function(self, config_name)
              if not aer_name then
@@ -677,37 +661,6 @@ function hdf_aerosol_property_file(fname, aer_group)
              return AerosolPropertyHdf(h, aer_group .. "/Properties", self.config.pressure)
           end
 end      
-
-function ConfigCommon.ascii_dispersion(file, units)
-   return function(self, i)
-             data = HeritageFile(file):data("DISP_" .. (i + 1))
-             return ArrayWithUnit_1d(data, units)
-          end
-end
-
-function ConfigCommon.ascii_ground_apriori(file)
-   return function(self, i)
-             data = HeritageFile(file):data("ALBEDO_" .. (i + 1))
-             return data
-          end
-end
-
-function ConfigCommon.ascii_read(file, label, alt_label)
-   return function(self)
-             local ascii_file = HeritageFile(file)
-         if ascii_file:column_index(label) >= 0 then
-            return ascii_file:data(label)
-         elseif alt_label ~= nil and ascii_file:column_index(alt_label) >= 0 then
-            return ascii_file:data(alt_label)
-         else
-             if alt_label ~= nil then
-                error("Could not find column named: " .. label .. " or alternative name: " .. alt_label .. " in file: " .. file)
-             else 
-                error("Could not find column named: " .. label .. " in file: " .. file)
-             end
-         end
-          end
-end
 
 ------------------------------------------------------------
 -- Read from the atmosphere file defined in the configuration
@@ -1603,45 +1556,6 @@ function ConfigCommon.fluorescence_effect_lambertian_only:create()
    else
       return nil
    end
-end
-
-------------------------------------------------------------
---- Use a precomputed noise file.
-------------------------------------------------------------
-
-ConfigCommon.noise_ascii = Creator:new()
-
-function ConfigCommon.noise_ascii:create()
-   local noise_file
-   if(self.config.noise_file) then
-      noise_file = HeritageFile(self.config.noise_file)
-   else
-      noise_file = HeritageFile(self.config.spectrum_file)
-   end
-   return PrecomputedNoiseModel(noise_file)
-end
-
-------------------------------------------------------------
---- Variation of noise_ascii that returns an array. This is
---- useful in testing, when we want to mix a HDF file wiht
---- an ASCII noise file.
-------------------------------------------------------------
-
-ConfigCommon.noise_ascii_array = Creator:new()
-
-function ConfigCommon.noise_ascii_array:create()
-   local noise_file
-   if(self.config.noise_file) then
-      noise_file = HeritageFile(self.config.noise_file)
-   else
-      noise_file = HeritageFile(self.config.spectrum_file)
-   end
-   local slist = self.config:l1b_sid_list()
-   local res = {}
-   for i=0,slist:size() - 1 do
-      res[i] = PrecomputedNoiseModel(noise_file)
-   end
-   return res
 end
 
 ------------------------------------------------------------

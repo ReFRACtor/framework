@@ -17,6 +17,6 @@ void GlobalFixture::set_default_value()
   setenv("abscodir", "@ABSCO_DIR@", 0);
   setenv("merradir", "@MERRA_DIR@", 0);
   setenv("abs_top_srcdir", "@PROJECT_SOURCE_DIR@", 1);
-  setenv("LUA_PATH", "@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/input/gosat/config/?.lua;@PROJECT_SOURCE_DIR@/input/oco/config/?.lua;@PROJECT_SOURCE_DIR@/input/fts/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/?.lua;", 1);
+  setenv("LUA_PATH", "@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/lua/?.lua;", 1);
 }
 

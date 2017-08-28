@@ -18,7 +18,7 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
 #ifdef HAVE_FEENABLEEXCEPT
     fedisableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
 #endif
-    config[Config_file] = LuaState::load_file(test_data_dir() + Config_file);
+    config[Config_file] = LuaState::load_file(test_data_dir() + "/lua/" + Config_file);
 #ifdef HAVE_FEENABLEEXCEPT
     feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
     feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
