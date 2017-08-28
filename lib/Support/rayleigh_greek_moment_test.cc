@@ -8,8 +8,7 @@ BOOST_FIXTURE_TEST_SUITE(rayleigh_greek_moment, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  HdfFile h(test_data_dir() + "l2_fixed_level_static_input.h5");
-  double depolar_fact = h.read_attribute<double>("/Gas/Air/depolarization_factor");
+  double depolar_fact = 0.0279;
   blitz::Array<double, 2> array_expect(3,6);
   array_expect = 
     1,     0, 0, 0, 0, 0,

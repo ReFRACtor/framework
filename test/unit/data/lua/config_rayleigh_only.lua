@@ -5,9 +5,9 @@
 --- Also use LRad, but not LSI
 ------------------------------------------------------------
 
-require "fixed_level_base_config"
+require "example_base_config"
 
-config = FixedLevelBaseConfig:new()
+config = ExampleBaseConfig:new()
 
 --- Use LRAD only
 config.fm.rt.nstream = 4
