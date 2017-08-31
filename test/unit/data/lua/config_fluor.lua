@@ -2,9 +2,9 @@
 --- Adds the use of FluorescenceEffect to the retrieval
 ------------------------------------------------------------
 
-require "fixed_level_base_config"
+require "example_base_config"
 
-config = FixedLevelBaseConfig:new()
+config = ExampleBaseConfig:new()
 
 function fluorescence_ap()
    local f_coeffs = Blitz_double_array_1d(2)

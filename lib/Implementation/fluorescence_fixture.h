@@ -14,7 +14,10 @@ public:
 
       boost::shared_ptr<std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > > vvse =
         lua_config["spectrum_effect"].value_ptr<std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > >();
-      config_fluor = boost::dynamic_pointer_cast<FluorescenceEffect>(vvse->at(0).at(1));
+      config_fluor = boost::dynamic_pointer_cast<FluorescenceEffect>(vvse->at(0).at(2));
+      if (!config_fluor) {
+          throw Exception("Could not cast SpectrumEffect into FluorescenceEffect");
+      }
   }
   virtual ~FluorescenceFixture() {}
   boost::shared_ptr<FluorescenceEffect> config_fluor;

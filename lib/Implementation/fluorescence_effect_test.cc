@@ -29,9 +29,7 @@ BOOST_AUTO_TEST_CASE(creation)
       1, 0, 0, 0;
   boost::shared_ptr<StokesCoefficient> stokes_coeff
     (new StokesCoefficientConstant(stokes_coeff_v));
-  FluorescenceEffect fluor_created(coeff, used_flag,
-           config_atmosphere, stokes_coeff,
-           lza, spec_index, reference_wn, conv_unit);
+  FluorescenceEffect fluor_created(coeff, used_flag, config_atmosphere, stokes_coeff, lza, spec_index, reference_wn, conv_unit);
 
   BOOST_CHECK_MATRIX_CLOSE(config_fluor->coefficient().value(), fluor_created.coefficient().value());
 }
@@ -50,12 +48,11 @@ BOOST_AUTO_TEST_CASE(small_range)
   // Loop over small range of wavenumbers 
   boost::shared_ptr<SpectrumSampling> spec_samp
     (new UniformSpectrumSampling(12930.15, 12931.14, 0.01,
-				 12930.15, 12931.14, 0.01,
-				 12930.15, 12931.14, 0.01) );
+                                 12930.15, 12931.14, 0.01,
+                                 12930.15, 12931.14, 0.01) );
   ForwardModelSpectralGrid fg(config_instrument, config_spectral_window, spec_samp);
   int num_jac = 2;
-  SpectralDomain sd = spec_samp->spectral_domain(0, lowres_grid(0), 
-						 ils_half_width(0));
+  SpectralDomain sd = spec_samp->spectral_domain(0, lowres_grid(0), ils_half_width(0));
   ArrayAd<double, 1> spec_range(sd.data().rows(), num_jac);
   spec_range.value() = 0.0;
   spec_range.jacobian() = 0.0;
@@ -97,7 +94,7 @@ BOOST_AUTO_TEST_CASE(small_range)
   IfstreamCs expt_contrib_file(test_data_dir() + "expected/fluorescence_effect/fluor_contrib");
   Array<double, 1> expt_contrib;
   expt_contrib_file >> expt_contrib;
-  
+
   BOOST_CHECK_MATRIX_CLOSE_TOL(fluor_created.contribution().value(), expt_contrib, 1e-12);
   BOOST_CHECK_MATRIX_CLOSE_TOL(spec.spectral_range().data_ad().value(), expt_contrib, 1e-12);
 
