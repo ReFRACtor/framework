@@ -10,8 +10,7 @@ BOOST_FIXTURE_TEST_SUITE(composite_initial_guess_full_guess, ConfigurationFixtur
 BOOST_AUTO_TEST_CASE(full_initial_guess)
 {
   const InitialGuess& ig = *config_initial_guess;
-  IfstreamCs in(test_data_dir() + 
-		"expected/composite_initial_guess/full_initial_guess");
+  IfstreamCs in(test_data_dir() + "expected/composite_initial_guess/full_initial_guess");
   Array<double, 1> initial_sv_expected, apriori_sv_expected;
   Array<double, 2> apriori_cov_expected;
   in >> initial_sv_expected >> apriori_sv_expected >> apriori_cov_expected;

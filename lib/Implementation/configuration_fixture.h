@@ -131,19 +131,5 @@ public:
   virtual ~ConfigurationBrdfSoilFixture() {}
 };
 
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_oco2.lua
-*******************************************************************/
-class ConfigurationOco2Fixture: public ConfigurationFixture {
-public:
-  ConfigurationOco2Fixture()
-    : ConfigurationFixture("config_oco2.lua") {}
-  virtual ~ConfigurationOco2Fixture() {}
-};
-
 }
 #endif

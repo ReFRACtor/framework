@@ -13,21 +13,21 @@ BOOST_AUTO_TEST_CASE(grid_indexes)
 {
     std::vector<int> pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(0), 0);
-    BOOST_CHECK_EQUAL((int) pix.size(), 1605 - 403 + 1);
-    BOOST_CHECK_EQUAL(pix.front(), 403);
-    BOOST_CHECK_EQUAL(pix.back(), 1605);
+    BOOST_CHECK_EQUAL((int) pix.size(), 835);
+    BOOST_CHECK_EQUAL(pix.front(), 89);
+    BOOST_CHECK_EQUAL(pix.back(), 923);
 
     pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(1), 1);
-    BOOST_CHECK_EQUAL((int) pix.size(), 2686 - 2086 + 1);
-    BOOST_CHECK_EQUAL(pix.front(), 2086);
-    BOOST_CHECK_EQUAL(pix.back(), 2686);
+    BOOST_CHECK_EQUAL((int) pix.size(), 652);
+    BOOST_CHECK_EQUAL(pix.front(), 210);
+    BOOST_CHECK_EQUAL(pix.back(), 861);
 
     pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(2), 2);
-    BOOST_CHECK_EQUAL((int) pix.size(), 736 - 301 + 1);
-    BOOST_CHECK_EQUAL(pix.front(), 301);
-    BOOST_CHECK_EQUAL(pix.back(), 736);
+    BOOST_CHECK_EQUAL((int) pix.size(), 811);
+    BOOST_CHECK_EQUAL(pix.front(), 99);
+    BOOST_CHECK_EQUAL(pix.back(), 909);
 }
 
 BOOST_AUTO_TEST_CASE(apply)
@@ -35,32 +35,32 @@ BOOST_AUTO_TEST_CASE(apply)
     SpectralDomain sdall = config_instrument->pixel_spectral_domain(0);
     SpectralDomain sd = config_spectral_window->apply(sdall, 0);
     BOOST_CHECK_CLOSE(FullPhysics::conversion(sdall.units(), sd.units()), 1.0, 1e-8);
-    BOOST_CHECK_MATRIX_CLOSE(sd.data(), sdall.data()(Range(403, 1605)));
+    BOOST_CHECK_MATRIX_CLOSE(sd.data(), sdall.data()(Range(89, 923)));
 }
 
 BOOST_AUTO_TEST_CASE(apply_multi)
 {
-    HdfFile h(test_data_dir() + "/l2_multimicrowindow.h5");
+    HdfFile h(test_data_dir() + "/in/spectral_window_range/l2_multimicrowindow.h5");
     SpectralWindowRange swin(h.read_field_with_unit<double, 3>
                              ("Spectral_Window/microwindow"));
     std::vector<int> pix =
         swin.grid_indexes(config_instrument->pixel_spectral_domain(0), 0);
-    BOOST_CHECK_EQUAL((int) pix.size(), 1102);
-    BOOST_CHECK_EQUAL(pix.front(), 403);
-    BOOST_CHECK_EQUAL(pix.back(), 1605);
+    BOOST_CHECK_EQUAL((int) pix.size(), 880);
+    BOOST_CHECK_EQUAL(pix.front(), 29);
+    BOOST_CHECK_EQUAL(pix.back(), 984);
     pix = swin.grid_indexes(config_instrument->pixel_spectral_domain(1), 1);
-    BOOST_CHECK_EQUAL((int) pix.size(), 501);
-    BOOST_CHECK_EQUAL(pix.front(), 2086);
-    BOOST_CHECK_EQUAL(pix.back(), 2686);
+    BOOST_CHECK_EQUAL((int) pix.size(), 835);
+    BOOST_CHECK_EQUAL(pix.front(), 7);
+    BOOST_CHECK_EQUAL(pix.back(), 1015);
     pix = swin.grid_indexes(config_instrument->pixel_spectral_domain(2), 2);
-    BOOST_CHECK_EQUAL((int) pix.size(), 361);
-    BOOST_CHECK_EQUAL(pix.front(), 301);
-    BOOST_CHECK_EQUAL(pix.back(), 736);
+    BOOST_CHECK_EQUAL((int) pix.size(), 732);
+    BOOST_CHECK_EQUAL(pix.front(), 0);
+    BOOST_CHECK_EQUAL(pix.back(), 887);
 }
 
 BOOST_AUTO_TEST_CASE(wavelength_file)
 {
-    HdfFile h(test_data_dir() + "/l2_ocowin.h5");
+    HdfFile h(test_data_dir() + "/in/spectral_window_range/l2_ocowin.h5");
     SpectralWindowRange swin(h.read_field_with_unit<double, 3>
                              ("Spectral_Window/microwindow"));
     Array<double, 2> expect_range(3, 2);
@@ -80,31 +80,17 @@ BOOST_AUTO_TEST_CASE(wavelength_file)
 
 }
 
-BOOST_AUTO_TEST_CASE(bounds_ordering)
-{
-  SpectralBound sb = config_spectral_window->spectral_bound();
-  for(int i = 0; i < 3; i++) {
-    BOOST_REQUIRE(sb.lower_bound(i) < sb.upper_bound(i));
-    BOOST_REQUIRE(sb.lower_bound(i, units::micron) < 
-		  sb.upper_bound(i, units::micron));
-  }
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_FIXTURE_TEST_SUITE(spectral_window_range_oco, ConfigurationOco2Fixture)
-
 BOOST_AUTO_TEST_CASE(hdf_read)
 {
   Array<double, 2> expect_range(3, 2);
   expect_range =
-    0.75899101635934307, 0.77112064381379375,
-    1.597346492, 1.616932485,
-    2.045831846, 2.077599596;
+    0.75918488928043171, 0.77146052770058471,
+    1.5979769247163076, 1.6177916201995313,
+    2.0476615743155038, 2.0797545539697246;
 
   SpectralBound sb = config_spectral_window->spectral_bound();
   for (int i = 0; i < expect_range.rows(); i++) {
-    BOOST_REQUIRE(sb.lower_bound(i).units.name() == "Microns");
+    BOOST_REQUIRE(sb.lower_bound(i).units.name() == "micron");
     BOOST_CHECK_CLOSE(sb.lower_bound(i).value, expect_range(i, 0), 1e-6);
     BOOST_CHECK_CLOSE(sb.upper_bound(i).value, expect_range(i, 1), 1e-6);
   }
@@ -116,7 +102,7 @@ BOOST_AUTO_TEST_CASE(bounds_ordering)
   for(int i = 0; i < 3; i++) {
     BOOST_REQUIRE(sb.lower_bound(i) < sb.upper_bound(i));
     BOOST_REQUIRE(sb.lower_bound(i, units::inv_cm) < 
-		  sb.upper_bound(i, units::inv_cm));
+                  sb.upper_bound(i, units::inv_cm));
     }
 }
 
