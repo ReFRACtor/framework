@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(averaging_kernel_test)
   ConnorSolver cs(boost::shared_ptr<CostFunction>(new 
 						  CostFunctionRankDegenerate),
 		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
-  IfstreamCs in(test_data_dir() + "connor_converged.txt");
+  IfstreamCs in(test_data_dir() + "in/solver/connor_converged");
   in >> cs;
   Array<double, 2> ak(cs.averaging_kernel());
   BOOST_CHECK_CLOSE(ak(0,0), 2.0114592943839052e-05, 2e-3);

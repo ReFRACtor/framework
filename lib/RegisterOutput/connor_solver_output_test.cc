@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(basic)
   boost::shared_ptr<CostFunction> cf;
   boost::shared_ptr<ConvergenceCheck> ccheck;
   boost::shared_ptr<ConnorSolver> cs(new ConnorSolver(cf, ccheck));
-  IfstreamCs in(test_data_dir() + "connor_converged.txt");
+  IfstreamCs in(test_data_dir() + "in/solver/connor_converged");
   in >> *cs;
   ConnorSolverOutput conout(cs);
   boost::shared_ptr<OutputHdf> out(new OutputHdf("connor_solver_output.h5", 20, 112, 5, 3));

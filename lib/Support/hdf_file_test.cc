@@ -11,7 +11,7 @@ BOOST_FIXTURE_TEST_SUITE(hdf_file, GlobalFixture)
 BOOST_AUTO_TEST_CASE(read)
 {
   BOOST_CHECK(HdfFile::is_hdf(test_data_dir() + "l1b.h5"));
-  BOOST_CHECK(!HdfFile::is_hdf(test_data_dir() + "connor_converged.txt"));
+  BOOST_CHECK(!HdfFile::is_hdf(test_data_dir() + "in/solver/connor_converged"));
   HdfFile h(test_data_dir() + "l1b.h5");
   BOOST_CHECK(h.has_object("/FootprintGeometry/footprint_stokes_coefficients"));
   BOOST_CHECK(!h.has_object("/FootprintGeometry/fake_field"));

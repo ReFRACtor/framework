@@ -6,7 +6,7 @@ using namespace FullPhysics;
 SolverFinishedFixture::SolverFinishedFixture()
 {
   solver = config_solver;
-  IfstreamCs in(test_data_dir() + "connor_converged.txt");
+  IfstreamCs in(test_data_dir() + "in/solver/connor_converged");
   in >> *solver;
   config_state_vector->update_state(solver->x_solution(), 
 				    solver->aposteriori_covariance());
