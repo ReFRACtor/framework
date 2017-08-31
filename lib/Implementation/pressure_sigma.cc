@@ -84,7 +84,7 @@ void PressureSigma::set_levels_from_grid(const blitz::Array<double, 1>& Pressure
 void PressureSigma::calc_pressure_grid() const
 {
   pgrid.units = units::Pa;
-  pgrid.value.resize(b_.rows(), sv_full.number_variable());
+  pgrid.value.resize(b_.rows(), coeff.number_variable());
   for(int i = 0; i < b_.rows(); ++i) {
     pgrid.value(i) = b_(i) * coeff(0) + a_(i);
 

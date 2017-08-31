@@ -45,7 +45,7 @@ void AerosolShapeGaussian::calc_aerosol_extinction() const
   AutoDerivative<double> surface_press = pressure()->surface_pressure().value;
 
   aext.resize(pressure()->number_level(),
-              pressure_grid.number_variable());
+              coeff.number_variable());
 
   for(int g_idx = 0; g_idx < ngaussians; g_idx++) {
     AutoDerivative<double> p0 = coefficient()(g_idx*2+1);
