@@ -81,20 +81,6 @@ private:
   standard set of objects, similar to what we generate when running
   l2_fp. This is fairly expensive to create, so 
   this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_ecmwf.run.
-*******************************************************************/
-class ConfigurationEcmwfFixture: public ConfigurationFixture {
-public:
-  ConfigurationEcmwfFixture() 
-  : ConfigurationFixture("config_ecmwf.lua") {}
-  virtual ~ConfigurationEcmwfFixture() {}
-};
-
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_coxmunk.lua
 *******************************************************************/
 class ConfigurationCoxmunkFixture: public ConfigurationFixture {
@@ -158,29 +144,6 @@ public:
     : ConfigurationFixture("config_oco2.lua") {}
   virtual ~ConfigurationOco2Fixture() {}
 };
-
-
-/****************************************************************//**
-  Fixture for FTS related classes and testing them
-*******************************************************************/
-class ConfigurationFtsFixture: public ConfigurationFixture {
-public:
-  ConfigurationFtsFixture() 
-  : ConfigurationFixture("config_fts.lua") 
-  {
-    using namespace blitz;
-    // State vector is a different size, so redo epsilon.
-    epsilon.resize(7);
-    epsilon = 1e-6;		    // Default
-    epsilon(Range(0, 1)) = 1.0e-8;  // CO2, H2O
-    epsilon(Range(3, 3)) = 1.0e-4;  // CONT
-    epsilon(Range(4, 4)) = 1.0e-6;  // CONT
-    epsilon(Range(5, 5)) = 1.0e-3;  // DISP
-    epsilon(Range(6, 6)) = 1.0e-10; // DISP
-  }
-  virtual ~ConfigurationFtsFixture() {}
-};
-
 
 }
 #endif

@@ -6,7 +6,6 @@ using namespace blitz;
 
 std::map<std::string, boost::shared_ptr<LuaState> > ConfigurationFixture::config;
 ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
-  : epsilon(112)
 {
   if(!config[Config_file]) {
     // Disable floating point exeptions while loading 
@@ -26,11 +25,6 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   }
 
   lua_config = config[Config_file]->globals()["config"];
-  epsilon = 1e-6;		  // Default
-  epsilon(Range(0, 19)) = 1e-7;	  // CO2 VMR
-  epsilon(21) = 1e-3;		  // Surface Pressure
-  epsilon(22) = 1e-4;		  // Temperature
-  epsilon(Range(23, 102)) = 1e-6; // Aerosol optical depth
 
   config_absorber = lua_config["absorber"].value_ptr<Absorber>();
   // Allow this to fail, we don't have aerosols if we happen to have a 
@@ -71,6 +65,13 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   config_forward_model = lua_config["forward_model"].value_ptr<ForwardModel>();
   sv_initial.reference(config_initial_guess->initial_guess());
   config_state_vector->update_state(sv_initial);
+
+  epsilon.resize(config_state_vector->observer_claimed_size());
+  epsilon = 1e-6;                  // Default
+  epsilon(Range(0, 19)) = 1e-7;    // CO2 VMR
+  epsilon(21) = 1e-3;              // Surface Pressure
+  epsilon(22) = 1e-4;              // Temperature
+
 }
 
 ConfigurationCoxmunkFixture::ConfigurationCoxmunkFixture(const std::string& Config_file) 

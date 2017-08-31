@@ -1,4 +1,5 @@
 #include "chapman_boa_rt.h"
+#include "unit.h"
 #include "unit_test_support.h"
 
 #include "configuration_fixture.h"
@@ -6,25 +7,24 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-
-SpectralDomain dummyd;
-DoubleWithUnit dummyd2;
-class ChapmanBoaRtFixture: public ConfigurationFtsFixture {
+class ChapmanBoaRtFixture: public ConfigurationFixture {
 public:
   ChapmanBoaRtFixture() 
   {
-    int spec_index = 0;
-    spec_domain.reset(new SpectralDomain(config_spectrum_sampling->
- spectral_domain(spec_index, lowres_grid(spec_index), ils_half_width(spec_index))));
+    Array<double, 1> wavenumbers(1);
+    wavenumbers = 6.1460+03;
+    spec_domain.reset(new SpectralDomain(wavenumbers, units::inv_cm));
+
     // Spectral windows for better refraction calculation
-    SpectralBound sb = config_spectral_window->spectral_bound();
+    // 6166 cm^-1 to 6286 cm^-1
+    std::vector<DoubleWithUnit> lower_bound, upper_bound;
+    lower_bound.push_back( DoubleWithUnit(6166, units::inv_cm) );
+    upper_bound.push_back( DoubleWithUnit(6286, units::inv_cm) );
 
-    boost::shared_ptr<Level1b> l1b_fts = config_level_1b;
+    SpectralBound sb(lower_bound, upper_bound);
 
-    // Create RT object to use
-    Array<double, 1> sza(l1b_fts->number_spectrometer());
-    for(int s = 0; s < l1b_fts->number_spectrometer(); s++)
-      sza(s) = l1b_fts->solar_zenith(s).convert(units::deg).value;
+    Array<double, 1> sza(1);
+    sza = 85.573;
 
     boost::shared_ptr<AtmosphereOco> atmosphere(boost::dynamic_pointer_cast<AtmosphereOco>(config_atmosphere));
     boa_rt.reset(new ChapmanBoaRT(atmosphere, sza, sb));
@@ -40,8 +40,7 @@ BOOST_FIXTURE_TEST_SUITE(chapman_boa_rt, ChapmanBoaRtFixture)
 
 BOOST_AUTO_TEST_CASE(check_jacobians)
 {
-  is_long_test();		// Skip unless we are running long tests.
-  turn_on_logger();		// Have log output show up.
+  turn_on_logger();                // Have log output show up.
 
   // Load expected high res values
   Array<double, 1> wn_expt_high;
@@ -49,8 +48,8 @@ BOOST_AUTO_TEST_CASE(check_jacobians)
   Array<double, 2> jac_expt_high;
   IfstreamCs fd_high_res(test_data_dir() + "expected/chapman_boa_rt/high_res_fd");
   fd_high_res >> wn_expt_high
-	      >> refl_expt_high
-	      >> jac_expt_high;
+              >> refl_expt_high
+              >> jac_expt_high;
 
   BOOST_CHECK_MATRIX_CLOSE(wn_expt_high, spec_domain->wavenumber());
   
@@ -70,12 +69,12 @@ BOOST_AUTO_TEST_CASE(check_jacobians)
   if (false) {
     // Write out calculations for debugging
     std::cerr << std::scientific << std::setprecision(20)
-	      << "# wavenumbers" << std::endl
-	      << spec_domain->wavenumber() << std::endl
-	      << "# reflectance" << std::endl
-	      << refl_jac_high.value() << std::endl
-	      << "# jacobian" << std::endl
-	      << refl_jac_high.jacobian() << std::endl;
+              << "# wavenumbers" << std::endl
+              << spec_domain->wavenumber() << std::endl
+              << "# reflectance" << std::endl
+              << refl_jac_high.value() << std::endl
+              << "# jacobian" << std::endl
+              << refl_jac_high.jacobian() << std::endl;
   }
   
 }
@@ -88,7 +87,7 @@ BOOST_AUTO_TEST_CASE(generate_finite_diff_jac)
     return;
   }
   std::cerr << *config_state_vector << "\n";
-  turn_on_logger();		// Have log output show up.
+  turn_on_logger();                // Have log output show up.
   
   // State vector object
   boost::shared_ptr<StateVector> sv_obj = config_state_vector;
@@ -133,12 +132,12 @@ BOOST_AUTO_TEST_CASE(generate_finite_diff_jac)
   // Will overwrite expected file for other test!!!
   std::ofstream fd_jac_file((test_data_dir() + "expected/chapman_boa_rt/high_res_fd").c_str());
   fd_jac_file << std::scientific << std::setprecision(20)
-	      << "# wavenumbers" << std::endl
-	      << spec_domain->wavenumber() << std::endl
-	      << "# reflectance" << std::endl
-	      << refl_unpert << std::endl
-	      << "# jacobian" << std::endl
-	      << jac_fd << std::endl;
+              << "# wavenumbers" << std::endl
+              << spec_domain->wavenumber() << std::endl
+              << "# reflectance" << std::endl
+              << refl_unpert << std::endl
+              << "# jacobian" << std::endl
+              << jac_fd << std::endl;
   
 }
 
