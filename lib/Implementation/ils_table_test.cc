@@ -8,7 +8,7 @@ BOOST_FIXTURE_TEST_SUITE(ils_table, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(table)
 {
-  HdfFile hf(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
   IlsTableLinear ils(hf, 0, "A-Band", "o2");
   BOOST_CHECK_EQUAL(ils.band_name(), "A-Band");
   BOOST_CHECK_EQUAL(ils.hdf_band_name(), "o2");
@@ -26,15 +26,15 @@ BOOST_AUTO_TEST_CASE(table)
   ArrayAd<double, 1> response2;
   ils.ils(wn_center_val + epsilon, wn, response2);
   BOOST_CHECK_MATRIX_CLOSE(response.jacobian()(Range::all(), 0),
-			   (response2.value() - response.value()) / epsilon);
+                           (response2.value() - response.value()) / epsilon);
   BOOST_CHECK_MATRIX_CLOSE(response.jacobian()(Range::all(), 1),
-		   (response2.value() - response.value()) / epsilon * 0.1);
+                           (response2.value() - response.value()) / epsilon * 0.1);
 }
 
 // Repeat tests from above, but with the function_type set to interpol
 BOOST_AUTO_TEST_CASE(interpol)
 {
-  HdfFile hf(test_data_dir() + "l2_ils_interpol.h5");
+  HdfFile hf(test_data_dir() + "in/ils/ils_interpol.h5");
   IlsTableLinear ils(hf, 0, "A-Band", "o2");
   BOOST_CHECK_EQUAL(ils.band_name(), "A-Band");
   BOOST_CHECK_EQUAL(ils.hdf_band_name(), "o2");
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(interpol)
 BOOST_AUTO_TEST_CASE(log_table)
 {
   // Use OCO ILS values
-  HdfFile hf(test_data_dir() + "l2_ils_log_table.h5");
+  HdfFile hf(test_data_dir() + "in/ils/ils_log_table.h5");
   IlsTableLog ils(hf, 0, "A-Band", "o2");
   BOOST_CHECK_EQUAL(ils.band_name(), "A-Band");
   BOOST_CHECK_EQUAL(ils.hdf_band_name(), "o2");

@@ -14,7 +14,7 @@ BOOST_FIXTURE_TEST_SUITE(ils_instrument, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  HdfFile hf(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
   Array<bool, 1> flag(2);
   flag = true, false;
   Array<double, 1> coeff(2);
@@ -22,20 +22,20 @@ BOOST_AUTO_TEST_CASE(basic)
   boost::shared_ptr<IlsTableLinear> ils_tab(new IlsTableLinear(hf, 0, "A-Band", "o2"));
   boost::shared_ptr<DispersionPolynomial>
     d(new DispersionPolynomial(coeff, flag, units::inv_cm, ils_tab->band_name(),
-			       1805, true));
+                               1805, true));
   std::vector<boost::shared_ptr<Ils> > ils;
   ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
   
   coeff = 5.74982835e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 1, "WC-Band", "weak_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
-				   ils_tab->band_name(), 3508, true));
+                                   ils_tab->band_name(), 3508, true));
   ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
 
   coeff = 4.74980283e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 2, "SC-Band", "strong_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
-				   ils_tab->band_name(), 2005, true));
+                                   ils_tab->band_name(), 2005, true));
   ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
 
   IlsInstrument inst(ils);
@@ -58,8 +58,8 @@ BOOST_AUTO_TEST_CASE(basic)
   SpectralDomain sd(wn_in, units::inv_cm);
   SpectralRange sr(rad_hres_in, units::dimensionless); // Ignore units
   BOOST_CHECK_MATRIX_CLOSE(inst.apply_instrument_model(Spectrum(sd, sr),
-						       plist, 0).
-			   spectral_range().data(), rad_out_expect);
+                                                       plist, 0).
+                           spectral_range().data(), rad_out_expect);
 
   Array<double, 2> jac_rad_fake(rad_hres_in.rows(), 4);
   jac_rad_fake = 0;
@@ -67,8 +67,8 @@ BOOST_AUTO_TEST_CASE(basic)
   ArrayAd<double, 1> rad_hres_in2(rad_hres_in, jac_rad_fake);
   SpectralRange sr2(rad_hres_in2, units::dimensionless); // Ignore units
   BOOST_CHECK_MATRIX_CLOSE(inst.apply_instrument_model(Spectrum(sd, sr), 
-						       plist, 0).
-			   spectral_range().data(), rad_out_expect);
+                                                       plist, 0).
+                           spectral_range().data(), rad_out_expect);
   Array<double, 2> jac = 
     inst.apply_instrument_model(Spectrum(sd, sr2), plist, 0).
     spectral_range().data_ad().jacobian();
@@ -106,14 +106,14 @@ BOOST_AUTO_TEST_CASE(timing)
   Array<double, 1> wn_in, rad_hres_val;
   expected >> wn_in >> rad_hres_val;
   Array<double, 2> rad_hres_jac(rad_hres_val.rows(), 
-				 config_state_vector->state().rows());
+                                 config_state_vector->state().rows());
   for(int i = 0; i < rad_hres_jac.cols(); ++i)
     rad_hres_jac(Range::all(), i) = rad_hres_val;
   ArrayAd<double, 1> rad_hres(rad_hres_val, rad_hres_jac);
   std::vector<int> plist = 
     config_spectral_window->grid_indexes(inst.pixel_spectral_domain(0), 0);
   Spectrum s(SpectralDomain(wn_in, units::inv_cm),
-	     SpectralRange(rad_hres, units::dimensionless));
+             SpectralRange(rad_hres, units::dimensionless));
   AccumulatedTimer tm("IlsInstrument");
   {
     FunctionTimer ft = tm.function_timer();

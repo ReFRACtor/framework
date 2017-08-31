@@ -17,9 +17,8 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> coeff(2);
   coeff = 1.28695614e+04, 1.99492886e-01;
   boost::shared_ptr<DispersionPolynomial>
-    d(new DispersionPolynomial(coeff, flag, units::inv_cm, "Test band", 1805, 
-			       true));
-  HdfFile hf(test_data_dir() + "l2_fixed_level_static_input.h5");
+    d(new DispersionPolynomial(coeff, flag, units::inv_cm, "Test band", 1805, true));
+  HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
   boost::shared_ptr<IlsTableLinear> ils_func(new IlsTableLinear(hf, 0, "A-Band", "o2"));
   IlsConvolution ils(d, ils_func);
 
@@ -42,14 +41,14 @@ BOOST_AUTO_TEST_CASE(basic)
   expected >> wn_in >> rad_hres_in >> rad_out_expect;
 
   BOOST_CHECK_MATRIX_CLOSE(ils.apply_ils(wn_in, rad_hres_in, plist),
-			   rad_out_expect);
+                           rad_out_expect);
 
   Array<double, 2> jac_rad_fake(rad_hres_in.rows(), 2);
   jac_rad_fake = 0;
   jac_rad_fake(Range::all(), 1) = rad_hres_in;
   ArrayAd<double, 1> rad_hres_in2(rad_hres_in, jac_rad_fake);
   BOOST_CHECK_MATRIX_CLOSE(ils.apply_ils(wn_in, rad_hres_in2, plist).value(),
-			   rad_out_expect);
+                           rad_out_expect);
   Array<double, 2> jac = ils.apply_ils(wn_in, rad_hres_in2, plist).jacobian();
   Array<double, 1> v0 = ils.apply_ils(wn_in, rad_hres_in2, plist).value();
   double epsilon = 1e-3;
