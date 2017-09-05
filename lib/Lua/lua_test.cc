@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE(set_value)
   std::ostringstream os;
   os << "s = { }\n";
   luaL_dostring(ls, os.str().c_str());
-  std::string s = test_data_dir() + "l1b.h5";
+  std::string s = test_data_dir() + "in/common/l1b_example_data.h5";
   boost::shared_ptr<HdfFile> h(new HdfFile(s));
   luabind::globals(ls)["s"]["t"] = h;
   luaL_dostring(ls, "s.t2 = s.t\n");

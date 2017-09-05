@@ -4,52 +4,38 @@
 
 using namespace FullPhysics;
 using namespace blitz;
-using namespace FullPhysics::units;
 
 BOOST_FIXTURE_TEST_SUITE(hdf_file, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(read)
 {
-  BOOST_CHECK(HdfFile::is_hdf(test_data_dir() + "l1b.h5"));
+  BOOST_CHECK(HdfFile::is_hdf(test_data_dir() + "in/common/l1b_example_data.h5"));
   BOOST_CHECK(!HdfFile::is_hdf(test_data_dir() + "in/solver/connor_converged"));
-  HdfFile h(test_data_dir() + "l1b.h5");
-  BOOST_CHECK(h.has_object("/FootprintGeometry/footprint_stokes_coefficients"));
-  BOOST_CHECK(!h.has_object("/FootprintGeometry/fake_field"));
+  HdfFile h(test_data_dir() + "in/common/l1b_example_data.h5");
+  BOOST_CHECK(h.has_object("/Level1b/stokes_coefficient"));
+  BOOST_CHECK(!h.has_object("/Level1b/fake_field"));
   Array<double, 2> st_expect(3,4);
   st_expect = 
-    1.00105,  0.156465,  0.900937,   0.40734,
-    1.00118,  0.379547,   0.71381, -0.590578, 
-    1.00093,  0.298259,   0.78226,  -0.54861; 
-  Array<double, 4> st = 
-    h.read_field<double, 4>("/FootprintGeometry/footprint_stokes_coefficients");
-  Array<double, 2> stsub = st(0, Range::all(), 0, Range::all());
+    0.5, 0.499993, -0.00268922, 0,
+    0.5, 0.499993, -0.00269793, 0,
+    0.5, 0.499993, -0.0025686, 0;
+  Array<double, 3> st = h.read_field<double, 3>("/Level1b/stokes_coefficient");
+  Array<double, 2> stsub = st(0, Range::all(), Range::all());
   BOOST_CHECK_MATRIX_CLOSE_TOL(stsub, st_expect, 1e-5);
-  TinyVector<int, 4> start, size;
-  start = 0, 0, 0, 0;
-  size = 1, st.cols(), 1, st.extent(fourthDim);
-  Array<double, 4> st2 =
-    h.read_field<double, 4>("/FootprintGeometry/footprint_stokes_coefficients",
-			    start, size);
+  TinyVector<int, 3> start, size;
+  start = 0, 0, 0;
+  size = 1, st.cols(), st.extent(thirdDim);
+  Array<double, 3> st2 = h.read_field<double, 3>("/Level1b/stokes_coefficient", start, size);
   BOOST_CHECK_EQUAL(st2.rows(), 1);
-  BOOST_CHECK_EQUAL(st2.extent(thirdDim), 1);
+  BOOST_CHECK_EQUAL(st2.cols(), 3);
+  BOOST_CHECK_EQUAL(st2.extent(thirdDim), 4);
   Array<double, 2> stsub2 = st2(0, Range::all(), 0, Range::all());
   BOOST_CHECK_MATRIX_CLOSE_TOL(stsub2, st_expect, 1e-5);
-  BOOST_CHECK_EQUAL(h.read_attribute<int>("/Dimensions/Band/Size"), 3);
-  BOOST_CHECK_EQUAL(
-     h.read_attribute<std::string>("/Dimensions/Band/Description"),
-     "Spectrum index (O2, weak CO2, strong CO2).");
-  std::vector<std::string> as = h.read_attribute<std::vector<std::string> >
-    ("/Shapes/Exposure_Band_Polarization_Array/Dimensions");
-  BOOST_CHECK_EQUAL((int) as.size(), 3);
-  BOOST_CHECK_EQUAL(as[0], "Exposure");
-  BOOST_CHECK_EQUAL(as[1], "Band");
-  BOOST_CHECK_EQUAL(as[2], "Polarization");
-  ArrayWithUnit<double, 3> rad = 
-    h.read_field_with_unit<double, 3>("/SoundingSpectra/radiance_o2");
-  BOOST_CHECK(rad.units.is_commensurate(W / (cm * cm * sr * inv_cm)));
-  BOOST_CHECK_CLOSE(rad.units.conversion_to_si(), 
-		    (W / (cm * cm * sr * inv_cm)).conversion_to_si(),
-		    1e-8);
+
+  BOOST_CHECK_EQUAL(h.read_attribute<std::string>("Level1b/altitude/Units"), "Meters");
+
+  ArrayWithUnit<double, 2> alt = h.read_field_with_unit<double, 2>("/Level1b/altitude");
+  BOOST_CHECK(alt.units.is_commensurate(units::m));
 }
 
 BOOST_AUTO_TEST_CASE(write)
@@ -123,9 +109,9 @@ BOOST_AUTO_TEST_CASE(write)
   BOOST_CHECK_EQUAL(att1read, 4);
   BOOST_CHECK_MATRIX_CLOSE(att2read, d);
   BOOST_CHECK_EQUAL(hread.read_attribute<int>("/TestGroup2/TestSubGroup3/att3"),
-		    4);
+                    4);
   BOOST_CHECK_EQUAL(hread.read_attribute<std::string>
-		    ("/TestGroup4/TestSubGroup/att4"), "hi there");
+                    ("/TestGroup4/TestSubGroup/att4"), "hi there");
   std::vector<std::string> att5read = 
     hread.read_attribute<std::vector<std::string> >("/TestGroup4/att5");
   BOOST_CHECK_EQUAL((int) att5read.size(), 2);
@@ -136,7 +122,7 @@ BOOST_AUTO_TEST_CASE(write)
 BOOST_AUTO_TEST_CASE(bad_data)
 {
   BOOST_CHECK_THROW(HdfFile h(test_data_dir() + "bad_file"), 
-		    FullPhysics::Exception);
+                    FullPhysics::Exception);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
