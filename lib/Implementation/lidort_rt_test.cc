@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(check_los)
 
   // These two modes are similar up to a certain point
   Range similar_range = Range(0, last(vza < 60.0));
-  BOOST_CHECK_MATRIX_CLOSE_TOL( stokes_ps(similar_range), stokes_los(similar_range), 1e-5 );
+  BOOST_CHECK_MATRIX_CLOSE_TOL( stokes_ps(similar_range), stokes_los(similar_range), 2e-5 );
 
   // The point closest to 0 vza should be almost exactly the same
   BOOST_CHECK_CLOSE( stokes_ps(0), stokes_los(0), 1e-9 );
@@ -269,6 +269,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(pp_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_pp(pp_expected_filename);
   expected_data_pp >> wn_expect >> reflectance_expect >> jacobian_expect;
 
@@ -283,6 +285,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(ps_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_ps(ps_expected_filename);
   expected_data_ps >> wn_expect >> reflectance_expect >> jacobian_expect;
 
@@ -297,6 +301,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(pp_and_ss_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_pp_and_ss(pp_and_ss_expected_filename);
   expected_data_pp_and_ss >> wn_expect >> reflectance_expect >> jacobian_expect;
 
@@ -332,6 +338,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(pp_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_pp(pp_expected_filename);
   expected_data_pp >> wn_expect >> reflectance_expect >> jacobian_expect;
 
@@ -346,6 +354,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(ps_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_ps(ps_expected_filename);
   expected_data_ps >> wn_expect >> reflectance_expect >> jacobian_expect;
 
@@ -362,6 +372,8 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
 
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
+  if(false) // Set to false to update expected results
+    write_expected(pp_and_ss_expected_filename, wn_arr, refl_jac_calc);
   IfstreamCs expected_data_pp_and_ss(pp_and_ss_expected_filename);
   expected_data_pp_and_ss >> wn_expect >> reflectance_expect >> jacobian_expect;
 
