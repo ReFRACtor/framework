@@ -12,6 +12,10 @@ set(REFRACTOR_MAJOR_VERSION "8.0.0")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
+# causes the warning to be output
+add_definitions("-Wno-deprecated-declarations")
+
 # For modules not available in standard cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
