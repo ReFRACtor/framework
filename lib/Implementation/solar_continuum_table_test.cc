@@ -9,7 +9,7 @@ BOOST_FIXTURE_TEST_SUITE(solar_continuum_table, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  HdfFile h(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile h(test_data_dir() + "../../../input/common/input/l2_solar_model.h5");
   SolarContinuumTable s(h, "/Solar/Continuum/Continuum_1");
   blitz::Array<double, 1> wn(6);
   wn = 12929.919173650407,
