@@ -39,12 +39,12 @@ BOOST_AUTO_TEST_CASE(jacobian)
 
     BOOST_CHECK_EQUAL(surface.value().rows(), 4);
   
-    BOOST_CHECK_CLOSE(surface.value()(0), 7.0, 1e-8);
+    BOOST_CHECK_CLOSE(surface.value()(0), 3.1582712862935693, 1e-8);
     BOOST_CHECK_CLOSE(surface.value()(1), 1.331, 1e-8);
     BOOST_CHECK_CLOSE(surface.value()(2), 0.0, 1e-8);
     BOOST_CHECK_CLOSE(surface.value()(3), 0.0, 1e-8);
-    
-    BOOST_CHECK_CLOSE(surface.jacobian()(0, 103), 1, 1e-8);
+
+    BOOST_CHECK_CLOSE(surface.jacobian()(0, 35), 1, 1e-8);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

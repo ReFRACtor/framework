@@ -32,11 +32,11 @@ BOOST_AUTO_TEST_CASE(jacobian)
     BOOST_CHECK_EQUAL(surface.value().rows(), 1);
   
     // coefficients in file are 0.581982157, 0, so value is just that w/ no wn varying part
-    BOOST_CHECK_CLOSE(surface.value()(0), 0.581982157, 1e-6);
+    BOOST_CHECK_CLOSE(surface.value()(0), 0.11368391022855645, 1e-6);
   
     // Slope jacobian should just be 13000-1e4/0.77
-    BOOST_CHECK_CLOSE(surface.jacobian()(0, 103), 1, 1e-8);
-    BOOST_CHECK_CLOSE(surface.jacobian()(0, 104), 12.987012987014168, 1e-6);
+    BOOST_CHECK_CLOSE(surface.jacobian()(0, 35), 1, 1e-8);
+    BOOST_CHECK_CLOSE(surface.jacobian()(0, 36), 12.987012987014168, 1e-6);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

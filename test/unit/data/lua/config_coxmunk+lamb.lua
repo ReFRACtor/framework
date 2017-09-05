@@ -1,10 +1,10 @@
 ------------------------------------------------------------
---- Do a run using the FixedLevelBaseConfig, but with Coxmunk+Lamb ground
+--- Do a run using the ExampleBaseConfig, but with Coxmunk+Lamb ground
 ------------------------------------------------------------
 
-require "fixed_level_base_config"
+require "example_base_config"
 
-config = FixedLevelBaseConfig:new() 
+config = ExampleBaseConfig:new() 
 
 config.fm.atmosphere.ground.creator = ConfigCommon.ground_coxmunk_plus_lamb
 

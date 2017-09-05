@@ -134,13 +134,16 @@ BOOST_FIXTURE_TEST_SUITE(ground_brdf_veg_config, ConfigurationBrdfVegFixture)
 
 BOOST_AUTO_TEST_CASE(load_from_lua)
 {
+    Array<double, 1> overall_amp_expt(3);
+    overall_amp_expt = 1.5770827726964785, 1.4105140989771507, 1.1222600923273593;
+
     for(int spec_idx = 0; spec_idx < 3; spec_idx++) {
         // These parameters do not vary by band number or wavenumber
-        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(0).value(), 1.0, 1e-8);
+        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(0).value(), overall_amp_expt(spec_idx), 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(1).value(), 0.05, 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(2).value(), -0.1, 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(3).value(), 0.75, 1e-8);
-        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(4).value(), 1.0, 1e-8);
+        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(4).value(), overall_amp_expt(spec_idx) * 1e-20, 1e-8);
     }
 }
 
@@ -153,7 +156,7 @@ BOOST_AUTO_TEST_CASE(kernel_value)
     boost::shared_ptr<GroundBrdfVeg> ground_brdf(boost::dynamic_pointer_cast<GroundBrdfVeg>(config_ground));
 
     float kernel_val = ground_brdf->kernel_value(0, retrieval_solar_zenith, retrieval_zenith, rel_azimuth);
-    BOOST_CHECK_CLOSE(kernel_val, 0.16137830913066864014, 1e-8);
+    BOOST_CHECK_CLOSE(kernel_val, 0.13890424370765686035, 1e-8);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -162,13 +165,16 @@ BOOST_FIXTURE_TEST_SUITE(ground_brdf_soil_config, ConfigurationBrdfSoilFixture)
 
 BOOST_AUTO_TEST_CASE(load_from_lua)
 {
+    Array<double, 1> overall_amp_expt(3);
+    overall_amp_expt = 1.5770827726964785, 1.4105140989771507, 1.1222600923273593;
+
     for(int spec_idx = 0; spec_idx < 3; spec_idx++) {
         // These parameters do not vary by band number or wavenumber
-        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(0).value(), 1.0, 1e-8);
+        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(0).value(), overall_amp_expt(spec_idx), 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(1).value(), 0.05, 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(2).value(), -0.1, 1e-8);
         BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(3).value(), 0.75, 1e-8);
-        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(4).value(), 1.0, 1e-8);
+        BOOST_CHECK_CLOSE(config_ground->surface_parameter(13000, spec_idx)(4).value(), overall_amp_expt(spec_idx) * 1.0e-20, 1e-8);
     }
 }
 
@@ -181,7 +187,7 @@ BOOST_AUTO_TEST_CASE(kernel_value)
     boost::shared_ptr<GroundBrdfSoil> ground_brdf(boost::dynamic_pointer_cast<GroundBrdfSoil>(config_ground));
 
     float kernel_val = ground_brdf->kernel_value(0, retrieval_solar_zenith, retrieval_zenith, rel_azimuth);
-    BOOST_CHECK_CLOSE(kernel_val, 0.16221261024475097656, 1e-8);
+    BOOST_CHECK_CLOSE(kernel_val, 0.13890424370765686035, 1e-8);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
