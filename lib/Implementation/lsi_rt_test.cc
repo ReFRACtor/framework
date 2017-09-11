@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(err_est)
   is_long_test();                // Skip unless we are running long tests.
   turn_on_logger();                // Have log output show up.
   
-  HdfFile config(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile config(test_data_dir() + "lua/example_static_input.h5");
   IfstreamCs expected_data(test_data_dir() + "expected/lsi_rt/lsi_expected");
   LsiRt rt(low_rt, high_rt, config);
   int wn_i = 0;
@@ -27,10 +27,11 @@ BOOST_AUTO_TEST_CASE(err_est)
   Logger::info() << low_rt->atmosphere_ptr()->timer_info();
   Array<double, 1> err_est_expect;
   expected_data >> err_est_expect;
-  if(false) {                        // Write to output, if we need to
+  if(false) {                   // Write to output, if we need to
                                 // regenerate expected values.
-    std::cerr.precision(20);
-    std::cerr << err_est.value()(Range::all(), 0) << "\n";
+    ofstream out_expt(test_data_dir() + "expected/lsi_rt/lsi_expected");
+    out_expt << std::setprecision(20) << std::scientific 
+             << err_est.value()(Range::all(), 0) << std::endl;
   }
   BOOST_CHECK_MATRIX_CLOSE_TOL(err_est.value()(Range::all(), 0), 
                                err_est_expect, 1e-7);
@@ -45,7 +46,7 @@ BOOST_AUTO_TEST_CASE(err_est_jac)
   // needed.
   is_really_long_test();     // Skip unless we are running long tests.
 
-  HdfFile c(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile c(test_data_dir() + "lua/example_static_input.h5");
   IfstreamCs expected_data(test_data_dir() + "expected/lsi_rt/lsi_expected");
   LsiRt rt(low_rt, high_rt, c);
 
@@ -53,13 +54,13 @@ BOOST_AUTO_TEST_CASE(err_est_jac)
   Array<double, 1> sv0(config_initial_guess->initial_guess());
   sv.update_state(sv0);
 
-  int spec_index = 2;
+  int spec_index = 0;
   int wn_i = 0;
-  for(double wn = 4810; wn <= 4897; wn += 0.01)
+  for(double wn = 13000.0; wn <= 13000.1; wn += 0.01)
     wn_i += 1;
   Array<double, 1> wn_arr(wn_i);
   wn_i = 0;
-  for(double wn = 4810; wn <= 4897; wn += 0.01, ++wn_i)
+  for(double wn = 13000.0; wn <= 13000.1; wn += 0.01, ++wn_i)
     wn_arr(wn_i) = wn;
 
   ArrayAd<double, 2> err_est = rt.correction_only(wn_arr, spec_index);
@@ -71,22 +72,19 @@ BOOST_AUTO_TEST_CASE(err_est_jac)
     svn(i) += epsilon(i);
     sv.update_state(svn);
     Array<double, 2> jacfd(err_est.shape());
-    jacfd = (rt.correction_only(wn_arr, spec_index).value() - e0) 
-      / epsilon(i);
+    jacfd = (rt.correction_only(wn_arr, spec_index).value() - e0) / epsilon(i);
     Array<double, 2> diff(jac(Range::all(), Range::all(), i) - jacfd);
-    if(false) {                        // Can turn this on to dump values,
+    if(false) {                 // Can turn this on to dump values,
                                 // if needed for debugging
       if(max(abs(diff)) !=0) {
-        std::cerr << i << ": " << max(abs(diff)) << " "
-                  << max(abs(where(abs(jacfd) < 1e-15, 0, diff/jacfd))) << "\n";
+        std::cerr << i << ": " 
+            << "jac_a = " << jac(Range::all(), Range::all(), i) << std::endl
+            << "jac_fd = " << jacfd << std::endl
+            << "abs_diff = " << max(abs(diff)) << " "
+            << "rel_diff = " << max(abs(where(abs(jacfd) < 1e-15, 0, diff/jacfd))) << "\n";
       }
     }
-    if(i < 20)
-    // The CO2 VMR jacobian values are much larger than the rest, so
-    // tolerance if more reasonable for those sizes
-      BOOST_CHECK(max(abs(diff)) < 0.2);
-    else
-      BOOST_CHECK(max(abs(diff)) < 3e-5);
+    BOOST_CHECK(max(abs(diff)) < 3e-4);
   }
 }
 
@@ -100,7 +98,7 @@ BOOST_AUTO_TEST_CASE(stokes)
   is_really_long_test();     // Skip unless we are running long tests.
   turn_on_logger();                // Have log output show up.
   
-  HdfFile config(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile config(test_data_dir() + "lua/example_static_input.h5");
   IfstreamCs expected_data(test_data_dir() + "expected/lsi_rt/stokes");
   LsiRt rt(low_rt, high_rt, config);
   int wn_i = 0;
@@ -116,13 +114,14 @@ BOOST_AUTO_TEST_CASE(stokes)
   BOOST_CHECK_MATRIX_CLOSE(refl(Range(9,19)), refl_expect);
   expected_data >> refl_expect;
   BOOST_CHECK_MATRIX_CLOSE(refl(Range(15999,16009)), refl_expect);
-  if(false) {                        // Write to output, if we need to
+  if(false) {                   // Write to output, if we need to
                                 // regenerate expected values.
-    std::cerr.precision(20);
-    std::cerr << "# refl Range(9,19)" << std::endl
-              << std::scientific << refl(Range(9,19)) << std::endl
-              << "# refl Range(15999,16009)" << std::endl
-              << std::scientific << refl(Range(15999,16009)) << std::endl;
+    std::ofstream out_expt(test_data_dir() + "expected/lsi_rt/stokes");
+    out_expt << std::setprecision(20) << std::scientific
+             << "# refl Range(9,19)" << std::endl
+             << std::scientific << refl(Range(9,19)) << std::endl
+             << "# refl Range(15999,16009)" << std::endl
+             << std::scientific << refl(Range(15999,16009)) << std::endl;
   }
 
 }
@@ -137,10 +136,9 @@ BOOST_AUTO_TEST_CASE(stokes_and_jacobian)
   is_really_long_test();     // Skip unless we are running long tests.
   turn_on_logger();                // Have log output show up.
 
-  IfstreamCs expected_data(test_data_dir() + 
-                           "expected/lsi_rt/stokes");
-  std::string lsi_fname = test_data_dir() + "old_ascii/lsi_wl.dat";
-  LsiRt rt(low_rt, high_rt, lsi_fname);
+  HdfFile config(test_data_dir() + "lua/example_static_input.h5");
+  IfstreamCs expected_data(test_data_dir() + "expected/lsi_rt/stokes");
+  LsiRt rt(low_rt, high_rt, config);
   int wn_i = 0;
   for(double wn = 12929.94; wn <= 13210.15; wn += 0.01)
     wn_i += 1;
