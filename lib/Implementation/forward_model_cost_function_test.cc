@@ -36,11 +36,6 @@ BOOST_AUTO_TEST_CASE(all_pixels)
     BOOST_CHECK_MATRIX_CLOSE(residual_expt, residual);
     BOOST_CHECK_MATRIX_CLOSE(se_expt, se);
     BOOST_CHECK_MATRIX_CLOSE(jacobian_expt, jacobian);
-
-}
-
-BOOST_AUTO_TEST_CASE(masked_pixels)
-{
 }
 
 BOOST_AUTO_TEST_SUITE_END()
