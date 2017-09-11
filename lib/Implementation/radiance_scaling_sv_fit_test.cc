@@ -51,15 +51,16 @@ BOOST_AUTO_TEST_CASE(basic)
   sv.update_state(x);
 
   rs2.apply_correction(pixel_grid, pixel_list, radiance2);
+
+  double band_ref_conv = band_ref.convert_wave(pixel_grid.units()).value;
   
   for(int i = 0; i < pixel_grid.data().rows(); i++)
-    rad_expect(i) = coeff(0) + coeff(1) * (pixel_grid.data()(i) - 
-                                           band_ref.value);
-  BOOST_CHECK_MATRIX_CLOSE(radiance2.data(), rad_expect);    
+    rad_expect(i) = coeff(0) + coeff(1) * (pixel_grid.data()(i) - band_ref_conv);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(radiance2.data(), rad_expect, 1e-8);
   
   for(int i = 0; i < pixel_grid.data().rows(); i++) {
     BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 0), 1, 1e-7);
-    BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 1), pixel_grid.data()(i) - band_ref.value, 1e-7);
+    BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 1), pixel_grid.data()(i) - band_ref_conv, 1e-7);
   }
 }
 

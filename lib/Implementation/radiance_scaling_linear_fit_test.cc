@@ -19,22 +19,22 @@ BOOST_AUTO_TEST_CASE(basic)
     pixel_list.push_back(i);
   RadianceScalingLinearFit rs_corr = RadianceScalingLinearFit(spec_meas, band_ref, "A-Band", true);
 
-  // This is a sell consistency check, pushing through the measured radiances should
+  // This is a self consistency check, pushing through the measured radiances should
   // result in a near perfect match to the scaled radiance
   double do_scale_0 = 2.0;
-  double do_scale_1 = 1e-4;
-  double do_offset = 7e-3;
+  double do_scale_1 = 1.0e2;
+  double do_offset = 1e19;
 
   // Convert to units like would be seen in forward model InstrumentCorrection loop
-  Unit dest_unit = Unit("ph / s / m^2 / micron W / (cm^-1) / (ph / (s) / (micron)) sr^-1");
-  //double conv_factor = FullPhysics:conversion(spec_meas.units(), dest_unit);
+  Unit dest_unit = Unit("ph / s / m^2 / micron sr^-1");
   SpectralRange meas_rad_conv( spec_meas.convert(dest_unit) );
 
   // Scale and offset test these effects on linear fit
   Array<double, 1> scaled_rad(meas_rad_conv.data().rows());
 
+  double band_ref_conv = band_ref.convert_wave(pixel_grid.units()).value;
   for(int i = 0; i < scaled_rad.rows(); i++)
-    scaled_rad(i) = (meas_rad_conv.data()(i) - do_offset) / (do_scale_0 + do_scale_1 * (pixel_grid.data()(pixel_list[i])-band_ref.value) );
+    scaled_rad(i) = (meas_rad_conv.data()(i) - do_offset) / (do_scale_0 + do_scale_1 * (pixel_grid.data()(pixel_list[i])-band_ref_conv) );
   SpectralRange meas_rad_test(scaled_rad, meas_rad_conv.units());
 
   rs_corr.apply_correction(pixel_grid, pixel_list, meas_rad_test);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(basic)
   // Convert converted radiance back so we can do a diff comparison
   SpectralRange convert_back( meas_rad_test.convert(spec_meas.units()) );
   Array<double, 1> rad_diff( spec_meas.data() - convert_back.data() );
-  BOOST_CHECK(max(abs(rad_diff)) < 1e-15);
+  BOOST_CHECK(max(abs(rad_diff)) < 1e5);
 
 }
 
