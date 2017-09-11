@@ -72,6 +72,15 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   epsilon(21) = 1e-3;              // Surface Pressure
   epsilon(22) = 1e-4;              // Temperature
 
+  epsilon(Range(23, 34)) = 1e-8;   // Aerosol
+
+  // For debugging epsilon values
+  if (false) {
+      for (int i=0 ; i < config_state_vector->observer_claimed_size(); i++) {
+          std::cerr << i << ": " << config_state_vector->state_vector_name()(i) << " val = " << config_state_vector->state()(i) << ", epsilon = " << epsilon(i) << std::endl;
+      }
+  }
+
 }
 
 ConfigurationCoxmunkFixture::ConfigurationCoxmunkFixture(const std::string& Config_file) 

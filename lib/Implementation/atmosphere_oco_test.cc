@@ -212,8 +212,7 @@ BOOST_AUTO_TEST_CASE(optical_depth_jac)
                   << jacfd << "\n"
                   << diff << "\n";
     }
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac(Range::all(), i), jacfd, 
-                                 5e-9);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac(Range::all(), i), jacfd, 1e-6);
   }
 }
 
@@ -264,8 +263,7 @@ BOOST_AUTO_TEST_CASE(ssa_jac)
     // the difference being very small, or the relative difference
     // small.
     Array<double, 1> diff(jac(Range::all(), i) - jacfd);
-    BOOST_CHECK(max(abs(diff)) < 5e-8 ||
-                max(abs(where(jacfd == 0, 0, diff / jacfd))) < 5e-4);
+    BOOST_CHECK(max(abs(diff)) < 4e-6 || max(abs(where(jacfd == 0, 0, diff / jacfd))) < 5e-4);
   }
 }
 
@@ -301,9 +299,7 @@ BOOST_AUTO_TEST_CASE(scattering_moment_jac)
                   << jacfd(Range(0,9), Range::all(), 0) << "\n";
       }
     }
-
-  BOOST_CHECK(all(abs(diff) < 2e-9 || 
-                  abs(where(jacfd == 0, 0, diff / jacfd)) < 1e-4));
+  BOOST_CHECK(all(abs(diff) < 4e-6 || abs(where(jacfd == 0, 0, diff / jacfd)) < 1e-4));
   }
 }
 
