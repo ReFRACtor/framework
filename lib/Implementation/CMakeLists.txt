@@ -196,9 +196,9 @@ set(TEST_SOURCES
     nlls_max_likelihood_test.cc
     # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses
     #nlls_solver_gsl_test.cc
-    #UT#nonuniform_lsi_rt_test.cc
-    #UT#nonuniform_spectrum_sampling_test.cc
-    #UT#oco_forward_model_test.cc
+    nonuniform_lsi_rt_test.cc
+    nonuniform_spectrum_sampling_test.cc
+    oco_forward_model_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     pressure_sigma_test.cc

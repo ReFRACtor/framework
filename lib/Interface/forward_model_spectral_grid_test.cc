@@ -6,7 +6,7 @@
 #include "nonuniform_spectrum_sampling.h"
 #include "uniform_spectrum_sampling.h"
 
-#define OUTPUT_EXPECTED false
+#define OUTPUT_EXPECTED false 
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -19,7 +19,7 @@ void print_grid(std::ostream& out, std::vector<SpectralDomain>& grid)
   out << std::setprecision(20);
   for(int spec_idx = 0; spec_idx < (int) grid.size(); spec_idx++) {
     out << "# Spectrometer: " << spec_idx << std::endl
-	<< grid[spec_idx].data() << std::endl;
+        << grid[spec_idx].data() << std::endl;
   }
 }
 
@@ -27,7 +27,7 @@ void print_pixel_list(std::ostream& out, std::vector<std::vector<int> >& plist)
 {
   for(int spec_idx = 0; spec_idx < (int) plist.size(); spec_idx++) {
     out << "# Spectrometer: " << spec_idx << std::endl
-	<< plist[spec_idx].size() << std::endl;
+        << plist[spec_idx].size() << std::endl;
     for(int pix = 0; pix < (int) plist[spec_idx].size(); pix++) {
       out << plist[spec_idx][pix] << " ";
     }
@@ -153,20 +153,30 @@ BOOST_AUTO_TEST_CASE(interpolate_spectrum)
 
     // Use non uniform sampling so that interpolated_spectrum will actually do something other than
     // return the high res spectrum
-    HeritageFile c1(test_data_dir() + "nonunif_rt_grid/nonunif_rt_grid__gosat_abo2_oco__absco_v3.1.0__wn.dat");
-    HeritageFile c2(test_data_dir() + "nonunif_rt_grid/nonunif_rt_grid__gosat_wco2_oco__absco_v3.1.0__wn.dat");
-    HeritageFile c3(test_data_dir() + "nonunif_rt_grid/nonunif_rt_grid__gosat_sco2_oco__absco_v3.1.0__wn.dat");
-    boost::shared_ptr<SpectrumSampling> interpolated_spec(
-            new UniformSpectrumSampling(12950.4, 13189.7, 0.05, 
-                                        6166.29, 6285.75, 0.05, 
-                                        4810.14, 4896.74, 0.05));
+    IfstreamCs grid_in1(test_data_dir() + "in/nonunif_rt_grid/nonunif_rt_grid__gosat_abo2_oco__absco_v3.1.0__wn");
+    IfstreamCs grid_in2(test_data_dir() + "in/nonunif_rt_grid/nonunif_rt_grid__gosat_wco2_oco__absco_v3.1.0__wn");
+    IfstreamCs grid_in3(test_data_dir() + "in/nonunif_rt_grid/nonunif_rt_grid__gosat_sco2_oco__absco_v3.1.0__wn");
 
-    boost::shared_ptr<SpectrumSampling> non_uni_spec_samp( new NonuniformSpectrumSampling(c1,c2,c3, interpolated_spec) );
+    Array<double, 1> grid_data1, grid_data2, grid_data3;
+    grid_in1 >> grid_data1;
+    grid_in2 >> grid_data2;
+    grid_in3 >> grid_data3;
+
+    SpectralDomain grid_dom1(grid_data1, units::inv_cm);
+    SpectralDomain grid_dom2(grid_data2, units::inv_cm);
+    SpectralDomain grid_dom3(grid_data3, units::inv_cm);
+
+    boost::shared_ptr<SpectrumSampling> interpolated_spec(
+            new UniformSpectrumSampling(12963.0, 13171.0, 0.05, 
+                                        6182, 6256.0, 0.05, 
+                                        4809.0, 4882.0, 0.05));
+
+    boost::shared_ptr<SpectrumSampling> non_uni_spec_samp( new NonuniformSpectrumSampling(grid_dom1, grid_dom2, grid_dom3, interpolated_spec) );
 
     ForwardModelSpectralGrid fg(config_instrument, config_spectral_window, non_uni_spec_samp);
 
     for (int spec_idx = 0; spec_idx < fg.number_spectrometer(); spec_idx++) {
-        SpectralDomain lgrid = fg.low_resolution_grid(spec_idx);
+        SpectralDomain lgrid(fg.low_resolution_grid(spec_idx).convert_wave(units::inv_cm).reverse(firstDim), units::inv_cm);
 
         // Create a new grid of some arbitrary size with the end points of the low resolution grid
         Array<double, 1> new_grid(1000);

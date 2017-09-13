@@ -2,7 +2,7 @@
 #include "fp_logger.h"
 #include "lidort_fixture.h"
 #include "solar_absorption_and_continuum.h"
-#include "solar_absorption_oco_file.h"
+#include "solar_absorption_table.h"
 #include "solar_continuum_polynomial.h"
 #include "solar_doppler_shift_polynomial.h"
 #include "uniform_spectrum_sampling.h"
@@ -21,8 +21,8 @@ BOOST_FIXTURE_TEST_SUITE(oco_forward_model, LidortLowHighLambertianFixture)
 
 BOOST_AUTO_TEST_CASE(radiance)
 {
-  is_long_test();		// Skip unless we are running long tests.
-  turn_on_logger();		// Have log output show up.
+  is_long_test();                // Skip unless we are running long tests.
+  turn_on_logger();                // Have log output show up.
 
   ArrayWithUnit<double, 3> swind;
   swind.units = units::inv_cm;
@@ -35,14 +35,9 @@ BOOST_AUTO_TEST_CASE(radiance)
     0, 0,
     0, 0;
   boost::shared_ptr<SpectralWindow> swin(new SpectralWindowRange(swind));
-
   IfstreamCs expected(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
-  HdfFile cfg(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile cfg(test_data_dir() + "lua/example_static_input.h5");
   boost::shared_ptr<RadiativeTransfer> rt(new LsiRt(low_rt, high_rt, cfg));
-  boost::shared_ptr<SpectrumSampling> spec_samp(new 
-		UniformSpectrumSampling(12929.94, 13210.15, 0.01,
-					6166.0,  6286.0, 0.01,
-					4810.0,  4897.0, 0.01));
   ptime t(date(2006, 9, 14), time_duration(12, 27, 22, 1000));
   DoubleWithUnit lat(77.1828918457, units::deg);
   DoubleWithUnit solar_zen(74.128288269, units::deg);
@@ -51,11 +46,9 @@ BOOST_AUTO_TEST_CASE(radiance)
   DefaultConstant constant;
   boost::shared_ptr<SolarDopplerShift>
     doppler(new SolarDopplerShiftPolynomial(t, lat, solar_zen, solar_az,
-					    elevation, constant));
-  double frac = 1.000;
-  HdfFile hdf_static_input(test_data_dir() + "l2_fixed_level_static_input.h5");
-  boost::shared_ptr<SolarAbsorptionSpectrum> 
-    absorption(new SolarAbsorptionOcoFile(hdf_static_input, "Solar", frac));
+                                            elevation, constant));
+  HdfFile hdf_static_input(test_data_dir() + "../../../input/common/input/l2_solar_model.h5");
+  boost::shared_ptr<SolarAbsorptionSpectrum> absorption(new SolarAbsorptionTable(hdf_static_input, "Solar/Absorption/Absorption_1"));
   ArrayWithUnit<double, 1> param;
   param.value.resize(6);
   param.value(0) = 8.83596E21;
@@ -77,7 +70,7 @@ BOOST_AUTO_TEST_CASE(radiance)
   }
 
   OcoForwardModel fm(config_instrument, swin, config_level_1b,
-		     rt, spec_samp, config_state_vector, spec_effect);
+                     rt, config_spectrum_sampling, config_state_vector, spec_effect);
   fm.setup_grid();
   Array<double, 1> rad_expect;
   expected >> rad_expect;
@@ -87,8 +80,8 @@ BOOST_AUTO_TEST_CASE(radiance)
 
 BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
 {
-  is_long_test();		// Skip unless we are running long tests.
-  turn_on_logger();		// Have log output show up.
+  is_long_test();                // Skip unless we are running long tests.
+  turn_on_logger();                // Have log output show up.
 
   ArrayWithUnit<double, 3> swind;
   swind.units = units::inv_cm;
@@ -103,12 +96,8 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
   boost::shared_ptr<SpectralWindow> swin(new SpectralWindowRange(swind));
 
   IfstreamCs expected(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
-  HdfFile cfg(test_data_dir() + "l2_fixed_level_static_input.h5");
+  HdfFile cfg(test_data_dir() + "lua/example_static_input.h5");
   boost::shared_ptr<RadiativeTransfer> rt(new LsiRt(low_rt, high_rt, cfg));
-  boost::shared_ptr<SpectrumSampling> spec_samp(new 
-		UniformSpectrumSampling(12929.94, 13210.15, 0.01,
-					12929.94, 13210.15, 0.01,
-					12929.94, 13210.15, 0.01));
   ptime t(date(2006, 9, 14), time_duration(12, 27, 22, 1000));
   DoubleWithUnit lat(77.1828918457, units::deg);
   DoubleWithUnit solar_zen(74.128288269, units::deg);
@@ -117,11 +106,9 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
   DefaultConstant constant;
   boost::shared_ptr<SolarDopplerShift>
     doppler(new SolarDopplerShiftPolynomial(t, lat, solar_zen, solar_az,
-					    elevation, constant));
-  double frac = 1.000;
-  HdfFile hdf_static_input(test_data_dir() + "l2_fixed_level_static_input.h5");
-  boost::shared_ptr<SolarAbsorptionSpectrum> 
-    absorption(new SolarAbsorptionOcoFile(hdf_static_input, "Solar", frac));
+                                            elevation, constant));
+  HdfFile hdf_static_input(test_data_dir() + "../../../input/common/input/l2_solar_model.h5");
+  boost::shared_ptr<SolarAbsorptionSpectrum> absorption(new SolarAbsorptionTable(hdf_static_input, "Solar/Absorption/Absorption_1"));
   ArrayWithUnit<double, 1> param;
   param.value.resize(6);
   param.value(0) = 8.83596E21;
@@ -143,20 +130,21 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
   }
 
   OcoForwardModel fm(config_instrument, swin, config_level_1b,
-		     rt, spec_samp, config_state_vector, spec_effect);
+                     rt, config_spectrum_sampling, config_state_vector, spec_effect);
   fm.setup_grid();
+  ArrayAd<double, 1> rad(fm.radiance_all().spectral_range().data_ad());
+  if(false) {                        // Print out in case we need to update
+                                // expected results
+    std::ofstream expt_out(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
+    expt_out << std::setprecision(20) << std::scientific
+             << "# Radiance" << std::endl
+             << rad.value() << std::endl
+             << "# Jacobian" << std::endl
+             << rad.jacobian() << std::endl;
+  }
   Array<double, 1> rad_expect;
   Array<double, 2> jac_expect;
   expected >> rad_expect >> jac_expect;
-  ArrayAd<double, 1> rad(fm.radiance_all().spectral_range().data_ad());
-  if(false) {			// Print out in case we need to update
-				// expected results
-    std::cerr.precision(20);
-    std::cerr << "# Radiance\n"
-	      << rad.value() << "\n"
-	      << "# Jacobian\n"
-	      << rad.jacobian() << "\n";
-  }
   BOOST_CHECK_MATRIX_CLOSE_TOL(rad.value(), rad_expect, 1e-7);
   BOOST_CHECK_MATRIX_CLOSE_TOL(rad.jacobian(), jac_expect, 1e-5);
 }
