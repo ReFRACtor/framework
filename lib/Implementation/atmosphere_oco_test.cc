@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   StateVector sv;
   sv.add_observer(*atm_zeroext->aerosol_ptr());
   Array<double, 1> x(sv.observer_claimed_size());
-  x = 0;
+  x = 1e-20;
   sv.update_state(x);
 
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
