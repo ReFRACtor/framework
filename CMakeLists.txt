@@ -16,6 +16,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")
 
+# Check that required functions exist and define macros to include their use
+INCLUDE (CheckFunctionExists)
+
+set(CMAKE_REQUIRED_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES} m)
+check_function_exists(feenableexcept HAVE_FEENABLEEXCEPT)
+if(HAVE_FEENABLEEXCEPT)
+    add_definitions(-DHAVE_FEENABLEEXCEPT)
+endif()
+
 # For modules not available in standard cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
