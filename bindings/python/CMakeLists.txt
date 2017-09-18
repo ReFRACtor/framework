@@ -81,7 +81,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL
 
 # Install SWIG Python code into full_physics_swig/
 install(TARGETS _swig_wrap DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig)
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/swig/ DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig
+install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig
     FILES_MATCHING PATTERN "*.py")
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig)
