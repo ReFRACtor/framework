@@ -13,10 +13,14 @@
 %fp_shared_ptr(FullPhysics::LidortRt);
 
 namespace FullPhysics {
+
+// Force to be not abstract
+%feature("notabstract") LidortRt;
+
 class LidortRt : public SpurrRt  {
 public:
   LidortRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-	   const blitz::Array<double, 2>& Stokes_coef,
+	   const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
 	   const blitz::Array<double, 1>& Sza, 
 	   const blitz::Array<double, 1>& Zen, 
 	   const blitz::Array<double, 1>& Azm,

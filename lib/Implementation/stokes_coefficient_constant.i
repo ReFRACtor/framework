@@ -9,12 +9,14 @@
 %fp_shared_ptr(FullPhysics::StokesCoefficientConstant);
 
 namespace FullPhysics {
+
+// Force to be not abstract
+%feature("notabstract") StokesCoefficientConstant;
+
 class StokesCoefficientConstant : public StokesCoefficientImpBase {
 public:
   StokesCoefficientConstant(const blitz::Array<double, 2>& Stokes_coeff);
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
   void set_stokes_coefficient(const blitz::Array<double, 2> Stokes_coeff);
-protected:
-  virtual void calc_stokes_coeff() const;
 };
 }

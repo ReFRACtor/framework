@@ -28,13 +28,33 @@ class AtmosphereOco : public RtAtmosphere,
     public Observer<Aerosol> {
 public:
   AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<Aerosol>& aerosolv,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-	     const boost::shared_ptr<Ground>& groundv,
-	     const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C);
+		const boost::shared_ptr<Pressure>& pressurev,
+		const boost::shared_ptr<Temperature>& temperaturev,
+		const boost::shared_ptr<Aerosol>& aerosolv,
+		const boost::shared_ptr<RelativeHumidity>& rhv,
+		const boost::shared_ptr<Ground>& groundv,
+		const std::vector<boost::shared_ptr<Altitude> >& altv,
+		const boost::shared_ptr<Constant>& C);
+  AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
+		const boost::shared_ptr<Pressure>& pressurev,
+		const boost::shared_ptr<Temperature>& temperaturev,
+		const boost::shared_ptr<Aerosol>& aerosolv,
+		const boost::shared_ptr<RelativeHumidity>& rhv,
+		const std::vector<boost::shared_ptr<Altitude> >& altv,
+		const boost::shared_ptr<Constant>& C);
+  AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
+		const boost::shared_ptr<Pressure>& pressurev,
+		const boost::shared_ptr<Temperature>& temperaturev,
+		const boost::shared_ptr<RelativeHumidity>& rhv,
+		const boost::shared_ptr<Ground>& groundv,
+		const std::vector<boost::shared_ptr<Altitude> >& altv,
+		const boost::shared_ptr<Constant>& C);
+  AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
+		const boost::shared_ptr<Pressure>& pressurev,
+		const boost::shared_ptr<Temperature>& temperaturev,
+		const boost::shared_ptr<RelativeHumidity>& Rh,
+		const std::vector<boost::shared_ptr<Altitude> >& altv,
+		const boost::shared_ptr<Constant>& C);
   virtual void notify_add(StateVector& Sv);
   virtual void notify_remove(StateVector& Sv);
   virtual ArrayAdWithUnit<double, 1> altitude(int spec_index) const;

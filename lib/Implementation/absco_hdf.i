@@ -9,6 +9,10 @@
 
 %fp_shared_ptr(FullPhysics::AbscoHdf);
 namespace FullPhysics {
+
+// Force to be not abstract
+%feature("notabstract") AbscoHdf;
+
 class AbscoHdf : public Absco {
 public:
   AbscoHdf(const std::string& Fname, int Cache_nline = 5000);
