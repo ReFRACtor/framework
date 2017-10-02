@@ -18,7 +18,7 @@ RUN yum install -y epel-release && yum update -y
 # Make a symbolic link for cmake3 since this is a non-standard name for the program
 RUN yum install -y \
     file which \
-    gcc gcc-gfortran gcc-c++ libtool rpm-build \
+    gcc gcc-gfortran gcc-c++ libtool \
     cmake3 make patch zlib-devel bzip2-devel \
     hdf5 hdf5-devel readline-devel \
     python34 python34-devel python34-pip python34-numpy python34-nose \
@@ -26,11 +26,11 @@ RUN yum install -y \
     ln -s /usr/bin/cmake3 /usr/bin/cmake
 
 # Install GSL 2+ from source since version in CentOS and EPEL are many years old in fact
-ADD http://dl.fedoraproject.org/pub/fedora/linux/releases/26/Everything/source/tree/Packages/g/gsl-2.3-1.fc26.src.rpm /tmp/
+ADD http://mirrors.ibiblio.org/gnu/ftp/gnu/gsl/gsl-2.4.tar.gz /tmp
 
-RUN rpmbuild --rebuild /tmp/gsl-2.3-1.fc26.src.rpm && \
-    yum install -y /root/rpmbuild/RPMS/x86_64/*.rpm && \
-    rm /tmp/gsl-2.3-1.fc26.src.rpm
+RUN cd /tmp && tar zfvx gsl-2.4.tar.gz && cd gsl-2.4 && \
+    ./configure && make && make install && \
+    rm -rf /tmp/gsl-2.4*
 
 # Install Boost from source since we need >= 1.59
 ADD https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.gz /tmp/
