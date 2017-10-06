@@ -74,35 +74,18 @@ if(BUILD_PYTHON_BINDING)
         COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target install
         DEPENDS python)
 
-    ######
-    # Include Python tests if building bindings
-    include(${CMAKE_CURRENT_SOURCE_DIR}/full/test_python_list.cmake)
+    set(PYTEST_WRAP ${CMAKE_CURRENT_BINARY_DIR}/pytest_wrap.sh)
+    configure_file(pytest_wrap.sh.in ${PYTEST_WRAP})
 
-    foreach(test_name ${FULL_TEST_PYTHON_LIST})
-        add_test(NAME full/python/${test_name}
-            COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/full/${test_name}/run_test
-            WORKING_DIRECTORY ${FULL_TEST_RUN_DIR})
-    endforeach()
+    set(PYTEST_TEST_RUN_DIR ${CMAKE_CURRENT_BINARY_DIR}/pytest)
+    file(MAKE_DIRECTORY ${PYTEST_TEST_RUN_DIR})
 
-    # Run a Make install so that Python bindings are installed before running these tests
-    add_custom_target(full_test_python 
-        COMMAND ${CTEST_WRAP} -R ^full/python
+    add_test(NAME python_pytest 
+        COMMAND ${PYTEST_WRAP} ${PROJECT_SOURCE_DIR}/lib/Python
+        WORKING_DIRECTORY ${PYTEST_TEST_RUN_DIR})
+
+    add_custom_target(python_test
+        COMMAND ${CTEST_WRAP} -R python_pytest
         DEPENDS python_install)
-    add_dependencies(full_test full_test_python)
 
-    #####
-    # Set up nose tests
-    set(NOSE_WRAP ${CMAKE_CURRENT_BINARY_DIR}/nose_wrap.sh)
-    configure_file(nose_wrap.sh.in ${NOSE_WRAP})
-
-    set(NOSE_TEST_RUN_DIR ${CMAKE_CURRENT_BINARY_DIR}/nose)
-    file(MAKE_DIRECTORY ${NOSE_TEST_RUN_DIR})
-
-    add_test(NAME python_nose 
-        COMMAND ${NOSE_WRAP} ${PROJECT_SOURCE_DIR}/lib/Python ${PROJECT_SOURCE_DIR}/verification_test
-        WORKING_DIRECTORY ${NOSE_TEST_RUN_DIR})
-
-    add_custom_target(nose_test
-        COMMAND ${CTEST_WRAP} -R python_nose
-        DEPENDS python_install)
 endif()
