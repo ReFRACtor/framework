@@ -173,23 +173,3 @@ def test_common_store():
     config_inst = process_config(config_def)
 
     assert config_inst['use_common'] == 11
-
-def test_structure():
-
-    config_def = {
-        'order': ['common', 'use_common'],
-        'common': {
-            'creator': creator.base.SaveToCommon,
-            'x': 5,
-            'y': 6,
-        },
-        'use_common': {
-            'creator': AddCreator,
-        },
-    }
-
-    c = creator.base.ParamPassThru(config_def)
-
-    from pprint import pprint
-    print("\n")
-    pprint(c.structure(), indent=4)
