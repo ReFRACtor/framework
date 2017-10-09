@@ -39,7 +39,13 @@ endif()
 
 # Set up HDF5 using the C and C++ bindings
 find_package(HDF5 REQUIRED COMPONENTS C CXX)
-list(APPEND THIRDPARTY_INCLUDES ${HDF5_C_INCLUDE_DIRS})
+# Different versionso of FindHDF5 may use one or the other of these variable naems, with 
+# newer versions saying that HDF5_C_INCLUDE_DIRS deprecates the other
+if(HDF5_C_INCLUDE_DIRS)
+    list(APPEND THIRDPARTY_INCLUDES ${HDF5_C_INCLUDE_DIRS})
+else()
+    list(APPEND THIRDPARTY_INCLUDES ${HDF5_C_INCLUDE_DIR})
+endif()
 list(APPEND THIRDPARTY_LIBRARIES ${HDF5_LIBRARIES})
 
 # Set up Boost
