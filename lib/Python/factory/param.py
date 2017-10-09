@@ -28,6 +28,8 @@ class ConfigParam(object):
         raise NotImplementedError("check_type must be implemented in inheriting class")
 
 class AnyValue(ConfigParam):
+    "Bypasses type checking for the parameter"
+
     def check_type(self, value):
         pass
 
@@ -74,3 +76,15 @@ class Iterable(ConfigParam):
 
         if not hasattr(value, "__iter__"):
             raise ParamError("Expected an iterable for value: %s" % value)
+
+class InstanceOf(ConfigParam):
+    "Configuration parameter that must be an instance of a specific type of class"
+
+    def __init__(self, cls_type, **kwargs):
+        super().__init__(**kwargs)
+        self.cls_type = cls_type
+
+    def check_type(self, value):
+
+        if not isinstance(value, self.cls_type):
+            raise ParamError("Expected an instance of %s for value: %s" % (self.cls_type, value))

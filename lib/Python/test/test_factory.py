@@ -4,9 +4,9 @@ import full_physics.factory.creator as creator
 import full_physics.factory.param as param
 from full_physics.factory import process_config
 
-def ParamReturnCreator(param_type):
+def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):
-        val = param_type()
+        val = param_type(**kwargs)
         def create(self):
             return self.param("val")
 
@@ -94,6 +94,31 @@ def test_iterable_param():
 
     assert np.all(np.array(config_inst) == np.arange(1,6))
 
+def test_instanceof_param():
+
+    class TestClass(object):
+        pass
+
+    # Check that iterables are correctly handled
+    config_def = {
+        'creator': ParamReturnCreator(param.InstanceOf, cls_type=TestClass),
+        'val': TestClass(),
+    }
+ 
+    config_inst = process_config(config_def)
+
+    assert isinstance(config_inst, TestClass)
+
+    # Force error on type
+    config_def['val'] = 5
+
+    try:
+        config_inst = process_config(config_def)
+    except param.ParamError:
+        assert True
+    else:
+        assert False
+
 def test_callable():
 
     config_def = {
@@ -131,3 +156,40 @@ def test_nested():
     assert config_inst['item2'] == 10
     assert config_inst['item3'] == 15
 
+def test_common_store():
+
+    config_def = {
+        'order': ['common', 'use_common'],
+        'common': {
+            'creator': creator.base.SaveToCommon,
+            'x': 5,
+            'y': 6,
+        },
+        'use_common': {
+            'creator': AddCreator,
+        },
+    }
+
+    config_inst = process_config(config_def)
+
+    assert config_inst['use_common'] == 11
+
+def test_structure():
+
+    config_def = {
+        'order': ['common', 'use_common'],
+        'common': {
+            'creator': creator.base.SaveToCommon,
+            'x': 5,
+            'y': 6,
+        },
+        'use_common': {
+            'creator': AddCreator,
+        },
+    }
+
+    c = creator.base.ParamPassThru(config_def)
+
+    from pprint import pprint
+    print("\n")
+    pprint(c.structure(), indent=4)

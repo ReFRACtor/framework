@@ -9,7 +9,7 @@ def process_config(config_def):
     if "creator" in config_def:
         creator_class = config_def["creator"]
     else:
-        creator_class = creator.base.ConfigPassThru
+        creator_class = creator.base.ParamPassThru
 
     config_creator = creator_class(config_def)
 

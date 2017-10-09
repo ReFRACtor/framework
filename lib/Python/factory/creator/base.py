@@ -1,4 +1,4 @@
-from ..param import ConfigParam, ParamError, AnyValue
+from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf
 
 class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
@@ -9,7 +9,7 @@ class Creator(object):
         if type(config_def) is dict:
             self.config_def = config_def
         else:
-            raise TypeError("The config definition (config_def) argument should be of type dict")
+            raise TypeError("The config definition (config_def) argument passed to %s should be of type dict" % self.__class__.__name__)
 
         # Create a new common store if non are passed
         if common_store is not None:
@@ -20,7 +20,7 @@ class Creator(object):
             self.common_store = {}
 
         self._load_parameters()
-
+        
     def _load_parameters(self):
         "Gather class parameter types and ensure config_def has necessary items"
 
@@ -31,19 +31,19 @@ class Creator(object):
         for attr_name in dir(self):
             attr_val = getattr(self, attr_name)
             if isinstance(attr_val, ConfigParam):
-                if attr_val.required and not attr_name in self.config_def:
+                # For required parameters, make sure the value is present either in the config or common store
+                if attr_val.required and not attr_name in self.config_def and not attr_name in self.common_store:
                     raise ParamError("A parameter named %s was expected in configuration definition used by creator %s" % (attr_name, self.__class__.__name__))
                 self.parameters[attr_name] = attr_val
 
-    def param(self, param_name, param_def=None):
+    def param(self, param_name):
         "Retrieve a parameter from the configuration definition"
 
         # Creator requested a parameter that was not defined by a ConfigParam attribute
-        if param_def is None:
-            try:
-                param_def = self.parameters[param_name]
-            except KeyError:
-                raise KeyError("Unregistered parameter %s requested by %s" % (param_name, self.__class__.__name__))
+        try:
+            param_def = self.parameters[param_name]
+        except KeyError:
+            raise KeyError("Unregistered parameter %s requested by %s" % (param_name, self.__class__.__name__))
 
         # Get parameter from configuration definition first, then trying common store and
         # if not required return None without error
@@ -61,34 +61,52 @@ class Creator(object):
         except ParamError as exc:
             raise ParamError("The parameter named %s requested by creator %s fails with error: %s" % (param_name, self.__class__.__name__, exc))
 
-    def structure(self):
-        "Return the required configuration parameters needed for this creator"
-
-        struct_def = {}
-        struct_def['creator'] = self.__class__.__name__
-        for param_name, param_obj in self.parameters.items():
-            struct_def[param_name] = repr(param_obj)
-
-        return struct_def
-
     def create(self):
         raise NotImplementedError("Create must be defined in inheriting Creator classes")
 
-class ConfigPassThru(Creator):
+class ParamIterateCreator(Creator):
+    "Base class for creators that iterate over their parameters"
+
+    order = Iterable(required=False)
 
     def __init__(self, config_def, param_order=None, **kwargs):
         super().__init__(config_def, **kwargs)
 
-        if param_order is not None:
-            self.param_order = param_order
-        else:
-            self.param_order = self.config_def.keys()
+        if param_order is None:
+            if "order" in self.config_def:
+                param_order = self.param("order")
+            else:
+                param_order = self.config_def.keys()
+
+        # Filter out parameter names that should not be processed,
+        # such as the creator param
+        self.param_names = []
+        for param_name in param_order:
+            if param_name != "creator":
+                self.param_names.append(param_name)
+
+                # Param type not defined so allow any value
+                if param_name not in self.parameters:
+                    self.parameters[param_name] = AnyValue()
+
+class ParamPassThru(ParamIterateCreator):
+    "Evaluates and passes configurations parameter through as the creator result"
 
     def create(self):
 
         result = {} 
-        for param_name in self.param_order:
-            if param_name != "creator":
-                result[param_name] = self.param(param_name, param_def=AnyValue())
+        for param_name in self.param_names:
+            result[param_name] = self.param(param_name)
 
         return result
+
+class SaveToCommon(ParamPassThru):
+    "Evalualtes parameters and saves them into the common store, creator has no return value"
+
+    def create(self):
+        param_vals = super().create()
+
+        for param_name in self.param_names:
+            self.common_store[param_name] = param_vals[param_name]
+        
+        return param_vals
