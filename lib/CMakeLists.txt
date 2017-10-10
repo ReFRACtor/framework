@@ -15,7 +15,7 @@ foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support D
     #
     # The trailing / on the sub_dir makes all files get coppied to the same destination path
     # instead of having the directory (ie Interface/) copied to the destination path
-    install(DIRECTORY ${sub_dir}/ DESTINATION include/full_physics
+    install(DIRECTORY ${sub_dir}/ DESTINATION include/refractor
         FILES_MATCHING 
             PATTERN "*.h" 
             PATTERN "*_fixture.h" EXCLUDE
@@ -28,8 +28,8 @@ endforeach(sub_dir)
 include_directories(${THIRDPARTY_INCLUDES})
 include_directories(${FP_INCLUDES})
 
-add_library(full_physics SHARED ${FP_SOURCE_FILES})
-target_link_libraries(full_physics ${THIRDPARTY_LIBRARIES})
+add_library(refractor SHARED ${FP_SOURCE_FILES})
+target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
 
 # Add SWIG files included in lib directory
 list(APPEND SWIG_INTERFACE_FILES 
@@ -43,6 +43,6 @@ set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
 set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
 
 # Create installation rules
-install(TARGETS full_physics
+install(TARGETS refractor
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib)

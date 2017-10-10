@@ -1,7 +1,7 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 export L2_EXE_PATH=$prefix/bin
 export L2_FP_SRC_PATH=@PROJECT_SOURCE_DIR@
-export L2_INPUT_PATH=$prefix/install/etc/full_physics/config
+export L2_INPUT_PATH=$prefix/install/etc/refractor/config
 export abscodir=@ABSCO_DIR@
 export merradir=@MERRA_DIR@
 
@@ -25,22 +25,4 @@ if [ -n "$LUA_PATH" ]; then
     export LUA_PATH="$L2_INPUT_PATH/?.lua;$LUA_PATH"
 else
     export LUA_PATH="$L2_INPUT_PATH/?.lua;"
-fi
-
-# Select a newer version of gcc and python
-# Note if you update this, also update ../pleiades_build.script
-if [ -e /usr/share/modules/init/bash ]; then
-    sles_version=$(cat /etc/SuSE-release | grep VERSION | cut -d " " -f 3)
-    if [ "$sles_version" == "11" ]; then # This is for SLES11
-        source /usr/share/modules/init/bash
-	module load gcc/4.9.3
-	module load python/2.7.11
-	module load ruby/1.9.1-p376	
-    else # This is for SLES12
-        source /usr/share/modules/init/bash
-	module load gcc/4.9.4
-        module load /nasa/modulefiles/pkgsrc/sles12/python/2.7.12
-        # This contains ruby 2.2.6p396
-        module load /nasa/modulefiles/pkgsrc/sles12/pkgsrc/2016Q4
-    fi
 fi

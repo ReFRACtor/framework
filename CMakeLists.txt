@@ -48,7 +48,7 @@ if(NOT MERRA_DIR)
 endif()
 
 # Obtain the CM version of the source code
-execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/support/full_physics/version_util.py ${PROJECT_SOURCE_DIR}
+execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/support/refractor/version_util.py ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE REFRACTOR_CM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -65,11 +65,11 @@ include_directories(${CMAKE_BINARY_DIR}/modules)
 # Add thirdparty packages to build
 add_subdirectory(thirdparty)
 
-# Set up the full_physics library
+# Set up the refractor library
 add_subdirectory(lib)
 
-# Add thirdparty dependencies to full_physics library
-add_dependencies(full_physics thirdparty)
+# Add thirdparty dependencies to refractor library
+add_dependencies(refractor thirdparty)
 
 # Add the binary tree to the search path for include files so that we will find version.h
 # Also include paths set from lib/ dir
@@ -77,7 +77,7 @@ include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES} ${THIRDPARTY_INCLUDES})
 
 # Create main executable 
 add_executable(l2_fp bin/l2_fp.cc)
-target_link_libraries(l2_fp full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
+target_link_libraries(l2_fp refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 
 # Include Lua configs and input rules
 add_subdirectory(input)

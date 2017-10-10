@@ -9,7 +9,7 @@
 #undef _REENTRANT
 #include <blitz/array.h>
 #include <blitz/range.h>
-#define PY_ARRAY_UNIQUE_SYMBOL full_physics_ARRAY_API
+#define PY_ARRAY_UNIQUE_SYMBOL refractor_ARRAY_API
 #ifndef DO_IMPORT_ARRAY
 #define NO_IMPORT_ARRAY
 #endif

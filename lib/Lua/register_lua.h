@@ -82,11 +82,11 @@ namespace FullPhysics {
 
    We normally use Lua through our C++ code. It can be useful, 
    particularly when testing, to go the other way. We define the
-   function "luaopen_fullphysics" to go the other way, call in 
+   function "luaopen_refractor" to go the other way, call in 
    Lua like:
 
    \code
-   require("libfull_physics")
+   require("librefractor")
    \endcode
    
    Note that you should use the installed library, like we do with 
@@ -97,7 +97,7 @@ namespace FullPhysics {
 
    \code
    LUA_CPATH=install/lib/?.so lua
-   require "libfull_physics"
+   require "librefractor"
    l1b = Level1bAcos("filename","soundingid")
    \endcode
 *******************************************************************/

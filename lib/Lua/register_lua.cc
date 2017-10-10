@@ -333,7 +333,7 @@ void RegisterLua::register_lua(lua_State* ls)
 }
 
 extern "C" {
-  int luaopen_libfull_physics(lua_State* ls)
+  int luaopen_librefractor(lua_State* ls)
   {
     luabind::open(ls);
     RegisterLua::register_lua(ls);

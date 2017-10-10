@@ -11,7 +11,7 @@ from .try_swig_load import *
 from . import safe_matplotlib_import
 
 # Normal __all__ doesn't work here, because we also need to include the
-# full_physics_swig stuff (with __all__, *only* the listed modules are
+# refractor_swig stuff (with __all__, *only* the listed modules are
 # included). So we just explicitly import the modules we want here.
 
 # Don't automatically import these modules, they may use C interface

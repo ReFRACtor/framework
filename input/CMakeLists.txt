@@ -1,5 +1,5 @@
 # Install files from this directory into a common subdirectory
-set(INPUT_INSTALL_PREFIX etc/full_physics)
+set(INPUT_INSTALL_PREFIX etc/refractor)
 
 # Create version.lua file by evaluating cmake variables and install
 configure_file (

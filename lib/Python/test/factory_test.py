@@ -1,8 +1,8 @@
 import numpy as np
 
-import full_physics.factory.creator as creator
-import full_physics.factory.param as param
-from full_physics.factory import process_config
+import refractor.factory.creator as creator
+import refractor.factory.param as param
+from refractor.factory import process_config
 
 def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):

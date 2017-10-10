@@ -25,7 +25,7 @@ set(FP_TEST_FILES ${FP_TEST_FILES} "${CMAKE_CURRENT_BINARY_DIR}/global_fixture_d
 #####
 # Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
-target_link_libraries(test_all full_physics ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
+target_link_libraries(test_all refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 
 #####
 # Define unit tests

@@ -63,28 +63,28 @@ set_source_files_properties(${BUILD_USED_SWIG_FILES} PROPERTIES CPLUSPLUS ON)
 file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_swig_wrap.py ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx ${SWIG_MODULE_NAMES})
 
-# Create full_physics SWIG library
+# Create refractor SWIG library
 swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
 
-# Link with main library, which is also called full_physics!
-swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} full_physics)
+# Link with main library, which is also called refractor!
+swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} refractor)
 
 # Ensure that only this module has access to the SWIG type information
-target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=full_physics)
+target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
 
 # Find where Python distribution libaries should be located by querying distutils
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-# Install non SWIG Python code into full_physics/
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL_DIR}/full_physics
+# Install non SWIG Python code into refractor/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
     FILES_MATCHING PATTERN "*.py")
 
-# Install SWIG Python code into full_physics_swig/
-install(TARGETS _swig_wrap DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig)
-install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig
+# Install SWIG Python code into refractor_swig/
+install(TARGETS _swig_wrap DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
+install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
     FILES_MATCHING PATTERN "*.py")
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/full_physics_swig)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 
 # Expose Python install path to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)

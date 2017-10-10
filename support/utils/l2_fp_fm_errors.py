@@ -10,7 +10,7 @@ import re
 from collections import namedtuple
 from six.moves import zip_longest
 
-from full_physics.fp_perturbation import BAND_NAMES, register_multiple_perturb_types, register_perturb_init, FmPerturbations, log_info, PerturbTypeDesc, filter_perturb_funcs 
+from refractor.fp_perturbation import BAND_NAMES, register_multiple_perturb_types, register_perturb_init, FmPerturbations, log_info, PerturbTypeDesc, filter_perturb_funcs 
 
 # Set up ABSCO files that should be used for base calculation
 # and spectroscopy error cases

@@ -10,7 +10,7 @@
 // when we build. But we still need to supply this to get the
 // directors=1 and allprotected=1 set.
 
-%module(directors="1", allprotected="1") full_physics
+%module(directors="1", allprotected="1") refractor
 
 %{
 #include <boost/shared_ptr.hpp>
@@ -32,7 +32,7 @@ public:
 
 // Short cut for ingesting a base class
 %define %base_import(NAME)
-%import(module="full_physics_swig.NAME") "NAME.i"
+%import(module="refractor_swig.NAME") "NAME.i"
 %enddef
 
 // Map std::string to and from the native string type

@@ -13,8 +13,8 @@ from argparse import ArgumentParser
 import h5py
 import numpy as np
 
-from full_physics import *
-import full_physics
+from refractor import *
+import refractor
 
 # Some constants that normally would be obtained from Lua config or static input
 NUM_PIXEL = 1016
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         log_util.init_logging(logging.INFO)
 
     # Debugging to let us make sure we are using the correct L2 library
-    logging.debug("L2 Library in use: %s" % full_physics.__file__)
+    logging.debug("L2 Library in use: %s" % refractor.__file__)
 
     l1b_obj = h5py.File(args.l1b_file, 'r')
 

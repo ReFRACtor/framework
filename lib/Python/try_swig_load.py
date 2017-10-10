@@ -2,7 +2,7 @@
 # The python modules need to work either way, so we have this simple test
 # and load if found.
 try:
-    from full_physics_swig import *
-    have_full_physics_swig = True
+    from refractor_swig import *
+    have_refractor_swig = True
 except ImportError:
-    have_full_physics_swig = False
+    have_refractor_swig = False

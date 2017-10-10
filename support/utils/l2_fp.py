@@ -5,7 +5,7 @@
 import os
 import imp
 import re
-from full_physics import *
+from refractor import *
 
 def run_python_config(config_filename, output_file):
     """Runs a python configurations which is expected to load a Lua configuration itself
