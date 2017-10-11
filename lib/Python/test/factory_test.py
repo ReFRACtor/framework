@@ -1,8 +1,11 @@
 import numpy as np
+from functools import partial
 
 import refractor.factory.creator as creator
 import refractor.factory.param as param
 from refractor.factory import process_config
+
+from refractor import framework as rf
 
 def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):
@@ -44,6 +47,28 @@ def test_scalar_param():
     else:
         assert False
 
+def test_scalar_with_type():
+
+    # Check that scalar params are correctly checked
+    config_def = {
+        'creator': ParamReturnCreator(partial(param.Scalar, dtype=str)),
+        'val': "10",
+    }
+ 
+    config_inst = process_config(config_def)
+
+    assert config_inst == "10"
+
+    # Check that non scalars cause errors
+    config_def['val'] = 10
+
+    try:
+        config_inst = process_config(config_def)
+    except param.ParamError:
+        assert True
+    else:
+        assert False
+
 def test_array_param():
     
     # Check that arrays are correctly handled
@@ -75,6 +100,18 @@ def test_array_param():
     else:
         assert False
 
+def test_array_with_unit_param():
+
+    # Check that arrays are correctly handled
+    config_def = {
+        'creator': ParamReturnCreator(param.ArrayWithUnit),
+        'val': rf.ArrayWithUnit_double_1(np.arange(1,6), "m"),
+    }
+
+    config_inst = process_config(config_def)
+
+
+ 
 def test_iterable_param():
 
     # Check that iterables are correctly handled
