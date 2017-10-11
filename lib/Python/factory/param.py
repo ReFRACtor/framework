@@ -12,6 +12,7 @@ class ConfigParam(object):
 
     def __init__(self, required=True):
         self.required = required
+        self.accessor_func = None
 
     def evaluate(self, in_value, creator):
 
@@ -28,8 +29,17 @@ class ConfigParam(object):
 
         return out_value
 
+    def bind_accessor(self, accessor_func):
+        self.accessor_func = accessor_func
+
     def check_type(self, value):
         raise NotImplementedError("check_type must be implemented in inheriting class")
+
+    def __call__(self):
+        if self.accessor_func is None:
+            raise ParamError("An accessor function has not been bound to this parameter")
+        else:
+            return self.accessor_func()
 
 class AnyValue(ConfigParam):
     "Bypasses type checking for the parameter"

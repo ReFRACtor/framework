@@ -210,3 +210,20 @@ def test_common_store():
     config_inst = process_config(config_def)
 
     assert config_inst['use_common'] == 11
+
+def test_bound_accessor():
+
+    class AccessorFuncCreator(creator.base.Creator):
+        some_val = param.Scalar(int)
+
+        def create(self):
+            return self.some_val()
+
+    config_def = {
+        'creator': AccessorFuncCreator,
+        'some_val': 5,
+    }
+
+    config_inst = process_config(config_def)
+
+    assert config_inst == 5
