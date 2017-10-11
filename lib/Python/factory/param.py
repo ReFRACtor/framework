@@ -19,8 +19,8 @@ class ConfigParam(object):
         # along the creator requesting the parameter
         if callable(in_value):
             out_value = in_value(creator)
-        elif isinstance(in_value, dict) and "creator" in in_value:
-            out_value = in_value["creator"](in_value, common_store=creator.common_store).create()
+        elif hasattr(in_value, "create"): 
+            out_value = in_value.create()
         else:
             out_value = in_value
 

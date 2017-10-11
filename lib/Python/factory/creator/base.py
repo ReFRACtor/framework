@@ -1,15 +1,13 @@
+import logging
+
 from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf
+
+logger = logging.getLogger('factory.creator.base')
 
 class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
 
     def __init__(self, config_def, common_store=None):
-
-        # Ensure the config definition is of the appropriate type
-        if type(config_def) is dict:
-            self.config_def = config_def
-        else:
-            raise TypeError("The config definition (config_def) argument passed to %s should be of type dict" % self.__class__.__name__)
 
         # Create a new common store if non are passed
         if common_store is not None:
@@ -19,22 +17,43 @@ class Creator(object):
         else:
             self.common_store = {}
 
-        self._load_parameters()
-        
+        # Ensure the config definition is of the appropriate type
+        if type(config_def) is dict:
+            self.config_def = self._process_config(config_def)
+        else:
+            raise TypeError("The config definition (config_def) argument passed to %s should be of type dict" % self.__class__.__name__)
+
+        self.parameters = self._load_parameters()
+
+        logger.debug("Initialized creator %s with parameters: %s" % (self.__class__.__name__, self.parameters.keys()))
+
+    def _process_config(self, in_config_def):
+        "Process config definition, create nested Creators"
+
+        out_config_def = {}
+
+        for config_name, config_val in in_config_def.items():
+            if isinstance(config_val, dict) and "creator" in config_val:
+                logger.debug("Initializing nested creator %s for %s" % (config_name, self.__class__.__name__))
+                out_config_def[config_name] = config_val["creator"](config_val, common_store=self.common_store)
+            else:
+                out_config_def[config_name] = config_val
+
+        return out_config_def
+
     def _load_parameters(self):
         "Gather class parameter types and ensure config_def has necessary items"
 
         # Look through class attributes to find the ones that have values that
         # inherit from ConfigParam to determine which are the parameters defined
         # in subclasses
-        self.parameters = {}
+        parameters = {}
         for attr_name in dir(self):
             attr_val = getattr(self, attr_name)
             if isinstance(attr_val, ConfigParam):
-                # For required parameters, make sure the value is present either in the config or common store
-                if attr_val.required and not attr_name in self.config_def and not attr_name in self.common_store:
-                    raise ParamError("A parameter named %s was expected in configuration definition used by creator %s" % (attr_name, self.__class__.__name__))
-                self.parameters[attr_name] = attr_val
+               parameters[attr_name] = attr_val
+
+        return parameters
 
     def param(self, param_name):
         "Retrieve a parameter from the configuration definition"
