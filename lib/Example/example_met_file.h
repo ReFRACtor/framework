@@ -13,6 +13,7 @@ namespace FullPhysics {
 class ExampleMetFile : public Meteorology {
 public:
     ExampleMetFile(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
+    ExampleMetFile(const std::string& input_filename, const std::string& observation_id);
     ~ExampleMetFile() {}
 
     // Define how to read various items

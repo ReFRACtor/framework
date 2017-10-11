@@ -16,6 +16,7 @@ namespace FullPhysics {
 class ExampleLevel1b: public Level1b {
 public:
     ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
+    ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);
     virtual ~ExampleLevel1b() {}
 
     virtual int number_spectrometer() const;

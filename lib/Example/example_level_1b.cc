@@ -22,6 +22,14 @@ ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, con
     data_index = obs_id.data_index();
 }
 
+ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::string& observation_id)
+:input(new HdfFile(input_filename))
+{
+    // All work done in initialization above
+    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    data_index = obs_id.data_index();
+}
+
 int ExampleLevel1b::number_spectrometer() const
 {
     TinyVector<int, 2> lat_shape = input->read_shape<2>(group_name + "/latitude");

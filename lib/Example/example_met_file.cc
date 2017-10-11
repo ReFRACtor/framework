@@ -24,6 +24,13 @@ ExampleMetFile::ExampleMetFile(const boost::shared_ptr<HdfFile>& input_file, con
     data_index = obs_id.data_index();
 }
 
+ExampleMetFile::ExampleMetFile(const std::string& input_filename, const std::string& observation_id)
+: input(new HdfFile(input_filename))
+{
+    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    data_index = obs_id.data_index();
+}
+
 //-----------------------------------------------------------------------
 /// Read a field where a single number is expected to be returned
 //-----------------------------------------------------------------------
