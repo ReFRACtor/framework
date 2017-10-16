@@ -51,7 +51,6 @@ class Creator(object):
         for attr_name in dir(self):
             attr_val = getattr(self, attr_name)
             if isinstance(attr_val, ConfigParam):
-                attr_val.bind_accessor(lambda: self.param(attr_name))
                 parameters[attr_name] = attr_val
 
         return parameters

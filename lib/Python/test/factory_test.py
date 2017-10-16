@@ -110,7 +110,6 @@ def test_array_with_unit_param():
 
     config_inst = process_config(config_def)
 
-
  
 def test_iterable_param():
 
@@ -211,19 +210,35 @@ def test_common_store():
 
     assert config_inst['use_common'] == 11
 
-def test_bound_accessor():
+def test_param_choice():
 
-    class AccessorFuncCreator(creator.base.Creator):
-        some_val = param.Scalar(int)
+    class ChoiceCreator(creator.base.Creator):
+        some_val = param.Choice(param.Scalar(int), param.Scalar(float))
 
         def create(self):
-            return self.some_val()
+            return self.param("some_val")
 
-    config_def = {
-        'creator': AccessorFuncCreator,
-        'some_val': 5,
+    config_def = { 
+        'item1': { 
+            'creator': ChoiceCreator,
+            'some_val': 10,
+        },
+        'item2': { 
+            'creator': ChoiceCreator,
+            'some_val': 5.0,
+        },
     }
 
     config_inst = process_config(config_def)
 
-    assert config_inst == 5
+    assert config_inst['item1'] == 10
+    assert config_inst['item2'] == 5.0
+
+    config_def['item1']['some_val'] = "ABC"
+
+    try:
+        config_inst = process_config(config_def)
+    except param.ParamError:
+        assert True
+    else:
+        assert False

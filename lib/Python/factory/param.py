@@ -29,23 +29,42 @@ class ConfigParam(object):
 
         return out_value
 
-    def bind_accessor(self, accessor_func):
-        self.accessor_func = accessor_func
-
     def check_type(self, value):
         raise NotImplementedError("check_type must be implemented in inheriting class")
-
-    def __call__(self):
-        if self.accessor_func is None:
-            raise ParamError("An accessor function has not been bound to this parameter")
-        else:
-            return self.accessor_func()
 
 class AnyValue(ConfigParam):
     "Bypasses type checking for the parameter"
 
     def check_type(self, value):
         pass
+
+class Choice(ConfigParam):
+    "Allows the choice of multiple parameter types"
+
+    def __init__(self, *vargs, **kwargs):
+        super().__init__(**kwargs)
+
+        self.choices = []
+        for choice in vargs:
+            if isinstance(choice, ConfigParam):
+                self.choices.append(choice)
+            else:
+                raise ParamError("Arguments to Choice must be instance of ConfigParam types.")
+
+    def check_type(self, value):
+
+        valid = False
+        for choice in self.choices:
+            try:
+                choice.check_type(value)
+            except ParamError:
+                pass
+            else:
+                valid = True
+                break
+
+        if not valid:
+            raise ParamError("Parameter value does not match any of the parameter choices")
 
 class Scalar(ConfigParam):
     "Configuration parameter that resolves to a single scalar value"
@@ -82,6 +101,26 @@ class Array(ConfigParam):
         if self.dtype is not None and not isinstance(value.dtype, self.dtype):
             raise ParamError("Type of parameter %s does not match expected %s for value: %s" % (value.dtype, self.dtype, value))
 
+class Iterable(ConfigParam):
+    "Configuration parameter that resolve to an iterable object like a tuple or list, but that is not required to be an array"
+
+    def check_type(self, value):
+
+        if not hasattr(value, "__iter__"):
+            raise ParamError("Expected an iterable for value: %s" % value)
+
+class InstanceOf(ConfigParam):
+    "Configuration parameter that must be an instance of a specific type of class"
+
+    def __init__(self, cls_type, **kwargs):
+        super().__init__(**kwargs)
+        self.cls_type = cls_type
+
+    def check_type(self, value):
+
+        if not isinstance(value, self.cls_type):
+            raise ParamError("Expected an instance of %s for value: %s" % (self.cls_type, value))
+
 class ArrayWithUnit(ConfigParam):
 
     awu_type_pattern = r"ArrayWithUnit_\w+_\d+"
@@ -108,22 +147,8 @@ class ArrayWithUnit(ConfigParam):
         if self.dtype is not None and not isinstance(value.value.dtype, self.dtype):
             raise ParamError("Type of parameter %s does not match expected %s for ArrayWithUnit value: %s" % (value.value.dtype, self.dtype, value))
 
-class Iterable(ConfigParam):
-    "Configuration parameter that resolve to an iterable object like a tuple or list, but that is not required to be an array"
+class DoubleWithUnit(InstanceOf):
+    "Short cut for the DoubleWithUnit type to parallel the ArrayWithUnit type parameter"
 
-    def check_type(self, value):
-
-        if not hasattr(value, "__iter__"):
-            raise ParamError("Expected an iterable for value: %s" % value)
-
-class InstanceOf(ConfigParam):
-    "Configuration parameter that must be an instance of a specific type of class"
-
-    def __init__(self, cls_type, **kwargs):
-        super().__init__(**kwargs)
-        self.cls_type = cls_type
-
-    def check_type(self, value):
-
-        if not isinstance(value, self.cls_type):
-            raise ParamError("Expected an instance of %s for value: %s" % (self.cls_type, value))
+    def __init__(self, **kwargs):
+        super().__init__(rf.DoubleWithUnit, **kwargs)
