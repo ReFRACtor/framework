@@ -242,3 +242,29 @@ def test_param_choice():
         assert True
     else:
         assert False
+
+def test_bound_params():
+
+    class BoundParamCreator(creator.base.Creator):
+        some_val = param.Choice(param.Scalar(int), param.Scalar(int))
+
+        def create(self):
+            return self.some_val()
+
+    config_def = { 
+        'item1': { 
+            'creator': BoundParamCreator,
+            'some_val': 10,
+        },
+        'item2': { 
+            'creator': BoundParamCreator,
+            'some_val': 5,
+        },
+    }
+
+    config_inst = process_config(config_def)
+
+    assert config_inst['item1'] == 10
+    assert config_inst['item2'] == 5
+
+
