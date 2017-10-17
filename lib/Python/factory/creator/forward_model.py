@@ -20,10 +20,10 @@ class SpectralWindowRange(Creator):
     window_ranges = param.ArrayWithUnit(dims=3)
     bad_sample_mask = param.Array(dims=3, required=False)
     
-    def create(self):
+    def create(self, **kwargs):
 
-        win_ranges = self.param("window_ranges")
-        bad_sample_mask = self.param("bad_sample_mask")
+        win_ranges = self.window_ranges()
+        bad_sample_mask = self.bad_sample_mask()
 
         if bad_sample_mask is not None:
             return rf.SpectralWindowRange(win_ranges, bad_sample_mask)
@@ -34,10 +34,10 @@ class UniformSpectrumSampling(Creator, PerChannelMixin):
 
     high_res_spacing = param.Choice(param.ArrayWithUnit(dims=1), param.DoubleWithUnit())
 
-    def create(self):
+    def create(self, **kwargs):
 
-        spacing_val = self.param("high_res_spacing")
-        num_channels = self.param("num_channels")
+        spacing_val = self.high_res_spacing()
+        num_channels = self.num_channels()
 
         if isinstance(spacing_val, rf.DoubleWithUnit):
             # Create an ArrayWithDouble matching the number of channels used

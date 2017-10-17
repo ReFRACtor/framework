@@ -9,10 +9,10 @@ class ArrayWithUnit(Creator):
     value = param.Array()
     units = param.Scalar(str)
 
-    def create(self):
+    def create(self, **kwargs):
 
-        value = self.param("value")
-        units = self.param("units")
+        value = self.value()
+        units = self.units()
 
         num_dims = len(value.shape)
         if num_dims == 3:

@@ -14,14 +14,12 @@ class ConfigParam(object):
         self.required = required
         self.accessor_func = None
 
-    def evaluate(self, in_value, creator):
+    def evaluate(self, in_value, **kwargs):
 
         # If value to be evaluated is callable, call and pass
         # along the creator requesting the parameter
         if callable(in_value):
-            out_value = in_value(creator)
-        elif hasattr(in_value, "create"): 
-            out_value = in_value.create()
+            out_value = in_value(**kwargs)
         else:
             out_value = in_value
 

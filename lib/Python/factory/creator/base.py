@@ -7,14 +7,14 @@ logger = logging.getLogger('factory.creator.base')
 class ParameterAccessor(object):
     "Proxy class to stand in place of ConfigParam defitions in Creator instances, to allow accessing as if a method of the creator class"
 
-    def __init__(self, param_name, param_def, config_def, common_store, creator):
+    def __init__(self, param_name, param_def, creator):
         self.param_name = param_name
         self.param_def = param_def
-        self.config_def = config_def
-        self.common_store = common_store
+        self.config_def = creator.config_def
+        self.common_store = creator.common_store
         self.creator = creator
 
-    def value(self):
+    def value(self, **kwargs):
         "Retrieve a parameter from the configuration definition"
 
         # Get parameter from configuration definition first, then trying common store and
@@ -29,19 +29,19 @@ class ParameterAccessor(object):
             return None
 
         try:
-            return self.param_def.evaluate(param_val, self.creator)
+            return self.param_def.evaluate(param_val, **kwargs)
         except ParamError as exc:
             raise ParamError("The parameter named %s requested by creator %s fails with error: %s" % (self.param_name, self.creator.__class__.__name__, exc))
 
-    def __call__(self):
-        return self.value()
+    def __call__(self, **kwargs):
+        return self.value(**kwargs)
 
 class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
 
     def __init__(self, config_def, common_store=None):
 
-        # Create a new common store if non are passed
+        # Create a new common store if none are passed
         if common_store is not None:
             if not isinstance(common_store, dict):
                 raise TypeError("The common store passed must be a instance of a dict")
@@ -84,13 +84,13 @@ class Creator(object):
         for attr_name in dir(self):
             attr_val = getattr(self, attr_name)
             if isinstance(attr_val, ConfigParam):
-                param_proxy = ParameterAccessor(attr_name, attr_val, self.config_def, self.common_store, self)
+                param_proxy = ParameterAccessor(attr_name, attr_val, self)
                 parameters[attr_name] = param_proxy
                 setattr(self, attr_name, param_proxy)
 
         return parameters
 
-    def param(self, param_name):
+    def param(self, param_name, **kwargs):
         "Retrieve a parameter from the configuration definition"
 
         try:
@@ -99,10 +99,17 @@ class Creator(object):
             # Creator requested a parameter that was not defined by a ConfigParam attribute
             raise KeyError("Unregistered parameter %s requested by %s" % (param_name, self.__class__.__name__))
         else:
-            return param_proxy.value()
+            return param_proxy.value(**kwargs)
 
-    def create(self):
+    def create(self, **kwargs):
         raise NotImplementedError("Create must be defined in inheriting Creator classes")
+
+    def __call__(self, **kwargs):
+        """Turns creators into callables so that they can be evaluated by ConfigParam as any other callable without it
+        needing to know any details of this class."""
+
+        return self.create(**kwargs)
+
 
 class ParamIterateCreator(Creator):
     "Base class for creators that iterate over their parameters"
@@ -127,14 +134,14 @@ class ParamIterateCreator(Creator):
 
                 # Param type not defined so allow any value
                 if param_name not in self.parameters:
-                    param_proxy = ParameterAccessor(param_name, AnyValue(), self.config_def, self.common_store, self)
+                    param_proxy = ParameterAccessor(param_name, AnyValue(), self)
                     self.parameters[param_name] = param_proxy
                     setattr(self, param_name, param_proxy)
 
 class ParamPassThru(ParamIterateCreator):
     "Evaluates and passes configurations parameter through as the creator result"
 
-    def create(self):
+    def create(self, **kwargs):
 
         result = {} 
         for param_name in self.param_names:
@@ -145,7 +152,7 @@ class ParamPassThru(ParamIterateCreator):
 class SaveToCommon(ParamPassThru):
     "Evalualtes parameters and saves them into the common store, creator has no return value"
 
-    def create(self):
+    def create(self, **kwargs):
         param_vals = super().create()
 
         for param_name in self.param_names:

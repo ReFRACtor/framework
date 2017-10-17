@@ -10,7 +10,7 @@ from refractor import framework as rf
 def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):
         val = param_type(**kwargs)
-        def create(self):
+        def create(self, **kwargs):
             return self.param("val")
 
     return ReturnCreatorHelper
@@ -20,7 +20,7 @@ class AddCreator(creator.base.Creator):
     x = param.Scalar()
     y = param.Scalar()
     
-    def create(self):
+    def create(self, **kwargs):
         x = self.param("x")
         y = self.param("y")
         return x + y
@@ -159,7 +159,7 @@ def test_callable():
 
     config_def = {
         'creator': ParamReturnCreator(param.Scalar),
-        'val': lambda creator: 10,
+        'val': lambda **kwargs: 10,
     }
 
     config_inst = process_config(config_def)
@@ -215,7 +215,7 @@ def test_param_choice():
     class ChoiceCreator(creator.base.Creator):
         some_val = param.Choice(param.Scalar(int), param.Scalar(float))
 
-        def create(self):
+        def create(self, **kwargs):
             return self.param("some_val")
 
     config_def = { 
@@ -248,7 +248,7 @@ def test_bound_params():
     class BoundParamCreator(creator.base.Creator):
         some_val = param.Choice(param.Scalar(int), param.Scalar(int))
 
-        def create(self):
+        def create(self, **kwargs):
             return self.some_val()
 
     config_def = { 
