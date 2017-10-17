@@ -28,7 +28,7 @@ public:
                   const std::string& Gas_name,
                   const int temp_avg_window);
 
-    %python_attribute(apriori_vmr, blitz::Array<double, 1>)
+    const blitz::Array<double, 1> apriori_vmr() const;
     const blitz::Array<double, 1> apriori_vmr(const Pressure& pressure) const;
 
     %python_attribute(reference, boost::shared_ptr<ReferenceVmrApriori>)

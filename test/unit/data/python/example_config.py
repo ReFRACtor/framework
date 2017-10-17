@@ -2,6 +2,8 @@ import os
 import h5py
 import logging
 
+import numpy as np
+
 import refractor.factory.creator as creator
 import refractor.factory.param as param
 from refractor.factory import process_config
@@ -18,18 +20,27 @@ met_file = os.path.join(data_dir, "met_example_data.h5")
 
 observation_id = "2014090915251774"
 
+# Helpers to abstract away getting data out of the static input file
+def static_value(dataset):
+    return static_input[dataset][:]
+
+def static_units(dataset):
+    return static_input[dataset].attrs['Units'][0].decode('UTF8') 
+
+
 config_def = {
-    'order': ['common', 'input', 'spec_win', 'spectrum_sampling'],
+    'order': ['common', 'input', 'spec_win', 'spectrum_sampling', 'atmosphere'],
     'common': {
         'creator': creator.base.SaveToCommon,
-        'desc_band_name': static_input["Common/desc_band_name"][:],
-        'hdf_band_name': static_input["Common/hdf_band_name"][:],
+        'desc_band_name': static_value("Common/desc_band_name"),
+        'hdf_band_name': static_value("Common/hdf_band_name"),
         'band_reference': {
             'creator': creator.value.ArrayWithUnit,
-            'value': static_input["Common/band_reference_point"][:],
-            'units': static_input["Common/band_reference_point"].attrs['Units'][0].decode('UTF8'),
+            'value': static_value("Common/band_reference_point"),
+            'units': static_units("Common/band_reference_point"),
         },
-        'num_channels': 4,
+        'num_channels': 3,
+        'absco_base_path': '/mnt/data1/absco'
     },
     'input': {
         'creator': creator.base.SaveToCommon,
@@ -40,8 +51,8 @@ config_def = {
         'creator': creator.forward_model.SpectralWindowRange,
         'window_ranges': {
             'creator': creator.value.ArrayWithUnit,
-            'value': static_input["/Spectral_Window/microwindow"][:],
-            'units': static_input["/Spectral_Window/microwindow"].attrs['Units'][0].decode('UTF8')
+            'value': static_value("/Spectral_Window/microwindow"),
+            'units': static_units("/Spectral_Window/microwindow"),
         },
     },
     'spectrum_sampling': {
@@ -59,6 +70,55 @@ config_def = {
     'state_vector': {
     },
     'atmosphere': {
+        'creator': creator.atmosphere.AtmosphereCreator,
+        'pressure': {
+            'creator': creator.atmosphere.PressureSigma,
+            'apriori': {
+                'creator': creator.met.ValueFromMet,
+                'field': "surface_pressure",
+            },
+            'a_coeff': static_value("Pressure/Pressure_sigma_a"),
+            'b_coeff': static_value("Pressure/Pressure_sigma_b"),
+        },
+        'temperature': {
+            'creator': creator.atmosphere.TemperatureMet,
+            'apriori': static_value("Temperature/Offset/a_priori")
+        },
+        'altitudes': { 
+            'creator': creator.atmosphere.AltitudeHydrostatic,
+            'latitude': {
+                'creator': creator.l1b.ValueFromLevel1b,
+                'field': "latitude",
+            },
+            'surface_height': {
+                'creator': creator.l1b.ValueFromLevel1b,
+                'field': "altitude",
+            },
+        },
+        'absorber': {
+            'creator': creator.atmosphere.AbsorberAbsco,
+            'gases': ['CO2'],
+            'CO2': {
+                'creator': creator.atmosphere.AbsorberGasDefinition,
+                'vmr': {
+                    'creator': creator.atmosphere.AbsorberVmrLevel,
+                    'apriori': {
+                        'creator': creator.atmosphere.GasVmrApriori,
+                        'gas_name': 'CO2',
+                        'reference_atm_file': static_input_file,
+                    },
+                },
+                'absco': {
+                    'creator': creator.atmosphere.AbscoHdf,
+                    'table_scale': np.array([1.0, 1.0, 1.004]),
+                    'filename': "v5.0.0/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
+                },
+            },
+            'H2O': {
+            },
+            'O2': {
+            },
+        },
     },
 }
 
