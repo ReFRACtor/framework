@@ -26,7 +26,7 @@ class ParameterAccessor(object):
         elif self.param_def.required:
             raise KeyError("The parameter name %s requested from config definition by %s was not found and is required" % (self.param_name, self.creator.__class__.__name__))
         else:
-            return None
+            return self.param_def.default
 
         try:
             return self.param_def.evaluate(param_val, **kwargs)
@@ -55,7 +55,9 @@ class Creator(object):
         else:
             raise TypeError("The config definition (config_def) argument passed to %s should be of type dict" % self.__class__.__name__)
 
-        self.parameters = self._load_parameters()
+        # Load parameters defined in class definition
+        self.parameters = {}
+        self._load_parameters()
 
         logger.debug("Initialized creator %s with parameters: %s" % (self.__class__.__name__, self.parameters.keys()))
 
@@ -73,22 +75,21 @@ class Creator(object):
 
         return out_config_def
 
+    def register_parameter(self, param_name, param_def):
+        param_proxy = ParameterAccessor(param_name, param_def, self)
+        self.parameters[param_name] = param_proxy
+        setattr(self, param_name, param_proxy)
+
     def _load_parameters(self):
         "Gather class parameter types and ensure config_def has necessary items"
 
         # Look through class attributes to find the ones that have values that
-        # inherit from ConfigParam to determine which are the parameters defined
-        # in subclasses.
+        # inherit from ConfigParam to determine which are the parameters defined.
         # Replace in the object the parameter definition with an ParamAccessor proxy
-        parameters = {}
         for attr_name in dir(self):
             attr_val = getattr(self, attr_name)
             if isinstance(attr_val, ConfigParam):
-                param_proxy = ParameterAccessor(attr_name, attr_val, self)
-                parameters[attr_name] = param_proxy
-                setattr(self, attr_name, param_proxy)
-
-        return parameters
+                self.register_parameter(attr_name, attr_val)
 
     def param(self, param_name, **kwargs):
         "Retrieve a parameter from the configuration definition"
@@ -145,7 +146,7 @@ class ParamPassThru(ParamIterateCreator):
 
         result = {} 
         for param_name in self.param_names:
-            result[param_name] = self.param(param_name)
+            result[param_name] = self.param(param_name, **kwargs)
 
         return result
 

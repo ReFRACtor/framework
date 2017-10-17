@@ -10,9 +10,14 @@ class ParamError(BaseException):
 class ConfigParam(object):
     "Base class for configuration parameters"
 
-    def __init__(self, required=True):
-        self.required = required
+    def __init__(self, required=True, default=None):
         self.accessor_func = None
+        self.default = default
+
+        if default is not None:
+            self.required = False
+        else:
+            self.required = required
 
     def evaluate(self, in_value, **kwargs):
 
@@ -118,6 +123,12 @@ class InstanceOf(ConfigParam):
 
         if not isinstance(value, self.cls_type):
             raise ParamError("Expected an instance of %s for value: %s" % (self.cls_type, value))
+
+class Dict(InstanceOf):
+    "Configuration parameter that resolves to a dict"
+
+    def __init__(self, **kwargs):
+        super().__init__(dict, **kwargs)
 
 class ArrayWithUnit(ConfigParam):
 
