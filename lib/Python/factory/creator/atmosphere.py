@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 
 from .base import Creator, ParamPassThru
@@ -106,18 +108,35 @@ class AbscoHdf(Creator):
 
     absco_base_path = param.Scalar(str)
     filename = param.Scalar(str)
-    table_scale = param.Array(dims=1)
+    table_scale = param.Choice(param.Iterable(), param.Scalar(float), default=1.0)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
 
-    def create(self):
+    def create(self, **kwargs):
 
-        
-        pass
+        absco_filename = os.path.join(self.absco_base_path(), self.filename())
+
+        if not os.path.exists(absco_filename):
+            raise param.ParamError("HDF ABSCO filename does not exist: %s" % absco_filename)
+
+        table_scale = self.table_scale()
+
+        if np.isscalar(table_scale):
+            return rf.AbscoHdf(absco_filename, table_scale)
+        else:
+            spectral_bound = self.spec_win().spectral_bound
+
+            # Convert to vector to match interface
+            table_scale_vector = rf.vector_double()
+            for val in table_scale:
+                table_scale_vector.push_back(val)
+
+            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale_vector)
 
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
 
     vmr = param.InstanceOf(rf.AbsorberVmr)
-    absco = param.InstanceOf(rf.Absco)
+    absorption = param.InstanceOf(rf.GasAbsorption)
 
 class AbsorberAbsco(Creator):
     "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
@@ -127,23 +146,30 @@ class AbsorberAbsco(Creator):
     temperature = param.InstanceOf(rf.Temperature)
     altitudes = param.AnyValue() #param.ObjectVector() ### TODO
     num_sub_layers = param.Scalar(int, required=False)
+    constants = param.InstanceOf(rf.Constant)
  
     def create(self, **kwargs):
 
-        vmrs = rf.vector_absorber_vmr
-        abscos = rf.vector_absco
+        vmrs = rf.vector_absorber_vmr()
+        absorptions = rf.vector_gas_absorption()
 
         for gas_name in self.gases():
             self.register_parameter(gas_name, param.Dict())
             gas_def = self.param(gas_name, gas_name=gas_name)
-            
+
+            if not "vmr" in gas_def:
+                raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
+
+            if not "absorption" in gas_def:
+                raise param.ParamError("absorption value not in gas definition for gas: %s" % gas_name)
+
             vmrs.push_back(gas_def['vmr'])
-            absco.push_back(gas_def['absco'])
+            absorptions.push_back(gas_def['absorption'])
 
         if self.num_sub_layers() is not None:
-            return AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), abscos, self.constants(), self.number_sub_layers())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), absorptions, self.constants(), self.number_sub_layers())
         else:
-            return AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), abscos, self.constants())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), absorptions, self.constants())
 
 
 class GasVMRFromConstant(Creator):

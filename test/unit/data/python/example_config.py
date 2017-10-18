@@ -29,6 +29,7 @@ def static_units(dataset):
 
 
 config_def = {
+    'creator': creator.base.SaveToCommon,
     'order': ['common', 'input', 'spec_win', 'spectrum_sampling', 'atmosphere'],
     'common': {
         'creator': creator.base.SaveToCommon,
@@ -40,7 +41,10 @@ config_def = {
             'units': static_units("Common/band_reference_point"),
         },
         'num_channels': 3,
-        'absco_base_path': '/mnt/data1/absco'
+        'absco_base_path': '/mnt/data1/absco',
+        'constants': {
+            'creator': creator.common.DefaultConstants,
+        },
     },
     'input': {
         'creator': creator.base.SaveToCommon,
@@ -108,9 +112,9 @@ config_def = {
                         'reference_atm_file': static_input_file,
                     },
                 },
-                'absco': {
+                'absorption': {
                     'creator': creator.atmosphere.AbscoHdf,
-                    'table_scale': np.array([1.0, 1.0, 1.004]),
+                    'table_scale': [1.0, 1.0, 1.004],
                     'filename': "v5.0.0/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                 },
             },

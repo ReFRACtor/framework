@@ -146,6 +146,7 @@ class ParamPassThru(ParamIterateCreator):
 
         result = {} 
         for param_name in self.param_names:
+            logger.debug("Passing through parameter %s" % param_name)
             result[param_name] = self.param(param_name, **kwargs)
 
         return result
@@ -154,9 +155,11 @@ class SaveToCommon(ParamPassThru):
     "Evalualtes parameters and saves them into the common store, creator has no return value"
 
     def create(self, **kwargs):
-        param_vals = super().create()
 
+        result = {} 
         for param_name in self.param_names:
-            self.common_store[param_name] = param_vals[param_name]
-        
-        return param_vals
+            logger.debug("Saving to the common store parameter %s" % param_name)
+            result[param_name] = self.param(param_name, **kwargs)
+            self.common_store[param_name] = result[param_name]
+
+        return result
