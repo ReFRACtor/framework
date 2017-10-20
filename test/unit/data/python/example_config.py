@@ -123,6 +123,32 @@ config_def = {
             'O2': {
             },
         },
+        'relative_humidity': {
+            'creator': creator.atmosphere.RelativeHumidity,
+        },
+        'ground': {
+            'creator': creator.base.PickChild,
+            'child': 'lambertian',
+            'lambertian': {
+                'creator': creator.ground.GroundLambertian,
+                'apriori': {
+                    'creator': creator.ground.AlbedoFromSignalLevel,
+                    'signal_level': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "signal",
+                    },
+                    'solar_zenith_angle': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "solar_zenith",
+                    },
+                    'solar_strength': np.array([4.87e21, 2.096e21, 1.15e21]),
+                    'solar_distance': {
+                        'creator': creator.l1b.SolarDistanceFromL1b,
+                    },
+                    'intensity_weight': np.array([1,1,1]),
+                },
+            },
+        },
     },
 }
 

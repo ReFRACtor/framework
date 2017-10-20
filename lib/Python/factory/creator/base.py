@@ -1,6 +1,6 @@
 import logging
 
-from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf
+from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Scalar
 
 logger = logging.getLogger('factory.creator.base')
 
@@ -152,7 +152,7 @@ class ParamPassThru(ParamIterateCreator):
         return result
 
 class SaveToCommon(ParamPassThru):
-    "Evalualtes parameters and saves them into the common store, creator has no return value"
+    "Evaluates parameters and saves them into the common store, creator has no return value"
 
     def create(self, **kwargs):
 
@@ -163,3 +163,12 @@ class SaveToCommon(ParamPassThru):
             self.common_store[param_name] = result[param_name]
 
         return result
+
+class PickChild(Creator):
+    "Simply picks one of many nested child elements and returns that, can be used as a place holder before implementing some sort of choice logic Creator"
+
+    child = Scalar(str)
+
+    def create(self, **kwargs):
+        self.register_parameter(self.child(), AnyValue())
+        return self.param(self.child(), **kwargs)

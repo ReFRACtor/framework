@@ -15,9 +15,10 @@ class AtmosphereCreator(Creator):
     temperature = param.InstanceOf(rf.Temperature)
     altitudes = param.AnyValue() #param.ObjectVector() ### TODO
     absorber = param.InstanceOf(rf.Absorber)
-    #relative_humidty = 
-    #ground = 
-    #constant = 
+    relative_humidity = param.InstanceOf(rf.RelativeHumidity)
+    ground = param.InstanceOf(rf.Ground)
+    #aerosol =
+    constants = param.InstanceOf(rf.Constant)
 
     def create(self, **kwargs):
 
@@ -25,11 +26,10 @@ class AtmosphereCreator(Creator):
         temperature = self.common_store["temperature"] = self.temperature()
         altitudes = self.common_store["altitudes"] = self.altitudes()
         absorber = self.common_store["absorber"] = self.absorber()
+        relative_humidity = self.relative_humidity()
+        ground = self.ground()
 
-        print("-->", absorber)
-
-        #return fp.AtmosphereOco(absorber, pressure, temperature, 
-        #                      rel_hum, ground, altitudes, fp.DefaultConstant())
+        return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitudes, self.constants())
 
 class PressureSigma(CreatorApriori):
     "Creates a PressureSigma object statisfying the AtmosphereCreator's pressure parameter"
@@ -59,8 +59,8 @@ class TemperatureMet(CreatorApriori):
 class AltitudeHydrostatic(Creator):
     "Creates a AltitudeHydrostatic object statisfying the AtmosphereCreator's altitude parameter"
     
-    latitude = param.DoubleWithUnit()
-    surface_height = param.DoubleWithUnit()
+    latitude = param.ArrayWithUnit(dims=1)
+    surface_height = param.ArrayWithUnit(dims=1)
 
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
@@ -68,9 +68,13 @@ class AltitudeHydrostatic(Creator):
     num_channels = param.Scalar(int)
 
     def create(self, **kwargs):
+        # These are per channel
+        latitudes = self.latitude()
+        surface_heights = self.surface_height()
+
         altitudes = rf.vector_altitude()
         for chan_idx in range(self.num_channels()):
-            chan_alt = rf.AltitudeHydrostatic(self.pressure(), self.temperature(), self.latitude(channel_index=chan_idx), self.surface_height(channel_index=chan_idx))
+            chan_alt = rf.AltitudeHydrostatic(self.pressure(), self.temperature(), latitudes[chan_idx], surface_heights[chan_idx])
             altitudes.push_back(chan_alt)
 
         return altitudes
@@ -175,3 +179,12 @@ class AbsorberAbsco(Creator):
 class GasVMRFromConstant(Creator):
     def create(self, **kwargs):
         pass
+
+class RelativeHumidity(Creator):
+
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    absorber = param.InstanceOf(rf.Absorber)
+
+    def create(self, **kwargs):
+        return rf.RelativeHumidity(self.absorber(), self.temperature(), self.pressure())

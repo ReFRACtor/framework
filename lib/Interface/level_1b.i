@@ -33,5 +33,6 @@ public:
   virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
   virtual Time time(int Spec_index) const = 0;
   virtual SpectralRange radiance(int Spec_index) const = 0;
+  virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
 };
 }
