@@ -12,19 +12,19 @@ class AlbedoFromSignalLevel(Creator):
 
     polynomial_degree = param.Scalar(int, default=1)
     signal_level = param.ArrayWithUnit(dims=1)
-    solar_zenith_angle = param.ArrayWithUnit(dims=1)
+    solar_zenith = param.ArrayWithUnit(dims=1)
     solar_strength = param.Array(dims=1)
     solar_distance = param.ArrayWithUnit(dims=1)
-    intensity_weight = param.Array(dims=1)
+    stokes_coefficients = param.Array(dims=2)
     num_channels = param.Scalar(int)
     
     def create(self, **kwargs):
 
         signal = self.signal_level()
-        sza_deg = self.solar_zenith_angle()
+        sza_deg = self.solar_zenith()
         solar_strength = self.solar_strength()
         solar_distance = self.solar_distance()
-        stokes_I = self.intensity_weight()
+        stokes_I = self.stokes_coefficients()[:, 0]
 
         albedo_val = np.zeros((self.num_channels(), self.polynomial_degree() + 1))
 

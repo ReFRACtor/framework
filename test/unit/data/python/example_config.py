@@ -30,7 +30,12 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['common', 'input', 'spec_win', 'spectrum_sampling', 'atmosphere'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'rt'],
+    'input': {
+        'creator': creator.base.SaveToCommon,
+        'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
+        'met': rf.ExampleMetFile(met_file, observation_id),
+    },
     'common': {
         'creator': creator.base.SaveToCommon,
         'desc_band_name': static_value("Common/desc_band_name"),
@@ -45,11 +50,10 @@ config_def = {
         'constants': {
             'creator': creator.common.DefaultConstants,
         },
-    },
-    'input': {
-        'creator': creator.base.SaveToCommon,
-        'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
-        'met': rf.ExampleMetFile(met_file, observation_id),
+        'stokes_coefficients': {
+            'creator': creator.l1b.ValueFromLevel1b,
+            'field': "stokes_coefficient",
+        },
     },
     'spec_win': {
         'creator': creator.forward_model.SpectralWindowRange,
@@ -62,16 +66,6 @@ config_def = {
     'spectrum_sampling': {
         'creator': creator.forward_model.UniformSpectrumSampling,
         'high_res_spacing': rf.DoubleWithUnit(0.01, "cm^-1"), 
-    },
-    'stokes_coefficient': {
-    },
-    'instrument': {
-    },
-    'spectrum_effect': {
-    },
-    'rt': {
-    },
-    'state_vector': {
     },
     'atmosphere': {
         'creator': creator.atmosphere.AtmosphereCreator,
@@ -137,7 +131,7 @@ config_def = {
                         'creator': creator.l1b.ValueFromLevel1b,
                         'field': "signal",
                     },
-                    'solar_zenith_angle': {
+                    'solar_zenith': {
                         'creator': creator.l1b.ValueFromLevel1b,
                         'field': "solar_zenith",
                     },
@@ -145,10 +139,32 @@ config_def = {
                     'solar_distance': {
                         'creator': creator.l1b.SolarDistanceFromL1b,
                     },
-                    'intensity_weight': np.array([1,1,1]),
                 },
             },
         },
+    },
+    'rt': {
+        'creator': creator.rt.LidortRt,
+        'solar_zenith': {
+            'creator': creator.l1b.ValueFromLevel1b,
+            'field': "solar_zenith",
+        },
+        'observation_zenith': {
+            'creator': creator.l1b.ValueFromLevel1b,
+            'field': "sounding_zenith",
+        },
+        'observation_azimuth': {
+            'creator': creator.l1b.ValueFromLevel1b,
+            'field': "sounding_azimuth",
+        },
+        'num_streams': 4,
+        'num_mom': 16,
+    },
+    'instrument': {
+    },
+    'spectrum_effect': {
+    },
+    'state_vector': {
     },
 }
 

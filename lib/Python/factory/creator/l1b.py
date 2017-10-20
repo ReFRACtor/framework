@@ -11,8 +11,12 @@ class ValueFromLevel1b(Creator):
     l1b = param.InstanceOf(rf.Level1b)
     field = param.Scalar(str)
 
-    # Fields that can become ArrayWithUnit if no channel_index supplied
     array_fields = [
+        'stokes_coefficient',
+    ]
+
+    # Fields that can become ArrayWithUnit if no channel_index supplied
+    array_with_unit_fields = [
         'latitude',
         'longitude',
         'sounding_zenith',
@@ -26,6 +30,14 @@ class ValueFromLevel1b(Creator):
     ]
 
     def _as_array(self, accessor):
+        num_channels = self.l1b().number_spectrometer
+        
+        vals = []
+        for chan_idx in range(num_channels):
+            vals.append(accessor(chan_idx))
+        return np.array(vals)
+ 
+    def _as_array_with_unit(self, accessor):
 
         num_channels = self.l1b().number_spectrometer
 
@@ -44,12 +56,18 @@ class ValueFromLevel1b(Creator):
 
     def create(self, channel_index=None, **kwargs):
 
-        field_val = getattr(self.l1b(), self.field())
+        field_val = getattr(self.l1b(), self.field(), None)
+
+        if field_val is None:
+            return param.ParamError("Field does not exist in Level1b interface: %s" % self.field())
+
         if np.isscalar(field_val):
             return np.full(1, field_val)
         elif callable(field_val):
             if channel_index is not None:
                 return field_val(channel_index)
+            elif self.field() in self.array_with_unit_fields:
+                return self._as_array_with_unit(field_val)
             elif self.field() in self.array_fields:
                 return self._as_array(field_val)
             else:
