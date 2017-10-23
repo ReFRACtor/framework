@@ -83,6 +83,7 @@ class IlsTable(Creator):
 
 class InstrumentCorrectionList(Creator):
 
+    corrections = param.Iterable(str)
     num_channels = param.Scalar(int)
 
     def create(self, **kwargs):

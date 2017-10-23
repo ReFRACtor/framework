@@ -32,7 +32,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'rt', 'instrument'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'radiative_transfer', 'instrument', 'state_vector', 'forward_model'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -145,7 +145,7 @@ config_def = {
             },
         },
     },
-    'rt': {
+    'radiative_transfer': {
         'creator': creator.rt.LidortRt,
         'solar_zenith': {
             'creator': creator.l1b.ValueFromLevel1b,
@@ -189,15 +189,21 @@ config_def = {
             'corrections': [],
         },
     },
-    'spectrum_effect': {
-    },
     'state_vector': {
+        'creator': creator.state_vector.StateVector,
+    },
+    'forward_model': {
+        'creator': creator.forward_model.ForwardModel,
+        'spectrum_effect': {
+            'creator': creator.forward_model.SpectrumEffectList,
+            'effects': [],
+        },
     },
 }
 
-config_inst = process_config(config_def)
+if __name__ == "__main__":
+    config_inst = process_config(config_def)
 
-#print(config_inst
-from pprint import pprint
-pprint(config_inst, indent=4)
+    from pprint import pprint
+    pprint(config_inst, indent=4)
 
