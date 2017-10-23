@@ -7,7 +7,7 @@ from refractor import framework as rf
 
 class CreatorApriori(Creator):
 
-    apriori = param.Array(dims=1)
+    apriori = param.Choice(param.Array(dims=1), param.ArrayWithUnit(dims=1))
     covariance = param.Array(dims=1, required=False)
     initial_guess = param.Array(dims=1, required=False)
     retrieved = param.Scalar(bool, required=False)
@@ -16,7 +16,11 @@ class CreatorApriori(Creator):
         ig_val = self.initial_guess()
 
         if ig_val is None:
-            return self.apriori()
+            ap = self.apriori()
+            if hasattr(ap, "value"):
+                return ap.value
+            else:
+                return ap
         else:
             return ig_val
 
@@ -24,10 +28,15 @@ class CreatorApriori(Creator):
         ap = self.apriori()
         retrieved = self.retrieved()
 
-        if retrieved is None or retrieved:
-            return np.ones(ap.shape, dtype=bool)
+        if hasattr(ap, "value"):
+            ap_shape = ap.value.shape
         else:
-            return np.zeros(ap.shape, dtype=bool)
+            ap_shape = ap.shape
+
+        if retrieved is None or retrieved:
+            return np.ones(ap_shape, dtype=bool)
+        else:
+            return np.zeros(ap_shape, dtype=bool)
 
     def sv_initial_guess(self):
 
@@ -36,8 +45,13 @@ class CreatorApriori(Creator):
         cov = self.covariance()
         rflag = self.retrieval_flag()
 
+        if hasattr(ap, "value"):
+            ap_val = ap.value
+        else:
+            ap_val = ap
+
         sv_ig = rf.InitialGuessValue()
-        sv_ig.apriori_subset(rflag, ap)
+        sv_ig.apriori_subset(rflag, ap_val)
         sv_ig.apriori_covariance_subset(rflag, cov)
         sv_ig.initial_guess_subset(rflag, ig)
         
@@ -45,7 +59,7 @@ class CreatorApriori(Creator):
 
 class CreatorAprioriMultiChannel(Creator):
 
-    apriori = param.Array(dims=2)
+    apriori = param.Choice(param.Array(dims=2), param.ArrayWithUnit(dims=2))
     covariance = param.Array(dims=2, required=False)
     initial_guess = param.Array(dims=2, required=False)
     retrieved = param.Iterable(required=False)
@@ -54,7 +68,11 @@ class CreatorAprioriMultiChannel(Creator):
         ig_val = self.initial_guess()
 
         if ig_val is None:
-            return self.apriori()
+            ap = self.apriori()
+            if hasattr(ap, "value"):
+                return ap.value
+            else:
+                return ap
         else:
             return ig_val
 
@@ -62,10 +80,15 @@ class CreatorAprioriMultiChannel(Creator):
         ap = self.apriori()
         retrieved = self.retrieved()
 
-        if retrieved is None:
-            return np.ones(ap.shape, dtype=bool)
+        if hasattr(ap, "value"):
+            ap_shape = ap.value.shape
         else:
-            flags = np.empty(ap.shape, dtype=bool)
+            ap_shape = ap.shape
+
+        if retrieved is None:
+            return np.ones(ap_shape, dtype=bool)
+        else:
+            flags = np.empty(ap_shape, dtype=bool)
             for chan_idx, chan_flag in enumerate(retrieved):
                 flags[chan_idx, :] = chan_flag
             return flags

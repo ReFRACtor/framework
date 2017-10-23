@@ -135,9 +135,7 @@ class ParamIterateCreator(Creator):
 
                 # Param type not defined so allow any value
                 if param_name not in self.parameters:
-                    param_proxy = ParameterAccessor(param_name, AnyValue(), self)
-                    self.parameters[param_name] = param_proxy
-                    setattr(self, param_name, param_proxy)
+                    self.register_parameter(param_name, AnyValue())
 
 class ParamPassThru(ParamIterateCreator):
     "Evaluates and passes configurations parameter through as the creator result"

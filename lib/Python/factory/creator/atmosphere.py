@@ -13,7 +13,7 @@ class AtmosphereCreator(Creator):
 
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
-    altitudes = param.AnyValue() #param.ObjectVector() ### TODO
+    altitudes = param.ObjectVector("altitude")
     absorber = param.InstanceOf(rf.Absorber)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
     ground = param.InstanceOf(rf.Ground)
@@ -86,7 +86,7 @@ class GasVmrApriori(Creator):
     l1b = param.InstanceOf(rf.Level1b)
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
-    altitudes = param.AnyValue() #param.ObjectVector() ### TODO
+    altitudes = param.ObjectVector("altitude")
     reference_atm_file = param.Scalar(str)
     gas_name = param.Scalar(str)
     temp_avg_window = param.Scalar(int, default=11)
@@ -148,7 +148,7 @@ class AbsorberAbsco(Creator):
     gases = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
-    altitudes = param.AnyValue() #param.ObjectVector() ### TODO
+    altitudes = param.ObjectVector("altitude")
     num_sub_layers = param.Scalar(int, required=False)
     constants = param.InstanceOf(rf.Constant)
  

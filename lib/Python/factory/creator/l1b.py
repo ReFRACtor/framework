@@ -27,6 +27,7 @@ class ValueFromLevel1b(Creator):
         'altitude',
         'relative_velocity',
         'signal',
+        'spectral_coefficient',
     ]
 
     def _as_array(self, accessor):
@@ -41,18 +42,25 @@ class ValueFromLevel1b(Creator):
 
         num_channels = self.l1b().number_spectrometer
 
-        vals = np.empty(num_channels, dtype=float)
+        vals = []
         units = None
         for chan_idx in range(num_channels):
             chan_val = accessor(chan_idx)
-            vals[chan_idx] = chan_val.value
+            vals.append(chan_val.value)
             new_units = chan_val.units
             if units != None and new_units.name != units.name:
                 raise param.ParamError("All units for L1B values must be the same to compact as an array")
             else:
                 units = new_units
 
-        return rf.ArrayWithUnit_double_1(vals, units)
+        val_arr = np.array(vals)
+
+        if len(val_arr.shape) == 1:
+            return rf.ArrayWithUnit_double_1(vals, units)
+        if len(val_arr.shape) == 2:
+            return rf.ArrayWithUnit_double_2(vals, units)
+        else:
+            raise param.ParamError("Unhandled return value size from L1b class")
 
     def create(self, channel_index=None, **kwargs):
 

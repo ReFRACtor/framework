@@ -14,6 +14,9 @@
 %fp_shared_ptr(FullPhysics::IlsInstrument);
 
 namespace FullPhysics {
+
+%feature("notabstract") IlsInstrument;
+
 class IlsInstrument : public Instrument {
 public:
   IlsInstrument(const std::vector<boost::shared_ptr<Ils> >& Ils_list,

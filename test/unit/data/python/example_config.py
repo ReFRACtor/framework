@@ -13,6 +13,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 static_input_file = os.path.join(os.path.dirname(__file__), "../lua/example_static_input.h5")
 static_input = h5py.File(static_input_file)
+ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
+ils_input = h5py.File(ils_file)
 
 data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
 l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
@@ -21,8 +23,8 @@ met_file = os.path.join(data_dir, "met_example_data.h5")
 observation_id = "2014090915251774"
 
 # Helpers to abstract away getting data out of the static input file
-def static_value(dataset):
-    return static_input[dataset][:]
+def static_value(dataset, dtype=None):
+    return np.array(static_input[dataset][:], dtype=dtype)
 
 def static_units(dataset):
     return static_input[dataset].attrs['Units'][0].decode('UTF8') 
@@ -30,7 +32,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'rt'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'rt', 'instrument'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -38,8 +40,8 @@ config_def = {
     },
     'common': {
         'creator': creator.base.SaveToCommon,
-        'desc_band_name': static_value("Common/desc_band_name"),
-        'hdf_band_name': static_value("Common/hdf_band_name"),
+        'desc_band_name': static_value("Common/desc_band_name", dtype=str),
+        'hdf_band_name': static_value("Common/hdf_band_name", dtype=str),
         'band_reference': {
             'creator': creator.value.ArrayWithUnit,
             'value': static_value("Common/band_reference_point"),
@@ -161,6 +163,31 @@ config_def = {
         'num_mom': 16,
     },
     'instrument': {
+        'creator': creator.instrument.IlsInstrument,
+        'ils_half_width': {
+            'creator': creator.value.ArrayWithUnit,
+            'value': np.array([4.09e-04, 1.08e-03, 1.40e-03]),
+            'units': "um",
+        },
+        'dispersion': {
+            'creator': creator.instrument.DispersionPolynomial,
+            'apriori': {
+                'creator': creator.l1b.ValueFromLevel1b,
+                'field': 'spectral_coefficient',
+            },
+            'number_samples': static_value("Instrument/Dispersion/number_pixel"),
+            'is_one_based': True,
+            'num_parameters': 2,
+        },
+        'ils_function': {
+            'creator': creator.instrument.IlsTable,
+            'delta_lambda': ils_input["/InstrumentData/ils_delta_lambda"][:],
+            'response': ils_input["/InstrumentData/ils_relative_response"][:],
+        },
+        'instrument_correction': {
+            'creator': creator.instrument.InstrumentCorrectionList,
+            'corrections': [],
+        },
     },
     'spectrum_effect': {
     },

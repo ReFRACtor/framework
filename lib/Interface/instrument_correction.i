@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
+%include <std_vector.i>
 %include "common.i"
 
 %{
@@ -38,6 +39,8 @@ public:
   virtual boost::shared_ptr<InstrumentCorrection> clone() const = 0;
 };
 
-%template(SubStateVectorArrayInstrumentCorrection) 
-FullPhysics::SubStateVectorArray<InstrumentCorrection>;
+%template(SubStateVectorArrayInstrumentCorrection) FullPhysics::SubStateVectorArray<InstrumentCorrection>;
 }
+
+%template(vector_instrument_correction) std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> >;
+%template(vector_vector_instrument_correction) std::vector<std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> > >;
