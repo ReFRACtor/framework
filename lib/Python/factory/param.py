@@ -107,22 +107,31 @@ class Array(ConfigParam):
 class Iterable(ConfigParam):
     "Configuration parameter that resolve to an iterable object like a tuple or list, but that is not required to be an array"
 
+    def __init__(self, val_type=None, **kwargs):
+        super().__init__(**kwargs)
+        self.val_type = val_type
+
     def check_type(self, value):
 
         if not hasattr(value, "__iter__"):
             raise ParamError("Expected an iterable for value: %s" % value)
 
+        if self.val_type is not None:
+            for idx, iter_val in enumerate(value):
+                if not isinstance(iter_val, self.val_type):
+                    raise ParamError("Expected an instance of %s for value %s at index %d of iterable" % (self.val_type, iter_val, idx))
+
 class InstanceOf(ConfigParam):
     "Configuration parameter that must be an instance of a specific type of class"
 
-    def __init__(self, cls_type, **kwargs):
+    def __init__(self, val_type, **kwargs):
         super().__init__(**kwargs)
-        self.cls_type = cls_type
+        self.val_type = val_type
 
     def check_type(self, value):
 
-        if not isinstance(value, self.cls_type):
-            raise ParamError("Expected an instance of %s for value: %s" % (self.cls_type, value))
+        if not isinstance(value, self.val_type):
+            raise ParamError("Expected an instance of %s for value: %s" % (self.val_type, value))
 
 class Dict(InstanceOf):
     "Configuration parameter that resolves to a dict"
@@ -161,3 +170,24 @@ class DoubleWithUnit(InstanceOf):
 
     def __init__(self, **kwargs):
         super().__init__(rf.DoubleWithUnit, **kwargs)
+
+class ObjectVector(ConfigParam):
+    "Checks that value is a C++ vector of a certain type"
+
+    def __init__(self, vec_type=None, **kwargs):
+        super().__init__(**kwargs)
+
+        self.vec_type = vec_type
+
+    def check_type(self, value):
+        
+        # Check that the type string has vector_ in it and vec_type if that is supplied
+        if self.vec_type is not None:
+            check_str = "\.vector_%s" % self.vec_type
+        else:
+            check_str = "\.vector_.*"
+
+        type_str = str(type(value))
+
+        if not re.search(check_str, type_str):
+            raise ParamError("Value with type string %s is not a C++ vector with type vector_%s" % (type_str, self.vec_type and self.vec_type or ""))

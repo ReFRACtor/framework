@@ -115,20 +115,27 @@ def test_iterable_param():
 
     # Check that iterables are correctly handled
     config_def = {
-        'creator': ParamReturnCreator(param.Iterable),
-        'val': [1,2,3,4,5]
+        'item1': {
+            'creator': ParamReturnCreator(param.Iterable),
+            'val': [1,2,3,4,5]
+        },
+        'item2': {
+            'creator': ParamReturnCreator(param.Iterable, val_type=np.int),
+            'val': [1,2,3,4,5]
+        },
     }
  
     config_inst = process_config(config_def)
 
-    assert np.all(np.array(config_inst) == np.arange(1,6))
+    assert np.all(np.array(config_inst['item1']) == np.arange(1,6))
+    assert np.all(np.array(config_inst['item2']) == np.arange(1,6))
 
     # Check arrays are considered iterable
-    config_def['val'] = np.arange(1,6)
+    config_def['item1']['val'] = np.arange(1,6)
 
     config_inst = process_config(config_def)
 
-    assert np.all(np.array(config_inst) == np.arange(1,6))
+    assert np.all(np.array(config_inst['item1']) == np.arange(1,6))
 
 def test_instanceof_param():
 
@@ -137,7 +144,7 @@ def test_instanceof_param():
 
     # Check that iterables are correctly handled
     config_def = {
-        'creator': ParamReturnCreator(param.InstanceOf, cls_type=TestClass),
+        'creator': ParamReturnCreator(param.InstanceOf, val_type=TestClass),
         'val': TestClass(),
     }
  
@@ -267,4 +274,20 @@ def test_bound_params():
     assert config_inst['item1'] == 10
     assert config_inst['item2'] == 5
 
+def test_object_vector():
 
+    config_def = {
+        'item1': {
+            'creator': ParamReturnCreator(param.ObjectVector),
+            'val': rf.vector_double(),
+        },
+        'item2': {
+            'creator': ParamReturnCreator(param.ObjectVector, vec_type="double"),
+            'val': rf.vector_double(),
+        }
+    }
+
+    config_inst = process_config(config_def)
+
+    assert isinstance(config_inst['item1'], rf.vector_double)
+    assert isinstance(config_inst['item2'], rf.vector_double)
