@@ -176,9 +176,13 @@ class AbsorberAbsco(Creator):
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), absorptions, self.constants())
 
 
-class GasVMRFromConstant(Creator):
+class ConstantForAllLevels(Creator):
+
+    pressure = param.InstanceOf(rf.Pressure)
+    value = param.Scalar(float)
+
     def create(self, **kwargs):
-        pass
+        return np.full(self.pressure().max_number_level, self.value())
 
 class RelativeHumidity(Creator):
 

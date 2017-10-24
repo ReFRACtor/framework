@@ -117,8 +117,29 @@ config_def = {
                 },
             },
             'H2O': {
+                #'creator': creator.atmosphere.AbsorberGasDefinition,
+                'vmr': {
+                },
+                'absorption': {
+                    'creator': creator.atmosphere.AbscoHdf,
+                    'table_scale': 1.0,
+                    'filename': "v5.0.0/h2o_hitran12.h5",
+                },
             },
             'O2': {
+                'creator': creator.atmosphere.AbsorberGasDefinition,
+                'vmr': {
+                    'creator': creator.atmosphere.AbsorberVmrLevel,
+                    'apriori': {
+                        'creator': creator.atmosphere.ConstantForAllLevels,
+                        'value': static_value("Gas/O2/average_mole_fraction"),
+                    },
+                },
+                'absorption': {
+                    'creator': creator.atmosphere.AbscoHdf,
+                    'table_scale': 1.0,
+                    'filename': "v5.0.0/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
+                 },
             },
         },
         'relative_humidity': {
