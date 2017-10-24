@@ -9,6 +9,9 @@
 %import "pressure.i"
 %fp_shared_ptr(FullPhysics::AbsorberVmrMet)
 namespace FullPhysics {
+
+%feature("notabstract") AbsorberVmrMet;
+
 class AbsorberVmrMet : public AbsorberVmrScaled {
 public:
   AbsorberVmrMet(const boost::shared_ptr<Meteorology>& Met_file,

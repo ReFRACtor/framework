@@ -99,7 +99,7 @@ config_def = {
         },
         'absorber': {
             'creator': creator.atmosphere.AbsorberAbsco,
-            'gases': ['CO2'],
+            'gases': ['CO2', 'H2O', 'O2'],
             'CO2': {
                 'creator': creator.atmosphere.AbsorberGasDefinition,
                 'vmr': {
@@ -117,8 +117,10 @@ config_def = {
                 },
             },
             'H2O': {
-                #'creator': creator.atmosphere.AbsorberGasDefinition,
+                'creator': creator.atmosphere.AbsorberGasDefinition,
                 'vmr': {
+                    'creator': creator.atmosphere.AbsorberVmrMet,
+                    'apriori': np.array([1.0]),
                 },
                 'absorption': {
                     'creator': creator.atmosphere.AbscoHdf,
@@ -132,7 +134,7 @@ config_def = {
                     'creator': creator.atmosphere.AbsorberVmrLevel,
                     'apriori': {
                         'creator': creator.atmosphere.ConstantForAllLevels,
-                        'value': static_value("Gas/O2/average_mole_fraction"),
+                        'value': static_value("Gas/O2/average_mole_fraction")[0],
                     },
                 },
                 'absorption': {

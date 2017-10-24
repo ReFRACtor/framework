@@ -108,6 +108,18 @@ class AbsorberVmrLevel(CreatorApriori):
 
         return rf.AbsorberVmrLevel(self.pressure(), self.apriori(), self.retrieval_flag(), gas_name)
 
+class AbsorberVmrMet(CreatorApriori):
+
+    met = param.InstanceOf(rf.Meteorology)
+    pressure = param.InstanceOf(rf.Pressure)
+
+    def create(self, gas_name=None, **kwargs):
+
+        if gas_name is None:
+            raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
+
+        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.apriori()[0], bool(self.retrieval_flag()[0]), gas_name)
+
 class AbscoHdf(Creator):
 
     absco_base_path = param.Scalar(str)
@@ -179,7 +191,7 @@ class AbsorberAbsco(Creator):
 class ConstantForAllLevels(Creator):
 
     pressure = param.InstanceOf(rf.Pressure)
-    value = param.Scalar(float)
+    value = param.Scalar()
 
     def create(self, **kwargs):
         return np.full(self.pressure().max_number_level, self.value())

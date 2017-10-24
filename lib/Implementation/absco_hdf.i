@@ -15,7 +15,8 @@ namespace FullPhysics {
 
 class AbscoHdf : public Absco {
 public:
-  AbscoHdf(const std::string& Fname, int Cache_nline = 5000);
+  AbscoHdf(const std::string& Fname, double Table_scale = 1.0, 
+	   int Cache_nline = 5000);
   AbscoHdf(const std::string& Fname, 
 	   const SpectralBound& Spectral_bound,
 	   const std::vector<double>& Table_scale,
