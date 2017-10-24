@@ -16,6 +16,8 @@ static_input = h5py.File(static_input_file)
 ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
 ils_input = h5py.File(ils_file)
 
+solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
+
 data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
 l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
 met_file = os.path.join(data_dir, "met_example_data.h5")
@@ -196,7 +198,41 @@ config_def = {
         'creator': creator.forward_model.ForwardModel,
         'spectrum_effect': {
             'creator': creator.forward_model.SpectrumEffectList,
-            'effects': [],
+            'effects': ["solar_model",],
+            'solar_model': {
+                'creator': creator.solar_model.SolarAbsorptionAndContinuum,
+                'doppler': {
+                    'creator': creator.solar_model.SolarDopplerShiftPolynomial,
+                    'time': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "time",
+                    },
+                    'latitude': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "latitude",
+                    },
+                    'solar_zenith': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "solar_zenith",
+                    },
+                    'solar_azimuth': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "solar_azimuth",
+                    },
+                    'altitude': {
+                        'creator': creator.l1b.ValueFromLevel1b,
+                        'field': "altitude",
+                    },
+                },
+                'absorption': {
+                    'creator': creator.solar_model.SolarAbsorptionTable,
+                    'solar_data_file': solar_file,
+                },
+                'continuum': {
+                    'creator': creator.solar_model.SolarContinuumTable,
+                    'solar_data_file': solar_file,
+                },
+            },
         },
     },
 }

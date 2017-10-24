@@ -55,8 +55,22 @@ class SpectrumEffectList(Creator):
 
     def create(self, **kwargs):
 
-        # TBD
-        return rf.vector_vector_spectrum_effect()
+        all_effects = []
+        for effect_name in self.effects():
+            self.register_parameter(effect_name, param.Iterable())
+            all_effects.append(self.param(effect_name))
+
+        # Map these into an outer vector for each channel, with an inner vector for each effect
+        spec_eff = rf.vector_vector_spectrum_effect()
+        for chan_index in range(self.num_channels()):
+            per_channel_eff = rf.vector_spectrum_effect()
+
+            for effect in all_effects:
+                per_channel_eff.push_back(effect[chan_index])
+
+            spec_eff.push_back(per_channel_eff)
+
+        return spec_eff
 
 class ForwardModel(Creator):
 

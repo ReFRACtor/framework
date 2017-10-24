@@ -11,6 +11,10 @@ class ValueFromLevel1b(Creator):
     l1b = param.InstanceOf(rf.Level1b)
     field = param.Scalar(str)
 
+    list_fields = [
+        'time',
+    ]
+
     array_fields = [
         'stokes_coefficient',
     ]
@@ -30,13 +34,16 @@ class ValueFromLevel1b(Creator):
         'spectral_coefficient',
     ]
 
-    def _as_array(self, accessor):
+    def _as_list(self, accessor):
         num_channels = self.l1b().number_spectrometer
         
         vals = []
         for chan_idx in range(num_channels):
             vals.append(accessor(chan_idx))
-        return np.array(vals)
+        return vals
+
+    def _as_array(self, accessor):
+        return np.array(self._as_list(accessor))
  
     def _as_array_with_unit(self, accessor):
 
@@ -78,6 +85,8 @@ class ValueFromLevel1b(Creator):
                 return self._as_array_with_unit(field_val)
             elif self.field() in self.array_fields:
                 return self._as_array(field_val)
+            elif self.field() in self.list_fields:
+                return self._as_list(field_val)
             else:
                 return field_val()
         else:
