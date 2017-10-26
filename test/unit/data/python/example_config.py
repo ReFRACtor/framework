@@ -34,7 +34,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'atmosphere', 'radiative_transfer', 'instrument', 'state_vector', 'forward_model'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'state_vector', 'forward_model'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -70,6 +70,33 @@ config_def = {
     'spectrum_sampling': {
         'creator': creator.forward_model.UniformSpectrumSampling,
         'high_res_spacing': rf.DoubleWithUnit(0.01, "cm^-1"), 
+    },
+    'instrument': {
+        'creator': creator.instrument.IlsInstrument,
+        'ils_half_width': {
+            'creator': creator.value.ArrayWithUnit,
+            'value': np.array([4.09e-04, 1.08e-03, 1.40e-03]),
+            'units': "um",
+        },
+        'dispersion': {
+            'creator': creator.instrument.DispersionPolynomial,
+            'apriori': {
+                'creator': creator.l1b.ValueFromLevel1b,
+                'field': 'spectral_coefficient',
+            },
+            'number_samples': static_value("Instrument/Dispersion/number_pixel"),
+            'is_one_based': True,
+            'num_parameters': 2,
+        },
+        'ils_function': {
+            'creator': creator.instrument.IlsTable,
+            'delta_lambda': ils_input["/InstrumentData/ils_delta_lambda"][:],
+            'response': ils_input["/InstrumentData/ils_relative_response"][:],
+        },
+        'instrument_correction': {
+            'creator': creator.instrument.InstrumentCorrectionList,
+            'corrections': [],
+        },
     },
     'atmosphere': {
         'creator': creator.atmosphere.AtmosphereCreator,
@@ -186,33 +213,6 @@ config_def = {
         },
         'num_streams': 4,
         'num_mom': 16,
-    },
-    'instrument': {
-        'creator': creator.instrument.IlsInstrument,
-        'ils_half_width': {
-            'creator': creator.value.ArrayWithUnit,
-            'value': np.array([4.09e-04, 1.08e-03, 1.40e-03]),
-            'units': "um",
-        },
-        'dispersion': {
-            'creator': creator.instrument.DispersionPolynomial,
-            'apriori': {
-                'creator': creator.l1b.ValueFromLevel1b,
-                'field': 'spectral_coefficient',
-            },
-            'number_samples': static_value("Instrument/Dispersion/number_pixel"),
-            'is_one_based': True,
-            'num_parameters': 2,
-        },
-        'ils_function': {
-            'creator': creator.instrument.IlsTable,
-            'delta_lambda': ils_input["/InstrumentData/ils_delta_lambda"][:],
-            'response': ils_input["/InstrumentData/ils_relative_response"][:],
-        },
-        'instrument_correction': {
-            'creator': creator.instrument.InstrumentCorrectionList,
-            'corrections': [],
-        },
     },
     'state_vector': {
         'creator': creator.state_vector.StateVector,

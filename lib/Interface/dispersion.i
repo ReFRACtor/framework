@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
+%include <std_vector.i>
 %include "common.i"
 
 %{
@@ -37,8 +38,7 @@ public:
   %python_attribute(pixel_grid, virtual SpectralDomain);
 };
 
-%template(SubStateVectorArrayDispersion) 
-FullPhysics::SubStateVectorArray<FullPhysics::Dispersion>;
-
+%template(SubStateVectorArrayDispersion) FullPhysics::SubStateVectorArray<FullPhysics::Dispersion>;
 }
 
+%template(vector_dispersion) std::vector<boost::shared_ptr<FullPhysics::Dispersion> >;

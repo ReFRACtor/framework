@@ -10,6 +10,9 @@
 %fp_shared_ptr(FullPhysics::SpectralWindowRange);
 
 namespace FullPhysics {
+
+class Dispersion;
+
 class SpectralWindowRange : public SpectralWindow {
 public:
   SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwindow_ranges);
@@ -17,5 +20,6 @@ public:
   %python_attribute(number_spectrometer, int)
   %python_attribute_with_set(range_array, ArrayWithUnit<double, 3>)
   %python_attribute_with_set(bad_sample_mask, blitz::Array<bool, 2>)
+  %python_attribute_with_set(dispersion, std::vector<boost::shared_ptr<Dispersion> >)
 };
 }

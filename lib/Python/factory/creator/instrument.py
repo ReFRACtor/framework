@@ -30,6 +30,7 @@ class DispersionPolynomial(CreatorAprioriMultiChannel):
     num_parameters = param.Scalar(int, default=2)
     desc_band_name = param.Iterable(str)
     num_channels = param.Scalar(int)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
 
     def create(self, **kwargs):
 
@@ -41,9 +42,23 @@ class DispersionPolynomial(CreatorAprioriMultiChannel):
         is_one_based = self.is_one_based()
 
         disp = []
+        vec_disp = rf.vector_dispersion()
         for chan_idx in range(self.num_channels()):
-            disp.append( rf.DispersionPolynomial(apriori.value[chan_idx, :], retrieval_flag[chan_idx, :], apriori.units,
-                                                 desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based) )
+            chan_disp = rf.DispersionPolynomial(apriori.value[chan_idx, :], retrieval_flag[chan_idx, :], apriori.units,
+                                                desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
+            disp.append(chan_disp)
+            vec_disp.push_back(chan_disp)
+
+        # Set dispersion into the spectral window class if it is a SpectralWindowRange
+        # so it can use the dispersion to convert sample_indexes into an actual spectral range
+        # This gets converted in the SpectralWindowRange spectral_bound method. The bounds
+        # get used elsewhere to resolve which channels spectral points belong to. This
+        # should definitely be handled in a better manner somehow since the order that Dispersion
+        # gets sets into the SpectralWindowRange matters.
+        spec_win = self.spec_win()
+        if hasattr(spec_win, "dispersion"):
+            self.spec_win().dispersion = vec_disp
+
         return disp
  
 class IlsTable(Creator):
