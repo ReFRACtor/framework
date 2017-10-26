@@ -17,6 +17,7 @@ ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
 ils_input = h5py.File(ils_file)
 
 solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
+aerosol_prop_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_aerosol_combined.h5")
 
 data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
 l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
@@ -170,6 +171,57 @@ config_def = {
                     'filename': "v5.0.0/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
                  },
             },
+        },
+        'aerosol': {
+            'creator': creator.aerosol.AerosolOptical,
+            'aerosols': [ "kahn_2b", "kahn_3b", "water", "ice" ],
+            'kahn_2b': {
+                'creator': creator.aerosol.AerosolDefinition,
+                'extinction': {
+                    'creator': creator.aerosol.AerosolShapeGaussian,
+                    'apriori': np.array([-4.38203, 1, 0.2]),
+                },
+                'properties': {
+                    'creator': creator.aerosol.AerosolPropertyHdf,
+                    'filename': aerosol_prop_file,
+                },
+            },
+            'kahn_3b': {
+                'creator': creator.aerosol.AerosolDefinition,
+                'extinction': {
+                    'creator': creator.aerosol.AerosolShapeGaussian,
+                    'apriori': np.array([-4.38203, 1, 0.2]),
+                },
+                'properties': {
+                    'creator': creator.aerosol.AerosolPropertyHdf,
+                    'filename': aerosol_prop_file,
+                },
+            },
+            'water': {
+                'creator': creator.aerosol.AerosolDefinition,
+                'extinction': {
+                    'creator': creator.aerosol.AerosolShapeGaussian,
+                    'apriori': np.array([-4.38203, 0.75, 0.1]),
+                },
+                'properties': {
+                    'creator': creator.aerosol.AerosolPropertyHdf,
+                    'filename': aerosol_prop_file,
+                    'prop_name': "wc_008",
+                },
+            },
+            'ice': {
+                'creator': creator.aerosol.AerosolDefinition,
+                'extinction': {
+                    'creator': creator.aerosol.AerosolShapeGaussian,
+                    'apriori': np.array([-4.38203, 0.3, 0.04]),
+                },
+                'properties': {
+                    'creator': creator.aerosol.AerosolPropertyHdf,
+                    'filename': aerosol_prop_file,
+                    'prop_name': "ice_cloud_MODIS6_deltaM_1000",
+                },
+            },
+
         },
         'relative_humidity': {
             'creator': creator.atmosphere.RelativeHumidity,

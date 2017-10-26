@@ -16,8 +16,8 @@ class AtmosphereCreator(Creator):
     altitudes = param.ObjectVector("altitude")
     absorber = param.InstanceOf(rf.Absorber)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
-    ground = param.InstanceOf(rf.Ground)
-    #aerosol =
+    ground = param.InstanceOf(rf.Ground, required=False)
+    aerosol = param.InstanceOf(rf.Aerosol, required=False)
     constants = param.InstanceOf(rf.Constant)
 
     def create(self, **kwargs):
@@ -26,10 +26,19 @@ class AtmosphereCreator(Creator):
         temperature = self.common_store["temperature"] = self.temperature()
         altitudes = self.common_store["altitudes"] = self.altitudes()
         absorber = self.common_store["absorber"] = self.absorber()
-        relative_humidity = self.relative_humidity()
-        ground = self.ground()
+        relative_humidity = self.common_store["relative_humidity"] = self.relative_humidity()
+        aerosol = self.common_store["aerosol"] = self.aerosol()
+        ground = self.common_store["ground"] = self.ground()
 
-        return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitudes, self.constants())
+        if aerosol and ground:
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitudes, self.constants())
+        elif aerosol:
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, altitudes, self.constants())
+        elif ground:
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitudes, self.constants())
+        else:
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, altitudes, self.constants())
+
 
 class PressureSigma(CreatorApriori):
     "Creates a PressureSigma object statisfying the AtmosphereCreator's pressure parameter"

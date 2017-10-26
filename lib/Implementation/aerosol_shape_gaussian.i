@@ -8,6 +8,9 @@
 %import "pressure.i"
 %fp_shared_ptr(FullPhysics::AerosolShapeGaussian)
 namespace FullPhysics {
+
+%feature("notabstract") AerosolShapeGaussian;
+
 class AerosolShapeGaussian : public AerosolExtinctionImpBase {
 public:
   AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
