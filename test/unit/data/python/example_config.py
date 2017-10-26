@@ -125,47 +125,47 @@ config_def = {
             },
         },
         'absorber': {
-            'creator': creator.atmosphere.AbsorberAbsco,
+            'creator': creator.absorber.AbsorberAbsco,
             'gases': ['CO2', 'H2O', 'O2'],
             'CO2': {
-                'creator': creator.atmosphere.AbsorberGasDefinition,
+                'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
-                    'creator': creator.atmosphere.AbsorberVmrLevel,
+                    'creator': creator.absorber.AbsorberVmrLevel,
                     'apriori': {
-                        'creator': creator.atmosphere.GasVmrApriori,
+                        'creator': creator.absorber.GasVmrApriori,
                         'gas_name': 'CO2',
                         'reference_atm_file': static_input_file,
                     },
                 },
                 'absorption': {
-                    'creator': creator.atmosphere.AbscoHdf,
+                    'creator': creator.absorber.AbscoHdf,
                     'table_scale': [1.0, 1.0, 1.004],
                     'filename': "v5.0.0/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                 },
             },
             'H2O': {
-                'creator': creator.atmosphere.AbsorberGasDefinition,
+                'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
-                    'creator': creator.atmosphere.AbsorberVmrMet,
+                    'creator': creator.absorber.AbsorberVmrMet,
                     'apriori': np.array([1.0]),
                 },
                 'absorption': {
-                    'creator': creator.atmosphere.AbscoHdf,
+                    'creator': creator.absorber.AbscoHdf,
                     'table_scale': 1.0,
                     'filename': "v5.0.0/h2o_hitran12.h5",
                 },
             },
             'O2': {
-                'creator': creator.atmosphere.AbsorberGasDefinition,
+                'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
-                    'creator': creator.atmosphere.AbsorberVmrLevel,
+                    'creator': creator.absorber.AbsorberVmrLevel,
                     'apriori': {
                         'creator': creator.atmosphere.ConstantForAllLevels,
                         'value': static_value("Gas/O2/average_mole_fraction")[0],
                     },
                 },
                 'absorption': {
-                    'creator': creator.atmosphere.AbscoHdf,
+                    'creator': creator.absorber.AbscoHdf,
                     'table_scale': 1.0,
                     'filename': "v5.0.0/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
                  },
