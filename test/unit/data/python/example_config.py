@@ -164,6 +164,7 @@ config_def = {
                         'creator': creator.atmosphere.ConstantForAllLevels,
                         'value': static_value("Gas/O2/average_mole_fraction")[0],
                     },
+                    'retrieved': False,
                 },
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,

@@ -21,6 +21,7 @@ class AerosolOptical(Creator):
     aerosols = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
+    reference_wn = param.Scalar(int, default=1e4/0.755)
  
     def create(self, **kwargs):
 
@@ -40,7 +41,7 @@ class AerosolOptical(Creator):
             vec_extinction.push_back(aerosol_def['extinction'])
             vec_properties.push_back(aerosol_def['properties'])
 
-        return rf.AerosolOptical(vec_extinction, vec_properties, self.pressure(), self.relative_humidity())
+        return rf.AerosolOptical(vec_extinction, vec_properties, self.pressure(), self.relative_humidity(), self.reference_wn())
 
 
 class AerosolShapeGaussian(CreatorApriori):

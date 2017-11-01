@@ -26,7 +26,7 @@ public:
 	  const std::vector<boost::shared_ptr<AerosolProperty> >& Aerosol_prop,
 	  const boost::shared_ptr<Pressure>& Press,
 	  const boost::shared_ptr<RelativeHumidity>& Rh,
-	  double Reference_wn = 1e4/0.755);
+	  double Reference_wn);
   virtual ArrayAd<double, 2> optical_depth_each_layer(double wn) 
     const;
   virtual ArrayAd<double, 1> 
