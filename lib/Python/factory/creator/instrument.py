@@ -95,6 +95,24 @@ class IlsTable(Creator):
                                       desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
         return ils_func
 
+class IlsGaussian(Creator):
+
+    hwhm = param.ArrayWithUnit(dims=1)
+    hdf_band_name = param.Iterable(str)
+    desc_band_name = param.Iterable(str)
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        hwhm = self.hwhm()
+        hdf_band_name = self.hdf_band_name()
+        desc_band_name = self.desc_band_name()
+
+        ils_func = []
+        for chan_idx in range(self.num_channels()):
+            ils_func.append( rf.IlsGaussian(hwhm.value[chan_idx], desc_band_name[chan_idx], hdf_band_name[chan_idx]) )
+
+        return ils_func
 
 class InstrumentCorrectionList(Creator):
 

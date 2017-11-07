@@ -10,6 +10,9 @@
 %fp_shared_ptr(FullPhysics::IlsGaussian);
 
 namespace FullPhysics {
+
+%feature("notabstract") IlsGaussian;
+
 class IlsGaussian : public IlsFunction {
 public:
   IlsGaussian(double a, const std::string& Band_name, 
