@@ -53,6 +53,18 @@ class PressureSigma(CreatorApriori):
 
         return rf.PressureSigma(self.a_coeff(), self.b_coeff(), ap_psurf, ret_flag)
 
+class PressureGrid(CreatorApriori):
+    "Creates a PressureSigma object statisfying the AtmosphereCreator's pressure parameter"
+
+    pressure_levels = param.Array(dims=1)
+
+    def create(self, **kwargs):
+        # ap and flag loaded as arrays, so just get first value
+        ap_psurf = self.apriori()[0]
+        ret_flag = bool(self.retrieval_flag()[0])
+
+        return rf.PressureSigma(self.pressure_levels(), ap_psurf, ret_flag)
+
 class TemperatureMet(CreatorApriori):
     "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"
     
@@ -64,6 +76,18 @@ class TemperatureMet(CreatorApriori):
         ret_flag = bool(self.retrieval_flag()[0])
 
         return rf.TemperatureMet(self.met(), self.pressure(), ap_offset, ret_flag)
+
+class TemperatureLevelOffset(CreatorApriori):
+    "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"
+    
+    temperature_levels = param.Array(dims=1)
+    pressure = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        ap_offset = self.apriori()[0]
+        ret_flag = bool(self.retrieval_flag()[0])
+
+        return rf.TemperatureLevelOffset(self.pressure(), self.temperature_levels(), ap_offset, ret_flag)
 
 class AltitudeHydrostatic(Creator):
     "Creates a AltitudeHydrostatic object statisfying the AtmosphereCreator's altitude parameter"
