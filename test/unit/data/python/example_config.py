@@ -9,8 +9,6 @@ import refractor.factory.param as param
 from refractor.factory import process_config
 from refractor import framework as rf
 
-logging.basicConfig(level=logging.DEBUG)
-
 static_input_file = os.path.join(os.path.dirname(__file__), "../lua/example_static_input.h5")
 static_input = h5py.File(static_input_file)
 ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
@@ -133,7 +131,7 @@ config_def = {
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrLevel,
                     'apriori': {
-                        'creator': creator.absorber.GasVmrApriori,
+                        'creator': creator.absorber.GasVmrAprioriMetL1b,
                         'gas_name': 'CO2',
                         'reference_atm_file': static_input_file,
                     },
@@ -314,6 +312,8 @@ config_def = {
 }
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+
     config_inst = process_config(config_def)
 
     from pprint import pprint

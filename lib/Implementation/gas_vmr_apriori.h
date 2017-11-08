@@ -27,12 +27,22 @@ namespace FullPhysics {
 
 class GasVmrApriori : public Printable<GasVmrApriori> {
 public:
-    GasVmrApriori(const boost::shared_ptr<Meteorology>& Met_file,
-                  const boost::shared_ptr<Level1b>& L1b_file,
-                  const boost::shared_ptr<Altitude>& Alt,
-                  const HdfFile& Hdf_static_input,
-                  const std::string& Hdf_group,
-                  const std::string& Gas_name,
+    GasVmrApriori(const boost::shared_ptr<Meteorology>& met_file,
+                  const boost::shared_ptr<Level1b>& l1b_file,
+                  const boost::shared_ptr<Altitude>& alt,
+                  const HdfFile& hdf_static_input,
+                  const std::string& hdf_group,
+                  const std::string& gas_name,
+                  const int temp_avg_window = 11);
+
+    GasVmrApriori(const blitz::Array<double, 1>& pressure_levels,
+                  const blitz::Array<double, 1>& temperature_levels,
+                  const double& obs_latitude,
+                  const Time& obs_time,
+                  const boost::shared_ptr<Altitude>& altitude,
+                  const HdfFile& reference_file,
+                  const std::string& hdf_group,
+                  const std::string& gas_name,
                   const int temp_avg_window = 11);
 
     const blitz::Array<double, 1> apriori_vmr() const;
@@ -46,6 +56,17 @@ public:
     void print(std::ostream& Os) const { Os << "GasVmrApriori"; }
 
 private:
+
+    void initialize(const blitz::Array<double, 1>& pressure_levels,
+                    const blitz::Array<double, 1>& temperature_levels,
+                    const double& obs_latitude,
+                    const Time& obs_time,
+                    const boost::shared_ptr<Altitude>& altitude,
+                    const HdfFile& reference_file,
+                    const std::string& hdf_group,
+                    const std::string& gas_name,
+                    const int temp_avg_window);
+
     boost::shared_ptr<ReferenceVmrApriori> ref_apriori;
 
     blitz::Array<double, 1> model_alt;

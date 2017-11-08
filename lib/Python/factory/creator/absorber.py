@@ -8,7 +8,7 @@ from .. import param
 
 from refractor import framework as rf
 
-class GasVmrApriori(Creator):
+class GasVmrAprioriMetL1b(Creator):
     "Creates a VMR apriori for a gas species using the TCCON method"
 
 
@@ -24,6 +24,28 @@ class GasVmrApriori(Creator):
         ref_atm_data = rf.HdfFile(self.reference_atm_file())
         apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitudes()[0], ref_atm_data, "/Reference_Atmosphere", self.gas_name(), self.temp_avg_window())
         return apriori_obj.apriori_vmr(self.pressure())
+
+class GasVmrApriori(Creator):
+    "Creates a VMR apriori for a gas species using the TCCON method"
+
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    latitude = param.ArrayWithUnit(dims=1)
+    time = param.Iterable(rf.Time)
+    altitudes = param.ObjectVector("altitude")
+    reference_atm_file = param.Scalar(str)
+    gas_name = param.Scalar(str)
+    temp_avg_window = param.Scalar(int, default=11)
+
+    def create(self, **kwargs):
+        ref_atm_data = rf.HdfFile(self.reference_atm_file())
+
+        pressure_levels = self.pressure().pressure_grid.value.value
+        temperature_levels = self.temperature().temperature_grid(self.pressure()).value.value
+
+        apriori_obj = rf.GasVmrApriori(pressure_levels, temperature_levels, self.latitude().value[0], self.time()[0], \
+                self.altitudes()[0], ref_atm_data, "/Reference_Atmosphere", self.gas_name(), self.temp_avg_window())
+        return apriori_obj.apriori_vmr()
 
 class AbsorberVmrLevel(CreatorApriori):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
