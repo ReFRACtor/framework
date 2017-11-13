@@ -27,3 +27,23 @@ class LidortRt(Creator):
                 self.observation_zenith().convert("deg").value, 
                 self.observation_azimuth().convert("deg").value, 
                 self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only())
+
+class TwostreamRt(Creator):
+
+    atmosphere = param.InstanceOf(rf.RtAtmosphere)
+    stokes_coefficients = param.Array(dims=2)
+    solar_zenith = param.ArrayWithUnit(dims=1)
+    observation_zenith = param.ArrayWithUnit(dims=1)
+    observation_azimuth = param.ArrayWithUnit(dims=1)
+
+    do_fullquadrature = param.Scalar(bool, default=True)
+
+    def create(self, **kwargs):
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
+
+        
+        return rf.TwostreamRt(self.atmosphere(), stokes_object,
+                self.solar_zenith().convert("deg").value, 
+                self.observation_zenith().convert("deg").value, 
+                self.observation_azimuth().convert("deg").value, 
+                self.do_fullquadrature())
