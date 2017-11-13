@@ -159,7 +159,7 @@ void AbscoHdf::load_file(const std::string& Fname,
 // See base class for description
 bool AbscoHdf::have_data(double wn) const
 {
-  return(wn >= *wnfront && wn <= *wnback);
+  return(wn >= *wnfront && wn <= *wnback && table_scale(wn) > 0.0);
 }
 
 double AbscoHdf::table_scale(double wn) const 
@@ -167,7 +167,7 @@ double AbscoHdf::table_scale(double wn) const
   if(sb.number_spectrometer() > 0) {
     int index = sb.spectral_index(DoubleWithUnit(wn, "cm^-1"));
     if(index < 0)
-      return 1.0;
+      return 0.0;
     return table_scale_[index];
   }
   return table_scale_[0];
