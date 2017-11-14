@@ -24,19 +24,20 @@ if("${THIRDPARTY_MODULE_DIR}" STREQUAL "")
     set(THIRDPARTY_MODULE_DIR ${CMAKE_BINARY_DIR}/modules)
 endif()
 
-# If using gfortran include the quadmath and gfortran libraries
+# If using gfortran include the quadmath and gfortran libraries if found
+# Not all distributions seem to seperate these out 
 if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
     find_library(LIB_QUADMATH NAMES quadmath libquadmath)
-    if(${LIB_QUADMATH} MATCHES "-NOTFOUND")
-        message(FATAL_ERROR "Could not find quadmath library needed when using GNU Fortran compiler")
+    if(NOT ${LIB_QUADMATH} MATCHES "-NOTFOUND")
+        message(STATUS "Linking with libquadmath")
+        list(APPEND THIRDPARTY_LIBRARIES ${LIB_QUADMATH})
     endif()
-    list(APPEND THIRDPARTY_LIBRARIES ${LIB_QUADMATH})
 
     find_library(LIB_GFORTRAN NAMES gfortran libgfortran)
-    if(${LIB_GFORTRAN} MATCHES "-NOTFOUND")
-        message(FATAL_ERROR "Could not find gfortran library needed when using GNU Fortran compiler")
+    if(NOT ${LIB_GFORTRAN} MATCHES "-NOTFOUND")
+        message(STATUS "Linking with libgfortran")
+        list(APPEND THIRDPARTY_LIBRARIES ${LIB_GFORTRAN})
     endif()
-    list(APPEND THIRDPARTY_LIBRARIES ${LIB_GFORTRAN})
 endif()
 
 ##########################################################
