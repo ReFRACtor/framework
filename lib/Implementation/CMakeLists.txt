@@ -118,6 +118,7 @@ set(DIR_SOURCES
     solar_absorption_gfit_file.cc
     solar_absorption_gfit_file_f.F90
     solar_absorption_table.cc
+    solar_continuum_polynomial.cc
     solar_continuum_table.cc
     solar_doppler_shift_l1b.cc
     solar_doppler_shift_polynomial.cc
@@ -212,6 +213,7 @@ set(TEST_SOURCES
     solar_absorption_and_continuum_test.cc
     solar_absorption_gfit_file_test.cc
     solar_absorption_table_test.cc
+    solar_continuum_polynomial_test.cc
     solar_continuum_table_test.cc
     solar_doppler_shift_l1b_test.cc
     solar_doppler_shift_polynomial_test.cc
