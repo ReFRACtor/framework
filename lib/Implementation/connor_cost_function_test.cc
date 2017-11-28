@@ -3,22 +3,21 @@
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
 
-#include "forward_model_cost_function.h"
+#include "connor_cost_function.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(forward_model_cost_function, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(connor_cost_function, ConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(all_pixels)
 {
     is_long_test();               // Skip unless we are running long tests.
     turn_on_logger();             // Have log output show up.
 
-    ForwardModelCostFunction fm_cost_func(config_forward_model);
+    ConnorCostFunction fm_cost_func(config_state_vector, config_forward_model);
 
-    StateVector& sv = *config_state_vector;
-    Array<double, 1> state_vec(sv.state().copy());
+    Array<double, 1> state_vec(config_state_vector->state().copy());
 
     Array<double, 1> residual;
     Array<double, 1> se;
@@ -30,7 +29,7 @@ BOOST_AUTO_TEST_CASE(all_pixels)
     Array<double, 1> se_expt;
     Array<double, 2> jacobian_expt;
 
-    IfstreamCs fm_cost_expected(test_data_dir() + "expected/forward_model_cost_function/all_pixels");
+    IfstreamCs fm_cost_expected(test_data_dir() + "expected/connor_cost_function/all_pixels");
     fm_cost_expected >> residual_expt >> se_expt >> jacobian_expt;
 
     BOOST_CHECK_MATRIX_CLOSE(residual_expt, residual);

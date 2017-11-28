@@ -3370,7 +3370,6 @@ function ConfigCommon.oco_forward_model:create_parent_object(sub_object)
    return OcoForwardModel(self.config.instrument,
                           self.config.spec_win, self.config.l1b, 
                           self.config.rt, self.config.spec_samp, 
-                          self.config.state_vector,
                           self.config.spectrum_effect)
 end
 
@@ -3435,7 +3434,7 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:connor_solver(config)
-   local cost_func = ForwardModelCostFunction(config.forward_model)
+   local cost_func = ConnorCostFunction(config.state_vector, config.forward_model)
    local conv = ConnorConvergence(config.forward_model, 
                                   self.threshold, 
                                   self.max_iteration, 

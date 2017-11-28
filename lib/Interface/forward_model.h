@@ -1,7 +1,6 @@
 #ifndef FORWARD_MODEL_H
 #define FORWARD_MODEL_H
 #include "printable.h"
-#include "state_vector.h"
 #include "auto_derivative.h"
 #include "spectrum.h"
 #include <blitz/array.h>
@@ -9,11 +8,9 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  This is the Forward Model.
-
-  Note that the forward model depends on the value of the StateVector.
-  This is set separate from getting the radiance or jacobian
-  values.
+  The forward model represents the encapsulation of modeling 
+  spectra from an atmospheric state then applying instrument 
+  specific effects to it.
 *******************************************************************/
 class ForwardModel : public Printable<ForwardModel> {
 public:
@@ -21,18 +18,10 @@ public:
   virtual void print(std::ostream& Os) const {Os << "ForwardModel";}
 
 //-----------------------------------------------------------------------
-/// The grid that the forward model runs on may depend on the state
-/// vector. This notifies the forward model that it should setup the
-/// grid
+/// This notifies the forward model that it should setup the grid
 //-----------------------------------------------------------------------
 
   virtual void setup_grid() = 0;
-
-//-----------------------------------------------------------------------
-/// The state vector associated with the forward model.
-//-----------------------------------------------------------------------
-
-  virtual boost::shared_ptr<StateVector> state_vector() const = 0;
 
 //-----------------------------------------------------------------------
 /// The number of spectral bands associated with forward model.

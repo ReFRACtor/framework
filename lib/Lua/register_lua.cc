@@ -279,7 +279,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(SpectrumSamplingFixedSpacing);
   REGISTER_LUA_LIST(StateVector);
   REGISTER_LUA_LIST(OcoForwardModel);
-  REGISTER_LUA_LIST(ForwardModelCostFunction);
+  REGISTER_LUA_LIST(ConnorCostFunction);
   REGISTER_LUA_LIST(ConnorConvergence);
   REGISTER_LUA_LIST(ConnorSolver);
   REGISTER_LUA_LIST(ErrorAnalysis);

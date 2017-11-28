@@ -3,6 +3,7 @@
 %include "common.i"
 %{
 #include "l2_fp_configuration_lua.h"
+#include "state_vector.h"
 %}
 %base_import(l2_fp_configuration)
 %import "lua_state.i"

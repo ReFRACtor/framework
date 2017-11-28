@@ -82,6 +82,10 @@ public:
   {
     return ls->globals()["forward_model"].value_ptr<ForwardModel>();
   }
+  virtual boost::shared_ptr<StateVector> state_vector() const 
+  {
+    return ls->globals()["state_vector"].value_ptr<StateVector>();
+  }
   virtual boost::shared_ptr<ConnorSolver> solver() const
   {
     if (not ls->globals()["solver"].is_nil())

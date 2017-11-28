@@ -28,7 +28,6 @@ public:
    const boost::shared_ptr<Level1b>& Level_1b,
    const boost::shared_ptr<RadiativeTransfer>& Rt,
    const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
-   const boost::shared_ptr<StateVector>& Sv,
    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect = 
                   std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
   virtual ~OcoForwardModel() {}
@@ -36,7 +35,6 @@ public:
   {
     g.reset(new ForwardModelSpectralGrid(inst, swin, spectrum_sampling_));
   }
-  virtual boost::shared_ptr<StateVector> state_vector() const { return statev; }
   virtual int number_spectrometer() const {return swin->number_spectrometer();}
   virtual std::string hdf_band_name(int Spec_index) const 
   { return inst->hdf_band_name(Spec_index); }
@@ -98,7 +96,6 @@ private:
   boost::shared_ptr<Level1b> l1b;
   boost::shared_ptr<RadiativeTransfer> rt;
   boost::shared_ptr<SpectrumSampling> spectrum_sampling_;
-  boost::shared_ptr<StateVector> statev;
   boost::shared_ptr<ForwardModelSpectralGrid> g;
 };
 }

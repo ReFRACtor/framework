@@ -9,19 +9,16 @@
 %}
 
 %base_import(generic_object)
-%import "state_vector.i"
 %import "spectrum.i"
 
 %fp_shared_ptr(FullPhysics::ForwardModel)
 
 namespace FullPhysics {
-class StateVector;
 
 class ForwardModel : public GenericObject {
 public:
   virtual ~ForwardModel();
   std::string print_to_string() const;
-  %python_attribute_abstract(state_vector, boost::shared_ptr<StateVector>)
   %python_attribute(number_spectrometer, virtual int)
   virtual std::string hdf_band_name(int Spec_index) const;
   virtual SpectralDomain spectral_domain(int Spec_index) const;

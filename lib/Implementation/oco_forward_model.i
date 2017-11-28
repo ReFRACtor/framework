@@ -4,8 +4,10 @@
 %{
 #include "oco_forward_model.h"
 #include "ils_instrument.h"
-#include "sub_state_vector_array.h"
 #include "pressure.h"
+
+// Needed for type conversions in SWIG
+#include "sub_state_vector_array.h"
 %}
 %base_import(forward_model)
 %base_import(named_spectrum)
@@ -14,7 +16,6 @@
 %import "level_1b.i"
 %import "radiative_transfer.i"
 %import "spectrum_sampling.i"
-%import "state_vector.i"
 %import "spectrum_effect.i"
 %import "forward_model_spectral_grid.i"
 
@@ -30,11 +31,9 @@ public:
    const boost::shared_ptr<Level1b>& Level_1b,
    const boost::shared_ptr<RadiativeTransfer>& Rt,
    const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
-   const boost::shared_ptr<StateVector>& Sv,
    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect = 
 		  std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
   virtual ~OcoForwardModel();
-  %python_attribute(state_vector, boost::shared_ptr<StateVector>)
   virtual Spectrum radiance(int Spec_index, bool Skip_jacobian = false) 
     const;
   virtual Spectrum measured_radiance(int Spec_index) const;

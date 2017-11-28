@@ -1,6 +1,7 @@
 #ifndef FD_FORWARD_MODEL_H
 #define FD_FORWARD_MODEL_H
 #include "forward_model.h"
+#include "state_vector.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -21,7 +22,7 @@ public:
 		 const blitz::Array<double, 1>& Perturbation);
   virtual ~FdForwardModel() {}
   virtual boost::shared_ptr<StateVector> state_vector() const 
-  { return real_fm->state_vector(); }
+  { return statev; }
   virtual void print(std::ostream& Os) const { Os << "FdForwardModel"; }
   virtual Spectrum radiance(int Spec_index, bool Skip_jacobian = false) 
     const;

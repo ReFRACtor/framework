@@ -3,6 +3,7 @@
 %include "common.i"
 %{
 #include "connor_convergence.h"
+#include "state_vector.h"
 %}
 %base_import(convergence_check)
 %import "forward_model.i"

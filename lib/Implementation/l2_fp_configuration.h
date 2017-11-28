@@ -2,6 +2,7 @@
 #define L2_FP_CONFIGURATION_H
 #include "printable.h"
 #include "forward_model.h"
+#include "state_vector.h"
 #include "initial_guess.h"
 #include "logger.h"
 #include "initial_guess.h"

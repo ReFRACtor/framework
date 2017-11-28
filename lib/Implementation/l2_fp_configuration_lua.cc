@@ -3,6 +3,7 @@
 #include "output_hdf.h"
 #include "output_hdf_iteration.h"
 #include "register_output_base.h"
+#include "state_vector.h"
 using namespace FullPhysics;
 
 // See base class for description.
@@ -13,9 +14,10 @@ void L2FpConfigurationLua::output(boost::shared_ptr<Output>& Regular_output,
   int num_aer_part = ls->globals()["number_aerosol"].value<int>();
   int npres = ls->globals()["number_pressure_level"].value<int>();
   int nband = ls->globals()["number_band"].value<int>();
+  int sv_claimed_size = ls->globals()["state_vector"].value_ptr<StateVector>()->observer_claimed_size();
   Regular_output.reset
     (new OutputHdf(output_g, npres, 
-		   forward_model()->state_vector()->observer_claimed_size(), 
+		   sv_claimed_size, 
 		   num_aer_part + 1, nband));
   if(ls->globals()["iteration_output"].value<bool>()) {
     if(solver()) {
@@ -27,7 +29,7 @@ void L2FpConfigurationLua::output(boost::shared_ptr<Output>& Regular_output,
   }
   Error_output.reset
     (new OutputHdf(output_name_ + ".error", npres, 
-		   forward_model()->state_vector()->observer_claimed_size(), 
+		   sv_claimed_size, 
 		   num_aer_part + 1, nband));
   std::vector<boost::shared_ptr<RegisterOutputBase> > out_reg
     = ls->globals()["register_output"].value<std::vector<boost::shared_ptr<RegisterOutputBase> > >();

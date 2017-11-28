@@ -10,11 +10,12 @@ using namespace blitz;
 
 FmNLLSProblem::FmNLLSProblem
 (const boost::shared_ptr<ForwardModel>& Fm,
+ const boost::shared_ptr<StateVector>& Sv,
  const Array<double, 1>& Rad,
  const Array<double, 1>& Rad_uncer,
  const Array<double, 1> X_apriori,
  const Array<double, 2> Apriori_cov)
-: fm(Fm), rad(Rad.copy()), x_a(X_apriori.copy())
+: fm(Fm), statev(Sv), rad(Rad.copy()), x_a(X_apriori.copy())
 {
   if(Rad.rows() != Rad_uncer.rows())
     throw Exception("Rad and Rad_uncer need to be the same size");
@@ -35,7 +36,7 @@ Array<double, 1> FmNLLSProblem::residual()
   Array<double, 1> res(rad.rows() + sa_sqrt_inv.rows());
   Range r1(0, rad.rows() - 1);
   Range r2(rad.rows(), res.rows() - 1);
-  fm->state_vector()->update_state(X);
+  statev->update_state(X);
   res(r1) = (fm->radiance_all(true).spectral_range().data() - rad) * 
     se_sqrt_inv;
   res(r2) = sum(sa_sqrt_inv(i1, i2) * (X(i2) - x_a(i2)));
@@ -51,7 +52,7 @@ Array<double, 2> FmNLLSProblem::jacobian()
 		       sa_sqrt_inv.cols());
   Range r1(0, rad.rows() - 1);
   Range r2(rad.rows(), res.rows() - 1);
-  fm->state_vector()->update_state(X);
+  statev->update_state(X);
   ArrayAd<double, 1> fmrad = fm->radiance_all().spectral_range().data_ad();
   res(r1, Range::all()) = fmrad.jacobian()(i1, i2) * se_sqrt_inv(i1);
   res(r2, Range::all()) = sa_sqrt_inv;

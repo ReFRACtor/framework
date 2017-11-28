@@ -49,7 +49,6 @@ set(DIR_SOURCES
     #    fdf_nlls_solver.cc
     fluorescence_effect.cc
     fm_nlls_problem.cc
-    forward_model_cost_function.cc
     fp_logger.cc
     freudenstein_roth_nlls_problem.cc
     gas_vmr_apriori.cc
@@ -125,6 +124,7 @@ set(DIR_SOURCES
     solver_iteration_log.cc
     spectral_window_range.cc
     spectrum_sampling_fixed_spacing.cc
+    connor_cost_function.cc
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
     temperature_met.cc
@@ -165,7 +165,6 @@ set(TEST_SOURCES
     # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses
     #fdf_nlls_solver_test.cc
     fluorescence_effect_test.cc
-    forward_model_cost_function_test.cc
     fp_logger_test.cc
     full_output_test.cc
     gas_vmr_apriori_test.cc
@@ -220,6 +219,7 @@ set(TEST_SOURCES
     solver_finished_fixture.cc
     spectral_window_range_test.cc
     spectrum_sampling_fixed_spacing_test.cc
+    connor_cost_function_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
     temperature_met_test.cc

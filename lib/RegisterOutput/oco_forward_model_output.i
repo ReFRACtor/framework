@@ -4,8 +4,10 @@
 %{
 #include "oco_forward_model_output.h"
 #include "ils_instrument.h"
-#include "sub_state_vector_array.h"
 #include "pressure.h"
+
+// Needed for type conversions in SWIG
+#include "sub_state_vector_array.h"
 %}
 %base_import(register_output_base)
 %import "output.i"

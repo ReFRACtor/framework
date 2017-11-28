@@ -2,16 +2,17 @@
 // (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
-#include "forward_model_cost_function.h"
+#include "connor_cost_function.h"
 %}
 %base_import(cost_function)
 %import "forward_model.i"
-%fp_shared_ptr(FullPhysics::ForwardModelCostFunction);
+%import "state_vector.i"
+%fp_shared_ptr(FullPhysics::ConnorCostFunction);
 
 namespace FullPhysics {
-class ForwardModelCostFunction : public CostFunction {
+class ConnorCostFunction : public CostFunction {
 public:
-  ForwardModelCostFunction(const boost::shared_ptr<ForwardModel>& fm);
+  ConnorCostFunction(const boost::shared_ptr<StateVector>& Sv, const boost::shared_ptr<ForwardModel>& fm);
   virtual void cost_function(const blitz::Array<double, 1>& X,
 			     blitz::Array<double, 1>& OUTPUT,
 			     blitz::Array<double, 1>& OUTPUT,

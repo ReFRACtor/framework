@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(radiance)
   }
 
   OcoForwardModel fm(config_instrument, swin, config_level_1b,
-                     rt, config_spectrum_sampling, config_state_vector, spec_effect);
+                     rt, config_spectrum_sampling, spec_effect);
   fm.setup_grid();
   Array<double, 1> rad_expect;
   expected >> rad_expect;
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
   }
 
   OcoForwardModel fm(config_instrument, swin, config_level_1b,
-                     rt, config_spectrum_sampling, config_state_vector, spec_effect);
+                     rt, config_spectrum_sampling, spec_effect);
   fm.setup_grid();
   ArrayAd<double, 1> rad(fm.radiance_all().spectral_range().data_ad());
   if(false) {                        // Print out in case we need to update

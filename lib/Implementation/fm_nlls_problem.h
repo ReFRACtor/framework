@@ -13,6 +13,7 @@ namespace FullPhysics {
 class FmNLLSProblem : public NLLSProblem {
 public:
   FmNLLSProblem(const boost::shared_ptr<ForwardModel>& Fm,
+   const boost::shared_ptr<StateVector>& Sv,
    const blitz::Array<double, 1>& Rad,
    const blitz::Array<double, 1>& Rad_uncer,
    const blitz::Array<double, 1> X_apriori,
@@ -26,6 +27,7 @@ public:
     { Os << "FmNLLSProblem"; }
 private:
   boost::shared_ptr<ForwardModel> fm;
+  boost::shared_ptr<StateVector> statev;
   blitz::Array<double, 1> rad;
   blitz::Array<double, 1> x_a;
   blitz::Array<double, 1> se_sqrt_inv;

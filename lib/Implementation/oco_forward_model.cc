@@ -12,7 +12,6 @@ REGISTER_LUA_DERIVED_CLASS(OcoForwardModel, ForwardModel)
        const boost::shared_ptr<Level1b>&,
        const boost::shared_ptr<RadiativeTransfer>&,
        const boost::shared_ptr<SpectrumSampling>&,
-       const boost::shared_ptr<StateVector>&,
        const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& >())
 REGISTER_LUA_END()
 #endif
@@ -27,10 +26,9 @@ OcoForwardModel::OcoForwardModel(
       const boost::shared_ptr<Level1b>& Level1b,
       const boost::shared_ptr<RadiativeTransfer>& Rt,
       const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
-      const boost::shared_ptr<StateVector>& Sv,
       const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect)
 : spec_effect(Spectrum_effect), inst(Inst), swin(Spectral_window), 
-  l1b(Level1b), rt(Rt), spectrum_sampling_(Spectrum_sampling), statev(Sv)
+  l1b(Level1b), rt(Rt), spectrum_sampling_(Spectrum_sampling)
 {
   if(spec_effect.size() == 0)
     spec_effect.resize(number_spectrometer());
@@ -137,11 +135,6 @@ void OcoForwardModel::print(std::ostream& Os) const
     Os << "  Spectrum Effect[" << i << "]:\n";
     BOOST_FOREACH(boost::shared_ptr<SpectrumEffect> se, spec_effect[i])
       opad << *se << "\n";
-    opad.strict_sync();
-  }
-  if (statev->state().rows() > 0) {
-    Os << "  State Vector:\n";
-    opad << *statev << "\n";
     opad.strict_sync();
   }
 }

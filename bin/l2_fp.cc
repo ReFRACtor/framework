@@ -221,8 +221,8 @@ int main(int Argc, char** Argv)
 
       // Statevector isn't generally set to the final solution by
       // the Solver, so set it now.
-      config->forward_model()->state_vector()->update_state(solver->x_solution(), 
-                                                            solver->aposteriori_covariance());
+      config->state_vector()->update_state(solver->x_solution(), 
+                                           solver->aposteriori_covariance());
       
       // Write output file
       output->write();
@@ -261,8 +261,7 @@ int main(int Argc, char** Argv)
 
       // Statevector isn't generally set to the final solution by
       // the Solver, so set it now.
-      config->forward_model()->state_vector()->update_state
-	(map->parameters(), map->a_posteriori_covariance());
+      config->state_vector()->update_state(map->parameters(), map->a_posteriori_covariance());
       // Write output file
       output->write();      
       
