@@ -26,6 +26,7 @@ set(DIR_SOURCES
     spectral_domain.cc
     spectral_range.cc
     spectrum.cc
+    stacked_radiance_mixin.cc
     state_vector.cc
     sub_state_vector_proxy.cc
     unit.cc
