@@ -66,6 +66,7 @@ set(DIR_SOURCES
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
+    instrument_measurement_level_1b.cc
     jennrich_sampson_nlls_problem.cc
     l2_fp_configuration_lua.cc
     l_rad_driver.cc
