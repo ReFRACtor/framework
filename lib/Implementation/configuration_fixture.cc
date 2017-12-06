@@ -63,6 +63,7 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   config_level_1b = lua_config["l1b"].value_ptr<Level1b>();
   config_rt = lua_config["rt"].value_ptr<RadiativeTransfer>();
   config_forward_model = lua_config["forward_model"].value_ptr<ForwardModel>();
+  config_instrument_measurement = lua_config["instrument_measurement"].value_ptr<InstrumentMeasurement>();
   sv_initial.reference(config_initial_guess->initial_guess());
   config_state_vector->update_state(sv_initial);
 

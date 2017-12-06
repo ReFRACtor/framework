@@ -130,7 +130,7 @@ ExampleBaseConfig = ConfigCommon:new {
 ------------------------------------------------------------
 
     fm = {
-        creator = ConfigCommon.oco_forward_model,
+        creator = ConfigCommon.standard_forward_model,
         common = {
             desc_band_name = ConfigCommon.hdf_read_string_vector("Common/desc_band_name"),
             hdf_band_name = ConfigCommon.hdf_read_string_vector("Common/hdf_band_name"),

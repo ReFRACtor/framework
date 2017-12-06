@@ -4,15 +4,15 @@ using namespace FullPhysics;
 using namespace blitz;
 
 #ifdef HAVE_LUA
-#include "oco_forward_model.h"
+#include "standard_forward_model.h"
 #include "lsi_rt.h"
 
 boost::shared_ptr<RegisterOutputBase> hr_spec_as_register_output_base(const boost::shared_ptr<HighResSpectrumOutput>& hr_spec) {
   return boost::dynamic_pointer_cast<RegisterOutputBase>(hr_spec);
 }
 
-void hr_spec_add_as_oco_fm_observer(HighResSpectrumOutput& hr_spec, OcoForwardModel& oco_fm) {
-  oco_fm.add_observer(hr_spec);
+void hr_spec_add_as_standard_fm_observer(HighResSpectrumOutput& hr_spec, StandardForwardModel& standard_fm) {
+  standard_fm.add_observer(hr_spec);
 }
 
 void hr_spec_add_as_lsi_rt_observer(HighResSpectrumOutput& hr_spec, LsiRt& rt) {
@@ -23,7 +23,7 @@ void hr_spec_add_as_lsi_rt_observer(HighResSpectrumOutput& hr_spec, LsiRt& rt) {
 REGISTER_LUA_CLASS(HighResSpectrumOutput)
 .def(luabind::constructor<>())
 .def("as_register_output_base", &hr_spec_as_register_output_base)
-.def("add_as_observer", &hr_spec_add_as_oco_fm_observer)
+.def("add_as_observer", &hr_spec_add_as_standard_fm_observer)
 .def("add_as_observer", &hr_spec_add_as_lsi_rt_observer)
 REGISTER_LUA_END()
 #endif

@@ -1,25 +1,25 @@
 #ifndef OCO_FORWARD_MODEL_OUTPUT_H
 #define OCO_FORWARD_MODEL_OUTPUT_H
 #include "register_output_base.h"
-#include "oco_forward_model.h"
+#include "standard_forward_model.h"
 
 namespace FullPhysics {
 /****************************************************************//**
-  This registers the portions of the OcoForwardModel class that 
+  This registers the portions of the StandardForwardModel class that 
   should be written as output.
 
   See the discussion in RegisterOutputBase why this isn't just 
-  part of the OcoForwardModel class.
+  part of the StandardForwardModel class.
 *******************************************************************/
-class OcoForwardModelOutput : public RegisterOutputBase {
+class StandardForwardModelOutput : public RegisterOutputBase {
 public:
-    OcoForwardModelOutput(const boost::shared_ptr<OcoForwardModel>&
+    StandardForwardModelOutput(const boost::shared_ptr<StandardForwardModel>&
                        Fm)
         : fm(Fm) {}
-    virtual ~OcoForwardModelOutput() {}
+    virtual ~StandardForwardModelOutput() {}
     virtual void register_output(const boost::shared_ptr<Output>& out) const;
 private:
-    boost::shared_ptr<OcoForwardModel> fm;
+    boost::shared_ptr<StandardForwardModel> fm;
 };
 }
 #endif

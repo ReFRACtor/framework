@@ -4,7 +4,7 @@
 %{
 #include "l2_fp_configuration.h"
 #include "composite_initial_guess.h"
-#include "oco_forward_model.h"
+#include "forward_model.h"
 %}
 %base_import(generic_object)
 %import "logger.i"

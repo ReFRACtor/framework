@@ -4,6 +4,7 @@
 #include "max_a_posteriori.h"
 #include "atmosphere_oco.h"
 #include "forward_model.h"
+#include "instrument_measurement.h"
 #include "fe_disable_exception.h"
 
 namespace FullPhysics {
@@ -35,30 +36,27 @@ class ErrorAnalysis : public Printable<ErrorAnalysis> {
 public:
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 		const boost::shared_ptr<AtmosphereOco>& Atm,
-		const boost::shared_ptr<ForwardModel>& Fm);
+		const boost::shared_ptr<ForwardModel>& Fm,
+        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 		const boost::shared_ptr<AtmosphereOco>& Atm,
-		const boost::shared_ptr<ForwardModel>& Fm);
+		const boost::shared_ptr<ForwardModel>& Fm,
+        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 		const boost::shared_ptr<RtAtmosphere>& Atm,
-		const boost::shared_ptr<ForwardModel>& Fm);
+		const boost::shared_ptr<ForwardModel>& Fm,
+        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 		const boost::shared_ptr<RtAtmosphere>& Atm,
-		const boost::shared_ptr<ForwardModel>& Fm);
+		const boost::shared_ptr<ForwardModel>& Fm,
+        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
   virtual ~ErrorAnalysis() {}
 
 //-----------------------------------------------------------------------
 /// The number of spectral bands associated with forward model.
 //-----------------------------------------------------------------------
 
-  int number_spectrometer() const { return fm->number_spectrometer();}
-
-//-----------------------------------------------------------------------
-/// The HDF field name to use for a particular band (e.g., "weak_co2")
-//-----------------------------------------------------------------------
-
-  std::string hdf_band_name(int Spec_index) const 
-  {return fm->hdf_band_name(Spec_index); }
+  int num_channels() const { return fm->num_channels();}
 
 //-----------------------------------------------------------------------
 /// Modeled radiance.
@@ -69,7 +67,7 @@ public:
     if(residual().rows() == 0)
       return blitz::Array<double, 1>(0);
     return blitz::Array<double, 1>
-      (residual() + fm->measured_radiance_all().spectral_range().data()); 
+      (residual() + meas->radiance_all().spectral_range().data()); 
   }
 
 //-----------------------------------------------------------------------
@@ -78,7 +76,7 @@ public:
 
   double residual_sum_sq(int Band) const {
     FeDisableException disable_fp;
-    boost::optional<blitz::Range> pr = fm->pixel_range(Band);
+    boost::optional<blitz::Range> pr = fm->stacked_pixel_range(Band);
     if(!pr)
       return 0;
     blitz::Array<double, 1> res(residual());
@@ -93,7 +91,7 @@ public:
 
   double residual_mean_sq(int Band) const {
     FeDisableException disable_fp;
-    boost::optional<blitz::Range> pr = fm->pixel_range(Band);
+    boost::optional<blitz::Range> pr = fm->stacked_pixel_range(Band);
     if(!pr)
       return 0;
     return sqrt(residual_sum_sq(Band) / pr->length());
@@ -106,7 +104,7 @@ public:
   double reduced_chisq(int Band) const
   { 
     FeDisableException disable_fp;
-    boost::optional<blitz::Range> pr = fm->pixel_range(Band);
+    boost::optional<blitz::Range> pr = fm->stacked_pixel_range(Band);
     if(!pr)
       return 0;
     if(solver) {
@@ -128,7 +126,7 @@ public:
   double relative_residual_mean_sq(int Band) const 
   { 
     FeDisableException disable_fp;
-    boost::optional<blitz::Range> pr = fm->pixel_range(Band);
+    boost::optional<blitz::Range> pr = fm->stacked_pixel_range(Band);
     if(!pr)
       return 0;
     double result = residual_mean_sq(Band);
@@ -268,6 +266,7 @@ private:
   boost::shared_ptr<MaxAPosteriori> max_a_posteriori;
   boost::shared_ptr<AtmosphereOco> atm;
   boost::shared_ptr<ForwardModel> fm;
+  boost::shared_ptr<InstrumentMeasurement> meas;
   blitz::Array<double, 2> hmat() const;
   blitz::Array<double, 2> ht_c_h() const;
   // Used in a lot of places, so define once here.

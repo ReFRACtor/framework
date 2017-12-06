@@ -9,10 +9,12 @@ using namespace blitz;
 REGISTER_LUA_CLASS(ErrorAnalysis)
 .def(luabind::constructor<const boost::shared_ptr<ConnorSolver>&,
      const boost::shared_ptr<RtAtmosphere>&,
-     const boost::shared_ptr<ForwardModel>&>())
+     const boost::shared_ptr<ForwardModel>&,
+     const boost::shared_ptr<InstrumentMeasurement>&>())
 .def(luabind::constructor<const boost::shared_ptr<MaxAPosteriori>&,
      const boost::shared_ptr<RtAtmosphere>&,
-     const boost::shared_ptr<ForwardModel>&>())
+     const boost::shared_ptr<ForwardModel>&,
+     const boost::shared_ptr<InstrumentMeasurement>&>())
 REGISTER_LUA_END()
 #endif
 
@@ -22,8 +24,9 @@ REGISTER_LUA_END()
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 			     const boost::shared_ptr<AtmosphereOco>& Atm,
-			     const boost::shared_ptr<ForwardModel>& Fm)
-  : solver(Solver), atm(Atm), fm(Fm)
+			     const boost::shared_ptr<ForwardModel>& Fm,
+                 const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+  : solver(Solver), atm(Atm), fm(Fm), meas(inst_meas)
 {
 }
 
@@ -33,8 +36,9 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 			     const boost::shared_ptr<AtmosphereOco>& Atm,
-			     const boost::shared_ptr<ForwardModel>& Fm)
-  : max_a_posteriori(Max_a_posteriori), atm(Atm), fm(Fm)
+			     const boost::shared_ptr<ForwardModel>& Fm,
+                 const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+  : max_a_posteriori(Max_a_posteriori), atm(Atm), fm(Fm), meas(inst_meas)
 {
 }
 
@@ -47,9 +51,10 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_post
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 			     const boost::shared_ptr<RtAtmosphere>& Atm,
-			     const boost::shared_ptr<ForwardModel>& Fm)
+			     const boost::shared_ptr<ForwardModel>& Fm,
+                 const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
 : solver(Solver), atm(boost::dynamic_pointer_cast<AtmosphereOco>(Atm)), 
-  fm(Fm)
+  fm(Fm), meas(inst_meas)
 {
 }
 
@@ -62,10 +67,11 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 			     const boost::shared_ptr<RtAtmosphere>& Atm,
-			     const boost::shared_ptr<ForwardModel>& Fm)
+			     const boost::shared_ptr<ForwardModel>& Fm,
+                 const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
 : max_a_posteriori(Max_a_posteriori), 
   atm(boost::dynamic_pointer_cast<AtmosphereOco>(Atm)), 
-  fm(Fm)
+  fm(Fm), meas(inst_meas)
 {
 }
 
@@ -180,7 +186,7 @@ double ErrorAnalysis::xco2_interference_error() const
 Array<double, 1> ErrorAnalysis::xco2_gain_vector() const
 {
     FeDisableException disable_fp;
-    Array<double, 1> result(fm->measured_radiance_all().spectral_range().data().shape()); 
+    Array<double, 1> result(meas->radiance_all().spectral_range().data().shape()); 
     result = 0;
     
     // Temporary, we need to add handling for a iterative_solver.
@@ -396,7 +402,7 @@ double ErrorAnalysis::signal(int band) const
 {
   FeDisableException disable_fp;
   const int nrad = 10;
-  SpectralRange rad(fm->measured_radiance(band).spectral_range());
+  SpectralRange rad(meas->radiance(band).spectral_range());
   if(rad.data().rows() ==0)
     return 0;
   Array<double, 1> r(rad.data().copy());
@@ -437,7 +443,7 @@ double ErrorAnalysis::noise(int band) const
 {
   FeDisableException disable_fp;
   const int nrad = 10;
-  SpectralRange rad(fm->measured_radiance(band).spectral_range());
+  SpectralRange rad(meas->radiance(band).spectral_range());
   if(rad.data().rows() < nrad || rad.uncertainty().rows() < nrad)
     return 0;
   std::vector<DataRow> dr;

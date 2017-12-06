@@ -26,6 +26,7 @@ set(DIR_SOURCES
     initial_guess.cc
     instrument.cc
     instrument_correction.cc
+    instrument_measurement.cc
     iterative_solver.cc
     iterative_solver_der.cc
     level_1b.cc

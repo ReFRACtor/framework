@@ -7,17 +7,19 @@
 %import "spectral_domain.i"
 %import "spectrum.i"
 
+%base_import(stacked_radiance_mixin)
+
 %fp_shared_ptr(FullPhysics::StackedRadianceMixin);
 
 namespace FullPhysics {
 
-class StackedRadianceMixin {
+class StackedRadianceMixin : GenericObject {
 public:
     /// Number of spectral channels
     virtual int num_channels() const = 0;
 
     /// The spectral grid of the radiance values, implemented by inheriting class
-    virtual const SpectralDomain spectral_grid(int channel_index) const = 0;
+    virtual const SpectralDomain spectral_domain(int channel_index) const = 0;
 
     /// The range of indicies that corresponds to a particular
     /// band in the stacked radiances.
@@ -29,11 +31,11 @@ public:
     const boost::optional<blitz::Range> stacked_pixel_range(int Spec_index) const;
 
     /// Per channel radiance data, implemented by inheriting class
-    virtual Spectrum radiance(int channel_index) const = 0;
+    virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;
 
     /// Radiance data all stacked together as one long
     /// spectrum (so band 0, followed by band 1, etc.).
-    virtual Spectrum radiance_all() const;
+    virtual Spectrum radiance_all(bool skip_jacobian = false) const;
 };
 }
 

@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(all_pixels)
     is_long_test();               // Skip unless we are running long tests.
     turn_on_logger();             // Have log output show up.
 
-    ConnorCostFunction fm_cost_func(config_state_vector, config_forward_model);
+    ConnorCostFunction fm_cost_func(config_state_vector, config_forward_model, config_instrument_measurement);
 
     Array<double, 1> state_vec(config_state_vector->state().copy());
 

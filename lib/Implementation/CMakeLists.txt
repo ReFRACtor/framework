@@ -97,7 +97,7 @@ set(DIR_SOURCES
     #nlls_solver_gsl_lmder.cc
     #nlls_solver_gsl_lmsder.cc
     nonuniform_spectrum_sampling.cc
-    oco_forward_model.cc
+    standard_forward_model.cc
     output_hdf.cc
     output_hdf_iteration.cc
     powell_nlls_problem.cc
@@ -199,7 +199,7 @@ set(TEST_SOURCES
     #nlls_solver_gsl_test.cc
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
-    oco_forward_model_test.cc
+    standard_forward_model_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     pressure_sigma_test.cc

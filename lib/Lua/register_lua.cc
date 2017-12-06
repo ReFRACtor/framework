@@ -278,7 +278,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(BadSampleNoiseModel);
   REGISTER_LUA_LIST(SpectrumSamplingFixedSpacing);
   REGISTER_LUA_LIST(StateVector);
-  REGISTER_LUA_LIST(OcoForwardModel);
+  REGISTER_LUA_LIST(StandardForwardModel);
   REGISTER_LUA_LIST(ConnorCostFunction);
   REGISTER_LUA_LIST(ConnorConvergence);
   REGISTER_LUA_LIST(ConnorSolver);
@@ -287,8 +287,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(DispersionPolynomialOutput);
   REGISTER_LUA_LIST(StokesCoefficientFractionOutput);
   REGISTER_LUA_LIST(ErrorAnalysisOutput);
-  REGISTER_LUA_LIST(ForwardModelOutput);
-  REGISTER_LUA_LIST(OcoForwardModelOutput);
+  REGISTER_LUA_LIST(SpectralParametersOutput);
+  REGISTER_LUA_LIST(StandardForwardModelOutput);
   REGISTER_LUA_LIST(ConnorConvergenceOutput);
   REGISTER_LUA_LIST(ConnorSolverOutput);
   REGISTER_LUA_LIST(EmpiricalOrthogonalFunction);
@@ -329,6 +329,9 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(RadianceScalingOutput);
   REGISTER_LUA_LIST(ExampleLevel1b);
   REGISTER_LUA_LIST(ExampleMetFile);
+  REGISTER_LUA_LIST(InstrumentMeasurement);
+  REGISTER_LUA_LIST(InstrumentMeasurementLevel1b);
+  REGISTER_LUA_LIST(ForwardModelSpectralGrid);
 }
 }
 

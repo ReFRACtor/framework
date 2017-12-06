@@ -1,7 +1,14 @@
 #include "forward_model_spectral_grid.h"
 #include "linear_interpolate.h"
+
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef HAVE_LUA
+#include "register_lua.h"
+REGISTER_LUA_CLASS(ForwardModelSpectralGrid)
+REGISTER_LUA_END()
+#endif
 
 //-----------------------------------------------------------------------
 /// The low resolution grid.

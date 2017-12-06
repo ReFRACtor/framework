@@ -13,9 +13,15 @@ public:
 
     int num_channels() const;
 
-    const SpectralDomain spectral_grid(int channel_index) const;
+    const SpectralDomain spectral_domain(int channel_index) const;
 
-    Spectrum radiance(int channel_index) const;
+    Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+
+    virtual void print(std::ostream& Os) const
+    {
+        Os << "InstrumentMeasurementLevel1b";
+    }
+
 private:
     boost::shared_ptr<Level1b> l1b;
     boost::shared_ptr<ForwardModelSpectralGrid> grids;

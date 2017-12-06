@@ -5,7 +5,7 @@ using namespace FullPhysics;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(ErrorAnalysisOutput, RegisterOutputBase)
-.def(luabind::constructor<const boost::shared_ptr<ErrorAnalysis>&, const blitz::Array<bool, 1>&, bool>())
+.def(luabind::constructor<const boost::shared_ptr<ErrorAnalysis>&, const blitz::Array<bool, 1>&, const std::vector<std::string>&, bool>())
 REGISTER_LUA_END()
 #endif
 
@@ -14,25 +14,25 @@ REGISTER_LUA_END()
 void ErrorAnalysisOutput::register_output(const boost::shared_ptr<Output>& out) const
 {
   boost::function<double ()> f;
-  for(int i = 0; i < err->number_spectrometer(); ++i) {
+  for(int i = 0; i < err->num_channels(); ++i) {
     // Skip spectrometers with missing output
     if (not spec_flag(i)) continue;
 
     f = boost::bind(&ErrorAnalysis::signal, err, i);
     out->register_data_source("/SpectralParameters/signal_" + 
-			     err->hdf_band_name(i) + "_fph", f);
+			     hdf_band_names[i] + "_fph", f);
     f = boost::bind(&ErrorAnalysis::noise, err, i);
     out->register_data_source("/SpectralParameters/noise_" + 
-			     err->hdf_band_name(i) + "_fph", f);
+			     hdf_band_names[i] + "_fph", f);
     f = boost::bind(&ErrorAnalysis::residual_mean_sq, err, i);
     out->register_data_source("/SpectralParameters/residual_mean_square_" + 
-			     err->hdf_band_name(i), f);
+			     hdf_band_names[i], f);
     f = boost::bind(&ErrorAnalysis::relative_residual_mean_sq, err, i);
     out->register_data_source("/SpectralParameters/relative_residual_mean_square_" + 
-			     err->hdf_band_name(i), f);
+			     hdf_band_names[i], f);
     f = boost::bind(&ErrorAnalysis::reduced_chisq, err, i);
     out->register_data_source("/SpectralParameters/reduced_chi_squared_" + 
-			     err->hdf_band_name(i) + "_fph", f);
+			     hdf_band_names[i] + "_fph", f);
   }
 
   out->register_data_source("/RetrievalResults/last_step_levenberg_marquardt_parameter",

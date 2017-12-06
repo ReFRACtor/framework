@@ -15,7 +15,7 @@
 --- call below. Check each function for details.
 ------------------------------------------------------------
 
-ConfigCommon = { diagnostic = false, input_file_description = "", wrote_atmsphere_desc = false}
+ConfigCommon = { diagnostic = false, wrote_atmsphere_desc = false}
 
 function ConfigCommon:new (o)
    o = o or {}   -- create object if user does not provide one
@@ -345,6 +345,8 @@ function ConfigCommon:do_config()
    -- Setup forward model grid, based on initial state vector
    self.forward_model:setup_grid()
 
+   self.instrument_measurement = InstrumentMeasurementLevel1b(self.l1b, self.forward_model:spectral_grid())
+
    if(self.do_retrieval) then
       self.solver:create(self)
       -- Only one kind of error_analysis right now, so just call directly.
@@ -359,7 +361,6 @@ function ConfigCommon:do_config()
    -- our results to these variables.
 
    logger = FpLogger(self.log_level)
-   self.forward_model:input_file_description(self.input_file_description)
    forward_model = self.forward_model
    solver = self.conn_solver
    -- This should be temporary, until we merge solver and iterative_solver
@@ -380,8 +381,6 @@ end
 function ConfigCommon:h()
    if(self.static_file and not self.h_v) then 
       self.h_v = HdfFile(self.static_file)
-      self.input_file_description = self.input_file_description .. 
-	 "Static input file:   " .. self.static_file .. "\n"
    end   
    return self.h_v
 end
@@ -395,8 +394,6 @@ function ConfigCommon:h_solar()
    -- file that we use for everything else (self:h()).
    if(self.static_solar_file and not self.h_solar_v) then 
       self.h_solar_v = HdfFile(self.static_solar_file) 
-      self.input_file_description = self.input_file_description .. 
-	 "Solar input file:    " .. self.static_solar_file .. "\n"
    end
    if(not self.static_solar_file) then
       self.h_solar_v = self:h()
@@ -409,8 +406,6 @@ function ConfigCommon:h_eof()
    -- file that we use for everything else (self:h()).
    if(self.static_eof_file and not self.h_eof_v) then 
       self.h_eof_v = HdfFile(self.static_eof_file) 
-      self.input_file_description = self.input_file_description .. 
-	 "EOF input file:    " .. self.static_eof_file .. "\n"
    end
    if(not self.static_eof_file) then
       self.h_eof_v = self:h()
@@ -421,8 +416,6 @@ end
 function ConfigCommon:h_imap()
    if(self.imap_file and self.imap_file ~= "" and not self.h_imap_v) then
       self.h_imap_v = HdfFile(self.imap_file)
-      self.input_file_description = self.input_file_description .. 
-        "IMAP input file:   " .. self.imap_file .. "\n"
    end
    return self.h_imap_v
 end
@@ -433,8 +426,6 @@ function ConfigCommon:h_merra_aerosol()
    -- file that we use for everything else (self:h()).
    if(self.static_merra_aerosol_file and not self.h_merra_aerosol_v) then 
       self.h_merra_aerosol_v = HdfFile(self.static_merra_aerosol_file) 
-      self.input_file_description = self.input_file_description .. 
-	 "Merra Aerosol input file:  " .. self.static_merra_aerosol_file .. "\n"
    end
    if(not self.static_merra_aerosol_file) then
       self.h_merra_aerosol_v = self:h_aerosol()
@@ -447,8 +438,6 @@ function ConfigCommon:h_aerosol()
    -- file that we use for everything else (self:h()).
    if(self.static_aerosol_file and not self.h_aerosol_v) then 
       self.h_aerosol_v = HdfFile(self.static_aerosol_file) 
-      self.input_file_description = self.input_file_description .. 
-	 "Aerosol input file:  " .. self.static_aerosol_file .. "\n"
    end
    if(not self.static_aerosol_file) then
       self.h_aerosol_v = self:h()
@@ -463,8 +452,6 @@ end
 function ConfigCommon:l1b_hdf_file()
    if(self.spectrum_file and not self.l1b_hdf_file_v) then
       self.l1b_hdf_file_v = HdfFile(self.spectrum_file)
-      self.input_file_description = self.input_file_description .. 
-	 "L1B input file:      " .. self.spectrum_file .. "\n"
    end
    return self.l1b_hdf_file_v
 end
@@ -656,8 +643,6 @@ function hdf_aerosol_property_file(fname, aer_group)
                 aer_group = config_name
              end
 	     local h = HdfFile(fname)
-	     self.config.input_file_description = self.config.input_file_description ..
-		"Aerosol input file:  " .. fname .. "\n"
              return AerosolPropertyHdf(h, aer_group .. "/Properties", self.config.pressure)
           end
 end      
@@ -673,8 +658,6 @@ function ConfigCommon.read_atmosphere_file(field, alt_field_name)
       end
       res = ConfigCommon.ascii_read(self.config.atmosphere_file, field, alt_field_name)(self)
       if(not self.config.wrote_atmsphere_desc) then
-	 self.config.input_file_description = self.config.input_file_description .. 
-	    "Atmosphere input file: " .. self.config.atmosphere_file .. "\n"
 	 self.config.wrote_atmsphere_desc = true
       end
       return res
@@ -1713,21 +1696,6 @@ function ConfigCommon.solar_absorption_table:create()
    return res
 end
 
---- This is replaced with SolarAbsorptionTable. We'll leave the code
---- here for a little while, in case we come across some odd requirement
---- to be able to use this old code again (e.g., compare with an old run)
-
---- ConfigCommon.solar_absorption_oco_file = Creator:new()
-
---- function ConfigCommon.solar_absorption_oco_file:create()
----   local res = {}
----   local i
----   for i=1,self.config.number_pixel:rows() do
----      res[i] = SolarAbsorptionOcoFile(self.config:h(), self.hdf_group)
----   end
----   return res
---- end
-
 ------------------------------------------------------------
 --- Create SolarContinuumTable
 ------------------------------------------------------------
@@ -2037,7 +2005,7 @@ function ConfigCommon.lambertian_retrieval:initial_guess()
 end
 
 ------------------------------------------------------------
---- Creates a GroundOco only using a Lambertian retrieval
+--- Creates a Ground only using a Lambertian retrieval
 ------------------------------------------------------------
 
 ConfigCommon.ground_lambertian = CompositeCreator:new {}
@@ -2066,7 +2034,7 @@ function ConfigCommon.coxmunk_retrieval:create()
 end
 
 ------------------------------------------------------------
---- Creates a GroundOco only using a Coxmunk retrieval
+--- Creates a Ground only using a Coxmunk retrieval
 ------------------------------------------------------------
 
 ConfigCommon.ground_coxmunk = CompositeCreator:new {}
@@ -2084,7 +2052,7 @@ function ConfigCommon.ground_coxmunk:register_output(ro)
 end
 
 ------------------------------------------------------------
---- Creates a GroundOco using both Lambertioan and Coxmunk 
+--- Creates a Ground using both Lambertioan and Coxmunk 
 --- retrieval
 ------------------------------------------------------------
 
@@ -2537,15 +2505,11 @@ function ConfigCommon:merra_file()
       local fname = string.format("%s/MERRA_Composite_Selection_M%02d_O2A.hdf5", 
 				  os.getenv("merradir"), self.l1b:month(0))
       self.merra_file_v = HdfFile(fname)
-      self.input_file_description = self.input_file_description .. 
-	 "Merra input file:    " .. fname .. "\n"
       self.merra_file_name = fname
    else if(self.merra_dir and not self.merra_file_v) then
 	 local fname = string.format("%s/MERRA_Composite_Selection_M%02d_O2A.hdf5", 
 				     self.merra_dir, self.l1b:month(0))
 	 self.merra_file_v = HdfFile(fname)
-	 self.input_file_description = self.input_file_description .. 
-	    "Merra input file:    " .. fname .. "\n"
 	 self.merra_file_name = fname
       end
    end
@@ -3346,15 +3310,15 @@ end
 --- Create forward model.
 ------------------------------------------------------------
 
-ConfigCommon.oco_forward_model = CompositeCreator:new()
+ConfigCommon.standard_forward_model = CompositeCreator:new()
 
-function ConfigCommon.oco_forward_model:sub_object_key()
+function ConfigCommon.standard_forward_model:sub_object_key()
    return {"common", "spec_win", "input", "stokes_coefficient", 
 	   "instrument", "atmosphere",
            "spec_samp", "spectrum_effect", "rt", "state_vector"}
 end
 
-function ConfigCommon.oco_forward_model:sub_initial_guess_key()
+function ConfigCommon.standard_forward_model:sub_initial_guess_key()
    -- For historical reasons, we put the instrument part of the state
    -- vector after the atmosphere, even though we create them in the
    -- opposite order. This is completely arbitrary, but matches what
@@ -3366,18 +3330,18 @@ function ConfigCommon.oco_forward_model:sub_initial_guess_key()
 	   "stokes_coefficient"}
 end
 
-function ConfigCommon.oco_forward_model:create_parent_object(sub_object)
-   return OcoForwardModel(self.config.instrument,
-                          self.config.spec_win, self.config.l1b, 
-                          self.config.rt, self.config.spec_samp, 
-                          self.config.spectrum_effect)
+function ConfigCommon.standard_forward_model:create_parent_object(sub_object)
+   return StandardForwardModel(self.config.instrument,
+                               self.config.spec_win, 
+                               self.config.rt, self.config.spec_samp, 
+                               self.config.spectrum_effect)
 end
 
-function ConfigCommon.oco_forward_model:register_output(ro)
+function ConfigCommon.standard_forward_model:register_output(ro)
    -- Store typical ForwardModel output
    CompositeCreator.register_output(self, ro)
-   ro:push_back(ForwardModelOutput(self.config.forward_model))
-   ro:push_back(OcoForwardModelOutput.create(self.config.forward_model))
+   ro:push_back(SpectralParametersOutput(self.config.forward_model, self.config.instrument_measurement))
+   ro:push_back(StandardForwardModelOutput.create(self.config.forward_model))
 
    -- Optionally save high resolution spectra
    if(self.config.write_high_res_spectra) then
@@ -3434,7 +3398,7 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:connor_solver(config)
-   local cost_func = ConnorCostFunction(config.state_vector, config.forward_model)
+   local cost_func = ConnorCostFunction(config.state_vector, config.forward_model, config.instrument_measurement)
    local conv = ConnorConvergence(config.forward_model, 
                                   self.threshold, 
                                   self.max_iteration, 
@@ -3462,15 +3426,14 @@ end
 function ConfigCommon:create_error_analysis()
    if(self.iter_solver == nil) then
       self.error_analysis = ErrorAnalysis(self.conn_solver, self.atmosphere, 
-					  self.forward_model)
+					  self.forward_model, self.instrument_measurement)
    else
       self.error_analysis = ErrorAnalysis(self.stat_method_map,
 					  self.atmosphere, 
 					  self.forward_model)
    end
    have_co2 = self.absorber:gas_index("CO2") ~= -1
-   local out = ErrorAnalysisOutput(self.error_analysis, self:spec_flag(), 
-				   have_co2)
+   local out = ErrorAnalysisOutput(self.error_analysis, self:spec_flag(), self.common.hdf_band_name, have_co2)
    self.register_output:push_back(out)
 end
 

@@ -110,8 +110,8 @@ void ConnorConvergence::evaluate_quality(FitStatistic& fit_stat,
 
   int quality_count = 0;
   int nband = 0;
-  for(int i = 0; i < fm->number_spectrometer(); ++i) {
-    boost::optional<blitz::Range> pr = fm->pixel_range(i);
+  for(int i = 0; i < fm->num_channels(); ++i) {
+    boost::optional<blitz::Range> pr = fm->stacked_pixel_range(i);
     if(pr) {
       double chisq_m = fit_stat.chisq_measure_norm(Residual(*pr), 
 						   Residual_cov_diag(*pr));

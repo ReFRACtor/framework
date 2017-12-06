@@ -9,10 +9,10 @@ const boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int chann
     int sind = 0;
 
     for(int i = 0; i < channel_index; ++i) {
-        sind += spectral_grid(i).data().rows();
+        sind += spectral_domain(i).data().rows();
     }
 
-    int nrow = spectral_grid(channel_index).data().rows();
+    int nrow = spectral_domain(channel_index).data().rows();
 
     if(nrow > 0) {
         return boost::optional<Range>(Range(sind, sind + nrow - 1));
@@ -22,7 +22,7 @@ const boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int chann
 }
 
 
-Spectrum StackedRadianceMixin::radiance_all() const
+Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
 {
     std::vector<Spectrum> sall;
     std::vector<Range> prall;
@@ -31,7 +31,7 @@ Spectrum StackedRadianceMixin::radiance_all() const
         boost::optional<Range> pr = stacked_pixel_range(i);
 
         if(pr) {
-            sall.push_back(radiance(i));
+            sall.push_back(radiance(i, skip_jacobian));
             prall.push_back(*pr);
         }
     }

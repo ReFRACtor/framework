@@ -1,7 +1,9 @@
-#ifndef FORWARD_MODEL_OUTPUT_H
-#define FORWARD_MODEL_OUTPUT_H
+#ifndef SPECTRAL_PARAMETERS_OUTPUT_H
+#define SPECTRAL_PARAMETERS_OUTPUT_H
+
 #include "register_output_base.h"
 #include "forward_model.h"
+#include "instrument_measurement.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -11,15 +13,15 @@ namespace FullPhysics {
   See the discussion in RegisterOutputBase why this isn't just part of
   the ForwardModel class.
 *******************************************************************/
-class ForwardModelOutput : public RegisterOutputBase {
+class SpectralParametersOutput : public RegisterOutputBase {
 public:
-    ForwardModelOutput(const boost::shared_ptr<ForwardModel>&
-                       Fm)
-        : fm(Fm) {}
-    virtual ~ForwardModelOutput() {}
+    SpectralParametersOutput(const boost::shared_ptr<ForwardModel>& Fm, const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+        : fm(Fm), meas(inst_meas) {}
+    virtual ~SpectralParametersOutput() {}
     virtual void register_output(const boost::shared_ptr<Output>& out) const;
 private:
     boost::shared_ptr<ForwardModel> fm;
+    boost::shared_ptr<InstrumentMeasurement> meas;
 };
 }
 #endif

@@ -78,13 +78,11 @@ class ForwardModel(Creator):
     spec_win = param.InstanceOf(rf.SpectralWindow)
     radiative_transfer = param.InstanceOf(rf.RadiativeTransfer)
     spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
-    l1b = param.InstanceOf(rf.Level1b)
     spectrum_effect = param.ObjectVector("vector_spectrum_effect")
 
     def create(self, **kwargs):
-        return rf.OcoForwardModel(self.instrument(),
-                                  self.spec_win(), 
-                                  self.l1b(), 
-                                  self.radiative_transfer(),
-                                  self.spectrum_sampling(), 
-                                  self.spectrum_effect())
+        return rf.StandardForwardModel(self.instrument(),
+                                       self.spec_win(), 
+                                       self.radiative_transfer(),
+                                       self.spectrum_sampling(), 
+                                       self.spectrum_effect())

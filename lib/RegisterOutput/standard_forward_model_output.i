@@ -2,7 +2,7 @@
 // (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
-#include "oco_forward_model_output.h"
+#include "standard_forward_model_output.h"
 #include "ils_instrument.h"
 #include "pressure.h"
 
@@ -11,14 +11,14 @@
 %}
 %base_import(register_output_base)
 %import "output.i"
-%import "oco_forward_model.i"
+%import "standard_forward_model.i"
 
-%fp_shared_ptr(FullPhysics::OcoForwardModelOutput);
+%fp_shared_ptr(FullPhysics::StandardForwardModelOutput);
 
 namespace FullPhysics {
-class OcoForwardModelOutput : public RegisterOutputBase {
+class StandardForwardModelOutput : public RegisterOutputBase {
 public:
-  OcoForwardModelOutput(const boost::shared_ptr<OcoForwardModel>& Fm);
+  StandardForwardModelOutput(const boost::shared_ptr<StandardForwardModel>& Fm, const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
   virtual void register_output(const boost::shared_ptr<Output>& out) const;
 };
 }

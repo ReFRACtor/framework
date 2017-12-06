@@ -6,7 +6,7 @@
 #include "solar_continuum_polynomial.h"
 #include "solar_doppler_shift_polynomial.h"
 #include "uniform_spectrum_sampling.h"
-#include "oco_forward_model.h"
+#include "standard_forward_model.h"
 #include "spectral_window_range.h"
 #include "unit_test_support.h"
 #include "default_constant.h"
@@ -17,7 +17,7 @@ using namespace boost::posix_time;
 using namespace boost::gregorian;
 using namespace units;
 
-BOOST_FIXTURE_TEST_SUITE(oco_forward_model, LidortLowHighLambertianFixture)
+BOOST_FIXTURE_TEST_SUITE(standard_forward_model, LidortLowHighLambertianFixture)
 
 BOOST_AUTO_TEST_CASE(radiance)
 {
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(radiance)
     0, 0,
     0, 0;
   boost::shared_ptr<SpectralWindow> swin(new SpectralWindowRange(swind));
-  IfstreamCs expected(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
+  IfstreamCs expected(test_data_dir() + "expected/standard_forward_model/radiance_and_jacobian");
   HdfFile cfg(test_data_dir() + "lua/example_static_input.h5");
   boost::shared_ptr<RadiativeTransfer> rt(new LsiRt(low_rt, high_rt, cfg));
   ptime t(date(2006, 9, 14), time_duration(12, 27, 22, 1000));
@@ -69,8 +69,7 @@ BOOST_AUTO_TEST_CASE(radiance)
     spec_effect.push_back(spec_sp_eff);
   }
 
-  OcoForwardModel fm(config_instrument, swin, config_level_1b,
-                     rt, config_spectrum_sampling, spec_effect);
+  StandardForwardModel fm(config_instrument, swin, rt, config_spectrum_sampling, spec_effect);
   fm.setup_grid();
   Array<double, 1> rad_expect;
   expected >> rad_expect;
@@ -95,7 +94,7 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
     0, 0;
   boost::shared_ptr<SpectralWindow> swin(new SpectralWindowRange(swind));
 
-  IfstreamCs expected(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
+  IfstreamCs expected(test_data_dir() + "expected/standard_forward_model/radiance_and_jacobian");
   HdfFile cfg(test_data_dir() + "lua/example_static_input.h5");
   boost::shared_ptr<RadiativeTransfer> rt(new LsiRt(low_rt, high_rt, cfg));
   ptime t(date(2006, 9, 14), time_duration(12, 27, 22, 1000));
@@ -129,13 +128,12 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
     spec_effect.push_back(spec_sp_eff);
   }
 
-  OcoForwardModel fm(config_instrument, swin, config_level_1b,
-                     rt, config_spectrum_sampling, spec_effect);
+  StandardForwardModel fm(config_instrument, swin, rt, config_spectrum_sampling, spec_effect);
   fm.setup_grid();
   ArrayAd<double, 1> rad(fm.radiance_all().spectral_range().data_ad());
   if(false) {                        // Print out in case we need to update
                                 // expected results
-    std::ofstream expt_out(test_data_dir() + "expected/oco_forward_model/radiance_and_jacobian");
+    std::ofstream expt_out(test_data_dir() + "expected/standard_forward_model/radiance_and_jacobian");
     expt_out << std::setprecision(20) << std::scientific
              << "# Radiance" << std::endl
              << rad.value() << std::endl

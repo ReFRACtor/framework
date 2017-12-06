@@ -2,7 +2,7 @@
 // (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
-#include "oco_forward_model.h"
+#include "standard_forward_model.h"
 #include "ils_instrument.h"
 #include "pressure.h"
 
@@ -13,42 +13,38 @@
 %base_import(named_spectrum)
 %import "instrument.i"
 %import "spectral_window.i"
-%import "level_1b.i"
 %import "radiative_transfer.i"
 %import "spectrum_sampling.i"
 %import "spectrum_effect.i"
 %import "forward_model_spectral_grid.i"
 
-%fp_shared_ptr(FullPhysics::OcoForwardModel);
+%fp_shared_ptr(FullPhysics::StandardForwardModel);
 
 namespace FullPhysics {
-class OcoForwardModel : public ForwardModel,
+class StandardForwardModel : public ForwardModel,
    public Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> > {
 public:
-  OcoForwardModel(
+  StandardForwardModel(
    const boost::shared_ptr<Instrument>& Inst,
    const boost::shared_ptr<SpectralWindow>& Spectral_window,
-   const boost::shared_ptr<Level1b>& Level_1b,
    const boost::shared_ptr<RadiativeTransfer>& Rt,
    const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect = 
 		  std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
-  virtual ~OcoForwardModel();
-  virtual Spectrum radiance(int Spec_index, bool Skip_jacobian = false) 
+  virtual ~StandardForwardModel();
+  virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) 
     const;
-  virtual Spectrum measured_radiance(int Spec_index) const;
   %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>)
   %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>)
-  %python_attribute_with_set(level_1b, boost::shared_ptr<Level1b>)
   %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
   %python_attribute(spectrum_sampling, boost::shared_ptr<SpectrumSampling>)
   %python_attribute(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>)
-  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int Spec_index) const;
+  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
 
-  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int Spec_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
 
   // vector of vector for SpectrumEffect is kind of a pain in
   // python. So just brute force a conversion.

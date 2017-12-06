@@ -17,6 +17,7 @@
 #include "lua_state.h"
 #include "global_fixture.h"
 #include "forward_model.h"
+#include "instrument_measurement.h"
 #include <map>
 
 namespace FullPhysics {
@@ -54,6 +55,7 @@ public:
   boost::shared_ptr<Level1b> config_level_1b;
   boost::shared_ptr<Ground> config_ground;
   boost::shared_ptr<ForwardModel> config_forward_model;
+  boost::shared_ptr<InstrumentMeasurement> config_instrument_measurement;
   boost::shared_ptr<RadiativeTransfer> config_rt;
 
   /// Useful function that appears in a few tests, so collect here

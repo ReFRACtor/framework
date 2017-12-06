@@ -3,6 +3,13 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef HAVE_LUA
+#include "register_lua.h"
+REGISTER_LUA_DERIVED_CLASS(InstrumentMeasurementLevel1b, InstrumentMeasurement)
+.def(luabind::constructor<const boost::shared_ptr<Level1b>&, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
+REGISTER_LUA_END()
+#endif
+
 InstrumentMeasurementLevel1b::InstrumentMeasurementLevel1b(const boost::shared_ptr<Level1b>& level_1b, const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
     : l1b(level_1b), grids(spectral_grids)
 {
@@ -13,18 +20,28 @@ int InstrumentMeasurementLevel1b::num_channels() const
     return grids->number_spectrometer();
 }
 
-const SpectralDomain InstrumentMeasurementLevel1b::spectral_grid(int channel_index) const
+const SpectralDomain InstrumentMeasurementLevel1b::spectral_domain(int channel_index) const
 {
     return grids->low_resolution_grid(channel_index);
 }
 
-Spectrum InstrumentMeasurementLevel1b::radiance(int channel_index) const
+Spectrum InstrumentMeasurementLevel1b::radiance(int channel_index, bool skip_jacobian) const
 {
     range_check(channel_index, 0, num_channels());
-    Spectrum full(spectral_grid(channel_index), l1b->radiance(channel_index));
+
+    Spectrum full(spectral_domain(channel_index), l1b->radiance(channel_index));
+
     const std::vector<int>& plist = grids->pixel_list(channel_index);
     Array<double, 1> res_d((int) plist.size());
-    ArrayAd<double, 1> res_r((int) plist.size(), full.spectral_range().data_ad().number_variable());
+
+    int num_jac;
+    if (skip_jacobian) {
+        num_jac = 0;
+    } else {
+        num_jac = full.spectral_range().data_ad().number_variable();
+    }
+
+    ArrayAd<double, 1> res_r((int) plist.size(), num_jac);
     Array<double, 1> uncer;
 
     if(full.spectral_range().uncertainty().rows() > 0) {
@@ -42,6 +59,5 @@ Spectrum InstrumentMeasurementLevel1b::radiance(int channel_index) const
     }
 
     return Spectrum(SpectralDomain(res_d, full.spectral_domain().units()),
-                    SpectralRange(res_r, full.spectral_range().units(),
-                                  uncer));
+                    SpectralRange(res_r, full.spectral_range().units(), uncer));
 }

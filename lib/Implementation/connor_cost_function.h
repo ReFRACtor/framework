@@ -3,13 +3,17 @@
 #include "cost_function.h"
 #include "state_vector.h"
 #include "forward_model.h"
+#include "instrument_measurement.h"
 #include <boost/shared_ptr.hpp>
 
 namespace FullPhysics {
 class ConnorCostFunction : public CostFunction {
 public:
-  ConnorCostFunction(const boost::shared_ptr<StateVector>& Sv, const boost::shared_ptr<ForwardModel>& fm)
-    : statev(Sv), forward_model(fm)
+  ConnorCostFunction(
+          const boost::shared_ptr<StateVector>& Sv, 
+          const boost::shared_ptr<ForwardModel>& fm, 
+          const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+    : statev(Sv), forward_model(fm), meas(inst_meas)
   {
   }
   virtual ~ConnorCostFunction() {}
@@ -20,8 +24,7 @@ public:
   {
     using namespace blitz;
     statev->update_state(X);
-    SpectralRange rad_meas = 
-      forward_model->measured_radiance_all().spectral_range();
+    SpectralRange rad_meas = meas->radiance_all().spectral_range();
     Spectrum rad_spec = forward_model->radiance_all();
 
     SpectralRange rad_mod = rad_spec.spectral_range().convert(rad_meas.units());
@@ -42,6 +45,7 @@ public:
 private:
   boost::shared_ptr<StateVector> statev;
   boost::shared_ptr<ForwardModel> forward_model;
+  boost::shared_ptr<InstrumentMeasurement> meas;
 };
 }
 #endif

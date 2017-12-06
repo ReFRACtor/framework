@@ -18,8 +18,8 @@ public:
 
     int num_channels() const;
 
-    const SpectralDomain spectral_grid(int channel_index) const;
+    const SpectralDomain spectral_domain(int channel_index) const;
 
-    Spectrum radiance(int channel_index) const;
+    Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
 };
 }

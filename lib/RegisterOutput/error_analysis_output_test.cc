@@ -11,9 +11,15 @@ BOOST_AUTO_TEST_CASE(basic)
 {
   is_long_test();		// Skip unless we are running long tests.
 
-  blitz::Array<bool, 1> spec_flag(config_forward_model->number_spectrometer());
+  blitz::Array<bool, 1> spec_flag(config_forward_model->num_channels());
   spec_flag = true;
-  ErrorAnalysisOutput po(config_error_analysis, spec_flag, true);
+
+  std::vector<std::string> band_name;
+  band_name.push_back("A-Band");
+  band_name.push_back("Weak-CO2");
+  band_name.push_back("Strong-CO2");
+
+  ErrorAnalysisOutput po(config_error_analysis, spec_flag, band_name, true);
   boost::shared_ptr<OutputHdf> out(new OutputHdf("error_analysis_output.h5", 20, 112, 5, 3));
   add_file_to_cleanup("error_analysis_output.h5");
   po.register_output(out);
