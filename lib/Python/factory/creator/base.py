@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Scalar
 
@@ -38,6 +39,9 @@ class ParameterAccessor(object):
 
 class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
+
+    # Other creators subscribed to the output of creators by type
+    observers = OrderedDict()
 
     def __init__(self, config_def, common_store=None):
 
@@ -102,6 +106,23 @@ class Creator(object):
         else:
             return param_proxy.value(**kwargs)
 
+    def register_to_receive(self, RfType):
+        dispatch_list = self.observers.get(RfType, [])
+        dispatch_list.append(self)
+        self.observers[RfType] = dispatch_list
+
+    def _dispatch(self, rf_obj):
+        "Called when the creator's object has been created to be sent to other creators who have registered to recieve objects of that type"
+
+        for RfType, dispatch_list in self.observers.items():
+            if isinstance(rf_obj, RfType):
+                for observer in dispatch_list:
+                    observer.receive(rf_obj)
+
+    def receive(self, rf_obj):
+        "Recieves a dispatched object, needs to be implemented in inheriting class"
+        pass
+
     def create(self, **kwargs):
         raise NotImplementedError("Create must be defined in inheriting Creator classes")
 
@@ -109,7 +130,11 @@ class Creator(object):
         """Turns creators into callables so that they can be evaluated by ConfigParam as any other callable without it
         needing to know any details of this class."""
 
-        return self.create(**kwargs)
+        result = self.create(**kwargs)
+
+        self._dispatch(result)
+
+        return result
 
 
 class ParamIterateCreator(Creator):

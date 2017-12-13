@@ -13,4 +13,4 @@ def process_config(config_def):
 
     config_creator = creator_class(config_def)
 
-    return config_creator.create()
+    return config_creator()

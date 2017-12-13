@@ -33,7 +33,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'state_vector', 'forward_model'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'state_vector'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -265,9 +265,6 @@ config_def = {
         'num_streams': 4,
         'num_mom': 16,
     },
-    'state_vector': {
-        'creator': creator.state_vector.StateVector,
-    },
     'forward_model': {
         'creator': creator.forward_model.ForwardModel,
         'spectrum_effect': {
@@ -308,6 +305,9 @@ config_def = {
                 },
             },
         },
+    },
+    'state_vector': {
+        'creator': creator.retrieval.StateVector,
     },
 }
 
