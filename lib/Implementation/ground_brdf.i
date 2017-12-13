@@ -85,6 +85,7 @@ public:
     virtual const std::string breon_type() const;
     virtual const DoubleWithUnit reference_point(const int spec_index) const;
     virtual boost::shared_ptr<Ground> clone() const;
+    %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;
     virtual void print(std::ostream& Os) const;
     virtual std::string desc() const;

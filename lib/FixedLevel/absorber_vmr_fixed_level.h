@@ -1,8 +1,10 @@
 #ifndef ABSORBER_VMR_FIXED_LEVEL_H
 #define ABSORBER_VMR_FIXED_LEVEL_H
+
 #include "absorber_vmr_imp_base.h"
 #include "pressure.h"
 #include "pressure_level_input.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -21,6 +23,8 @@ public:
 	const std::string& Gas_name);
   virtual ~AbsorberVmrFixedLevel() {}
   virtual void print(std::ostream& Os) const;
+
+  virtual std::string sub_state_identifier() const { return "absorber_levels/" + gas_name(); }
 
   virtual std::string state_vector_name_i(int i) const
   { return gas_name() + " VMR for Press Lvl " + 

@@ -1,5 +1,6 @@
 #ifndef FLUOR_EFFECT_IMP_BASE_H
 #define FLUOR_EFFECT_IMP_BASE_H
+
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -29,6 +30,8 @@ public:
   virtual ArrayAd<double, 1> contribution() const { return f_contrib_ad; }
 
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
+
+  virtual std::string sub_state_identifier() const { return "fluorescence"; }
 
   virtual std::string state_vector_name_i(int i) const
   { return "Fluorescence Surface Coefficient " + boost::lexical_cast<std::string>(i + 1); }

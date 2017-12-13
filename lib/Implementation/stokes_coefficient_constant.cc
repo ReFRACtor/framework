@@ -17,14 +17,6 @@ StokesCoefficientConstant::StokesCoefficientConstant
 {
   stokes_coeff.resize(Stokes_coeff.shape(), 0);
   stokes_coeff = Stokes_coeff;
-  // This is a dummy value, since the base SubStateVectorArray expects
-  // at least one value. But we mark this as unused, and don't do
-  // anything with these values.
-  blitz::Array<double, 1> coeff(1);
-  blitz::Array<bool, 1> used(1);
-  coeff(0) = 0.0;
-  used(0) = false;
-  init(coeff, used);
 }
 
 void StokesCoefficientConstant::print(std::ostream& Os) const

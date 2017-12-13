@@ -1,6 +1,8 @@
 #ifndef ABSORBER_VMR_LEVEL_H
 #define ABSORBER_VMR_LEVEL_H
+
 #include "absorber_vmr_imp_base.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -18,6 +20,7 @@ public:
 		   const std::string& Gas_name);
   virtual ~AbsorberVmrLevel() {}
   virtual void print(std::ostream& Os) const;
+  virtual std::string sub_state_identifier() const { return "absorber_levels/" + gas_name(); }
   virtual std::string state_vector_name_i(int i) const
   { return gas_name() + " VMR for Press Lvl " + 
       boost::lexical_cast<std::string>(i + 1); }

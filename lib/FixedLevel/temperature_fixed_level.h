@@ -24,6 +24,7 @@ public:
   { return clone(press->clone()); }
   virtual boost::shared_ptr<Temperature> 
   clone(const boost::shared_ptr<Pressure>& Press) const ;
+  virtual std::string sub_state_identifier() const { return "temperature_levels"; }
   virtual std::string state_vector_name_i(int i) const;
 
 //-----------------------------------------------------------------------

@@ -73,7 +73,9 @@ public:
     virtual const DoubleWithUnit reference_point(const int spec_index) const { return reference_points(spec_index); } 
 
     virtual boost::shared_ptr<Ground> clone() const = 0;
-  
+
+    virtual std::string sub_state_identifier() const { return "ground/brdf"; }  
+
     virtual std::string state_vector_name_i(int i) const;
   
     virtual void print(std::ostream& Os) const;

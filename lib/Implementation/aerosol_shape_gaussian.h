@@ -1,6 +1,8 @@
 #ifndef AEROSOL_SHAPE_GAUSSIAN_H
 #define AEROSOL_SHAPE_GAUSSIAN_H
+
 #include "aerosol_extinction_imp_base.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -37,6 +39,7 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
   { return clone(press->clone()); }
   virtual boost::shared_ptr<AerosolExtinction> clone
   (const boost::shared_ptr<Pressure>& P) const;
+  virtual std::string sub_state_identifier() const { return "aerosol_shape/" + aerosol_name() + "/" + (linear_aod ? "linear" : "log"); }
   virtual std::string state_vector_name_i(int i) const
   { return "Aerosol Shape " + aerosol_name() + " " + (linear_aod ? "Linear" : "Logarithmic") + " Gaussian for Coefficient " +
       boost::lexical_cast<std::string>(i + 1); } 

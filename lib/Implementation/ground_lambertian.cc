@@ -1,6 +1,7 @@
 #include "ground_lambertian.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
+#include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;

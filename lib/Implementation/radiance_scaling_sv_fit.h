@@ -37,6 +37,8 @@ public:
 
   virtual ~RadianceScalingSvFit() {}
 
+  virtual std::string sub_state_identifier() const { return "radiance_scaling_sv_fit"; } 
+
   virtual std::string state_vector_name_i(int i) const;
   virtual boost::shared_ptr<InstrumentCorrection> clone() const;
 

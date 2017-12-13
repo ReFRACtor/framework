@@ -22,6 +22,7 @@ public:
   virtual const AutoDerivative<double> windspeed() const;
   virtual const double refractive_index(const int Spec_idx) const;
   virtual boost::shared_ptr<Ground> clone() const;
+  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
   virtual void update_sub_state_hook();

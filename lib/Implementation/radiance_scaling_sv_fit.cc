@@ -1,5 +1,6 @@
 #include "radiance_scaling_sv_fit.h"
 #include "ostream_pad.h"
+#include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;

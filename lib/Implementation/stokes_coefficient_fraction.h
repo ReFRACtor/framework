@@ -1,6 +1,8 @@
 #ifndef STOKES_COEFFICIENT_FRACTION_H
 #define STOKES_COEFFICIENT_FRACTION_H
+
 #include "stokes_coefficient_imp_base.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -16,6 +18,7 @@ public:
   virtual ~StokesCoefficientFraction() {}
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
+  virtual std::string sub_state_identifier() const { return "parallel_polarization_fraction"; } 
   virtual std::string state_vector_name_i(int i) const
   { return "Parallel Polarization Band " + 
       boost::lexical_cast<std::string>(i + 1); }

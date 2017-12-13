@@ -23,6 +23,7 @@ public:
 		       const std::string& Band_name,
 		       int Number_pixel, bool Is_one_based);
   virtual ~DispersionPolynomial() {}
+  %python_attribute(sub_state_identifier, std::string);
   %python_attribute(pixel_grid, SpectralDomain)
   virtual boost::shared_ptr<Dispersion> clone() const;
 };

@@ -20,6 +20,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
   virtual boost::shared_ptr<AbsorberVmr> 
   clone(const boost::shared_ptr<Pressure>& Press) const;
+  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(volume_mixing_ratio_level, blitz::Array<double, 1>);
   %python_attribute(volume_mixing_ratio_active_level, blitz::Array<double, 1>);

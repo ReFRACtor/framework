@@ -1,7 +1,9 @@
 #ifndef AEROSOL_PROPERTY_IMP_BASE_H
 #define AEROSOL_PROPERTY_IMP_BASE_H
+
 #include "aerosol_property.h"
 #include "sub_state_vector_array.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -27,6 +29,13 @@ public:
   virtual ArrayAd<double, 3> 
   phase_function_moment_each_layer(double wn, int nmom = -1, 
 				   int nscatt = -1) const = 0;
+
+  virtual std::string sub_state_identifier() const { return "aerosol/property"; }
+
+  virtual std::string state_vector_name_i(int i) const 
+  {
+      return "Aerosol Property Coeff " + boost::lexical_cast<std::string>(i + 1);
+  }
 
 //-----------------------------------------------------------------------
 /// Print to stream. The default calls the function "desc" that returns

@@ -90,6 +90,9 @@ public:
   virtual void print(std::ostream& Os) const;
 
   virtual boost::shared_ptr<Pressure> clone() const;
+
+  virtual std::string sub_state_identifier() const { return "surface_pressure"; }
+
   virtual std::string state_vector_name_i(int i) const
   { return "Surface Pressure (Pascals)"; }
 protected:

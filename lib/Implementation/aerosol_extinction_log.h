@@ -1,7 +1,9 @@
 #ifndef AEROSOL_EXTINCTION_LOG_H
 #define AEROSOL_EXTINCTION_LOG_H
+
 #include "aerosol_extinction_imp_base.h"
 #include "pressure.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -35,6 +37,7 @@ public:
   { return clone(press->clone()); }
   virtual boost::shared_ptr<AerosolExtinction> clone
   (const boost::shared_ptr<Pressure>& P) const;
+  virtual std::string sub_state_identifier() const { return "aerosol_extinction/" + aerosol_name() + "/log"; }
   virtual std::string state_vector_name_i(int i) const
   { return "Aerosol " + aerosol_name() + " Log(extinction) for Press Lvl " +
       boost::lexical_cast<std::string>(i + 1); }

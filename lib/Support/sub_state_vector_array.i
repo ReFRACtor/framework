@@ -9,7 +9,9 @@
 %import "pressure.i"
 
 namespace FullPhysics {
+
 class Pressure;
+
 template<class Base> class SubStateVectorArray: 
     public Base,
     public SubStateVectorObserver {
@@ -31,6 +33,7 @@ public:
 	    int Pdep_start = 0);
     virtual ~SubStateVectorArray();
     void mark_used_sub(blitz::Array<bool, 1>& Used) const;
+    %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;
     virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
     virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);

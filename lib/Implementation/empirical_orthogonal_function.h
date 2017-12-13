@@ -1,10 +1,12 @@
 #ifndef EMPIRICAL_ORTHOGONAL_FUNCTION_H
 #define EMPIRICAL_ORTHOGONAL_FUNCTION_H
+
 #include "dispersion.h"
 #include "instrument_correction.h"
 #include "hdf_file.h"
 #include "sub_state_vector_array.h"
 #include "array_with_unit.h"
+#include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -90,9 +92,13 @@ public:
 			      "Instrument/EmpiricalOrthogonalFunction",
 			      double Scale_to_stddev = 1e19);
   virtual ~EmpiricalOrthogonalFunction() {}
+
+  virtual std::string sub_state_identifier() const { return "eof/" + band_name; }
+
   virtual std::string state_vector_name_i(int i) const
   { return "EOF order " + boost::lexical_cast<std::string>(order_) +
       " scale factor " + band_name; }
+
   virtual boost::shared_ptr<InstrumentCorrection> clone() const;
   virtual void apply_correction
   (const SpectralDomain& Pixel_grid,

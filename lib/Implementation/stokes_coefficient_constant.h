@@ -1,6 +1,6 @@
 #ifndef STOKES_COEFFICIENT_CONSTANT_H
 #define STOKES_COEFFICIENT_CONSTANT_H
-#include "stokes_coefficient_imp_base.h"
+#include "stokes_coefficient.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -8,12 +8,13 @@ namespace FullPhysics {
   state. This particular implementation just uses constant values, 
   i.e. the state vector has no effect on the stokes coefficients.
 *******************************************************************/
-class StokesCoefficientConstant : public StokesCoefficientImpBase {
+class StokesCoefficientConstant : public StokesCoefficient {
 public:
   StokesCoefficientConstant(const blitz::Array<double, 2>& Stokes_coeff);
   virtual ~StokesCoefficientConstant() {}
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
+  virtual ArrayAd<double, 2> stokes_coefficient() const { return stokes_coeff; }
   // Update the stokes coefficients.
   void set_stokes_coefficient(const blitz::Array<double, 2> Stokes_coeff)
   {
@@ -23,9 +24,7 @@ public:
     stokes_coeff = Stokes_coeff;
   }
 protected:
-  virtual void calc_stokes_coeff() const { 
-    // Nothing to do
-  }
+  ArrayAd<double, 2> stokes_coeff;
 };
 }
 #endif

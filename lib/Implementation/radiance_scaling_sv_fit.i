@@ -25,6 +25,7 @@ public:
                         const DoubleWithUnit& Band_ref,
                         const std::string& Band_name);
   virtual ~RadianceScalingSvFit();
+  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   virtual boost::shared_ptr<InstrumentCorrection> clone() const;
   virtual void apply_correction

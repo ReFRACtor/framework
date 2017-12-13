@@ -20,6 +20,8 @@ public:
   virtual ~AbsorberVmrScaled() {}
   virtual void print(std::ostream& Os) const;
 
+  virtual std::string sub_state_identifier() const { return "absorber_scaled/" + gas_name(); }
+
   virtual std::string state_vector_name_i(int i) const
   { return gas_name() + " Scaling factor"; }
 

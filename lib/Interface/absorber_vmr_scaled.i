@@ -18,6 +18,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone();
   virtual boost::shared_ptr<AbsorberVmr> 
   clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(scale_factor, double)
   %python_attribute(scale_uncertainty, double)

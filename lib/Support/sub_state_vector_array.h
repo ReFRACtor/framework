@@ -104,6 +104,24 @@ public:
         }
     }
 
+
+    //-----------------------------------------------------------------------
+    /// Return a string to identify this part of the state, this name should be
+    /// all lower case and seperate parts with a /. For example, an aerosol
+    /// named strat would be named as:
+    /// aerosol/strat.
+    /// A gas named CO2 would be named like this:
+    /// absorber/co2
+    /// The name is intended to be used for looking up retrieval values 
+    /// for a configuration system. Classes that have the same type of inputs
+    /// should have the same name.
+    //-----------------------------------------------------------------------
+
+    virtual std::string sub_state_identifier() const
+    {
+	return "unknown/not_set";
+    }
+
     //-----------------------------------------------------------------------
     /// Return state vector name for ith entry in coeff.
     //-----------------------------------------------------------------------

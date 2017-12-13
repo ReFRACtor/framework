@@ -1,5 +1,6 @@
 #ifndef INSTRUMENT_DOPPLER_H
 #define INSTRUMENT_DOPPLER_H
+
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -22,6 +23,8 @@ public:
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
+
+  virtual std::string sub_state_identifier() const { return "instrument_doppler"; }
 
   virtual std::string state_vector_name_i(int i) const
   { return "Instrument Doppler Correction " + boost::lexical_cast<std::string>(i + 1); }

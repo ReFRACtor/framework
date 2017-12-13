@@ -21,6 +21,7 @@ public:
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure);
   void set_levels_from_grid(const blitz::Array<double, 1>& Pressure_grid);
   virtual boost::shared_ptr<Pressure> clone() const;
+  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(a, blitz::Array<double, 1>)
   %python_attribute(b, blitz::Array<double, 1>)

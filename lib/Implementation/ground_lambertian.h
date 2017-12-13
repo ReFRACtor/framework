@@ -33,6 +33,8 @@ public:
 
   virtual boost::shared_ptr<Ground> clone() const;
 
+  virtual std::string sub_state_identifier() const { return "ground/lambertian"; }
+
   virtual std::string state_vector_name_i(int i) const;
 
   virtual void print(std::ostream& Os) const;
