@@ -8,7 +8,7 @@
 %}
 
 %base_import(observer)
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %import "array_ad_with_unit.i"
 %import "auto_derivative.i"
 %import "ground.i"

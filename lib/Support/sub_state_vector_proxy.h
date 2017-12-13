@@ -1,7 +1,7 @@
 #ifndef SUB_STATE_VECTOR_PROXY_H
 #define SUB_STATE_VECTOR_PROXY_H
 
-#include "state_vector.h"
+#include "sub_state_vector_observer.h"
 
 namespace FullPhysics {
 

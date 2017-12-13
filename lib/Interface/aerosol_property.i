@@ -10,7 +10,7 @@
 #include "altitude.h"
 %}
 %base_import(observer)
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %base_import(generic_object)
 %import "pressure.i"
 %import "sub_state_vector_array.i"

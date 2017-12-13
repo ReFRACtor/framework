@@ -116,7 +116,7 @@ public:
 namespace FullPhysics {
 class FullPhysics::Observer<FullPhysics::ConnorSolver> {
 public:
-  virtual ~Observer();
+  virtual ~Observer<FullPhysics::ConnorSolver>();
   virtual void notify_add(ConnorSolver& Obs);
   virtual void notify_remove(ConnorSolver& Obs);
   virtual void notify_update(const ConnorSolver& Obs);

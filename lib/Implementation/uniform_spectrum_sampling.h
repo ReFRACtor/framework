@@ -1,5 +1,6 @@
 #ifndef UNIFORM_SPECTRUM_SAMPLING_H
 #define UNIFORM_SPECTRUM_SAMPLING_H
+
 #include "spectrum_sampling.h"
 #include "fp_exception.h"
 #include <vector>

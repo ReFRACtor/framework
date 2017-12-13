@@ -3,7 +3,7 @@
 #include "printable.h"
 #include "spectral_window.h"
 #include "array_ad.h"
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "spectrum.h"
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>

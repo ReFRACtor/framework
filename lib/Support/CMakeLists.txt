@@ -28,6 +28,7 @@ set(DIR_SOURCES
     spectrum.cc
     stacked_radiance_mixin.cc
     state_vector.cc
+    sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc
 )

@@ -7,7 +7,8 @@
 #include "stokes_coefficient.h"
 %}
 
-%base_import(state_vector)
+%base_import(state_vector_observer)
+
 %import "array_ad.i"
 
 %fp_shared_ptr(FullPhysics::StokesCoefficient)

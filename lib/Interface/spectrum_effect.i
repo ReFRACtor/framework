@@ -11,7 +11,9 @@
 %}
 %include "common.i"
 %import "observer.i"
-%base_import(state_vector)
+
+%base_import(state_vector_observer)
+
 %import "sub_state_vector_array.i"
 %import "spectrum.i"
 %import "forward_model_spectral_grid.i"

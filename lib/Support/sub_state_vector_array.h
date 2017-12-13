@@ -1,6 +1,6 @@
 #ifndef SUB_STATE_VECTOR_ARRAY_H
 #define SUB_STATE_VECTOR_ARRAY_H
-#include "state_vector.h"
+#include "sub_state_vector_observer.h"
 #include "pressure.h"
 #include <boost/lexical_cast.hpp>
 
@@ -37,8 +37,7 @@ public:
 
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
                         const blitz::Array<bool, 1>& Used_flag,
-                        const boost::shared_ptr<Pressure>& Press =
-                            boost::shared_ptr<Pressure>(),
+                        const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                         bool Mark_according_to_press = true,
                         int Pdep_start = 0)
         : coeff(Coeff.copy()), press(Press), used_flag(Used_flag.copy()),
@@ -59,8 +58,7 @@ public:
 
     void init(const blitz::Array<double, 1>& Coeff,
               const blitz::Array<bool, 1>& Used_flag,
-              const boost::shared_ptr<Pressure>& Press =
-                  boost::shared_ptr<Pressure>(),
+              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
               bool Mark_according_to_press = true,
               int Pdep_start = 0)
     {
@@ -94,7 +92,7 @@ public:
     {
         int si = 0;
 
-        for(int i = 0; i < used_flag.rows(); ++i)
+        for(int i = 0; i < used_flag.rows(); ++i) {
             if(used_flag(i)) {
                 if(!press || !mark_according_to_press ||
                         i < press->number_level() + pdep_start) {
@@ -103,6 +101,7 @@ public:
 
                 ++si;
             }
+        }
     }
 
     //-----------------------------------------------------------------------

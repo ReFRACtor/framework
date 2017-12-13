@@ -1,6 +1,6 @@
 #ifndef DISPERSION_H
 #define DISPERSION_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "observer.h"
 #include "spectral_domain.h"
 

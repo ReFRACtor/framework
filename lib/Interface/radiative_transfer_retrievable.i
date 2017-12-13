@@ -7,7 +7,7 @@
 %}
 
 %base_import(radiative_transfer)
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %base_import(sub_state_vector_array)
 %base_import(observer)
 %import "spectral_domain.i"

@@ -14,7 +14,8 @@ namespace FullPhysics {
   class Dispersion;
 }
 
-%base_import(state_vector)
+%base_import(state_vector_observer)
+
 %import "spectral_domain.i"
 %import "sub_state_vector_array.i"
 

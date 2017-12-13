@@ -14,30 +14,30 @@ using namespace blitz;
 
 void state_vector_add_observer_instrument(StateVector& Sv, Instrument& inst)
 {
-  Sv.add_observer(inst);
+    Sv.add_observer(inst);
 }
 
 void state_vector_add_observer_atm(StateVector& Sv, RtAtmosphere& atm)
 {
-  Sv.add_observer(atm);
+    Sv.add_observer(atm);
 }
 
 void state_vector_add_observer_scoeff(StateVector& Sv, StokesCoefficient& Scoef)
 {
-  Sv.add_observer(Scoef);
+    Sv.add_observer(Scoef);
 }
 
 void state_vector_add_observer_spec_effect(StateVector& Sv, std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& se)
 {
-  BOOST_FOREACH(std::vector<boost::shared_ptr<SpectrumEffect> >& i, se) {
-    BOOST_FOREACH(boost::shared_ptr<SpectrumEffect>& j, i)
-      Sv.add_observer(*j);
-  }
+    BOOST_FOREACH(std::vector<boost::shared_ptr<SpectrumEffect> >& i, se) {
+        BOOST_FOREACH(boost::shared_ptr<SpectrumEffect>& j, i)
+        Sv.add_observer(*j);
+    }
 }
 
 void state_vector_print_names(StateVector& Sv)
 {
-  BOOST_FOREACH(const std::string& s, Sv.state_vector_name())
+    BOOST_FOREACH(const std::string & s, Sv.state_vector_name())
     std::cout << s << "\n";
 }
 typedef void (StateVector::*us1)(const blitz::Array<double, 1>&);
@@ -63,35 +63,46 @@ REGISTER_LUA_END()
 
 void StateVector::update_state(const blitz::Array<double, 1>& X)
 {
-  x_.resize(X.rows(), X.rows());
-  x_.value() = X;
-  x_.jacobian() = 0;
-  for(int i = 0; i < x_.rows(); ++i)
-    x_.jacobian()(i,i) = 1;
-  cov_.resize(x_.rows(), x_.rows());
-  cov_ = 0;
-  for(int i = 0; i < x_.rows(); ++i)
-    cov_(i, i) = 1;
-  notify_update_do(*this);
+    x_.resize(X.rows(), X.rows());
+    x_.value() = X;
+    x_.jacobian() = 0;
+
+    for(int i = 0; i < x_.rows(); ++i) {
+        x_.jacobian()(i, i) = 1;
+    }
+
+    cov_.resize(x_.rows(), x_.rows());
+    cov_ = 0;
+
+    for(int i = 0; i < x_.rows(); ++i) {
+        cov_(i, i) = 1;
+    }
+
+    notify_update_do(*this);
 }
 
 //-----------------------------------------------------------------------
 /// Update the state vector and covariance.
 //-----------------------------------------------------------------------
 
-void StateVector::update_state(const blitz::Array<double, 1>& X, 
-			       const blitz::Array<double, 2>& Cov)
+void StateVector::update_state(const blitz::Array<double, 1>& X,
+                               const blitz::Array<double, 2>& Cov)
 {
-  if(X.rows() != Cov.rows() ||
-     X.rows() != Cov.cols())
-    throw Exception("X and Cov need to be the same size when updating the StateVector");
-  x_.resize(X.rows(), X.rows());
-  x_.value() = X;
-  x_.jacobian() = 0;
-  for(int i = 0; i < x_.rows(); ++i)
-    x_.jacobian()(i,i) = 1;
-  cov_.reference(Cov.copy());
-  notify_update_do(*this);
+    if(X.rows() != Cov.rows() ||
+            X.rows() != Cov.cols()) {
+        throw Exception("X and Cov need to be the same size when updating the StateVector");
+    }
+
+    x_.resize(X.rows(), X.rows());
+    x_.value() = X;
+    x_.jacobian() = 0;
+
+    for(int i = 0; i < x_.rows(); ++i) {
+        x_.jacobian()(i, i) = 1;
+    }
+
+    cov_.reference(Cov.copy());
+    notify_update_do(*this);
 }
 
 
@@ -104,66 +115,17 @@ void StateVector::update_state(const blitz::Array<double, 1>& X,
 
 blitz::Array<bool, 1> StateVector::used_flag() const
 {
-  blitz::Array<bool, 1> res(state().rows());
-  res = false;
-  BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
-    boost::shared_ptr<StateVectorObserver> t2 = 
-      boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
-    if(t2)
-      t2->mark_used(*this, res);
-  }
-  return res;
-}
+    blitz::Array<bool, 1> res(state().rows());
+    res = false;
+    BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
+        boost::shared_ptr<StateVectorObserver> t2 =
+            boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
 
-void SubStateVectorObserver::notify_update(const StateVector& Sv)
-{
-  if(Sv.state().rows() < pstart + plen) {
-    std::stringstream err_msg;
-    err_msg << "StateVector is of size: "
-	    << Sv.state().rows()
-	    << " not the expected size: "
-	    << (pstart + plen);
-    throw Exception(err_msg.str());
-  }
-  if(pstart < 0)
-    throw Exception("pstart < 0");
-  sv_full.reference(Sv.state_with_derivative());
-  sv_cov_full.reference(Sv.state_covariance());
-  if(plen > 0) {
-    blitz::Range rsub(pstart, pstart + plen - 1);
-    sv_sub.reference(sv_full(rsub));
-    sv_cov_sub.reference(Array<double, 2>(sv_cov_full(rsub, rsub)));
-  }
-  // So that anything registered as a SubStateVector observer
-  // gets notified even if it doesn't contain any SV elements
-  update_sub_state(sv_sub, sv_cov_sub);
-}
-
-void SubStateVectorObserver::mark_used(const StateVector& Sv, 
-				blitz::Array<bool, 1>& Used) const
-{
-  if(Used.rows() < pstart + plen)
-    throw Exception("StateVector not the expected size");
-  if(pstart < 0)
-    throw Exception("pstart < 0");
-  if(plen > 0) {
-    Array<bool, 1> used_sub(Used(blitz::Range(pstart, pstart + plen - 1)));
-    mark_used_sub(used_sub);
-  }
-}
-
-void SubStateVectorObserver::state_vector_name(const StateVector& Sv, 
-		       blitz::Array<std::string, 1>& Sv_name) const
-{
-  if(Sv_name.rows() < pstart + plen)
-    throw Exception("StateVector not the expected size");
-  if(pstart < 0)
-    throw Exception("pstart < 0");
-  if(plen > 0) {
-    Array<std::string, 1> sv_name_sub(Sv_name(blitz::Range(pstart, 
-							   pstart + plen - 1)));
-    state_vector_name_sub(sv_name_sub);
-  }
+        if(t2) {
+            t2->mark_used(*this, res);
+        }
+    }
+    return res;
 }
 
 //-----------------------------------------------------------------------
@@ -172,53 +134,47 @@ void SubStateVectorObserver::state_vector_name(const StateVector& Sv,
 
 Array<std::string, 1> StateVector::state_vector_name() const
 {
-  Array<std::string, 1> res(std::max(state().rows(), observer_claimed_size()));
-  for(int i = 0; i < res.rows(); ++i)
-    res(i) = "State vector " + boost::lexical_cast<std::string>(i + 1);
-  BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
-    boost::shared_ptr<StateVectorObserver> t2 = 
-      boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
-    if(t2)
-      t2->state_vector_name(*this, res);
-  }
-  return res;
+    Array<std::string, 1> res(std::max(state().rows(), observer_claimed_size()));
+
+    for(int i = 0; i < res.rows(); ++i) {
+        res(i) = "State vector " + boost::lexical_cast<std::string>(i + 1);
+    }
+
+    BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
+        boost::shared_ptr<StateVectorObserver> t2 =
+            boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
+
+        if(t2) {
+            t2->state_vector_name(*this, res);
+        }
+    }
+    return res;
 }
 
 void StateVector::print(std::ostream& Os) const
 {
-  const static int sv_num_width = 17;
-  Array<std::string, 1> svname = state_vector_name();
-  for(int i = 0; i < std::max(svname.rows(), state().rows()); ++i) {
-    Os << std::setprecision(sv_num_width-7)
-       << std::setw(sv_num_width);
+    const static int sv_num_width = 17;
+    Array<std::string, 1> svname = state_vector_name();
 
-    if(i < state().rows())
-      Os << state()(i);
-    else
-      Os << "Past end state vector";
+    for(int i = 0; i < std::max(svname.rows(), state().rows()); ++i) {
+        Os << std::setprecision(sv_num_width - 7)
+           << std::setw(sv_num_width);
 
-    Os << "  ";
-    if(i < svname.rows())
-      Os << svname(i);
-    else
-      Os << "Unlabeled row " << i;
-    Os << std::endl;
+        if(i < state().rows()) {
+            Os << state()(i);
+        } else {
+            Os << "Past end state vector";
+        }
 
-  }
-}
+        Os << "  ";
 
-//-----------------------------------------------------------------------
-/// Take the given number of state vector parameters. We determine
-/// where the starting point to use is when we attach to the state
-/// vector. 
-///
-/// Note that it is perfectly legal for Plen to be 0, that just means
-/// we don't have any parameters. This is a useful edge case that we
-/// support. 
-//-----------------------------------------------------------------------
+        if(i < svname.rows()) {
+            Os << svname(i);
+        } else {
+            Os << "Unlabeled row " << i;
+        }
 
-void SubStateVectorObserver::state_vector_observer_initialize(int Plen)
-{
-  range_min_check(Plen, 0);
-  plen = Plen;
+        Os << std::endl;
+
+    }
 }

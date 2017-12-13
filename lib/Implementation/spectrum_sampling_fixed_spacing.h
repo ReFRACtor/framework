@@ -1,5 +1,6 @@
 #ifndef SPECTRUM_SAMPLING_FIXED_SPACING_H
 #define SPECTRUM_SAMPLING_FIXED_SPACING_H
+
 #include "spectrum_sampling.h"
 
 namespace FullPhysics {

@@ -1,6 +1,6 @@
 #ifndef ABSORBER_VMR_H
 #define ABSORBER_VMR_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "auto_derivative.h"
 #include "pressure.h"
 

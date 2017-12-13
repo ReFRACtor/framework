@@ -1,5 +1,6 @@
 #ifndef SPECTRUM_H
 #define SPECTRUM_H
+
 #include "spectral_domain.h"
 #include "spectral_range.h"
 

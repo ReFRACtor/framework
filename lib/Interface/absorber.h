@@ -1,7 +1,7 @@
 #ifndef ABSORBER_H
 #define ABSORBER_H
 #include "absorber_vmr.h"
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "observer.h"
 #include "auto_derivative.h"
 #include "accumulated_timer.h"

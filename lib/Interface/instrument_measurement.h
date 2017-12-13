@@ -17,6 +17,7 @@ public:
     /// Measured spectrum for the given spectral channel. Note that this may be empty.
     ///
     /// \param channel_index Band to give value for
+    /// \param skip_jacobian If true, don't do the Jacobian
     /// \return The set of radiances, possibly empty.
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;
 

@@ -7,7 +7,7 @@
 #include "pressure.h"
 %}
 
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %import "array_ad_with_unit.i"
 %import "auto_derivative_with_unit.i"
 

@@ -8,9 +8,13 @@
 #include "temperature.h"
 #include "altitude.h"
 %}
-%base_import(state_vector)
+
+%base_import(state_vector_observer)
+%base_import(sub_state_vector_observer)
 %base_import(observer)
+
 %import "sub_state_vector_array.i"
+%import "sub_state_vector_observer.i"
 %import "pressure.i"
 %import "temperature.i"
 %import "altitude.i"

@@ -45,7 +45,7 @@ public:
     /// Spectrum for the given spectral band. Note that this may be empty.
     ///
     /// \param channel_index Band to give value for
-    /// \param Skip_jacobian If true, don't do the Jacobian
+    /// \param skip_jacobian If true, don't do the Jacobian
     /// calculation. Often this is significantly faster to calculate.
     /// \return The set of radiances, possibly empty.
     //-----------------------------------------------------------------------

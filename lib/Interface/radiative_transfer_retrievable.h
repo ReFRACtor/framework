@@ -1,7 +1,7 @@
 #ifndef RADIATIVE_TRANSFER_RETRIEVABLE_H
 #define RADIATIVE_TRANSFER_RETRIEVABLE_H
 
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "observer.h"
 #include "radiative_transfer.h"
 

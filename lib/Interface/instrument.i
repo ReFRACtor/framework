@@ -11,7 +11,7 @@
 %import "spectrum.i"
 %import "spectral_domain.i"
 %import "double_with_unit.i"
-%base_import(state_vector)
+%base_import(state_vector_observer)
 
 %fp_shared_ptr(FullPhysics::Instrument);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Instrument>)

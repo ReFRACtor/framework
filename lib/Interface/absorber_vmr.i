@@ -6,7 +6,7 @@
 %{
 #include "absorber_vmr.h"
 %}
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %base_import(observer)
 %import "pressure.i"
 %import "auto_derivative.i"

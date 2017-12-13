@@ -1,6 +1,6 @@
 #ifndef AEROSOL_PROPERTY_H
 #define AEROSOL_PROPERTY_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "pressure.h"
 #include "relative_humidity.h"
 #include <blitz/array.h>

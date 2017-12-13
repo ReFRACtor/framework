@@ -6,7 +6,7 @@
 #include "aerosol_extinction.h"
 %}
 %base_import(observer)
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %import "pressure.i"
 %import "auto_derivative.i"
 

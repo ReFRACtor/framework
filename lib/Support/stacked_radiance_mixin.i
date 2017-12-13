@@ -7,13 +7,11 @@
 %import "spectral_domain.i"
 %import "spectrum.i"
 
-%base_import(stacked_radiance_mixin)
-
 %fp_shared_ptr(FullPhysics::StackedRadianceMixin);
 
 namespace FullPhysics {
 
-class StackedRadianceMixin : GenericObject {
+class StackedRadianceMixin {
 public:
     /// Number of spectral channels
     virtual int num_channels() const = 0;

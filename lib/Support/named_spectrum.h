@@ -1,5 +1,6 @@
 #ifndef NAMED_SPECTRUM_H
 #define NAMED_SPECTRUM_H
+
 #include "spectrum.h"
 
 namespace FullPhysics {

@@ -7,7 +7,7 @@
 #include "sub_state_vector_proxy.h"
 %}
 
-%import "state_vector.i"
+%base_import(sub_state_vector_observer)
 
 %fp_shared_ptr(FullPhysics::SubStateVectorProxy);
 

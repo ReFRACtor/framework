@@ -1,5 +1,6 @@
 #ifndef SPECTRAL_WINDOW_H
 #define SPECTRAL_WINDOW_H
+
 #include "printable.h"
 #include <blitz/array.h>
 #include <vector>

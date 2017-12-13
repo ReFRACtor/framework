@@ -1,6 +1,6 @@
 #ifndef INSTRUMENT_CORRECTION_H
 #define INSTRUMENT_CORRECTION_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "spectral_range.h"
 #include "spectral_domain.h"
 

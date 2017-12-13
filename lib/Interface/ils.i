@@ -8,7 +8,8 @@
 #include "ils.h"
 %}
 
-%base_import(state_vector)
+%base_import(state_vector_observer)
+
 %import "array_ad.i"
 %import "spectral_domain.i"
 %import "double_with_unit.i"

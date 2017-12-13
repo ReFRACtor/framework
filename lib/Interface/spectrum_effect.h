@@ -1,6 +1,6 @@
 #ifndef SPECTRUM_EFFECT_H
 #define SPECTRUM_EFFECT_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "spectrum.h"
 
 namespace FullPhysics {

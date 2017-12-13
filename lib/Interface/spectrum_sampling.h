@@ -1,5 +1,6 @@
 #ifndef SPECTRUM_SAMPLING_H
 #define SPECTRUM_SAMPLING_H
+
 #include "printable.h"
 #include "spectral_domain.h"
 #include "spectrum.h"

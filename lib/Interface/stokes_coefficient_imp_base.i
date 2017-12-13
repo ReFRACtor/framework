@@ -8,7 +8,7 @@
 %}
 
 %base_import(stokes_coefficient)
-%import "sub_state_vector_array.i"
+%base_import(sub_state_vector_array)
 %import "array_ad.i"
 
 %fp_shared_ptr(FullPhysics::StokesCoefficientImpBase);

@@ -14,6 +14,7 @@
 
 %fp_shared_ptr(FullPhysics::AerosolPropertyImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AerosolProperty>);
+
 namespace FullPhysics {
 %template(SubStateVectorArrayAerosolProperty) 
      FullPhysics::SubStateVectorArray<AerosolProperty>;

@@ -1,6 +1,6 @@
 #ifndef GROUND_H
 #define GROUND_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "observer.h"
 #include "auto_derivative.h"
 

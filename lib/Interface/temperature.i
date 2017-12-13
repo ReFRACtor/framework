@@ -7,7 +7,7 @@
 #include "temperature.h"
 %}
 
-%base_import(state_vector)
+%base_import(state_vector_observer)
 %import "array_with_unit.i"
 %import "auto_derivative_with_unit.i"
 %import "pressure.i"

@@ -1,6 +1,6 @@
 #ifndef TEMPERATURE_H
 #define TEMPERATURE_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "observer.h"
 #include "auto_derivative.h"
 #include "array_with_unit.h"

@@ -1,6 +1,6 @@
 #ifndef AEROSOL_EXTINCTION_H
 #define AEROSOL_EXTINCTION_H
-#include "state_vector.h"
+#include "state_vector_observer.h"
 #include "auto_derivative.h"
 #include "pressure.h"
 
