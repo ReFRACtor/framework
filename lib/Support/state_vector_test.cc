@@ -1,4 +1,5 @@
 #include "state_vector.h"
+#include "sub_state_vector_observer.h"
 #include "fp_exception.h"
 #include "unit_test_support.h"
 #include <iostream>
