@@ -14,8 +14,8 @@
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::Pressure>)
 
 namespace FullPhysics {
-%template(SubStateVectorArrayPressure) 
-     FullPhysics::SubStateVectorArray<Pressure>;
+
+%template(SubStateVectorArrayPressure) FullPhysics::SubStateVectorArray<Pressure>;
 
 // Allow these classes to be derived from in Python.
 %feature("director") PressureImpBase;

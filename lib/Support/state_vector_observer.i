@@ -1,18 +1,13 @@
 %include "common.i"
 
 %{
-#include "sub_state_vector_observer.h"
+#include "state_vector_observer.h"
 %}
 
-%base_import(state_vector)
+%import "state_vector.i"
     
 %fp_shared_ptr(FullPhysics::StateVectorObserver);
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::StateVector>);
-
-// Do this so we can derive from this and have it able to be used by the C++ code
-// Defined here since rename does not like being inside of a namespace
-%feature("director") FullPhysics::Observer<FullPhysics::StateVector>;
-%rename(ObserverStateVector) FullPhysics::Observer<FullPhysics::StateVector>;
 
 namespace FullPhysics {
 

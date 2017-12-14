@@ -17,20 +17,20 @@ template<class Base> class SubStateVectorArray:
     public SubStateVectorObserver {
 public:
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff, 
-		      const blitz::Array<bool, 1>& Used_flag);
+                        const blitz::Array<bool, 1>& Used_flag);
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff, 
-		      const blitz::Array<bool, 1>& Used_flag,
-		      const boost::shared_ptr<Pressure>& Press,
-		      bool Mark_according_to_press = true,
-		      int Pdep_start = 0);
+                        const blitz::Array<bool, 1>& Used_flag,
+                        const boost::shared_ptr<Pressure>& Press,
+                        bool Mark_according_to_press = true,
+                        int Pdep_start = 0);
     SubStateVectorArray();
     void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag);
+              const blitz::Array<bool, 1>& Used_flag);
     void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press,
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0);
+              const blitz::Array<bool, 1>& Used_flag,
+              const boost::shared_ptr<Pressure>& Press,
+              bool Mark_according_to_press = true,
+              int Pdep_start = 0);
     virtual ~SubStateVectorArray();
     void mark_used_sub(blitz::Array<bool, 1>& Used) const;
     %python_attribute(sub_state_identifier, std::string);
@@ -57,20 +57,17 @@ protected:
 // SubStateVectorArray, so we have this utility macro to define all those
 // virtual functions.
 %define %sub_state_virtual_func(TYPE)
-virtual void add_observer(Observer<TYPE>& Obs);
-virtual void remove_observer(Observer<TYPE>& Obs);
-virtual void update_sub_state_hook();
-virtual void print(std::ostream& Os) const;
-%python_attribute(desc, std::string)
-virtual void mark_used(const StateVector& Sv, 
-		 blitz::Array<bool, 1>& Used) const;
-virtual void state_vector_name(const StateVector& Sv, 
-				 blitz::Array<std::string, 1>& Sv_name) const;
-virtual void notify_update(const StateVector& Observed_object);
-virtual void notify_add(StateVector& Observed_object);
-virtual void notify_remove(StateVector& Observed_object);
-virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub,
-				const blitz::Array<double, 2>& Cov_sub);
-virtual std::string state_vector_name_i(int i) const;
-virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
+    virtual void add_observer(Observer<TYPE>& Obs);
+    virtual void remove_observer(Observer<TYPE>& Obs);
+    virtual void update_sub_state_hook();
+    virtual void print(std::ostream& Os) const;
+    %python_attribute(desc, std::string)
+    virtual void mark_used(const StateVector& Sv, blitz::Array<bool, 1>& Used) const;
+    virtual void state_vector_name(const StateVector& Sv, blitz::Array<std::string, 1>& Sv_name) const;
+    virtual void notify_update(const StateVector& Observed_object);
+    virtual void notify_add(StateVector& Observed_object);
+    virtual void notify_remove(StateVector& Observed_object);
+    virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov_sub);
+    virtual std::string state_vector_name_i(int i) const;
+    virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
 %enddef
