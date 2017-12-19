@@ -18,7 +18,7 @@
 namespace FullPhysics {
 class StandardForwardModelOutput : public RegisterOutputBase {
 public:
-  StandardForwardModelOutput(const boost::shared_ptr<StandardForwardModel>& Fm, const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
+  StandardForwardModelOutput(const boost::shared_ptr<StandardForwardModel>& Fm, const boost::shared_ptr<Observation>& inst_meas);
   virtual void register_output(const boost::shared_ptr<Output>& out) const;
 };
 }

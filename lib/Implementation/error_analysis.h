@@ -4,7 +4,7 @@
 #include "max_a_posteriori.h"
 #include "atmosphere_oco.h"
 #include "forward_model.h"
-#include "instrument_measurement.h"
+#include "observation.h"
 #include "fe_disable_exception.h"
 
 namespace FullPhysics {
@@ -37,19 +37,19 @@ public:
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 		const boost::shared_ptr<AtmosphereOco>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
-        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
+        const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 		const boost::shared_ptr<AtmosphereOco>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
-        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
+        const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 		const boost::shared_ptr<RtAtmosphere>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
-        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
+        const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
 		const boost::shared_ptr<RtAtmosphere>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
-        const boost::shared_ptr<InstrumentMeasurement>& inst_meas);
+        const boost::shared_ptr<Observation>& inst_meas);
   virtual ~ErrorAnalysis() {}
 
 //-----------------------------------------------------------------------
@@ -266,7 +266,7 @@ private:
   boost::shared_ptr<MaxAPosteriori> max_a_posteriori;
   boost::shared_ptr<AtmosphereOco> atm;
   boost::shared_ptr<ForwardModel> fm;
-  boost::shared_ptr<InstrumentMeasurement> meas;
+  boost::shared_ptr<Observation> meas;
   blitz::Array<double, 2> hmat() const;
   blitz::Array<double, 2> ht_c_h() const;
   // Used in a lot of places, so define once here.

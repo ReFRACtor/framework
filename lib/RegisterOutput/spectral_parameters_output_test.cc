@@ -9,7 +9,7 @@ BOOST_FIXTURE_TEST_SUITE(spectral_parameters_output, SolverFinishedFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  SpectralParametersOutput po(config_forward_model, config_instrument_measurement);
+  SpectralParametersOutput po(config_forward_model, config_observation);
   boost::shared_ptr<OutputHdf> out(new OutputHdf("spectral_parameters_output.h5", 20, 112, 5, 3));
   add_file_to_cleanup("spectral_parameters_output.h5");
   po.register_output(out);

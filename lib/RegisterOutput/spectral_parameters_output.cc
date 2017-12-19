@@ -6,7 +6,7 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(SpectralParametersOutput, RegisterOutputBase)
-.def(luabind::constructor<const boost::shared_ptr<ForwardModel>&, const boost::shared_ptr<InstrumentMeasurement>&>())
+.def(luabind::constructor<const boost::shared_ptr<ForwardModel>&, const boost::shared_ptr<Observation>&>())
 REGISTER_LUA_END()
 #endif
 
@@ -14,7 +14,7 @@ REGISTER_LUA_END()
 // for output
 class ForwardModelCalc {
 public:
-    ForwardModelCalc(const boost::shared_ptr<ForwardModel>& Fm, const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+    ForwardModelCalc(const boost::shared_ptr<ForwardModel>& Fm, const boost::shared_ptr<Observation>& inst_meas)
         : fm(Fm), meas(inst_meas) {}
     blitz::Array<double, 1> spectral_domain_values() const
     {
@@ -61,7 +61,7 @@ public:
 
 private:
     boost::shared_ptr<ForwardModel> fm;
-    boost::shared_ptr<InstrumentMeasurement> meas;
+    boost::shared_ptr<Observation> meas;
 };
 
 // See base class for description

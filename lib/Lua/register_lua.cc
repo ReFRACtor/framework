@@ -329,8 +329,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(RadianceScalingOutput);
   REGISTER_LUA_LIST(ExampleLevel1b);
   REGISTER_LUA_LIST(ExampleMetFile);
-  REGISTER_LUA_LIST(InstrumentMeasurement);
-  REGISTER_LUA_LIST(InstrumentMeasurementLevel1b);
+  REGISTER_LUA_LIST(Observation);
+  REGISTER_LUA_LIST(ObservationLevel1b);
   REGISTER_LUA_LIST(ForwardModelSpectralGrid);
 }
 }

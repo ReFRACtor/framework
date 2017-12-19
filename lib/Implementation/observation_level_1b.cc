@@ -1,31 +1,31 @@
-#include "instrument_measurement_level_1b.h"
+#include "observation_level_1b.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(InstrumentMeasurementLevel1b, InstrumentMeasurement)
+REGISTER_LUA_DERIVED_CLASS(ObservationLevel1b, Observation)
 .def(luabind::constructor<const boost::shared_ptr<Level1b>&, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
 REGISTER_LUA_END()
 #endif
 
-InstrumentMeasurementLevel1b::InstrumentMeasurementLevel1b(const boost::shared_ptr<Level1b>& level_1b, const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
+ObservationLevel1b::ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
     : l1b(level_1b), grids(spectral_grids)
 {
 }
 
-int InstrumentMeasurementLevel1b::num_channels() const
+int ObservationLevel1b::num_channels() const
 {
     return grids->number_spectrometer();
 }
 
-const SpectralDomain InstrumentMeasurementLevel1b::spectral_domain(int channel_index) const
+const SpectralDomain ObservationLevel1b::spectral_domain(int channel_index) const
 {
     return grids->low_resolution_grid(channel_index);
 }
 
-Spectrum InstrumentMeasurementLevel1b::radiance(int channel_index, bool skip_jacobian) const
+Spectrum ObservationLevel1b::radiance(int channel_index, bool skip_jacobian) const
 {
     range_check(channel_index, 0, num_channels());
 

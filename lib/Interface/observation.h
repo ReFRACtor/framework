@@ -1,12 +1,12 @@
-#ifndef INSTRUMENT_MEASUREMENT_H
-#define INSTRUMENT_MEASUREMENT_H
+#ifndef OBSERVATION_H
+#define OBSERVATION_H
 
 #include "printable.h"
 #include "stacked_radiance_mixin.h"
 
 namespace FullPhysics {
 
-class InstrumentMeasurement : public StackedRadianceMixin, public Printable<InstrumentMeasurement> {
+class Observation : public StackedRadianceMixin, public Printable<Observation> {
 public:
     /// Number of spectral channels
     virtual int num_channels() const = 0;
@@ -23,7 +23,7 @@ public:
 
     virtual void print(std::ostream& Os) const
     {
-        Os << "InstrumentMeasurement";
+        Os << "Observation";
     }
 };
 }

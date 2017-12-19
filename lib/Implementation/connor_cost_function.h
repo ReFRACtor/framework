@@ -3,7 +3,7 @@
 #include "cost_function.h"
 #include "state_vector.h"
 #include "forward_model.h"
-#include "instrument_measurement.h"
+#include "observation.h"
 #include <boost/shared_ptr.hpp>
 
 namespace FullPhysics {
@@ -12,7 +12,7 @@ public:
   ConnorCostFunction(
           const boost::shared_ptr<StateVector>& Sv, 
           const boost::shared_ptr<ForwardModel>& fm, 
-          const boost::shared_ptr<InstrumentMeasurement>& inst_meas)
+          const boost::shared_ptr<Observation>& inst_meas)
     : statev(Sv), forward_model(fm), meas(inst_meas)
   {
   }
@@ -45,7 +45,7 @@ public:
 private:
   boost::shared_ptr<StateVector> statev;
   boost::shared_ptr<ForwardModel> forward_model;
-  boost::shared_ptr<InstrumentMeasurement> meas;
+  boost::shared_ptr<Observation> meas;
 };
 }
 #endif

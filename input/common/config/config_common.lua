@@ -345,7 +345,7 @@ function ConfigCommon:do_config()
    -- Setup forward model grid, based on initial state vector
    self.forward_model:setup_grid()
 
-   self.instrument_measurement = InstrumentMeasurementLevel1b(self.l1b, self.forward_model:spectral_grid())
+   self.observation = ObservationLevel1b(self.l1b, self.forward_model:spectral_grid())
 
    if(self.do_retrieval) then
       self.solver:create(self)
@@ -3340,7 +3340,7 @@ end
 function ConfigCommon.standard_forward_model:register_output(ro)
    -- Store typical ForwardModel output
    CompositeCreator.register_output(self, ro)
-   ro:push_back(SpectralParametersOutput(self.config.forward_model, self.config.instrument_measurement))
+   ro:push_back(SpectralParametersOutput(self.config.forward_model, self.config.observation))
    ro:push_back(StandardForwardModelOutput.create(self.config.forward_model))
 
    -- Optionally save high resolution spectra
@@ -3398,7 +3398,7 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:connor_solver(config)
-   local cost_func = ConnorCostFunction(config.state_vector, config.forward_model, config.instrument_measurement)
+   local cost_func = ConnorCostFunction(config.state_vector, config.forward_model, config.observation)
    local conv = ConnorConvergence(config.forward_model, 
                                   self.threshold, 
                                   self.max_iteration, 
@@ -3426,7 +3426,7 @@ end
 function ConfigCommon:create_error_analysis()
    if(self.iter_solver == nil) then
       self.error_analysis = ErrorAnalysis(self.conn_solver, self.atmosphere, 
-					  self.forward_model, self.instrument_measurement)
+					  self.forward_model, self.observation)
    else
       self.error_analysis = ErrorAnalysis(self.stat_method_map,
 					  self.atmosphere, 
