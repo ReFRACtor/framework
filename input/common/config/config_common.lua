@@ -345,7 +345,7 @@ function ConfigCommon:do_config()
    -- Setup forward model grid, based on initial state vector
    self.forward_model:setup_grid()
 
-   self.observation = ObservationLevel1b(self.l1b, self.forward_model:spectral_grid())
+   self.observation = ObservationLevel1b(self.l1b, self.instrument, self.forward_model:spectral_grid())
 
    if(self.do_retrieval) then
       self.solver:create(self)

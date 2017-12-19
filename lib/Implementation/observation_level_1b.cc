@@ -6,12 +6,14 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(ObservationLevel1b, Observation)
-.def(luabind::constructor<const boost::shared_ptr<Level1b>&, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
+.def(luabind::constructor<const boost::shared_ptr<Level1b>&, const boost::shared_ptr<Instrument> &, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
 REGISTER_LUA_END()
 #endif
 
-ObservationLevel1b::ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
-    : l1b(level_1b), grids(spectral_grids)
+ObservationLevel1b::ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, 
+        const boost::shared_ptr<Instrument> &instrument,
+        const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
+    : l1b(level_1b), inst(instrument), grids(spectral_grids)
 {
 }
 
@@ -29,7 +31,7 @@ Spectrum ObservationLevel1b::radiance(int channel_index, bool skip_jacobian) con
 {
     range_check(channel_index, 0, num_channels());
 
-    Spectrum full(spectral_domain(channel_index), l1b->radiance(channel_index));
+    Spectrum full(inst->pixel_spectral_domain(channel_index), l1b->radiance(channel_index));
 
     const std::vector<int>& plist = grids->pixel_list(channel_index);
     Array<double, 1> res_d((int) plist.size());

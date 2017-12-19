@@ -3,13 +3,16 @@
 
 #include "observation.h"
 #include "level_1b.h"
+#include "instrument.h"
 #include "forward_model_spectral_grid.h"
 
 namespace FullPhysics {
 
 class ObservationLevel1b : public Observation {
 public:
-    ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids);
+    ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, 
+            const boost::shared_ptr<Instrument> &instrument,
+            const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids);
 
     int num_channels() const;
 
@@ -24,6 +27,7 @@ public:
 
 private:
     boost::shared_ptr<Level1b> l1b;
+    boost::shared_ptr<Instrument> inst;
     boost::shared_ptr<ForwardModelSpectralGrid> grids;
 };
 }

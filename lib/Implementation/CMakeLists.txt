@@ -200,6 +200,7 @@ set(TEST_SOURCES
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
     standard_forward_model_test.cc
+    observation_level_1b_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     pressure_sigma_test.cc
