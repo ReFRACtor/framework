@@ -3,8 +3,8 @@ enable_language(Fortran)
 
 include(ExternalProject)
 
-find_program(CMAKE_LIBTOOL libtool)
-find_program(CMAKE_INSTALL install)
+find_program(CMAKE_LIBTOOL NAMES glibtool libtool)
+find_program(CMAKE_INSTALL NAMES ginstall install)
 
 # Use these directory for where files get installed
 if(NOT THIRDPARTY_INSTALL_PREFIX)
