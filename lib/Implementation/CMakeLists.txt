@@ -87,11 +87,13 @@ set(DIR_SOURCES
     lidort_rt.cc
     log_timing.cc
     lsi_rt.cc
+    max_a_posteriori_standard.cc
     merra_aerosol.cc
     meyer_ml_problem.cc
     meyer_nlls_problem.cc
     model_measure_bard.cc
     model_measure_meyer.cc
+    model_measure_standard.cc
     # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses
     #nlls_solver_gsl.cc
     #nlls_solver_gsl_lmder.cc
