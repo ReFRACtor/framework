@@ -29,7 +29,7 @@ class StateVector(Creator):
         ig_values = []
         for observer in self.sv_observers:
             sv.add_observer(observer)
-            ig_values.append(observer.coefficient.value[np.nonzero(sv_obs.used_flag_value)])
+            ig_values.append(observer.coefficient.value[np.nonzero(observer.used_flag_value)])
 
         ig = np.concatenate(ig_values)
 
