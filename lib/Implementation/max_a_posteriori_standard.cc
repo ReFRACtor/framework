@@ -22,8 +22,8 @@ MaxAPosterioriStandard::MaxAPosterioriStandard(const boost::shared_ptr<ForwardMo
         const Array<double, 1> a_priori_params,
         const Array<double, 2> a_priori_cov)
   : ModelMeasure(
-        obs->radiance_all().spectral_range().data(),
-        Array<double, 1>(sqr(obs->radiance_all().spectral_range().uncertainty()))),
+        observation->radiance_all().spectral_range().data(),
+        Array<double, 1>(sqr(observation->radiance_all().spectral_range().uncertainty()))),
     MaxAPosteriori(a_priori_params, a_priori_cov),
     ModelMeasureStandard(forward_model, observation, state_vector) 
 {
