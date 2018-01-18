@@ -1,0 +1,4 @@
+<map id="FullPhysics::AtmRefractiveIndex" name="FullPhysics::AtmRefractiveIndex">
+<area shape="rect" id="node2" href="$a00378.html" title="Computes refractive index per level/layer using a method that takes into account knowledge of OCO spe..." alt="" coords="5,263,188,428"/>
+<area shape="rect" id="node3" href="$a00444.html" title="Computes refractive index per level/layer using a simple approximation using pressure and temperature..." alt="" coords="212,270,411,421"/>
+</map>

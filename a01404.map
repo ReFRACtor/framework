@@ -1,0 +1,13 @@
+<map id="Implementation/log_timing.cc" name="Implementation/log_timing.cc">
+<area shape="rect" id="node2" href="$a00687.html" title="log_timing.h" alt="" coords="124,95,216,121"/>
+<area shape="rect" id="node20" href="$a01079.html" title="logger.h" alt="" coords="64,244,132,271"/>
+<area shape="rect" id="node21" href="$a01054.html" title="fp_exception.h" alt="" coords="1389,169,1496,196"/>
+<area shape="rect" id="node3" href="$a01088.html" title="printable.h" alt="" coords="380,319,462,345"/>
+<area shape="rect" id="node6" href="$a00606.html" title="connor_solver.h" alt="" coords="518,169,633,196"/>
+<area shape="rect" id="node4" href="$a01064.html" title="generic_object.h" alt="" coords="646,393,764,420"/>
+<area shape="rect" id="node7" href="$a00822.html" title="cost_function.h" alt="" coords="520,244,631,271"/>
+<area shape="rect" id="node9" href="$a00812.html" title="convergence_check.h" alt="" coords="346,244,496,271"/>
+<area shape="rect" id="node10" href="$a01082.html" title="observer.h" alt="" coords="934,244,1017,271"/>
+<area shape="rect" id="node11" href="$a01081.html" title="null_deleter.h" alt="" coords="1064,319,1162,345"/>
+<area shape="rect" id="node22" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1480,244,1620,271"/>
+</map>

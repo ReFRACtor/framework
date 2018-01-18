@@ -1,0 +1,26 @@
+var a00087 =
+[
+    [ "Brdf_Linsup_Outputs", "a00087.html#a9645c3848baca3197d2efa45bfcbe0d3", null ],
+    [ "Brdf_Linsup_Outputs", "a00087.html#a7692c86c14ceb9d5ca6c7b86fd77d37a", null ],
+    [ "~Brdf_Linsup_Outputs", "a00087.html#aa4a41a415216b496490e30a3dd3d74fc", null ],
+    [ "bs_ls_brdf_f", "a00087.html#abde21dd8f3ade31b976e865a57325cdd", null ],
+    [ "bs_ls_brdf_f", "a00087.html#ab910cf2c47df76a50e75421007601265", null ],
+    [ "bs_ls_brdf_f_0", "a00087.html#a692962e2ca9b9cc8cf321627ce01b3b2", null ],
+    [ "bs_ls_brdf_f_0", "a00087.html#ad322cf3240d92dab065b2040a18d93ae", null ],
+    [ "bs_ls_emissivity", "a00087.html#a4a5b98ec2acbe0a89c9594c9b811f9f8", null ],
+    [ "bs_ls_emissivity", "a00087.html#a4bebed0809cb1bdd1f87f2c614c95b9d", null ],
+    [ "bs_ls_exactdb_brdfunc", "a00087.html#ae7ec5cd8bee0aaf73e60b9d77e62ff0f", null ],
+    [ "bs_ls_exactdb_brdfunc", "a00087.html#a63ba7be8b401ff40c8e2b28ebed51d40", null ],
+    [ "bs_ls_user_brdf_f", "a00087.html#a36f354956386050ba5eaba42163392dc", null ],
+    [ "bs_ls_user_brdf_f", "a00087.html#a13e0795a4e1b173f084a3e604acaf074", null ],
+    [ "bs_ls_user_brdf_f_0", "a00087.html#a6da451ff8d77b81d63d58bdcfb9729fb", null ],
+    [ "bs_ls_user_brdf_f_0", "a00087.html#a8d4de90a32ff5d6e0aca39e60b00b6be", null ],
+    [ "bs_ls_user_emissivity", "a00087.html#a5ad78c94f2296f3b2089663c0df31211", null ],
+    [ "bs_ls_user_emissivity", "a00087.html#acbf63a08d62d520b3ba5ff078fa7ff48", null ],
+    [ "check_byte_sizes", "a00087.html#ad6ff39c49edfd98d61d8d670a861e879", null ],
+    [ "fortran_type_ptr", "a00087.html#af1f9a2f8cc4b0d6d661df474e8c3a910", null ],
+    [ "print", "a00087.html#a3e98f2e39838c1818a9cfb1df79fd06b", null ],
+    [ "print_to_string", "a00087.html#adb52c1f4ab60cbabfdcb8aa32fac7b20", null ],
+    [ "fortran_type_c", "a00087.html#a4ad8c958b21c4ffdfe812410ff96992c", null ],
+    [ "owns_pointer", "a00087.html#a47d6495523d09a3d38ff44f297a5d2cb", null ]
+];

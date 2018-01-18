@@ -1,0 +1,37 @@
+<map id="Interface/spurr_rt.cc" name="Interface/spurr_rt.cc">
+<area shape="rect" id="node2" href="$a00912.html" title="spurr_rt.h" alt="" coords="888,87,965,114"/>
+<area shape="rect" id="node38" href="$a01085.html" title="ostream_pad.h" alt="" coords="1983,87,2091,114"/>
+<area shape="rect" id="node40" href="$a00908.html" title="spurr_brdf_types.h" alt="" coords="2437,87,2568,114"/>
+<area shape="rect" id="node41" href="$a00642.html" title="ground_lambertian.h" alt="" coords="1861,177,2000,203"/>
+<area shape="rect" id="node47" href="$a00637.html" title="ground_coxmunk.h" alt="" coords="1603,177,1735,203"/>
+<area shape="rect" id="node48" href="$a00639.html" title="ground_coxmunk_plus\l_lambertian.h" alt="" coords="1748,80,1900,121"/>
+<area shape="rect" id="node50" href="$a00635.html" title="ground_brdf.h" alt="" coords="2261,177,2363,203"/>
+<area shape="rect" id="node3" href="$a00910.html" title="spurr_driver.h" alt="" coords="37,497,139,524"/>
+<area shape="rect" id="node15" href="$a00888.html" title="radiative_transfer\l_single_wn.h" alt="" coords="865,169,988,211"/>
+<area shape="rect" id="node32" href="$a00890.html" title="rt_atmosphere.h" alt="" coords="1023,266,1139,293"/>
+<area shape="rect" id="node6" href="$a01032.html" title="array_ad.h" alt="" coords="1584,579,1667,606"/>
+<area shape="rect" id="node10" href="$a01064.html" title="generic_object.h" alt="" coords="936,885,1053,912"/>
+<area shape="rect" id="node7" href="$a01037.html" title="auto_derivative.h" alt="" coords="1711,661,1833,688"/>
+<area shape="rect" id="node8" href="$a01054.html" title="fp_exception.h" alt="" coords="1595,736,1701,763"/>
+<area shape="rect" id="node9" href="$a01088.html" title="printable.h" alt="" coords="1607,811,1689,837"/>
+<area shape="rect" id="node16" href="$a00884.html" title="radiative_transfer\l_fixed_stokes_coefficient.h" alt="" coords="817,259,999,300"/>
+<area shape="rect" id="node17" href="$a00882.html" title="radiative_transfer.h" alt="" coords="644,497,777,524"/>
+<area shape="rect" id="node22" href="$a01082.html" title="observer.h" alt="" coords="1148,579,1231,606"/>
+<area shape="rect" id="node28" href="$a01080.html" title="named_spectrum.h" alt="" coords="748,348,881,375"/>
+<area shape="rect" id="node29" href="$a00914.html" title="stokes_coefficient.h" alt="" coords="1057,348,1196,375"/>
+<area shape="rect" id="node18" href="$a01031.html" title="accumulated_timer.h" alt="" coords="639,579,782,606"/>
+<area shape="rect" id="node19" href="$a01079.html" title="logger.h" alt="" coords="737,661,805,688"/>
+<area shape="rect" id="node23" href="$a01081.html" title="null_deleter.h" alt="" coords="613,661,712,688"/>
+<area shape="rect" id="node30" href="$a01105.html" title="state_vector_observer.h" alt="" coords="1345,423,1508,449"/>
+<area shape="rect" id="node31" href="$a01104.html" title="state_vector.h" alt="" coords="1399,497,1505,524"/>
+<area shape="rect" id="node33" href="$a01034.html" title="array_ad_with_unit.h" alt="" coords="1685,497,1827,524"/>
+<area shape="rect" id="node37" href="$a00834.html" title="ground.h" alt="" coords="1271,348,1343,375"/>
+<area shape="rect" id="node34" href="$a01038.html" title="auto_derivative_with\l_unit.h" alt="" coords="2021,572,2163,613"/>
+<area shape="rect" id="node36" href="$a01112.html" title="unit.h" alt="" coords="2217,736,2271,763"/>
+<area shape="rect" id="node35" href="$a01049.html" title="double_with_unit.h" alt="" coords="2080,661,2211,688"/>
+<area shape="rect" id="node42" href="$a01036.html" title="array_with_unit.h" alt="" coords="2187,579,2309,606"/>
+<area shape="rect" id="node43" href="$a01106.html" title="sub_state_vector_array.h" alt="" coords="1742,266,1911,293"/>
+<area shape="rect" id="node44" href="$a01108.html" title="sub_state_vector_observer.h" alt="" coords="1418,348,1609,375"/>
+<area shape="rect" id="node45" href="$a00877.html" title="pressure.h" alt="" coords="1633,348,1716,375"/>
+<area shape="rect" id="node49" href="$a01110.html" title="sub_state_vector_proxy.h" alt="" coords="1475,266,1647,293"/>
+</map>

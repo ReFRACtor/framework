@@ -1,0 +1,9 @@
+<map id="Interface/solar_continuum_spectrum.h" name="Interface/solar_continuum_spectrum.h">
+<area shape="rect" id="node2" href="$a00752.html" title="Implementation/solar\l_absorption_and_continuum.h" alt="" coords="12,95,207,136"/>
+<area shape="rect" id="node4" href="$a00758.html" title="Implementation/solar\l_continuum_polynomial.h" alt="" coords="235,95,405,136"/>
+<area shape="rect" id="node6" href="$a00760.html" title="Implementation/solar\l_continuum_table.h" alt="" coords="429,95,571,136"/>
+<area shape="rect" id="node8" href="$a00893.html" title="Interface/solar_continuum\l_spectrum.cc" alt="" coords="595,95,767,136"/>
+<area shape="rect" id="node3" href="$a00751.html" title="Implementation/solar\l_absorption_and_continuum.cc" alt="" coords="5,184,208,225"/>
+<area shape="rect" id="node5" href="$a00757.html" title="Implementation/solar\l_continuum_polynomial.cc" alt="" coords="232,184,408,225"/>
+<area shape="rect" id="node7" href="$a00759.html" title="Implementation/solar\l_continuum_table.cc" alt="" coords="433,184,575,225"/>
+</map>

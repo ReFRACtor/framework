@@ -1,0 +1,27 @@
+<map id="Implementation/observation_level_1b.h" name="Implementation/observation_level_1b.h">
+<area shape="rect" id="node2" href="$a00872.html" title="observation.h" alt="" coords="421,184,521,211"/>
+<area shape="rect" id="node30" href="$a00852.html" title="level_1b.h" alt="" coords="132,333,213,360"/>
+<area shape="rect" id="node34" href="$a00844.html" title="instrument.h" alt="" coords="1351,184,1445,211"/>
+<area shape="rect" id="node45" href="$a00830.html" title="forward_model_spectral\l_grid.h" alt="" coords="727,95,887,136"/>
+<area shape="rect" id="node3" href="$a01088.html" title="printable.h" alt="" coords="963,714,1046,741"/>
+<area shape="rect" id="node6" href="$a01102.html" title="stacked_radiance_mixin.h" alt="" coords="385,259,558,285"/>
+<area shape="rect" id="node4" href="$a01064.html" title="generic_object.h" alt="" coords="1191,796,1309,823"/>
+<area shape="rect" id="node7" href="$a01096.html" title="spectral_domain.h" alt="" coords="621,408,749,435"/>
+<area shape="rect" id="node27" href="$a01100.html" title="spectrum.h" alt="" coords="633,333,720,360"/>
+<area shape="rect" id="node8" href="$a01112.html" title="unit.h" alt="" coords="343,632,397,659"/>
+<area shape="rect" id="node12" href="$a01032.html" title="array_ad.h" alt="" coords="1357,483,1439,509"/>
+<area shape="rect" id="node25" href="$a01036.html" title="array_with_unit.h" alt="" coords="684,483,805,509"/>
+<area shape="rect" id="node13" href="$a01037.html" title="auto_derivative.h" alt="" coords="1337,557,1459,584"/>
+<area shape="rect" id="node14" href="$a01054.html" title="fp_exception.h" alt="" coords="1403,632,1510,659"/>
+<area shape="rect" id="node15" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1572,714,1712,741"/>
+<area shape="rect" id="node26" href="$a01049.html" title="double_with_unit.h" alt="" coords="979,557,1110,584"/>
+<area shape="rect" id="node28" href="$a01098.html" title="spectral_range.h" alt="" coords="337,408,456,435"/>
+<area shape="rect" id="node31" href="$a01060.html" title="fp_time.h" alt="" coords="51,632,127,659"/>
+<area shape="rect" id="node35" href="$a00900.html" title="spectral_window.h" alt="" coords="1030,259,1161,285"/>
+<area shape="rect" id="node37" href="$a01105.html" title="state_vector_observer.h" alt="" coords="1539,259,1702,285"/>
+<area shape="rect" id="node36" href="$a01094.html" title="spectral_bound.h" alt="" coords="1084,408,1205,435"/>
+<area shape="rect" id="node38" href="$a01104.html" title="state_vector.h" alt="" coords="1592,408,1697,435"/>
+<area shape="rect" id="node39" href="$a01082.html" title="observer.h" alt="" coords="2026,557,2109,584"/>
+<area shape="rect" id="node40" href="$a01081.html" title="null_deleter.h" alt="" coords="2309,632,2407,659"/>
+<area shape="rect" id="node46" href="$a00907.html" title="spectrum_sampling.h" alt="" coords="734,259,881,285"/>
+</map>

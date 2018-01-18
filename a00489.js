@@ -1,0 +1,26 @@
+var a00489 =
+[
+    [ "~StokesCoefficient", "a00489.html#a9e0c72d7d584981c5202f0b67f19d4fa", null ],
+    [ "add_observer", "a00489.html#a16a5449229f135cbc11c10e376d3ef4a", null ],
+    [ "add_observer_and_keep_reference", "a00489.html#a3dc34330b9a84e38b6a1fa05a0012335", null ],
+    [ "add_observer_do", "a00489.html#a7970e17e040afd9e5df213d9ea9868b0", null ],
+    [ "add_observer_do", "a00489.html#a5bf89406b6dca0f10d93d8c2134b308b", null ],
+    [ "clean_dead_ptr", "a00489.html#a7314770d025eb25151f8086d311e7970", null ],
+    [ "clone", "a00489.html#a9804ae3c9889520086181c28aa1e2632", null ],
+    [ "mark_used", "a00489.html#aa6204d37a5123c30cb3e46fb091af3c4", null ],
+    [ "notify_add", "a00489.html#a3f6f571daf6fd0cafbccc78f3067b70d", null ],
+    [ "notify_add", "a00489.html#a5f76c13a4b078e8b82e5ef7175508cc4", null ],
+    [ "notify_remove", "a00489.html#a9297d361bb8506be11e8b72480ad4a3d", null ],
+    [ "notify_remove", "a00489.html#a196eb6fa56b49dfa4f927d56133d85f2", null ],
+    [ "notify_update", "a00489.html#a15c6c36910e17a536f45998f0b651082", null ],
+    [ "notify_update_do", "a00489.html#aa421058599b4fdf31fee1c3bbefd37b8", null ],
+    [ "print", "a00489.html#a53f23df4eae73f8d1c3bc570826599e8", null ],
+    [ "print_to_string", "a00489.html#adb52c1f4ab60cbabfdcb8aa32fac7b20", null ],
+    [ "remove_observer", "a00489.html#a23b34572d695be8f28d11dfc25343177", null ],
+    [ "remove_observer_do", "a00489.html#a4bf93566609435bf648a170f6ee4f5fa", null ],
+    [ "remove_observer_do", "a00489.html#ae3e1aeb7e65acda6147ae292a665c556", null ],
+    [ "state_vector_name", "a00489.html#a6937b1c5dd5d9e0656a882f53ebf5dc8", null ],
+    [ "stokes_coefficient", "a00489.html#a92947e3e63e0d02cdf097674c65ea60c", null ],
+    [ "olist", "a00489.html#a9a2122b1d0f4bfe1269def978c34b32a", null ],
+    [ "ref_list", "a00489.html#aae4b1ee50224cb361dc646986c729849", null ]
+];

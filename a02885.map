@@ -1,0 +1,12 @@
+<map id="FullPhysics::MaxAPosterioriObservation" name="FullPhysics::MaxAPosterioriObservation">
+<area shape="rect" id="node2" href="$a00341.html" title="The base class for maximum a posteriori estimation. " alt="" coords="305,1164,491,1447"/>
+<area shape="rect" id="node3" href="$a00351.html" title="The base class for models and measurements. " alt="" coords="307,848,489,1101"/>
+<area shape="rect" id="node8" href="$a00354.html" title="{FullPhysics::ModelMeasureOCO\n||+ ~ModelMeasureOCO()\l+ expected_parameter_size()\l+ jacobian_eval()\l+ model_eval()\l+ model_jacobian_eval()\l+ parameters()\l+ parameters()\l+ print()\l# ModelMeasureOCO()\l# ModelMeasureOCO()\l# radiance_from_fm()\l# vanishing_params_update()\l}" alt="" coords="515,1186,729,1425"/>
+<area shape="rect" id="node4" href="$a00355.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="79,620,243,785"/>
+<area shape="rect" id="node5" href="$a00416.html" title="The base class for all problem states. " alt="" coords="5,288,196,556"/>
+<area shape="rect" id="node6" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="11,132,161,224"/>
+<area shape="rect" id="node7" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="98,5,279,83"/>
+<area shape="rect" id="node10" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="185,132,334,224"/>
+<area shape="rect" id="node9" href="$a00523.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="554,273,701,571"/>
+<area shape="rect" id="node16" href="$a00443.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ForwardModel \&gt;\n||}" alt="" coords="660,929,856,1021"/>
+</map>

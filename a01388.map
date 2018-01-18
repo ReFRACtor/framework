@@ -1,0 +1,15 @@
+<map id="Implementation/level_1b_scale_radiance.cc" name="Implementation/level_1b_scale_radiance.cc">
+<area shape="rect" id="node2" href="$a00677.html" title="level_1b_scale_radiance.h" alt="" coords="91,95,266,121"/>
+<area shape="rect" id="node20" href="$a01054.html" title="fp_exception.h" alt="" coords="251,468,357,495"/>
+<area shape="rect" id="node3" href="$a00852.html" title="level_1b.h" alt="" coords="986,169,1067,196"/>
+<area shape="rect" id="node4" href="$a01060.html" title="fp_time.h" alt="" coords="1065,468,1141,495"/>
+<area shape="rect" id="node5" href="$a01088.html" title="printable.h" alt="" coords="944,550,1027,577"/>
+<area shape="rect" id="node10" href="$a01049.html" title="double_with_unit.h" alt="" coords="808,393,939,420"/>
+<area shape="rect" id="node15" href="$a01098.html" title="spectral_range.h" alt="" coords="787,244,906,271"/>
+<area shape="rect" id="node6" href="$a01064.html" title="generic_object.h" alt="" coords="927,632,1044,659"/>
+<area shape="rect" id="node11" href="$a01112.html" title="unit.h" alt="" coords="833,468,887,495"/>
+<area shape="rect" id="node16" href="$a01036.html" title="array_with_unit.h" alt="" coords="786,319,907,345"/>
+<area shape="rect" id="node18" href="$a01032.html" title="array_ad.h" alt="" coords="467,319,549,345"/>
+<area shape="rect" id="node19" href="$a01037.html" title="auto_derivative.h" alt="" coords="447,393,569,420"/>
+<area shape="rect" id="node21" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="150,550,290,577"/>
+</map>

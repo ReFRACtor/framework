@@ -1,0 +1,18 @@
+<map id="Interface/spectrum_effect.h" name="Interface/spectrum_effect.h">
+<area shape="rect" id="node2" href="$a01105.html" title="state_vector_observer.h" alt="" coords="705,95,868,121"/>
+<area shape="rect" id="node27" href="$a01100.html" title="spectrum.h" alt="" coords="575,95,662,121"/>
+<area shape="rect" id="node3" href="$a01104.html" title="state_vector.h" alt="" coords="753,169,858,196"/>
+<area shape="rect" id="node4" href="$a01088.html" title="printable.h" alt="" coords="657,468,740,495"/>
+<area shape="rect" id="node7" href="$a01082.html" title="observer.h" alt="" coords="1195,319,1277,345"/>
+<area shape="rect" id="node15" href="$a01032.html" title="array_ad.h" alt="" coords="725,244,808,271"/>
+<area shape="rect" id="node17" href="$a01054.html" title="fp_exception.h" alt="" coords="832,393,939,420"/>
+<area shape="rect" id="node5" href="$a01064.html" title="generic_object.h" alt="" coords="859,543,976,569"/>
+<area shape="rect" id="node8" href="$a01081.html" title="null_deleter.h" alt="" coords="1376,393,1475,420"/>
+<area shape="rect" id="node16" href="$a01037.html" title="auto_derivative.h" alt="" coords="585,319,706,345"/>
+<area shape="rect" id="node18" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1173,468,1313,495"/>
+<area shape="rect" id="node28" href="$a01096.html" title="spectral_domain.h" alt="" coords="369,169,497,196"/>
+<area shape="rect" id="node34" href="$a01098.html" title="spectral_range.h" alt="" coords="559,169,678,196"/>
+<area shape="rect" id="node29" href="$a01112.html" title="unit.h" alt="" coords="111,393,166,420"/>
+<area shape="rect" id="node32" href="$a01036.html" title="array_with_unit.h" alt="" coords="335,244,457,271"/>
+<area shape="rect" id="node33" href="$a01049.html" title="double_with_unit.h" alt="" coords="227,319,357,345"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="FullPhysics::Exception" name="FullPhysics::Exception">
+<area shape="rect" id="node2" title="STL class. " alt="" coords="5,182,109,259"/>
+<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Exception \&gt;\n||+ print_to_string()\l}" alt="" coords="133,175,283,267"/>
+<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="117,5,299,83"/>
+<area shape="rect" id="node5" href="$a00075.html" title="{boost::backtrace\n|+ default_stack_size\l|+ backtrace()\l+ ~backtrace()\l+ return_address()\l+ stack_size()\l+ trace()\l+ trace()\l+ trace_line()\l+ trace_line()\l}" alt="" coords="306,131,449,311"/>
+</map>

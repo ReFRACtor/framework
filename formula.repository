@@ -1,0 +1,37 @@
+\form#0:\[ \left((1+\gamma) \mathbf{S}_a^{-1} + \mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \mathbf{K}_i\right) d\mathbf{x}_{i+1} = \left[\mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \left(\mathbf{y} - \mathbf{F}(\mathbf{x}_i)\right) + \mathbf{S}_a^{-1}(\mathbf{x}_a - \mathbf{x}_i)\right] \]
+\form#1:$\mathbf{N} = \sqrt{diag \mathbf{S}_a}$
+\form#2:\[ \mathbf{N}^T \left((1+\gamma) \mathbf{S}_a^{-1} + \mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \mathbf{K}_i\right) \mathbf{N} \left( \mathbf{N}^{-1} d\mathbf{x}_{i+1} \right) = \mathbf{N}^T \left[\mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \left(\mathbf{y} - \mathbf{F}(\mathbf{x}_i)\right) + \mathbf{S}_a^{-1}(\mathbf{x}_a - \mathbf{x}_i)\right] \]
+\form#3:\[ d \sigma^2 = \left(d\mathbf{x}_{i+1}\right)^T \left[\mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \left(\mathbf{y} - \mathbf{F}(\mathbf{x}_i)\right) + \mathbf{S}_a^{-1}(\mathbf{x}_a - \mathbf{x}_i)\right] \]
+\form#4:$\mathbf{S}_{\epsilon}$
+\form#5:$\mathbf{K}_i$
+\form#6:$\mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \mathbf{K}_i$
+\form#7:$\gamma$
+\form#8:$\mathbf{X}_a$
+\form#9:$\mathbf{X}_i$
+\form#10:$\mathbf{y} - \mathbf{F}(\mathbf{x}_i)$
+\form#11:$d{x}_{i + 1}$
+\form#12:$\mathbf{x}_i$
+\form#13:\[SOT = s \exp\left(-\frac{x^2}{\sqrt{d^4+x^2 y^2}}\right)\]
+\form#14:$ d^2 \gg x.y $
+\form#15:\[SOT = s \exp\left(-{\frac{x}{d}}^2\right)\]
+\form#16:$x y \gg d^2$
+\form#17:\[SOT = s \exp\left(- \left|\frac{x}{y}\right|\right)\]
+\form#18:\[ X - X_a \]
+\form#19:\[ S_a = C_a C_a^T \]
+\form#20:\[ C_a^{-1}(X-X_a) \]
+\form#21:\[ C_a^{-1} \]
+\form#22:\[ \left[ \begin{array}{c} M - S ---- X - X_a \end{array} \right] \]
+\form#23:\[ S_e = C_e C_e^T \]
+\form#24:\[ \left[ \begin{array}{c} C_e^{-1}(M-S) ------ C_a^{-1}(X-X_a) \end{array} \right] \]
+\form#25:\[ \left[ \begin{array}{c} C_e^{-1}K --- C_a^{-1} \end{array} \right] \]
+\form#26:\[ (J^TJ)^{-1} = \left( K^T S_e^{-1} K + S_a^{-1} \right)^{-1}. \]
+\form#27:\[ (J^TJ)^{-1} \]
+\form#28:\[ \left( K^T S_e^{-1} K + S_a^{-1} \right)^{-1} K^T S_e^{-1} K \]
+\form#29:\[ C_a \]
+\form#30:\[ M - S \]
+\form#31:\[ C_e^{-1}(M-S) \]
+\form#32:\[ C_e^{-1}K \]
+\form#33:\[ K^TS_e^{-1}K \]
+\form#34:\[ c(x) = \frac{1}{2}\parallel f(x) \parallel^2 \]
+\form#35:\[ \frac{1}{2}\parallel f(x) \parallel^2 \]
+\form#36:\[ J(x)^T f(x) \]

@@ -1,0 +1,5 @@
+<map id="FullPhysics::LidortLambertianFixture" name="FullPhysics::LidortLambertianFixture">
+<area shape="rect" id="node2" href="$a00317.html" title="Base fixture for testing LidortRt modes. " alt="" coords="5,270,203,523"/>
+<area shape="rect" id="node3" href="$a00108.html" title="There are a number of tests that need to use a standard set of objects, similar to what we generate w..." alt="" coords="227,248,402,545"/>
+<area shape="rect" id="node4" href="$a00172.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="227,5,402,200"/>
+</map>

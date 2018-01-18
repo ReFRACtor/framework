@@ -1,0 +1,5 @@
+<map id="FullPhysics::Observation" name="FullPhysics::Observation">
+<area shape="rect" id="node2" href="$a00481.html" title="{FullPhysics::StackedRadiance\lMixin\n||+ num_channels()\l+ radiance()\l+ radiance_all()\l+ spectral_domain()\l+ stacked_pixel_range()\l}" alt="" coords="5,131,207,281"/>
+<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Observation \&gt;\n||+ print_to_string()\l}" alt="" coords="231,160,381,252"/>
+<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="215,5,397,83"/>
+</map>

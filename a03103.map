@@ -1,0 +1,5 @@
+<map id="FullPhysics::Return1Point&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;" name="FullPhysics::Return1Point&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;">
+<area shape="rect" id="node2" href="$a00214.html" title="{FullPhysics::Interpolate\lPoint\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\l\&lt; double \&gt; \&gt;\n||+ interpolate()\l+ x_max()\l+ x_min()\l}" alt="" coords="5,131,184,281"/>
+<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Return1Point\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\l\&lt; double \&gt; \&gt; \&gt;\n||+ print_to_string()\l}" alt="" coords="208,145,416,267"/>
+<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="221,5,403,83"/>
+</map>

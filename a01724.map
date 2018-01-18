@@ -1,0 +1,20 @@
+<map id="Interface/solar_model.cc" name="Interface/solar_model.cc">
+<area shape="rect" id="node2" href="$a00898.html" title="solar_model.h" alt="" coords="545,80,647,107"/>
+<area shape="rect" id="node3" href="$a01088.html" title="printable.h" alt="" coords="577,603,660,629"/>
+<area shape="rect" id="node6" href="$a01032.html" title="array_ad.h" alt="" coords="661,379,744,405"/>
+<area shape="rect" id="node20" href="$a01100.html" title="spectrum.h" alt="" coords="487,229,574,256"/>
+<area shape="rect" id="node28" href="$a00903.html" title="spectrum_effect.h" alt="" coords="634,155,761,181"/>
+<area shape="rect" id="node4" href="$a01064.html" title="generic_object.h" alt="" coords="961,677,1079,704"/>
+<area shape="rect" id="node7" href="$a01037.html" title="auto_derivative.h" alt="" coords="707,453,829,480"/>
+<area shape="rect" id="node8" href="$a01054.html" title="fp_exception.h" alt="" coords="891,528,997,555"/>
+<area shape="rect" id="node9" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1237,603,1377,629"/>
+<area shape="rect" id="node21" href="$a01096.html" title="spectral_domain.h" alt="" coords="223,304,351,331"/>
+<area shape="rect" id="node27" href="$a01098.html" title="spectral_range.h" alt="" coords="467,304,586,331"/>
+<area shape="rect" id="node22" href="$a01112.html" title="unit.h" alt="" coords="105,528,159,555"/>
+<area shape="rect" id="node25" href="$a01036.html" title="array_with_unit.h" alt="" coords="301,379,422,405"/>
+<area shape="rect" id="node26" href="$a01049.html" title="double_with_unit.h" alt="" coords="400,453,531,480"/>
+<area shape="rect" id="node29" href="$a01105.html" title="state_vector_observer.h" alt="" coords="836,229,999,256"/>
+<area shape="rect" id="node30" href="$a01104.html" title="state_vector.h" alt="" coords="865,304,970,331"/>
+<area shape="rect" id="node31" href="$a01082.html" title="observer.h" alt="" coords="1283,453,1365,480"/>
+<area shape="rect" id="node32" href="$a01081.html" title="null_deleter.h" alt="" coords="1384,528,1483,555"/>
+</map>

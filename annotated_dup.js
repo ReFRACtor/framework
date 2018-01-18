@@ -1,0 +1,26 @@
+var annotated_dup =
+[
+    [ "boost", "a01119.html", "a01119" ],
+    [ "factory_test", "a01125.html", "a01125" ],
+    [ "FullPhysics", "a01127.html", "a01127" ],
+    [ "lua_test", "a01131.html", "a01131" ],
+    [ "Python", "a01135.html", "a01135" ],
+    [ "swig_cast_test", "a01162.html", "a01162" ],
+    [ "AbsorberAbscoOutputHelper", "a00013.html", "a00013" ],
+    [ "AbsorberVmrFixedLevelOutputHelper", "a00018.html", "a00018" ],
+    [ "AbsorberVmrLevelHelper", "a00024.html", "a00024" ],
+    [ "AerosolOutputHelper", "a00044.html", "a00044" ],
+    [ "base_unit_", "a00079.html", "a00079" ],
+    [ "BrdfOutputHelper", "a00093.html", "a00093" ],
+    [ "FluorescenceFixture", "a00155.html", "a00155" ],
+    [ "ForwardModelCalc", "a00159.html", "a00159" ],
+    [ "GasAbscoOutputHelper", "a00165.html", "a00165" ],
+    [ "GroundFixture", "a00182.html", "a00182" ],
+    [ "MetDataFixture", "a00346.html", "a00346" ],
+    [ "prefix_", "a00402.html", "a00402" ],
+    [ "PressureFixedLevelOutputHelper", "a00406.html", "a00406" ],
+    [ "PressureOutputHelper", "a00412.html", "a00412" ],
+    [ "StandardForwardModelCalc", "a00483.html", "a00483" ],
+    [ "StokesCoefficientFractionOutputHelper", "a00493.html", "a00493" ],
+    [ "unit_parser", "a00524.html", "a00524" ]
+];

@@ -1,0 +1,4 @@
+<map id="Python.factory.creator.base.ParamPassThru" name="Python.factory.creator.base.ParamPassThru">
+<area shape="rect" id="node2" href="$a00391.html" title="{Python.factory.creator.base.\lParamIterateCreator\n|+ param_names\l+ order\l|+ __init__()\l}" alt="" coords="5,403,192,509"/>
+<area shape="rect" id="node3" href="$a00126.html" title="{Python.factory.creator.base.\lCreator\n|+ common_store\l+ config_def\l+ parameters\l+ observers\l|+ __init__()\l+ __call__()\l+ create()\l+ param()\l+ receive()\l+ register_parameter()\l+ register_to_receive()\l}" alt="" coords="5,131,192,355"/>
+</map>

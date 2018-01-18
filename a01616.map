@@ -1,0 +1,16 @@
+<map id="Interface/dispersion.h" name="Interface/dispersion.h">
+<area shape="rect" id="node2" href="$a01105.html" title="state_vector_observer.h" alt="" coords="737,80,900,107"/>
+<area shape="rect" id="node7" href="$a01082.html" title="observer.h" alt="" coords="396,304,479,331"/>
+<area shape="rect" id="node27" href="$a01096.html" title="spectral_domain.h" alt="" coords="1053,155,1181,181"/>
+<area shape="rect" id="node3" href="$a01104.html" title="state_vector.h" alt="" coords="766,155,871,181"/>
+<area shape="rect" id="node4" href="$a01088.html" title="printable.h" alt="" coords="892,453,975,480"/>
+<area shape="rect" id="node15" href="$a01032.html" title="array_ad.h" alt="" coords="865,229,948,256"/>
+<area shape="rect" id="node17" href="$a01054.html" title="fp_exception.h" alt="" coords="739,379,845,405"/>
+<area shape="rect" id="node5" href="$a01064.html" title="generic_object.h" alt="" coords="656,528,773,555"/>
+<area shape="rect" id="node8" href="$a01081.html" title="null_deleter.h" alt="" coords="95,379,193,405"/>
+<area shape="rect" id="node16" href="$a01037.html" title="auto_derivative.h" alt="" coords="857,304,978,331"/>
+<area shape="rect" id="node18" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="371,453,511,480"/>
+<area shape="rect" id="node28" href="$a01112.html" title="unit.h" alt="" coords="1418,379,1473,405"/>
+<area shape="rect" id="node31" href="$a01036.html" title="array_with_unit.h" alt="" coords="1107,229,1229,256"/>
+<area shape="rect" id="node32" href="$a01049.html" title="double_with_unit.h" alt="" coords="1205,304,1336,331"/>
+</map>

@@ -1,0 +1,22 @@
+<map id="Implementation/radiance_scaling_linear_fit.cc" name="Implementation/radiance_scaling_linear_fit.cc">
+<area shape="rect" id="node2" href="$a00735.html" title="radiance_scaling_linear\l_fit.h" alt="" coords="1281,95,1438,136"/>
+<area shape="rect" id="node37" href="$a01085.html" title="ostream_pad.h" alt="" coords="839,102,947,129"/>
+<area shape="rect" id="node39" href="$a01074.html" title="linear_algebra.h" alt="" coords="1509,102,1623,129"/>
+<area shape="rect" id="node3" href="$a00733.html" title="radiance_scaling.h" alt="" coords="1154,191,1285,218"/>
+<area shape="rect" id="node4" href="$a00846.html" title="instrument_correction.h" alt="" coords="985,273,1144,300"/>
+<area shape="rect" id="node30" href="$a01098.html" title="spectral_range.h" alt="" coords="1353,423,1472,449"/>
+<area shape="rect" id="node35" href="$a01049.html" title="double_with_unit.h" alt="" coords="1243,572,1374,599"/>
+<area shape="rect" id="node7" href="$a01088.html" title="printable.h" alt="" coords="1051,721,1134,748"/>
+<area shape="rect" id="node36" href="$a01096.html" title="spectral_domain.h" alt="" coords="1093,423,1221,449"/>
+<area shape="rect" id="node5" href="$a01105.html" title="state_vector_observer.h" alt="" coords="830,348,993,375"/>
+<area shape="rect" id="node6" href="$a01104.html" title="state_vector.h" alt="" coords="831,423,936,449"/>
+<area shape="rect" id="node10" href="$a01082.html" title="observer.h" alt="" coords="419,572,502,599"/>
+<area shape="rect" id="node18" href="$a01032.html" title="array_ad.h" alt="" coords="965,497,1047,524"/>
+<area shape="rect" id="node20" href="$a01054.html" title="fp_exception.h" alt="" coords="818,647,925,673"/>
+<area shape="rect" id="node8" href="$a01064.html" title="generic_object.h" alt="" coords="917,796,1034,823"/>
+<area shape="rect" id="node11" href="$a01081.html" title="null_deleter.h" alt="" coords="325,647,423,673"/>
+<area shape="rect" id="node19" href="$a01037.html" title="auto_derivative.h" alt="" coords="945,572,1067,599"/>
+<area shape="rect" id="node21" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="549,721,689,748"/>
+<area shape="rect" id="node31" href="$a01112.html" title="unit.h" alt="" coords="1551,647,1605,673"/>
+<area shape="rect" id="node34" href="$a01036.html" title="array_with_unit.h" alt="" coords="1353,497,1475,524"/>
+</map>

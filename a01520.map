@@ -1,0 +1,21 @@
+<map id="Implementation/solar_doppler_shift_polynomial.cc" name="Implementation/solar_doppler_shift_polynomial.cc">
+<area shape="rect" id="node2" href="$a00764.html" title="solar_doppler_shift\l_polynomial.h" alt="" coords="296,95,427,136"/>
+<area shape="rect" id="node16" href="$a01054.html" title="fp_exception.h" alt="" coords="1361,497,1468,524"/>
+<area shape="rect" id="node31" href="$a01084.html" title="old_constant.h" alt="" coords="5,102,112,129"/>
+<area shape="rect" id="node32" href="$a01114.html" title="wgs84_constant.h" alt="" coords="141,102,269,129"/>
+<area shape="rect" id="node33" href="$a00852.html" title="level_1b.h" alt="" coords="1009,184,1090,211"/>
+<area shape="rect" id="node3" href="$a00896.html" title="solar_doppler_shift.h" alt="" coords="367,184,510,211"/>
+<area shape="rect" id="node7" href="$a01049.html" title="double_with_unit.h" alt="" coords="215,423,345,449"/>
+<area shape="rect" id="node27" href="$a01060.html" title="fp_time.h" alt="" coords="1011,259,1087,285"/>
+<area shape="rect" id="node29" href="$a01047.html" title="default_constant.h" alt="" coords="117,184,246,211"/>
+<area shape="rect" id="node4" href="$a01088.html" title="printable.h" alt="" coords="976,572,1059,599"/>
+<area shape="rect" id="node13" href="$a01096.html" title="spectral_domain.h" alt="" coords="549,259,677,285"/>
+<area shape="rect" id="node5" href="$a01064.html" title="generic_object.h" alt="" coords="949,647,1067,673"/>
+<area shape="rect" id="node8" href="$a01112.html" title="unit.h" alt="" coords="347,497,402,524"/>
+<area shape="rect" id="node14" href="$a01032.html" title="array_ad.h" alt="" coords="825,341,908,367"/>
+<area shape="rect" id="node26" href="$a01036.html" title="array_with_unit.h" alt="" coords="527,341,649,367"/>
+<area shape="rect" id="node15" href="$a01037.html" title="auto_derivative.h" alt="" coords="826,423,947,449"/>
+<area shape="rect" id="node17" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1381,572,1521,599"/>
+<area shape="rect" id="node30" href="$a01045.html" title="constant.h" alt="" coords="116,341,199,367"/>
+<area shape="rect" id="node34" href="$a01098.html" title="spectral_range.h" alt="" coords="807,259,926,285"/>
+</map>

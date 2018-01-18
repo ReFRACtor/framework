@@ -1,0 +1,20 @@
+<map id="RegisterOutput/high_res_spectrum_output.cc" name="RegisterOutput/high_res_spectrum_output.cc">
+<area shape="rect" id="node2" href="$a01006.html" title="high_res_spectrum_output.h" alt="" coords="1311,95,1498,121"/>
+<area shape="rect" id="node3" href="$a01016.html" title="register_output_base.h" alt="" coords="906,393,1061,420"/>
+<area shape="rect" id="node17" href="$a01080.html" title="named_spectrum.h" alt="" coords="1338,169,1471,196"/>
+<area shape="rect" id="node39" href="$a01082.html" title="observer.h" alt="" coords="2014,468,2097,495"/>
+<area shape="rect" id="node4" href="$a01088.html" title="printable.h" alt="" coords="1145,617,1227,644"/>
+<area shape="rect" id="node7" href="$a00874.html" title="output.h" alt="" coords="677,468,746,495"/>
+<area shape="rect" id="node5" href="$a01064.html" title="generic_object.h" alt="" coords="1658,692,1775,719"/>
+<area shape="rect" id="node18" href="$a01100.html" title="spectrum.h" alt="" coords="1361,244,1448,271"/>
+<area shape="rect" id="node19" href="$a01096.html" title="spectral_domain.h" alt="" coords="1450,319,1578,345"/>
+<area shape="rect" id="node38" href="$a01098.html" title="spectral_range.h" alt="" coords="1307,319,1425,345"/>
+<area shape="rect" id="node20" href="$a01112.html" title="unit.h" alt="" coords="1739,543,1793,569"/>
+<area shape="rect" id="node24" href="$a01032.html" title="array_ad.h" alt="" coords="1231,393,1314,420"/>
+<area shape="rect" id="node36" href="$a01036.html" title="array_with_unit.h" alt="" coords="1453,393,1575,420"/>
+<area shape="rect" id="node25" href="$a01037.html" title="auto_derivative.h" alt="" coords="1201,468,1323,495"/>
+<area shape="rect" id="node26" href="$a01054.html" title="fp_exception.h" alt="" coords="853,543,959,569"/>
+<area shape="rect" id="node27" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="799,617,939,644"/>
+<area shape="rect" id="node37" href="$a01049.html" title="double_with_unit.h" alt="" coords="1449,468,1579,495"/>
+<area shape="rect" id="node40" href="$a01081.html" title="null_deleter.h" alt="" coords="1919,543,2018,569"/>
+</map>

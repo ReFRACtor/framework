@@ -1,0 +1,12 @@
+<map id="FullPhysics::IterativeSolver" name="FullPhysics::IterativeSolver">
+<area shape="rect" id="node4" href="$a00124.html" title="The base class for all iterative cost minimizers that do not require derivatives of any order..." alt="" coords="18,638,201,759"/>
+<area shape="rect" id="node6" href="$a00218.html" title="The base class for all iterative optimizers that use first order derivatives. " alt="" coords="225,616,428,781"/>
+<area shape="rect" id="node2" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; IterativeSolver \&gt;\n||+ print_to_string()\l}" alt="" coords="143,131,292,223"/>
+<area shape="rect" id="node3" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="127,5,308,83"/>
+<area shape="rect" id="node5" href="$a00125.html" title="{FullPhysics::CostMinimizerGSL\n|# Initial_step_size\l# Size_tol\l|+ CostMinimizerGSL()\l+ ~CostMinimizerGSL()\l+ print()\l+ solve()\l# get_gsl_multimin_fminimizer()\l}" alt="" coords="5,829,213,980"/>
+<area shape="rect" id="node7" href="$a00364.html" title="The base class for the solvers of the Nonlinear&#45;Least&#45;Squares Problem. " alt="" coords="243,844,411,965"/>
+<area shape="rect" id="node8" href="$a00113.html" title="This solves a nonlinear least squares problem using Levenberg&#45;Marquardt. " alt="" coords="111,1028,318,1399"/>
+<area shape="rect" id="node9" href="$a00365.html" title="{FullPhysics::NLLSSolverGSL\n||+ NLLSSolverGSL()\l+ ~NLLSSolverGSL()\l+ print()\l+ solve()\l# get_gsl_multifit_fdfsolver()\l}" alt="" coords="343,1145,537,1281"/>
+<area shape="rect" id="node10" href="$a00366.html" title="{FullPhysics::NLLSSolverGSLLMDER\n||+ NLLSSolverGSLLMDER()\l+ ~NLLSSolverGSLLMDER()\l+ print()\l# get_gsl_multifit_fdfsolver()\l}" alt="" coords="185,1447,426,1568"/>
+<area shape="rect" id="node11" href="$a00367.html" title="{FullPhysics::NLLSSolverGSLLMSDER\n||+ NLLSSolverGSLLMSDER()\l+ ~NLLSSolverGSLLMSDER()\l+ print()\l# get_gsl_multifit_fdfsolver()\l}" alt="" coords="451,1447,701,1568"/>
+</map>

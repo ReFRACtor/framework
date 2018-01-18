@@ -1,0 +1,5 @@
+<map id="MetDataFixture" name="MetDataFixture">
+<area shape="rect" id="node2" href="$a00172.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="5,5,180,200"/>
+<area shape="rect" id="node3" href="$a00443.html" title="{boost::shared_ptr\&lt;\l Meteorology \&gt;\n||}" alt="" coords="205,57,335,149"/>
+<area shape="rect" id="node4" href="$a00443.html" title="{boost::shared_ptr\&lt;\l Pressure \&gt;\n||}" alt="" coords="359,57,490,149"/>
+</map>

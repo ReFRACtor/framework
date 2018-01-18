@@ -1,0 +1,10 @@
+<map id="FullPhysics::RtAtmosphere" name="FullPhysics::RtAtmosphere">
+<area shape="rect" id="node2" href="$a00487.html" title="This is an observer of a StateVector. " alt="" coords="171,469,343,605"/>
+<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="181,219,349,311"/>
+<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="267,20,449,97"/>
+<area shape="rect" id="node5" href="$a00377.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="5,175,156,355"/>
+<area shape="rect" id="node6" href="$a00373.html" title="{FullPhysics::Observable\l\&lt; RtAtmosphere \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="579,417,753,656"/>
+<area shape="rect" id="node11" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; AccumulatedTimer \&gt;\n||+ print_to_string()\l}" alt="" coords="373,219,527,311"/>
+<area shape="rect" id="node8" href="$a00443.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; RtAtmosphere \&gt; \&gt;\n||}" alt="" coords="633,5,787,112"/>
+<area shape="rect" id="node10" href="$a00032.html" title="This is a simple timer class that can be used to accumulate the time spent in multiple calls to a fun..." alt="" coords="367,461,541,612"/>
+</map>

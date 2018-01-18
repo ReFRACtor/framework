@@ -1,0 +1,18 @@
+<map id="Implementation/dispersion_fit.cc" name="Implementation/dispersion_fit.cc">
+<area shape="rect" id="node2" href="$a00612.html" title="dispersion_fit.h" alt="" coords="609,95,720,121"/>
+<area shape="rect" id="node30" href="$a01084.html" title="old_constant.h" alt="" coords="710,169,817,196"/>
+<area shape="rect" id="node31" href="$a01087.html" title="polynomial_eval.h" alt="" coords="905,244,1032,271"/>
+<area shape="rect" id="node32" href="$a01074.html" title="linear_algebra.h" alt="" coords="823,95,936,121"/>
+<area shape="rect" id="node3" href="$a00852.html" title="level_1b.h" alt="" coords="604,169,685,196"/>
+<area shape="rect" id="node4" href="$a01060.html" title="fp_time.h" alt="" coords="252,468,328,495"/>
+<area shape="rect" id="node5" href="$a01088.html" title="printable.h" alt="" coords="629,550,711,577"/>
+<area shape="rect" id="node10" href="$a01049.html" title="double_with_unit.h" alt="" coords="583,393,714,420"/>
+<area shape="rect" id="node15" href="$a01098.html" title="spectral_range.h" alt="" coords="488,244,607,271"/>
+<area shape="rect" id="node6" href="$a01064.html" title="generic_object.h" alt="" coords="611,632,729,659"/>
+<area shape="rect" id="node11" href="$a01112.html" title="unit.h" alt="" coords="352,468,407,495"/>
+<area shape="rect" id="node16" href="$a01036.html" title="array_with_unit.h" alt="" coords="485,319,607,345"/>
+<area shape="rect" id="node18" href="$a01032.html" title="array_ad.h" alt="" coords="910,319,993,345"/>
+<area shape="rect" id="node19" href="$a01037.html" title="auto_derivative.h" alt="" coords="885,393,1007,420"/>
+<area shape="rect" id="node20" href="$a01054.html" title="fp_exception.h" alt="" coords="1085,468,1191,495"/>
+<area shape="rect" id="node21" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1141,550,1281,577"/>
+</map>

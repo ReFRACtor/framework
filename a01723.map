@@ -1,0 +1,9 @@
+<map id="Interface/solar_doppler_shift.h" name="Interface/solar_doppler_shift.h">
+<area shape="rect" id="node2" href="$a00752.html" title="Implementation/solar\l_absorption_and_continuum.h" alt="" coords="12,95,207,136"/>
+<area shape="rect" id="node4" href="$a00762.html" title="Implementation/solar\l_doppler_shift_l1b.h" alt="" coords="234,95,377,136"/>
+<area shape="rect" id="node6" href="$a00764.html" title="Implementation/solar\l_doppler_shift_polynomial.h" alt="" coords="401,95,583,136"/>
+<area shape="rect" id="node8" href="$a00895.html" title="Interface/solar_doppler\l_shift.cc" alt="" coords="608,95,763,136"/>
+<area shape="rect" id="node3" href="$a00751.html" title="Implementation/solar\l_absorption_and_continuum.cc" alt="" coords="5,184,208,225"/>
+<area shape="rect" id="node5" href="$a00761.html" title="Implementation/solar\l_doppler_shift_l1b.cc" alt="" coords="233,184,378,225"/>
+<area shape="rect" id="node7" href="$a00763.html" title="Implementation/solar\l_doppler_shift_polynomial.cc" alt="" coords="402,184,593,225"/>
+</map>

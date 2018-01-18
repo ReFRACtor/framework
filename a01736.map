@@ -1,0 +1,15 @@
+<map id="Interface/spectrum_sampling.cc" name="Interface/spectrum_sampling.cc">
+<area shape="rect" id="node2" href="$a00907.html" title="spectrum_sampling.h" alt="" coords="793,95,940,121"/>
+<area shape="rect" id="node3" href="$a01088.html" title="printable.h" alt="" coords="493,543,576,569"/>
+<area shape="rect" id="node6" href="$a01096.html" title="spectral_domain.h" alt="" coords="641,244,769,271"/>
+<area shape="rect" id="node26" href="$a01100.html" title="spectrum.h" alt="" coords="662,169,749,196"/>
+<area shape="rect" id="node4" href="$a01064.html" title="generic_object.h" alt="" coords="455,617,572,644"/>
+<area shape="rect" id="node7" href="$a01112.html" title="unit.h" alt="" coords="166,468,221,495"/>
+<area shape="rect" id="node11" href="$a01032.html" title="array_ad.h" alt="" coords="645,319,728,345"/>
+<area shape="rect" id="node24" href="$a01036.html" title="array_with_unit.h" alt="" coords="386,319,507,345"/>
+<area shape="rect" id="node12" href="$a01037.html" title="auto_derivative.h" alt="" coords="577,393,698,420"/>
+<area shape="rect" id="node13" href="$a01054.html" title="fp_exception.h" alt="" coords="683,468,789,495"/>
+<area shape="rect" id="node14" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="822,543,962,569"/>
+<area shape="rect" id="node25" href="$a01049.html" title="double_with_unit.h" alt="" coords="279,393,409,420"/>
+<area shape="rect" id="node27" href="$a01098.html" title="spectral_range.h" alt="" coords="387,244,506,271"/>
+</map>
