@@ -3,7 +3,7 @@ RT Retrieval Framework
 ======================
 
 Jet Propulsion Laboratory, California Institute of Technology. 
-Copyright 2017 California Institute of Technology. 
+Copyright 2018 California Institute of Technology. 
 U.S. Government sponsorship acknowledged.
 
 This software (NASA NTR-49044) retrieves a set of atmospheric/surface/instrument
@@ -36,14 +36,5 @@ Level-2 processing.
 Documentation
 -------------
 
-Documentation on setup and compiling of the software can be found in the
-doc/users_guide.pdf PDF file, or online in HTML form at:
-http://nasa.github.io/RtRetrievalFrameworkDoc/ 
-
-For information on the algorithms used by the software the OCO2 L2 Algorithm
-Theoretical Basis Document can be found at the Goddard DAAC: 
-http://disc.sci.gsfc.nasa.gov/OCO-2/documentation/oco-2-v6/OCO2_L2_ATBD.V6.pdf
-
-For further information on the methods used by OCO, see the OCO-2 project
-publications page: 
-http://oco.jpl.nasa.gov/science/publications/
+Documentation on setup and compiling of the software can be found at:
+https://github.jpl.nasa.gov/pages/refractor/documentation/

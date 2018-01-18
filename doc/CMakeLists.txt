@@ -21,6 +21,19 @@ if(DOXYGEN_FOUND)
     install(DIRECTORY "${PROJECT_BINARY_DIR}/doc/fortran/html/" DESTINATION "doc/fortran"
         USE_SOURCE_PERMISSIONS OPTIONAL)
 
+    # Look for ghp-import to allow importing of Doxygen documentation into gh-pages branch
+    find_program(GHP_IMPORT ghp-import)
+    if (EXISTS ${GHP_IMPORT})
+        add_custom_target(gh-pages)
+        add_custom_command(TARGET gh-pages
+            COMMAND ${GHP_IMPORT} -n -p "${CMAKE_INSTALL_PREFIX}/doc/api"
+            COMMENT "Importing API documentation into ghp-pages branch"
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            DEPENDS doc)
+    else()
+        message(STATUS "ghp-import not found, can not import Doxygen into Github Pages branch")
+    endif()
+
 else()
     message(STATUS "Doxygen not found, will not build API documentation")
 endif()
