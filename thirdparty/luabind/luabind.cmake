@@ -5,6 +5,12 @@ set(LUABIND_NAME luabind)
 # Commit version used is shown in the filename below
 set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-60e576e.tar.gz)
 
+# Luabind depends on lua, but if we are building lua from source we won't have LUA_LIBRARIES set
+if(NOT LUA_FOUND OR BUILD_LUA)
+    message("LUA built from source. Setting library path to ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX}.")
+    set(LUA_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
+
 # Set up arguments to cmake call
 # 1. Tell their cmake that Lua was found and pass the include directory path found by thirdparty cmake
 # 2. Turn on shared libary creation
