@@ -1261,7 +1261,7 @@
       ENDDO
 
       N_SURFACE_WFS = N_KERNEL_FACTOR_WFS + N_KERNEL_PARAMS_WFS
-      IF ( Q .ne. N_SURFACE_WFS ) stop'bookkeeping wrong'
+      IF ( Q .ne. N_SURFACE_WFS ) stop 'bookkeeping wrong'
 
 !  Set up the MSR points
 !  ---------------------

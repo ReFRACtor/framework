@@ -968,7 +968,7 @@
 !  Temporary - Only Isotropic yet.
 
         IF ( .not.DO_ISOTROPIC ) &
-          Stop'Non-isotropic not allowed yet if doing fluorescence'
+          Stop 'Non-isotropic not allowed yet if doing fluorescence'
 
 !  F_755 data file
 
@@ -1076,7 +1076,7 @@
 !  Temporary - Only Isotropic yet.
 
         IF ( .not.DO_ISOTROPIC ) &
-          Stop'Non-isotropic not allowed yet if not doing fluorescence'
+          Stop 'Non-isotropic not allowed yet if not doing fluorescence'
 
 !  INDWAT call . uses single precision routine
 
