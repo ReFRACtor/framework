@@ -24,5 +24,5 @@ ObservationId<T>::ObservationId(const boost::shared_ptr<HdfFile>& input, const s
     }
 }
 
-template class ObservationId<std::string>;
-template class ObservationId<int>;
+template class FullPhysics::ObservationId<std::string>;
+template class FullPhysics::ObservationId<int>;
