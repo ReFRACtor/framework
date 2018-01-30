@@ -249,7 +249,7 @@ config_def = {
         },
     },
     'radiative_transfer': {
-        'creator': creator.rt.LidortRt,
+        'creator': creator.rt.LsiRt,
         'solar_zenith': {
             'creator': creator.l1b.ValueFromLevel1b,
             'field': "solar_zenith",
@@ -262,8 +262,9 @@ config_def = {
             'creator': creator.l1b.ValueFromLevel1b,
             'field': "sounding_azimuth",
         },
-        'num_streams': 4,
-        'num_mom': 16,
+        'num_low_streams': 1,
+        'num_high_streams': 8,
+        'lsi_config_file': static_input_file,
     },
     'forward_model': {
         'creator': creator.forward_model.ForwardModel,
