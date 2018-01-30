@@ -131,8 +131,15 @@ class Creator(object):
         needing to know any details of this class."""
 
         result = self.create(**kwargs)
-
-        self._dispatch(result)
+    
+        if type(result) is list:
+            for result_item in result:
+                self._dispatch(result_item)
+        elif type(result) is dict:
+            for result_item in result.items():
+                self._dispatch(result_item)
+        else:
+            self._dispatch(result)
 
         return result
 
