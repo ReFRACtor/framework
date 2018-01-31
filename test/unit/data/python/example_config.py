@@ -16,6 +16,7 @@ ils_input = h5py.File(ils_file)
 
 solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
 aerosol_prop_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_aerosol_combined.h5")
+covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
 data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
 l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
@@ -33,7 +34,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'state_vector'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -307,8 +308,34 @@ config_def = {
             },
         },
     },
-    'state_vector': {
-        'creator': creator.retrieval.StateVector,
+    'retrieval': {
+        'creator': creator.retrieval.NLLSRetrieval,
+        'retrieval_components': {
+            'creator': creator.retrieval.SVObserverComponents,
+        },
+        'state_vector': {
+            'creator': creator.retrieval.StateVector,
+        },
+        'initial_guess': {
+            'creator': creator.retrieval.InitialGuessFromSV,
+        },
+        'a_priori': {
+            'creator': creator.retrieval.AprioriFromIG,
+        },
+        'covariance': {
+            'creator': creator.retrieval.CovarianceByComponent,
+            'values': {
+                'creator': creator.value.LoadValuesFromHDF,
+                'filename': covariance_file,
+            }
+        },
+        'solver': {
+            'creator': creator.retrieval.NLLSMaxAPosteriori,
+            'max_cost_function_calls': 20,
+            'dx_tol_abs': 1e-5,
+            'dx_tol_rel': 1e-5, 
+            'g_tol_abs': 1e-5,
+        },
     },
 }
 
