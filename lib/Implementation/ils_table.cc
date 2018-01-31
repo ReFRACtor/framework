@@ -40,11 +40,6 @@ REGISTER_LUA_END()
 #endif
 
 template<>
-void IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response);
-template<>
-void IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response);
-
-template<>
 IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
                          const std::string& Band_name, const std::string& Hdf_band_name,
                          const std::string& Hdf_group) : band_name_(Band_name), hdf_band_name_(Hdf_band_name),

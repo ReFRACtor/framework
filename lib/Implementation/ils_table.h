@@ -112,6 +112,33 @@ private:
 
 typedef IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLinear;
 typedef IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLog;
+template<>
+void IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response);
+template<>
+void IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response);
+template<>
+IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > >::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
+                         const std::string& Band_name, const std::string& Hdf_band_name,
+                         const std::string& Hdf_group);
+template<>
+IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > >::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
+                         const std::string& Band_name, const std::string& Hdf_band_name,
+                         const std::string& Hdf_group);
+template<>
+void IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double>>>::ils(const AutoDerivative<double>& wn_center,
+    const blitz::Array<double, 1>& wn,
+    ArrayAd<double, 1>& res) const;
+
+template<>
+void IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >>::print(std::ostream& Os) const;
+template<>
+void IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> >>::ils
+(const AutoDerivative<double>& wn_center,
+ const blitz::Array<double, 1>& wn,
+ ArrayAd<double, 1>& res) const;
+template<>
+void IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> >>::print(std::ostream& Os) const;
+
 
 }
 #endif
