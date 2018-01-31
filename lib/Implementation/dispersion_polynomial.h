@@ -73,7 +73,7 @@ public:
 
   virtual boost::shared_ptr<Dispersion> clone() const;
 
-  virtual std::string sub_state_identifier() const { return "dispersion"; } 
+  virtual std::string sub_state_identifier() const { return "dispersion/" + band_name_; } 
 
   virtual std::string state_vector_name_i(int i) const;
   virtual SpectralDomain pixel_grid() const;
