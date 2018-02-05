@@ -312,6 +312,7 @@ config_def = {
         'creator': creator.retrieval.NLLSRetrieval,
         'retrieval_components': {
             'creator': creator.retrieval.SVObserverComponents,
+            'exclude': ['absorber_levels/O2'],
         },
         'state_vector': {
             'creator': creator.retrieval.StateVector,

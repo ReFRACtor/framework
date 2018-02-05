@@ -1,3 +1,4 @@
+import re
 from collections import OrderedDict
 
 import numpy as np
@@ -13,7 +14,7 @@ class NLLSRetrieval(Creator):
     state_vector = param.InstanceOf(rf.StateVector)
     initial_guess = param.Array(dims=1)
     a_priori = param.Array(dims=1)
-    covariance = param.Array(dims=1)
+    covariance = param.Array(dims=2)
     solver = param.InstanceOf(rf.NLLSSolver)
 
     def __init__(self, *vargs, **kwargs):
@@ -26,18 +27,22 @@ class NLLSRetrieval(Creator):
         state_vector = self.common_store["state_vector"] = self.state_vector()
         initial_guess = self.common_store["initial_guess"] = self.initial_guess()
         a_priori = self.common_store["a_priori"] = self.a_priori()
-
+        covariance = self.common_store["covariance"] = self.covariance()
 
         return {
             'retrieval_components': retrieval_components,
             'state_vector': state_vector,
             'intial_guess': initial_guess,
             'a_priori': a_priori,
-            'covariance': None,
+            'covariance': covariance,
             'solver': None,
         }
 
 class SVObserverComponents(Creator):
+
+    exclude = param.Iterable(default=None, required=False)
+    include = param.Iterable(default=None, required=False)
+    order = param.Iterable(default=[], required=False)
 
     def __init__(self, *vargs, **kwargs):
         super().__init__(*vargs, **kwargs)
@@ -52,8 +57,55 @@ class SVObserverComponents(Creator):
             ss_iden = rec_obj.sub_state_identifier
             self.retrieval_components[ss_iden] = rec_obj
  
+    def is_included(self, iden):
+
+        include_list = self.include()
+
+        if include_list is None:
+            return True
+        else:
+            for incl_re in include_list:
+                if re.search(incl_re, iden):
+                    return True
+            return False
+
+    def is_excluded(self, iden):
+
+        exclude_list = self.exclude()
+
+        if exclude_list is None:
+            return False
+        else:
+            for excl_re in exclude_list:
+                if re.search(excl_re, iden):
+                    return True
+            return False
+
     def create(self, **kwargs):
-        return self.retrieval_components
+        
+        filtered_components = []
+        for iden, obj in self.retrieval_components.items():
+            if self.is_included(iden) and not self.is_excluded(iden):
+                filtered_components.append( (iden, obj) )
+
+        # Sort by the items listed in the order parameter
+        # falling back to the order of items originally recieved
+        order = self.order()
+        def sort_key(comp_tuple):
+            found_order = None
+            for idx, ord_item in order:
+                if re.search(ord_item, comp_tuple[1]):
+                    found_order = idx
+                    break
+
+            if found_order:
+                return idx
+            else:
+                # Add length of order array so items without a specific order
+                # come after any that match the specific ordering
+                return len(order) + filtered_components.index(comp_tuple)
+
+        return OrderedDict(sorted(filtered_components, key=sort_key))
 
 class StateVector(Creator):
 
@@ -128,30 +180,35 @@ class CovarianceByComponent(Creator):
         # Gather covariance arrays and do input checking
         covariances = []
         total_len = 0
-        for rc_name in self.retrieval_components.keys():
+        for rc_name in self.retrieval_components().keys():
             if rc_name not in cov_inputs:
                 raise param.ParamError("CovarianceByComponent: values argument is missing data for this retrieval component: %s" % rc_name)
             
             rc_cov = cov_inputs[rc_name]
 
-            if not hasattr("shape", rc_cov):
+            if not hasattr(rc_cov, "shape"):
                 raise param.ParamError("CovarianceByComponent: value for retrieval component must be a numpy array: %s" % rc_name)
 
-            if len(rc_cov.shape) != 2:
-                raise param.ParamError("CovarianceByComponent: shape of array for retrieval component must be 2 dimensional: %s" % rc_name)
+            if len(rc_cov.shape) != 2 and len(rc_cov.shape) != 3:
+                raise param.ParamError("CovarianceByComponent: shape of array for retrieval component must be 2 or 3 dimensional: %s" % rc_name)
 
-            if rc_cov.shape[0] != rc_cov.shape[1]:
+            if rc_cov.shape[-1] != rc_cov.shape[-2]:
                 raise param.ParamError("CovarianceByComponent: array for retrieval component must be a square matrix: %s" % rc_name)
 
-            total_len += rc_cov.shape[0]
-            covariances.append(rc_cov)
+            if len(rc_cov.shape) == 3:
+                for chan_idx in range(rc_cov.shape[0]):
+                    total_len += rc_cov.shape[1]
+                    covariances.append(rc_cov[chan_idx, :, :])
+            else:
+                total_len += rc_cov.shape[0]
+                covariances.append(rc_cov)
 
         # Concatenate covariances along the diagonal
         total_covariance = np.zeros((total_len, total_len), dtype=float)
 
         offset = 0
         for idx, cov in enumerate(covariances):
-            total_covariance[offset:cov.shape[0], offset:cov.shape[1]] = cov
+            total_covariance[offset:offset+cov.shape[0], offset:offset+cov.shape[1]] = cov
             offset += cov.shape[0]
 
         return total_covariance

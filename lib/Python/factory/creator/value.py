@@ -1,3 +1,5 @@
+import h5py
+
 from .base import Creator
 from .. import param
 
@@ -24,3 +26,20 @@ class ArrayWithUnit(Creator):
         else:
             raise param.ParamError("Unsupported number of dimensions %s for array" % (num_dims))
 
+class LoadValuesFromHDF(Creator):
+
+    filename = param.Scalar(str)
+
+    def create(self, **kwargs):
+
+        values = {}
+
+        contents = h5py.File(self.filename(), "r")
+
+        def visit_datasets(name, obj):
+            if type(obj) is h5py.Dataset:
+                values[name] = obj[:]
+
+        contents.visititems(visit_datasets)
+
+        return values
