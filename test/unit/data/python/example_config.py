@@ -313,6 +313,8 @@ config_def = {
         'retrieval_components': {
             'creator': creator.retrieval.SVObserverComponents,
             'exclude': ['absorber_levels/O2'],
+            # Match order tradtionally used in old system
+            'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol_shape', 'ground', 'dispersion'],
         },
         'state_vector': {
             'creator': creator.retrieval.StateVector,

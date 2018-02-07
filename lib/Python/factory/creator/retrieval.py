@@ -93,17 +93,18 @@ class SVObserverComponents(Creator):
         order = self.order()
         def sort_key(comp_tuple):
             found_order = None
-            for idx, ord_item in order:
-                if re.search(ord_item, comp_tuple[1]):
+            for idx, ord_item in enumerate(order):
+                if re.search(ord_item, comp_tuple[0]):
                     found_order = idx
                     break
 
-            if found_order:
-                return idx
+            if found_order is not None:
+                return found_order
             else:
                 # Add length of order array so items without a specific order
                 # come after any that match the specific ordering
-                return len(order) + filtered_components.index(comp_tuple)
+                dflt_order = len(order) + filtered_components.index(comp_tuple)
+                return dflt_order
 
         return OrderedDict(sorted(filtered_components, key=sort_key))
 
