@@ -1,6 +1,15 @@
 import logging
 from collections import OrderedDict
 
+# Try and use AttrDict as the dictionary class used to store config instantiation
+# to make accessing config values easier
+try:
+    from attrdict import AttrDict as ConfigDict
+except ImportError:
+    from warnings import warn
+    warn("Could not import AttrDict, config values not accessible as attributes")
+    ConfigDict = dict
+
 from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Scalar
 
 logger = logging.getLogger('factory.creator.base')
@@ -54,7 +63,7 @@ class Creator(object):
             self.common_store = {}
 
         # Ensure the config definition is of the appropriate type
-        if type(config_def) is dict:
+        if isinstance(config_def, dict):
             self.config_def = self._process_config(config_def)
         else:
             raise TypeError("The config definition (config_def) argument passed to %s should be of type dict" % self.__class__.__name__)
@@ -68,7 +77,7 @@ class Creator(object):
     def _process_config(self, in_config_def):
         "Process config definition, create nested Creators"
 
-        out_config_def = {}
+        out_config_def = ConfigDict()
 
         for config_name, config_val in in_config_def.items():
             if isinstance(config_val, dict) and "creator" in config_val:
@@ -132,10 +141,10 @@ class Creator(object):
 
         result = self.create(**kwargs)
     
-        if type(result) is list:
+        if isinstance(result, list):
             for result_item in result:
                 self._dispatch(result_item)
-        elif type(result) is dict:
+        elif isinstance(result, dict):
             for result_item in result.items():
                 self._dispatch(result_item)
         else:
@@ -174,7 +183,7 @@ class ParamPassThru(ParamIterateCreator):
 
     def create(self, **kwargs):
 
-        result = {} 
+        result = ConfigDict()
         for param_name in self.param_names:
             logger.debug("Passing through parameter %s" % param_name)
             result[param_name] = self.param(param_name, **kwargs)
@@ -186,7 +195,7 @@ class SaveToCommon(ParamPassThru):
 
     def create(self, **kwargs):
 
-        result = {} 
+        result = ConfigDict()
         for param_name in self.param_names:
             logger.debug("Saving to the common store parameter %s" % param_name)
             result[param_name] = self.param(param_name, **kwargs)
