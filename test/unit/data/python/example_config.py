@@ -80,7 +80,7 @@ config_def = {
         },
         'dispersion': {
             'creator': creator.instrument.DispersionPolynomial,
-            'apriori': {
+            'value': {
                 'creator': creator.l1b.ValueFromLevel1b,
                 'field': 'spectral_coefficient',
             },
@@ -102,7 +102,7 @@ config_def = {
         'creator': creator.atmosphere.AtmosphereCreator,
         'pressure': {
             'creator': creator.atmosphere.PressureSigma,
-            'apriori': {
+            'value': {
                 'creator': creator.met.ValueFromMet,
                 'field': "surface_pressure",
             },
@@ -111,7 +111,7 @@ config_def = {
         },
         'temperature': {
             'creator': creator.atmosphere.TemperatureMet,
-            'apriori': static_value("Temperature/Offset/a_priori")
+            'value': static_value("Temperature/Offset/a_priori")
         },
         'altitudes': { 
             'creator': creator.atmosphere.AltitudeHydrostatic,
@@ -131,7 +131,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrLevel,
-                    'apriori': {
+                    'value': {
                         'creator': creator.absorber.GasVmrAprioriMetL1b,
                         'gas_name': 'CO2',
                         'reference_atm_file': static_input_file,
@@ -147,7 +147,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrMet,
-                    'apriori': np.array([1.0]),
+                    'value': np.array([1.0]),
                 },
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,
@@ -159,7 +159,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrLevel,
-                    'apriori': {
+                    'value': {
                         'creator': creator.atmosphere.ConstantForAllLevels,
                         'value': static_value("Gas/O2/average_mole_fraction")[0],
                     },
@@ -179,7 +179,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 1, 0.2]),
+                    'value': np.array([-4.38203, 1, 0.2]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -190,7 +190,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 1, 0.2]),
+                    'value': np.array([-4.38203, 1, 0.2]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -201,7 +201,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 0.75, 0.1]),
+                    'value': np.array([-4.38203, 0.75, 0.1]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -213,7 +213,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 0.3, 0.04]),
+                    'value': np.array([-4.38203, 0.3, 0.04]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -231,7 +231,7 @@ config_def = {
             'child': 'lambertian',
             'lambertian': {
                 'creator': creator.ground.GroundLambertian,
-                'apriori': {
+                'value': {
                     'creator': creator.ground.AlbedoFromSignalLevel,
                     'signal_level': {
                         'creator': creator.l1b.ValueFromLevel1b,
