@@ -363,6 +363,7 @@ function ConfigCommon:do_config()
    logger = FpLogger(self.log_level)
    forward_model = self.forward_model
    solver = self.conn_solver
+   state_vector = self.state_vector
    -- This should be temporary, until we merge solver and iterative_solver
    iterative_solver = self.iter_solver
    stat_method_map = self.stat_method_map
