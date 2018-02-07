@@ -260,8 +260,7 @@ config_def = {
             'field': "sounding_zenith",
         },
         'observation_azimuth': {
-            'creator': creator.l1b.ValueFromLevel1b,
-            'field': "sounding_azimuth",
+            'creator': creator.l1b.RelativeAzimuthFromLevel1b,
         },
         'num_low_streams': 1,
         'num_high_streams': 8,

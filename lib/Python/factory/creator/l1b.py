@@ -92,6 +92,43 @@ class ValueFromLevel1b(Creator):
         else:
             return field_val
 
+class RelativeAzimuthFromLevel1b(Creator):
+
+    l1b = param.InstanceOf(rf.Level1b)
+
+    def create(self, channel_index=None, **kwargs):
+        # Azimuth is modified because the convention used by the OCO L1B file is to
+        # take both solar and observation angles as viewed from an observer
+        # standing in the FOV.  In this convention, the convention for glint
+        # would be a relative azimuth difference of 180 degrees, as the
+        # spacecraft and sun would be on opposite sides of the sky. However, the
+        # radiative transfer convention is that the azimuth angles must be the
+        # same for glint (it is "follow the photons" convention). However, we'd
+        # like the solar azimuth to not be changed, so as to continue to agree
+        # with zenith, so this change of the observation azimuth has the effect
+        # of putting everything in a "reverse follow-the-photons" convention,
+        # where we look from the satellite to the FOV, then from the FOV to the
+        # sun.  Note that because of an old historical reason, however, both
+        # zenith angles remain > 0 and < 90, even in the RT convention.
+
+        l1b = self.l1b()
+        orig_units = l1b.sounding_azimuth(0).units;
+
+        rel_azm_vals = []
+        deg_units = rf.Unit("deg")
+        for chan_idx in range(l1b.number_spectrometer):
+            val = (180 + l1b.sounding_azimuth(chan_idx).convert(deg_units).value) - \
+                l1b.solar_azimuth(chan_idx).convert(deg_units).value
+
+            if val > 360:
+                val -= 360
+            elif val < 0:
+                val += 360
+
+            rel_azm_vals.append(val)
+
+        return rf.ArrayWithUnit_double_1(rel_azm_vals, orig_units)
+ 
 class SolarDistanceFromL1b(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
