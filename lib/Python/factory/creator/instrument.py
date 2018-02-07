@@ -1,7 +1,7 @@
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValueMultiChannel
+from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
 from .. import param
 
 from refractor import framework as rf
@@ -119,6 +119,21 @@ class IlsGaussian(Creator):
             ils_func.append( rf.IlsGaussian(hwhm.value[chan_idx], desc_band_name[chan_idx], hdf_band_name[chan_idx]) )
 
         return ils_func
+
+class InstrumentDoppler(CreatorFlaggedValue):
+
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        rel_vel = self.value()
+        ret_flag = self.retrieval_flag()
+
+        inst_doppler = []
+        for chan_idx in range(self.num_channels()):
+            inst_doppler.append( rf.InstrumentDoppler(rel_vel[chan_idx], bool(ret_flag[chan_idx])) ) 
+
+        return inst_doppler
 
 class InstrumentCorrectionList(Creator):
 

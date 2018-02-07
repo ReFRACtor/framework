@@ -270,7 +270,7 @@ config_def = {
         'creator': creator.forward_model.ForwardModel,
         'spectrum_effect': {
             'creator': creator.forward_model.SpectrumEffectList,
-            'effects': ["solar_model",],
+            'effects': ["solar_model","instrument_doppler"],
             'solar_model': {
                 'creator': creator.solar_model.SolarAbsorptionAndContinuum,
                 'doppler': {
@@ -305,13 +305,20 @@ config_def = {
                     'solar_data_file': solar_file,
                 },
             },
+            'instrument_doppler': {
+                'creator': creator.instrument.InstrumentDoppler,
+                'value': {
+                    'creator': creator.l1b.ValueFromLevel1b,
+                    'field': "relative_velocity",
+                },
+            },
         },
     },
     'retrieval': {
         'creator': creator.retrieval.NLLSRetrieval,
         'retrieval_components': {
             'creator': creator.retrieval.SVObserverComponents,
-            'exclude': ['absorber_levels/O2'],
+            'exclude': ['absorber_levels/O2', 'instrument_doppler'],
             # Match order tradtionally used in old system
             'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol_shape', 'ground', 'dispersion'],
         },
