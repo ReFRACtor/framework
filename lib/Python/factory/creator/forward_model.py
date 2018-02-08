@@ -81,8 +81,12 @@ class ForwardModel(Creator):
     spectrum_effect = param.ObjectVector("vector_spectrum_effect")
 
     def create(self, **kwargs):
-        return rf.StandardForwardModel(self.instrument(),
-                                       self.spec_win(), 
-                                       self.radiative_transfer(),
-                                       self.spectrum_sampling(), 
-                                       self.spectrum_effect())
+        fm = rf.StandardForwardModel(self.instrument(),
+                                     self.spec_win(), 
+                                     self.radiative_transfer(),
+                                     self.spectrum_sampling(), 
+                                     self.spectrum_effect())
+
+        fm.setup_grid()
+
+        return fm

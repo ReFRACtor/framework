@@ -28,6 +28,7 @@ class NLLSRetrieval(Creator):
         initial_guess = self.common_store["initial_guess"] = self.initial_guess()
         a_priori = self.common_store["a_priori"] = self.a_priori()
         covariance = self.common_store["covariance"] = self.covariance()
+        solver = self.common_store["solver"] = self.solver()
 
         return {
             'retrieval_components': retrieval_components,
@@ -35,7 +36,7 @@ class NLLSRetrieval(Creator):
             'intial_guess': initial_guess,
             'a_priori': a_priori,
             'covariance': covariance,
-            'solver': None,
+            'solver': solver,
         }
 
 class SVObserverComponents(Creator):
@@ -181,28 +182,31 @@ class CovarianceByComponent(Creator):
         # Gather covariance arrays and do input checking
         covariances = []
         total_len = 0
-        for rc_name in self.retrieval_components().keys():
+        for rc_name, rc_obj in self.retrieval_components().items():
             if rc_name not in cov_inputs:
-                raise param.ParamError("CovarianceByComponent: values argument is missing data for this retrieval component: %s" % rc_name)
+                raise param.ParamError("CovarianceByComponent: covariance values argument is missing data for this retrieval component: %s" % rc_name)
             
             rc_cov = cov_inputs[rc_name]
 
             if not hasattr(rc_cov, "shape"):
-                raise param.ParamError("CovarianceByComponent: value for retrieval component must be a numpy array: %s" % rc_name)
+                raise param.ParamError("CovarianceByComponent: value for retrieval component covariance must be a numpy array: %s" % rc_name)
 
-            if len(rc_cov.shape) != 2 and len(rc_cov.shape) != 3:
-                raise param.ParamError("CovarianceByComponent: shape of array for retrieval component must be 2 or 3 dimensional: %s" % rc_name)
+            if len(rc_cov.shape) != 2:
+                raise param.ParamError("CovarianceByComponent: shape of array for retrieval component covariance must be 2: %s" % rc_name)
 
-            if rc_cov.shape[-1] != rc_cov.shape[-2]:
+            if rc_cov.shape[0] != rc_cov.shape[1]:
                 raise param.ParamError("CovarianceByComponent: array for retrieval component must be a square matrix: %s" % rc_name)
 
-            if len(rc_cov.shape) == 3:
-                for chan_idx in range(rc_cov.shape[0]):
-                    total_len += rc_cov.shape[1]
-                    covariances.append(rc_cov[chan_idx, :, :])
-            else:
-                total_len += rc_cov.shape[0]
-                covariances.append(rc_cov)
+            flag = rc_obj.used_flag_value
+
+            if flag.shape[0] != rc_cov.shape[0]:
+                raise param.ParamError("CovarianceByComponent: covariance shape %s and and flag shape are mismatched: %s" % (flag.shape, rc_cov.shape, rc_name))
+
+            used_indexes = np.nonzero(flag)
+            used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
+
+            total_len += used_cov.shape[0]
+            covariances.append(used_cov)
 
         # Concatenate covariances along the diagonal
         total_covariance = np.zeros((total_len, total_len), dtype=float)
@@ -214,7 +218,7 @@ class CovarianceByComponent(Creator):
 
         return total_covariance
 
-class NLLSMaxAPosteriori(Creator):
+class MaxAPosterioriBase(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
     instrument = param.InstanceOf(rf.Instrument)
@@ -230,17 +234,52 @@ class NLLSMaxAPosteriori(Creator):
     dx_tol_rel = param.Scalar(float)
     g_tol_abs = param.Scalar(float)
 
-    def create(self, **kwargs):
+    def init_state_vector(self):
 
+        self.state_vector().update_state(self.a_priori(), self.covariance())
+
+    def opt_problem(self):
         fm = self.forward_model()
+
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
         stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())
 
         opt_problem = rf.NLLSMaxAPosteriori(stat_method, True)
 
-        solver = NLLSSolverGSLLMSDER(self.max_cost_function_calls(), 
-                                     self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
-                                     opt_problem, True)
+        return opt_problem
+
+class NLLSMaxAPosteriori(MaxAPosterioriBase):
+
+    def create(self, **kwargs):
+
+        self.init_state_vector()
+
+        solver = rf.NLLSSolverGSLLMSDER(self.max_cost_function_calls(), 
+                self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
+                self.opt_problem(), True)
 
         return solver
+
+class ConnorSolverMAP(MaxAPosterioriBase):
+
+    threshold = param.Scalar(float)
+    max_iteration = param.Scalar(int)
+    max_divergence = param.Scalar(int)
+    max_chisq = param.Scalar(float)
+    gamma_initial = param.Scalar(float)
+
+    def create(self, **kwargs):
+
+        self.init_state_vector()
+
+        conv = rf.ConnorConvergence(self.forward_model(), self.threshold(), self.max_iteration(), self.max_divergence(), self.max_chisq())
+
+        solver = rf.ConnorSolverMAP(self.max_cost_function_calls(), 
+                self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
+                self.opt_problem(), conv, False, self.gamma_initial())
+
+        return solver
+
+ 
+
