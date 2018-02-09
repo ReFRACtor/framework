@@ -164,3 +164,6 @@ void SpectralWindowRange::print(std::ostream& Os) const
 	 << range_.value(i, j, 0) << ", " << range_.value(i, j, 1) << ")\n";
   }
 }
+
+
+template SpectralWindowRange::SpectralWindowRange(const ArrayWithUnit<double, 3>&, const Array<double, 2>&);
