@@ -82,6 +82,7 @@ if(LUA_FOUND AND (NOT BUILD_LUA))
 else()
     message(STATUS "Building Lua from source")
     include(lua/lua.cmake)
+    set(LUA_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX})
     list(APPEND THIRDPARTY_TARGETS lua)
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX})
 
