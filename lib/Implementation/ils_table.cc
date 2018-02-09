@@ -39,70 +39,6 @@ REGISTER_LUA_END()
 
 #endif
 
-template<>
-IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
-                         const std::string& Band_name, const std::string& Hdf_band_name,
-                         const std::string& Hdf_group) : band_name_(Band_name), hdf_band_name_(Hdf_band_name),
-  from_hdf_file(true),
-  hdf_file_name(Hdf_static_input.file_name())
-{
-  hdf_group = Hdf_group + "/ILS_" +
-    boost::lexical_cast<std::string>(Spec_index + 1);
-  Array<double, 1> wavenumber
-    (Hdf_static_input.read_field<double, 1>(hdf_group + "/wavenumber"));
-  Array<double, 2> delta_lambda
-    (Hdf_static_input.read_field<double, 2>(hdf_group + "/delta_lambda"));
-  Array<double, 2> response
-    (Hdf_static_input.read_field<double, 2>(hdf_group + "/response"));
-  std::string ftype =
-    Hdf_static_input.read_field<std::string>(hdf_group + "/function_type");
-  if(ftype == "table")
-    interpolate_wavenumber = false;
-  else if(ftype == "interpol")
-    interpolate_wavenumber = true;
-  else {
-    Exception e;
-    e << "Unrecognized function_type given in the file "
-      << Hdf_static_input.file_name() << " HDF group " << hdf_group
-      << ". The value was '" << ftype << "'. This should be one of "
-      << "'table' or 'interpol'";
-    throw e;
-  }
-  IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(wavenumber, delta_lambda, response);
-}
-
-template<>
-IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
-                         const std::string& Band_name, const std::string& Hdf_band_name,
-                         const std::string& Hdf_group) : band_name_(Band_name), hdf_band_name_(Hdf_band_name),
-  from_hdf_file(true),
-  hdf_file_name(Hdf_static_input.file_name())
-{
-  hdf_group = Hdf_group + "/ILS_" +
-    boost::lexical_cast<std::string>(Spec_index + 1);
-  Array<double, 1> wavenumber
-    (Hdf_static_input.read_field<double, 1>(hdf_group + "/wavenumber"));
-  Array<double, 2> delta_lambda
-    (Hdf_static_input.read_field<double, 2>(hdf_group + "/delta_lambda"));
-  Array<double, 2> response
-    (Hdf_static_input.read_field<double, 2>(hdf_group + "/response"));
-  std::string ftype =
-    Hdf_static_input.read_field<std::string>(hdf_group + "/function_type");
-  if(ftype == "table")
-    interpolate_wavenumber = false;
-  else if(ftype == "interpol")
-    interpolate_wavenumber = true;
-  else {
-    Exception e;
-    e << "Unrecognized function_type given in the file "
-      << Hdf_static_input.file_name() << " HDF group " << hdf_group
-      << ". The value was '" << ftype << "'. This should be one of "
-      << "'table' or 'interpol'";
-    throw e;
-  }
-  IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(wavenumber, delta_lambda, response);
-}
-
 //-----------------------------------------------------------------------
 /// Constructor, which reads the ILS information from a HDF file. We
 /// determine the HDF group to read as Hdf_group + "/ILS_" +
@@ -143,40 +79,6 @@ IlsTable<Lint>::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
   }
   create_delta_lambda_to_response(wavenumber, delta_lambda, response);
 }
-template<>
-void IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response) {
-  wavenumber_.reference(Wavenumber);
-  delta_lambda_.reference(Delta_lambda);
-  response_.reference(Response);
-  delta_lambda_to_response.clear();
-  for(int i = 0; i < Wavenumber.rows(); ++i) {
-   // Create AutoDerivative version of these arrays, for use by the
-    // interpolator.
-    Array<ad, 1>
-      delta_lambda(arrad(Delta_lambda(i, Range::all())).to_array()),
-      response(arrad(Response(i, Range::all())).to_array());
-    delta_lambda_to_response[Wavenumber(i)] =
-      FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >(delta_lambda.begin(), delta_lambda.end(), response.begin(),
-           LinearInterpolate<ad, ad>::OUT_OF_RANGE_EXTRAPOLATE);
-  }
-}
-template<>
-void IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >::create_delta_lambda_to_response(blitz::Array<double, 1> const& Wavenumber, blitz::Array<double, 2> const&Delta_lambda, blitz::Array<double, 2> const&Response) {
-  wavenumber_.reference(Wavenumber);
-  delta_lambda_.reference(Delta_lambda);
-  response_.reference(Response);
-  delta_lambda_to_response.clear();
-  for(int i = 0; i < Wavenumber.rows(); ++i) {
-   // Create AutoDerivative version of these arrays, for use by the
-    // interpolator.
-    Array<ad, 1>
-      delta_lambda(arrad(Delta_lambda(i, Range::all())).to_array()),
-      response(arrad(Response(i, Range::all())).to_array());
-    delta_lambda_to_response[Wavenumber(i)] =
-      FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >(delta_lambda.begin(), delta_lambda.end(), response.begin(),
-           LinearInterpolate<ad, ad>::OUT_OF_RANGE_EXTRAPOLATE);
-  }
-}
 
 template<class Lint>
 void IlsTable<Lint>::create_delta_lambda_to_response
@@ -199,129 +101,6 @@ void IlsTable<Lint>::create_delta_lambda_to_response
       Lint(delta_lambda.begin(), delta_lambda.end(), response.begin(),
            LinearInterpolate<ad, ad>::OUT_OF_RANGE_EXTRAPOLATE);
   }
-}
-
-template<>
-void IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double>>>::ils
-(const AutoDerivative<double>& wn_center,
- const blitz::Array<double, 1>& wn,
- ArrayAd<double, 1>& res) const
-{
-  // Note that this function is a bottleneck, so we have written this
-  // for speed at the expense of some clarity.
-  res.resize(wn.rows(), wn_center.number_variable());
-  AutoDerivative<double> f;
-  f.gradient().resize(wn_center.number_variable());
-  AutoDerivative<double> t;
-  t.gradient().resize(wn_center.number_variable());
-  AutoDerivativeRef<double> tref(t.value(), t.gradient());
-  // w will be wn(i) - wn_center. We do this calculation in 2 steps
-  // to speed up the calculation.
-  AutoDerivative<double> w;
-  w.gradient().resize(wn_center.number_variable());
-  w.gradient() = -wn_center.gradient();
-  // This returns the value for the first wn not less than wn_center.
-  it inter = delta_lambda_to_response.lower_bound(wn_center.value());
-  // By the convention, we want the value for the last wn less than
-  // wn_center.
-  if(inter != delta_lambda_to_response.begin())
-    --inter;
-  for(int i = 0; i < res.rows(); ++i) {
-    w.value() = wn(i) - wn_center.value();
-    inter->second.interpolate(w, res(i));
-  }
-
-  // Do an interpolation in the wavenumber direction, if requested.
-  if(interpolate_wavenumber) {
-    double wn1 = inter->first;
-    ++inter;
-    if(inter != delta_lambda_to_response.end()) {
-      double wn2 = inter->first;
-      f = (wn_center - wn1) / (wn2 - wn1);
-      for(int i = 0; i < res.rows(); ++i) {
-        w.value() = wn(i) - wn_center.value();
-        inter->second.interpolate(w, tref);
-        double v = res(i).value();
-        res(i).value_ref() = (1 - f.value()) * v + f.value() * t.value();
-        res(i).gradient_ref() *= (1 - f.value());
-        res(i).gradient_ref() += f.gradient() * (t.value() -  v) +
-          f.value() * t.gradient();
-      }
-    }
-  }
-}
-
-template<>
-void IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >>::print(std::ostream& Os) const
-{
-  Os << "IlsTable for band " << band_name() << "\n"
-     << "  Interpolate wavenumber: " << (interpolate_wavenumber ? "true" : "false");
-  if(from_hdf_file)
-    Os << "\n"
-       << "  Hdf file name:          " << hdf_file_name << "\n"
-       << "  Hdf group:              " << hdf_group;
-}
-
-// See base class for description
-template<>
-void IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >>::ils
-(const AutoDerivative<double>& wn_center,
- const blitz::Array<double, 1>& wn,
- ArrayAd<double, 1>& res) const
-{
-  // Note that this function is a bottleneck, so we have written this
-  // for speed at the expense of some clarity.
-  res.resize(wn.rows(), wn_center.number_variable());
-  AutoDerivative<double> f;
-  f.gradient().resize(wn_center.number_variable());
-  AutoDerivative<double> t;
-  t.gradient().resize(wn_center.number_variable());
-  AutoDerivativeRef<double> tref(t.value(), t.gradient());
-  // w will be wn(i) - wn_center. We do this calculation in 2 steps
-  // to speed up the calculation.
-  AutoDerivative<double> w;
-  w.gradient().resize(wn_center.number_variable());
-  w.gradient() = -wn_center.gradient();
-  // This returns the value for the first wn not less than wn_center.
-  it inter = delta_lambda_to_response.lower_bound(wn_center.value());
-  // By the convention, we want the value for the last wn less than
-  // wn_center.
-  if(inter != delta_lambda_to_response.begin())
-    --inter;
-  for(int i = 0; i < res.rows(); ++i) {
-    w.value() = wn(i) - wn_center.value();
-    inter->second.interpolate(w, res(i));
-  }
-
-  // Do an interpolation in the wavenumber direction, if requested.
-  if(interpolate_wavenumber) {
-    double wn1 = inter->first;
-    ++inter;
-    if(inter != delta_lambda_to_response.end()) {
-      double wn2 = inter->first;
-      f = (wn_center - wn1) / (wn2 - wn1);
-      for(int i = 0; i < res.rows(); ++i) {
-        w.value() = wn(i) - wn_center.value();
-        inter->second.interpolate(w, tref);
-        double v = res(i).value();
-        res(i).value_ref() = (1 - f.value()) * v + f.value() * t.value();
-        res(i).gradient_ref() *= (1 - f.value());
-        res(i).gradient_ref() += f.gradient() * (t.value() -  v) +
-          f.value() * t.gradient();
-      }
-    }
-  }
-}
-
-template<>
-void IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >>::print(std::ostream& Os) const
-{
-  Os << "IlsTable for band " << band_name() << "\n"
-     << "  Interpolate wavenumber: " << (interpolate_wavenumber ? "true" : "false");
-  if(from_hdf_file)
-    Os << "\n"
-       << "  Hdf file name:          " << hdf_file_name << "\n"
-       << "  Hdf group:              " << hdf_group;
 }
 
 // See base class for description
@@ -385,3 +164,8 @@ void IlsTable<Lint>::print(std::ostream& Os) const
        << "  Hdf file name:          " << hdf_file_name << "\n"
        << "  Hdf group:              " << hdf_group;
 }
+
+
+template class FullPhysics::IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >;
+template class FullPhysics::IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >;
+
