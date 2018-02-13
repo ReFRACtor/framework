@@ -240,12 +240,16 @@ class MaxAPosterioriBase(Creator):
 
     def opt_problem(self):
         fm = self.forward_model()
+        sv = self.state_vector()
 
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
-        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())
+        stat_method = rf.MaxAPosterioriStandard(fm, observation, sv, self.a_priori(), self.covariance())
 
         opt_problem = rf.NLLSMaxAPosteriori(stat_method, True)
+
+        # Initialize solver intitial guess
+        opt_problem.parameters = sv.state
 
         return opt_problem
 
