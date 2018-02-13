@@ -1,21 +1,21 @@
-#include "solver_iteration_log.h"
+#include "connor_iteration_log.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-void iter_log_add_as_observer(SolverIterationLog& iter_log, ConnorSolver& solver) {
+void iter_log_add_as_observer(ConnorIterationLog& iter_log, ConnorSolver& solver) {
   solver.add_observer(iter_log);
 }
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_CLASS(SolverIterationLog)
+REGISTER_LUA_CLASS(ConnorIterationLog)
 .def(luabind::constructor<const boost::shared_ptr<StateVector>&>())
 .def("add_as_observer", &iter_log_add_as_observer)
 REGISTER_LUA_END()
 #endif
 
-void SolverIterationLog::notify_update(const ConnorSolver& solver)
+void ConnorIterationLog::notify_update(const ConnorSolver& solver)
 { 
   blitz::Array<std::string, 1> sv_names = sv_obj->state_vector_name();
   blitz::Array<double, 1> dx(solver.x_update().copy());

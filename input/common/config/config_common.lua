@@ -3409,7 +3409,7 @@ function ConfigCommon:connor_solver(config)
    config.register_output:push_back(out)
    config.conn_solver = ConnorSolver(cost_func, conv, 
 				     self.gamma_initial)
-   local iter_log = SolverIterationLog(config.state_vector)
+   local iter_log = ConnorIterationLog(config.state_vector)
    iter_log:add_as_observer(config.conn_solver)
    out = ConnorSolverOutput(config.conn_solver, config.write_jacobian)
    config.register_output:push_back(out)

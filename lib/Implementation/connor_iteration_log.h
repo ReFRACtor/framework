@@ -15,15 +15,15 @@ namespace FullPhysics {
   When we support more solvers, this can be made more generic.
 *******************************************************************/
 
-  class SolverIterationLog : public Printable<SolverIterationLog>, public Observer<ConnorSolver> {
+  class ConnorIterationLog : public Printable<ConnorIterationLog>, public Observer<ConnorSolver> {
   public:
     static const int SV_PRINT_WIDTH = 17;
     
-    SolverIterationLog(const boost::shared_ptr<StateVector>& Sv) : sv_obj(Sv) {};
+    ConnorIterationLog(const boost::shared_ptr<StateVector>& Sv) : sv_obj(Sv) {};
 
     void notify_update(const ConnorSolver& solver);
 
-    virtual void print(std::ostream& Os) const { Os << "SolverIterationLog";}
+    virtual void print(std::ostream& Os) const { Os << "ConnorIterationLog";}
   private:
     boost::shared_ptr<StateVector> sv_obj;
 };

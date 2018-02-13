@@ -121,7 +121,7 @@ set(DIR_SOURCES
     solar_continuum_table.cc
     solar_doppler_shift_l1b.cc
     solar_doppler_shift_polynomial.cc
-    solver_iteration_log.cc
+    connor_iteration_log.cc
     spectral_window_range.cc
     spectrum_sampling_fixed_spacing.cc
     connor_cost_function.cc
