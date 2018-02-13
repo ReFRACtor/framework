@@ -29,26 +29,12 @@ public:
 /// \param[in] max_cost_function_calls 
 ///            read related base class comments
 ///
-/// \param[in] dx_tol_abs
-///            read related base class comments
-///
-/// \param[in] dx_tol_rel
-///            read related base class comments
-///
-/// \param[in] g_tol_abs
-///            for convergence check, a tolerance for absolute gradient,
-///            and may be used in different ways by different derived
-///            classes
-///
 /// \param[in] vrbs
 ///            read related base class comments
 //-----------------------------------------------------------------------
 
-  IterativeSolverDer(int max_cost_function_calls, 
-             double dx_tol_abs, double dx_tol_rel, 
-             double g_tol_abs, bool vrbs)
-    : IterativeSolver(max_cost_function_calls, dx_tol_abs, dx_tol_rel, vrbs),
-      G_tol_abs(g_tol_abs)
+  IterativeSolverDer(int max_cost_function_calls, bool vrbs)
+    : IterativeSolver(max_cost_function_calls, vrbs)
   {}
 
 
@@ -78,6 +64,16 @@ public:
 
 
 //-----------------------------------------------------------------------
+/// \brief Prints description of object.
+//-----------------------------------------------------------------------
+
+  virtual void print(std::ostream& Os) const 
+  { Os << "IterativeSolverDer"; }
+
+
+protected:
+
+//-----------------------------------------------------------------------
 /// \brief For recording the gradient of the cost 
 ///        function evaluated at an accepted point
 ///
@@ -95,18 +91,6 @@ public:
   void record_gradient_at_accepted_point(const blitz::Array<double, 1>& gradient)
   { Gradient_at_accepted_points.push_back(gradient); }
 
-
-//-----------------------------------------------------------------------
-/// \brief Prints description of object.
-//-----------------------------------------------------------------------
-
-  virtual void print(std::ostream& Os) const 
-  { Os << "IterativeSolverDer"; }
-
-
-protected:
-
-  double G_tol_abs;
 
 private:
 

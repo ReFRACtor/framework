@@ -6,14 +6,20 @@ using namespace FullPhysics;
 using namespace blitz;
 
 
-ModelMeasure::ModelMeasure( const blitz::Array<double, 1>& measurement, 
-                            const blitz::Array<double, 1>& measurement_error_cov )
-  : msrmnt(measurement.copy()), Se(measurement_error_cov.copy())
+void ModelMeasure::set_measurement( const blitz::Array<double, 1>& measurement, 
+                                    const blitz::Array<double, 1>& measurement_error_cov )
 {
-  if(msrmnt.rows() <= 0)
+  if(measurement.rows() <= 0)
     throw Exception("The size of measurement data array is zero.");
-  if(Se.rows() != msrmnt.rows() )
+  if(measurement_error_cov.rows() != measurement.rows() )
     throw Exception("Measured data and the related diagonal error covariance matrix need to be the same size.");
+
+  msrmnt.resize(measurement.shape());
+  msrmnt = measurement;
+
+  Se.resize(measurement_error_cov.shape());
+  Se = measurement_error_cov;
+
   Se_chol.resize(Se.shape());
   Se_chol = sqrt(Se);
 }

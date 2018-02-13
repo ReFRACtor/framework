@@ -12,10 +12,9 @@
 namespace FullPhysics {
   class NLLSSolverGSLLMSDER : public NLLSSolverGSL {
 public:
-  NLLSSolverGSLLMSDER(int max_cost_function_calls, 
-                double dx_tol_abs, double dx_tol_rel, 
-                double g_tol_abs, const boost::shared_ptr<NLLSProblem>& p,
-                bool vrbs=false);
+  NLLSSolverGSLLMSDER(const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
+                      double dx_tol_abs=0.000001, double dx_tol_rel=0.000001, double g_tol=6.0555e-06, 
+                      bool vrbs=false);
   virtual ~NLLSSolverGSLLMSDER();
 };
 }

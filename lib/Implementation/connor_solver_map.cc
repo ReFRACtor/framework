@@ -10,15 +10,13 @@ using namespace blitz;
 
 
 boost::shared_ptr<IterativeSolver> connor_solver_map_create(
-                  int max_cost_function_calls,
-                  double dx_tol_abs, double dx_tol_rel, 
-                  double g_tol_abs,
 	          const boost::shared_ptr<CostFunc>& NLLS_MAP,
 	          const boost::shared_ptr<ConvergenceCheck>& Convergence_check,
+                  int max_cost_function_calls,
 	          double Gamma_initial)
 {
   const boost::shared_ptr<NLLSMaxAPosteriori> nlls_map(boost::dynamic_pointer_cast<NLLSMaxAPosteriori>(NLLS_MAP));
-  return boost::shared_ptr<IterativeSolver>(new ConnorSolverMAP(max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol_abs, nlls_map, Convergence_check, Gamma_initial));
+  return boost::shared_ptr<IterativeSolver>(new ConnorSolverMAP(nlls_map, Convergence_check, max_cost_function_calls, Gamma_initial));
 }
 
 #ifdef HAVE_LUA

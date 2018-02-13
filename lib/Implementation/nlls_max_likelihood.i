@@ -12,7 +12,7 @@
 namespace FullPhysics {
 class NLLSMaxLikelihood : public NLLSProblem, public NLLSProblemState {
 public:
-  NLLSMaxLikelihood(const boost::shared_ptr<MaxLikelihood>& ml, bool together=false);
+  NLLSMaxLikelihood(const boost::shared_ptr<MaxLikelihood>& ml);
   virtual ~NLLSMaxLikelihood();
   %python_attribute_nonconst(residual, blitz::Array<double, 1>)
   %python_attribute_nonconst(jacobian, blitz::Array<double, 2>)

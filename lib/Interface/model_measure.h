@@ -60,7 +60,8 @@ public:
 //-----------------------------------------------------------------------
 
   ModelMeasure(const blitz::Array<double, 1>& measurement, 
-               const blitz::Array<double, 1>& measurement_error_cov);
+               const blitz::Array<double, 1>& measurement_error_cov)
+  { set_measurement(measurement, measurement_error_cov); }
 
 
 //-----------------------------------------------------------------------
@@ -71,6 +72,21 @@ public:
 
 
   virtual ~ModelMeasure() {}
+
+
+//-----------------------------------------------------------------------
+/// \brief For setting measurement and the error covariance matrix
+///
+/// \param[in] measurement
+///            The measurement to which the model is to be fitted
+///
+/// \param[in] measurement_error_cov
+///            The measurement error covariance matrix assumed to
+///            be diagonal (hence simply a vector containing the diagonal)
+//-----------------------------------------------------------------------
+
+  void set_measurement(const blitz::Array<double, 1>& measurement, 
+                       const blitz::Array<double, 1>& measurement_error_cov);
 
 
 //-----------------------------------------------------------------------
@@ -327,6 +343,29 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void assert_jacobian_correct(const blitz::Array<double, 2>& k) const;
+
+
+//-----------------------------------------------------------------------
+/// \brief A boolean function to check whether or not the model
+///        is computed.
+///
+/// \return true if model is computed false otherwise
+///
+//-----------------------------------------------------------------------
+
+  bool model_computed() const
+  { return (M.size() > 0); }
+
+
+//-----------------------------------------------------------------------
+/// \brief A boolean function to check whether or not the Jacobean
+///        of the model is computed.
+///
+/// \return true if Jacobean is computed false otherwise
+//-----------------------------------------------------------------------
+
+  bool jacobean_computed() const
+  { return (K.size() > 0); }
 
 
 //-----------------------------------------------------------------------

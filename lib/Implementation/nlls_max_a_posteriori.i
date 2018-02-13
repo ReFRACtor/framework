@@ -12,7 +12,7 @@
 namespace FullPhysics {
 class NLLSMaxAPosteriori: public NLLSProblem, public NLLSProblemState {
 public:
-  NLLSMaxAPosteriori(const boost::shared_ptr<MaxAPosteriori>& map, bool together=false);
+  NLLSMaxAPosteriori(const boost::shared_ptr<MaxAPosteriori>& map);
   virtual ~NLLSMaxAPosteriori();
   %python_attribute_nonconst(residual, blitz::Array<double, 1>)
   %python_attribute_nonconst(jacobian, blitz::Array<double, 2>)

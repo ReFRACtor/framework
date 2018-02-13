@@ -56,15 +56,13 @@ public:
   ///
   /// See the comments above this class for the "save_test_data" argument.
   //-----------------------------------------------------------------------
-  ConnorSolverMAP(int max_cost_function_calls,
-                  double dx_tol_abs, double dx_tol_rel, 
-                  double g_tol_abs,
-	          const boost::shared_ptr<NLLSMaxAPosteriori>& NLLS_MAP,
+  ConnorSolverMAP(const boost::shared_ptr<NLLSMaxAPosteriori>& NLLS_MAP,
 	          const boost::shared_ptr<ConvergenceCheck>& Convergence_check,
-                  bool vrbs = false,
+                  int max_cost_function_calls,
+	          bool vrbs = false,
 	          double Gamma_initial = 0.0,
 	          const std::string& Fname_test_data = "")
-    : NLLSSolver(max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol_abs, NLLS_MAP, vrbs),
+    : NLLSSolver(NLLS_MAP, max_cost_function_calls, vrbs),
       fname_test_data(Fname_test_data), convergence_check_(Convergence_check), gamma_initial(Gamma_initial),
       map(NLLS_MAP->max_a_posteriori())  // for convenience
   {}

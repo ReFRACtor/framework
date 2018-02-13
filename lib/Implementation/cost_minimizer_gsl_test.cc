@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(bard)
   Array<double, 1> x0(3); x0 = 1.0, 1.0, 1.0;
   boost::shared_ptr<BardNLLSProblem> nlls(new BardNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(brown)
   Array<double, 1> x0(2); x0 = 1.0, 1.0;
   boost::shared_ptr<BrownNLLSProblem> nlls(new BrownNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
   Array<double, 1> x0(2); x0 = 0.5, -2.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__b)
   Array<double, 1> x0(2); x0 = 6.0, 2.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   Array<double, 1> x0(3); x0 = -1.2, 0.0, 0.0;
   boost::shared_ptr<HelicalValleyNLLSProblem> nlls(new HelicalValleyNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol*0.01, nlls, Array<double,1>(), verbose);  // A smaller size_tol is needed, hence *0.01
+  CostMinimizerGSL solver(nlls, 1000, size_tol*0.01, Array<double,1>(), verbose);  // A smaller size_tol is needed, hence *0.01
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -219,13 +219,13 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   int n_j_calls = nlls->num_jacobian_evaluations();
   double cst = nlls->cost();
 
-//   std::cout 
-//      << "Testing CostMinimizerGSL with Helical Valley function:" << std::endl
-//      << "   Number of residual function evaluations = " << n_f_calls << std::endl
-//      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
-//      << "   Final solver status = " << solver.status_str() << std::endl
-//      << "   Final problem status (point) = " << nlls->parameters() << std::endl
-//      << "   Final problem status (cost value) = " << cst << std::endl;
+//  std::cout 
+//     << "Testing CostMinimizerGSL with Helical Valley function:" << std::endl
+//     << "   Number of residual function evaluations = " << n_f_calls << std::endl
+//     << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
+//     << "   Final solver status = " << solver.status_str() << std::endl
+//     << "   Final problem status (point) = " << nlls->parameters() << std::endl
+//     << "   Final problem status (cost value) = " << cst << std::endl;
 //   for( int i=0; i<=solver.num_accepted_steps(); i++ )
 //      std::cout 
 //         << "   ========================================" << std::endl
@@ -240,12 +240,12 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 295);
+  BOOST_CHECK(n_f_calls < 330);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0, 0.01);
-  BOOST_CHECK(abs(nlls->parameters()(1)-0.0) < 0.0000001);
-  BOOST_CHECK(abs(nlls->parameters()(2)-0.0) < 0.0000001);
+  BOOST_CHECK(abs(nlls->parameters()(1)-0.0) < 0.000001);
+  BOOST_CHECK(abs(nlls->parameters()(2)-0.0) < 0.000001);
 }
 
 
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
   Array<double, 1> x0(2); x0 = 0.3, 0.4;
   boost::shared_ptr<JennrichSampsonNLLSProblem> nlls(new JennrichSampsonNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE(meyer)
   Array<double, 1> x0(3); x0 = 0.02, 4000.0, 250.0;
   boost::shared_ptr<MeyerNLLSProblem> nlls(new MeyerNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(2000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 4000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -304,13 +304,13 @@ BOOST_AUTO_TEST_CASE(meyer)
   int n_j_calls = nlls->num_jacobian_evaluations();
   double cst = nlls->cost();
 
-//   std::cout 
-//      << "Testing CostMinimizerGSL with Meyer function:" << std::endl
-//      << "   Number of residual function evaluations = " << n_f_calls << std::endl
-//      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
-//      << "   Final solver status = " << solver.status_str() << std::endl
-//      << "   Final problem status (point) = " << nlls->parameters() << std::endl
-//      << "   Final problem status (cost value) = " << cst << std::endl;
+//  std::cout 
+//     << "Testing CostMinimizerGSL with Meyer function:" << std::endl
+//     << "   Number of residual function evaluations = " << n_f_calls << std::endl
+//     << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
+//     << "   Final solver status = " << solver.status_str() << std::endl
+//     << "   Final problem status (point) = " << nlls->parameters() << std::endl
+//     << "   Final problem status (cost value) = " << cst << std::endl;
 //   for( int i=0; i<=solver.num_accepted_steps(); i++ )
 //      std::cout 
 //         << "   ========================================" << std::endl
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(meyer)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 1700);
+  BOOST_CHECK(n_f_calls < 2800);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE(powell)
   Array<double, 1> x0(2); x0 = 0.0, 1.0;
   boost::shared_ptr<PowellNLLSProblem> nlls(new PowellNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(3000, 1e-21, 1e-21, 1e-10, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 3000, 1e-10, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
   Array<double, 1> x0(2); x0 = -1.2, 1.0;
   boost::shared_ptr<Rosenbrock2NLLSProblem> nlls(new Rosenbrock2NLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -467,8 +467,8 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  CostMinimizerGSL solver1(1000, 1e-5, 1e-5, 1e-4, nlls, Array<double,1>(), verbose);
-  CostMinimizerGSL solver2(2000, 1e-21, 1e-21, 1e-10, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver1(nlls, 1000, 1e-4, Array<double,1>(), verbose);
+  CostMinimizerGSL solver2(nlls, 2000, 1e-10, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver1.status(), (int)CostMinimizerGSL::UNTRIED);
   BOOST_CHECK_EQUAL((int)solver2.status(), (int)CostMinimizerGSL::UNTRIED);
 
@@ -584,9 +584,9 @@ BOOST_AUTO_TEST_CASE(bard_ml)
   measurement_error_cov = 1.0;
 
   boost::shared_ptr<BardMLProblem> ml(new BardMLProblem(measurement, measurement_error_cov));
-  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml, false));
+  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  CostMinimizerGSL solver(1000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 1000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -637,9 +637,9 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   measurement_error_cov = 1.0;
 
   boost::shared_ptr<MeyerMLProblem> ml(new MeyerMLProblem(measurement, measurement_error_cov));
-  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml, false));
+  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  CostMinimizerGSL solver(2000, dx_epsabs, dx_epsrel, size_tol, nlls, Array<double,1>(), verbose);
+  CostMinimizerGSL solver(nlls, 4000, size_tol, Array<double,1>(), verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::UNTRIED);
   solver.solve();
 
@@ -647,13 +647,13 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   int n_j_calls = nlls->num_jacobian_evaluations();
   double cst = nlls->cost();
 
-//   std::cout 
-//      << "Testing CostMinimizerGSL with Meyer/ML function:" << std::endl
-//      << "   Number of residual function evaluations = " << n_f_calls << std::endl
-//      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
-//      << "   Final solver status = " << solver.status_str() << std::endl
-//      << "   Final problem status (point) = " << nlls->parameters() << std::endl
-//      << "   Final problem status (cost value) = " << cst << std::endl;
+//  std::cout 
+//     << "Testing CostMinimizerGSL with Meyer/ML function:" << std::endl
+//     << "   Number of residual function evaluations = " << n_f_calls << std::endl
+//     << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
+//     << "   Final solver status = " << solver.status_str() << std::endl
+//     << "   Final problem status (point) = " << nlls->parameters() << std::endl
+//     << "   Final problem status (cost value) = " << cst << std::endl;
 //   for( int i=0; i<=solver.num_accepted_steps(); i++ )
 //      std::cout 
 //         << "   ========================================" << std::endl
@@ -668,7 +668,7 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 1700);
+  BOOST_CHECK(n_f_calls < 2800);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);

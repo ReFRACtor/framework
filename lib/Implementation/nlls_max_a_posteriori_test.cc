@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(residual_jacobian)
   BOOST_CHECK_EQUAL(nlls_map.num_residual_evaluations(), 2);
   BOOST_CHECK_EQUAL(nlls_map.num_jacobian_evaluations(), 3);
 
-  NLLSMaxAPosteriori nlls_map_2(mapt, true);
+  NLLSMaxAPosteriori nlls_map_2(mapt);
   Params(0) = 0.5;  // Restore the original value of Param(0)
   nlls_map_2.parameters(Params);
 
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE(residual_jacobian)
   BOOST_CHECK_EQUAL(nlls_map_2.num_jacobian_evaluations(), 0);
   BOOST_CHECK(sum(abs(nlls_map_2.residual()-res)) < 0.000001);
   BOOST_CHECK_EQUAL(nlls_map_2.num_residual_evaluations(), 1);
-  BOOST_CHECK_EQUAL(nlls_map_2.num_jacobian_evaluations(), 1);
+  BOOST_CHECK_EQUAL(nlls_map_2.num_jacobian_evaluations(), 0);
   BOOST_CHECK(sum(abs(nlls_map_2.jacobian()-jac)) < 0.000001);
   BOOST_CHECK_EQUAL(nlls_map_2.num_residual_evaluations(), 1);
   BOOST_CHECK_EQUAL(nlls_map_2.num_jacobian_evaluations(), 1);
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(residual_jacobian)
   Params(0) = 3.0;  // This changes the residual and gradient
   nlls_map_2.parameters(Params);
   BOOST_CHECK(sum(abs(nlls_map_2.jacobian()-jac)) < 0.000001);
-  BOOST_CHECK_EQUAL(nlls_map_2.num_residual_evaluations(), 3);
+  BOOST_CHECK_EQUAL(nlls_map_2.num_residual_evaluations(), 2);
   BOOST_CHECK_EQUAL(nlls_map_2.num_jacobian_evaluations(), 3);
 
 }

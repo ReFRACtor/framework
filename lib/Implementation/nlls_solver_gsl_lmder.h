@@ -18,20 +18,18 @@ public:
 //-----------------------------------------------------------------------
 /// Initializes the solver.
 /// 
+/// \param p The problem Input value
 /// \param max_cost_function_calls Input value
 /// \param dx_tol_abs Input value
 /// \param dx_tol_rel Input value
-/// \param g_tol_abs Input value
-/// \param p The problem
+/// \param g_tol Input value
 /// \param vrbs Input value
 //-----------------------------------------------------------------------
 
-  NLLSSolverGSLLMDER(int max_cost_function_calls, 
-                double dx_tol_abs, double dx_tol_rel, 
-                double g_tol_abs, const boost::shared_ptr<NLLSProblem>& p,
-                bool vrbs=false)
-    : NLLSSolverGSL(max_cost_function_calls, 
-                    dx_tol_abs, dx_tol_rel, g_tol_abs, p, vrbs)
+  NLLSSolverGSLLMDER(const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
+                     double dx_tol_abs=0.000001, double dx_tol_rel=0.000001, double g_tol=6.0555e-06, 
+                     bool vrbs=false)
+    : NLLSSolverGSL(p, max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol, vrbs)
   {}
 
   virtual ~NLLSSolverGSLLMDER() {}
