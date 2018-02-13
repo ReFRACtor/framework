@@ -45,8 +45,6 @@ set(DIR_SOURCES
     empirical_orthogonal_function.cc
     error_analysis.cc
     fd_forward_model.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
-    #fdf_nlls_solver.cc
     fluorescence_effect.cc
     fm_nlls_problem.cc
     fp_logger.cc
@@ -94,7 +92,6 @@ set(DIR_SOURCES
     model_measure_bard.cc
     model_measure_meyer.cc
     model_measure_standard.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (3)
     nlls_solver_gsl.cc
     nlls_solver_gsl_lmder.cc
     nlls_solver_gsl_lmsder.cc
@@ -165,8 +162,6 @@ set(TEST_SOURCES
     dispersion_polynomial_test.cc
     empirical_orthogonal_function_test.cc
     error_analysis_test.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
-    #fdf_nlls_solver_test.cc
     fluorescence_effect_test.cc
     fp_logger_test.cc
     full_output_test.cc
@@ -197,7 +192,6 @@ set(TEST_SOURCES
     met_data_fixture.cc
     nlls_max_a_posteriori_test.cc
     nlls_max_likelihood_test.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
     nlls_solver_gsl_test.cc
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
@@ -236,12 +230,6 @@ set(TEST_SOURCES
 
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
-# Remove ununused SWIG files
-foreach(file ${SWIG_SOURCES})
-    if(${file} MATCHES "nlls_solver_gsl")
-        list(REMOVE_ITEM SWIG_SOURCES ${file})
-    endif()
-endforeach()
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
 # Add current source directory to source file names
