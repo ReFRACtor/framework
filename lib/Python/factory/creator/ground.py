@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 from .base import Creator
-from .apriori import CreatorAprioriMultiChannel
+from .value import CreatorFlaggedValueMultiChannel
 from .. import param
 from .util import as_vector_string
 
@@ -41,10 +41,10 @@ class AlbedoFromSignalLevel(Creator):
 
         return albedo_val
 
-class GroundLambertian(CreatorAprioriMultiChannel):
+class GroundLambertian(CreatorFlaggedValueMultiChannel):
 
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
 
     def create(self, **kwargs):
-        return rf.GroundLambertian(self.apriori(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        return rf.GroundLambertian(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))

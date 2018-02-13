@@ -129,21 +129,9 @@ protected:
   }
 
 //-----------------------------------------------------------------------
-/// Add an observer 
+// Helper class for comparing against the weak_ptrs used to keep track
+// of observables
 //-----------------------------------------------------------------------
-
-  void add_observer_do(Observer<T>& Obs, T& t)
-  {
-    olist.push_back(boost::weak_ptr<Observer<T> >(Obs.this_obj));
-    Obs.notify_add(t);
-    Obs.notify_add();
-  }
-
-  void add_observer_do(Observer<T>& Obs)
-  {
-    olist.push_back(boost::weak_ptr<Observer<T> >(Obs.this_obj));
-    Obs.notify_add();
-  }
 
   class PointerEqual {
   public:
@@ -152,6 +140,31 @@ protected:
     { return w.lock().get() == t_; }
     Observer<T>* t_;
   };
+
+//-----------------------------------------------------------------------
+/// Add an observer 
+//-----------------------------------------------------------------------
+
+  void add_observer_do(Observer<T>& Obs, T& t)
+  {
+    PointerEqual p(Obs.this_obj.get());
+    bool already_added = std::find_if(olist.begin(), olist.end(), p) != olist.end();
+    if (!already_added) {
+      olist.push_back(boost::weak_ptr<Observer<T> >(Obs.this_obj));
+      Obs.notify_add(t);
+      Obs.notify_add();
+    }
+  }
+
+  void add_observer_do(Observer<T>& Obs)
+  {
+    PointerEqual p(Obs.this_obj.get());
+    bool already_added = std::find_if(olist.begin(), olist.end(), p) != olist.end();
+    if (!already_added) {
+      olist.push_back(boost::weak_ptr<Observer<T> >(Obs.this_obj));
+      Obs.notify_add();
+    }
+  }
 
 //-----------------------------------------------------------------------
 /// Remove an observer 

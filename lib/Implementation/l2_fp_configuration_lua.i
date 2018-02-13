@@ -7,6 +7,7 @@
 %}
 %base_import(l2_fp_configuration)
 %import "lua_state.i"
+%import "state_vector.i"
 %import "output.i"
 %fp_shared_ptr(FullPhysics::L2FpConfigurationLua);
 
@@ -21,6 +22,7 @@ public:
   L2FpConfigurationLua(int Argc, char** Argv);
   %python_attribute_nonconst(lua_state, LuaState)
   %python_attribute_with_set(output_name, std::string);
+  %python_attribute(state_vector, boost::shared_ptr<StateVector>)
   virtual void output(boost::shared_ptr<Output>& OUTPUT,
 		      boost::shared_ptr<Output>& OUTPUT) const;
 };

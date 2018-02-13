@@ -1,5 +1,5 @@
 #ifndef SOLAR_CONTINUUM_TABLE_H
-#define SOLAR_CONTINUUN_TABLE_H
+#define SOLAR_CONTINUUM_TABLE_H
 #include "hdf_file.h"
 #include "solar_continuum_spectrum.h"
 #include "linear_interpolate.h"
