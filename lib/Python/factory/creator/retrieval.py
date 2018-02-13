@@ -226,13 +226,11 @@ class MaxAPosterioriBase(Creator):
 
     state_vector = param.InstanceOf(rf.StateVector)
 
+    initial_guess = param.Array(dims=1)
     a_priori = param.Array(dims=1)
     covariance = param.Array(dims=2)
 
     max_cost_function_calls = param.Scalar(int)
-    dx_tol_abs = param.Scalar(float)
-    dx_tol_rel = param.Scalar(float)
-    g_tol_abs = param.Scalar(float)
 
     def init_state_vector(self):
 
@@ -240,28 +238,31 @@ class MaxAPosterioriBase(Creator):
 
     def opt_problem(self):
         fm = self.forward_model()
-        sv = self.state_vector()
 
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
-        stat_method = rf.MaxAPosterioriStandard(fm, observation, sv, self.a_priori(), self.covariance())
+        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())
 
-        opt_problem = rf.NLLSMaxAPosteriori(stat_method, True)
+        opt_problem = rf.NLLSMaxAPosteriori(stat_method)
 
         # Initialize solver intitial guess
-        opt_problem.parameters = sv.state
+        opt_problem.parameters = self.initial_guess()
 
         return opt_problem
 
-class NLLSMaxAPosteriori(MaxAPosterioriBase):
+class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
+
+    dx_tol_abs = param.Scalar(float)
+    dx_tol_rel = param.Scalar(float)
+    g_tol_abs = param.Scalar(float)
 
     def create(self, **kwargs):
 
         self.init_state_vector()
 
-        solver = rf.NLLSSolverGSLLMSDER(self.max_cost_function_calls(), 
-                self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
-                self.opt_problem(), True)
+        solver = rf.NLLSSolverGSLLMSDER(self.opt_problem(),
+                self.max_cost_function_calls(), self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
+                True)
 
         return solver
 
@@ -279,9 +280,9 @@ class ConnorSolverMAP(MaxAPosterioriBase):
 
         conv = rf.ConnorConvergence(self.forward_model(), self.threshold(), self.max_iteration(), self.max_divergence(), self.max_chisq())
 
-        solver = rf.ConnorSolverMAP(self.max_cost_function_calls(), 
-                self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
-                self.opt_problem(), conv, False, self.gamma_initial())
+        solver = rf.ConnorSolverMAP(self.opt_problem(), conv,
+                self.max_cost_function_calls(), True,
+                self.gamma_initial())
 
         return solver
 

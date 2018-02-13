@@ -338,19 +338,16 @@ config_def = {
                 'filename': covariance_file,
             }
         },
-        'solver_nlls_MAP': {
-            'creator': creator.retrieval.NLLSMaxAPosteriori,
-            'max_cost_function_calls': 20,
+        'solver_nlls_gsl': {
+            'creator': creator.retrieval.NLLSSolverGSLLMSDER,
+            'max_cost_function_calls': 10,
             'dx_tol_abs': 1e-5,
             'dx_tol_rel': 1e-5, 
             'g_tol_abs': 1e-5,
         },
         'solver': {
             'creator': creator.retrieval.ConnorSolverMAP,
-            'max_cost_function_calls': 20,
-            'dx_tol_abs': 1e-5,
-            'dx_tol_rel': 1e-5, 
-            'g_tol_abs': 1e-5,
+            'max_cost_function_calls': 14,
             'threshold': 2.0,
             'max_iteration': 7,
             'max_divergence': 2,
