@@ -5,6 +5,7 @@
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
 #include <cost_func.h>
+#include "observer.h"
 
 namespace FullPhysics {
 
@@ -36,6 +37,7 @@ namespace FullPhysics {
 //-----------------------------------------------------------------------
 
 class IterativeSolver : 
+    public Observable<IterativeSolver>,
     public Printable<IterativeSolver> {
 
 public:
@@ -74,6 +76,16 @@ public:
 
   virtual ~IterativeSolver() {}
 
+//-----------------------------------------------------------------------
+// Observers can be be registered to get notified for each accepted
+// solver state.
+//-----------------------------------------------------------------------
+
+  virtual void add_observer(Observer<IterativeSolver>& Obs)
+    { add_observer_do(Obs, *this);}
+
+  virtual void remove_observer(Observer<IterativeSolver>& Obs)
+    { remove_observer_do(Obs, *this);}
 
 //-----------------------------------------------------------------------
 /// \brief Returns the number of the accepted steps.
@@ -232,7 +244,12 @@ protected:
 //-----------------------------------------------------------------------
 
   void record_accepted_point(const blitz::Array<double, 1>& point)
-  { Accepted_points.push_back(point); }
+  { 
+      Accepted_points.push_back(point); 
+
+      // Notify observers, number of accepted points will be > 0 now
+      notify_update_do(*this);
+  }
 
 
 //-----------------------------------------------------------------------
@@ -245,7 +262,7 @@ protected:
 /// order that they are evaluated.
 ///
 /// \param[in] cost
-///            cost funciotn value at an accepted point
+///            cost function value at an accepted point
 ///            in the parameter space
 //-----------------------------------------------------------------------
 

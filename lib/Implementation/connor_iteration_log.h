@@ -1,5 +1,5 @@
-#ifndef SOLVER_ITER_LOG_H
-#define SOLVER_ITER_LOG_H
+#ifndef CONNOR_ITER_LOG_H
+#define CONNOR_ITER_LOG_H
 #include "connor_solver.h"
 #include "state_vector.h"
 #include "logger.h"

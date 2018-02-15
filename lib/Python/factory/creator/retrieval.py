@@ -284,6 +284,9 @@ class ConnorSolverMAP(MaxAPosterioriBase):
                 self.max_cost_function_calls(), True,
                 self.gamma_initial())
 
+        iter_log = rf.SolverIterationLog(self.state_vector())
+        solver.add_observer(iter_log)
+
         return solver
 
  
