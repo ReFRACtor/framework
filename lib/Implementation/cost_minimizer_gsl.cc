@@ -95,22 +95,23 @@ void CostMinimizerGSL::solve()
     if(Initial_step_size.size() > 0) {
       ss_initialized = (gsl_vector_memcpy(ss, GslVector(Initial_step_size).gsl()) == GSL_SUCCESS);
     } else {
-      //  Here is a simple choice (commented out).
-      //gsl_vector_set_all(ss, 1.0); 
-      //ss_initialized = true;
 
-      //  This is probably a better method.
-      if( gsl_vector_memcpy(ss, GslVector(X).gsl()) == GSL_SUCCESS ) {
-        for( size_t i=0; i<f.n; i++ )
-          gsl_vector_set( ss, i, fmax(fabs(gsl_vector_get( GslVector(X).gsl(), i)*0.1),0.1) );
-        ss_initialized = true;
-      }
-     }
+      // Here is a simple choice.
+      //
+      gsl_vector_set_all(ss, 1.0);
+
+      // Another common choice.
+      //
+//      for( size_t i=0; i<f.n; i++ )
+//        gsl_vector_set( ss, i, (X(i)==0.0)?0.00025:0.05 );
+
+      ss_initialized = true;
+    }
   }
 
   int num_step = 0;
   stat = UNTRIED;
-  if( s && ss_initialized );
+  if( s && ss_initialized )
     if( !(gsl_status = gsl_multimin_fminimizer_set(s, &f, GslVector(X).gsl(), ss)) ) {
       stat = CONTINUE;
       do {
