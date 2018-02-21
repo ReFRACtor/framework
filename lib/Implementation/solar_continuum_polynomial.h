@@ -1,5 +1,5 @@
 #ifndef SOLAR_CONTINUUM_POLYNOMIAL_H
-#define SOLAR_CONTINUUN_POLYNOMIAL_H
+#define SOLAR_CONTINUUM_POLYNOMIAL_H
 #include "solar_continuum_spectrum.h"
 #include "array_with_unit.h"
 #include <vector>

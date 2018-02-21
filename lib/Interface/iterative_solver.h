@@ -5,6 +5,7 @@
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
 #include <cost_func.h>
+#include "observer.h"
 
 namespace FullPhysics {
 
@@ -36,6 +37,7 @@ namespace FullPhysics {
 //-----------------------------------------------------------------------
 
 class IterativeSolver : 
+    public Observable<IterativeSolver>,
     public Printable<IterativeSolver> {
 
 public:
@@ -48,6 +50,7 @@ public:
   enum status_t {
     SUCCESS,  ///< solve method called and a solution found
     CONTINUE, ///< solve method called but did not converge to a solution
+    STALLED,  ///< solve method was called but stalled
     ERROR,    ///< solve method called but an error was encountered
     UNTRIED   ///< solve method not called yet
   };
@@ -59,32 +62,30 @@ public:
 /// \param[in] max_cost_function_calls 
 ///            max number of times to evaluate cost function
 ///
-/// \param[in] dx_tol_abs
-///            for convergence check, a tolerance for absolute step size,
-///            and may be used in different ways by different derived
-///            classes
-///
-/// \param[in] dx_tol_rel
-///            for convergence check, a tolerance for relative step size,
-///            and may be used in different ways by different derived
-///            classes
-///
 /// \param[in] vrbs
 ///            if set to true, then a leaf class of this class hierarchy
 ///            should display some diagnostic information during each
 ///            iteration
 //-----------------------------------------------------------------------
 
-  IterativeSolver(int max_cost_function_calls, 
-                  double dx_tol_abs, double dx_tol_rel, bool vrbs)
+  IterativeSolver(int max_cost_function_calls, bool vrbs)
     : max_cost_f_calls(max_cost_function_calls),
-      dX_tol_abs(dx_tol_abs), dX_tol_rel(dx_tol_rel), 
-      stat(UNTRIED), verbose(vrbs)
+      verbose(vrbs), stat(UNTRIED)
   {}
 
 
   virtual ~IterativeSolver() {}
 
+//-----------------------------------------------------------------------
+// Observers can be be registered to get notified for each accepted
+// solver state.
+//-----------------------------------------------------------------------
+
+  virtual void add_observer(Observer<IterativeSolver>& Obs)
+    { add_observer_do(Obs, *this);}
+
+  virtual void remove_observer(Observer<IterativeSolver>& Obs)
+    { remove_observer_do(Obs, *this);}
 
 //-----------------------------------------------------------------------
 /// \brief Returns the number of the accepted steps.
@@ -177,6 +178,7 @@ public:
 /// implemented version of solve() method:
 ///   - IterativeSolver::SUCCESS
 ///   - IterativeSolver::CONTINUE
+///   - IterativeSolver::STALLED
 ///   - IterativeSolver::ERROR
 ///
 /// Please, read the comments on IterativeSolver::status_t type
@@ -195,13 +197,15 @@ public:
 /// If the method status() returns
 ///   - IterativeSolver::UNTRIED,
 ///   - IterativeSolver::SUCCESS,
-///   - IterativeSolver::CONTINUE, or
+///   - IterativeSolver::CONTINUE,
+///   - IterativeSolver::STALLED, or
 ///   - IterativeSolver::ERROR
 ///
 /// then status_str() will return
 ///   - "UNTRIED",
 ///   - "SUCCESS",
-///   - "CONTINUE", or 
+///   - "CONTINUE",
+///   - "STALLED", or 
 ///   - "ERROR"
 ///
 /// respectively.
@@ -211,6 +215,21 @@ public:
 
   virtual const char * const status_str() const;
 
+
+//-----------------------------------------------------------------------
+/// \brief Prints description of object.
+//-----------------------------------------------------------------------
+
+  virtual void print(std::ostream& Os) const 
+  { Os << "IterativeSolver"; }
+
+
+protected:
+
+  int max_cost_f_calls;
+
+  bool verbose;
+  status_t stat;
 
 //-----------------------------------------------------------------------
 /// \brief Called to record an accepted point
@@ -225,7 +244,12 @@ public:
 //-----------------------------------------------------------------------
 
   void record_accepted_point(const blitz::Array<double, 1>& point)
-  { Accepted_points.push_back(point); }
+  { 
+      Accepted_points.push_back(point); 
+
+      // Notify observers, number of accepted points will be > 0 now
+      notify_update_do(*this);
+  }
 
 
 //-----------------------------------------------------------------------
@@ -238,29 +262,13 @@ public:
 /// order that they are evaluated.
 ///
 /// \param[in] cost
-///            cost funciotn value at an accepted point
+///            cost function value at an accepted point
 ///            in the parameter space
 //-----------------------------------------------------------------------
 
   void record_cost_at_accepted_point(double cost)
   { Cost_at_accepted_points.push_back(cost); }
 
-
-//-----------------------------------------------------------------------
-/// \brief Prints description of object.
-//-----------------------------------------------------------------------
-
-  virtual void print(std::ostream& Os) const 
-  { Os << "IterativeSolver"; }
-
-
-protected:
-
-  int max_cost_f_calls;
-  double dX_tol_abs, dX_tol_rel;
-
-  status_t stat;
-  bool verbose;
 
 private:
 

@@ -11,11 +11,8 @@
 namespace FullPhysics {
 class CostMinimizer : public IterativeSolver {
 public:
-  CostMinimizer(int max_cost_function_calls, 
-                double dx_tol_abs, double dx_tol_rel,
-                const boost::shared_ptr<CostFunc>& p,
-                bool vrbs);
+  CostMinimizer(const boost::shared_ptr<CostFunc>& p,
+                int max_cost_function_calls, bool vrbs);
   virtual ~CostMinimizer();
-  %python_attribute(cost_min_problem, boost::shared_ptr<CostFunc>)
 };
 }

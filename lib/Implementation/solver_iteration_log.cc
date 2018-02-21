@@ -3,44 +3,55 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-void iter_log_add_as_observer(SolverIterationLog& iter_log, ConnorSolver& solver) {
-  solver.add_observer(iter_log);
-}
-
-#ifdef HAVE_LUA
-#include "register_lua.h"
-REGISTER_LUA_CLASS(SolverIterationLog)
-.def(luabind::constructor<const boost::shared_ptr<StateVector>&>())
-.def("add_as_observer", &iter_log_add_as_observer)
-REGISTER_LUA_END()
-#endif
-
-void SolverIterationLog::notify_update(const ConnorSolver& solver)
+void SolverIterationLog::notify_update(const IterativeSolver& solver)
 { 
-  blitz::Array<std::string, 1> sv_names = sv_obj->state_vector_name();
-  blitz::Array<double, 1> dx(solver.x_update().copy());
-  blitz::Array<double, 1> sv_prev(solver.x_solution().copy());
-  sv_prev -= dx; // What it was before the dx update
-  
-  std::stringstream fit_log;
-  fit_log << std::endl 
-	  << solver.fit_statistic();
-  Logger::info() << fit_log.str();
+    // Iteration index 0 is the initial state
+    int iter_index = solver.num_accepted_steps();
 
-  std::stringstream sv_log;
-  sv_log << std::endl
-	 << std::setw(SV_PRINT_WIDTH) 
-	 << "State Vector"
-	 << std::setw(SV_PRINT_WIDTH) 
-	 << "Dx" 
-	 << "  Name" << std::endl;
-  for(int sv_idx = 0; sv_idx < sv_prev.rows(); sv_idx++)
-    sv_log << std::setprecision(SV_PRINT_WIDTH-7) // leave room for -/+, ., exponent and space, etc
-	   << std::setw(SV_PRINT_WIDTH) 
-	   << sv_prev(sv_idx)
-	   << std::setw(SV_PRINT_WIDTH) 
-	   << dx(sv_idx) << "  "
-	   << sv_names(sv_idx)
-	   << std::endl;
-  Logger::info() << sv_log.str();
+    if (iter_index < 0) {
+        throw Exception("Number of iteration indexes indicated by IterativeSolver is negative");
+    }
+
+    blitz::Array<std::string, 1> sv_names = sv_obj->state_vector_name();
+
+    blitz::Array<double, 1> curr_sv(solver.accepted_points().at(iter_index));
+    blitz::Array<double, 1> dx;
+
+    if (iter_index > 0) {
+        dx.resize(curr_sv.rows());
+        dx = solver.accepted_points().at(iter_index) - solver.accepted_points().at(iter_index - 1);
+    }
+
+    std::stringstream header_log;
+    header_log << std::endl;
+    if (iter_index > 0) {
+        header_log << "Accepted iteration #" << iter_index << std::endl;
+    } else {
+        header_log << "Initial retrieval state" << std::endl;
+    }
+    header_log << "Cost function value: " << solver.cost_at_accepted_points().at(iter_index) << std::endl;
+    Logger::info() << header_log.str();
+
+    std::stringstream sv_log;
+    sv_log << std::endl
+           << std::setw(SV_PRINT_WIDTH) 
+           << "State Vector";
+    if (iter_index > 0) {
+        sv_log << std::setw(SV_PRINT_WIDTH) 
+               << "Dx";
+    }
+    sv_log << "  Name" << std::endl;
+    for(int sv_idx = 0; sv_idx < curr_sv.rows(); sv_idx++) {
+        sv_log << std::setprecision(SV_PRINT_WIDTH-7) // leave room for -/+, ., exponent and space, etc
+               << std::setw(SV_PRINT_WIDTH) 
+               << curr_sv(sv_idx);
+        if (iter_index > 0) {
+            sv_log << std::setw(SV_PRINT_WIDTH) 
+                   << dx(sv_idx);
+        }
+        sv_log << "  "
+               << sv_names(sv_idx)
+               << std::endl;
+    }
+    Logger::info() << sv_log.str();
 }

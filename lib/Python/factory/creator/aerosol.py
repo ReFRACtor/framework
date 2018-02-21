@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 from .base import Creator, ParamPassThru
-from .apriori import CreatorApriori
+from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -44,7 +44,7 @@ class AerosolOptical(Creator):
         return rf.AerosolOptical(vec_extinction, vec_properties, self.pressure(), self.relative_humidity(), self.reference_wn())
 
 
-class AerosolShapeGaussian(CreatorApriori):
+class AerosolShapeGaussian(CreatorFlaggedValue):
 
     pressure = param.InstanceOf(rf.Pressure)
     log_space = param.Scalar(bool, default=True)
@@ -54,7 +54,7 @@ class AerosolShapeGaussian(CreatorApriori):
         if aerosol_name is None:
             raise param.ParamError("aerosol_name not supplied to creator")
 
-        return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.apriori(), aerosol_name, not self.log_space())
+        return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_space())
 
 class AerosolPropertyHdf(Creator):
 

@@ -19,8 +19,8 @@ public:
 /// Constructor
 //-----------------------------------------------------------------------
 
-  NLLSMaxAPosteriori(const boost::shared_ptr<MaxAPosteriori>& map, bool together=false)
-    : NLLSProblem(), MAP(map), Compute_together(together)
+  NLLSMaxAPosteriori(const boost::shared_ptr<MaxAPosteriori>& map)
+    : NLLSProblem(), NLLSProblemState(), MAP(map)
   {}
 
   virtual ~NLLSMaxAPosteriori() {}
@@ -100,7 +100,6 @@ public:
 protected:
 
   const boost::shared_ptr<MaxAPosteriori> MAP;
-  bool Compute_together;
 
 };
 }

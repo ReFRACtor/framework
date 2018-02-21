@@ -14,6 +14,8 @@ public:
                const blitz::Array<double, 1>& measurement_error_cov);
   ModelMeasure();
   virtual ~ModelMeasure();
+  void set_measurement(const blitz::Array<double, 1>& measurement, 
+                       const blitz::Array<double, 1>& measurement_error_cov);
   virtual void model_eval() = 0;
   %python_attribute_nonconst(model, blitz::Array<double, 1>)
   virtual blitz::Array<double, 1> model_x(const blitz::Array<double, 1>& x);
@@ -30,6 +32,8 @@ public:
   %python_attribute(measurement_size, int)
   virtual void assert_model_correct(const blitz::Array<double, 1>& m) const;
   virtual void assert_jacobian_correct(const blitz::Array<double, 2>& k) const;
+  %python_attribute(model_computed, bool)
+  %python_attribute(jacobean_computed, bool)
 
   %python_attribute_nonconst(model_measure_diff, blitz::Array<double, 1>)
   %python_attribute_nonconst(uncert_weighted_model_measure_diff, 

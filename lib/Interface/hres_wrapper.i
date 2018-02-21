@@ -11,6 +11,9 @@
 %fp_shared_ptr(FullPhysics::HresWrapper);
 
 namespace FullPhysics {
+
+%feature("notabstract") HresWrapper;
+
 class HresWrapper : public RadiativeTransferSingleWn {
 public:
   HresWrapper(const boost::shared_ptr<RadiativeTransferSingleWn>& Rt);

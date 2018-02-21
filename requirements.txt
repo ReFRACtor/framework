@@ -2,6 +2,7 @@
 # Use with pip install -r requirements.txt
 numpy
 pytest
+attrdict
 
 # Needed to support both Python 2 and 3
 future

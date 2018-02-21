@@ -19,8 +19,8 @@ public:
 /// Constructor
 //-----------------------------------------------------------------------
 
-  NLLSMaxLikelihood(const boost::shared_ptr<MaxLikelihood>& ml, bool together=false)
-    : NLLSProblem(), ML(ml), Compute_together(together)
+  NLLSMaxLikelihood(const boost::shared_ptr<MaxLikelihood>& ml)
+    : NLLSProblem(), NLLSProblemState(), ML(ml)
   {}
 
   virtual ~NLLSMaxLikelihood() {}
@@ -99,7 +99,6 @@ public:
 protected:
 
   const boost::shared_ptr<MaxLikelihood> ML;
-  bool Compute_together;
 
 };
 }

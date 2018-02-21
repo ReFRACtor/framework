@@ -32,45 +32,24 @@ public:
 //-----------------------------------------------------------------------
 /// \brief Constructor
 /// 
-/// \param[in] max_cost_function_calls 
-///            read related base class comments
-///
-/// \param[in] dx_tol_abs
-///            read related base class comments
-///
-/// \param[in] dx_tol_rel
-///            read related base class comments
-///
 /// \param[in] p
 ///            The cost minimization problem
+///
+/// \param[in] max_cost_function_calls 
+///            read related base class comments
 ///
 /// \param[in] vrbs
 ///            read related base class comments
 //-----------------------------------------------------------------------
 
-  CostMinimizer(int max_cost_function_calls, 
-                double dx_tol_abs, double dx_tol_rel, 
-                const boost::shared_ptr<CostFunc>& p,
-                bool vrbs)
-    : IterativeSolver(max_cost_function_calls, dx_tol_abs, dx_tol_rel, vrbs),
+  CostMinimizer(const boost::shared_ptr<CostFunc>& p,
+                int max_cost_function_calls, bool vrbs)
+    : IterativeSolver(max_cost_function_calls, vrbs),
       P(p)
   {}
 
 
   virtual ~CostMinimizer() {}
-
-
-//-----------------------------------------------------------------------
-/// \brief Returns the cost minimization problem
-///
-/// This method returns the cost minimization problem that
-/// is passed to the constructor of the solver.
-///
-/// \return Cost-function problem
-//-----------------------------------------------------------------------
-
-  const boost::shared_ptr<CostFunc>& cost_min_problem() const
-  { return P; }
 
 
 //-----------------------------------------------------------------------

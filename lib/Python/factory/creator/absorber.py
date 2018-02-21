@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 from .base import Creator, ParamPassThru
-from .apriori import CreatorApriori
+from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -47,7 +47,7 @@ class GasVmrApriori(Creator):
                 self.altitudes()[0], ref_atm_data, "/Reference_Atmosphere", self.gas_name(), self.temp_avg_window())
         return apriori_obj.apriori_vmr()
 
-class AbsorberVmrLevel(CreatorApriori):
+class AbsorberVmrLevel(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
 
     pressure = param.InstanceOf(rf.Pressure)
@@ -57,9 +57,9 @@ class AbsorberVmrLevel(CreatorApriori):
         if gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrLevel(self.pressure(), self.apriori(), self.retrieval_flag(), gas_name)
+        return rf.AbsorberVmrLevel(self.pressure(), self.value(), self.retrieval_flag(), gas_name)
 
-class AbsorberVmrMet(CreatorApriori):
+class AbsorberVmrMet(CreatorFlaggedValue):
 
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
@@ -69,7 +69,7 @@ class AbsorberVmrMet(CreatorApriori):
         if gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.apriori()[0], bool(self.retrieval_flag()[0]), gas_name)
+        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value()[0], bool(self.retrieval_flag()[0]), gas_name)
 
 class AbscoHdf(Creator):
 

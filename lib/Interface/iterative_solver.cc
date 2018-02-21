@@ -16,6 +16,7 @@ const char * const IterativeSolver::status_str() const
   switch( stat ) {
   case SUCCESS: return "SUCCESS";
   case CONTINUE: return "CONTINUE";
+  case STALLED: return "STALLED";
   case ERROR: return "ERROR";
   case UNTRIED: return "UNTRIED";
   }

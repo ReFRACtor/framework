@@ -13,12 +13,10 @@
 namespace FullPhysics {
 class ConnorSolverMAP : public NLLSSolver {
 public:
-  ConnorSolverMAP(int max_cost_function_calls,
-                  double dx_tol_abs, double dx_tol_rel, 
-                  double g_tol_abs,
-	          const boost::shared_ptr<NLLSMaxAPosteriori>& NLLS_MAP,
+  ConnorSolverMAP(const boost::shared_ptr<NLLSMaxAPosteriori>& NLLS_MAP,
 	          const boost::shared_ptr<ConvergenceCheck>& Convergence_check,
-                  bool vrbs = false,
+                  int max_cost_function_calls,
+	          bool vrbs = false,
 	          double Gamma_initial = 0.0,
 	          const std::string& Fname_test_data = "");
   virtual ~ConnorSolverMAP();

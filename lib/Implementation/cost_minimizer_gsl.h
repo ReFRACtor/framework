@@ -17,20 +17,17 @@ public:
 //-----------------------------------------------------------------------
 /// Initializes the minimizer.
 /// 
-/// \param max_cost_function_calls Input value
-/// \param dx_tol_abs Input value
-/// \param dx_tol_rel Input value
-/// \param size_tol
 /// \param p Input value
+/// \param max_cost_function_calls Input value
+/// \param size_tol
 /// \param init_step_size The initial step stize
 /// \param vrbs Input value
 //-----------------------------------------------------------------------
 
-  CostMinimizerGSL(int max_cost_function_calls, 
-                double dx_tol_abs, double dx_tol_rel, 
-                double size_tol, const boost::shared_ptr<CostFunc>& p,
-                const blitz::Array<double,1>& init_step_size,
-                bool vrbs=false);
+  CostMinimizerGSL(const boost::shared_ptr<CostFunc>& p,
+                   int max_cost_function_calls, double size_tol=0.001, 
+                   const blitz::Array<double,1>& init_step_size=blitz::Array<double,1>(),
+                   bool vrbs=false);
 
   virtual ~CostMinimizerGSL() {}
 

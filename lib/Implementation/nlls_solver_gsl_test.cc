@@ -22,7 +22,8 @@ using namespace blitz;
 BOOST_FIXTURE_TEST_SUITE(nlls_solver_gsl, GlobalFixture)
 
 /* convergence check thresholds */
-double dx_epsabs=1e-5, dx_epsrel=1e-5, g_epsabs=1e-5;
+double dx_tol_abs=1e-5, dx_tol_rel=1e-5, g_tol=1e-5;
+bool verbose=false;
 
 
 BOOST_AUTO_TEST_CASE(bard)
@@ -30,7 +31,7 @@ BOOST_AUTO_TEST_CASE(bard)
   Array<double, 1> x0(3); x0 = 1.0, 1.0, 1.0;
   boost::shared_ptr<BardNLLSProblem> nlls(new BardNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -79,7 +80,7 @@ BOOST_AUTO_TEST_CASE(brown)
   Array<double, 1> x0(2); x0 = 1.0, 1.0;
   boost::shared_ptr<BrownNLLSProblem> nlls(new BrownNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -125,7 +126,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
   Array<double, 1> x0(2); x0 = 0.5, -2.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -176,7 +177,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__b)
   Array<double, 1> x0(2); x0 = 6.0, 7.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -227,7 +228,7 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   Array<double, 1> x0(3); x0 = -1.0, 0.0, 0.0;
   boost::shared_ptr<HelicalValleyNLLSProblem> nlls(new HelicalValleyNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -274,7 +275,7 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
   Array<double, 1> x0(2); x0 = 0.3, 0.4;
   boost::shared_ptr<JennrichSampsonNLLSProblem> nlls(new JennrichSampsonNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -320,7 +321,7 @@ BOOST_AUTO_TEST_CASE(meyer)
   Array<double, 1> x0(3); x0 = 0.02, 4000.0, 250.0;
   boost::shared_ptr<MeyerNLLSProblem> nlls(new MeyerNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(200, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 200, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -367,7 +368,7 @@ BOOST_AUTO_TEST_CASE(powell)
   Array<double, 1> x0(2); x0 = 0.0, 1.0;
   boost::shared_ptr<PowellNLLSProblem> nlls(new PowellNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -413,7 +414,7 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, 1e-21, 1e-21, 1e-21, nlls);
+  NLLSSolverGSL solver(nlls, 100, 1e-21, 1e-21, 1e-21);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -461,7 +462,7 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
   Array<double, 1> x0(2); x0 = -1.2, 1.0;
   boost::shared_ptr<Rosenbrock2NLLSProblem> nlls(new Rosenbrock2NLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -507,8 +508,8 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver1(100, 1e-5, 1e-5, 1e-5, nlls);
-  NLLSSolverGSL solver2(100, 1e-21, 1e-21, 1e-21, nlls);
+  NLLSSolverGSL solver1(nlls, 100, 1e-5, 1e-5, 1e-5);
+  NLLSSolverGSL solver2(nlls, 100, 1e-21, 1e-21, 1e-21);
   BOOST_CHECK_EQUAL((int)solver1.status(), (int)NLLSSolverGSL::UNTRIED);
   BOOST_CHECK_EQUAL((int)solver2.status(), (int)NLLSSolverGSL::UNTRIED);
 
@@ -627,9 +628,9 @@ BOOST_AUTO_TEST_CASE(bard_ml)
   measurement_error_cov = 1.0;
 
   boost::shared_ptr<BardMLProblem> ml(new BardMLProblem(measurement, measurement_error_cov));
-  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml, false));
+  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  NLLSSolverGSL solver(100, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
@@ -684,9 +685,9 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   measurement_error_cov = 1.0;
 
   boost::shared_ptr<MeyerMLProblem> ml(new MeyerMLProblem(measurement, measurement_error_cov));
-  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml, false));
+  boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  NLLSSolverGSL solver(200, dx_epsabs, dx_epsrel, g_epsabs, nlls);
+  NLLSSolverGSL solver(nlls, 200, dx_tol_abs, dx_tol_rel, g_tol, verbose);
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
   solver.solve();
 
