@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(bard)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 225);
+  BOOST_CHECK(n_f_calls < 190);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0041074) < 0.000001) || (abs(cst-8.71431) < 0.001) );
   if( abs(cst-0.0041074) < 0.000001 ) {
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(brown)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 330);
+  BOOST_CHECK(n_f_calls < 270);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0e6, 0.01);
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 125);
+  BOOST_CHECK(n_f_calls < 110);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) || (abs(cst-24.4921) < 0.001) );
   if( abs(cst-0.0) < 0.0000001 ) {
@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__b)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 120);
+  BOOST_CHECK(n_f_calls < 105);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) || (abs(cst-24.4921) < 0.001) );
   if( abs(cst-0.0) < 0.0000001 ) {
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 330);
+  BOOST_CHECK(n_f_calls < 285);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0, 0.01);
@@ -283,7 +283,7 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 85);
+  BOOST_CHECK(n_f_calls < 180);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 62.1813, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.2578, 0.015);
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(meyer)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 2800);
+  BOOST_CHECK(n_f_calls < 2900);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE(powell)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 700);
+  BOOST_CHECK(n_f_calls < 710);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.09816e-5, 0.01);
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 1200);
+  BOOST_CHECK(n_f_calls < 1100);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 175);
+  BOOST_CHECK(n_f_calls < 180);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0, 0.01);
@@ -507,7 +507,7 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver1.accepted_points()[iLast1])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver1.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls1 < 430);
+  BOOST_CHECK(n_f_calls1 < 260);
   BOOST_CHECK(n_j_calls1 <= 0);
 
 
@@ -545,7 +545,7 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver2.accepted_points()[iLast2])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver2.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls2 < 1310);
+  BOOST_CHECK(n_f_calls2 < 1100);
   BOOST_CHECK(n_j_calls2 <= 0);
   BOOST_CHECK( (abs(cst2-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);
@@ -615,7 +615,7 @@ BOOST_AUTO_TEST_CASE(bard_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 225);
+  BOOST_CHECK(n_f_calls < 190);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0041074) < 0.000001) || (abs(cst-8.71431) < 0.001) );
   if( abs(cst-0.0041074) < 0.000001 ) {
@@ -668,7 +668,7 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 2800);
+  BOOST_CHECK(n_f_calls < 2900);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
