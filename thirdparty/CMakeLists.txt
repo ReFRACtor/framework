@@ -106,7 +106,7 @@ include(2stream/2stream.cmake)
 list(APPEND THIRDPARTY_TARGETS twostream)
 list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream.so)
 
-include(lidort-3.6/lidort.cmake)
+include(lidort-3.7/lidort.cmake)
 list(APPEND THIRDPARTY_TARGETS lidort)
 list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort.so)
 
