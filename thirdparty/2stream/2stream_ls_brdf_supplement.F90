@@ -318,7 +318,7 @@ subroutine twostream_ls_brdfmaster                        &
         ENDDO
         IF ( K.LT.N_BRDF_KERNELS ) QOFFSET(K+1) = Q
       ENDDO
-      IF ( Q .ne. N_SURFACE_WFS ) stop'bookkeeping wrong'
+      IF ( Q .ne. N_SURFACE_WFS ) stop 'bookkeeping wrong'
 
 !  Usable solar beams
 !    Warning, this shoudl be the BOA angle. OK for the non-refractive case.

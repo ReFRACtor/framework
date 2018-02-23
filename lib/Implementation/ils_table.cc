@@ -164,3 +164,8 @@ void IlsTable<Lint>::print(std::ostream& Os) const
        << "  Hdf file name:          " << hdf_file_name << "\n"
        << "  Hdf group:              " << hdf_group;
 }
+
+
+template class FullPhysics::IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >;
+template class FullPhysics::IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >;
+
