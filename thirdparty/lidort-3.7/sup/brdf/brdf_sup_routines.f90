@@ -58,7 +58,6 @@
 
       MODULE brdf_sup_routines_m
 
-      PRIVATE :: BRDF_FUNCTION
       PUBLIC  :: BRDF_MAKER, BRDF_NewCM_MAKER, &
                  BRDF_FOURIER, SCALING_FOURIER_ZERO
 

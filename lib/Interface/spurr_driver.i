@@ -15,7 +15,7 @@ public:
   virtual void initialize_brdf_inputs(int surface_type);
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
   virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) const;
-  void set_lambertian_albedo(const blitz::Array<double, 1>& albedo_array);
+  void set_lambertian_albedo(const double& albedo_val);
 
   %python_attribute_abstract(n_brdf_kernels, int)
   %python_attribute_abstract(n_kernel_factor_wfs, int)

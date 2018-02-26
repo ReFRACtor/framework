@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(simple)
   bool do_multiple_scattering_only = false;
 
   // Use simple BREON throughout
-  int surface_type = BREONVEG;
+  int surface_type = BPDFVEGN;
   ArrayAd<double, 1> surface_params(5, 1); 
   surface_params = 0.0;
 

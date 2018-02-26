@@ -24,8 +24,8 @@ public:
     enum BrdfType {
         LAMBERTIAN  = 1,
         COXMUNK     = 2,
-        BREONVEG    = 3,
-        BREONSOIL   = 4
+        BPDFVEGN    = 3,
+        BPDFSOIL   = 4
     };
   
     LRadRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Rt,

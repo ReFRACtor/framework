@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(brdf)
   ArrayAd<double, 1> taur(nlayer, nparam);
 
   // Use simple lambertian throughout
-  int surface_type = BREONVEG;
+  int surface_type = BPDFVEGN;
   
   // Check jacobian using finite derivatives
   // od, ssa

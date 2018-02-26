@@ -23,8 +23,8 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int surface_type)
   case LAMBERTIAN:
     nspars = 1;
     break;
-  case BREONVEG:
-  case BREONSOIL:
+  case BPDFVEGN:
+  case BPDFSOIL:
     nspars = 5;
     break;
   case COXMUNK:
@@ -192,7 +192,7 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int npars, int surface_type, b
 
   // Lambertian albedo values are stored seperate from BRDF data structures
   // Do this after TwoStream has been instantiated
-  brdf_driver_->set_lambertian_albedo( twostream_interface_->lambertian_albedo() );
+  brdf_driver_->set_lambertian_albedo( twostream_interface_->lambertian_albedo()(0) );
 
   // Initialize BRDF data structure
   brdf_driver_->initialize_brdf_inputs(surface_type_);

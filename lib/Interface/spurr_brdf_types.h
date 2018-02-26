@@ -14,8 +14,10 @@ namespace FullPhysics {
         ROUJEAN     = 7,
         RAHMAN      = 8,
         COXMUNK     = 9,
-        BREONVEG    = 10,
-        BREONSOIL   = 11
+        BPDFSOIL    = 10,
+        BPDFVEGN    = 11,
+        BRDFNDVI    = 12,
+        NEWCMGLINT  = 13
     };
  
 }

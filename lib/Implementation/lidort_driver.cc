@@ -22,7 +22,7 @@ using namespace blitz;
 
 LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment) : nmoment_(nmoment)
 {
-  brdf_interface_.reset( new Brdf_Linsup_Masters(1) );
+  brdf_interface_.reset( new Brdf_Linsup_Masters() );
 
   Brdf_Sup_Inputs& brdf_inputs = brdf_interface_->brdf_sup_in();
 
@@ -168,7 +168,7 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
   : nstream_(nstream), nmoment_(nmoment), do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type), pure_nadir_(pure_nadir)
 {
   brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
-  lidort_interface_.reset( new Lidort_Lps_Masters(1) );
+  lidort_interface_.reset( new Lidort_Lps_Masters() );
 
   // Check inputs against sizes allowed by LIDORT
   Lidort_Pars lid_pars = Lidort_Pars::instance();
@@ -274,7 +274,7 @@ void LidortRtDriver::initialize_rt()
   muser_inputs.ts_n_user_relazms(1);
 
   // Number of user-defined viewing zenith angles
-  fuser_inputs.ts_n_user_streams(1);
+  muser_inputs.ts_n_user_streams(1);
 
   // Number of vertical output levels
   fuser_inputs.ts_n_user_levels(1);
@@ -446,20 +446,20 @@ void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
   Lidort_Modified_Optical& moptical_inputs = lidort_interface_->lidort_modin().moptical();
 
   // Vertical optical depth thicness values for all layers and threads
-  Array<double, 2> deltau( foptical_inputs.ts_deltau_vert_input() );
-  deltau(rlay, 0) = od;
+  Array<double, 1> deltau( foptical_inputs.ts_deltau_vert_input() );
+  deltau(rlay) = od;
 
   // Single scattering albedos for all layers and threads 
-  Array<double, 2> omega( moptical_inputs.ts_omega_total_input() );
-  omega(rlay, 0) = where(ssa > 0.999, 0.999999, ssa);
+  Array<double, 1> omega( moptical_inputs.ts_omega_total_input() );
+  omega(rlay) = where(ssa > 0.999, 0.999999, ssa);
 
   // For all layers n and threads t, Legrenre moments of
   // the phase function expansion multiplied by (2L+1);
   // initial value (L=0) should always be 1
   // phasmoms_total_input(n, L, t)
   // n = moments, L = layers, t = threads
-  Array<double, 3> phasmoms( foptical_inputs.ts_phasmoms_total_input() );
-  phasmoms(rmom, rlay, 0) = where(abs(pf) > 1e-11, pf, 1e-11);
+  Array<double, 2> phasmoms( foptical_inputs.ts_phasmoms_total_input() );
+  phasmoms(rmom, rlay) = where(abs(pf) > 1e-11, pf, 1e-11);
 }
 
 void LidortRtDriver::clear_linear_inputs() const

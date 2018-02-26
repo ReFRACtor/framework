@@ -195,9 +195,9 @@ void LRadRt::initialize(const SpectralBound& Spec_bound, double Spectrum_spacing
     } else if(dynamic_cast<GroundCoxmunkPlusLambertian*>(atm->ground().get())) {
         surface_type_int = LRadRt::COXMUNK;
     } else if(dynamic_cast<GroundBrdfVeg*>(atm->ground().get())) {
-        surface_type_int = LRadRt::BREONVEG;
+        surface_type_int = LRadRt::BPDFVEGN;
     } else if(dynamic_cast<GroundBrdfSoil*>(atm->ground().get())) {
-        surface_type_int = LRadRt::BREONSOIL;
+        surface_type_int = LRadRt::BPDFSOIL;
     } else {
         Exception err_msg;
         err_msg << "Spurr RT can not determine surface type integer from ground class: "

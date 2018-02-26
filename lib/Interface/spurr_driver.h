@@ -51,8 +51,8 @@ public:
 
   /// Initialize lambertian albedo from array that might be 
   /// external to the BrdfDriver
-  void set_lambertian_albedo(const blitz::Array<double, 1>& albedo_array) {
-    lambertian_albedo.reference( albedo_array );
+  void set_lambertian_albedo(const double& albedo_val) {
+    lambertian_albedo = albedo_val;
   }
 
 protected:
@@ -83,7 +83,7 @@ protected:
   // These are set through attributes linked to a valid array by the implementing class. 
   mutable blitz::Array<double, 1> brdf_factors;
   mutable blitz::Array<double, 2> brdf_params;
-  mutable blitz::Array<double, 1> lambertian_albedo;
+  mutable double lambertian_albedo;
 };
 
 /****************************************************************//**

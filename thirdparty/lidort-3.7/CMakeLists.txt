@@ -19,6 +19,7 @@ if(NOT DEFINED LIDORT_MAXATMOSWFS OR "${LIDORT_MAXATMOSWFS}" STREQUAL "")
 endif()
 message(STATUS "Using LIDORT_MAXATMOSWFS value: ${LIDORT_MAXATMOSWFS}")
 
+# Fill in the values of LIDORT_MAXLAYER and LIDORT_MAXATMOSWFS to be used by LIDORT
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/lidort_def/lidort_pars.f90.in"
     "${PROJECT_BINARY_DIR}/lidort_pars.f90"

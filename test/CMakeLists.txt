@@ -22,6 +22,10 @@ configure_file (
 
 set(FP_TEST_FILES ${FP_TEST_FILES} "${CMAKE_CURRENT_BINARY_DIR}/global_fixture_default.cc")
 
+# Define the LIDORT compilation option variables into macros so they can be used by other
+# pieces of the code. These are defined and loaded in the thirdparty cmake file
+add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDORT_MAXATMOSWFS})
+
 #####
 # Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
