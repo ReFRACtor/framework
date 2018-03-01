@@ -101,11 +101,11 @@
 !  Maximum number of input moments.
 !    (Use full range for exact single scatter calculations)
 
-   INTEGER, PARAMETER :: MAXMOMENTS_INPUT = 5000
+   INTEGER, PARAMETER :: MAXMOMENTS_INPUT = 180
 
 !  Max number of thermal coefficients
 
-   INTEGER, PARAMETER :: MAX_THERMAL_COEFFS = 2
+   INTEGER, PARAMETER :: MAX_THERMAL_COEFFS = 3
 
 !  Geometrical and output parameters
 !  ---------------------------------
