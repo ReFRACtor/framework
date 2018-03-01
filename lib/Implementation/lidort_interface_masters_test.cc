@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(lidort_brdf_master)
   Brdf_Sup_Masters brdf_master = Brdf_Sup_Masters();
 
   // Read lidort config file
-  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p6T_BRDF_ReadInput.cfg");
+  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p7_BRDF_ReadInput.cfg");
   int read_status = brdf_master.brdf_sup_inputstatus().bs_status_inputread();
   BOOST_CHECK_EQUAL(read_status, 0); // was read successful?
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(lidort_ls_brdf_master)
   Brdf_Linsup_Masters brdf_master = Brdf_Linsup_Masters();
 
   // Read lidort config file
-  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p6T_BRDF_ReadInput.cfg");
+  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p7_BRDF_ReadInput.cfg");
   int read_status = brdf_master.brdf_sup_inputstatus().bs_status_inputread();
   BOOST_CHECK_EQUAL(read_status, 0); // was read successful?
 
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   Brdf_Linsup_Masters brdf_master = Brdf_Linsup_Masters();
 
   // Read lidort config file
-  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p6T_BRDF_ReadInput.cfg");
+  brdf_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p7_BRDF_ReadInput.cfg");
   int read_status = brdf_master.brdf_sup_inputstatus().bs_status_inputread();
   BOOST_CHECK_EQUAL(read_status, 0); // was read successful?
 
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   Lidort_Lps_Masters lps_master = Lidort_Lps_Masters();
 
   // Read lidort config file
-  inp_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p6T_LIDORT_ReadInput.cfg");
+  inp_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p7_LIDORT_ReadInput.cfg");
   BOOST_CHECK_EQUAL(inp_master.lidort_inputstatus().ts_status_inputread(), lid_pars.lidort_success); // was read successful?
 
   if ( inp_master.lidort_inputstatus().ts_status_inputread() != lid_pars.lidort_success )
@@ -391,13 +391,13 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
     std::cerr << lps_master.lidort_out() << std::endl;
 
   // Read expected outputs
-  Array<double, 4> ts_intensity_expt;
-  Array<double, 6> ts_profilewf_expt;
-  Array<double, 5> ts_surfacewf_expt;
-  Array<double, 4> ts_mean_intensity_expt;
-  Array<double, 6> ts_mint_profilewf_expt;
-  Array<double, 4> ts_flux_integral_expt;
-  Array<double, 6> ts_flux_profilewf_expt;
+  Array<double, 3> ts_intensity_expt;
+  Array<double, 5> ts_profilewf_expt;
+  Array<double, 4> ts_surfacewf_expt;
+  Array<double, 3> ts_mean_intensity_expt;
+  Array<double, 5> ts_mint_profilewf_expt;
+  Array<double, 3> ts_flux_integral_expt;
+  Array<double, 5> ts_flux_profilewf_expt;
 
   IfstreamCs lps_outputs_expt(test_data_dir() + "expected/lidort_interface_masters/lidort_lps_outputs");
   lps_outputs_expt >> ts_intensity_expt
@@ -424,24 +424,24 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   // this unit test, where the additional lidort runs are stored in the thread dimension
   Array<double, 3> ts_intensity_calc( lid_output.ts_intensity() );
   BOOST_CHECK_MATRIX_CLOSE( ts_intensity_calc(rulevs,rgeoms,rdirs), 
-                            ts_intensity_expt(rulevs,rgeoms,rdirs,0) );
+                            ts_intensity_expt(rulevs,rgeoms,rdirs) );
 
   Array<double, 5> ts_profilewf_calc( lid_lpoutput.ts_profilewf() );
   BOOST_CHECK_MATRIX_CLOSE( ts_profilewf_calc(ratmwfs,rlayers,rulevs,rgeoms,rdirs), 
-                            ts_profilewf_expt(ratmwfs,rlayers,rulevs,rgeoms,rdirs,0) );
+                            ts_profilewf_expt(ratmwfs,rlayers,rulevs,rgeoms,rdirs) );
 
   Array<double, 4> ts_surfacewf_calc( lid_lsoutput.ts_surfacewf() );
   BOOST_CHECK_MATRIX_CLOSE_TOL( ts_surfacewf_calc(rsurfwfs,rulevs,rgeoms,rdirs), 
-                                ts_surfacewf_expt(rsurfwfs,rulevs,rgeoms,rdirs,0), 1e-6 );
+                                ts_surfacewf_expt(rsurfwfs,rulevs,rgeoms,rdirs), 1e-6 );
 
   // These two are not used in production
   Array<double, 3> ts_mean_intensity_calc( lid_output.ts_mean_intensity() );
   BOOST_CHECK_MATRIX_CLOSE( ts_mean_intensity_calc(rulevs,rbeams,rdirs), 
-                            ts_mean_intensity_expt(rulevs,rbeams,rdirs,0) );
+                            ts_mean_intensity_expt(rulevs,rbeams,rdirs) );
 
   Array<double, 3> ts_flux_integral_calc( lid_output.ts_flux_integral() );
   BOOST_CHECK_MATRIX_CLOSE( ts_flux_integral_calc(rulevs,rbeams,rdirs), 
-                            ts_flux_integral_expt(rulevs,rbeams,rdirs,0) );
+                            ts_flux_integral_expt(rulevs,rbeams,rdirs) );
 
   // Unsure as to whether these are actually computed or not, the comparison
   // below will reference uninitialized values. These are not used in production so their
@@ -449,11 +449,11 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
 
   Array<double, 5> ts_mint_profilewf_calc( lid_lpoutput.ts_mint_profilewf() );
   BOOST_CHECK_MATRIX_CLOSE( ts_mint_profilewf_calc(ratmwfs,rlayers,rulevs,rbeams,rdirs), 
-                            ts_mint_profilewf_expt(ratmwfs,rlayers,rulevs,rbeams,rdirs,0) );
+                            ts_mint_profilewf_expt(ratmwfs,rlayers,rulevs,rbeams,rdirs) );
 
   Array<double, 5> ts_flux_profilewf_calc( lid_lpoutput.ts_flux_profilewf() );
   BOOST_CHECK_MATRIX_CLOSE( ts_flux_profilewf_calc(ratmwfs,rlayers,rulevs,rbeams,rdirs), 
-                            ts_flux_profilewf_expt(ratmwfs,rlayers,rulevs,rbeams,rdirs,0) );
+                            ts_flux_profilewf_expt(ratmwfs,rlayers,rulevs,rbeams,rdirs) );
 
 }
 

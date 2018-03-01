@@ -41,6 +41,9 @@ LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment) : nmoment_(nmoment)
 
   brdf_params.reference( brdf_inputs.bs_brdf_parameters() );
   brdf_factors.reference( brdf_inputs.bs_brdf_factors() );
+
+  // Enable solar sources
+  brdf_inputs.bs_do_solar_sources(true);
 }
 
 void LidortBrdfDriver::setup_geometry(double sza, double azm, double zen) const
@@ -175,10 +178,6 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
   range_check(nstream, 1, lid_pars.maxstreams+1);
   range_check(nmoment, 3, lid_pars.maxmoments_input+1);
 
-  // Lambertian albedo values are stored seperate from BRDF data structures
-  // Do this after Lidort has been instantiated
-  lidort_brdf_driver()->set_lambertian_albedo( lidort_interface_->lidort_fixin().optical().ts_lambertian_albedo() );
-
   // Initialize BRDF data structure
   brdf_driver()->initialize_brdf_inputs(surface_type_);
 
@@ -231,11 +230,9 @@ void LidortRtDriver::initialize_rt()
   // Needed for atmospheric scattering of sunlight
   mboolean_inputs.ts_do_solar_sources(true);
 
-  // Leave false if doing lambertian
-  if(surface_type_ != LAMBERTIAN) {
-    brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
-    fboolean_inputs.ts_do_brdf_surface(true);
-  }
+  // Always use BRDF supplement, don't use specialized lambertian_albedo mode
+  brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
+  fboolean_inputs.ts_do_brdf_surface(true);
   
   // Flags for viewing mode
   fboolean_inputs.ts_do_upwelling(true);

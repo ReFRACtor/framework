@@ -96,7 +96,7 @@
 
 !  Maximum number of fine layers used in single scattering corrections
 
-   INTEGER, PARAMETER :: MAXFINELAYERS = 1
+   INTEGER, PARAMETER :: MAXFINELAYERS = 4
 
 !  Maximum number of input moments.
 !    (Use full range for exact single scatter calculations)
@@ -129,12 +129,12 @@
 
 !  Maximum number of output levels
 
-   INTEGER, PARAMETER :: MAX_USER_LEVELS = 1
+   INTEGER, PARAMETER :: MAX_USER_LEVELS = 5
 
 !  Maximum number of output levels away from layer boundaries 
 !   This must be less than or equal to the previous entry
 
-   INTEGER, PARAMETER :: MAX_PARTLAYERS = 1
+   INTEGER, PARAMETER :: MAX_PARTLAYERS = 2
 
 !  Maximum number of Terms for Taylor series expansions
 !    If you are retaining contributions of order EPS^n, then you need at least n+2 Taylor terms

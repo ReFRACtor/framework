@@ -2638,15 +2638,15 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 !  Check single scattering correction and Do no Azimuth
 !    ---WARNING. Do-no-Azimuth Flag turned off
 
-      IF ( DO_SSCORR_NADIR .OR. DO_SSCORR_OUTGOING ) THEN
-        IF ( DO_NO_AZIMUTH ) THEN
-          NM = NM + 1
-          MESSAGES(NM)  = 'Bad input: need azimuth dependence for SS corrections'
-          ACTIONS(NM)   = 'Warning: DO_NO_AZIMUTH turned off internally'
-          STATUS        = LIDORT_WARNING
-          DO_NO_AZIMUTH = .FALSE.
-        ENDIF
-      ENDIF
+!      IF ( DO_SSCORR_NADIR .OR. DO_SSCORR_OUTGOING ) THEN
+!        IF ( DO_NO_AZIMUTH ) THEN
+!          NM = NM + 1
+!          MESSAGES(NM)  = 'Bad input: need azimuth dependence for SS corrections'
+!          ACTIONS(NM)   = 'Warning: DO_NO_AZIMUTH turned off internally'
+!          STATUS        = LIDORT_WARNING
+!          DO_NO_AZIMUTH = .FALSE.
+!        ENDIF
+!      ENDIF
 
 !  Check: OLD single scattering correction and Do Rayleigh
 !    ---WARNING. SS Flag turned off

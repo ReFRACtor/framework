@@ -190,10 +190,6 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int npars, int surface_type, b
 
   twostream_interface_.reset( new Twostream_L_Master( thread, nthreads, nlayers, ntotal, n_geometries, n_user_angles, n_user_relazms, nbeams, earth_radius, npars, nspars) );
 
-  // Lambertian albedo values are stored seperate from BRDF data structures
-  // Do this after TwoStream has been instantiated
-  brdf_driver_->set_lambertian_albedo( twostream_interface_->lambertian_albedo()(0) );
-
   // Initialize BRDF data structure
   brdf_driver_->initialize_brdf_inputs(surface_type_);
 
@@ -217,11 +213,8 @@ void TwostreamRtDriver::initialize_rt()
   // Set stream value for BRDF interface to the same value used by 2stream interface
   brdf_interface()->stream_value( twostream_interface_->stream_value() );
 
-  // Leave false if doing lambertian
-  if(surface_type_ == LAMBERTIAN)
-    twostream_interface_->do_brdf_surface(false);
-  else
-    twostream_interface_->do_brdf_surface(true);
+  // Always usr BRDF supplement, even for lambertian albedo
+  twostream_interface_->do_brdf_surface(true);
    
   // Flags for viewing mode
   twostream_interface_->do_upwelling(true);
