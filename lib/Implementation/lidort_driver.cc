@@ -548,9 +548,9 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
   // Therefore you will notice that by not multiplying dtau/dxi by xi and only
   // dividing by xi, we are cancelling out the xi in the result and hence
   // the driver really return dI/dxi
-  Array<double, 2> l_deltau( linoptical.ts_l_deltau_vert_input()(rjac,rlay,0) );
-  Array<double, 2> l_omega( linoptical.ts_l_omega_total_input()(rjac,rlay,0) );
-  Array<double, 3> l_phasmoms( linoptical.ts_l_phasmoms_total_input()(rjac,rmom,rlay,0) );
+  Array<double, 2> l_deltau( linoptical.ts_l_deltau_vert_input()(rjac,rlay) );
+  Array<double, 2> l_omega( linoptical.ts_l_omega_total_input()(rjac,rlay) );
+  Array<double, 3> l_phasmoms( linoptical.ts_l_phasmoms_total_input()(rjac,rmom,rlay) );
 
   // Transpose these to match dimensions used internally
   l_deltau.transposeSelf(secondDim, firstDim);
@@ -616,7 +616,7 @@ double LidortRtDriver::get_intensity() const
 
   // Total Intensity I(t,v,d,T) at output level t, output geometry v,
   // direction d, thread T
-  return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx-1,0);
+  return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx-1);
 }
 
 void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const
@@ -630,10 +630,10 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
 
   // Surface Jacobians KR(r,t,v,d) with respect to surface variable r
   // at output level t, geometry v, direction d
-  jac_surf.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx-1, 0).copy() );
+  jac_surf.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx-1).copy() );
 
   // Get profile jacobians
   // Jacobians K(q,n,t,v,d) with respect to profile atmospheric variable
   // q in layer n, at output level t, geometry v, direction d
-  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, lid_pars.upidx-1, 0).copy() );
+  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, lid_pars.upidx-1).copy() );
 }

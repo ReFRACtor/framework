@@ -247,7 +247,7 @@ SUBROUTINE TWOSTREAM_LS_BRDFMASTER &
 !  Exception handling. !@@ Added, 12/31/12
 
       INTEGER      , intent(out) :: status_brdfsup
-      CHARACTER*(*), intent(out) :: message, action
+      CHARACTER*100, intent(out) :: message, action
 
 !  Local BRDF functions
 !  ====================

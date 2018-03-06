@@ -53,7 +53,7 @@ protected:
 
 class TwostreamRtDriver : public SpurrRtDriver {
 public:
-  TwostreamRtDriver(int nlayers, int npars, int surface_type, bool do_fullquadrature = true, bool pure_nadir = false);
+  TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true);
 
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
   void setup_geometry(double sza, double azm, double zen) const;
@@ -77,19 +77,17 @@ public:
 
   boost::shared_ptr<Twostream_Ls_Brdf_Supplement> brdf_interface() const { return twostream_brdf_driver()->brdf_interface(); }
  
-  boost::shared_ptr<Twostream_L_Master> twostream_interface() const { return twostream_interface_; }
+  boost::shared_ptr<Twostream_Lps_Master> twostream_interface() const { return twostream_interface_; }
   
   bool do_full_quadrature() const { return do_fullquadrature_; };
-  bool pure_nadir() const { return pure_nadir_; }
 
 protected:
   void initialize_rt();
 
   int surface_type_;
   bool do_fullquadrature_;
-  bool pure_nadir_;
 
-  boost::shared_ptr<Twostream_L_Master> twostream_interface_;
+  boost::shared_ptr<Twostream_Lps_Master> twostream_interface_;
 };
 
 }

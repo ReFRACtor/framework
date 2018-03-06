@@ -36,7 +36,7 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   blitz::Array<double, 2> jac_atm_lid;
   blitz::Array<double, 1> jac_surf_lid;
 
-  TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, nparam, surface_type, false);
+  TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, surface_type, false);
 
   // Turn off delta-m scaling
   twostream_driver.twostream_interface()->do_d2s_scaling(false);
@@ -325,8 +325,8 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   int nlayer, nparm, surface_type, do_fullquadrature;
   captured_input >> nlayer >> nparm >> surface_type 
                  >> do_fullquadrature;
-  TwostreamRtDriver d(nlayer, nparm, surface_type, 
-                      (do_fullquadrature == 1));
+  TwostreamRtDriver d(nlayer, surface_type, (do_fullquadrature == 1));
+                      
   double refl;
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf;
