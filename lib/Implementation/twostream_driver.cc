@@ -31,6 +31,8 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int surface_type)
 
   brdf_params.reference( twostream_brdf_->brdf_parameters() );
   brdf_factors.reference( twostream_brdf_->brdf_factors() );
+
+  twostream_brdf_->do_solar_sources(true);
 }
 
 void TwostreamBrdfDriver::setup_geometry(double sza, double azm, double zen) const
@@ -177,9 +179,6 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_full
     lid_pars.max_atmoswfs, lid_pars.max_surfacewfs, lid_pars.max_sleavewfs, 
     nlayers, ntotal, n_user_streams, n_user_relazms, nbeams, earth_radius, n_geometries) );
 
-  // Set a value or divide by zeros will occur
-  twostream_interface_->bvpscalefactor(1.0);
-
   // Initialize BRDF data structure
   brdf_driver_->initialize_brdf_inputs(surface_type_);
 
@@ -188,6 +187,10 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_full
 
 void TwostreamRtDriver::initialize_rt()
 {
+
+  // Set a value or divide by zeros will occur
+  twostream_interface_->bvpscalefactor(1.0);
+
   // We are doing solar sources only
   twostream_interface_->do_solar_sources(true);
 

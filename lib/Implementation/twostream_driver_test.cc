@@ -101,7 +101,7 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   twostream_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, ts_surface_params,
                                                    od, ssa, pf, refl_ts, jac_atm_ts, jac_surf_ts);
-  
+
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
               << "refl_ts  = " << refl_ts << std::endl;
