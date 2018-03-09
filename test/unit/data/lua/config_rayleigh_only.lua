@@ -1,6 +1,5 @@
 ------------------------------------------------------------
---- Do a run using the FixedLevelBaseConfig, but have Rayleigh only with
---- no Aerosol.
+--- Do a run but with Rayleigh only and no Aerosol.
 ---
 --- Also use LRad, but not LSI
 ------------------------------------------------------------
