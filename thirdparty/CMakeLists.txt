@@ -73,7 +73,7 @@ list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 # Configure packages we will possibly build here
 include(blitz/blitz.cmake)
 list(APPEND THIRDPARTY_TARGETS blitz)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libblitz.so)
+list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libblitz${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 find_package(Lua 5.2)
 if(LUA_FOUND AND (NOT BUILD_LUA))
@@ -82,8 +82,10 @@ if(LUA_FOUND AND (NOT BUILD_LUA))
 else()
     message(STATUS "Building Lua from source")
     include(lua/lua.cmake)
+    set(LUA_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX})
     list(APPEND THIRDPARTY_TARGETS lua)
-    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua.so)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblua${CMAKE_SHARED_LIBRARY_SUFFIX})
+
     # Override the value put into the CACHE by find_package
     set(LUA_INCLUDE_DIR ${THIRDPARTY_INCLUDE_DIR} CACHE PATH "Location of Lua includes" FORCE)
 endif()
@@ -99,12 +101,12 @@ else()
         add_dependencies(luabind lua)
     endif()
     list(APPEND THIRDPARTY_TARGETS luabind)
-    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libluabind.so)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libluabind${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
 include(2stream/2stream.cmake)
 list(APPEND THIRDPARTY_TARGETS twostream)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream.so)
+list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 # Duplicates the setting of these properties as done in lidort-*/CMakeCache.txt
 # because that cmake file is treated as an external project and not exposed to
@@ -126,7 +128,7 @@ set(LIDORT_MAXATMOSWFS ${LIDORT_MAXATMOSWFS} PARENT_SCOPE)
 
 include(lidort-3.7/lidort.cmake)
 list(APPEND THIRDPARTY_TARGETS lidort)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort.so)
+list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 # Custom target that makes it easier to compile all third party independently
 add_custom_target(thirdparty DEPENDS ${THIRDPARTY_TARGETS})

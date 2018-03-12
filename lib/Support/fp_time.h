@@ -56,6 +56,13 @@ public:
   {Time res; res.unix_time_ = pgs + 725846400.0; return res;}
 
 //-----------------------------------------------------------------------
+/// Return time from given IDPS Epoch Time (IET) (epoch of 1958-01-01).
+//-----------------------------------------------------------------------
+
+  static Time time_iet(double iet)
+  {Time res; res.unix_time_ = iet - 378691200.0; return res;}
+
+//-----------------------------------------------------------------------
 /// Add given number of seconds to Time.
 //-----------------------------------------------------------------------
 
@@ -78,6 +85,12 @@ public:
 //-----------------------------------------------------------------------
 
   double pgs_time() const { return unix_time_ - 725846400.0;}
+
+//-----------------------------------------------------------------------
+/// Give time in IDPS Epoch Time (IET) time, as double (epoch 1958-01-01)
+//-----------------------------------------------------------------------
+
+  double iet_time() const { return unix_time_ + 378691200.0;}
 
   double frac_day_of_year() const;
   double frac_year() const;

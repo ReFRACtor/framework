@@ -30,7 +30,8 @@ add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDO
 # Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
 target_link_libraries(test_all refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
-
+set_target_properties(test_all PROPERTIES INSTALL_RPATH "${PROJECT_BINARY_DIR}/lib;${CMAKE_INSTALL_PREFIX}/lib")
+set_target_properties(test_all PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE)
 #####
 # Define unit tests
 foreach(test_file ${FP_TEST_FILES})
