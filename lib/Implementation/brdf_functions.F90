@@ -110,7 +110,7 @@ contains
       N_BRDF_PARAMETERS(2) = 3
       BRDF_PARAMETERS = ZERO
       ! Breon refactive index squared, same as value hardcoded inside lrad
-      BRDF_PARAMETERS(1,1)   = 2.25_fpk 
+      BRDF_PARAMETERS(1,1)   = 1.5_fpk  ! refractive index (value itself, not the square of it)
       BRDF_PARAMETERS(2,1)   = params(2) ! hotspot parameter
       BRDF_PARAMETERS(2,2)   = params(3) ! Asymmetry parameter
       BRDF_PARAMETERS(2,3)   = params(4) ! anisotropy
@@ -314,7 +314,7 @@ contains
       N_BRDF_PARAMETERS(2) = 3
       BRDF_PARAMETERS = ZERO
       ! Breon refactive index squared, same as value hardcoded inside lrad
-      BRDF_PARAMETERS(1,1)   = 2.25_fpk 
+      BRDF_PARAMETERS(1,1)   = 1.5_fpk  ! refractive index (value itself, not the square of it)
       BRDF_PARAMETERS(2,1)   = params(2) ! Overall amplitude
       BRDF_PARAMETERS(2,2)   = params(3) ! Asymmetry parameter
       BRDF_PARAMETERS(2,3)   = params(4) ! Geometric factor
