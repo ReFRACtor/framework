@@ -18,9 +18,9 @@ foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support E
     install(DIRECTORY ${sub_dir}/ DESTINATION include/refractor
         FILES_MATCHING 
             PATTERN "*.h" 
+            PATTERN "*.hpp" 
             PATTERN "*_fixture.h" EXCLUDE
             PATTERN "unit_test*.h" EXCLUDE
-            PATTERN "boost" EXCLUDE 
             PATTERN "l_rad_fortran" EXCLUDE
             PATTERN "spectrum_doxygen.h" EXCLUDE)
 endforeach(sub_dir)
