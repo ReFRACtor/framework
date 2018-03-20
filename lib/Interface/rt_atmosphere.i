@@ -65,7 +65,6 @@ public:
   virtual ArrayAd<double, 2>
     intermediate_variable(double wn, int spec_index) const = 0;
   %python_attribute_abstract(ground, boost::shared_ptr<Ground>)
-  %python_attribute_abstract(uplooking, bool)
   virtual void reset_timer();
   std::string print_to_string() const;
 };

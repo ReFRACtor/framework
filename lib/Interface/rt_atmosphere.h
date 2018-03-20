@@ -229,13 +229,6 @@ public:
   virtual const boost::shared_ptr<Ground> ground() const = 0;
 
 //-----------------------------------------------------------------------
-/// Return true if  we have an atmosphere for uplooking mode, i.e., we
-/// don't have a ground defined.
-//-----------------------------------------------------------------------
-
-  virtual bool uplooking() const = 0;
-
-//-----------------------------------------------------------------------
 /// Reset timer
 //-----------------------------------------------------------------------
 

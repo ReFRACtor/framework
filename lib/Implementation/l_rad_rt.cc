@@ -167,8 +167,8 @@ void LRadRt::initialize(const SpectralBound& Spec_bound, double Spectrum_spacing
         range_check(zen(i), 0.0, 90.0);
     }
 
-    if(atm->uplooking()) {
-        throw Exception("LRadDriver cannot be used in uplooking mode");
+    if(!atm->ground()) {
+        throw Exception("LRadDriver cannot be used without a ground");
     }
 
     for(int i = 0; i < number_spectrometer(); ++i) {
