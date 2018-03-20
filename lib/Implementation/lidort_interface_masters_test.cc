@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
                     muser_inputs.ts_n_user_streams()) - 1 );
   Range rbeams( 0, brdf_inputs.bs_nbeams() - 1 );
   Range rdirs( 0, 1 ); // up and down welling
-  Range ratmwfs( 0, min(lincontrol.ts_layer_vary_number()) - 1 );
+  Range ratmwfs( 0, min(layer_vary_number(Range(0, nlayers-1))) - 1 );
   Range rsurfwfs( 0, 0 ); // only first index has values // brdf_inputs.bs_n_surface_wfs() 
 
   // Compare only the first thread dimension (last one) since the lps tester
