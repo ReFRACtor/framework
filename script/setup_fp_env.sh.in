@@ -1,28 +1,28 @@
-prefix=@CMAKE_INSTALL_PREFIX@
-export L2_EXE_PATH=$prefix/bin
-export L2_FP_SRC_PATH=@PROJECT_SOURCE_DIR@
-export L2_INPUT_PATH=$prefix/install/etc/refractor/config
+refr_install_path=@CMAKE_INSTALL_PREFIX@
+refr_etc_path=$refr_install_path/etc/refractor
+
+export REFRACTOR_INPUTS=$refr_etc_path/input
 export abscodir=@ABSCO_DIR@
 export merradir=@MERRA_DIR@
 
 if [ -n "@PYTHON_INSTALL_DIR@" ]; then
-    L2_PYTHON_PATH=$prefix/@PYTHON_INSTALL_DIR@
+    refr_python_path=$refr_install_path/@PYTHON_INSTALL_DIR@
 fi
 
 if [ -n "$LD_LIBRARY_PATH" ]; then
-  export LD_LIBRARY_PATH=$prefix/lib:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$refr_install_path/lib:$LD_LIBRARY_PATH
 else
-  export LD_LIBRARY_PATH=$prefix/lib
+  export LD_LIBRARY_PATH=$refr_install_path/lib
 fi
 
 if [ -n "$PYTHONPATH" ]; then
-  export PYTHONPATH=$L2_PYTHON_PATH:$PYTHONPATH
+  export PYTHONPATH=$refr_python_path:$PYTHONPATH
 else
-  export PYTHONPATH=$L2_PYTHON_PATH
+  export PYTHONPATH=$refr_python_path
 fi
 
 if [ -n "$LUA_PATH" ]; then
-    export LUA_PATH="$L2_INPUT_PATH/?.lua;$LUA_PATH"
+    export LUA_PATH="$refr_etc_path/config/?.lua;$LUA_PATH"
 else
-    export LUA_PATH="$L2_INPUT_PATH/?.lua;"
+    export LUA_PATH="$refr_etc_path/config/?.lua;"
 fi

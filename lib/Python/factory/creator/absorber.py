@@ -4,28 +4,56 @@ import numpy as np
 
 from .base import Creator, ParamPassThru
 from .value import CreatorFlaggedValue
+from .util import ExtendedFormatter
 from .. import param
 
 from refractor import framework as rf
 
-class GasVmrAprioriMetL1b(Creator):
-    "Creates a VMR apriori for a gas species using the TCCON method"
+DEFAULT_REFERENCE_ATM_FILENAME = os.path.join(os.environ.get("REFRACTOR_INPUTS", "$ENV{REFRACTOR_INPUTS}"), "reference_atmosphere.h5")
 
+class ReferenceAtmFileMixin(object):
+
+    def ref_atm_data(self):
+
+        if self.reference_atm_file() is not None:
+            if not os.path.exists(self.reference_atm_file()):
+                raise param.ParamError("Could not find reference atmosphere file supplied through config: %s" % self.reference_atm_file())
+
+            ref_atm_data = rf.HdfFile(self.reference_atm_file())
+        else:
+            if not os.path.exists(DEFAULT_REFERENCE_ATM_FILENAME):
+                raise param.ParamError("Could not find default reference atmosphere file: %s" % DEFAULT_REFERENCE_ATM_FILENAME)
+
+            ref_atm_data = rf.HdfFile(DEFAULT_REFERENCE_ATM_FILENAME)
+
+        return ref_atm_data
+
+class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
+    "Creates a VMR apriori for a gas species using the TCCON method"
 
     l1b = param.InstanceOf(rf.Level1b)
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
     altitudes = param.ObjectVector("altitude")
-    reference_atm_file = param.Scalar(str)
-    gas_name = param.Scalar(str)
     temp_avg_window = param.Scalar(int, default=11)
 
+    # Normally passed from through the create method from the AbsorberGasDefinition creator
+    gas_name = param.Scalar(str, required=False)
+
+    # Normally use the distributed version of this file
+    reference_atm_file = param.Scalar(str, required=False)
+
     def create(self, **kwargs):
-        ref_atm_data = rf.HdfFile(self.reference_atm_file())
-        apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitudes()[0], ref_atm_data, "/Reference_Atmosphere", self.gas_name(), self.temp_avg_window())
+
+        if self.gas_name() is not None:
+            gas_name = self.gas_name()
+        elif gas_name is None:
+            raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
+
+        apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitudes()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
         return apriori_obj.apriori_vmr(self.pressure())
 
-class GasVmrApriori(Creator):
+class GasVmrApriori(Creator, ReferenceAtmFileMixin):
     "Creates a VMR apriori for a gas species using the TCCON method"
 
     pressure = param.InstanceOf(rf.Pressure)
@@ -34,17 +62,26 @@ class GasVmrApriori(Creator):
     time = param.Iterable(rf.Time)
     altitudes = param.ObjectVector("altitude")
     reference_atm_file = param.Scalar(str)
-    gas_name = param.Scalar(str)
     temp_avg_window = param.Scalar(int, default=11)
 
-    def create(self, **kwargs):
-        ref_atm_data = rf.HdfFile(self.reference_atm_file())
+    # Normally passed from through the create method from the AbsorberGasDefinition creator
+    gas_name = param.Scalar(str, required=False)
+
+    # Normally use the distributed version of this file
+    reference_atm_file = param.Scalar(str, required=False)
+
+    def create(self, gas_name=None, **kwargs):
+
+        if self.gas_name() is not None:
+            gas_name = self.gas_name()
+        elif gas_name is None:
+            raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
         pressure_levels = self.pressure().pressure_grid.value.value
         temperature_levels = self.temperature().temperature_grid(self.pressure()).value.value
 
         apriori_obj = rf.GasVmrApriori(pressure_levels, temperature_levels, self.latitude().value[0], self.time()[0], \
-                self.altitudes()[0], ref_atm_data, "/Reference_Atmosphere", self.gas_name(), self.temp_avg_window())
+                self.altitudes()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
         return apriori_obj.apriori_vmr()
 
 class AbsorberVmrLevel(CreatorFlaggedValue):
@@ -52,12 +89,17 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
 
     pressure = param.InstanceOf(rf.Pressure)
 
+    # Normally passed from through the create method from the AbsorberGasDefinition creator
+    gas_name = param.Scalar(str, required=False)
+
     def create(self, gas_name=None, **kwargs):
 
-        if gas_name is None:
+        if self.gas_name() is not None:
+            gas_name = self.gas_name()
+        elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrLevel(self.pressure(), self.value(), self.retrieval_flag(), gas_name)
+        return rf.AbsorberVmrLevel(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
 
 class AbsorberVmrMet(CreatorFlaggedValue):
 
@@ -69,7 +111,7 @@ class AbsorberVmrMet(CreatorFlaggedValue):
         if gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value()[0], bool(self.retrieval_flag()[0]), gas_name)
+        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
 
 class AbscoHdf(Creator):
 
@@ -78,9 +120,14 @@ class AbscoHdf(Creator):
     table_scale = param.Choice(param.Iterable(), param.Scalar(float), default=1.0)
     spec_win = param.InstanceOf(rf.SpectralWindow)
 
-    def create(self, **kwargs):
+    def create(self, gas_name=None, **kwargs):
 
-        absco_filename = os.path.join(self.absco_base_path(), self.filename())
+        # Use ExtendedFormatter that allows using l and u conversion codes for upper/lower case conversion
+        fn_formatter = ExtendedFormatter()
+        try:
+            absco_filename = fn_formatter.format(self.filename(), gas=gas_name, **self.common_store)
+        except ValueError as exc:
+            raise param.ParamError('Error formatting absco filename template "%s": %s' % (self.filename(), exc))
 
         if not os.path.exists(absco_filename):
             raise param.ParamError("HDF ABSCO filename does not exist: %s" % absco_filename)
@@ -114,15 +161,19 @@ class AbsorberAbsco(Creator):
     altitudes = param.ObjectVector("altitude")
     num_sub_layers = param.Scalar(int, required=False)
     constants = param.InstanceOf(rf.Constant)
- 
+    default_gas_definition = param.Dict(required=False)
+            
     def create(self, **kwargs):
 
         vmrs = rf.vector_absorber_vmr()
         absorptions = rf.vector_gas_absorption()
 
         for gas_name in self.gases():
-            self.register_parameter(gas_name, param.Dict())
-            gas_def = self.param(gas_name, gas_name=gas_name)
+            if gas_name in self.parameters:
+                self.register_parameter(gas_name, param.Dict())
+                gas_def = self.param(gas_name, gas_name=gas_name)
+            else:
+                gas_def = self.default_gas_definition(gas_name=gas_name)
 
             if not "vmr" in gas_def:
                 raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)

@@ -1,5 +1,6 @@
 # Install files from this directory into a common subdirectory
 set(INPUT_INSTALL_PREFIX etc/refractor)
+set(INPUT_INSTALL_PREFIX ${INPUT_INSTALL_PREFIX} PARENT_SCOPE)
 
 # Create version.lua file by evaluating cmake variables and install
 configure_file (

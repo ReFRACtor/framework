@@ -97,8 +97,16 @@ install(TARGETS l2_fp
 install(DIRECTORY "support/utils/" DESTINATION bin
     USE_SOURCE_PERMISSIONS)
 
+# Build documentation for project
+add_subdirectory(doc)
+
+# Add unit and full tests
+add_subdirectory(test)
+
 # Configure and install enviroment setup script
 # Install to base of installation prefix
+# Put here at the end so any variables created by subdirectories
+# can be included.
 configure_file (
     "${PROJECT_SOURCE_DIR}/script/setup_fp_env.sh.in"
     "${PROJECT_BINARY_DIR}/setup_fp_env.sh"
@@ -106,8 +114,3 @@ configure_file (
 
 install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
-# Build documentation for project
-add_subdirectory(doc)
-
-# Add unit and full tests
-add_subdirectory(test)

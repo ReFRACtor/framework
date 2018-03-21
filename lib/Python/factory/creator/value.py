@@ -11,8 +11,8 @@ class CreatorFlaggedValue(Creator):
     value = param.Choice(param.Array(dims=1), param.ArrayWithUnit(dims=1))
     retrieved = param.Scalar(bool, required=False)
 
-    def retrieval_flag(self):
-        val = self.value()
+    def retrieval_flag(self, **kwargs):
+        val = self.value(**kwargs)
         retrieved = self.retrieved()
 
         if hasattr(val, "value"):
@@ -31,8 +31,8 @@ class CreatorFlaggedValueMultiChannel(Creator):
     value = param.Choice(param.Array(dims=2), param.ArrayWithUnit(dims=2))
     retrieved = param.Iterable(required=False)
 
-    def retrieval_flag(self):
-        val = self.value()
+    def retrieval_flag(self, **kwargs):
+        val = self.value(**kwargs)
         retrieved = self.retrieved()
 
         if hasattr(val, "value"):
@@ -57,7 +57,7 @@ class ArrayWithUnit(Creator):
 
     def create(self, **kwargs):
 
-        value = self.value()
+        value = self.value(**kwargs)
         units = self.units()
 
         num_dims = len(value.shape)
