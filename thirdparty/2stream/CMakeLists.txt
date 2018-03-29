@@ -5,7 +5,7 @@ project(twostream)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB TWOSTREAM_SRC "*.F90")
+file(GLOB TWOSTREAM_SRC "*.f90")
 MESSAGE("Current directory: ${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_library(twostream SHARED ${TWOSTREAM_SRC})

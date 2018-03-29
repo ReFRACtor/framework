@@ -36,7 +36,7 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   blitz::Array<double, 2> jac_atm_lid;
   blitz::Array<double, 1> jac_surf_lid;
 
-  TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, nparam, surface_type, false);
+  TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, surface_type, false);
 
   // Turn off delta-m scaling
   twostream_driver.twostream_interface()->do_d2s_scaling(false);
@@ -101,7 +101,7 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   twostream_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, ts_surface_params,
                                                    od, ssa, pf, refl_ts, jac_atm_ts, jac_surf_ts);
-  
+
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
               << "refl_ts  = " << refl_ts << std::endl;
@@ -285,7 +285,7 @@ BOOST_AUTO_TEST_CASE(brdf)
   ArrayAd<double, 1> taur(nlayer, nparam);
 
   // Use simple lambertian throughout
-  int surface_type = BREONVEG;
+  int surface_type = BPDFVEGN;
   
   // Check jacobian using finite derivatives
   // od, ssa
@@ -325,8 +325,8 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   int nlayer, nparm, surface_type, do_fullquadrature;
   captured_input >> nlayer >> nparm >> surface_type 
                  >> do_fullquadrature;
-  TwostreamRtDriver d(nlayer, nparm, surface_type, 
-                      (do_fullquadrature == 1));
+  TwostreamRtDriver d(nlayer, surface_type, (do_fullquadrature == 1));
+                      
   double refl;
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf;

@@ -609,7 +609,7 @@ void AtmosphereOco::print(std::ostream& Os) const
   if(ground_ptr)
     opad << *ground_ptr << "\n";
   else
-    opad << "No ground, uplooking mode\n";
+    opad << "No ground\n";
   opad.strict_sync();
   for(int i = 0; i < (int) alt.size(); ++i) {
     Os << "  Altitude[" << i << "]:\n";

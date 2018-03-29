@@ -1,7 +1,7 @@
 import numpy as np
 
 from .base import Creator
-from .apriori import CreatorAprioriMultiChannel
+from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
 from .. import param
 
 from refractor import framework as rf
@@ -23,7 +23,7 @@ class IlsInstrument(Creator):
             ils_vec.push_back( rf.IlsConvolution(disp, ils_func, half_width) )
         return rf.IlsInstrument(ils_vec, self.instrument_correction())
 
-class DispersionPolynomial(CreatorAprioriMultiChannel):
+class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
     number_samples = param.Array(dims=1)
     is_one_based = param.Scalar(bool, default=False)
@@ -32,11 +32,17 @@ class DispersionPolynomial(CreatorAprioriMultiChannel):
     num_channels = param.Scalar(int)
     spec_win = param.InstanceOf(rf.SpectralWindow)
 
+    def retrieval_flag(self):
+        # Mask out non retrieved parameters
+        ret_flag = super().retrieval_flag()
+        ret_flag[:, slice(self.num_parameters(), ret_flag.shape[1])] = False
+        return ret_flag
+
     def create(self, **kwargs):
 
-        apriori = self.apriori()
+        disp_coeffs = self.value()
         retrieval_flag = self.retrieval_flag()
-        
+
         desc_band_name = self.desc_band_name()
         number_samples = self.number_samples()
         is_one_based = self.is_one_based()
@@ -44,7 +50,7 @@ class DispersionPolynomial(CreatorAprioriMultiChannel):
         disp = []
         vec_disp = rf.vector_dispersion()
         for chan_idx in range(self.num_channels()):
-            chan_disp = rf.DispersionPolynomial(apriori.value[chan_idx, :], retrieval_flag[chan_idx, :], apriori.units,
+            chan_disp = rf.DispersionPolynomial(disp_coeffs.value[chan_idx, :], retrieval_flag[chan_idx, :], disp_coeffs.units,
                                                 desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
             disp.append(chan_disp)
             vec_disp.push_back(chan_disp)
@@ -113,6 +119,21 @@ class IlsGaussian(Creator):
             ils_func.append( rf.IlsGaussian(hwhm.value[chan_idx], desc_band_name[chan_idx], hdf_band_name[chan_idx]) )
 
         return ils_func
+
+class InstrumentDoppler(CreatorFlaggedValue):
+
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        rel_vel = self.value()
+        ret_flag = self.retrieval_flag()
+
+        inst_doppler = []
+        for chan_idx in range(self.num_channels()):
+            inst_doppler.append( rf.InstrumentDoppler(rel_vel[chan_idx], bool(ret_flag[chan_idx])) ) 
+
+        return inst_doppler
 
 class InstrumentCorrectionList(Creator):
 

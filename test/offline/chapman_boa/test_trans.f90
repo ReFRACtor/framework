@@ -78,7 +78,7 @@ PROGRAM TESTREFRAC
 !      do_plane_parallel      = .true.
 
       if ( do_refractive_geometry .and. do_plane_parallel ) &
-         stop'Stop: Plane-parallel and refractive dont go together!'
+         stop 'Stop: Plane-parallel and refractive dont go together!'
 
       if ( do_refractive_geometry ) then
          write(*,*) 'height_grid = ', height_grid

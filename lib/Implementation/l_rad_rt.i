@@ -14,6 +14,9 @@
 %fp_shared_ptr(FullPhysics::LRadRt);
 
 namespace FullPhysics {
+
+%feature("notabstract") LRadRt;
+
 class LRadRt : public RadiativeTransferSingleWn {
 public:
     LRadRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Rt,
@@ -23,9 +26,7 @@ public:
            const blitz::Array<double, 1>& Azm, 
            bool Pure_nadir,
            bool Use_first_order_scatt_calc = true,
-           bool Do_second_order = false,
-           double Spectrum_spacing = 0.01,
-           const PsMode ps_mode = DETECT);
+           bool Do_second_order = false);
   
     LRadRt(const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
            const boost::shared_ptr<RtAtmosphere>& Atm,
@@ -36,9 +37,7 @@ public:
            bool Pure_nadir,
            int Number_stokes,
            bool Do_second_order = false,
-           int Number_stream = 4,
-           double Spectrum_spacing = 0.01,
-           const PsMode ps_mode = DETECT);
+           int Number_stream = 4);
 
   %python_attribute(number_stokes, virtual int)
   %python_attribute(number_stream, virtual int)

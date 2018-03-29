@@ -363,6 +363,7 @@ function ConfigCommon:do_config()
    logger = FpLogger(self.log_level)
    forward_model = self.forward_model
    solver = self.conn_solver
+   state_vector = self.state_vector
    -- This should be temporary, until we merge solver and iterative_solver
    iterative_solver = self.iter_solver
    stat_method_map = self.stat_method_map
@@ -3232,7 +3233,7 @@ function ConfigCommon.radiative_transfer_lsi:create()
    local rt_low
    if(low_stream == 1 and use_twostream) then
       rt_low = TwostreamRt(self.config.atmosphere, self.config.stokes_coefficient,
-                           sza, zen, azm, do_full_quadrature, pure_nadir)
+                           sza, zen, azm, do_full_quadrature)
    else
       rt_low = LidortRt(self.config.atmosphere, self.config.stokes_coefficient,
                         sza, zen, azm, pure_nadir, low_stream, nmom_low, 
@@ -3408,7 +3409,7 @@ function ConfigCommon:connor_solver(config)
    config.register_output:push_back(out)
    config.conn_solver = ConnorSolver(cost_func, conv, 
 				     self.gamma_initial)
-   local iter_log = SolverIterationLog(config.state_vector)
+   local iter_log = ConnorIterationLog(config.state_vector)
    iter_log:add_as_observer(config.conn_solver)
    out = ConnorSolverOutput(config.conn_solver, config.write_jacobian)
    config.register_output:push_back(out)

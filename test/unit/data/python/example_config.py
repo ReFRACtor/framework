@@ -16,6 +16,7 @@ ils_input = h5py.File(ils_file)
 
 solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
 aerosol_prop_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_aerosol_combined.h5")
+covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
 data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
 l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
@@ -33,7 +34,7 @@ def static_units(dataset):
 
 config_def = {
     'creator': creator.base.SaveToCommon,
-    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'state_vector'],
+    'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
     'input': {
         'creator': creator.base.SaveToCommon,
         'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -79,7 +80,7 @@ config_def = {
         },
         'dispersion': {
             'creator': creator.instrument.DispersionPolynomial,
-            'apriori': {
+            'value': {
                 'creator': creator.l1b.ValueFromLevel1b,
                 'field': 'spectral_coefficient',
             },
@@ -101,7 +102,7 @@ config_def = {
         'creator': creator.atmosphere.AtmosphereCreator,
         'pressure': {
             'creator': creator.atmosphere.PressureSigma,
-            'apriori': {
+            'value': {
                 'creator': creator.met.ValueFromMet,
                 'field': "surface_pressure",
             },
@@ -110,7 +111,7 @@ config_def = {
         },
         'temperature': {
             'creator': creator.atmosphere.TemperatureMet,
-            'apriori': static_value("Temperature/Offset/a_priori")
+            'value': static_value("Temperature/Offset/a_priori")
         },
         'altitudes': { 
             'creator': creator.atmosphere.AltitudeHydrostatic,
@@ -130,7 +131,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrLevel,
-                    'apriori': {
+                    'value': {
                         'creator': creator.absorber.GasVmrAprioriMetL1b,
                         'gas_name': 'CO2',
                         'reference_atm_file': static_input_file,
@@ -146,7 +147,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrMet,
-                    'apriori': np.array([1.0]),
+                    'value': np.array([1.0]),
                 },
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,
@@ -158,7 +159,7 @@ config_def = {
                 'creator': creator.absorber.AbsorberGasDefinition,
                 'vmr': {
                     'creator': creator.absorber.AbsorberVmrLevel,
-                    'apriori': {
+                    'value': {
                         'creator': creator.atmosphere.ConstantForAllLevels,
                         'value': static_value("Gas/O2/average_mole_fraction")[0],
                     },
@@ -178,7 +179,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 1, 0.2]),
+                    'value': np.array([-4.38203, 1, 0.2]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -189,7 +190,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 1, 0.2]),
+                    'value': np.array([-4.38203, 1, 0.2]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -200,7 +201,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 0.75, 0.1]),
+                    'value': np.array([-4.38203, 0.75, 0.1]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -212,7 +213,7 @@ config_def = {
                 'creator': creator.aerosol.AerosolDefinition,
                 'extinction': {
                     'creator': creator.aerosol.AerosolShapeGaussian,
-                    'apriori': np.array([-4.38203, 0.3, 0.04]),
+                    'value': np.array([-4.38203, 0.3, 0.04]),
                 },
                 'properties': {
                     'creator': creator.aerosol.AerosolPropertyHdf,
@@ -230,7 +231,7 @@ config_def = {
             'child': 'lambertian',
             'lambertian': {
                 'creator': creator.ground.GroundLambertian,
-                'apriori': {
+                'value': {
                     'creator': creator.ground.AlbedoFromSignalLevel,
                     'signal_level': {
                         'creator': creator.l1b.ValueFromLevel1b,
@@ -249,7 +250,7 @@ config_def = {
         },
     },
     'radiative_transfer': {
-        'creator': creator.rt.LidortRt,
+        'creator': creator.rt.LsiRt,
         'solar_zenith': {
             'creator': creator.l1b.ValueFromLevel1b,
             'field': "solar_zenith",
@@ -259,17 +260,17 @@ config_def = {
             'field': "sounding_zenith",
         },
         'observation_azimuth': {
-            'creator': creator.l1b.ValueFromLevel1b,
-            'field': "sounding_azimuth",
+            'creator': creator.l1b.RelativeAzimuthFromLevel1b,
         },
-        'num_streams': 4,
-        'num_mom': 16,
+        'num_low_streams': 1,
+        'num_high_streams': 8,
+        'lsi_config_file': static_input_file,
     },
     'forward_model': {
         'creator': creator.forward_model.ForwardModel,
         'spectrum_effect': {
             'creator': creator.forward_model.SpectrumEffectList,
-            'effects': ["solar_model",],
+            'effects': ["solar_model","instrument_doppler"],
             'solar_model': {
                 'creator': creator.solar_model.SolarAbsorptionAndContinuum,
                 'doppler': {
@@ -304,10 +305,55 @@ config_def = {
                     'solar_data_file': solar_file,
                 },
             },
+            'instrument_doppler': {
+                'creator': creator.instrument.InstrumentDoppler,
+                'value': {
+                    'creator': creator.l1b.ValueFromLevel1b,
+                    'field': "relative_velocity",
+                },
+            },
         },
     },
-    'state_vector': {
-        'creator': creator.retrieval.StateVector,
+    'retrieval': {
+        'creator': creator.retrieval.NLLSRetrieval,
+        'retrieval_components': {
+            'creator': creator.retrieval.SVObserverComponents,
+            'exclude': ['absorber_levels/O2', 'instrument_doppler'],
+            # Match order tradtionally used in old system
+            'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol_shape', 'ground', 'dispersion'],
+        },
+        'state_vector': {
+            'creator': creator.retrieval.StateVector,
+        },
+        'initial_guess': {
+            'creator': creator.retrieval.InitialGuessFromSV,
+        },
+        'a_priori': {
+            'creator': creator.retrieval.AprioriFromIG,
+        },
+        'covariance': {
+            'creator': creator.retrieval.CovarianceByComponent,
+            'values': {
+                'creator': creator.value.LoadValuesFromHDF,
+                'filename': covariance_file,
+            }
+        },
+        'solver_nlls_gsl': {
+            'creator': creator.retrieval.NLLSSolverGSLLMSDER,
+            'max_cost_function_calls': 10,
+            'dx_tol_abs': 1e-5,
+            'dx_tol_rel': 1e-5, 
+            'g_tol_abs': 1e-5,
+        },
+        'solver': {
+            'creator': creator.retrieval.ConnorSolverMAP,
+            'max_cost_function_calls': 14,
+            'threshold': 2.0,
+            'max_iteration': 7,
+            'max_divergence': 2,
+            'max_chisq': 1.4,
+            'gamma_initial': 10.0,
+        },
     },
 }
 

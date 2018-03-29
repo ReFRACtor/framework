@@ -52,13 +52,13 @@ subroutine brdf_linsup_masters_m_brdf_lin_inputmaster_wrap (filnam_in_len, &
 
 end subroutine brdf_linsup_masters_m_brdf_lin_inputmaster_wrap
 
-subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap (thread_in, &
-                                                           do_debug_restoration_in, &
+subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap (do_debug_restoration_in, &
                                                            nmoments_input_in, &
                                                            brdf_sup_in_in, &
                                                            brdf_linsup_in_in, &
                                                            brdf_sup_out_in, &
-                                                           brdf_linsup_out_in) bind(C)
+                                                           brdf_linsup_out_in, &
+                                                           brdf_sup_outputstatus_in) bind(C)
   use lidort_pars
   use brdf_sup_inputs_def
   use brdf_linsup_inputs_def
@@ -67,15 +67,17 @@ subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap (thread_in, &
   use brdf_sup_aux_m
   use brdf_sup_routines_m
   use brdf_linsup_routines_m
+  use brdf_sup_kernels_m
+  use brdf_linsup_kernels_m
 
   ! Arguments
-  integer(c_int), intent(in) :: thread_in
   logical(c_bool), intent(in) :: do_debug_restoration_in
   integer(c_int), intent(in) :: nmoments_input_in
   type(c_ptr), intent(in) :: brdf_sup_in_in
   type(c_ptr), intent(in) :: brdf_linsup_in_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
   type(c_ptr), intent(out) :: brdf_linsup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   logical(kind=4) :: do_debug_restoration_lcl
@@ -83,6 +85,7 @@ subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap (thread_in, &
   type(brdf_linsup_inputs), pointer :: brdf_linsup_in_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
   type(brdf_linsup_outputs), pointer :: brdf_linsup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
 
   ! Convert input arguments
   do_debug_restoration_lcl = do_debug_restoration_in
@@ -90,14 +93,15 @@ subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap (thread_in, &
   call c_f_pointer(brdf_linsup_in_in, brdf_linsup_in_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
   call c_f_pointer(brdf_linsup_out_in, brdf_linsup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
 
-  call brdf_lin_mainmaster(thread_in, &
-                           do_debug_restoration_lcl, &
+  call brdf_lin_mainmaster(do_debug_restoration_lcl, &
                            nmoments_input_in, &
                            brdf_sup_in_lcl, &
                            brdf_linsup_in_lcl, &
                            brdf_sup_out_lcl, &
-                           brdf_linsup_out_lcl)
+                           brdf_linsup_out_lcl, &
+                           brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_linsup_masters_m_brdf_lin_mainmaster_wrap
 
@@ -150,39 +154,42 @@ subroutine brdf_sup_masters_m_brdf_inputmaster_wrap (filnam_in_len, &
 
 end subroutine brdf_sup_masters_m_brdf_inputmaster_wrap
 
-subroutine brdf_sup_masters_m_brdf_mainmaster_wrap (thread_in, &
-                                                    do_debug_restoration_in, &
+subroutine brdf_sup_masters_m_brdf_mainmaster_wrap (do_debug_restoration_in, &
                                                     nmoments_input_in, &
                                                     brdf_sup_in_in, &
-                                                    brdf_sup_out_in) bind(C)
+                                                    brdf_sup_out_in, &
+                                                    brdf_sup_outputstatus_in) bind(C)
   use lidort_pars
   use brdf_sup_inputs_def
   use brdf_sup_outputs_def
   use brdf_sup_aux_m
+  use brdf_sup_kernels_m
   use brdf_sup_routines_m
 
   ! Arguments
-  integer(c_int), intent(in) :: thread_in
   logical(c_bool), intent(in) :: do_debug_restoration_in
   integer(c_int), intent(in) :: nmoments_input_in
   type(c_ptr), intent(in) :: brdf_sup_in_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   logical(kind=4) :: do_debug_restoration_lcl
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
 
   ! Convert input arguments
   do_debug_restoration_lcl = do_debug_restoration_in
   call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
 
-  call brdf_mainmaster(thread_in, &
-                       do_debug_restoration_lcl, &
+  call brdf_mainmaster(do_debug_restoration_lcl, &
                        nmoments_input_in, &
                        brdf_sup_in_lcl, &
-                       brdf_sup_out_lcl)
+                       brdf_sup_out_lcl, &
+                       brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_sup_masters_m_brdf_mainmaster_wrap
 
@@ -198,6 +205,7 @@ use lidort_io_defs
 use lidort_lin_io_defs
 use lidort_aux
 use lidort_inputs
+use lidort_l_inputs
 use lidort_geometry
 use lidort_corrections
 use lidort_lc_corrections
@@ -215,6 +223,7 @@ use lidort_ls_wfsurface
 use lidort_ls_wfsleave
 use lidort_thermalsup
 use lidort_l_thermalsup
+use lidort_lbbf_jacobians_m
 use lidort_writemodules
 use lidort_l_writemodules
 
@@ -224,8 +233,7 @@ implicit none
 
 contains
 
-subroutine lcs_masters_lcs_master_wrap (thread_in, &
-                                        lidort_fixin_in, &
+subroutine lcs_masters_lcs_master_wrap (lidort_fixin_in, &
                                         lidort_modin_in, &
                                         lidort_sup_in, &
                                         lidort_out_in, &
@@ -239,6 +247,7 @@ subroutine lcs_masters_lcs_master_wrap (thread_in, &
   use lidort_lin_io_defs
   use lidort_aux
   use lidort_inputs
+  use lidort_l_inputs
   use lidort_geometry
   use lidort_corrections
   use lidort_lc_corrections
@@ -256,19 +265,19 @@ subroutine lcs_masters_lcs_master_wrap (thread_in, &
   use lidort_ls_wfsleave
   use lidort_thermalsup
   use lidort_l_thermalsup
+  use lidort_lbbf_jacobians_m
   use lidort_writemodules
   use lidort_l_writemodules
 
   ! Arguments
-  integer(c_int), intent(in) :: thread_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -290,8 +299,7 @@ subroutine lcs_masters_lcs_master_wrap (thread_in, &
   call c_f_pointer(lidort_linsup_in, lidort_linsup_lcl)
   call c_f_pointer(lidort_linout_in, lidort_linout_lcl)
 
-  call lidort_lcs_master(thread_in, &
-                         lidort_fixin_lcl, &
+  call lidort_lcs_master(lidort_fixin_lcl, &
                          lidort_modin_lcl, &
                          lidort_sup_lcl, &
                          lidort_out_lcl, &
@@ -314,6 +322,7 @@ use lidort_io_defs
 use lidort_lin_io_defs
 use lidort_aux
 use lidort_inputs
+use lidort_l_inputs
 use lidort_geometry
 use lidort_corrections
 use lidort_lp_corrections
@@ -331,6 +340,7 @@ use lidort_ls_wfsurface
 use lidort_ls_wfsleave
 use lidort_thermalsup
 use lidort_l_thermalsup
+use lidort_lbbf_jacobians_m
 use lidort_writemodules
 use lidort_l_writemodules
 
@@ -340,8 +350,7 @@ implicit none
 
 contains
 
-subroutine lps_masters_lps_master_wrap (thread_in, &
-                                        lidort_fixin_in, &
+subroutine lps_masters_lps_master_wrap (lidort_fixin_in, &
                                         lidort_modin_in, &
                                         lidort_sup_in, &
                                         lidort_out_in, &
@@ -355,6 +364,7 @@ subroutine lps_masters_lps_master_wrap (thread_in, &
   use lidort_lin_io_defs
   use lidort_aux
   use lidort_inputs
+  use lidort_l_inputs
   use lidort_geometry
   use lidort_corrections
   use lidort_lp_corrections
@@ -372,19 +382,19 @@ subroutine lps_masters_lps_master_wrap (thread_in, &
   use lidort_ls_wfsleave
   use lidort_thermalsup
   use lidort_l_thermalsup
+  use lidort_lbbf_jacobians_m
   use lidort_writemodules
   use lidort_l_writemodules
 
   ! Arguments
-  integer(c_int), intent(in) :: thread_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -406,8 +416,7 @@ subroutine lps_masters_lps_master_wrap (thread_in, &
   call c_f_pointer(lidort_linsup_in, lidort_linsup_lcl)
   call c_f_pointer(lidort_linout_in, lidort_linout_lcl)
 
-  call lidort_lps_master(thread_in, &
-                         lidort_fixin_lcl, &
+  call lidort_lps_master(lidort_fixin_lcl, &
                          lidort_modin_lcl, &
                          lidort_sup_lcl, &
                          lidort_out_lcl, &
@@ -425,6 +434,7 @@ module LIDORT_INPUTS_WRAP
 use iso_c_binding
 use lidort_inputs
 use lidort_pars
+use lidort_pars
 use lidort_aux
 
 ! This module was auto-generated 
@@ -438,9 +448,9 @@ subroutine inputs_input_master_wrap (filnam_in_len, &
                                      lidort_fixin_in, &
                                      lidort_modin_in, &
                                      lidort_inputstatus_in) bind(C)
-  use lidort_pars
   use lidort_inputs_def
   use lidort_outputs_def
+  use lidort_pars
   use lidort_aux
 
   ! Arguments
@@ -499,8 +509,7 @@ implicit none
 
 contains
 
-subroutine masters_master_wrap (thread_in, &
-                                lidort_fixin_in, &
+subroutine masters_master_wrap (lidort_fixin_in, &
                                 lidort_modin_in, &
                                 lidort_sup_in, &
                                 lidort_out_in) bind(C)
@@ -519,11 +528,10 @@ subroutine masters_master_wrap (thread_in, &
   use lidort_writemodules
 
   ! Arguments
-  integer(c_int), intent(in) :: thread_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -537,8 +545,7 @@ subroutine masters_master_wrap (thread_in, &
   call c_f_pointer(lidort_sup_in, lidort_sup_lcl)
   call c_f_pointer(lidort_out_in, lidort_out_lcl)
 
-  call lidort_master(thread_in, &
-                     lidort_fixin_lcl, &
+  call lidort_master(lidort_fixin_lcl, &
                      lidort_modin_lcl, &
                      lidort_sup_lcl, &
                      lidort_out_lcl)
@@ -558,6 +565,35 @@ use lidort_pars
 implicit none
 
 contains
+
+subroutine sup_accessories_brdf_sleave_input_checker_wrap (sleave_sup_in_in, &
+                                                           brdf_sup_in_in, &
+                                                           brdf_sleavecheck_status_in) bind(C)
+  use lidort_pars
+  use sleave_sup_inputs_def
+  use brdf_sup_inputs_def
+  use lidort_outputs_def
+
+  ! Arguments
+  type(c_ptr), intent(in) :: sleave_sup_in_in
+  type(c_ptr), intent(in) :: brdf_sup_in_in
+  type(c_ptr), intent(out) :: brdf_sleavecheck_status_in
+
+  ! Local variables
+  type(sleave_sup_inputs), pointer :: sleave_sup_in_lcl
+  type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
+  type(lidort_exception_handling), pointer :: brdf_sleavecheck_status_lcl
+
+  ! Convert input arguments
+  call c_f_pointer(sleave_sup_in_in, sleave_sup_in_lcl)
+  call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
+  call c_f_pointer(brdf_sleavecheck_status_in, brdf_sleavecheck_status_lcl)
+
+  call brdf_sleave_input_checker(sleave_sup_in_lcl, &
+                                 brdf_sup_in_lcl, &
+                                 brdf_sleavecheck_status_lcl)
+
+end subroutine sup_accessories_brdf_sleave_input_checker_wrap
 
 subroutine sup_accessories_brdf_input_checker_wrap (brdf_sup_in_in, &
                                                     lidort_fixin_in, &

@@ -48,4 +48,3 @@ public:
 %include "swig_array_inc.i"
 %import "swig_array.i"
 %import "swig_rational.i"
-

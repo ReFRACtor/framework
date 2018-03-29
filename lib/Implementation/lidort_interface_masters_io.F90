@@ -15,6 +15,8 @@ use brdf_linsup_outputs_def
 use brdf_sup_aux_m
 use brdf_sup_routines_m
 use brdf_linsup_routines_m
+use brdf_sup_kernels_m
+use brdf_linsup_kernels_m
 
 ! This module was auto-generated 
 
@@ -26,7 +28,8 @@ subroutine brdf_linsup_masters_m_read_wrap (filename_in, filename_in_len, brdf_s
                                             brdf_linsup_in_in, &
                                             brdf_sup_inputstatus_in, &
                                             brdf_sup_out_in, &
-                                            brdf_linsup_out_in) bind(c)
+                                            brdf_linsup_out_in, &
+                                            brdf_sup_outputstatus_in) bind(c)
 
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
@@ -36,6 +39,7 @@ subroutine brdf_linsup_masters_m_read_wrap (filename_in, filename_in_len, brdf_s
   type(c_ptr), intent(out) :: brdf_sup_inputstatus_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
   type(c_ptr), intent(out) :: brdf_linsup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
@@ -43,6 +47,7 @@ subroutine brdf_linsup_masters_m_read_wrap (filename_in, filename_in_len, brdf_s
   type(brdf_input_exception_handling), pointer :: brdf_sup_inputstatus_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
   type(brdf_linsup_outputs), pointer :: brdf_linsup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
   character(len=filename_in_len) :: filename_lcl
   integer :: fn_idx
 
@@ -52,6 +57,7 @@ subroutine brdf_linsup_masters_m_read_wrap (filename_in, filename_in_len, brdf_s
   call c_f_pointer(brdf_sup_inputstatus_in, brdf_sup_inputstatus_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
   call c_f_pointer(brdf_linsup_out_in, brdf_linsup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
   do fn_idx = 1, filename_in_len
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
@@ -60,7 +66,8 @@ subroutine brdf_linsup_masters_m_read_wrap (filename_in, filename_in_len, brdf_s
                                   brdf_linsup_in_lcl, &
                                   brdf_sup_inputstatus_lcl, &
                                   brdf_sup_out_lcl, &
-                                  brdf_linsup_out_lcl)
+                                  brdf_linsup_out_lcl, &
+                                  brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_linsup_masters_m_read_wrap
 
@@ -68,7 +75,8 @@ subroutine brdf_linsup_masters_m_read (filename, brdf_sup_in_in, &
                                        brdf_linsup_in_in, &
                                        brdf_sup_inputstatus_in, &
                                        brdf_sup_out_in, &
-                                       brdf_linsup_out_in) 
+                                       brdf_linsup_out_in, &
+                                       brdf_sup_outputstatus_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
@@ -76,6 +84,7 @@ subroutine brdf_linsup_masters_m_read (filename, brdf_sup_in_in, &
   type(brdf_input_exception_handling), intent(inout), pointer :: brdf_sup_inputstatus_in
   type(brdf_sup_outputs), intent(inout), pointer :: brdf_sup_out_in
   type(brdf_linsup_outputs), intent(inout), pointer :: brdf_linsup_out_in
+  type(brdf_output_exception_handling), intent(inout), pointer :: brdf_sup_outputstatus_in
   
   
   open (500, file=filename, form="unformatted", access="sequential")
@@ -84,6 +93,7 @@ subroutine brdf_linsup_masters_m_read (filename, brdf_sup_in_in, &
   call brdf_input_exception_handling_f_read(500, brdf_sup_inputstatus_in)
   call brdf_sup_outputs_f_read(500, brdf_sup_out_in)
   call brdf_linsup_outputs_f_read(500, brdf_linsup_out_in)
+  call brdf_output_exception_handling_f_read(500, brdf_sup_outputstatus_in)
   close(500)
 
 end subroutine brdf_linsup_masters_m_read
@@ -92,7 +102,8 @@ subroutine brdf_linsup_masters_m_write_wrap (filename_in, filename_in_len, brdf_
                                              brdf_linsup_in_in, &
                                              brdf_sup_inputstatus_in, &
                                              brdf_sup_out_in, &
-                                             brdf_linsup_out_in) bind(c)
+                                             brdf_linsup_out_in, &
+                                             brdf_sup_outputstatus_in) bind(c)
 
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
@@ -102,6 +113,7 @@ subroutine brdf_linsup_masters_m_write_wrap (filename_in, filename_in_len, brdf_
   type(c_ptr), intent(out) :: brdf_sup_inputstatus_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
   type(c_ptr), intent(out) :: brdf_linsup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
@@ -109,6 +121,7 @@ subroutine brdf_linsup_masters_m_write_wrap (filename_in, filename_in_len, brdf_
   type(brdf_input_exception_handling), pointer :: brdf_sup_inputstatus_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
   type(brdf_linsup_outputs), pointer :: brdf_linsup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
   character(len=filename_in_len) :: filename_lcl
   integer :: fn_idx
 
@@ -118,6 +131,7 @@ subroutine brdf_linsup_masters_m_write_wrap (filename_in, filename_in_len, brdf_
   call c_f_pointer(brdf_sup_inputstatus_in, brdf_sup_inputstatus_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
   call c_f_pointer(brdf_linsup_out_in, brdf_linsup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
   do fn_idx = 1, filename_in_len
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
@@ -126,7 +140,8 @@ subroutine brdf_linsup_masters_m_write_wrap (filename_in, filename_in_len, brdf_
                                    brdf_linsup_in_lcl, &
                                    brdf_sup_inputstatus_lcl, &
                                    brdf_sup_out_lcl, &
-                                   brdf_linsup_out_lcl)
+                                   brdf_linsup_out_lcl, &
+                                   brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_linsup_masters_m_write_wrap
 
@@ -134,7 +149,8 @@ subroutine brdf_linsup_masters_m_write (filename, brdf_sup_in_in, &
                                         brdf_linsup_in_in, &
                                         brdf_sup_inputstatus_in, &
                                         brdf_sup_out_in, &
-                                        brdf_linsup_out_in) 
+                                        brdf_linsup_out_in, &
+                                        brdf_sup_outputstatus_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
@@ -142,6 +158,7 @@ subroutine brdf_linsup_masters_m_write (filename, brdf_sup_in_in, &
   type(brdf_input_exception_handling), intent(inout), pointer :: brdf_sup_inputstatus_in
   type(brdf_sup_outputs), intent(inout), pointer :: brdf_sup_out_in
   type(brdf_linsup_outputs), intent(inout), pointer :: brdf_linsup_out_in
+  type(brdf_output_exception_handling), intent(inout), pointer :: brdf_sup_outputstatus_in
   
   
   open (500, file=filename, form="unformatted", access="sequential")
@@ -150,6 +167,7 @@ subroutine brdf_linsup_masters_m_write (filename, brdf_sup_in_in, &
   call brdf_input_exception_handling_f_write(500, brdf_sup_inputstatus_in)
   call brdf_sup_outputs_f_write(500, brdf_sup_out_in)
   call brdf_linsup_outputs_f_write(500, brdf_linsup_out_in)
+  call brdf_output_exception_handling_f_write(500, brdf_sup_outputstatus_in)
   close(500)
 
 end subroutine brdf_linsup_masters_m_write
@@ -170,6 +188,7 @@ use lidort_pars
 use brdf_sup_inputs_def
 use brdf_sup_outputs_def
 use brdf_sup_aux_m
+use brdf_sup_kernels_m
 use brdf_sup_routines_m
 
 ! This module was auto-generated 
@@ -180,7 +199,8 @@ contains
 
 subroutine brdf_sup_masters_m_read_wrap (filename_in, filename_in_len, brdf_sup_in_in, &
                                          brdf_sup_inputstatus_in, &
-                                         brdf_sup_out_in) bind(c)
+                                         brdf_sup_out_in, &
+                                         brdf_sup_outputstatus_in) bind(c)
 
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
@@ -188,11 +208,13 @@ subroutine brdf_sup_masters_m_read_wrap (filename_in, filename_in_len, brdf_sup_
   type(c_ptr), intent(out) :: brdf_sup_in_in
   type(c_ptr), intent(out) :: brdf_sup_inputstatus_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
   type(brdf_input_exception_handling), pointer :: brdf_sup_inputstatus_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
   character(len=filename_in_len) :: filename_lcl
   integer :: fn_idx
 
@@ -200,37 +222,43 @@ subroutine brdf_sup_masters_m_read_wrap (filename_in, filename_in_len, brdf_sup_
   call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
   call c_f_pointer(brdf_sup_inputstatus_in, brdf_sup_inputstatus_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
   do fn_idx = 1, filename_in_len
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
 
   call brdf_sup_masters_m_read(filename_lcl, brdf_sup_in_lcl, &
                                brdf_sup_inputstatus_lcl, &
-                               brdf_sup_out_lcl)
+                               brdf_sup_out_lcl, &
+                               brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_sup_masters_m_read_wrap
 
 subroutine brdf_sup_masters_m_read (filename, brdf_sup_in_in, &
                                     brdf_sup_inputstatus_in, &
-                                    brdf_sup_out_in) 
+                                    brdf_sup_out_in, &
+                                    brdf_sup_outputstatus_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
   type(brdf_input_exception_handling), intent(inout), pointer :: brdf_sup_inputstatus_in
   type(brdf_sup_outputs), intent(inout), pointer :: brdf_sup_out_in
+  type(brdf_output_exception_handling), intent(inout), pointer :: brdf_sup_outputstatus_in
   
   
-  open (501, file=filename, form="unformatted", access="sequential")
-  call brdf_sup_inputs_f_read(501, brdf_sup_in_in)
-  call brdf_input_exception_handling_f_read(501, brdf_sup_inputstatus_in)
-  call brdf_sup_outputs_f_read(501, brdf_sup_out_in)
-  close(501)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call brdf_sup_inputs_f_read(500, brdf_sup_in_in)
+  call brdf_input_exception_handling_f_read(500, brdf_sup_inputstatus_in)
+  call brdf_sup_outputs_f_read(500, brdf_sup_out_in)
+  call brdf_output_exception_handling_f_read(500, brdf_sup_outputstatus_in)
+  close(500)
 
 end subroutine brdf_sup_masters_m_read
 
 subroutine brdf_sup_masters_m_write_wrap (filename_in, filename_in_len, brdf_sup_in_in, &
                                           brdf_sup_inputstatus_in, &
-                                          brdf_sup_out_in) bind(c)
+                                          brdf_sup_out_in, &
+                                          brdf_sup_outputstatus_in) bind(c)
 
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
@@ -238,11 +266,13 @@ subroutine brdf_sup_masters_m_write_wrap (filename_in, filename_in_len, brdf_sup
   type(c_ptr), intent(out) :: brdf_sup_in_in
   type(c_ptr), intent(out) :: brdf_sup_inputstatus_in
   type(c_ptr), intent(out) :: brdf_sup_out_in
+  type(c_ptr), intent(out) :: brdf_sup_outputstatus_in
 
   ! Local variables
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
   type(brdf_input_exception_handling), pointer :: brdf_sup_inputstatus_lcl
   type(brdf_sup_outputs), pointer :: brdf_sup_out_lcl
+  type(brdf_output_exception_handling), pointer :: brdf_sup_outputstatus_lcl
   character(len=filename_in_len) :: filename_lcl
   integer :: fn_idx
 
@@ -250,31 +280,36 @@ subroutine brdf_sup_masters_m_write_wrap (filename_in, filename_in_len, brdf_sup
   call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
   call c_f_pointer(brdf_sup_inputstatus_in, brdf_sup_inputstatus_lcl)
   call c_f_pointer(brdf_sup_out_in, brdf_sup_out_lcl)
+  call c_f_pointer(brdf_sup_outputstatus_in, brdf_sup_outputstatus_lcl)
   do fn_idx = 1, filename_in_len
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
 
   call brdf_sup_masters_m_write(filename_lcl, brdf_sup_in_lcl, &
                                 brdf_sup_inputstatus_lcl, &
-                                brdf_sup_out_lcl)
+                                brdf_sup_out_lcl, &
+                                brdf_sup_outputstatus_lcl)
 
 end subroutine brdf_sup_masters_m_write_wrap
 
 subroutine brdf_sup_masters_m_write (filename, brdf_sup_in_in, &
                                      brdf_sup_inputstatus_in, &
-                                     brdf_sup_out_in) 
+                                     brdf_sup_out_in, &
+                                     brdf_sup_outputstatus_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
   type(brdf_input_exception_handling), intent(inout), pointer :: brdf_sup_inputstatus_in
   type(brdf_sup_outputs), intent(inout), pointer :: brdf_sup_out_in
+  type(brdf_output_exception_handling), intent(inout), pointer :: brdf_sup_outputstatus_in
   
   
-  open (501, file=filename, form="unformatted", access="sequential")
-  call brdf_sup_inputs_f_write(501, brdf_sup_in_in)
-  call brdf_input_exception_handling_f_write(501, brdf_sup_inputstatus_in)
-  call brdf_sup_outputs_f_write(501, brdf_sup_out_in)
-  close(501)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call brdf_sup_inputs_f_write(500, brdf_sup_in_in)
+  call brdf_input_exception_handling_f_write(500, brdf_sup_inputstatus_in)
+  call brdf_sup_outputs_f_write(500, brdf_sup_out_in)
+  call brdf_output_exception_handling_f_write(500, brdf_sup_outputstatus_in)
+  close(500)
 
 end subroutine brdf_sup_masters_m_write
 
@@ -292,6 +327,7 @@ use lidort_io_defs
 use lidort_lin_io_defs
 use lidort_aux
 use lidort_inputs
+use lidort_l_inputs
 use lidort_geometry
 use lidort_corrections
 use lidort_lc_corrections
@@ -309,6 +345,7 @@ use lidort_ls_wfsurface
 use lidort_ls_wfsleave
 use lidort_thermalsup
 use lidort_l_thermalsup
+use lidort_lbbf_jacobians_m
 use lidort_writemodules
 use lidort_l_writemodules
 
@@ -333,11 +370,11 @@ subroutine lcs_masters_read_wrap (filename_in, filename_in_len, lidort_fixin_in,
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -395,16 +432,16 @@ subroutine lidort_lcs_masters_read (filename, lidort_fixin_in, &
   type(lidort_linoutputs), intent(inout), pointer :: lidort_linout_in
   
   
-  open (502, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_read(502, lidort_fixin_in)
-  call lidort_modified_inputs_f_read(502, lidort_modin_in)
-  call lidort_sup_inout_f_read(502, lidort_sup_in)
-  call lidort_outputs_f_read(502, lidort_out_in)
-  call lidort_fixed_lininputs_f_read(502, lidort_linfixin_in)
-  call lidort_modified_lininputs_f_read(502, lidort_linmodin_in)
-  call lidort_linsup_inout_f_read(502, lidort_linsup_in)
-  call lidort_linoutputs_f_read(502, lidort_linout_in)
-  close(502)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_read(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_read(500, lidort_modin_in)
+  call lidort_sup_inout_f_read(500, lidort_sup_in)
+  call lidort_outputs_f_read(500, lidort_out_in)
+  call lidort_fixed_lininputs_f_read(500, lidort_linfixin_in)
+  call lidort_modified_lininputs_f_read(500, lidort_linmodin_in)
+  call lidort_linsup_inout_f_read(500, lidort_linsup_in)
+  call lidort_linoutputs_f_read(500, lidort_linout_in)
+  close(500)
 
 end subroutine lidort_lcs_masters_read
 
@@ -423,11 +460,11 @@ subroutine lcs_masters_write_wrap (filename_in, filename_in_len, lidort_fixin_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -485,16 +522,16 @@ subroutine lidort_lcs_masters_write (filename, lidort_fixin_in, &
   type(lidort_linoutputs), intent(inout), pointer :: lidort_linout_in
   
   
-  open (502, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_write(502, lidort_fixin_in)
-  call lidort_modified_inputs_f_write(502, lidort_modin_in)
-  call lidort_sup_inout_f_write(502, lidort_sup_in)
-  call lidort_outputs_f_write(502, lidort_out_in)
-  call lidort_fixed_lininputs_f_write(502, lidort_linfixin_in)
-  call lidort_modified_lininputs_f_write(502, lidort_linmodin_in)
-  call lidort_linsup_inout_f_write(502, lidort_linsup_in)
-  call lidort_linoutputs_f_write(502, lidort_linout_in)
-  close(502)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_write(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_write(500, lidort_modin_in)
+  call lidort_sup_inout_f_write(500, lidort_sup_in)
+  call lidort_outputs_f_write(500, lidort_out_in)
+  call lidort_fixed_lininputs_f_write(500, lidort_linfixin_in)
+  call lidort_modified_lininputs_f_write(500, lidort_linmodin_in)
+  call lidort_linsup_inout_f_write(500, lidort_linsup_in)
+  call lidort_linoutputs_f_write(500, lidort_linout_in)
+  close(500)
 
 end subroutine lidort_lcs_masters_write
 
@@ -512,6 +549,7 @@ use lidort_io_defs
 use lidort_lin_io_defs
 use lidort_aux
 use lidort_inputs
+use lidort_l_inputs
 use lidort_geometry
 use lidort_corrections
 use lidort_lp_corrections
@@ -529,6 +567,7 @@ use lidort_ls_wfsurface
 use lidort_ls_wfsleave
 use lidort_thermalsup
 use lidort_l_thermalsup
+use lidort_lbbf_jacobians_m
 use lidort_writemodules
 use lidort_l_writemodules
 
@@ -553,11 +592,11 @@ subroutine lps_masters_read_wrap (filename_in, filename_in_len, lidort_fixin_in,
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -615,16 +654,16 @@ subroutine lidort_lps_masters_read (filename, lidort_fixin_in, &
   type(lidort_linoutputs), intent(inout), pointer :: lidort_linout_in
   
   
-  open (503, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_read(503, lidort_fixin_in)
-  call lidort_modified_inputs_f_read(503, lidort_modin_in)
-  call lidort_sup_inout_f_read(503, lidort_sup_in)
-  call lidort_outputs_f_read(503, lidort_out_in)
-  call lidort_fixed_lininputs_f_read(503, lidort_linfixin_in)
-  call lidort_modified_lininputs_f_read(503, lidort_linmodin_in)
-  call lidort_linsup_inout_f_read(503, lidort_linsup_in)
-  call lidort_linoutputs_f_read(503, lidort_linout_in)
-  close(503)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_read(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_read(500, lidort_modin_in)
+  call lidort_sup_inout_f_read(500, lidort_sup_in)
+  call lidort_outputs_f_read(500, lidort_out_in)
+  call lidort_fixed_lininputs_f_read(500, lidort_linfixin_in)
+  call lidort_modified_lininputs_f_read(500, lidort_linmodin_in)
+  call lidort_linsup_inout_f_read(500, lidort_linsup_in)
+  call lidort_linoutputs_f_read(500, lidort_linout_in)
+  close(500)
 
 end subroutine lidort_lps_masters_read
 
@@ -643,11 +682,11 @@ subroutine lps_masters_write_wrap (filename_in, filename_in_len, lidort_fixin_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
   type(c_ptr), intent(in) :: lidort_linfixin_in
   type(c_ptr), intent(inout) :: lidort_linmodin_in
   type(c_ptr), intent(inout) :: lidort_linsup_in
-  type(c_ptr), intent(inout) :: lidort_linout_in
+  type(c_ptr), intent(out) :: lidort_linout_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -705,16 +744,16 @@ subroutine lidort_lps_masters_write (filename, lidort_fixin_in, &
   type(lidort_linoutputs), intent(inout), pointer :: lidort_linout_in
   
   
-  open (503, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_write(503, lidort_fixin_in)
-  call lidort_modified_inputs_f_write(503, lidort_modin_in)
-  call lidort_sup_inout_f_write(503, lidort_sup_in)
-  call lidort_outputs_f_write(503, lidort_out_in)
-  call lidort_fixed_lininputs_f_write(503, lidort_linfixin_in)
-  call lidort_modified_lininputs_f_write(503, lidort_linmodin_in)
-  call lidort_linsup_inout_f_write(503, lidort_linsup_in)
-  call lidort_linoutputs_f_write(503, lidort_linout_in)
-  close(503)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_write(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_write(500, lidort_modin_in)
+  call lidort_sup_inout_f_write(500, lidort_sup_in)
+  call lidort_outputs_f_write(500, lidort_out_in)
+  call lidort_fixed_lininputs_f_write(500, lidort_linfixin_in)
+  call lidort_modified_lininputs_f_write(500, lidort_linmodin_in)
+  call lidort_linsup_inout_f_write(500, lidort_linsup_in)
+  call lidort_linoutputs_f_write(500, lidort_linout_in)
+  close(500)
 
 end subroutine lidort_lps_masters_write
 
@@ -726,9 +765,9 @@ module LIDORT_INPUTS_IO
 
 use iso_c_binding
 use lidort_interface_types_io
-use lidort_pars
 use lidort_inputs_def
 use lidort_outputs_def
+use lidort_pars
 use lidort_aux
 
 ! This module was auto-generated 
@@ -779,11 +818,11 @@ subroutine lidort_inputs_read (filename, lidort_fixin_in, &
   type(lidort_input_exception_handling), intent(inout), pointer :: lidort_inputstatus_in
   
   
-  open (504, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_read(504, lidort_fixin_in)
-  call lidort_modified_inputs_f_read(504, lidort_modin_in)
-  call lidort_input_exception_handling_f_read(504, lidort_inputstatus_in)
-  close(504)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_read(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_read(500, lidort_modin_in)
+  call lidort_input_exception_handling_f_read(500, lidort_inputstatus_in)
+  close(500)
 
 end subroutine lidort_inputs_read
 
@@ -829,11 +868,11 @@ subroutine lidort_inputs_write (filename, lidort_fixin_in, &
   type(lidort_input_exception_handling), intent(inout), pointer :: lidort_inputstatus_in
   
   
-  open (504, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_write(504, lidort_fixin_in)
-  call lidort_modified_inputs_f_write(504, lidort_modin_in)
-  call lidort_input_exception_handling_f_write(504, lidort_inputstatus_in)
-  close(504)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_write(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_write(500, lidort_modin_in)
+  call lidort_input_exception_handling_f_write(500, lidort_inputstatus_in)
+  close(500)
 
 end subroutine lidort_inputs_write
 
@@ -876,7 +915,7 @@ subroutine masters_read_wrap (filename_in, filename_in_len, lidort_fixin_in, &
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -914,12 +953,12 @@ subroutine lidort_masters_read (filename, lidort_fixin_in, &
   type(lidort_outputs), intent(inout), pointer :: lidort_out_in
   
   
-  open (505, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_read(505, lidort_fixin_in)
-  call lidort_modified_inputs_f_read(505, lidort_modin_in)
-  call lidort_sup_inout_f_read(505, lidort_sup_in)
-  call lidort_outputs_f_read(505, lidort_out_in)
-  close(505)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_read(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_read(500, lidort_modin_in)
+  call lidort_sup_inout_f_read(500, lidort_sup_in)
+  call lidort_outputs_f_read(500, lidort_out_in)
+  close(500)
 
 end subroutine lidort_masters_read
 
@@ -934,7 +973,7 @@ subroutine masters_write_wrap (filename_in, filename_in_len, lidort_fixin_in, &
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(inout) :: lidort_modin_in
   type(c_ptr), intent(inout) :: lidort_sup_in
-  type(c_ptr), intent(inout) :: lidort_out_in
+  type(c_ptr), intent(out) :: lidort_out_in
 
   ! Local variables
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
@@ -972,12 +1011,12 @@ subroutine lidort_masters_write (filename, lidort_fixin_in, &
   type(lidort_outputs), intent(inout), pointer :: lidort_out_in
   
   
-  open (505, file=filename, form="unformatted", access="sequential")
-  call lidort_fixed_inputs_f_write(505, lidort_fixin_in)
-  call lidort_modified_inputs_f_write(505, lidort_modin_in)
-  call lidort_sup_inout_f_write(505, lidort_sup_in)
-  call lidort_outputs_f_write(505, lidort_out_in)
-  close(505)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call lidort_fixed_inputs_f_write(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_write(500, lidort_modin_in)
+  call lidort_sup_inout_f_write(500, lidort_sup_in)
+  call lidort_outputs_f_write(500, lidort_out_in)
+  close(500)
 
 end subroutine lidort_masters_write
 
@@ -990,6 +1029,10 @@ module LIDORT_SUP_ACCESSORIES_IO
 use iso_c_binding
 use lidort_interface_types_io
 use lidort_pars
+use sleave_sup_inputs_def
+use brdf_sup_inputs_def
+use lidort_outputs_def
+use lidort_pars
 use brdf_sup_inputs_def
 use lidort_inputs_def
 use lidort_outputs_def
@@ -1000,7 +1043,9 @@ implicit none
 
 contains
 
-subroutine sup_accessories_read_wrap (filename_in, filename_in_len, brdf_sup_in_in, &
+subroutine sup_accessories_read_wrap (filename_in, filename_in_len, sleave_sup_in_in, &
+                                      brdf_sup_in_in, &
+                                      brdf_sleavecheck_status_in, &
                                       lidort_fixin_in, &
                                       lidort_modin_in, &
                                       lidort_brdfcheck_status_in) bind(c)
@@ -1008,13 +1053,17 @@ subroutine sup_accessories_read_wrap (filename_in, filename_in_len, brdf_sup_in_
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
   character(kind=c_char) , intent(inout) :: filename_in(filename_in_len+1)
+  type(c_ptr), intent(in) :: sleave_sup_in_in
   type(c_ptr), intent(in) :: brdf_sup_in_in
+  type(c_ptr), intent(out) :: brdf_sleavecheck_status_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(in) :: lidort_modin_in
   type(c_ptr), intent(out) :: lidort_brdfcheck_status_in
 
   ! Local variables
+  type(sleave_sup_inputs), pointer :: sleave_sup_in_lcl
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
+  type(lidort_exception_handling), pointer :: brdf_sleavecheck_status_lcl
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
   type(lidort_modified_inputs), pointer :: lidort_modin_lcl
   type(lidort_exception_handling), pointer :: lidort_brdfcheck_status_lcl
@@ -1022,7 +1071,9 @@ subroutine sup_accessories_read_wrap (filename_in, filename_in_len, brdf_sup_in_
   integer :: fn_idx
 
   ! Convert input arguments
+  call c_f_pointer(sleave_sup_in_in, sleave_sup_in_lcl)
   call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
+  call c_f_pointer(brdf_sleavecheck_status_in, brdf_sleavecheck_status_lcl)
   call c_f_pointer(lidort_fixin_in, lidort_fixin_lcl)
   call c_f_pointer(lidort_modin_in, lidort_modin_lcl)
   call c_f_pointer(lidort_brdfcheck_status_in, lidort_brdfcheck_status_lcl)
@@ -1030,35 +1081,45 @@ subroutine sup_accessories_read_wrap (filename_in, filename_in_len, brdf_sup_in_
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
 
-  call lidort_sup_accessories_read(filename_lcl, brdf_sup_in_lcl, &
+  call lidort_sup_accessories_read(filename_lcl, sleave_sup_in_lcl, &
+                                   brdf_sup_in_lcl, &
+                                   brdf_sleavecheck_status_lcl, &
                                    lidort_fixin_lcl, &
                                    lidort_modin_lcl, &
                                    lidort_brdfcheck_status_lcl)
 
 end subroutine sup_accessories_read_wrap
 
-subroutine lidort_sup_accessories_read (filename, brdf_sup_in_in, &
+subroutine lidort_sup_accessories_read (filename, sleave_sup_in_in, &
+                                        brdf_sup_in_in, &
+                                        brdf_sleavecheck_status_in, &
                                         lidort_fixin_in, &
                                         lidort_modin_in, &
                                         lidort_brdfcheck_status_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
+  type(sleave_sup_inputs), intent(inout), pointer :: sleave_sup_in_in
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
+  type(lidort_exception_handling), intent(inout), pointer :: brdf_sleavecheck_status_in
   type(lidort_fixed_inputs), intent(inout), pointer :: lidort_fixin_in
   type(lidort_modified_inputs), intent(inout), pointer :: lidort_modin_in
   type(lidort_exception_handling), intent(inout), pointer :: lidort_brdfcheck_status_in
   
   
-  open (506, file=filename, form="unformatted", access="sequential")
-  call brdf_sup_inputs_f_read(506, brdf_sup_in_in)
-  call lidort_fixed_inputs_f_read(506, lidort_fixin_in)
-  call lidort_modified_inputs_f_read(506, lidort_modin_in)
-  call lidort_exception_handling_f_read(506, lidort_brdfcheck_status_in)
-  close(506)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call sleave_sup_inputs_f_read(500, sleave_sup_in_in)
+  call brdf_sup_inputs_f_read(500, brdf_sup_in_in)
+  call lidort_exception_handling_f_read(500, brdf_sleavecheck_status_in)
+  call lidort_fixed_inputs_f_read(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_read(500, lidort_modin_in)
+  call lidort_exception_handling_f_read(500, lidort_brdfcheck_status_in)
+  close(500)
 
 end subroutine lidort_sup_accessories_read
 
-subroutine sup_accessories_write_wrap (filename_in, filename_in_len, brdf_sup_in_in, &
+subroutine sup_accessories_write_wrap (filename_in, filename_in_len, sleave_sup_in_in, &
+                                       brdf_sup_in_in, &
+                                       brdf_sleavecheck_status_in, &
                                        lidort_fixin_in, &
                                        lidort_modin_in, &
                                        lidort_brdfcheck_status_in) bind(c)
@@ -1066,13 +1127,17 @@ subroutine sup_accessories_write_wrap (filename_in, filename_in_len, brdf_sup_in
   ! Arguments
   integer(c_int), intent(in) :: filename_in_len
   character(kind=c_char) , intent(inout) :: filename_in(filename_in_len+1)
+  type(c_ptr), intent(in) :: sleave_sup_in_in
   type(c_ptr), intent(in) :: brdf_sup_in_in
+  type(c_ptr), intent(out) :: brdf_sleavecheck_status_in
   type(c_ptr), intent(in) :: lidort_fixin_in
   type(c_ptr), intent(in) :: lidort_modin_in
   type(c_ptr), intent(out) :: lidort_brdfcheck_status_in
 
   ! Local variables
+  type(sleave_sup_inputs), pointer :: sleave_sup_in_lcl
   type(brdf_sup_inputs), pointer :: brdf_sup_in_lcl
+  type(lidort_exception_handling), pointer :: brdf_sleavecheck_status_lcl
   type(lidort_fixed_inputs), pointer :: lidort_fixin_lcl
   type(lidort_modified_inputs), pointer :: lidort_modin_lcl
   type(lidort_exception_handling), pointer :: lidort_brdfcheck_status_lcl
@@ -1080,7 +1145,9 @@ subroutine sup_accessories_write_wrap (filename_in, filename_in_len, brdf_sup_in
   integer :: fn_idx
 
   ! Convert input arguments
+  call c_f_pointer(sleave_sup_in_in, sleave_sup_in_lcl)
   call c_f_pointer(brdf_sup_in_in, brdf_sup_in_lcl)
+  call c_f_pointer(brdf_sleavecheck_status_in, brdf_sleavecheck_status_lcl)
   call c_f_pointer(lidort_fixin_in, lidort_fixin_lcl)
   call c_f_pointer(lidort_modin_in, lidort_modin_lcl)
   call c_f_pointer(lidort_brdfcheck_status_in, lidort_brdfcheck_status_lcl)
@@ -1088,31 +1155,39 @@ subroutine sup_accessories_write_wrap (filename_in, filename_in_len, brdf_sup_in
     filename_lcl(fn_idx:fn_idx) = filename_in(fn_idx)
   end do
 
-  call lidort_sup_accessories_write(filename_lcl, brdf_sup_in_lcl, &
+  call lidort_sup_accessories_write(filename_lcl, sleave_sup_in_lcl, &
+                                    brdf_sup_in_lcl, &
+                                    brdf_sleavecheck_status_lcl, &
                                     lidort_fixin_lcl, &
                                     lidort_modin_lcl, &
                                     lidort_brdfcheck_status_lcl)
 
 end subroutine sup_accessories_write_wrap
 
-subroutine lidort_sup_accessories_write (filename, brdf_sup_in_in, &
+subroutine lidort_sup_accessories_write (filename, sleave_sup_in_in, &
+                                         brdf_sup_in_in, &
+                                         brdf_sleavecheck_status_in, &
                                          lidort_fixin_in, &
                                          lidort_modin_in, &
                                          lidort_brdfcheck_status_in) 
   ! Arguments
   character (len=*), intent(in) :: filename
+  type(sleave_sup_inputs), intent(inout), pointer :: sleave_sup_in_in
   type(brdf_sup_inputs), intent(inout), pointer :: brdf_sup_in_in
+  type(lidort_exception_handling), intent(inout), pointer :: brdf_sleavecheck_status_in
   type(lidort_fixed_inputs), intent(inout), pointer :: lidort_fixin_in
   type(lidort_modified_inputs), intent(inout), pointer :: lidort_modin_in
   type(lidort_exception_handling), intent(inout), pointer :: lidort_brdfcheck_status_in
   
   
-  open (506, file=filename, form="unformatted", access="sequential")
-  call brdf_sup_inputs_f_write(506, brdf_sup_in_in)
-  call lidort_fixed_inputs_f_write(506, lidort_fixin_in)
-  call lidort_modified_inputs_f_write(506, lidort_modin_in)
-  call lidort_exception_handling_f_write(506, lidort_brdfcheck_status_in)
-  close(506)
+  open (500, file=filename, form="unformatted", access="sequential")
+  call sleave_sup_inputs_f_write(500, sleave_sup_in_in)
+  call brdf_sup_inputs_f_write(500, brdf_sup_in_in)
+  call lidort_exception_handling_f_write(500, brdf_sleavecheck_status_in)
+  call lidort_fixed_inputs_f_write(500, lidort_fixin_in)
+  call lidort_modified_inputs_f_write(500, lidort_modin_in)
+  call lidort_exception_handling_f_write(500, lidort_brdfcheck_status_in)
+  close(500)
 
 end subroutine lidort_sup_accessories_write
 

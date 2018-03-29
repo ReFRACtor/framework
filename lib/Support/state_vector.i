@@ -13,6 +13,7 @@
 
 %fp_shared_ptr(FullPhysics::StateVector);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::StateVector>);
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::StateVector>);
 
 // Do this so we can derive from this and have it able to be used by the C++ code
 // Defined here since rename does not like being inside of a namespace
@@ -55,11 +56,11 @@ public:
         }
 
         // Support shared pointers from other languages for add/remove observer
-        void add_observer(boost::shared_ptr<Observer<StateVector> >& Obs) {
+        void add_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
             $self->add_observer(*Obs);
         }
 
-        void remove_observer(boost::shared_ptr<Observer<StateVector> >& Obs) {
+        void remove_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
             $self->remove_observer(*Obs);
         }
 

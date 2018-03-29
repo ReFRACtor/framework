@@ -14,6 +14,9 @@
 %fp_shared_ptr(FullPhysics::LsiRt);
 
 namespace FullPhysics {
+
+%feature("notabstract") LsiRt;
+
 class LsiRt : public RadiativeTransferFixedStokesCoefficient {
 public:
   LsiRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Low_stream_rt,

@@ -8,7 +8,7 @@ use lidort_pars
 implicit none
 
 
-! Links to module: "lidort_pars" in file: "lidort_pars.F90.in"
+! Links to module: "lidort_pars" in file: "lidort_pars.f90.in"
 type, bind(c) :: lidort_pars_c
   character(kind=c_char, len=3) :: lidort_version_number
   integer(c_int) :: lidort_inunit
@@ -18,7 +18,6 @@ type, bind(c) :: lidort_pars_c
   integer(c_int) :: lidort_errunit
   integer(c_int) :: lidort_dbgunit
   integer(c_int) :: max_messages
-  integer(c_int) :: maxthreads
   integer(c_int) :: maxstreams
   integer(c_int) :: maxlayers
   integer(c_int) :: maxfinelayers
@@ -27,14 +26,17 @@ type, bind(c) :: lidort_pars_c
   integer(c_int) :: maxbeams
   integer(c_int) :: max_user_streams
   integer(c_int) :: max_user_relazms
+  integer(c_int) :: max_user_obsgeoms
   integer(c_int) :: max_user_levels
   integer(c_int) :: max_partlayers
+  integer(c_int) :: max_taylor_terms
   integer(c_int) :: max_directions
   integer(c_int) :: max_brdf_kernels
   integer(c_int) :: max_brdf_parameters
   integer(c_int) :: maxstreams_brdf
   integer(c_int) :: max_msrs_muquad
   integer(c_int) :: max_msrs_phiquad
+  integer(c_int) :: maxstreams_scaling
   integer(c_int) :: max_atmoswfs
   integer(c_int) :: max_surfacewfs
   integer(c_int) :: max_sleavewfs
@@ -67,6 +69,7 @@ type, bind(c) :: lidort_pars_c
   real(c_double) :: eps3
   real(c_double) :: eps4
   real(c_double) :: eps5
+  real(c_double) :: taylor_small
   real(c_double) :: smallnum
   real(c_double) :: bigexp
   real(c_double) :: hopital_tolerance
@@ -90,15 +93,17 @@ type, bind(c) :: lidort_pars_c
   integer(c_int) :: roujean_idx
   integer(c_int) :: rahman_idx
   integer(c_int) :: coxmunk_idx
-  integer(c_int) :: breonveg_idx
-  integer(c_int) :: breonsoil_idx
+  integer(c_int) :: bpdfsoil_idx
+  integer(c_int) :: bpdfvegn_idx
+  integer(c_int) :: bpdfndvi_idx
+  integer(c_int) :: newcmglint_idx
   integer(c_int) :: maxbrdf_idx
   
 end type lidort_pars_c
 
 
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.f90"
 type, bind(c) :: brdf_linsup_inputs_c
   type(c_ptr) :: bs_do_kernel_factor_wfs ! dimension(MAX_BRDF_KERNELS)
   integer(c_int), dimension(1) :: bs_do_kernel_factor_wfs_f_shapes
@@ -121,14 +126,23 @@ type, bind(c) :: brdf_linsup_inputs_c
   type(c_ptr) :: bs_n_kernel_params_wfs ! scalar
   integer(c_int) :: bs_n_kernel_params_wfs_f_byte_size
 
+  type(c_ptr) :: bs_do_bsavalue_wf ! scalar
+  integer(c_int) :: bs_do_bsavalue_wf_f_byte_size
+
+  type(c_ptr) :: bs_do_wsavalue_wf ! scalar
+  integer(c_int) :: bs_do_wsavalue_wf_f_byte_size
+
+  type(c_ptr) :: bs_do_windspeed_wf ! scalar
+  integer(c_int) :: bs_do_windspeed_wf_f_byte_size
+
   
 end type brdf_linsup_inputs_c
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.f90"
 type, bind(c) :: brdf_linsup_outputs_c
-  type(c_ptr) :: bs_ls_exactdb_brdfunc ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
-  integer(c_int), dimension(4) :: bs_ls_exactdb_brdfunc_f_shapes
-  integer(c_int) :: bs_ls_exactdb_brdfunc_f_byte_size
+  type(c_ptr) :: bs_ls_dbounce_brdfunc ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
+  integer(c_int), dimension(4) :: bs_ls_dbounce_brdfunc_f_shapes
+  integer(c_int) :: bs_ls_dbounce_brdfunc_f_byte_size
 
   type(c_ptr) :: bs_ls_brdf_f_0 ! dimension(MAX_SURFACEWFS, 0:MAXMOMENTS, MAXSTREAMS, MAXBEAMS)
   integer(c_int), dimension(4) :: bs_ls_brdf_f_0_f_shapes
@@ -146,18 +160,18 @@ type, bind(c) :: brdf_linsup_outputs_c
   integer(c_int), dimension(4) :: bs_ls_user_brdf_f_f_shapes
   integer(c_int) :: bs_ls_user_brdf_f_f_byte_size
 
-  type(c_ptr) :: bs_ls_emissivity ! dimension(MAX_SURFACEWFS, MAXSTREAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: bs_ls_emissivity_f_shapes
+  type(c_ptr) :: bs_ls_emissivity ! dimension(MAX_SURFACEWFS, MAXSTREAMS)
+  integer(c_int), dimension(2) :: bs_ls_emissivity_f_shapes
   integer(c_int) :: bs_ls_emissivity_f_byte_size
 
-  type(c_ptr) :: bs_ls_user_emissivity ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: bs_ls_user_emissivity_f_shapes
+  type(c_ptr) :: bs_ls_user_emissivity ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS)
+  integer(c_int), dimension(2) :: bs_ls_user_emissivity_f_shapes
   integer(c_int) :: bs_ls_user_emissivity_f_byte_size
 
   
 end type brdf_linsup_outputs_c
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.f90"
 type, bind(c) :: brdf_sup_inputs_c
   type(c_ptr) :: bs_do_user_streams ! scalar
   integer(c_int) :: bs_do_user_streams_f_byte_size
@@ -167,6 +181,12 @@ type, bind(c) :: brdf_sup_inputs_c
 
   type(c_ptr) :: bs_do_surface_emission ! scalar
   integer(c_int) :: bs_do_surface_emission_f_byte_size
+
+  type(c_ptr) :: bs_do_solar_sources ! scalar
+  integer(c_int) :: bs_do_solar_sources_f_byte_size
+
+  type(c_ptr) :: bs_do_user_obsgeoms ! scalar
+  integer(c_int) :: bs_do_user_obsgeoms_f_byte_size
 
   type(c_ptr) :: bs_nstreams ! scalar
   integer(c_int) :: bs_nstreams_f_byte_size
@@ -191,6 +211,13 @@ type, bind(c) :: brdf_sup_inputs_c
   type(c_ptr) :: bs_user_angles_input ! dimension(MAX_USER_STREAMS)
   integer(c_int), dimension(1) :: bs_user_angles_input_f_shapes
   integer(c_int) :: bs_user_angles_input_f_byte_size
+
+  type(c_ptr) :: bs_n_user_obsgeoms ! scalar
+  integer(c_int) :: bs_n_user_obsgeoms_f_byte_size
+
+  type(c_ptr) :: bs_user_obsgeoms ! dimension(MAX_USER_OBSGEOMS, 3)
+  integer(c_int), dimension(2) :: bs_user_obsgeoms_f_shapes
+  integer(c_int) :: bs_user_obsgeoms_f_byte_size
 
   type(c_ptr) :: bs_n_brdf_kernels ! scalar
   integer(c_int) :: bs_n_brdf_kernels_f_byte_size
@@ -225,14 +252,54 @@ type, bind(c) :: brdf_sup_inputs_c
   type(c_ptr) :: bs_do_shadow_effect ! scalar
   integer(c_int) :: bs_do_shadow_effect_f_byte_size
 
-  type(c_ptr) :: bs_do_exactonly ! scalar
-  integer(c_int) :: bs_do_exactonly_f_byte_size
+  type(c_ptr) :: bs_do_directbounce_only ! scalar
+  integer(c_int) :: bs_do_directbounce_only_f_byte_size
+
+  type(c_ptr) :: bs_do_wsabsa_output ! scalar
+  integer(c_int) :: bs_do_wsabsa_output_f_byte_size
+
+  type(c_ptr) :: bs_do_wsa_scaling ! scalar
+  integer(c_int) :: bs_do_wsa_scaling_f_byte_size
+
+  type(c_ptr) :: bs_do_bsa_scaling ! scalar
+  integer(c_int) :: bs_do_bsa_scaling_f_byte_size
+
+  type(c_ptr) :: bs_wsa_value ! scalar
+  integer(c_int) :: bs_wsa_value_f_byte_size
+
+  type(c_ptr) :: bs_bsa_value ! scalar
+  integer(c_int) :: bs_bsa_value_f_byte_size
+
+  type(c_ptr) :: bs_do_newcmglint ! scalar
+  integer(c_int) :: bs_do_newcmglint_f_byte_size
+
+  type(c_ptr) :: bs_salinity ! scalar
+  integer(c_int) :: bs_salinity_f_byte_size
+
+  type(c_ptr) :: bs_wavelength ! scalar
+  integer(c_int) :: bs_wavelength_f_byte_size
+
+  type(c_ptr) :: bs_windspeed ! scalar
+  integer(c_int) :: bs_windspeed_f_byte_size
+
+  type(c_ptr) :: bs_winddir ! dimension(MAXBEAMS)
+  integer(c_int), dimension(1) :: bs_winddir_f_shapes
+  integer(c_int) :: bs_winddir_f_byte_size
+
+  type(c_ptr) :: bs_do_glintshadow ! scalar
+  integer(c_int) :: bs_do_glintshadow_f_byte_size
+
+  type(c_ptr) :: bs_do_foamoption ! scalar
+  integer(c_int) :: bs_do_foamoption_f_byte_size
+
+  type(c_ptr) :: bs_do_facetisotropy ! scalar
+  integer(c_int) :: bs_do_facetisotropy_f_byte_size
 
   type(c_ptr) :: bs_do_glitter_msrcorr ! scalar
   integer(c_int) :: bs_do_glitter_msrcorr_f_byte_size
 
-  type(c_ptr) :: bs_do_glitter_msrcorr_exactonly ! scalar
-  integer(c_int) :: bs_do_glitter_msrcorr_exactonly_f_byte_size
+  type(c_ptr) :: bs_do_glitter_msrcorr_dbonly ! scalar
+  integer(c_int) :: bs_do_glitter_msrcorr_dbonly_f_byte_size
 
   type(c_ptr) :: bs_glitter_msrcorr_order ! scalar
   integer(c_int) :: bs_glitter_msrcorr_order_f_byte_size
@@ -246,11 +313,11 @@ type, bind(c) :: brdf_sup_inputs_c
   
 end type brdf_sup_inputs_c
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 type, bind(c) :: brdf_sup_outputs_c
-  type(c_ptr) :: bs_exactdb_brdfunc ! dimension(MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
-  integer(c_int), dimension(3) :: bs_exactdb_brdfunc_f_shapes
-  integer(c_int) :: bs_exactdb_brdfunc_f_byte_size
+  type(c_ptr) :: bs_dbounce_brdfunc ! dimension(MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
+  integer(c_int), dimension(3) :: bs_dbounce_brdfunc_f_shapes
+  integer(c_int) :: bs_dbounce_brdfunc_f_byte_size
 
   type(c_ptr) :: bs_brdf_f_0 ! dimension(0:MAXMOMENTS, MAXSTREAMS, MAXBEAMS)
   integer(c_int), dimension(3) :: bs_brdf_f_0_f_shapes
@@ -268,18 +335,32 @@ type, bind(c) :: brdf_sup_outputs_c
   integer(c_int), dimension(3) :: bs_user_brdf_f_f_shapes
   integer(c_int) :: bs_user_brdf_f_f_byte_size
 
-  type(c_ptr) :: bs_emissivity ! dimension(MAXSTREAMS, MAXTHREADS)
-  integer(c_int), dimension(2) :: bs_emissivity_f_shapes
+  type(c_ptr) :: bs_emissivity ! dimension(MAXSTREAMS)
+  integer(c_int), dimension(1) :: bs_emissivity_f_shapes
   integer(c_int) :: bs_emissivity_f_byte_size
 
-  type(c_ptr) :: bs_user_emissivity ! dimension(MAX_USER_STREAMS, MAXTHREADS)
-  integer(c_int), dimension(2) :: bs_user_emissivity_f_shapes
+  type(c_ptr) :: bs_user_emissivity ! dimension(MAX_USER_STREAMS)
+  integer(c_int), dimension(1) :: bs_user_emissivity_f_shapes
   integer(c_int) :: bs_user_emissivity_f_byte_size
+
+  type(c_ptr) :: bs_wsa_calculated ! scalar
+  integer(c_int) :: bs_wsa_calculated_f_byte_size
+
+  type(c_ptr) :: bs_wsa_kernels ! dimension(3)
+  integer(c_int), dimension(1) :: bs_wsa_kernels_f_shapes
+  integer(c_int) :: bs_wsa_kernels_f_byte_size
+
+  type(c_ptr) :: bs_bsa_calculated ! scalar
+  integer(c_int) :: bs_bsa_calculated_f_byte_size
+
+  type(c_ptr) :: bs_bsa_kernels ! dimension(3)
+  integer(c_int), dimension(1) :: bs_bsa_kernels_f_shapes
+  integer(c_int) :: bs_bsa_kernels_f_byte_size
 
   
 end type brdf_sup_outputs_c
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 type, bind(c) :: brdf_input_exception_handling_c
   type(c_ptr) :: bs_status_inputread ! scalar
   integer(c_int) :: bs_status_inputread_f_byte_size
@@ -298,7 +379,130 @@ type, bind(c) :: brdf_input_exception_handling_c
   
 end type brdf_input_exception_handling_c
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
+type, bind(c) :: brdf_output_exception_handling_c
+  type(c_ptr) :: bs_status_output ! scalar
+  integer(c_int) :: bs_status_output_f_byte_size
+
+  type(c_ptr) :: bs_noutputmessages ! scalar
+  integer(c_int) :: bs_noutputmessages_f_byte_size
+
+  
+  integer(c_int), dimension(1) :: bs_outputmessages_f_shapes
+  integer(c_int) :: bs_outputmessages_f_len
+
+  
+end type brdf_output_exception_handling_c
+
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def" in file: "sleave_sup_inputs_def.f90"
+type, bind(c) :: sleave_sup_inputs_c
+  type(c_ptr) :: sl_do_sleaving ! scalar
+  integer(c_int) :: sl_do_sleaving_f_byte_size
+
+  type(c_ptr) :: sl_do_isotropic ! scalar
+  integer(c_int) :: sl_do_isotropic_f_byte_size
+
+  type(c_ptr) :: sl_do_exact ! scalar
+  integer(c_int) :: sl_do_exact_f_byte_size
+
+  type(c_ptr) :: sl_do_exactonly ! scalar
+  integer(c_int) :: sl_do_exactonly_f_byte_size
+
+  type(c_ptr) :: sl_do_fluorescence ! scalar
+  integer(c_int) :: sl_do_fluorescence_f_byte_size
+
+  type(c_ptr) :: sl_do_solar_sources ! scalar
+  integer(c_int) :: sl_do_solar_sources_f_byte_size
+
+  type(c_ptr) :: sl_do_user_obsgeoms ! scalar
+  integer(c_int) :: sl_do_user_obsgeoms_f_byte_size
+
+  type(c_ptr) :: sl_nstreams ! scalar
+  integer(c_int) :: sl_nstreams_f_byte_size
+
+  type(c_ptr) :: sl_nbeams ! scalar
+  integer(c_int) :: sl_nbeams_f_byte_size
+
+  type(c_ptr) :: sl_beam_szas ! dimension(MAXBEAMS)
+  integer(c_int), dimension(1) :: sl_beam_szas_f_shapes
+  integer(c_int) :: sl_beam_szas_f_byte_size
+
+  type(c_ptr) :: sl_n_user_relazms ! scalar
+  integer(c_int) :: sl_n_user_relazms_f_byte_size
+
+  type(c_ptr) :: sl_user_relazms ! dimension(MAX_USER_RELAZMS)
+  integer(c_int), dimension(1) :: sl_user_relazms_f_shapes
+  integer(c_int) :: sl_user_relazms_f_byte_size
+
+  type(c_ptr) :: sl_do_user_streams ! scalar
+  integer(c_int) :: sl_do_user_streams_f_byte_size
+
+  type(c_ptr) :: sl_n_user_streams ! scalar
+  integer(c_int) :: sl_n_user_streams_f_byte_size
+
+  type(c_ptr) :: sl_user_angles_input ! dimension(MAX_USER_STREAMS)
+  integer(c_int), dimension(1) :: sl_user_angles_input_f_shapes
+  integer(c_int) :: sl_user_angles_input_f_byte_size
+
+  type(c_ptr) :: sl_n_user_obsgeoms ! scalar
+  integer(c_int) :: sl_n_user_obsgeoms_f_byte_size
+
+  type(c_ptr) :: sl_user_obsgeoms ! dimension(MAX_USER_OBSGEOMS, 3)
+  integer(c_int), dimension(2) :: sl_user_obsgeoms_f_shapes
+  integer(c_int) :: sl_user_obsgeoms_f_byte_size
+
+  type(c_ptr) :: sl_salinity ! scalar
+  integer(c_int) :: sl_salinity_f_byte_size
+
+  type(c_ptr) :: sl_chlorconc ! scalar
+  integer(c_int) :: sl_chlorconc_f_byte_size
+
+  type(c_ptr) :: sl_wavelength ! scalar
+  integer(c_int) :: sl_wavelength_f_byte_size
+
+  type(c_ptr) :: sl_windspeed ! scalar
+  integer(c_int) :: sl_windspeed_f_byte_size
+
+  type(c_ptr) :: sl_winddir ! dimension(MAXBEAMS)
+  integer(c_int), dimension(1) :: sl_winddir_f_shapes
+  integer(c_int) :: sl_winddir_f_byte_size
+
+  type(c_ptr) :: sl_do_glintshadow ! scalar
+  integer(c_int) :: sl_do_glintshadow_f_byte_size
+
+  type(c_ptr) :: sl_do_foamoption ! scalar
+  integer(c_int) :: sl_do_foamoption_f_byte_size
+
+  type(c_ptr) :: sl_do_facetisotropy ! scalar
+  integer(c_int) :: sl_do_facetisotropy_f_byte_size
+
+  type(c_ptr) :: sl_fl_wavelength ! scalar
+  integer(c_int) :: sl_fl_wavelength_f_byte_size
+
+  type(c_ptr) :: sl_fl_latitude ! scalar
+  integer(c_int) :: sl_fl_latitude_f_byte_size
+
+  type(c_ptr) :: sl_fl_longitude ! scalar
+  integer(c_int) :: sl_fl_longitude_f_byte_size
+
+  type(c_ptr) :: sl_fl_epoch ! dimension(6)
+  integer(c_int), dimension(1) :: sl_fl_epoch_f_shapes
+  integer(c_int) :: sl_fl_epoch_f_byte_size
+
+  type(c_ptr) :: sl_fl_amplitude755 ! scalar
+  integer(c_int) :: sl_fl_amplitude755_f_byte_size
+
+  type(c_ptr) :: sl_fl_do_datagaussian ! scalar
+  integer(c_int) :: sl_fl_do_datagaussian_f_byte_size
+
+  type(c_ptr) :: sl_fl_inputgaussians ! dimension(3, 2)
+  integer(c_int), dimension(2) :: sl_fl_inputgaussians_f_shapes
+  integer(c_int) :: sl_fl_inputgaussians_f_byte_size
+
+  
+end type sleave_sup_inputs_c
+
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_lincontrol_c
   type(c_ptr) :: ts_do_column_linearization ! scalar
   integer(c_int) :: ts_do_column_linearization_f_byte_size
@@ -329,27 +533,33 @@ type, bind(c) :: lidort_fixed_lincontrol_c
   type(c_ptr) :: ts_n_sleave_wfs ! scalar
   integer(c_int) :: ts_n_sleave_wfs_f_byte_size
 
+  type(c_ptr) :: ts_do_atmos_lbbf ! scalar
+  integer(c_int) :: ts_do_atmos_lbbf_f_byte_size
+
+  type(c_ptr) :: ts_do_surface_lbbf ! scalar
+  integer(c_int) :: ts_do_surface_lbbf_f_byte_size
+
   
 end type lidort_fixed_lincontrol_c
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_linoptical_c
-  type(c_ptr) :: ts_l_deltau_vert_input ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_l_deltau_vert_input_f_shapes
+  type(c_ptr) :: ts_l_deltau_vert_input ! dimension(MAX_ATMOSWFS, MAXLAYERS)
+  integer(c_int), dimension(2) :: ts_l_deltau_vert_input_f_shapes
   integer(c_int) :: ts_l_deltau_vert_input_f_byte_size
 
-  type(c_ptr) :: ts_l_omega_total_input ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_l_omega_total_input_f_shapes
+  type(c_ptr) :: ts_l_omega_total_input ! dimension(MAX_ATMOSWFS, MAXLAYERS)
+  integer(c_int), dimension(2) :: ts_l_omega_total_input_f_shapes
   integer(c_int) :: ts_l_omega_total_input_f_byte_size
 
-  type(c_ptr) :: ts_l_phasmoms_total_input ! dimension(MAX_ATMOSWFS, 0:MAXMOMENTS_INPUT, MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(4) :: ts_l_phasmoms_total_input_f_shapes
+  type(c_ptr) :: ts_l_phasmoms_total_input ! dimension(MAX_ATMOSWFS, 0:MAXMOMENTS_INPUT, MAXLAYERS)
+  integer(c_int), dimension(3) :: ts_l_phasmoms_total_input_f_shapes
   integer(c_int) :: ts_l_phasmoms_total_input_f_byte_size
 
   
 end type lidort_fixed_linoptical_c
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_lininputs_c
   type(c_ptr) :: cont ! scalar
   integer(c_int) :: cont_f_byte_size
@@ -360,7 +570,7 @@ type, bind(c) :: lidort_fixed_lininputs_c
   
 end type lidort_fixed_lininputs_c
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_modified_lininputs_c
   type(c_ptr) :: dummy ! scalar
   integer(c_int) :: dummy_f_byte_size
@@ -368,53 +578,69 @@ type, bind(c) :: lidort_modified_lininputs_c
   
 end type lidort_modified_lininputs_c
 
-! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linatmos_c
-  type(c_ptr) :: ts_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_columnwf_f_shapes
+  type(c_ptr) :: ts_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_columnwf_f_shapes
   integer(c_int) :: ts_columnwf_f_byte_size
 
-  type(c_ptr) :: ts_mint_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_mint_columnwf_f_shapes
+  type(c_ptr) :: ts_mint_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_mint_columnwf_f_shapes
   integer(c_int) :: ts_mint_columnwf_f_byte_size
 
-  type(c_ptr) :: ts_flux_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_flux_columnwf_f_shapes
+  type(c_ptr) :: ts_flux_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_flux_columnwf_f_shapes
   integer(c_int) :: ts_flux_columnwf_f_byte_size
 
-  type(c_ptr) :: ts_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(6) :: ts_profilewf_f_shapes
+  type(c_ptr) :: ts_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
+  integer(c_int), dimension(5) :: ts_profilewf_f_shapes
   integer(c_int) :: ts_profilewf_f_byte_size
 
-  type(c_ptr) :: ts_mint_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(6) :: ts_mint_profilewf_f_shapes
+  type(c_ptr) :: ts_mint_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(5) :: ts_mint_profilewf_f_shapes
   integer(c_int) :: ts_mint_profilewf_f_byte_size
 
-  type(c_ptr) :: ts_flux_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(6) :: ts_flux_profilewf_f_shapes
+  type(c_ptr) :: ts_flux_profilewf ! dimension(MAX_ATMOSWFS, MAXLAYERS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(5) :: ts_flux_profilewf_f_shapes
   integer(c_int) :: ts_flux_profilewf_f_byte_size
+
+  type(c_ptr) :: ts_abbwfs_jacobians ! dimension(MAX_USER_LEVELS, MAX_USER_STREAMS, 0:MAXLAYERS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_abbwfs_jacobians_f_shapes
+  integer(c_int) :: ts_abbwfs_jacobians_f_byte_size
+
+  type(c_ptr) :: ts_abbwfs_fluxes ! dimension(MAX_USER_LEVELS, 2, 0:MAXLAYERS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_abbwfs_fluxes_f_shapes
+  integer(c_int) :: ts_abbwfs_fluxes_f_byte_size
 
   
 end type lidort_linatmos_c
 
-! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linsurf_c
-  type(c_ptr) :: ts_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_surfacewf_f_shapes
+  type(c_ptr) :: ts_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_surfacewf_f_shapes
   integer(c_int) :: ts_surfacewf_f_byte_size
 
-  type(c_ptr) :: ts_mint_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_mint_surfacewf_f_shapes
+  type(c_ptr) :: ts_mint_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_mint_surfacewf_f_shapes
   integer(c_int) :: ts_mint_surfacewf_f_byte_size
 
-  type(c_ptr) :: ts_flux_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(5) :: ts_flux_surfacewf_f_shapes
+  type(c_ptr) :: ts_flux_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(4) :: ts_flux_surfacewf_f_shapes
   integer(c_int) :: ts_flux_surfacewf_f_byte_size
+
+  type(c_ptr) :: ts_sbbwfs_jacobians ! dimension(MAX_USER_LEVELS, MAX_USER_STREAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(3) :: ts_sbbwfs_jacobians_f_shapes
+  integer(c_int) :: ts_sbbwfs_jacobians_f_byte_size
+
+  type(c_ptr) :: ts_sbbwfs_fluxes ! dimension(MAX_USER_LEVELS, 2, MAX_DIRECTIONS)
+  integer(c_int), dimension(3) :: ts_sbbwfs_fluxes_f_shapes
+  integer(c_int) :: ts_sbbwfs_fluxes_f_byte_size
 
   
 end type lidort_linsurf_c
 
-! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linoutputs_c
   type(c_ptr) :: atmos ! scalar
   integer(c_int) :: atmos_f_byte_size
@@ -425,7 +651,7 @@ type, bind(c) :: lidort_linoutputs_c
   
 end type lidort_linoutputs_c
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.f90"
 type, bind(c) :: lidort_linsup_brdf_c
   type(c_ptr) :: ts_ls_exactdb_brdfunc ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(4) :: ts_ls_exactdb_brdfunc_f_shapes
@@ -447,18 +673,18 @@ type, bind(c) :: lidort_linsup_brdf_c
   integer(c_int), dimension(4) :: ts_ls_user_brdf_f_f_shapes
   integer(c_int) :: ts_ls_user_brdf_f_f_byte_size
 
-  type(c_ptr) :: ts_ls_emissivity ! dimension(MAX_SURFACEWFS, MAXSTREAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_ls_emissivity_f_shapes
+  type(c_ptr) :: ts_ls_emissivity ! dimension(MAX_SURFACEWFS, MAXSTREAMS)
+  integer(c_int), dimension(2) :: ts_ls_emissivity_f_shapes
   integer(c_int) :: ts_ls_emissivity_f_byte_size
 
-  type(c_ptr) :: ts_ls_user_emissivity ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_ls_user_emissivity_f_shapes
+  type(c_ptr) :: ts_ls_user_emissivity ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS)
+  integer(c_int), dimension(2) :: ts_ls_user_emissivity_f_shapes
   integer(c_int) :: ts_ls_user_emissivity_f_byte_size
 
   
 end type lidort_linsup_brdf_c
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_atmos_c
   type(c_ptr) :: ts_columnwf_ss ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(4) :: ts_columnwf_ss_f_shapes
@@ -479,7 +705,7 @@ type, bind(c) :: lidort_linsup_ss_atmos_c
   
 end type lidort_linsup_ss_atmos_c
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_surf_c
   type(c_ptr) :: ts_surfacewf_db ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAX_GEOMETRIES)
   integer(c_int), dimension(3) :: ts_surfacewf_db_f_shapes
@@ -488,7 +714,7 @@ type, bind(c) :: lidort_linsup_ss_surf_c
   
 end type lidort_linsup_ss_surf_c
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_c
   type(c_ptr) :: atmos ! scalar
   integer(c_int) :: atmos_f_byte_size
@@ -499,7 +725,7 @@ type, bind(c) :: lidort_linsup_ss_c
   
 end type lidort_linsup_ss_c
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.f90"
 type, bind(c) :: lidort_linsup_sleave_c
   type(c_ptr) :: ts_lssl_slterm_isotropic ! dimension(MAX_SLEAVEWFS, MAXBEAMS)
   integer(c_int), dimension(2) :: ts_lssl_slterm_isotropic_f_shapes
@@ -520,7 +746,7 @@ type, bind(c) :: lidort_linsup_sleave_c
   
 end type lidort_linsup_sleave_c
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.f90"
 type, bind(c) :: lidort_linsup_inout_c
   type(c_ptr) :: brdf ! scalar
   integer(c_int) :: brdf_f_byte_size
@@ -534,39 +760,43 @@ type, bind(c) :: lidort_linsup_inout_c
   
 end type lidort_linsup_inout_c
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_main_outputs_c
-  type(c_ptr) :: ts_intensity ! dimension(MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(4) :: ts_intensity_f_shapes
+  type(c_ptr) :: ts_intensity ! dimension(MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
+  integer(c_int), dimension(3) :: ts_intensity_f_shapes
   integer(c_int) :: ts_intensity_f_byte_size
 
-  type(c_ptr) :: ts_mean_intensity ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(4) :: ts_mean_intensity_f_shapes
+  type(c_ptr) :: ts_mean_intensity ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(3) :: ts_mean_intensity_f_shapes
   integer(c_int) :: ts_mean_intensity_f_byte_size
 
-  type(c_ptr) :: ts_flux_integral ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS, MAXTHREADS)
-  integer(c_int), dimension(4) :: ts_flux_integral_f_shapes
+  type(c_ptr) :: ts_flux_integral ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAX_DIRECTIONS)
+  integer(c_int), dimension(3) :: ts_flux_integral_f_shapes
   integer(c_int) :: ts_flux_integral_f_byte_size
 
-  type(c_ptr) :: ts_dnflux_direct ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_dnflux_direct_f_shapes
+  type(c_ptr) :: ts_dnflux_direct ! dimension(MAX_USER_LEVELS, MAXBEAMS)
+  integer(c_int), dimension(2) :: ts_dnflux_direct_f_shapes
   integer(c_int) :: ts_dnflux_direct_f_byte_size
 
-  type(c_ptr) :: ts_dnmean_direct ! dimension(MAX_USER_LEVELS, MAXBEAMS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_dnmean_direct_f_shapes
+  type(c_ptr) :: ts_dnmean_direct ! dimension(MAX_USER_LEVELS, MAXBEAMS)
+  integer(c_int), dimension(2) :: ts_dnmean_direct_f_shapes
   integer(c_int) :: ts_dnmean_direct_f_byte_size
 
-  type(c_ptr) :: ts_fourier_saved ! dimension(MAXBEAMS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_fourier_saved_f_shapes
+  type(c_ptr) :: ts_fourier_saved ! dimension(MAXBEAMS)
+  integer(c_int), dimension(1) :: ts_fourier_saved_f_shapes
   integer(c_int) :: ts_fourier_saved_f_byte_size
 
   type(c_ptr) :: ts_n_geometries ! scalar
   integer(c_int) :: ts_n_geometries_f_byte_size
 
+  type(c_ptr) :: ts_solarbeam_boatrans ! dimension(MAXBEAMS)
+  integer(c_int), dimension(1) :: ts_solarbeam_boatrans_f_shapes
+  integer(c_int) :: ts_solarbeam_boatrans_f_byte_size
+
   
 end type lidort_main_outputs_c
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_exception_handling_c
   type(c_ptr) :: ts_status_inputcheck ! scalar
   integer(c_int) :: ts_status_inputcheck_f_byte_size
@@ -600,7 +830,7 @@ type, bind(c) :: lidort_exception_handling_c
   
 end type lidort_exception_handling_c
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_input_exception_handling_c
   type(c_ptr) :: ts_status_inputread ! scalar
   integer(c_int) :: ts_status_inputread_f_byte_size
@@ -619,7 +849,7 @@ type, bind(c) :: lidort_input_exception_handling_c
   
 end type lidort_input_exception_handling_c
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_outputs_c
   type(c_ptr) :: main ! scalar
   integer(c_int) :: main_f_byte_size
@@ -630,7 +860,7 @@ type, bind(c) :: lidort_outputs_c
   
 end type lidort_outputs_c
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.f90"
 type, bind(c) :: lidort_sup_brdf_c
   type(c_ptr) :: ts_exactdb_brdfunc ! dimension(MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(3) :: ts_exactdb_brdfunc_f_shapes
@@ -652,18 +882,18 @@ type, bind(c) :: lidort_sup_brdf_c
   integer(c_int), dimension(3) :: ts_user_brdf_f_f_shapes
   integer(c_int) :: ts_user_brdf_f_f_byte_size
 
-  type(c_ptr) :: ts_emissivity ! dimension(MAXSTREAMS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_emissivity_f_shapes
+  type(c_ptr) :: ts_emissivity ! dimension(MAXSTREAMS)
+  integer(c_int), dimension(1) :: ts_emissivity_f_shapes
   integer(c_int) :: ts_emissivity_f_byte_size
 
-  type(c_ptr) :: ts_user_emissivity ! dimension(MAX_USER_STREAMS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_user_emissivity_f_shapes
+  type(c_ptr) :: ts_user_emissivity ! dimension(MAX_USER_STREAMS)
+  integer(c_int), dimension(1) :: ts_user_emissivity_f_shapes
   integer(c_int) :: ts_user_emissivity_f_byte_size
 
   
 end type lidort_sup_brdf_c
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.f90"
 type, bind(c) :: lidort_sup_sleave_c
   type(c_ptr) :: ts_slterm_isotropic ! dimension(MAXBEAMS)
   integer(c_int), dimension(1) :: ts_slterm_isotropic_f_shapes
@@ -684,7 +914,7 @@ type, bind(c) :: lidort_sup_sleave_c
   
 end type lidort_sup_sleave_c
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.f90"
 type, bind(c) :: lidort_sup_ss_c
   type(c_ptr) :: ts_intensity_ss ! dimension(MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(3) :: ts_intensity_ss_f_shapes
@@ -697,7 +927,7 @@ type, bind(c) :: lidort_sup_ss_c
   
 end type lidort_sup_ss_c
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.f90"
 type, bind(c) :: lidort_sup_inout_c
   type(c_ptr) :: brdf ! scalar
   integer(c_int) :: brdf_f_byte_size
@@ -711,7 +941,7 @@ type, bind(c) :: lidort_sup_inout_c
   
 end type lidort_sup_inout_c
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_boolean_c
   type(c_ptr) :: ts_do_fullrad_mode ! scalar
   integer(c_int) :: ts_do_fullrad_mode_f_byte_size
@@ -752,8 +982,14 @@ type, bind(c) :: lidort_fixed_boolean_c
   
 end type lidort_fixed_boolean_c
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_control_c
+  type(c_ptr) :: ts_thermal_cutoff ! scalar
+  integer(c_int) :: ts_thermal_cutoff_f_byte_size
+
+  type(c_ptr) :: ts_taylor_order ! scalar
+  integer(c_int) :: ts_taylor_order_f_byte_size
+
   type(c_ptr) :: ts_nstreams ! scalar
   integer(c_int) :: ts_nstreams_f_byte_size
 
@@ -772,7 +1008,7 @@ type, bind(c) :: lidort_fixed_control_c
   
 end type lidort_fixed_control_c
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_sunrays_c
   type(c_ptr) :: ts_flux_factor ! scalar
   integer(c_int) :: ts_flux_factor_f_byte_size
@@ -780,18 +1016,15 @@ type, bind(c) :: lidort_fixed_sunrays_c
   
 end type lidort_fixed_sunrays_c
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_uservalues_c
-  type(c_ptr) :: ts_n_user_streams ! scalar
-  integer(c_int) :: ts_n_user_streams_f_byte_size
-
   type(c_ptr) :: ts_n_user_levels ! scalar
   integer(c_int) :: ts_n_user_levels_f_byte_size
 
   
 end type lidort_fixed_uservalues_c
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_chapman_c
   type(c_ptr) :: ts_height_grid ! dimension(0:MAXLAYERS)
   integer(c_int), dimension(1) :: ts_height_grid_f_shapes
@@ -815,32 +1048,30 @@ type, bind(c) :: lidort_fixed_chapman_c
   
 end type lidort_fixed_chapman_c
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_optical_c
-  type(c_ptr) :: ts_deltau_vert_input ! dimension(MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_deltau_vert_input_f_shapes
+  type(c_ptr) :: ts_deltau_vert_input ! dimension(MAXLAYERS)
+  integer(c_int), dimension(1) :: ts_deltau_vert_input_f_shapes
   integer(c_int) :: ts_deltau_vert_input_f_byte_size
 
-  type(c_ptr) :: ts_phasmoms_total_input ! dimension(0:MAXMOMENTS_INPUT, MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(3) :: ts_phasmoms_total_input_f_shapes
+  type(c_ptr) :: ts_phasmoms_total_input ! dimension(0:MAXMOMENTS_INPUT, MAXLAYERS)
+  integer(c_int), dimension(2) :: ts_phasmoms_total_input_f_shapes
   integer(c_int) :: ts_phasmoms_total_input_f_byte_size
 
-  type(c_ptr) :: ts_thermal_bb_input ! dimension(0:MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_thermal_bb_input_f_shapes
+  type(c_ptr) :: ts_thermal_bb_input ! dimension(0:MAXLAYERS)
+  integer(c_int), dimension(1) :: ts_thermal_bb_input_f_shapes
   integer(c_int) :: ts_thermal_bb_input_f_byte_size
 
-  type(c_ptr) :: ts_lambertian_albedo ! dimension(MAXTHREADS)
-  integer(c_int), dimension(1) :: ts_lambertian_albedo_f_shapes
+  type(c_ptr) :: ts_lambertian_albedo ! scalar
   integer(c_int) :: ts_lambertian_albedo_f_byte_size
 
-  type(c_ptr) :: ts_surface_bb_input ! dimension(MAXTHREADS)
-  integer(c_int), dimension(1) :: ts_surface_bb_input_f_shapes
+  type(c_ptr) :: ts_surface_bb_input ! scalar
   integer(c_int) :: ts_surface_bb_input_f_byte_size
 
   
 end type lidort_fixed_optical_c
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_inputs_c
   type(c_ptr) :: f_bool ! scalar
   integer(c_int) :: bool_f_byte_size
@@ -863,7 +1094,7 @@ type, bind(c) :: lidort_fixed_inputs_c
   
 end type lidort_fixed_inputs_c
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_boolean_c
   type(c_ptr) :: ts_do_sscorr_nadir ! scalar
   integer(c_int) :: ts_do_sscorr_nadir_f_byte_size
@@ -916,10 +1147,13 @@ type, bind(c) :: lidort_modified_boolean_c
   type(c_ptr) :: ts_do_thermal_transonly ! scalar
   integer(c_int) :: ts_do_thermal_transonly_f_byte_size
 
+  type(c_ptr) :: ts_do_observation_geometry ! scalar
+  integer(c_int) :: ts_do_observation_geometry_f_byte_size
+
   
 end type lidort_modified_boolean_c
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_control_c
   type(c_ptr) :: ts_nmoments_input ! scalar
   integer(c_int) :: ts_nmoments_input_f_byte_size
@@ -927,7 +1161,7 @@ type, bind(c) :: lidort_modified_control_c
   
 end type lidort_modified_control_c
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_sunrays_c
   type(c_ptr) :: ts_nbeams ! scalar
   integer(c_int) :: ts_nbeams_f_byte_size
@@ -939,7 +1173,7 @@ type, bind(c) :: lidort_modified_sunrays_c
   
 end type lidort_modified_sunrays_c
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_uservalues_c
   type(c_ptr) :: ts_n_user_relazms ! scalar
   integer(c_int) :: ts_n_user_relazms_f_byte_size
@@ -947,6 +1181,9 @@ type, bind(c) :: lidort_modified_uservalues_c
   type(c_ptr) :: ts_user_relazms ! dimension(MAX_USER_RELAZMS)
   integer(c_int), dimension(1) :: ts_user_relazms_f_shapes
   integer(c_int) :: ts_user_relazms_f_byte_size
+
+  type(c_ptr) :: ts_n_user_streams ! scalar
+  integer(c_int) :: ts_n_user_streams_f_byte_size
 
   type(c_ptr) :: ts_user_angles_input ! dimension(MAX_USER_STREAMS)
   integer(c_int), dimension(1) :: ts_user_angles_input_f_shapes
@@ -959,10 +1196,17 @@ type, bind(c) :: lidort_modified_uservalues_c
   type(c_ptr) :: ts_geometry_specheight ! scalar
   integer(c_int) :: ts_geometry_specheight_f_byte_size
 
+  type(c_ptr) :: ts_n_user_obsgeoms ! scalar
+  integer(c_int) :: ts_n_user_obsgeoms_f_byte_size
+
+  type(c_ptr) :: ts_user_obsgeom_input ! dimension(MAX_USER_OBSGEOMS, 3)
+  integer(c_int), dimension(2) :: ts_user_obsgeom_input_f_shapes
+  integer(c_int) :: ts_user_obsgeom_input_f_byte_size
+
   
 end type lidort_modified_uservalues_c
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_chapman_c
   type(c_ptr) :: ts_earth_radius ! scalar
   integer(c_int) :: ts_earth_radius_f_byte_size
@@ -970,16 +1214,16 @@ type, bind(c) :: lidort_modified_chapman_c
   
 end type lidort_modified_chapman_c
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_optical_c
-  type(c_ptr) :: ts_omega_total_input ! dimension(MAXLAYERS, MAXTHREADS)
-  integer(c_int), dimension(2) :: ts_omega_total_input_f_shapes
+  type(c_ptr) :: ts_omega_total_input ! dimension(MAXLAYERS)
+  integer(c_int), dimension(1) :: ts_omega_total_input_f_shapes
   integer(c_int) :: ts_omega_total_input_f_byte_size
 
   
 end type lidort_modified_optical_c
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_inputs_c
   type(c_ptr) :: mbool ! scalar
   integer(c_int) :: mbool_f_byte_size
@@ -1017,7 +1261,6 @@ subroutine set_lidort_pars(pars_struct) bind(C)
   pars_struct%lidort_errunit = LIDORT_ERRUNIT
   pars_struct%lidort_dbgunit = LIDORT_DBGUNIT
   pars_struct%max_messages = MAX_MESSAGES
-  pars_struct%maxthreads = MAXTHREADS
   pars_struct%maxstreams = MAXSTREAMS
   pars_struct%maxlayers = MAXLAYERS
   pars_struct%maxfinelayers = MAXFINELAYERS
@@ -1026,14 +1269,17 @@ subroutine set_lidort_pars(pars_struct) bind(C)
   pars_struct%maxbeams = MAXBEAMS
   pars_struct%max_user_streams = MAX_USER_STREAMS
   pars_struct%max_user_relazms = MAX_USER_RELAZMS
+  pars_struct%max_user_obsgeoms = MAX_USER_OBSGEOMS
   pars_struct%max_user_levels = MAX_USER_LEVELS
   pars_struct%max_partlayers = MAX_PARTLAYERS
+  pars_struct%max_taylor_terms = MAX_TAYLOR_TERMS
   pars_struct%max_directions = MAX_DIRECTIONS
   pars_struct%max_brdf_kernels = MAX_BRDF_KERNELS
   pars_struct%max_brdf_parameters = MAX_BRDF_PARAMETERS
   pars_struct%maxstreams_brdf = MAXSTREAMS_BRDF
   pars_struct%max_msrs_muquad = MAX_MSRS_MUQUAD
   pars_struct%max_msrs_phiquad = MAX_MSRS_PHIQUAD
+  pars_struct%maxstreams_scaling = MAXSTREAMS_SCALING
   pars_struct%max_atmoswfs = MAX_ATMOSWFS
   pars_struct%max_surfacewfs = MAX_SURFACEWFS
   pars_struct%max_sleavewfs = MAX_SLEAVEWFS
@@ -1066,6 +1312,7 @@ subroutine set_lidort_pars(pars_struct) bind(C)
   pars_struct%eps3 = EPS3
   pars_struct%eps4 = EPS4
   pars_struct%eps5 = EPS5
+  pars_struct%taylor_small = TAYLOR_SMALL
   pars_struct%smallnum = SMALLNUM
   pars_struct%bigexp = BIGEXP
   pars_struct%hopital_tolerance = HOPITAL_TOLERANCE
@@ -1089,15 +1336,17 @@ subroutine set_lidort_pars(pars_struct) bind(C)
   pars_struct%roujean_idx = ROUJEAN_IDX
   pars_struct%rahman_idx = RAHMAN_IDX
   pars_struct%coxmunk_idx = COXMUNK_IDX
-  pars_struct%breonveg_idx = BREONVEG_IDX
-  pars_struct%breonsoil_idx = BREONSOIL_IDX
+  pars_struct%bpdfsoil_idx = BPDFSOIL_IDX
+  pars_struct%bpdfvegn_idx = BPDFVEGN_IDX
+  pars_struct%bpdfndvi_idx = BPDFNDVI_IDX
+  pars_struct%newcmglint_idx = NEWCMGLINT_IDX
   pars_struct%maxbrdf_idx = MAXBRDF_IDX
   
 end subroutine set_lidort_pars
 
 
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_linsup_inputs_def, only : brdf_linsup_inputs
@@ -1114,7 +1363,7 @@ subroutine brdf_linsup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bi
 
 end subroutine brdf_linsup_inputs_c_alloc_init
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_linsup_inputs_def" in file: "brdf_lin_sup_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_linsup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_linsup_inputs_def
@@ -1131,6 +1380,9 @@ subroutine brdf_linsup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bin
   integer(c_int), pointer :: bs_n_surface_wfs_ptr
   integer(c_int), pointer :: bs_n_kernel_factor_wfs_ptr
   integer(c_int), pointer :: bs_n_kernel_params_wfs_ptr
+  logical(kind=4), pointer :: bs_do_bsavalue_wf_ptr
+  logical(kind=4), pointer :: bs_do_wsavalue_wf_ptr
+  logical(kind=4), pointer :: bs_do_windspeed_wf_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -1213,6 +1465,36 @@ subroutine brdf_linsup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bin
   
   
   
+  fortran_type_f%bs_do_bsavalue_wf = .FALSE.
+  bs_do_bsavalue_wf_ptr => fortran_type_f%bs_do_bsavalue_wf
+  transfer_struct_c%bs_do_bsavalue_wf = c_loc(bs_do_bsavalue_wf_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_bsavalue_wf_f_byte_size) fortran_type_f%bs_do_bsavalue_wf
+#ifdef ifort
+  transfer_struct_c%bs_do_bsavalue_wf_f_byte_size = transfer_struct_c%bs_do_bsavalue_wf_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_wsavalue_wf = .FALSE.
+  bs_do_wsavalue_wf_ptr => fortran_type_f%bs_do_wsavalue_wf
+  transfer_struct_c%bs_do_wsavalue_wf = c_loc(bs_do_wsavalue_wf_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_wsavalue_wf_f_byte_size) fortran_type_f%bs_do_wsavalue_wf
+#ifdef ifort
+  transfer_struct_c%bs_do_wsavalue_wf_f_byte_size = transfer_struct_c%bs_do_wsavalue_wf_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_windspeed_wf = .FALSE.
+  bs_do_windspeed_wf_ptr => fortran_type_f%bs_do_windspeed_wf
+  transfer_struct_c%bs_do_windspeed_wf = c_loc(bs_do_windspeed_wf_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_windspeed_wf_f_byte_size) fortran_type_f%bs_do_windspeed_wf
+#ifdef ifort
+  transfer_struct_c%bs_do_windspeed_wf_f_byte_size = transfer_struct_c%bs_do_windspeed_wf_f_byte_size * 4
+#endif
+  
+  
+  
 end subroutine brdf_linsup_inputs_c_init_only
 
 subroutine brdf_linsup_inputs_c_destroy(fortran_type_c) bind(C)
@@ -1245,11 +1527,14 @@ subroutine brdf_linsup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bin
   fortran_type_f_to%bs_n_surface_wfs = fortran_type_f_from%bs_n_surface_wfs
   fortran_type_f_to%bs_n_kernel_factor_wfs = fortran_type_f_from%bs_n_kernel_factor_wfs
   fortran_type_f_to%bs_n_kernel_params_wfs = fortran_type_f_from%bs_n_kernel_params_wfs
+  fortran_type_f_to%bs_do_bsavalue_wf = fortran_type_f_from%bs_do_bsavalue_wf
+  fortran_type_f_to%bs_do_wsavalue_wf = fortran_type_f_from%bs_do_wsavalue_wf
+  fortran_type_f_to%bs_do_windspeed_wf = fortran_type_f_from%bs_do_windspeed_wf
   
 
 end subroutine brdf_linsup_inputs_c_copy
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_linsup_outputs_def, only : brdf_linsup_outputs
@@ -1266,7 +1551,7 @@ subroutine brdf_linsup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine brdf_linsup_outputs_c_alloc_init
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_linsup_outputs_def" in file: "brdf_lin_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_linsup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_linsup_outputs_def
@@ -1277,13 +1562,13 @@ subroutine brdf_linsup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
 
   type(brdf_linsup_outputs), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:,:), pointer :: bs_ls_exactdb_brdfunc_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: bs_ls_dbounce_brdfunc_ptr
   real(c_double), dimension(:,:,:,:), pointer :: bs_ls_brdf_f_0_ptr
   real(c_double), dimension(:,:,:,:), pointer :: bs_ls_brdf_f_ptr
   real(c_double), dimension(:,:,:,:), pointer :: bs_ls_user_brdf_f_0_ptr
   real(c_double), dimension(:,:,:,:), pointer :: bs_ls_user_brdf_f_ptr
-  real(c_double), dimension(:,:,:), pointer :: bs_ls_emissivity_ptr
-  real(c_double), dimension(:,:,:), pointer :: bs_ls_user_emissivity_ptr
+  real(c_double), dimension(:,:), pointer :: bs_ls_emissivity_ptr
+  real(c_double), dimension(:,:), pointer :: bs_ls_user_emissivity_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -1294,26 +1579,26 @@ subroutine brdf_linsup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   !   * Set bit size and extents
 
   
-  fortran_type_f%bs_ls_exactdb_brdfunc = 0_fpk
-  bs_ls_exactdb_brdfunc_ptr => fortran_type_f%bs_ls_exactdb_brdfunc
-  transfer_struct_c%bs_ls_exactdb_brdfunc = c_loc(bs_ls_exactdb_brdfunc_ptr(&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,1),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,2),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,3),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,4)))
-  inquire(iolength=transfer_struct_c%bs_ls_exactdb_brdfunc_f_byte_size) fortran_type_f%bs_ls_exactdb_brdfunc(&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,1),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,2),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,3),&
-    lbound(fortran_type_f%bs_ls_exactdb_brdfunc,4))
+  fortran_type_f%bs_ls_dbounce_brdfunc = 0_fpk
+  bs_ls_dbounce_brdfunc_ptr => fortran_type_f%bs_ls_dbounce_brdfunc
+  transfer_struct_c%bs_ls_dbounce_brdfunc = c_loc(bs_ls_dbounce_brdfunc_ptr(&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,1),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,2),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,3),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,4)))
+  inquire(iolength=transfer_struct_c%bs_ls_dbounce_brdfunc_f_byte_size) fortran_type_f%bs_ls_dbounce_brdfunc(&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,1),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,2),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,3),&
+    lbound(fortran_type_f%bs_ls_dbounce_brdfunc,4))
 #ifdef ifort
-  transfer_struct_c%bs_ls_exactdb_brdfunc_f_byte_size = transfer_struct_c%bs_ls_exactdb_brdfunc_f_byte_size * 4
+  transfer_struct_c%bs_ls_dbounce_brdfunc_f_byte_size = transfer_struct_c%bs_ls_dbounce_brdfunc_f_byte_size * 4
 #endif
   
-  transfer_struct_c%bs_ls_exactdb_brdfunc_f_shapes(1) = size(fortran_type_f%bs_ls_exactdb_brdfunc, 1)
-  transfer_struct_c%bs_ls_exactdb_brdfunc_f_shapes(2) = size(fortran_type_f%bs_ls_exactdb_brdfunc, 2)
-  transfer_struct_c%bs_ls_exactdb_brdfunc_f_shapes(3) = size(fortran_type_f%bs_ls_exactdb_brdfunc, 3)
-  transfer_struct_c%bs_ls_exactdb_brdfunc_f_shapes(4) = size(fortran_type_f%bs_ls_exactdb_brdfunc, 4)
+  transfer_struct_c%bs_ls_dbounce_brdfunc_f_shapes(1) = size(fortran_type_f%bs_ls_dbounce_brdfunc, 1)
+  transfer_struct_c%bs_ls_dbounce_brdfunc_f_shapes(2) = size(fortran_type_f%bs_ls_dbounce_brdfunc, 2)
+  transfer_struct_c%bs_ls_dbounce_brdfunc_f_shapes(3) = size(fortran_type_f%bs_ls_dbounce_brdfunc, 3)
+  transfer_struct_c%bs_ls_dbounce_brdfunc_f_shapes(4) = size(fortran_type_f%bs_ls_dbounce_brdfunc, 4)
   
   
   fortran_type_f%bs_ls_brdf_f_0 = 0_fpk
@@ -1408,38 +1693,32 @@ subroutine brdf_linsup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   bs_ls_emissivity_ptr => fortran_type_f%bs_ls_emissivity
   transfer_struct_c%bs_ls_emissivity = c_loc(bs_ls_emissivity_ptr(&
     lbound(fortran_type_f%bs_ls_emissivity,1),&
-    lbound(fortran_type_f%bs_ls_emissivity,2),&
-    lbound(fortran_type_f%bs_ls_emissivity,3)))
+    lbound(fortran_type_f%bs_ls_emissivity,2)))
   inquire(iolength=transfer_struct_c%bs_ls_emissivity_f_byte_size) fortran_type_f%bs_ls_emissivity(&
     lbound(fortran_type_f%bs_ls_emissivity,1),&
-    lbound(fortran_type_f%bs_ls_emissivity,2),&
-    lbound(fortran_type_f%bs_ls_emissivity,3))
+    lbound(fortran_type_f%bs_ls_emissivity,2))
 #ifdef ifort
   transfer_struct_c%bs_ls_emissivity_f_byte_size = transfer_struct_c%bs_ls_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%bs_ls_emissivity_f_shapes(1) = size(fortran_type_f%bs_ls_emissivity, 1)
   transfer_struct_c%bs_ls_emissivity_f_shapes(2) = size(fortran_type_f%bs_ls_emissivity, 2)
-  transfer_struct_c%bs_ls_emissivity_f_shapes(3) = size(fortran_type_f%bs_ls_emissivity, 3)
   
   
   fortran_type_f%bs_ls_user_emissivity = 0_fpk
   bs_ls_user_emissivity_ptr => fortran_type_f%bs_ls_user_emissivity
   transfer_struct_c%bs_ls_user_emissivity = c_loc(bs_ls_user_emissivity_ptr(&
     lbound(fortran_type_f%bs_ls_user_emissivity,1),&
-    lbound(fortran_type_f%bs_ls_user_emissivity,2),&
-    lbound(fortran_type_f%bs_ls_user_emissivity,3)))
+    lbound(fortran_type_f%bs_ls_user_emissivity,2)))
   inquire(iolength=transfer_struct_c%bs_ls_user_emissivity_f_byte_size) fortran_type_f%bs_ls_user_emissivity(&
     lbound(fortran_type_f%bs_ls_user_emissivity,1),&
-    lbound(fortran_type_f%bs_ls_user_emissivity,2),&
-    lbound(fortran_type_f%bs_ls_user_emissivity,3))
+    lbound(fortran_type_f%bs_ls_user_emissivity,2))
 #ifdef ifort
   transfer_struct_c%bs_ls_user_emissivity_f_byte_size = transfer_struct_c%bs_ls_user_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%bs_ls_user_emissivity_f_shapes(1) = size(fortran_type_f%bs_ls_user_emissivity, 1)
   transfer_struct_c%bs_ls_user_emissivity_f_shapes(2) = size(fortran_type_f%bs_ls_user_emissivity, 2)
-  transfer_struct_c%bs_ls_user_emissivity_f_shapes(3) = size(fortran_type_f%bs_ls_user_emissivity, 3)
   
   
 end subroutine brdf_linsup_outputs_c_init_only
@@ -1468,7 +1747,7 @@ subroutine brdf_linsup_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
   call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
   call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
 
-  fortran_type_f_to%bs_ls_exactdb_brdfunc = fortran_type_f_from%bs_ls_exactdb_brdfunc
+  fortran_type_f_to%bs_ls_dbounce_brdfunc = fortran_type_f_from%bs_ls_dbounce_brdfunc
   fortran_type_f_to%bs_ls_brdf_f_0 = fortran_type_f_from%bs_ls_brdf_f_0
   fortran_type_f_to%bs_ls_brdf_f = fortran_type_f_from%bs_ls_brdf_f
   fortran_type_f_to%bs_ls_user_brdf_f_0 = fortran_type_f_from%bs_ls_user_brdf_f_0
@@ -1479,7 +1758,7 @@ subroutine brdf_linsup_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine brdf_linsup_outputs_c_copy
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_inputs_def, only : brdf_sup_inputs
@@ -1496,7 +1775,7 @@ subroutine brdf_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine brdf_sup_inputs_c_alloc_init
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_inputs_def
@@ -1510,6 +1789,8 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   logical(kind=4), pointer :: bs_do_user_streams_ptr
   logical(kind=4), pointer :: bs_do_brdf_surface_ptr
   logical(kind=4), pointer :: bs_do_surface_emission_ptr
+  logical(kind=4), pointer :: bs_do_solar_sources_ptr
+  logical(kind=4), pointer :: bs_do_user_obsgeoms_ptr
   integer(c_int), pointer :: bs_nstreams_ptr
   integer(c_int), pointer :: bs_nbeams_ptr
   real(c_double), dimension(:), pointer :: bs_beam_szas_ptr
@@ -1517,6 +1798,8 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   real(c_double), dimension(:), pointer :: bs_user_relazms_ptr
   integer(c_int), pointer :: bs_n_user_streams_ptr
   real(c_double), dimension(:), pointer :: bs_user_angles_input_ptr
+  integer(c_int), pointer :: bs_n_user_obsgeoms_ptr
+  real(c_double), dimension(:,:), pointer :: bs_user_obsgeoms_ptr
   integer(c_int), pointer :: bs_n_brdf_kernels_ptr
   integer(c_int), dimension(:), pointer :: bs_which_brdf_ptr
   integer(c_int), dimension(:), pointer :: bs_n_brdf_parameters_ptr
@@ -1525,9 +1808,22 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   real(c_double), dimension(:), pointer :: bs_brdf_factors_ptr
   integer(c_int), pointer :: bs_nstreams_brdf_ptr
   logical(kind=4), pointer :: bs_do_shadow_effect_ptr
-  logical(kind=4), pointer :: bs_do_exactonly_ptr
+  logical(kind=4), pointer :: bs_do_directbounce_only_ptr
+  logical(kind=4), pointer :: bs_do_wsabsa_output_ptr
+  logical(kind=4), pointer :: bs_do_wsa_scaling_ptr
+  logical(kind=4), pointer :: bs_do_bsa_scaling_ptr
+  real(c_double), pointer :: bs_wsa_value_ptr
+  real(c_double), pointer :: bs_bsa_value_ptr
+  logical(kind=4), pointer :: bs_do_newcmglint_ptr
+  real(c_double), pointer :: bs_salinity_ptr
+  real(c_double), pointer :: bs_wavelength_ptr
+  real(c_double), pointer :: bs_windspeed_ptr
+  real(c_double), dimension(:), pointer :: bs_winddir_ptr
+  logical(kind=4), pointer :: bs_do_glintshadow_ptr
+  logical(kind=4), pointer :: bs_do_foamoption_ptr
+  logical(kind=4), pointer :: bs_do_facetisotropy_ptr
   logical(kind=4), pointer :: bs_do_glitter_msrcorr_ptr
-  logical(kind=4), pointer :: bs_do_glitter_msrcorr_exactonly_ptr
+  logical(kind=4), pointer :: bs_do_glitter_msrcorr_dbonly_ptr
   integer(c_int), pointer :: bs_glitter_msrcorr_order_ptr
   integer(c_int), pointer :: bs_glitter_msrcorr_nmuquad_ptr
   integer(c_int), pointer :: bs_glitter_msrcorr_nphiquad_ptr
@@ -1567,6 +1863,26 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   inquire(iolength=transfer_struct_c%bs_do_surface_emission_f_byte_size) fortran_type_f%bs_do_surface_emission
 #ifdef ifort
   transfer_struct_c%bs_do_surface_emission_f_byte_size = transfer_struct_c%bs_do_surface_emission_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_solar_sources = .FALSE.
+  bs_do_solar_sources_ptr => fortran_type_f%bs_do_solar_sources
+  transfer_struct_c%bs_do_solar_sources = c_loc(bs_do_solar_sources_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_solar_sources_f_byte_size) fortran_type_f%bs_do_solar_sources
+#ifdef ifort
+  transfer_struct_c%bs_do_solar_sources_f_byte_size = transfer_struct_c%bs_do_solar_sources_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_user_obsgeoms = .FALSE.
+  bs_do_user_obsgeoms_ptr => fortran_type_f%bs_do_user_obsgeoms
+  transfer_struct_c%bs_do_user_obsgeoms = c_loc(bs_do_user_obsgeoms_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_user_obsgeoms_f_byte_size) fortran_type_f%bs_do_user_obsgeoms
+#ifdef ifort
+  transfer_struct_c%bs_do_user_obsgeoms_f_byte_size = transfer_struct_c%bs_do_user_obsgeoms_f_byte_size * 4
 #endif
   
   
@@ -1648,6 +1964,32 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
 #endif
   
   transfer_struct_c%bs_user_angles_input_f_shapes(1) = size(fortran_type_f%bs_user_angles_input, 1)
+  
+  
+  fortran_type_f%bs_n_user_obsgeoms = 0
+  bs_n_user_obsgeoms_ptr => fortran_type_f%bs_n_user_obsgeoms
+  transfer_struct_c%bs_n_user_obsgeoms = c_loc(bs_n_user_obsgeoms_ptr)
+  inquire(iolength=transfer_struct_c%bs_n_user_obsgeoms_f_byte_size) fortran_type_f%bs_n_user_obsgeoms
+#ifdef ifort
+  transfer_struct_c%bs_n_user_obsgeoms_f_byte_size = transfer_struct_c%bs_n_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_user_obsgeoms = 0_fpk
+  bs_user_obsgeoms_ptr => fortran_type_f%bs_user_obsgeoms
+  transfer_struct_c%bs_user_obsgeoms = c_loc(bs_user_obsgeoms_ptr(&
+    lbound(fortran_type_f%bs_user_obsgeoms,1),&
+    lbound(fortran_type_f%bs_user_obsgeoms,2)))
+  inquire(iolength=transfer_struct_c%bs_user_obsgeoms_f_byte_size) fortran_type_f%bs_user_obsgeoms(&
+    lbound(fortran_type_f%bs_user_obsgeoms,1),&
+    lbound(fortran_type_f%bs_user_obsgeoms,2))
+#ifdef ifort
+  transfer_struct_c%bs_user_obsgeoms_f_byte_size = transfer_struct_c%bs_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%bs_user_obsgeoms_f_shapes(1) = size(fortran_type_f%bs_user_obsgeoms, 1)
+  transfer_struct_c%bs_user_obsgeoms_f_shapes(2) = size(fortran_type_f%bs_user_obsgeoms, 2)
   
   
   fortran_type_f%bs_n_brdf_kernels = 0
@@ -1752,12 +2094,145 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   
   
   
-  fortran_type_f%bs_do_exactonly = .FALSE.
-  bs_do_exactonly_ptr => fortran_type_f%bs_do_exactonly
-  transfer_struct_c%bs_do_exactonly = c_loc(bs_do_exactonly_ptr)
-  inquire(iolength=transfer_struct_c%bs_do_exactonly_f_byte_size) fortran_type_f%bs_do_exactonly
+  fortran_type_f%bs_do_directbounce_only = .FALSE.
+  bs_do_directbounce_only_ptr => fortran_type_f%bs_do_directbounce_only
+  transfer_struct_c%bs_do_directbounce_only = c_loc(bs_do_directbounce_only_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_directbounce_only_f_byte_size) fortran_type_f%bs_do_directbounce_only
 #ifdef ifort
-  transfer_struct_c%bs_do_exactonly_f_byte_size = transfer_struct_c%bs_do_exactonly_f_byte_size * 4
+  transfer_struct_c%bs_do_directbounce_only_f_byte_size = transfer_struct_c%bs_do_directbounce_only_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_wsabsa_output = .FALSE.
+  bs_do_wsabsa_output_ptr => fortran_type_f%bs_do_wsabsa_output
+  transfer_struct_c%bs_do_wsabsa_output = c_loc(bs_do_wsabsa_output_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_wsabsa_output_f_byte_size) fortran_type_f%bs_do_wsabsa_output
+#ifdef ifort
+  transfer_struct_c%bs_do_wsabsa_output_f_byte_size = transfer_struct_c%bs_do_wsabsa_output_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_wsa_scaling = .FALSE.
+  bs_do_wsa_scaling_ptr => fortran_type_f%bs_do_wsa_scaling
+  transfer_struct_c%bs_do_wsa_scaling = c_loc(bs_do_wsa_scaling_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_wsa_scaling_f_byte_size) fortran_type_f%bs_do_wsa_scaling
+#ifdef ifort
+  transfer_struct_c%bs_do_wsa_scaling_f_byte_size = transfer_struct_c%bs_do_wsa_scaling_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_bsa_scaling = .FALSE.
+  bs_do_bsa_scaling_ptr => fortran_type_f%bs_do_bsa_scaling
+  transfer_struct_c%bs_do_bsa_scaling = c_loc(bs_do_bsa_scaling_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_bsa_scaling_f_byte_size) fortran_type_f%bs_do_bsa_scaling
+#ifdef ifort
+  transfer_struct_c%bs_do_bsa_scaling_f_byte_size = transfer_struct_c%bs_do_bsa_scaling_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_wsa_value = 0_fpk
+  bs_wsa_value_ptr => fortran_type_f%bs_wsa_value
+  transfer_struct_c%bs_wsa_value = c_loc(bs_wsa_value_ptr)
+  inquire(iolength=transfer_struct_c%bs_wsa_value_f_byte_size) fortran_type_f%bs_wsa_value
+#ifdef ifort
+  transfer_struct_c%bs_wsa_value_f_byte_size = transfer_struct_c%bs_wsa_value_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_bsa_value = 0_fpk
+  bs_bsa_value_ptr => fortran_type_f%bs_bsa_value
+  transfer_struct_c%bs_bsa_value = c_loc(bs_bsa_value_ptr)
+  inquire(iolength=transfer_struct_c%bs_bsa_value_f_byte_size) fortran_type_f%bs_bsa_value
+#ifdef ifort
+  transfer_struct_c%bs_bsa_value_f_byte_size = transfer_struct_c%bs_bsa_value_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_newcmglint = .FALSE.
+  bs_do_newcmglint_ptr => fortran_type_f%bs_do_newcmglint
+  transfer_struct_c%bs_do_newcmglint = c_loc(bs_do_newcmglint_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_newcmglint_f_byte_size) fortran_type_f%bs_do_newcmglint
+#ifdef ifort
+  transfer_struct_c%bs_do_newcmglint_f_byte_size = transfer_struct_c%bs_do_newcmglint_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_salinity = 0_fpk
+  bs_salinity_ptr => fortran_type_f%bs_salinity
+  transfer_struct_c%bs_salinity = c_loc(bs_salinity_ptr)
+  inquire(iolength=transfer_struct_c%bs_salinity_f_byte_size) fortran_type_f%bs_salinity
+#ifdef ifort
+  transfer_struct_c%bs_salinity_f_byte_size = transfer_struct_c%bs_salinity_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_wavelength = 0_fpk
+  bs_wavelength_ptr => fortran_type_f%bs_wavelength
+  transfer_struct_c%bs_wavelength = c_loc(bs_wavelength_ptr)
+  inquire(iolength=transfer_struct_c%bs_wavelength_f_byte_size) fortran_type_f%bs_wavelength
+#ifdef ifort
+  transfer_struct_c%bs_wavelength_f_byte_size = transfer_struct_c%bs_wavelength_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_windspeed = 0_fpk
+  bs_windspeed_ptr => fortran_type_f%bs_windspeed
+  transfer_struct_c%bs_windspeed = c_loc(bs_windspeed_ptr)
+  inquire(iolength=transfer_struct_c%bs_windspeed_f_byte_size) fortran_type_f%bs_windspeed
+#ifdef ifort
+  transfer_struct_c%bs_windspeed_f_byte_size = transfer_struct_c%bs_windspeed_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_winddir = 0_fpk
+  bs_winddir_ptr => fortran_type_f%bs_winddir
+  transfer_struct_c%bs_winddir = c_loc(bs_winddir_ptr(&
+    lbound(fortran_type_f%bs_winddir,1)))
+  inquire(iolength=transfer_struct_c%bs_winddir_f_byte_size) fortran_type_f%bs_winddir(&
+    lbound(fortran_type_f%bs_winddir,1))
+#ifdef ifort
+  transfer_struct_c%bs_winddir_f_byte_size = transfer_struct_c%bs_winddir_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%bs_winddir_f_shapes(1) = size(fortran_type_f%bs_winddir, 1)
+  
+  
+  fortran_type_f%bs_do_glintshadow = .FALSE.
+  bs_do_glintshadow_ptr => fortran_type_f%bs_do_glintshadow
+  transfer_struct_c%bs_do_glintshadow = c_loc(bs_do_glintshadow_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_glintshadow_f_byte_size) fortran_type_f%bs_do_glintshadow
+#ifdef ifort
+  transfer_struct_c%bs_do_glintshadow_f_byte_size = transfer_struct_c%bs_do_glintshadow_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_foamoption = .FALSE.
+  bs_do_foamoption_ptr => fortran_type_f%bs_do_foamoption
+  transfer_struct_c%bs_do_foamoption = c_loc(bs_do_foamoption_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_foamoption_f_byte_size) fortran_type_f%bs_do_foamoption
+#ifdef ifort
+  transfer_struct_c%bs_do_foamoption_f_byte_size = transfer_struct_c%bs_do_foamoption_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_do_facetisotropy = .FALSE.
+  bs_do_facetisotropy_ptr => fortran_type_f%bs_do_facetisotropy
+  transfer_struct_c%bs_do_facetisotropy = c_loc(bs_do_facetisotropy_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_facetisotropy_f_byte_size) fortran_type_f%bs_do_facetisotropy
+#ifdef ifort
+  transfer_struct_c%bs_do_facetisotropy_f_byte_size = transfer_struct_c%bs_do_facetisotropy_f_byte_size * 4
 #endif
   
   
@@ -1772,12 +2247,12 @@ subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   
   
   
-  fortran_type_f%bs_do_glitter_msrcorr_exactonly = .FALSE.
-  bs_do_glitter_msrcorr_exactonly_ptr => fortran_type_f%bs_do_glitter_msrcorr_exactonly
-  transfer_struct_c%bs_do_glitter_msrcorr_exactonly = c_loc(bs_do_glitter_msrcorr_exactonly_ptr)
-  inquire(iolength=transfer_struct_c%bs_do_glitter_msrcorr_exactonly_f_byte_size) fortran_type_f%bs_do_glitter_msrcorr_exactonly
+  fortran_type_f%bs_do_glitter_msrcorr_dbonly = .FALSE.
+  bs_do_glitter_msrcorr_dbonly_ptr => fortran_type_f%bs_do_glitter_msrcorr_dbonly
+  transfer_struct_c%bs_do_glitter_msrcorr_dbonly = c_loc(bs_do_glitter_msrcorr_dbonly_ptr)
+  inquire(iolength=transfer_struct_c%bs_do_glitter_msrcorr_dbonly_f_byte_size) fortran_type_f%bs_do_glitter_msrcorr_dbonly
 #ifdef ifort
-  transfer_struct_c%bs_do_glitter_msrcorr_exactonly_f_byte_size = transfer_struct_c%bs_do_glitter_msrcorr_exactonly_f_byte_size * 4
+  transfer_struct_c%bs_do_glitter_msrcorr_dbonly_f_byte_size = transfer_struct_c%bs_do_glitter_msrcorr_dbonly_f_byte_size * 4
 #endif
   
   
@@ -1841,6 +2316,8 @@ subroutine brdf_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
   fortran_type_f_to%bs_do_user_streams = fortran_type_f_from%bs_do_user_streams
   fortran_type_f_to%bs_do_brdf_surface = fortran_type_f_from%bs_do_brdf_surface
   fortran_type_f_to%bs_do_surface_emission = fortran_type_f_from%bs_do_surface_emission
+  fortran_type_f_to%bs_do_solar_sources = fortran_type_f_from%bs_do_solar_sources
+  fortran_type_f_to%bs_do_user_obsgeoms = fortran_type_f_from%bs_do_user_obsgeoms
   fortran_type_f_to%bs_nstreams = fortran_type_f_from%bs_nstreams
   fortran_type_f_to%bs_nbeams = fortran_type_f_from%bs_nbeams
   fortran_type_f_to%bs_beam_szas = fortran_type_f_from%bs_beam_szas
@@ -1848,6 +2325,8 @@ subroutine brdf_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
   fortran_type_f_to%bs_user_relazms = fortran_type_f_from%bs_user_relazms
   fortran_type_f_to%bs_n_user_streams = fortran_type_f_from%bs_n_user_streams
   fortran_type_f_to%bs_user_angles_input = fortran_type_f_from%bs_user_angles_input
+  fortran_type_f_to%bs_n_user_obsgeoms = fortran_type_f_from%bs_n_user_obsgeoms
+  fortran_type_f_to%bs_user_obsgeoms = fortran_type_f_from%bs_user_obsgeoms
   fortran_type_f_to%bs_n_brdf_kernels = fortran_type_f_from%bs_n_brdf_kernels
   fortran_type_f_to%bs_brdf_names = fortran_type_f_from%bs_brdf_names
   fortran_type_f_to%bs_which_brdf = fortran_type_f_from%bs_which_brdf
@@ -1857,9 +2336,22 @@ subroutine brdf_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
   fortran_type_f_to%bs_brdf_factors = fortran_type_f_from%bs_brdf_factors
   fortran_type_f_to%bs_nstreams_brdf = fortran_type_f_from%bs_nstreams_brdf
   fortran_type_f_to%bs_do_shadow_effect = fortran_type_f_from%bs_do_shadow_effect
-  fortran_type_f_to%bs_do_exactonly = fortran_type_f_from%bs_do_exactonly
+  fortran_type_f_to%bs_do_directbounce_only = fortran_type_f_from%bs_do_directbounce_only
+  fortran_type_f_to%bs_do_wsabsa_output = fortran_type_f_from%bs_do_wsabsa_output
+  fortran_type_f_to%bs_do_wsa_scaling = fortran_type_f_from%bs_do_wsa_scaling
+  fortran_type_f_to%bs_do_bsa_scaling = fortran_type_f_from%bs_do_bsa_scaling
+  fortran_type_f_to%bs_wsa_value = fortran_type_f_from%bs_wsa_value
+  fortran_type_f_to%bs_bsa_value = fortran_type_f_from%bs_bsa_value
+  fortran_type_f_to%bs_do_newcmglint = fortran_type_f_from%bs_do_newcmglint
+  fortran_type_f_to%bs_salinity = fortran_type_f_from%bs_salinity
+  fortran_type_f_to%bs_wavelength = fortran_type_f_from%bs_wavelength
+  fortran_type_f_to%bs_windspeed = fortran_type_f_from%bs_windspeed
+  fortran_type_f_to%bs_winddir = fortran_type_f_from%bs_winddir
+  fortran_type_f_to%bs_do_glintshadow = fortran_type_f_from%bs_do_glintshadow
+  fortran_type_f_to%bs_do_foamoption = fortran_type_f_from%bs_do_foamoption
+  fortran_type_f_to%bs_do_facetisotropy = fortran_type_f_from%bs_do_facetisotropy
   fortran_type_f_to%bs_do_glitter_msrcorr = fortran_type_f_from%bs_do_glitter_msrcorr
-  fortran_type_f_to%bs_do_glitter_msrcorr_exactonly = fortran_type_f_from%bs_do_glitter_msrcorr_exactonly
+  fortran_type_f_to%bs_do_glitter_msrcorr_dbonly = fortran_type_f_from%bs_do_glitter_msrcorr_dbonly
   fortran_type_f_to%bs_glitter_msrcorr_order = fortran_type_f_from%bs_glitter_msrcorr_order
   fortran_type_f_to%bs_glitter_msrcorr_nmuquad = fortran_type_f_from%bs_glitter_msrcorr_nmuquad
   fortran_type_f_to%bs_glitter_msrcorr_nphiquad = fortran_type_f_from%bs_glitter_msrcorr_nphiquad
@@ -1867,7 +2359,7 @@ subroutine brdf_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
 
 end subroutine brdf_sup_inputs_c_copy
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def, only : brdf_sup_outputs
@@ -1884,7 +2376,7 @@ subroutine brdf_sup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine brdf_sup_outputs_c_alloc_init
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_sup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def
@@ -1895,13 +2387,17 @@ subroutine brdf_sup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(
 
   type(brdf_sup_outputs), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:), pointer :: bs_exactdb_brdfunc_ptr
+  real(c_double), dimension(:,:,:), pointer :: bs_dbounce_brdfunc_ptr
   real(c_double), dimension(:,:,:), pointer :: bs_brdf_f_0_ptr
   real(c_double), dimension(:,:,:), pointer :: bs_brdf_f_ptr
   real(c_double), dimension(:,:,:), pointer :: bs_user_brdf_f_0_ptr
   real(c_double), dimension(:,:,:), pointer :: bs_user_brdf_f_ptr
-  real(c_double), dimension(:,:), pointer :: bs_emissivity_ptr
-  real(c_double), dimension(:,:), pointer :: bs_user_emissivity_ptr
+  real(c_double), dimension(:), pointer :: bs_emissivity_ptr
+  real(c_double), dimension(:), pointer :: bs_user_emissivity_ptr
+  real(c_double), pointer :: bs_wsa_calculated_ptr
+  real(c_double), dimension(:), pointer :: bs_wsa_kernels_ptr
+  real(c_double), pointer :: bs_bsa_calculated_ptr
+  real(c_double), dimension(:), pointer :: bs_bsa_kernels_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -1912,23 +2408,23 @@ subroutine brdf_sup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(
   !   * Set bit size and extents
 
   
-  fortran_type_f%bs_exactdb_brdfunc = 0_fpk
-  bs_exactdb_brdfunc_ptr => fortran_type_f%bs_exactdb_brdfunc
-  transfer_struct_c%bs_exactdb_brdfunc = c_loc(bs_exactdb_brdfunc_ptr(&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,1),&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,2),&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,3)))
-  inquire(iolength=transfer_struct_c%bs_exactdb_brdfunc_f_byte_size) fortran_type_f%bs_exactdb_brdfunc(&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,1),&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,2),&
-    lbound(fortran_type_f%bs_exactdb_brdfunc,3))
+  fortran_type_f%bs_dbounce_brdfunc = 0_fpk
+  bs_dbounce_brdfunc_ptr => fortran_type_f%bs_dbounce_brdfunc
+  transfer_struct_c%bs_dbounce_brdfunc = c_loc(bs_dbounce_brdfunc_ptr(&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,1),&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,2),&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,3)))
+  inquire(iolength=transfer_struct_c%bs_dbounce_brdfunc_f_byte_size) fortran_type_f%bs_dbounce_brdfunc(&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,1),&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,2),&
+    lbound(fortran_type_f%bs_dbounce_brdfunc,3))
 #ifdef ifort
-  transfer_struct_c%bs_exactdb_brdfunc_f_byte_size = transfer_struct_c%bs_exactdb_brdfunc_f_byte_size * 4
+  transfer_struct_c%bs_dbounce_brdfunc_f_byte_size = transfer_struct_c%bs_dbounce_brdfunc_f_byte_size * 4
 #endif
   
-  transfer_struct_c%bs_exactdb_brdfunc_f_shapes(1) = size(fortran_type_f%bs_exactdb_brdfunc, 1)
-  transfer_struct_c%bs_exactdb_brdfunc_f_shapes(2) = size(fortran_type_f%bs_exactdb_brdfunc, 2)
-  transfer_struct_c%bs_exactdb_brdfunc_f_shapes(3) = size(fortran_type_f%bs_exactdb_brdfunc, 3)
+  transfer_struct_c%bs_dbounce_brdfunc_f_shapes(1) = size(fortran_type_f%bs_dbounce_brdfunc, 1)
+  transfer_struct_c%bs_dbounce_brdfunc_f_shapes(2) = size(fortran_type_f%bs_dbounce_brdfunc, 2)
+  transfer_struct_c%bs_dbounce_brdfunc_f_shapes(3) = size(fortran_type_f%bs_dbounce_brdfunc, 3)
   
   
   fortran_type_f%bs_brdf_f_0 = 0_fpk
@@ -2010,33 +2506,73 @@ subroutine brdf_sup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(
   fortran_type_f%bs_emissivity = 0_fpk
   bs_emissivity_ptr => fortran_type_f%bs_emissivity
   transfer_struct_c%bs_emissivity = c_loc(bs_emissivity_ptr(&
-    lbound(fortran_type_f%bs_emissivity,1),&
-    lbound(fortran_type_f%bs_emissivity,2)))
+    lbound(fortran_type_f%bs_emissivity,1)))
   inquire(iolength=transfer_struct_c%bs_emissivity_f_byte_size) fortran_type_f%bs_emissivity(&
-    lbound(fortran_type_f%bs_emissivity,1),&
-    lbound(fortran_type_f%bs_emissivity,2))
+    lbound(fortran_type_f%bs_emissivity,1))
 #ifdef ifort
   transfer_struct_c%bs_emissivity_f_byte_size = transfer_struct_c%bs_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%bs_emissivity_f_shapes(1) = size(fortran_type_f%bs_emissivity, 1)
-  transfer_struct_c%bs_emissivity_f_shapes(2) = size(fortran_type_f%bs_emissivity, 2)
   
   
   fortran_type_f%bs_user_emissivity = 0_fpk
   bs_user_emissivity_ptr => fortran_type_f%bs_user_emissivity
   transfer_struct_c%bs_user_emissivity = c_loc(bs_user_emissivity_ptr(&
-    lbound(fortran_type_f%bs_user_emissivity,1),&
-    lbound(fortran_type_f%bs_user_emissivity,2)))
+    lbound(fortran_type_f%bs_user_emissivity,1)))
   inquire(iolength=transfer_struct_c%bs_user_emissivity_f_byte_size) fortran_type_f%bs_user_emissivity(&
-    lbound(fortran_type_f%bs_user_emissivity,1),&
-    lbound(fortran_type_f%bs_user_emissivity,2))
+    lbound(fortran_type_f%bs_user_emissivity,1))
 #ifdef ifort
   transfer_struct_c%bs_user_emissivity_f_byte_size = transfer_struct_c%bs_user_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%bs_user_emissivity_f_shapes(1) = size(fortran_type_f%bs_user_emissivity, 1)
-  transfer_struct_c%bs_user_emissivity_f_shapes(2) = size(fortran_type_f%bs_user_emissivity, 2)
+  
+  
+  fortran_type_f%bs_wsa_calculated = 0_fpk
+  bs_wsa_calculated_ptr => fortran_type_f%bs_wsa_calculated
+  transfer_struct_c%bs_wsa_calculated = c_loc(bs_wsa_calculated_ptr)
+  inquire(iolength=transfer_struct_c%bs_wsa_calculated_f_byte_size) fortran_type_f%bs_wsa_calculated
+#ifdef ifort
+  transfer_struct_c%bs_wsa_calculated_f_byte_size = transfer_struct_c%bs_wsa_calculated_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_wsa_kernels = 0_fpk
+  bs_wsa_kernels_ptr => fortran_type_f%bs_wsa_kernels
+  transfer_struct_c%bs_wsa_kernels = c_loc(bs_wsa_kernels_ptr(&
+    lbound(fortran_type_f%bs_wsa_kernels,1)))
+  inquire(iolength=transfer_struct_c%bs_wsa_kernels_f_byte_size) fortran_type_f%bs_wsa_kernels(&
+    lbound(fortran_type_f%bs_wsa_kernels,1))
+#ifdef ifort
+  transfer_struct_c%bs_wsa_kernels_f_byte_size = transfer_struct_c%bs_wsa_kernels_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%bs_wsa_kernels_f_shapes(1) = size(fortran_type_f%bs_wsa_kernels, 1)
+  
+  
+  fortran_type_f%bs_bsa_calculated = 0_fpk
+  bs_bsa_calculated_ptr => fortran_type_f%bs_bsa_calculated
+  transfer_struct_c%bs_bsa_calculated = c_loc(bs_bsa_calculated_ptr)
+  inquire(iolength=transfer_struct_c%bs_bsa_calculated_f_byte_size) fortran_type_f%bs_bsa_calculated
+#ifdef ifort
+  transfer_struct_c%bs_bsa_calculated_f_byte_size = transfer_struct_c%bs_bsa_calculated_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_bsa_kernels = 0_fpk
+  bs_bsa_kernels_ptr => fortran_type_f%bs_bsa_kernels
+  transfer_struct_c%bs_bsa_kernels = c_loc(bs_bsa_kernels_ptr(&
+    lbound(fortran_type_f%bs_bsa_kernels,1)))
+  inquire(iolength=transfer_struct_c%bs_bsa_kernels_f_byte_size) fortran_type_f%bs_bsa_kernels(&
+    lbound(fortran_type_f%bs_bsa_kernels,1))
+#ifdef ifort
+  transfer_struct_c%bs_bsa_kernels_f_byte_size = transfer_struct_c%bs_bsa_kernels_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%bs_bsa_kernels_f_shapes(1) = size(fortran_type_f%bs_bsa_kernels, 1)
   
   
 end subroutine brdf_sup_outputs_c_init_only
@@ -2065,18 +2601,22 @@ subroutine brdf_sup_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
   call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
   call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
 
-  fortran_type_f_to%bs_exactdb_brdfunc = fortran_type_f_from%bs_exactdb_brdfunc
+  fortran_type_f_to%bs_dbounce_brdfunc = fortran_type_f_from%bs_dbounce_brdfunc
   fortran_type_f_to%bs_brdf_f_0 = fortran_type_f_from%bs_brdf_f_0
   fortran_type_f_to%bs_brdf_f = fortran_type_f_from%bs_brdf_f
   fortran_type_f_to%bs_user_brdf_f_0 = fortran_type_f_from%bs_user_brdf_f_0
   fortran_type_f_to%bs_user_brdf_f = fortran_type_f_from%bs_user_brdf_f
   fortran_type_f_to%bs_emissivity = fortran_type_f_from%bs_emissivity
   fortran_type_f_to%bs_user_emissivity = fortran_type_f_from%bs_user_emissivity
+  fortran_type_f_to%bs_wsa_calculated = fortran_type_f_from%bs_wsa_calculated
+  fortran_type_f_to%bs_wsa_kernels = fortran_type_f_from%bs_wsa_kernels
+  fortran_type_f_to%bs_bsa_calculated = fortran_type_f_from%bs_bsa_calculated
+  fortran_type_f_to%bs_bsa_kernels = fortran_type_f_from%bs_bsa_kernels
   
 
 end subroutine brdf_sup_outputs_c_copy
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_input_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def, only : brdf_input_exception_handling
@@ -2093,7 +2633,7 @@ subroutine brdf_input_exception_handling_c_alloc_init(transfer_struct_c, fortran
 
 end subroutine brdf_input_exception_handling_c_alloc_init
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_input_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def
@@ -2178,7 +2718,583 @@ subroutine brdf_input_exception_handling_c_copy(fortran_type_c_from, fortran_typ
 
 end subroutine brdf_input_exception_handling_c_copy
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
+! Allocs and initializes type
+subroutine brdf_output_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
+  use brdf_sup_outputs_def, only : brdf_output_exception_handling
+
+  type(brdf_output_exception_handling_c), intent(inout) :: transfer_struct_c
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(brdf_output_exception_handling), pointer :: fortran_type_f
+
+  allocate(fortran_type_f)
+  fortran_type_c = c_loc(fortran_type_f)
+
+  call brdf_output_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) 
+
+end subroutine brdf_output_exception_handling_c_alloc_init
+
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
+! Initializes only with no allocation
+subroutine brdf_output_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
+  use brdf_sup_outputs_def
+  use lidort_pars
+
+  type(brdf_output_exception_handling_c), intent(inout) :: transfer_struct_c
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(brdf_output_exception_handling), pointer :: fortran_type_f
+
+  integer(c_int), pointer :: bs_status_output_ptr
+  integer(c_int), pointer :: bs_noutputmessages_ptr
+  
+
+  call c_f_pointer(fortran_type_c, fortran_type_f)
+
+  ! For each variable in the structure:
+  !   * Initalize
+  !   * Set pointer location into C transfer struct
+  !   * Set bit size and extents
+
+  
+  fortran_type_f%bs_status_output = 0
+  bs_status_output_ptr => fortran_type_f%bs_status_output
+  transfer_struct_c%bs_status_output = c_loc(bs_status_output_ptr)
+  inquire(iolength=transfer_struct_c%bs_status_output_f_byte_size) fortran_type_f%bs_status_output
+#ifdef ifort
+  transfer_struct_c%bs_status_output_f_byte_size = transfer_struct_c%bs_status_output_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%bs_noutputmessages = 0
+  bs_noutputmessages_ptr => fortran_type_f%bs_noutputmessages
+  transfer_struct_c%bs_noutputmessages = c_loc(bs_noutputmessages_ptr)
+  inquire(iolength=transfer_struct_c%bs_noutputmessages_f_byte_size) fortran_type_f%bs_noutputmessages
+#ifdef ifort
+  transfer_struct_c%bs_noutputmessages_f_byte_size = transfer_struct_c%bs_noutputmessages_f_byte_size * 4
+#endif
+  
+  
+  fortran_type_f%bs_outputmessages = ''
+  transfer_struct_c%bs_outputmessages_f_len = len(fortran_type_f%bs_outputmessages)
+  transfer_struct_c%bs_outputmessages_f_shapes(1) = size(fortran_type_f%bs_outputmessages, 1)
+  
+  
+end subroutine brdf_output_exception_handling_c_init_only
+
+subroutine brdf_output_exception_handling_c_destroy(fortran_type_c) bind(C)
+  use brdf_sup_outputs_def, only : brdf_output_exception_handling
+
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(brdf_output_exception_handling), pointer :: fortran_type_f
+
+  call c_f_pointer(fortran_type_c, fortran_type_f)
+
+  deallocate(fortran_type_f)
+end subroutine brdf_output_exception_handling_c_destroy
+
+subroutine brdf_output_exception_handling_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
+  use brdf_sup_outputs_def, only : brdf_output_exception_handling
+
+  type(c_ptr), intent(inout) :: fortran_type_c_from
+  type(c_ptr), intent(inout) :: fortran_type_c_to
+
+  type(brdf_output_exception_handling), pointer :: fortran_type_f_from
+  type(brdf_output_exception_handling), pointer :: fortran_type_f_to
+
+  call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
+  call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
+
+  fortran_type_f_to%bs_status_output = fortran_type_f_from%bs_status_output
+  fortran_type_f_to%bs_noutputmessages = fortran_type_f_from%bs_noutputmessages
+  fortran_type_f_to%bs_outputmessages = fortran_type_f_from%bs_outputmessages
+  
+
+end subroutine brdf_output_exception_handling_c_copy
+
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def" in file: "sleave_sup_inputs_def.f90"
+! Allocs and initializes type
+subroutine sleave_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
+  use sleave_sup_inputs_def, only : sleave_sup_inputs
+
+  type(sleave_sup_inputs_c), intent(inout) :: transfer_struct_c
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(sleave_sup_inputs), pointer :: fortran_type_f
+
+  allocate(fortran_type_f)
+  fortran_type_c = c_loc(fortran_type_f)
+
+  call sleave_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) 
+
+end subroutine sleave_sup_inputs_c_alloc_init
+
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def" in file: "sleave_sup_inputs_def.f90"
+! Initializes only with no allocation
+subroutine sleave_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
+  use sleave_sup_inputs_def
+  use lidort_pars
+
+  type(sleave_sup_inputs_c), intent(inout) :: transfer_struct_c
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(sleave_sup_inputs), pointer :: fortran_type_f
+
+  logical(kind=4), pointer :: sl_do_sleaving_ptr
+  logical(kind=4), pointer :: sl_do_isotropic_ptr
+  logical(kind=4), pointer :: sl_do_exact_ptr
+  logical(kind=4), pointer :: sl_do_exactonly_ptr
+  logical(kind=4), pointer :: sl_do_fluorescence_ptr
+  logical(kind=4), pointer :: sl_do_solar_sources_ptr
+  logical(kind=4), pointer :: sl_do_user_obsgeoms_ptr
+  integer(c_int), pointer :: sl_nstreams_ptr
+  integer(c_int), pointer :: sl_nbeams_ptr
+  real(c_double), dimension(:), pointer :: sl_beam_szas_ptr
+  integer(c_int), pointer :: sl_n_user_relazms_ptr
+  real(c_double), dimension(:), pointer :: sl_user_relazms_ptr
+  logical(kind=4), pointer :: sl_do_user_streams_ptr
+  integer(c_int), pointer :: sl_n_user_streams_ptr
+  real(c_double), dimension(:), pointer :: sl_user_angles_input_ptr
+  integer(c_int), pointer :: sl_n_user_obsgeoms_ptr
+  real(c_double), dimension(:,:), pointer :: sl_user_obsgeoms_ptr
+  real(c_double), pointer :: sl_salinity_ptr
+  real(c_double), pointer :: sl_chlorconc_ptr
+  real(c_double), pointer :: sl_wavelength_ptr
+  real(c_double), pointer :: sl_windspeed_ptr
+  real(c_double), dimension(:), pointer :: sl_winddir_ptr
+  logical(kind=4), pointer :: sl_do_glintshadow_ptr
+  logical(kind=4), pointer :: sl_do_foamoption_ptr
+  logical(kind=4), pointer :: sl_do_facetisotropy_ptr
+  real(c_double), pointer :: sl_fl_wavelength_ptr
+  real(c_double), pointer :: sl_fl_latitude_ptr
+  real(c_double), pointer :: sl_fl_longitude_ptr
+  integer(c_int), dimension(:), pointer :: sl_fl_epoch_ptr
+  real(c_double), pointer :: sl_fl_amplitude755_ptr
+  logical(kind=4), pointer :: sl_fl_do_datagaussian_ptr
+  real(c_double), dimension(:,:), pointer :: sl_fl_inputgaussians_ptr
+  
+
+  call c_f_pointer(fortran_type_c, fortran_type_f)
+
+  ! For each variable in the structure:
+  !   * Initalize
+  !   * Set pointer location into C transfer struct
+  !   * Set bit size and extents
+
+  
+  fortran_type_f%sl_do_sleaving = .FALSE.
+  sl_do_sleaving_ptr => fortran_type_f%sl_do_sleaving
+  transfer_struct_c%sl_do_sleaving = c_loc(sl_do_sleaving_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_sleaving_f_byte_size) fortran_type_f%sl_do_sleaving
+#ifdef ifort
+  transfer_struct_c%sl_do_sleaving_f_byte_size = transfer_struct_c%sl_do_sleaving_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_isotropic = .FALSE.
+  sl_do_isotropic_ptr => fortran_type_f%sl_do_isotropic
+  transfer_struct_c%sl_do_isotropic = c_loc(sl_do_isotropic_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_isotropic_f_byte_size) fortran_type_f%sl_do_isotropic
+#ifdef ifort
+  transfer_struct_c%sl_do_isotropic_f_byte_size = transfer_struct_c%sl_do_isotropic_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_exact = .FALSE.
+  sl_do_exact_ptr => fortran_type_f%sl_do_exact
+  transfer_struct_c%sl_do_exact = c_loc(sl_do_exact_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_exact_f_byte_size) fortran_type_f%sl_do_exact
+#ifdef ifort
+  transfer_struct_c%sl_do_exact_f_byte_size = transfer_struct_c%sl_do_exact_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_exactonly = .FALSE.
+  sl_do_exactonly_ptr => fortran_type_f%sl_do_exactonly
+  transfer_struct_c%sl_do_exactonly = c_loc(sl_do_exactonly_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_exactonly_f_byte_size) fortran_type_f%sl_do_exactonly
+#ifdef ifort
+  transfer_struct_c%sl_do_exactonly_f_byte_size = transfer_struct_c%sl_do_exactonly_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_fluorescence = .FALSE.
+  sl_do_fluorescence_ptr => fortran_type_f%sl_do_fluorescence
+  transfer_struct_c%sl_do_fluorescence = c_loc(sl_do_fluorescence_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_fluorescence_f_byte_size) fortran_type_f%sl_do_fluorescence
+#ifdef ifort
+  transfer_struct_c%sl_do_fluorescence_f_byte_size = transfer_struct_c%sl_do_fluorescence_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_solar_sources = .FALSE.
+  sl_do_solar_sources_ptr => fortran_type_f%sl_do_solar_sources
+  transfer_struct_c%sl_do_solar_sources = c_loc(sl_do_solar_sources_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_solar_sources_f_byte_size) fortran_type_f%sl_do_solar_sources
+#ifdef ifort
+  transfer_struct_c%sl_do_solar_sources_f_byte_size = transfer_struct_c%sl_do_solar_sources_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_user_obsgeoms = .FALSE.
+  sl_do_user_obsgeoms_ptr => fortran_type_f%sl_do_user_obsgeoms
+  transfer_struct_c%sl_do_user_obsgeoms = c_loc(sl_do_user_obsgeoms_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_user_obsgeoms_f_byte_size) fortran_type_f%sl_do_user_obsgeoms
+#ifdef ifort
+  transfer_struct_c%sl_do_user_obsgeoms_f_byte_size = transfer_struct_c%sl_do_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_nstreams = 0
+  sl_nstreams_ptr => fortran_type_f%sl_nstreams
+  transfer_struct_c%sl_nstreams = c_loc(sl_nstreams_ptr)
+  inquire(iolength=transfer_struct_c%sl_nstreams_f_byte_size) fortran_type_f%sl_nstreams
+#ifdef ifort
+  transfer_struct_c%sl_nstreams_f_byte_size = transfer_struct_c%sl_nstreams_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_nbeams = 0
+  sl_nbeams_ptr => fortran_type_f%sl_nbeams
+  transfer_struct_c%sl_nbeams = c_loc(sl_nbeams_ptr)
+  inquire(iolength=transfer_struct_c%sl_nbeams_f_byte_size) fortran_type_f%sl_nbeams
+#ifdef ifort
+  transfer_struct_c%sl_nbeams_f_byte_size = transfer_struct_c%sl_nbeams_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_beam_szas = 0_fpk
+  sl_beam_szas_ptr => fortran_type_f%sl_beam_szas
+  transfer_struct_c%sl_beam_szas = c_loc(sl_beam_szas_ptr(&
+    lbound(fortran_type_f%sl_beam_szas,1)))
+  inquire(iolength=transfer_struct_c%sl_beam_szas_f_byte_size) fortran_type_f%sl_beam_szas(&
+    lbound(fortran_type_f%sl_beam_szas,1))
+#ifdef ifort
+  transfer_struct_c%sl_beam_szas_f_byte_size = transfer_struct_c%sl_beam_szas_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_beam_szas_f_shapes(1) = size(fortran_type_f%sl_beam_szas, 1)
+  
+  
+  fortran_type_f%sl_n_user_relazms = 0
+  sl_n_user_relazms_ptr => fortran_type_f%sl_n_user_relazms
+  transfer_struct_c%sl_n_user_relazms = c_loc(sl_n_user_relazms_ptr)
+  inquire(iolength=transfer_struct_c%sl_n_user_relazms_f_byte_size) fortran_type_f%sl_n_user_relazms
+#ifdef ifort
+  transfer_struct_c%sl_n_user_relazms_f_byte_size = transfer_struct_c%sl_n_user_relazms_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_user_relazms = 0_fpk
+  sl_user_relazms_ptr => fortran_type_f%sl_user_relazms
+  transfer_struct_c%sl_user_relazms = c_loc(sl_user_relazms_ptr(&
+    lbound(fortran_type_f%sl_user_relazms,1)))
+  inquire(iolength=transfer_struct_c%sl_user_relazms_f_byte_size) fortran_type_f%sl_user_relazms(&
+    lbound(fortran_type_f%sl_user_relazms,1))
+#ifdef ifort
+  transfer_struct_c%sl_user_relazms_f_byte_size = transfer_struct_c%sl_user_relazms_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_user_relazms_f_shapes(1) = size(fortran_type_f%sl_user_relazms, 1)
+  
+  
+  fortran_type_f%sl_do_user_streams = .FALSE.
+  sl_do_user_streams_ptr => fortran_type_f%sl_do_user_streams
+  transfer_struct_c%sl_do_user_streams = c_loc(sl_do_user_streams_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_user_streams_f_byte_size) fortran_type_f%sl_do_user_streams
+#ifdef ifort
+  transfer_struct_c%sl_do_user_streams_f_byte_size = transfer_struct_c%sl_do_user_streams_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_n_user_streams = 0
+  sl_n_user_streams_ptr => fortran_type_f%sl_n_user_streams
+  transfer_struct_c%sl_n_user_streams = c_loc(sl_n_user_streams_ptr)
+  inquire(iolength=transfer_struct_c%sl_n_user_streams_f_byte_size) fortran_type_f%sl_n_user_streams
+#ifdef ifort
+  transfer_struct_c%sl_n_user_streams_f_byte_size = transfer_struct_c%sl_n_user_streams_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_user_angles_input = 0_fpk
+  sl_user_angles_input_ptr => fortran_type_f%sl_user_angles_input
+  transfer_struct_c%sl_user_angles_input = c_loc(sl_user_angles_input_ptr(&
+    lbound(fortran_type_f%sl_user_angles_input,1)))
+  inquire(iolength=transfer_struct_c%sl_user_angles_input_f_byte_size) fortran_type_f%sl_user_angles_input(&
+    lbound(fortran_type_f%sl_user_angles_input,1))
+#ifdef ifort
+  transfer_struct_c%sl_user_angles_input_f_byte_size = transfer_struct_c%sl_user_angles_input_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_user_angles_input_f_shapes(1) = size(fortran_type_f%sl_user_angles_input, 1)
+  
+  
+  fortran_type_f%sl_n_user_obsgeoms = 0
+  sl_n_user_obsgeoms_ptr => fortran_type_f%sl_n_user_obsgeoms
+  transfer_struct_c%sl_n_user_obsgeoms = c_loc(sl_n_user_obsgeoms_ptr)
+  inquire(iolength=transfer_struct_c%sl_n_user_obsgeoms_f_byte_size) fortran_type_f%sl_n_user_obsgeoms
+#ifdef ifort
+  transfer_struct_c%sl_n_user_obsgeoms_f_byte_size = transfer_struct_c%sl_n_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_user_obsgeoms = 0_fpk
+  sl_user_obsgeoms_ptr => fortran_type_f%sl_user_obsgeoms
+  transfer_struct_c%sl_user_obsgeoms = c_loc(sl_user_obsgeoms_ptr(&
+    lbound(fortran_type_f%sl_user_obsgeoms,1),&
+    lbound(fortran_type_f%sl_user_obsgeoms,2)))
+  inquire(iolength=transfer_struct_c%sl_user_obsgeoms_f_byte_size) fortran_type_f%sl_user_obsgeoms(&
+    lbound(fortran_type_f%sl_user_obsgeoms,1),&
+    lbound(fortran_type_f%sl_user_obsgeoms,2))
+#ifdef ifort
+  transfer_struct_c%sl_user_obsgeoms_f_byte_size = transfer_struct_c%sl_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_user_obsgeoms_f_shapes(1) = size(fortran_type_f%sl_user_obsgeoms, 1)
+  transfer_struct_c%sl_user_obsgeoms_f_shapes(2) = size(fortran_type_f%sl_user_obsgeoms, 2)
+  
+  
+  fortran_type_f%sl_salinity = 0_fpk
+  sl_salinity_ptr => fortran_type_f%sl_salinity
+  transfer_struct_c%sl_salinity = c_loc(sl_salinity_ptr)
+  inquire(iolength=transfer_struct_c%sl_salinity_f_byte_size) fortran_type_f%sl_salinity
+#ifdef ifort
+  transfer_struct_c%sl_salinity_f_byte_size = transfer_struct_c%sl_salinity_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_chlorconc = 0_fpk
+  sl_chlorconc_ptr => fortran_type_f%sl_chlorconc
+  transfer_struct_c%sl_chlorconc = c_loc(sl_chlorconc_ptr)
+  inquire(iolength=transfer_struct_c%sl_chlorconc_f_byte_size) fortran_type_f%sl_chlorconc
+#ifdef ifort
+  transfer_struct_c%sl_chlorconc_f_byte_size = transfer_struct_c%sl_chlorconc_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_wavelength = 0_fpk
+  sl_wavelength_ptr => fortran_type_f%sl_wavelength
+  transfer_struct_c%sl_wavelength = c_loc(sl_wavelength_ptr)
+  inquire(iolength=transfer_struct_c%sl_wavelength_f_byte_size) fortran_type_f%sl_wavelength
+#ifdef ifort
+  transfer_struct_c%sl_wavelength_f_byte_size = transfer_struct_c%sl_wavelength_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_windspeed = 0_fpk
+  sl_windspeed_ptr => fortran_type_f%sl_windspeed
+  transfer_struct_c%sl_windspeed = c_loc(sl_windspeed_ptr)
+  inquire(iolength=transfer_struct_c%sl_windspeed_f_byte_size) fortran_type_f%sl_windspeed
+#ifdef ifort
+  transfer_struct_c%sl_windspeed_f_byte_size = transfer_struct_c%sl_windspeed_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_winddir = 0_fpk
+  sl_winddir_ptr => fortran_type_f%sl_winddir
+  transfer_struct_c%sl_winddir = c_loc(sl_winddir_ptr(&
+    lbound(fortran_type_f%sl_winddir,1)))
+  inquire(iolength=transfer_struct_c%sl_winddir_f_byte_size) fortran_type_f%sl_winddir(&
+    lbound(fortran_type_f%sl_winddir,1))
+#ifdef ifort
+  transfer_struct_c%sl_winddir_f_byte_size = transfer_struct_c%sl_winddir_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_winddir_f_shapes(1) = size(fortran_type_f%sl_winddir, 1)
+  
+  
+  fortran_type_f%sl_do_glintshadow = .FALSE.
+  sl_do_glintshadow_ptr => fortran_type_f%sl_do_glintshadow
+  transfer_struct_c%sl_do_glintshadow = c_loc(sl_do_glintshadow_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_glintshadow_f_byte_size) fortran_type_f%sl_do_glintshadow
+#ifdef ifort
+  transfer_struct_c%sl_do_glintshadow_f_byte_size = transfer_struct_c%sl_do_glintshadow_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_foamoption = .FALSE.
+  sl_do_foamoption_ptr => fortran_type_f%sl_do_foamoption
+  transfer_struct_c%sl_do_foamoption = c_loc(sl_do_foamoption_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_foamoption_f_byte_size) fortran_type_f%sl_do_foamoption
+#ifdef ifort
+  transfer_struct_c%sl_do_foamoption_f_byte_size = transfer_struct_c%sl_do_foamoption_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_do_facetisotropy = .FALSE.
+  sl_do_facetisotropy_ptr => fortran_type_f%sl_do_facetisotropy
+  transfer_struct_c%sl_do_facetisotropy = c_loc(sl_do_facetisotropy_ptr)
+  inquire(iolength=transfer_struct_c%sl_do_facetisotropy_f_byte_size) fortran_type_f%sl_do_facetisotropy
+#ifdef ifort
+  transfer_struct_c%sl_do_facetisotropy_f_byte_size = transfer_struct_c%sl_do_facetisotropy_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_wavelength = 0_fpk
+  sl_fl_wavelength_ptr => fortran_type_f%sl_fl_wavelength
+  transfer_struct_c%sl_fl_wavelength = c_loc(sl_fl_wavelength_ptr)
+  inquire(iolength=transfer_struct_c%sl_fl_wavelength_f_byte_size) fortran_type_f%sl_fl_wavelength
+#ifdef ifort
+  transfer_struct_c%sl_fl_wavelength_f_byte_size = transfer_struct_c%sl_fl_wavelength_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_latitude = 0_fpk
+  sl_fl_latitude_ptr => fortran_type_f%sl_fl_latitude
+  transfer_struct_c%sl_fl_latitude = c_loc(sl_fl_latitude_ptr)
+  inquire(iolength=transfer_struct_c%sl_fl_latitude_f_byte_size) fortran_type_f%sl_fl_latitude
+#ifdef ifort
+  transfer_struct_c%sl_fl_latitude_f_byte_size = transfer_struct_c%sl_fl_latitude_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_longitude = 0_fpk
+  sl_fl_longitude_ptr => fortran_type_f%sl_fl_longitude
+  transfer_struct_c%sl_fl_longitude = c_loc(sl_fl_longitude_ptr)
+  inquire(iolength=transfer_struct_c%sl_fl_longitude_f_byte_size) fortran_type_f%sl_fl_longitude
+#ifdef ifort
+  transfer_struct_c%sl_fl_longitude_f_byte_size = transfer_struct_c%sl_fl_longitude_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_epoch = 0
+  sl_fl_epoch_ptr => fortran_type_f%sl_fl_epoch
+  transfer_struct_c%sl_fl_epoch = c_loc(sl_fl_epoch_ptr(&
+    lbound(fortran_type_f%sl_fl_epoch,1)))
+  inquire(iolength=transfer_struct_c%sl_fl_epoch_f_byte_size) fortran_type_f%sl_fl_epoch(&
+    lbound(fortran_type_f%sl_fl_epoch,1))
+#ifdef ifort
+  transfer_struct_c%sl_fl_epoch_f_byte_size = transfer_struct_c%sl_fl_epoch_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_fl_epoch_f_shapes(1) = size(fortran_type_f%sl_fl_epoch, 1)
+  
+  
+  fortran_type_f%sl_fl_amplitude755 = 0_fpk
+  sl_fl_amplitude755_ptr => fortran_type_f%sl_fl_amplitude755
+  transfer_struct_c%sl_fl_amplitude755 = c_loc(sl_fl_amplitude755_ptr)
+  inquire(iolength=transfer_struct_c%sl_fl_amplitude755_f_byte_size) fortran_type_f%sl_fl_amplitude755
+#ifdef ifort
+  transfer_struct_c%sl_fl_amplitude755_f_byte_size = transfer_struct_c%sl_fl_amplitude755_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_do_datagaussian = .FALSE.
+  sl_fl_do_datagaussian_ptr => fortran_type_f%sl_fl_do_datagaussian
+  transfer_struct_c%sl_fl_do_datagaussian = c_loc(sl_fl_do_datagaussian_ptr)
+  inquire(iolength=transfer_struct_c%sl_fl_do_datagaussian_f_byte_size) fortran_type_f%sl_fl_do_datagaussian
+#ifdef ifort
+  transfer_struct_c%sl_fl_do_datagaussian_f_byte_size = transfer_struct_c%sl_fl_do_datagaussian_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%sl_fl_inputgaussians = 0_fpk
+  sl_fl_inputgaussians_ptr => fortran_type_f%sl_fl_inputgaussians
+  transfer_struct_c%sl_fl_inputgaussians = c_loc(sl_fl_inputgaussians_ptr(&
+    lbound(fortran_type_f%sl_fl_inputgaussians,1),&
+    lbound(fortran_type_f%sl_fl_inputgaussians,2)))
+  inquire(iolength=transfer_struct_c%sl_fl_inputgaussians_f_byte_size) fortran_type_f%sl_fl_inputgaussians(&
+    lbound(fortran_type_f%sl_fl_inputgaussians,1),&
+    lbound(fortran_type_f%sl_fl_inputgaussians,2))
+#ifdef ifort
+  transfer_struct_c%sl_fl_inputgaussians_f_byte_size = transfer_struct_c%sl_fl_inputgaussians_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%sl_fl_inputgaussians_f_shapes(1) = size(fortran_type_f%sl_fl_inputgaussians, 1)
+  transfer_struct_c%sl_fl_inputgaussians_f_shapes(2) = size(fortran_type_f%sl_fl_inputgaussians, 2)
+  
+  
+end subroutine sleave_sup_inputs_c_init_only
+
+subroutine sleave_sup_inputs_c_destroy(fortran_type_c) bind(C)
+  use sleave_sup_inputs_def, only : sleave_sup_inputs
+
+  type(c_ptr), intent(inout) :: fortran_type_c
+
+  type(sleave_sup_inputs), pointer :: fortran_type_f
+
+  call c_f_pointer(fortran_type_c, fortran_type_f)
+
+  deallocate(fortran_type_f)
+end subroutine sleave_sup_inputs_c_destroy
+
+subroutine sleave_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
+  use sleave_sup_inputs_def, only : sleave_sup_inputs
+
+  type(c_ptr), intent(inout) :: fortran_type_c_from
+  type(c_ptr), intent(inout) :: fortran_type_c_to
+
+  type(sleave_sup_inputs), pointer :: fortran_type_f_from
+  type(sleave_sup_inputs), pointer :: fortran_type_f_to
+
+  call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
+  call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
+
+  fortran_type_f_to%sl_do_sleaving = fortran_type_f_from%sl_do_sleaving
+  fortran_type_f_to%sl_do_isotropic = fortran_type_f_from%sl_do_isotropic
+  fortran_type_f_to%sl_do_exact = fortran_type_f_from%sl_do_exact
+  fortran_type_f_to%sl_do_exactonly = fortran_type_f_from%sl_do_exactonly
+  fortran_type_f_to%sl_do_fluorescence = fortran_type_f_from%sl_do_fluorescence
+  fortran_type_f_to%sl_do_solar_sources = fortran_type_f_from%sl_do_solar_sources
+  fortran_type_f_to%sl_do_user_obsgeoms = fortran_type_f_from%sl_do_user_obsgeoms
+  fortran_type_f_to%sl_nstreams = fortran_type_f_from%sl_nstreams
+  fortran_type_f_to%sl_nbeams = fortran_type_f_from%sl_nbeams
+  fortran_type_f_to%sl_beam_szas = fortran_type_f_from%sl_beam_szas
+  fortran_type_f_to%sl_n_user_relazms = fortran_type_f_from%sl_n_user_relazms
+  fortran_type_f_to%sl_user_relazms = fortran_type_f_from%sl_user_relazms
+  fortran_type_f_to%sl_do_user_streams = fortran_type_f_from%sl_do_user_streams
+  fortran_type_f_to%sl_n_user_streams = fortran_type_f_from%sl_n_user_streams
+  fortran_type_f_to%sl_user_angles_input = fortran_type_f_from%sl_user_angles_input
+  fortran_type_f_to%sl_n_user_obsgeoms = fortran_type_f_from%sl_n_user_obsgeoms
+  fortran_type_f_to%sl_user_obsgeoms = fortran_type_f_from%sl_user_obsgeoms
+  fortran_type_f_to%sl_salinity = fortran_type_f_from%sl_salinity
+  fortran_type_f_to%sl_chlorconc = fortran_type_f_from%sl_chlorconc
+  fortran_type_f_to%sl_wavelength = fortran_type_f_from%sl_wavelength
+  fortran_type_f_to%sl_windspeed = fortran_type_f_from%sl_windspeed
+  fortran_type_f_to%sl_winddir = fortran_type_f_from%sl_winddir
+  fortran_type_f_to%sl_do_glintshadow = fortran_type_f_from%sl_do_glintshadow
+  fortran_type_f_to%sl_do_foamoption = fortran_type_f_from%sl_do_foamoption
+  fortran_type_f_to%sl_do_facetisotropy = fortran_type_f_from%sl_do_facetisotropy
+  fortran_type_f_to%sl_fl_wavelength = fortran_type_f_from%sl_fl_wavelength
+  fortran_type_f_to%sl_fl_latitude = fortran_type_f_from%sl_fl_latitude
+  fortran_type_f_to%sl_fl_longitude = fortran_type_f_from%sl_fl_longitude
+  fortran_type_f_to%sl_fl_epoch = fortran_type_f_from%sl_fl_epoch
+  fortran_type_f_to%sl_fl_amplitude755 = fortran_type_f_from%sl_fl_amplitude755
+  fortran_type_f_to%sl_fl_do_datagaussian = fortran_type_f_from%sl_fl_do_datagaussian
+  fortran_type_f_to%sl_fl_inputgaussians = fortran_type_f_from%sl_fl_inputgaussians
+  
+
+end subroutine sleave_sup_inputs_c_copy
+
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lincontrol_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def, only : lidort_fixed_lincontrol
@@ -2195,7 +3311,7 @@ subroutine lidort_fixed_lincontrol_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_lincontrol_c_alloc_init
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_lincontrol_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def
@@ -2215,6 +3331,8 @@ subroutine lidort_fixed_lincontrol_c_init_only(transfer_struct_c, fortran_type_c
   integer(c_int), pointer :: ts_n_totalcolumn_wfs_ptr
   integer(c_int), pointer :: ts_n_surface_wfs_ptr
   integer(c_int), pointer :: ts_n_sleave_wfs_ptr
+  logical(kind=4), pointer :: ts_do_atmos_lbbf_ptr
+  logical(kind=4), pointer :: ts_do_surface_lbbf_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -2321,6 +3439,26 @@ subroutine lidort_fixed_lincontrol_c_init_only(transfer_struct_c, fortran_type_c
   
   
   
+  fortran_type_f%ts_do_atmos_lbbf = .FALSE.
+  ts_do_atmos_lbbf_ptr => fortran_type_f%ts_do_atmos_lbbf
+  transfer_struct_c%ts_do_atmos_lbbf = c_loc(ts_do_atmos_lbbf_ptr)
+  inquire(iolength=transfer_struct_c%ts_do_atmos_lbbf_f_byte_size) fortran_type_f%ts_do_atmos_lbbf
+#ifdef ifort
+  transfer_struct_c%ts_do_atmos_lbbf_f_byte_size = transfer_struct_c%ts_do_atmos_lbbf_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%ts_do_surface_lbbf = .FALSE.
+  ts_do_surface_lbbf_ptr => fortran_type_f%ts_do_surface_lbbf
+  transfer_struct_c%ts_do_surface_lbbf = c_loc(ts_do_surface_lbbf_ptr)
+  inquire(iolength=transfer_struct_c%ts_do_surface_lbbf_f_byte_size) fortran_type_f%ts_do_surface_lbbf
+#ifdef ifort
+  transfer_struct_c%ts_do_surface_lbbf_f_byte_size = transfer_struct_c%ts_do_surface_lbbf_f_byte_size * 4
+#endif
+  
+  
+  
 end subroutine lidort_fixed_lincontrol_c_init_only
 
 subroutine lidort_fixed_lincontrol_c_destroy(fortran_type_c) bind(C)
@@ -2356,11 +3494,13 @@ subroutine lidort_fixed_lincontrol_c_copy(fortran_type_c_from, fortran_type_c_to
   fortran_type_f_to%ts_n_totalcolumn_wfs = fortran_type_f_from%ts_n_totalcolumn_wfs
   fortran_type_f_to%ts_n_surface_wfs = fortran_type_f_from%ts_n_surface_wfs
   fortran_type_f_to%ts_n_sleave_wfs = fortran_type_f_from%ts_n_sleave_wfs
+  fortran_type_f_to%ts_do_atmos_lbbf = fortran_type_f_from%ts_do_atmos_lbbf
+  fortran_type_f_to%ts_do_surface_lbbf = fortran_type_f_from%ts_do_surface_lbbf
   
 
 end subroutine lidort_fixed_lincontrol_c_copy
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_linoptical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def, only : lidort_fixed_linoptical
@@ -2377,7 +3517,7 @@ subroutine lidort_fixed_linoptical_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_linoptical_c_alloc_init
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def
@@ -2388,9 +3528,9 @@ subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c
 
   type(lidort_fixed_linoptical), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:), pointer :: ts_l_deltau_vert_input_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_l_omega_total_input_ptr
-  real(c_double), dimension(:,:,:,:), pointer :: ts_l_phasmoms_total_input_ptr
+  real(c_double), dimension(:,:), pointer :: ts_l_deltau_vert_input_ptr
+  real(c_double), dimension(:,:), pointer :: ts_l_omega_total_input_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_l_phasmoms_total_input_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -2405,38 +3545,32 @@ subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c
   ts_l_deltau_vert_input_ptr => fortran_type_f%ts_l_deltau_vert_input
   transfer_struct_c%ts_l_deltau_vert_input = c_loc(ts_l_deltau_vert_input_ptr(&
     lbound(fortran_type_f%ts_l_deltau_vert_input,1),&
-    lbound(fortran_type_f%ts_l_deltau_vert_input,2),&
-    lbound(fortran_type_f%ts_l_deltau_vert_input,3)))
+    lbound(fortran_type_f%ts_l_deltau_vert_input,2)))
   inquire(iolength=transfer_struct_c%ts_l_deltau_vert_input_f_byte_size) fortran_type_f%ts_l_deltau_vert_input(&
     lbound(fortran_type_f%ts_l_deltau_vert_input,1),&
-    lbound(fortran_type_f%ts_l_deltau_vert_input,2),&
-    lbound(fortran_type_f%ts_l_deltau_vert_input,3))
+    lbound(fortran_type_f%ts_l_deltau_vert_input,2))
 #ifdef ifort
   transfer_struct_c%ts_l_deltau_vert_input_f_byte_size = transfer_struct_c%ts_l_deltau_vert_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_l_deltau_vert_input_f_shapes(1) = size(fortran_type_f%ts_l_deltau_vert_input, 1)
   transfer_struct_c%ts_l_deltau_vert_input_f_shapes(2) = size(fortran_type_f%ts_l_deltau_vert_input, 2)
-  transfer_struct_c%ts_l_deltau_vert_input_f_shapes(3) = size(fortran_type_f%ts_l_deltau_vert_input, 3)
   
   
   fortran_type_f%ts_l_omega_total_input = 0_fpk
   ts_l_omega_total_input_ptr => fortran_type_f%ts_l_omega_total_input
   transfer_struct_c%ts_l_omega_total_input = c_loc(ts_l_omega_total_input_ptr(&
     lbound(fortran_type_f%ts_l_omega_total_input,1),&
-    lbound(fortran_type_f%ts_l_omega_total_input,2),&
-    lbound(fortran_type_f%ts_l_omega_total_input,3)))
+    lbound(fortran_type_f%ts_l_omega_total_input,2)))
   inquire(iolength=transfer_struct_c%ts_l_omega_total_input_f_byte_size) fortran_type_f%ts_l_omega_total_input(&
     lbound(fortran_type_f%ts_l_omega_total_input,1),&
-    lbound(fortran_type_f%ts_l_omega_total_input,2),&
-    lbound(fortran_type_f%ts_l_omega_total_input,3))
+    lbound(fortran_type_f%ts_l_omega_total_input,2))
 #ifdef ifort
   transfer_struct_c%ts_l_omega_total_input_f_byte_size = transfer_struct_c%ts_l_omega_total_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_l_omega_total_input_f_shapes(1) = size(fortran_type_f%ts_l_omega_total_input, 1)
   transfer_struct_c%ts_l_omega_total_input_f_shapes(2) = size(fortran_type_f%ts_l_omega_total_input, 2)
-  transfer_struct_c%ts_l_omega_total_input_f_shapes(3) = size(fortran_type_f%ts_l_omega_total_input, 3)
   
   
   fortran_type_f%ts_l_phasmoms_total_input = 0_fpk
@@ -2444,13 +3578,11 @@ subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c
   transfer_struct_c%ts_l_phasmoms_total_input = c_loc(ts_l_phasmoms_total_input_ptr(&
     lbound(fortran_type_f%ts_l_phasmoms_total_input,1),&
     lbound(fortran_type_f%ts_l_phasmoms_total_input,2),&
-    lbound(fortran_type_f%ts_l_phasmoms_total_input,3),&
-    lbound(fortran_type_f%ts_l_phasmoms_total_input,4)))
+    lbound(fortran_type_f%ts_l_phasmoms_total_input,3)))
   inquire(iolength=transfer_struct_c%ts_l_phasmoms_total_input_f_byte_size) fortran_type_f%ts_l_phasmoms_total_input(&
     lbound(fortran_type_f%ts_l_phasmoms_total_input,1),&
     lbound(fortran_type_f%ts_l_phasmoms_total_input,2),&
-    lbound(fortran_type_f%ts_l_phasmoms_total_input,3),&
-    lbound(fortran_type_f%ts_l_phasmoms_total_input,4))
+    lbound(fortran_type_f%ts_l_phasmoms_total_input,3))
 #ifdef ifort
   transfer_struct_c%ts_l_phasmoms_total_input_f_byte_size = transfer_struct_c%ts_l_phasmoms_total_input_f_byte_size * 4
 #endif
@@ -2458,7 +3590,6 @@ subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c
   transfer_struct_c%ts_l_phasmoms_total_input_f_shapes(1) = size(fortran_type_f%ts_l_phasmoms_total_input, 1)
   transfer_struct_c%ts_l_phasmoms_total_input_f_shapes(2) = size(fortran_type_f%ts_l_phasmoms_total_input, 2)
   transfer_struct_c%ts_l_phasmoms_total_input_f_shapes(3) = size(fortran_type_f%ts_l_phasmoms_total_input, 3)
-  transfer_struct_c%ts_l_phasmoms_total_input_f_shapes(4) = size(fortran_type_f%ts_l_phasmoms_total_input, 4)
   
   
 end subroutine lidort_fixed_linoptical_c_init_only
@@ -2494,7 +3625,7 @@ subroutine lidort_fixed_linoptical_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_fixed_linoptical_c_copy
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def, only : lidort_fixed_lininputs
@@ -2511,7 +3642,7 @@ subroutine lidort_fixed_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_fixed_lininputs_c_alloc_init
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_lininputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def
@@ -2582,7 +3713,7 @@ subroutine lidort_fixed_lininputs_c_copy(fortran_type_c_from, fortran_type_c_to)
 
 end subroutine lidort_fixed_lininputs_c_copy
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def, only : lidort_modified_lininputs
@@ -2599,7 +3730,7 @@ subroutine lidort_modified_lininputs_c_alloc_init(transfer_struct_c, fortran_typ
 
 end subroutine lidort_modified_lininputs_c_alloc_init
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lininputs_def" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_lininputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lininputs_def
@@ -2662,7 +3793,7 @@ subroutine lidort_modified_lininputs_c_copy(fortran_type_c_from, fortran_type_c_
 
 end subroutine lidort_modified_lininputs_c_copy
 
-! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linatmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def, only : lidort_linatmos
@@ -2679,7 +3810,7 @@ subroutine lidort_linatmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine lidort_linatmos_c_alloc_init
 
-! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def
@@ -2690,12 +3821,14 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
 
   type(lidort_linatmos), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_columnwf_ptr
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_mint_columnwf_ptr
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_flux_columnwf_ptr
-  real(c_double), dimension(:,:,:,:,:,:), pointer :: ts_profilewf_ptr
-  real(c_double), dimension(:,:,:,:,:,:), pointer :: ts_mint_profilewf_ptr
-  real(c_double), dimension(:,:,:,:,:,:), pointer :: ts_flux_profilewf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_columnwf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_mint_columnwf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_flux_columnwf_ptr
+  real(c_double), dimension(:,:,:,:,:), pointer :: ts_profilewf_ptr
+  real(c_double), dimension(:,:,:,:,:), pointer :: ts_mint_profilewf_ptr
+  real(c_double), dimension(:,:,:,:,:), pointer :: ts_flux_profilewf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_abbwfs_jacobians_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_abbwfs_fluxes_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -2712,14 +3845,12 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_columnwf,1),&
     lbound(fortran_type_f%ts_columnwf,2),&
     lbound(fortran_type_f%ts_columnwf,3),&
-    lbound(fortran_type_f%ts_columnwf,4),&
-    lbound(fortran_type_f%ts_columnwf,5)))
+    lbound(fortran_type_f%ts_columnwf,4)))
   inquire(iolength=transfer_struct_c%ts_columnwf_f_byte_size) fortran_type_f%ts_columnwf(&
     lbound(fortran_type_f%ts_columnwf,1),&
     lbound(fortran_type_f%ts_columnwf,2),&
     lbound(fortran_type_f%ts_columnwf,3),&
-    lbound(fortran_type_f%ts_columnwf,4),&
-    lbound(fortran_type_f%ts_columnwf,5))
+    lbound(fortran_type_f%ts_columnwf,4))
 #ifdef ifort
   transfer_struct_c%ts_columnwf_f_byte_size = transfer_struct_c%ts_columnwf_f_byte_size * 4
 #endif
@@ -2728,7 +3859,6 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_columnwf_f_shapes(2) = size(fortran_type_f%ts_columnwf, 2)
   transfer_struct_c%ts_columnwf_f_shapes(3) = size(fortran_type_f%ts_columnwf, 3)
   transfer_struct_c%ts_columnwf_f_shapes(4) = size(fortran_type_f%ts_columnwf, 4)
-  transfer_struct_c%ts_columnwf_f_shapes(5) = size(fortran_type_f%ts_columnwf, 5)
   
   
   fortran_type_f%ts_mint_columnwf = 0_fpk
@@ -2737,14 +3867,12 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_mint_columnwf,1),&
     lbound(fortran_type_f%ts_mint_columnwf,2),&
     lbound(fortran_type_f%ts_mint_columnwf,3),&
-    lbound(fortran_type_f%ts_mint_columnwf,4),&
-    lbound(fortran_type_f%ts_mint_columnwf,5)))
+    lbound(fortran_type_f%ts_mint_columnwf,4)))
   inquire(iolength=transfer_struct_c%ts_mint_columnwf_f_byte_size) fortran_type_f%ts_mint_columnwf(&
     lbound(fortran_type_f%ts_mint_columnwf,1),&
     lbound(fortran_type_f%ts_mint_columnwf,2),&
     lbound(fortran_type_f%ts_mint_columnwf,3),&
-    lbound(fortran_type_f%ts_mint_columnwf,4),&
-    lbound(fortran_type_f%ts_mint_columnwf,5))
+    lbound(fortran_type_f%ts_mint_columnwf,4))
 #ifdef ifort
   transfer_struct_c%ts_mint_columnwf_f_byte_size = transfer_struct_c%ts_mint_columnwf_f_byte_size * 4
 #endif
@@ -2753,7 +3881,6 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_mint_columnwf_f_shapes(2) = size(fortran_type_f%ts_mint_columnwf, 2)
   transfer_struct_c%ts_mint_columnwf_f_shapes(3) = size(fortran_type_f%ts_mint_columnwf, 3)
   transfer_struct_c%ts_mint_columnwf_f_shapes(4) = size(fortran_type_f%ts_mint_columnwf, 4)
-  transfer_struct_c%ts_mint_columnwf_f_shapes(5) = size(fortran_type_f%ts_mint_columnwf, 5)
   
   
   fortran_type_f%ts_flux_columnwf = 0_fpk
@@ -2762,14 +3889,12 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_flux_columnwf,1),&
     lbound(fortran_type_f%ts_flux_columnwf,2),&
     lbound(fortran_type_f%ts_flux_columnwf,3),&
-    lbound(fortran_type_f%ts_flux_columnwf,4),&
-    lbound(fortran_type_f%ts_flux_columnwf,5)))
+    lbound(fortran_type_f%ts_flux_columnwf,4)))
   inquire(iolength=transfer_struct_c%ts_flux_columnwf_f_byte_size) fortran_type_f%ts_flux_columnwf(&
     lbound(fortran_type_f%ts_flux_columnwf,1),&
     lbound(fortran_type_f%ts_flux_columnwf,2),&
     lbound(fortran_type_f%ts_flux_columnwf,3),&
-    lbound(fortran_type_f%ts_flux_columnwf,4),&
-    lbound(fortran_type_f%ts_flux_columnwf,5))
+    lbound(fortran_type_f%ts_flux_columnwf,4))
 #ifdef ifort
   transfer_struct_c%ts_flux_columnwf_f_byte_size = transfer_struct_c%ts_flux_columnwf_f_byte_size * 4
 #endif
@@ -2778,7 +3903,6 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_flux_columnwf_f_shapes(2) = size(fortran_type_f%ts_flux_columnwf, 2)
   transfer_struct_c%ts_flux_columnwf_f_shapes(3) = size(fortran_type_f%ts_flux_columnwf, 3)
   transfer_struct_c%ts_flux_columnwf_f_shapes(4) = size(fortran_type_f%ts_flux_columnwf, 4)
-  transfer_struct_c%ts_flux_columnwf_f_shapes(5) = size(fortran_type_f%ts_flux_columnwf, 5)
   
   
   fortran_type_f%ts_profilewf = 0_fpk
@@ -2788,15 +3912,13 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_profilewf,2),&
     lbound(fortran_type_f%ts_profilewf,3),&
     lbound(fortran_type_f%ts_profilewf,4),&
-    lbound(fortran_type_f%ts_profilewf,5),&
-    lbound(fortran_type_f%ts_profilewf,6)))
+    lbound(fortran_type_f%ts_profilewf,5)))
   inquire(iolength=transfer_struct_c%ts_profilewf_f_byte_size) fortran_type_f%ts_profilewf(&
     lbound(fortran_type_f%ts_profilewf,1),&
     lbound(fortran_type_f%ts_profilewf,2),&
     lbound(fortran_type_f%ts_profilewf,3),&
     lbound(fortran_type_f%ts_profilewf,4),&
-    lbound(fortran_type_f%ts_profilewf,5),&
-    lbound(fortran_type_f%ts_profilewf,6))
+    lbound(fortran_type_f%ts_profilewf,5))
 #ifdef ifort
   transfer_struct_c%ts_profilewf_f_byte_size = transfer_struct_c%ts_profilewf_f_byte_size * 4
 #endif
@@ -2806,7 +3928,6 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_profilewf_f_shapes(3) = size(fortran_type_f%ts_profilewf, 3)
   transfer_struct_c%ts_profilewf_f_shapes(4) = size(fortran_type_f%ts_profilewf, 4)
   transfer_struct_c%ts_profilewf_f_shapes(5) = size(fortran_type_f%ts_profilewf, 5)
-  transfer_struct_c%ts_profilewf_f_shapes(6) = size(fortran_type_f%ts_profilewf, 6)
   
   
   fortran_type_f%ts_mint_profilewf = 0_fpk
@@ -2816,15 +3937,13 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_mint_profilewf,2),&
     lbound(fortran_type_f%ts_mint_profilewf,3),&
     lbound(fortran_type_f%ts_mint_profilewf,4),&
-    lbound(fortran_type_f%ts_mint_profilewf,5),&
-    lbound(fortran_type_f%ts_mint_profilewf,6)))
+    lbound(fortran_type_f%ts_mint_profilewf,5)))
   inquire(iolength=transfer_struct_c%ts_mint_profilewf_f_byte_size) fortran_type_f%ts_mint_profilewf(&
     lbound(fortran_type_f%ts_mint_profilewf,1),&
     lbound(fortran_type_f%ts_mint_profilewf,2),&
     lbound(fortran_type_f%ts_mint_profilewf,3),&
     lbound(fortran_type_f%ts_mint_profilewf,4),&
-    lbound(fortran_type_f%ts_mint_profilewf,5),&
-    lbound(fortran_type_f%ts_mint_profilewf,6))
+    lbound(fortran_type_f%ts_mint_profilewf,5))
 #ifdef ifort
   transfer_struct_c%ts_mint_profilewf_f_byte_size = transfer_struct_c%ts_mint_profilewf_f_byte_size * 4
 #endif
@@ -2834,7 +3953,6 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_mint_profilewf_f_shapes(3) = size(fortran_type_f%ts_mint_profilewf, 3)
   transfer_struct_c%ts_mint_profilewf_f_shapes(4) = size(fortran_type_f%ts_mint_profilewf, 4)
   transfer_struct_c%ts_mint_profilewf_f_shapes(5) = size(fortran_type_f%ts_mint_profilewf, 5)
-  transfer_struct_c%ts_mint_profilewf_f_shapes(6) = size(fortran_type_f%ts_mint_profilewf, 6)
   
   
   fortran_type_f%ts_flux_profilewf = 0_fpk
@@ -2844,15 +3962,13 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
     lbound(fortran_type_f%ts_flux_profilewf,2),&
     lbound(fortran_type_f%ts_flux_profilewf,3),&
     lbound(fortran_type_f%ts_flux_profilewf,4),&
-    lbound(fortran_type_f%ts_flux_profilewf,5),&
-    lbound(fortran_type_f%ts_flux_profilewf,6)))
+    lbound(fortran_type_f%ts_flux_profilewf,5)))
   inquire(iolength=transfer_struct_c%ts_flux_profilewf_f_byte_size) fortran_type_f%ts_flux_profilewf(&
     lbound(fortran_type_f%ts_flux_profilewf,1),&
     lbound(fortran_type_f%ts_flux_profilewf,2),&
     lbound(fortran_type_f%ts_flux_profilewf,3),&
     lbound(fortran_type_f%ts_flux_profilewf,4),&
-    lbound(fortran_type_f%ts_flux_profilewf,5),&
-    lbound(fortran_type_f%ts_flux_profilewf,6))
+    lbound(fortran_type_f%ts_flux_profilewf,5))
 #ifdef ifort
   transfer_struct_c%ts_flux_profilewf_f_byte_size = transfer_struct_c%ts_flux_profilewf_f_byte_size * 4
 #endif
@@ -2862,7 +3978,50 @@ subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   transfer_struct_c%ts_flux_profilewf_f_shapes(3) = size(fortran_type_f%ts_flux_profilewf, 3)
   transfer_struct_c%ts_flux_profilewf_f_shapes(4) = size(fortran_type_f%ts_flux_profilewf, 4)
   transfer_struct_c%ts_flux_profilewf_f_shapes(5) = size(fortran_type_f%ts_flux_profilewf, 5)
-  transfer_struct_c%ts_flux_profilewf_f_shapes(6) = size(fortran_type_f%ts_flux_profilewf, 6)
+  
+  
+  fortran_type_f%ts_abbwfs_jacobians = 0_fpk
+  ts_abbwfs_jacobians_ptr => fortran_type_f%ts_abbwfs_jacobians
+  transfer_struct_c%ts_abbwfs_jacobians = c_loc(ts_abbwfs_jacobians_ptr(&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,1),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,2),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,3),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,4)))
+  inquire(iolength=transfer_struct_c%ts_abbwfs_jacobians_f_byte_size) fortran_type_f%ts_abbwfs_jacobians(&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,1),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,2),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,3),&
+    lbound(fortran_type_f%ts_abbwfs_jacobians,4))
+#ifdef ifort
+  transfer_struct_c%ts_abbwfs_jacobians_f_byte_size = transfer_struct_c%ts_abbwfs_jacobians_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_abbwfs_jacobians_f_shapes(1) = size(fortran_type_f%ts_abbwfs_jacobians, 1)
+  transfer_struct_c%ts_abbwfs_jacobians_f_shapes(2) = size(fortran_type_f%ts_abbwfs_jacobians, 2)
+  transfer_struct_c%ts_abbwfs_jacobians_f_shapes(3) = size(fortran_type_f%ts_abbwfs_jacobians, 3)
+  transfer_struct_c%ts_abbwfs_jacobians_f_shapes(4) = size(fortran_type_f%ts_abbwfs_jacobians, 4)
+  
+  
+  fortran_type_f%ts_abbwfs_fluxes = 0_fpk
+  ts_abbwfs_fluxes_ptr => fortran_type_f%ts_abbwfs_fluxes
+  transfer_struct_c%ts_abbwfs_fluxes = c_loc(ts_abbwfs_fluxes_ptr(&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,1),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,2),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,3),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,4)))
+  inquire(iolength=transfer_struct_c%ts_abbwfs_fluxes_f_byte_size) fortran_type_f%ts_abbwfs_fluxes(&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,1),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,2),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,3),&
+    lbound(fortran_type_f%ts_abbwfs_fluxes,4))
+#ifdef ifort
+  transfer_struct_c%ts_abbwfs_fluxes_f_byte_size = transfer_struct_c%ts_abbwfs_fluxes_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_abbwfs_fluxes_f_shapes(1) = size(fortran_type_f%ts_abbwfs_fluxes, 1)
+  transfer_struct_c%ts_abbwfs_fluxes_f_shapes(2) = size(fortran_type_f%ts_abbwfs_fluxes, 2)
+  transfer_struct_c%ts_abbwfs_fluxes_f_shapes(3) = size(fortran_type_f%ts_abbwfs_fluxes, 3)
+  transfer_struct_c%ts_abbwfs_fluxes_f_shapes(4) = size(fortran_type_f%ts_abbwfs_fluxes, 4)
   
   
 end subroutine lidort_linatmos_c_init_only
@@ -2897,11 +4056,13 @@ subroutine lidort_linatmos_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
   fortran_type_f_to%ts_profilewf = fortran_type_f_from%ts_profilewf
   fortran_type_f_to%ts_mint_profilewf = fortran_type_f_from%ts_mint_profilewf
   fortran_type_f_to%ts_flux_profilewf = fortran_type_f_from%ts_flux_profilewf
+  fortran_type_f_to%ts_abbwfs_jacobians = fortran_type_f_from%ts_abbwfs_jacobians
+  fortran_type_f_to%ts_abbwfs_fluxes = fortran_type_f_from%ts_abbwfs_fluxes
   
 
 end subroutine lidort_linatmos_c_copy
 
-! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsurf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def, only : lidort_linsurf
@@ -2918,7 +4079,7 @@ subroutine lidort_linsurf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C
 
 end subroutine lidort_linsurf_c_alloc_init
 
-! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def
@@ -2929,9 +4090,11 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
 
   type(lidort_linsurf), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_surfacewf_ptr
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_mint_surfacewf_ptr
-  real(c_double), dimension(:,:,:,:,:), pointer :: ts_flux_surfacewf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_surfacewf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_mint_surfacewf_ptr
+  real(c_double), dimension(:,:,:,:), pointer :: ts_flux_surfacewf_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_sbbwfs_jacobians_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_sbbwfs_fluxes_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -2948,14 +4111,12 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
     lbound(fortran_type_f%ts_surfacewf,1),&
     lbound(fortran_type_f%ts_surfacewf,2),&
     lbound(fortran_type_f%ts_surfacewf,3),&
-    lbound(fortran_type_f%ts_surfacewf,4),&
-    lbound(fortran_type_f%ts_surfacewf,5)))
+    lbound(fortran_type_f%ts_surfacewf,4)))
   inquire(iolength=transfer_struct_c%ts_surfacewf_f_byte_size) fortran_type_f%ts_surfacewf(&
     lbound(fortran_type_f%ts_surfacewf,1),&
     lbound(fortran_type_f%ts_surfacewf,2),&
     lbound(fortran_type_f%ts_surfacewf,3),&
-    lbound(fortran_type_f%ts_surfacewf,4),&
-    lbound(fortran_type_f%ts_surfacewf,5))
+    lbound(fortran_type_f%ts_surfacewf,4))
 #ifdef ifort
   transfer_struct_c%ts_surfacewf_f_byte_size = transfer_struct_c%ts_surfacewf_f_byte_size * 4
 #endif
@@ -2964,7 +4125,6 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   transfer_struct_c%ts_surfacewf_f_shapes(2) = size(fortran_type_f%ts_surfacewf, 2)
   transfer_struct_c%ts_surfacewf_f_shapes(3) = size(fortran_type_f%ts_surfacewf, 3)
   transfer_struct_c%ts_surfacewf_f_shapes(4) = size(fortran_type_f%ts_surfacewf, 4)
-  transfer_struct_c%ts_surfacewf_f_shapes(5) = size(fortran_type_f%ts_surfacewf, 5)
   
   
   fortran_type_f%ts_mint_surfacewf = 0_fpk
@@ -2973,14 +4133,12 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
     lbound(fortran_type_f%ts_mint_surfacewf,1),&
     lbound(fortran_type_f%ts_mint_surfacewf,2),&
     lbound(fortran_type_f%ts_mint_surfacewf,3),&
-    lbound(fortran_type_f%ts_mint_surfacewf,4),&
-    lbound(fortran_type_f%ts_mint_surfacewf,5)))
+    lbound(fortran_type_f%ts_mint_surfacewf,4)))
   inquire(iolength=transfer_struct_c%ts_mint_surfacewf_f_byte_size) fortran_type_f%ts_mint_surfacewf(&
     lbound(fortran_type_f%ts_mint_surfacewf,1),&
     lbound(fortran_type_f%ts_mint_surfacewf,2),&
     lbound(fortran_type_f%ts_mint_surfacewf,3),&
-    lbound(fortran_type_f%ts_mint_surfacewf,4),&
-    lbound(fortran_type_f%ts_mint_surfacewf,5))
+    lbound(fortran_type_f%ts_mint_surfacewf,4))
 #ifdef ifort
   transfer_struct_c%ts_mint_surfacewf_f_byte_size = transfer_struct_c%ts_mint_surfacewf_f_byte_size * 4
 #endif
@@ -2989,7 +4147,6 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   transfer_struct_c%ts_mint_surfacewf_f_shapes(2) = size(fortran_type_f%ts_mint_surfacewf, 2)
   transfer_struct_c%ts_mint_surfacewf_f_shapes(3) = size(fortran_type_f%ts_mint_surfacewf, 3)
   transfer_struct_c%ts_mint_surfacewf_f_shapes(4) = size(fortran_type_f%ts_mint_surfacewf, 4)
-  transfer_struct_c%ts_mint_surfacewf_f_shapes(5) = size(fortran_type_f%ts_mint_surfacewf, 5)
   
   
   fortran_type_f%ts_flux_surfacewf = 0_fpk
@@ -2998,14 +4155,12 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
     lbound(fortran_type_f%ts_flux_surfacewf,1),&
     lbound(fortran_type_f%ts_flux_surfacewf,2),&
     lbound(fortran_type_f%ts_flux_surfacewf,3),&
-    lbound(fortran_type_f%ts_flux_surfacewf,4),&
-    lbound(fortran_type_f%ts_flux_surfacewf,5)))
+    lbound(fortran_type_f%ts_flux_surfacewf,4)))
   inquire(iolength=transfer_struct_c%ts_flux_surfacewf_f_byte_size) fortran_type_f%ts_flux_surfacewf(&
     lbound(fortran_type_f%ts_flux_surfacewf,1),&
     lbound(fortran_type_f%ts_flux_surfacewf,2),&
     lbound(fortran_type_f%ts_flux_surfacewf,3),&
-    lbound(fortran_type_f%ts_flux_surfacewf,4),&
-    lbound(fortran_type_f%ts_flux_surfacewf,5))
+    lbound(fortran_type_f%ts_flux_surfacewf,4))
 #ifdef ifort
   transfer_struct_c%ts_flux_surfacewf_f_byte_size = transfer_struct_c%ts_flux_surfacewf_f_byte_size * 4
 #endif
@@ -3014,7 +4169,44 @@ subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   transfer_struct_c%ts_flux_surfacewf_f_shapes(2) = size(fortran_type_f%ts_flux_surfacewf, 2)
   transfer_struct_c%ts_flux_surfacewf_f_shapes(3) = size(fortran_type_f%ts_flux_surfacewf, 3)
   transfer_struct_c%ts_flux_surfacewf_f_shapes(4) = size(fortran_type_f%ts_flux_surfacewf, 4)
-  transfer_struct_c%ts_flux_surfacewf_f_shapes(5) = size(fortran_type_f%ts_flux_surfacewf, 5)
+  
+  
+  fortran_type_f%ts_sbbwfs_jacobians = 0_fpk
+  ts_sbbwfs_jacobians_ptr => fortran_type_f%ts_sbbwfs_jacobians
+  transfer_struct_c%ts_sbbwfs_jacobians = c_loc(ts_sbbwfs_jacobians_ptr(&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,1),&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,2),&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,3)))
+  inquire(iolength=transfer_struct_c%ts_sbbwfs_jacobians_f_byte_size) fortran_type_f%ts_sbbwfs_jacobians(&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,1),&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,2),&
+    lbound(fortran_type_f%ts_sbbwfs_jacobians,3))
+#ifdef ifort
+  transfer_struct_c%ts_sbbwfs_jacobians_f_byte_size = transfer_struct_c%ts_sbbwfs_jacobians_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_sbbwfs_jacobians_f_shapes(1) = size(fortran_type_f%ts_sbbwfs_jacobians, 1)
+  transfer_struct_c%ts_sbbwfs_jacobians_f_shapes(2) = size(fortran_type_f%ts_sbbwfs_jacobians, 2)
+  transfer_struct_c%ts_sbbwfs_jacobians_f_shapes(3) = size(fortran_type_f%ts_sbbwfs_jacobians, 3)
+  
+  
+  fortran_type_f%ts_sbbwfs_fluxes = 0_fpk
+  ts_sbbwfs_fluxes_ptr => fortran_type_f%ts_sbbwfs_fluxes
+  transfer_struct_c%ts_sbbwfs_fluxes = c_loc(ts_sbbwfs_fluxes_ptr(&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,1),&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,2),&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,3)))
+  inquire(iolength=transfer_struct_c%ts_sbbwfs_fluxes_f_byte_size) fortran_type_f%ts_sbbwfs_fluxes(&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,1),&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,2),&
+    lbound(fortran_type_f%ts_sbbwfs_fluxes,3))
+#ifdef ifort
+  transfer_struct_c%ts_sbbwfs_fluxes_f_byte_size = transfer_struct_c%ts_sbbwfs_fluxes_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_sbbwfs_fluxes_f_shapes(1) = size(fortran_type_f%ts_sbbwfs_fluxes, 1)
+  transfer_struct_c%ts_sbbwfs_fluxes_f_shapes(2) = size(fortran_type_f%ts_sbbwfs_fluxes, 2)
+  transfer_struct_c%ts_sbbwfs_fluxes_f_shapes(3) = size(fortran_type_f%ts_sbbwfs_fluxes, 3)
   
   
 end subroutine lidort_linsurf_c_init_only
@@ -3046,11 +4238,13 @@ subroutine lidort_linsurf_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
   fortran_type_f_to%ts_surfacewf = fortran_type_f_from%ts_surfacewf
   fortran_type_f_to%ts_mint_surfacewf = fortran_type_f_from%ts_mint_surfacewf
   fortran_type_f_to%ts_flux_surfacewf = fortran_type_f_from%ts_flux_surfacewf
+  fortran_type_f_to%ts_sbbwfs_jacobians = fortran_type_f_from%ts_sbbwfs_jacobians
+  fortran_type_f_to%ts_sbbwfs_fluxes = fortran_type_f_from%ts_sbbwfs_fluxes
   
 
 end subroutine lidort_linsurf_c_copy
 
-! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linoutputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def, only : lidort_linoutputs
@@ -3067,7 +4261,7 @@ subroutine lidort_linoutputs_c_alloc_init(transfer_struct_c, fortran_type_c) bin
 
 end subroutine lidort_linoutputs_c_alloc_init
 
-! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_linoutputs_def" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linoutputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linoutputs_def
@@ -3138,7 +4332,7 @@ subroutine lidort_linoutputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind
 
 end subroutine lidort_linoutputs_c_copy
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_brdf_def, only : lidort_linsup_brdf
@@ -3155,7 +4349,7 @@ subroutine lidort_linsup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bi
 
 end subroutine lidort_linsup_brdf_c_alloc_init
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_linsup_brdf_def" in file: "lidort_lin_sup_brdf_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_brdf_def
@@ -3171,8 +4365,8 @@ subroutine lidort_linsup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bin
   real(c_double), dimension(:,:,:,:), pointer :: ts_ls_brdf_f_ptr
   real(c_double), dimension(:,:,:,:), pointer :: ts_ls_user_brdf_f_0_ptr
   real(c_double), dimension(:,:,:,:), pointer :: ts_ls_user_brdf_f_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_ls_emissivity_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_ls_user_emissivity_ptr
+  real(c_double), dimension(:,:), pointer :: ts_ls_emissivity_ptr
+  real(c_double), dimension(:,:), pointer :: ts_ls_user_emissivity_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -3297,38 +4491,32 @@ subroutine lidort_linsup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bin
   ts_ls_emissivity_ptr => fortran_type_f%ts_ls_emissivity
   transfer_struct_c%ts_ls_emissivity = c_loc(ts_ls_emissivity_ptr(&
     lbound(fortran_type_f%ts_ls_emissivity,1),&
-    lbound(fortran_type_f%ts_ls_emissivity,2),&
-    lbound(fortran_type_f%ts_ls_emissivity,3)))
+    lbound(fortran_type_f%ts_ls_emissivity,2)))
   inquire(iolength=transfer_struct_c%ts_ls_emissivity_f_byte_size) fortran_type_f%ts_ls_emissivity(&
     lbound(fortran_type_f%ts_ls_emissivity,1),&
-    lbound(fortran_type_f%ts_ls_emissivity,2),&
-    lbound(fortran_type_f%ts_ls_emissivity,3))
+    lbound(fortran_type_f%ts_ls_emissivity,2))
 #ifdef ifort
   transfer_struct_c%ts_ls_emissivity_f_byte_size = transfer_struct_c%ts_ls_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_ls_emissivity_f_shapes(1) = size(fortran_type_f%ts_ls_emissivity, 1)
   transfer_struct_c%ts_ls_emissivity_f_shapes(2) = size(fortran_type_f%ts_ls_emissivity, 2)
-  transfer_struct_c%ts_ls_emissivity_f_shapes(3) = size(fortran_type_f%ts_ls_emissivity, 3)
   
   
   fortran_type_f%ts_ls_user_emissivity = 0_fpk
   ts_ls_user_emissivity_ptr => fortran_type_f%ts_ls_user_emissivity
   transfer_struct_c%ts_ls_user_emissivity = c_loc(ts_ls_user_emissivity_ptr(&
     lbound(fortran_type_f%ts_ls_user_emissivity,1),&
-    lbound(fortran_type_f%ts_ls_user_emissivity,2),&
-    lbound(fortran_type_f%ts_ls_user_emissivity,3)))
+    lbound(fortran_type_f%ts_ls_user_emissivity,2)))
   inquire(iolength=transfer_struct_c%ts_ls_user_emissivity_f_byte_size) fortran_type_f%ts_ls_user_emissivity(&
     lbound(fortran_type_f%ts_ls_user_emissivity,1),&
-    lbound(fortran_type_f%ts_ls_user_emissivity,2),&
-    lbound(fortran_type_f%ts_ls_user_emissivity,3))
+    lbound(fortran_type_f%ts_ls_user_emissivity,2))
 #ifdef ifort
   transfer_struct_c%ts_ls_user_emissivity_f_byte_size = transfer_struct_c%ts_ls_user_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_ls_user_emissivity_f_shapes(1) = size(fortran_type_f%ts_ls_user_emissivity, 1)
   transfer_struct_c%ts_ls_user_emissivity_f_shapes(2) = size(fortran_type_f%ts_ls_user_emissivity, 2)
-  transfer_struct_c%ts_ls_user_emissivity_f_shapes(3) = size(fortran_type_f%ts_ls_user_emissivity, 3)
   
   
 end subroutine lidort_linsup_brdf_c_init_only
@@ -3368,7 +4556,7 @@ subroutine lidort_linsup_brdf_c_copy(fortran_type_c_from, fortran_type_c_to) bin
 
 end subroutine lidort_linsup_brdf_c_copy
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_atmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def, only : lidort_linsup_ss_atmos
@@ -3385,7 +4573,7 @@ subroutine lidort_linsup_ss_atmos_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_linsup_ss_atmos_c_alloc_init
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_atmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def
@@ -3532,7 +4720,7 @@ subroutine lidort_linsup_ss_atmos_c_copy(fortran_type_c_from, fortran_type_c_to)
 
 end subroutine lidort_linsup_ss_atmos_c_copy
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_surf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def, only : lidort_linsup_ss_surf
@@ -3549,7 +4737,7 @@ subroutine lidort_linsup_ss_surf_c_alloc_init(transfer_struct_c, fortran_type_c)
 
 end subroutine lidort_linsup_ss_surf_c_alloc_init
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_surf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def
@@ -3621,7 +4809,7 @@ subroutine lidort_linsup_ss_surf_c_copy(fortran_type_c_from, fortran_type_c_to) 
 
 end subroutine lidort_linsup_ss_surf_c_copy
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def, only : lidort_linsup_ss
@@ -3638,7 +4826,7 @@ subroutine lidort_linsup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine lidort_linsup_ss_c_alloc_init
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_linsup_ss_def" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_ss_def
@@ -3709,7 +4897,7 @@ subroutine lidort_linsup_ss_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
 
 end subroutine lidort_linsup_ss_c_copy
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_sleave_def, only : lidort_linsup_sleave
@@ -3726,7 +4914,7 @@ subroutine lidort_linsup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_linsup_sleave_c_alloc_init
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_linsup_sleave_def" in file: "lidort_lin_sup_sleave_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_sleave_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_sleave_def
@@ -3867,7 +5055,7 @@ subroutine lidort_linsup_sleave_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_linsup_sleave_c_copy
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_inout_def, only : lidort_linsup_inout
@@ -3884,7 +5072,7 @@ subroutine lidort_linsup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_linsup_inout_c_alloc_init
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_linsup_inout_def" in file: "lidort_lin_sup_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_inout_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_linsup_inout_def
@@ -3967,7 +5155,7 @@ subroutine lidort_linsup_inout_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine lidort_linsup_inout_c_copy
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_main_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def, only : lidort_main_outputs
@@ -3984,7 +5172,7 @@ subroutine lidort_main_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_main_outputs_c_alloc_init
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def
@@ -3995,13 +5183,14 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
 
   type(lidort_main_outputs), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:,:,:), pointer :: ts_intensity_ptr
-  real(c_double), dimension(:,:,:,:), pointer :: ts_mean_intensity_ptr
-  real(c_double), dimension(:,:,:,:), pointer :: ts_flux_integral_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_dnflux_direct_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_dnmean_direct_ptr
-  integer(c_int), dimension(:,:), pointer :: ts_fourier_saved_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_intensity_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_mean_intensity_ptr
+  real(c_double), dimension(:,:,:), pointer :: ts_flux_integral_ptr
+  real(c_double), dimension(:,:), pointer :: ts_dnflux_direct_ptr
+  real(c_double), dimension(:,:), pointer :: ts_dnmean_direct_ptr
+  integer(c_int), dimension(:), pointer :: ts_fourier_saved_ptr
   integer(c_int), pointer :: ts_n_geometries_ptr
+  real(c_double), dimension(:), pointer :: ts_solarbeam_boatrans_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -4017,13 +5206,11 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_intensity = c_loc(ts_intensity_ptr(&
     lbound(fortran_type_f%ts_intensity,1),&
     lbound(fortran_type_f%ts_intensity,2),&
-    lbound(fortran_type_f%ts_intensity,3),&
-    lbound(fortran_type_f%ts_intensity,4)))
+    lbound(fortran_type_f%ts_intensity,3)))
   inquire(iolength=transfer_struct_c%ts_intensity_f_byte_size) fortran_type_f%ts_intensity(&
     lbound(fortran_type_f%ts_intensity,1),&
     lbound(fortran_type_f%ts_intensity,2),&
-    lbound(fortran_type_f%ts_intensity,3),&
-    lbound(fortran_type_f%ts_intensity,4))
+    lbound(fortran_type_f%ts_intensity,3))
 #ifdef ifort
   transfer_struct_c%ts_intensity_f_byte_size = transfer_struct_c%ts_intensity_f_byte_size * 4
 #endif
@@ -4031,7 +5218,6 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_intensity_f_shapes(1) = size(fortran_type_f%ts_intensity, 1)
   transfer_struct_c%ts_intensity_f_shapes(2) = size(fortran_type_f%ts_intensity, 2)
   transfer_struct_c%ts_intensity_f_shapes(3) = size(fortran_type_f%ts_intensity, 3)
-  transfer_struct_c%ts_intensity_f_shapes(4) = size(fortran_type_f%ts_intensity, 4)
   
   
   fortran_type_f%ts_mean_intensity = 0_fpk
@@ -4039,13 +5225,11 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_mean_intensity = c_loc(ts_mean_intensity_ptr(&
     lbound(fortran_type_f%ts_mean_intensity,1),&
     lbound(fortran_type_f%ts_mean_intensity,2),&
-    lbound(fortran_type_f%ts_mean_intensity,3),&
-    lbound(fortran_type_f%ts_mean_intensity,4)))
+    lbound(fortran_type_f%ts_mean_intensity,3)))
   inquire(iolength=transfer_struct_c%ts_mean_intensity_f_byte_size) fortran_type_f%ts_mean_intensity(&
     lbound(fortran_type_f%ts_mean_intensity,1),&
     lbound(fortran_type_f%ts_mean_intensity,2),&
-    lbound(fortran_type_f%ts_mean_intensity,3),&
-    lbound(fortran_type_f%ts_mean_intensity,4))
+    lbound(fortran_type_f%ts_mean_intensity,3))
 #ifdef ifort
   transfer_struct_c%ts_mean_intensity_f_byte_size = transfer_struct_c%ts_mean_intensity_f_byte_size * 4
 #endif
@@ -4053,7 +5237,6 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_mean_intensity_f_shapes(1) = size(fortran_type_f%ts_mean_intensity, 1)
   transfer_struct_c%ts_mean_intensity_f_shapes(2) = size(fortran_type_f%ts_mean_intensity, 2)
   transfer_struct_c%ts_mean_intensity_f_shapes(3) = size(fortran_type_f%ts_mean_intensity, 3)
-  transfer_struct_c%ts_mean_intensity_f_shapes(4) = size(fortran_type_f%ts_mean_intensity, 4)
   
   
   fortran_type_f%ts_flux_integral = 0_fpk
@@ -4061,13 +5244,11 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_flux_integral = c_loc(ts_flux_integral_ptr(&
     lbound(fortran_type_f%ts_flux_integral,1),&
     lbound(fortran_type_f%ts_flux_integral,2),&
-    lbound(fortran_type_f%ts_flux_integral,3),&
-    lbound(fortran_type_f%ts_flux_integral,4)))
+    lbound(fortran_type_f%ts_flux_integral,3)))
   inquire(iolength=transfer_struct_c%ts_flux_integral_f_byte_size) fortran_type_f%ts_flux_integral(&
     lbound(fortran_type_f%ts_flux_integral,1),&
     lbound(fortran_type_f%ts_flux_integral,2),&
-    lbound(fortran_type_f%ts_flux_integral,3),&
-    lbound(fortran_type_f%ts_flux_integral,4))
+    lbound(fortran_type_f%ts_flux_integral,3))
 #ifdef ifort
   transfer_struct_c%ts_flux_integral_f_byte_size = transfer_struct_c%ts_flux_integral_f_byte_size * 4
 #endif
@@ -4075,61 +5256,51 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_flux_integral_f_shapes(1) = size(fortran_type_f%ts_flux_integral, 1)
   transfer_struct_c%ts_flux_integral_f_shapes(2) = size(fortran_type_f%ts_flux_integral, 2)
   transfer_struct_c%ts_flux_integral_f_shapes(3) = size(fortran_type_f%ts_flux_integral, 3)
-  transfer_struct_c%ts_flux_integral_f_shapes(4) = size(fortran_type_f%ts_flux_integral, 4)
   
   
   fortran_type_f%ts_dnflux_direct = 0_fpk
   ts_dnflux_direct_ptr => fortran_type_f%ts_dnflux_direct
   transfer_struct_c%ts_dnflux_direct = c_loc(ts_dnflux_direct_ptr(&
     lbound(fortran_type_f%ts_dnflux_direct,1),&
-    lbound(fortran_type_f%ts_dnflux_direct,2),&
-    lbound(fortran_type_f%ts_dnflux_direct,3)))
+    lbound(fortran_type_f%ts_dnflux_direct,2)))
   inquire(iolength=transfer_struct_c%ts_dnflux_direct_f_byte_size) fortran_type_f%ts_dnflux_direct(&
     lbound(fortran_type_f%ts_dnflux_direct,1),&
-    lbound(fortran_type_f%ts_dnflux_direct,2),&
-    lbound(fortran_type_f%ts_dnflux_direct,3))
+    lbound(fortran_type_f%ts_dnflux_direct,2))
 #ifdef ifort
   transfer_struct_c%ts_dnflux_direct_f_byte_size = transfer_struct_c%ts_dnflux_direct_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_dnflux_direct_f_shapes(1) = size(fortran_type_f%ts_dnflux_direct, 1)
   transfer_struct_c%ts_dnflux_direct_f_shapes(2) = size(fortran_type_f%ts_dnflux_direct, 2)
-  transfer_struct_c%ts_dnflux_direct_f_shapes(3) = size(fortran_type_f%ts_dnflux_direct, 3)
   
   
   fortran_type_f%ts_dnmean_direct = 0_fpk
   ts_dnmean_direct_ptr => fortran_type_f%ts_dnmean_direct
   transfer_struct_c%ts_dnmean_direct = c_loc(ts_dnmean_direct_ptr(&
     lbound(fortran_type_f%ts_dnmean_direct,1),&
-    lbound(fortran_type_f%ts_dnmean_direct,2),&
-    lbound(fortran_type_f%ts_dnmean_direct,3)))
+    lbound(fortran_type_f%ts_dnmean_direct,2)))
   inquire(iolength=transfer_struct_c%ts_dnmean_direct_f_byte_size) fortran_type_f%ts_dnmean_direct(&
     lbound(fortran_type_f%ts_dnmean_direct,1),&
-    lbound(fortran_type_f%ts_dnmean_direct,2),&
-    lbound(fortran_type_f%ts_dnmean_direct,3))
+    lbound(fortran_type_f%ts_dnmean_direct,2))
 #ifdef ifort
   transfer_struct_c%ts_dnmean_direct_f_byte_size = transfer_struct_c%ts_dnmean_direct_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_dnmean_direct_f_shapes(1) = size(fortran_type_f%ts_dnmean_direct, 1)
   transfer_struct_c%ts_dnmean_direct_f_shapes(2) = size(fortran_type_f%ts_dnmean_direct, 2)
-  transfer_struct_c%ts_dnmean_direct_f_shapes(3) = size(fortran_type_f%ts_dnmean_direct, 3)
   
   
   fortran_type_f%ts_fourier_saved = 0
   ts_fourier_saved_ptr => fortran_type_f%ts_fourier_saved
   transfer_struct_c%ts_fourier_saved = c_loc(ts_fourier_saved_ptr(&
-    lbound(fortran_type_f%ts_fourier_saved,1),&
-    lbound(fortran_type_f%ts_fourier_saved,2)))
+    lbound(fortran_type_f%ts_fourier_saved,1)))
   inquire(iolength=transfer_struct_c%ts_fourier_saved_f_byte_size) fortran_type_f%ts_fourier_saved(&
-    lbound(fortran_type_f%ts_fourier_saved,1),&
-    lbound(fortran_type_f%ts_fourier_saved,2))
+    lbound(fortran_type_f%ts_fourier_saved,1))
 #ifdef ifort
   transfer_struct_c%ts_fourier_saved_f_byte_size = transfer_struct_c%ts_fourier_saved_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_fourier_saved_f_shapes(1) = size(fortran_type_f%ts_fourier_saved, 1)
-  transfer_struct_c%ts_fourier_saved_f_shapes(2) = size(fortran_type_f%ts_fourier_saved, 2)
   
   
   fortran_type_f%ts_n_geometries = 0
@@ -4140,6 +5311,19 @@ subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bi
   transfer_struct_c%ts_n_geometries_f_byte_size = transfer_struct_c%ts_n_geometries_f_byte_size * 4
 #endif
   
+  
+  
+  fortran_type_f%ts_solarbeam_boatrans = 0_fpk
+  ts_solarbeam_boatrans_ptr => fortran_type_f%ts_solarbeam_boatrans
+  transfer_struct_c%ts_solarbeam_boatrans = c_loc(ts_solarbeam_boatrans_ptr(&
+    lbound(fortran_type_f%ts_solarbeam_boatrans,1)))
+  inquire(iolength=transfer_struct_c%ts_solarbeam_boatrans_f_byte_size) fortran_type_f%ts_solarbeam_boatrans(&
+    lbound(fortran_type_f%ts_solarbeam_boatrans,1))
+#ifdef ifort
+  transfer_struct_c%ts_solarbeam_boatrans_f_byte_size = transfer_struct_c%ts_solarbeam_boatrans_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_solarbeam_boatrans_f_shapes(1) = size(fortran_type_f%ts_solarbeam_boatrans, 1)
   
   
 end subroutine lidort_main_outputs_c_init_only
@@ -4175,11 +5359,12 @@ subroutine lidort_main_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
   fortran_type_f_to%ts_dnmean_direct = fortran_type_f_from%ts_dnmean_direct
   fortran_type_f_to%ts_fourier_saved = fortran_type_f_from%ts_fourier_saved
   fortran_type_f_to%ts_n_geometries = fortran_type_f_from%ts_n_geometries
+  fortran_type_f_to%ts_solarbeam_boatrans = fortran_type_f_from%ts_solarbeam_boatrans
   
 
 end subroutine lidort_main_outputs_c_copy
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def, only : lidort_exception_handling
@@ -4196,7 +5381,7 @@ subroutine lidort_exception_handling_c_alloc_init(transfer_struct_c, fortran_typ
 
 end subroutine lidort_exception_handling_c_alloc_init
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def
@@ -4309,7 +5494,7 @@ subroutine lidort_exception_handling_c_copy(fortran_type_c_from, fortran_type_c_
 
 end subroutine lidort_exception_handling_c_copy
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_input_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def, only : lidort_input_exception_handling
@@ -4326,7 +5511,7 @@ subroutine lidort_input_exception_handling_c_alloc_init(transfer_struct_c, fortr
 
 end subroutine lidort_input_exception_handling_c_alloc_init
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_input_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def
@@ -4411,7 +5596,7 @@ subroutine lidort_input_exception_handling_c_copy(fortran_type_c_from, fortran_t
 
 end subroutine lidort_input_exception_handling_c_copy
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def, only : lidort_outputs
@@ -4428,7 +5613,7 @@ subroutine lidort_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C
 
 end subroutine lidort_outputs_c_alloc_init
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def
@@ -4499,7 +5684,7 @@ subroutine lidort_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
 
 end subroutine lidort_outputs_c_copy
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_brdf_def, only : lidort_sup_brdf
@@ -4516,7 +5701,7 @@ subroutine lidort_sup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine lidort_sup_brdf_c_alloc_init
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def" in file: "lidort_sup_brdf_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_brdf_def
@@ -4532,8 +5717,8 @@ subroutine lidort_sup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   real(c_double), dimension(:,:,:), pointer :: ts_brdf_f_ptr
   real(c_double), dimension(:,:,:), pointer :: ts_user_brdf_f_0_ptr
   real(c_double), dimension(:,:,:), pointer :: ts_user_brdf_f_ptr
-  real(c_double), dimension(:,:), pointer :: ts_emissivity_ptr
-  real(c_double), dimension(:,:), pointer :: ts_user_emissivity_ptr
+  real(c_double), dimension(:), pointer :: ts_emissivity_ptr
+  real(c_double), dimension(:), pointer :: ts_user_emissivity_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -4642,33 +5827,27 @@ subroutine lidort_sup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C
   fortran_type_f%ts_emissivity = 0_fpk
   ts_emissivity_ptr => fortran_type_f%ts_emissivity
   transfer_struct_c%ts_emissivity = c_loc(ts_emissivity_ptr(&
-    lbound(fortran_type_f%ts_emissivity,1),&
-    lbound(fortran_type_f%ts_emissivity,2)))
+    lbound(fortran_type_f%ts_emissivity,1)))
   inquire(iolength=transfer_struct_c%ts_emissivity_f_byte_size) fortran_type_f%ts_emissivity(&
-    lbound(fortran_type_f%ts_emissivity,1),&
-    lbound(fortran_type_f%ts_emissivity,2))
+    lbound(fortran_type_f%ts_emissivity,1))
 #ifdef ifort
   transfer_struct_c%ts_emissivity_f_byte_size = transfer_struct_c%ts_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_emissivity_f_shapes(1) = size(fortran_type_f%ts_emissivity, 1)
-  transfer_struct_c%ts_emissivity_f_shapes(2) = size(fortran_type_f%ts_emissivity, 2)
   
   
   fortran_type_f%ts_user_emissivity = 0_fpk
   ts_user_emissivity_ptr => fortran_type_f%ts_user_emissivity
   transfer_struct_c%ts_user_emissivity = c_loc(ts_user_emissivity_ptr(&
-    lbound(fortran_type_f%ts_user_emissivity,1),&
-    lbound(fortran_type_f%ts_user_emissivity,2)))
+    lbound(fortran_type_f%ts_user_emissivity,1)))
   inquire(iolength=transfer_struct_c%ts_user_emissivity_f_byte_size) fortran_type_f%ts_user_emissivity(&
-    lbound(fortran_type_f%ts_user_emissivity,1),&
-    lbound(fortran_type_f%ts_user_emissivity,2))
+    lbound(fortran_type_f%ts_user_emissivity,1))
 #ifdef ifort
   transfer_struct_c%ts_user_emissivity_f_byte_size = transfer_struct_c%ts_user_emissivity_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_user_emissivity_f_shapes(1) = size(fortran_type_f%ts_user_emissivity, 1)
-  transfer_struct_c%ts_user_emissivity_f_shapes(2) = size(fortran_type_f%ts_user_emissivity, 2)
   
   
 end subroutine lidort_sup_brdf_c_init_only
@@ -4708,7 +5887,7 @@ subroutine lidort_sup_brdf_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
 
 end subroutine lidort_sup_brdf_c_copy
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_sleave_def, only : lidort_sup_sleave
@@ -4725,7 +5904,7 @@ subroutine lidort_sup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bin
 
 end subroutine lidort_sup_sleave_c_alloc_init
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def" in file: "lidort_sup_sleave_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_sleave_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_sleave_def
@@ -4854,7 +6033,7 @@ subroutine lidort_sup_sleave_c_copy(fortran_type_c_from, fortran_type_c_to) bind
 
 end subroutine lidort_sup_sleave_c_copy
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_ss_def, only : lidort_sup_ss
@@ -4871,7 +6050,7 @@ subroutine lidort_sup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
 
 end subroutine lidort_sup_ss_c_alloc_init
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def" in file: "lidort_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_ss_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_ss_def
@@ -4961,7 +6140,7 @@ subroutine lidort_sup_ss_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
 
 end subroutine lidort_sup_ss_c_copy
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_inout_def, only : lidort_sup_inout
@@ -4978,7 +6157,7 @@ subroutine lidort_sup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine lidort_sup_inout_c_alloc_init
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def" in file: "lidort_sup_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_inout_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_inout_def
@@ -5061,7 +6240,7 @@ subroutine lidort_sup_inout_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
 
 end subroutine lidort_sup_inout_c_copy
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_boolean
@@ -5078,7 +6257,7 @@ subroutine lidort_fixed_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_boolean_c_alloc_init
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_boolean_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5273,7 +6452,7 @@ subroutine lidort_fixed_boolean_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_boolean_c_copy
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_control_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_control
@@ -5290,7 +6469,7 @@ subroutine lidort_fixed_control_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_control_c_alloc_init
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_control_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5301,6 +6480,8 @@ subroutine lidort_fixed_control_c_init_only(transfer_struct_c, fortran_type_c) b
 
   type(lidort_fixed_control), pointer :: fortran_type_f
 
+  real(c_double), pointer :: ts_thermal_cutoff_ptr
+  integer(c_int), pointer :: ts_taylor_order_ptr
   integer(c_int), pointer :: ts_nstreams_ptr
   integer(c_int), pointer :: ts_nlayers_ptr
   integer(c_int), pointer :: ts_nfinelayers_ptr
@@ -5315,6 +6496,26 @@ subroutine lidort_fixed_control_c_init_only(transfer_struct_c, fortran_type_c) b
   !   * Set pointer location into C transfer struct
   !   * Set bit size and extents
 
+  
+  fortran_type_f%ts_thermal_cutoff = 0_fpk
+  ts_thermal_cutoff_ptr => fortran_type_f%ts_thermal_cutoff
+  transfer_struct_c%ts_thermal_cutoff = c_loc(ts_thermal_cutoff_ptr)
+  inquire(iolength=transfer_struct_c%ts_thermal_cutoff_f_byte_size) fortran_type_f%ts_thermal_cutoff
+#ifdef ifort
+  transfer_struct_c%ts_thermal_cutoff_f_byte_size = transfer_struct_c%ts_thermal_cutoff_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%ts_taylor_order = 0
+  ts_taylor_order_ptr => fortran_type_f%ts_taylor_order
+  transfer_struct_c%ts_taylor_order = c_loc(ts_taylor_order_ptr)
+  inquire(iolength=transfer_struct_c%ts_taylor_order_f_byte_size) fortran_type_f%ts_taylor_order
+#ifdef ifort
+  transfer_struct_c%ts_taylor_order_f_byte_size = transfer_struct_c%ts_taylor_order_f_byte_size * 4
+#endif
+  
+  
   
   fortran_type_f%ts_nstreams = 0
   ts_nstreams_ptr => fortran_type_f%ts_nstreams
@@ -5392,6 +6593,8 @@ subroutine lidort_fixed_control_c_copy(fortran_type_c_from, fortran_type_c_to) b
   call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
   call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
 
+  fortran_type_f_to%ts_thermal_cutoff = fortran_type_f_from%ts_thermal_cutoff
+  fortran_type_f_to%ts_taylor_order = fortran_type_f_from%ts_taylor_order
   fortran_type_f_to%ts_nstreams = fortran_type_f_from%ts_nstreams
   fortran_type_f_to%ts_nlayers = fortran_type_f_from%ts_nlayers
   fortran_type_f_to%ts_nfinelayers = fortran_type_f_from%ts_nfinelayers
@@ -5401,7 +6604,7 @@ subroutine lidort_fixed_control_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_control_c_copy
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_sunrays
@@ -5418,7 +6621,7 @@ subroutine lidort_fixed_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_sunrays_c_alloc_init
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_sunrays_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5481,7 +6684,7 @@ subroutine lidort_fixed_sunrays_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_sunrays_c_copy
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_uservalues_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_uservalues
@@ -5498,7 +6701,7 @@ subroutine lidort_fixed_uservalues_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_uservalues_c_alloc_init
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_uservalues_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5509,7 +6712,6 @@ subroutine lidort_fixed_uservalues_c_init_only(transfer_struct_c, fortran_type_c
 
   type(lidort_fixed_uservalues), pointer :: fortran_type_f
 
-  integer(c_int), pointer :: ts_n_user_streams_ptr
   integer(c_int), pointer :: ts_n_user_levels_ptr
   
 
@@ -5520,16 +6722,6 @@ subroutine lidort_fixed_uservalues_c_init_only(transfer_struct_c, fortran_type_c
   !   * Set pointer location into C transfer struct
   !   * Set bit size and extents
 
-  
-  fortran_type_f%ts_n_user_streams = 0
-  ts_n_user_streams_ptr => fortran_type_f%ts_n_user_streams
-  transfer_struct_c%ts_n_user_streams = c_loc(ts_n_user_streams_ptr)
-  inquire(iolength=transfer_struct_c%ts_n_user_streams_f_byte_size) fortran_type_f%ts_n_user_streams
-#ifdef ifort
-  transfer_struct_c%ts_n_user_streams_f_byte_size = transfer_struct_c%ts_n_user_streams_f_byte_size * 4
-#endif
-  
-  
   
   fortran_type_f%ts_n_user_levels = 0
   ts_n_user_levels_ptr => fortran_type_f%ts_n_user_levels
@@ -5567,13 +6759,12 @@ subroutine lidort_fixed_uservalues_c_copy(fortran_type_c_from, fortran_type_c_to
   call c_f_pointer(fortran_type_c_from, fortran_type_f_from)
   call c_f_pointer(fortran_type_c_to, fortran_type_f_to)
 
-  fortran_type_f_to%ts_n_user_streams = fortran_type_f_from%ts_n_user_streams
   fortran_type_f_to%ts_n_user_levels = fortran_type_f_from%ts_n_user_levels
   
 
 end subroutine lidort_fixed_uservalues_c_copy
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_chapman
@@ -5590,7 +6781,7 @@ subroutine lidort_fixed_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_chapman_c_alloc_init
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_chapman_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5713,7 +6904,7 @@ subroutine lidort_fixed_chapman_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_chapman_c_copy
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_optical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_optical
@@ -5730,7 +6921,7 @@ subroutine lidort_fixed_optical_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_optical_c_alloc_init
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_optical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5741,11 +6932,11 @@ subroutine lidort_fixed_optical_c_init_only(transfer_struct_c, fortran_type_c) b
 
   type(lidort_fixed_optical), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:), pointer :: ts_deltau_vert_input_ptr
-  real(c_double), dimension(:,:,:), pointer :: ts_phasmoms_total_input_ptr
-  real(c_double), dimension(:,:), pointer :: ts_thermal_bb_input_ptr
-  real(c_double), dimension(:), pointer :: ts_lambertian_albedo_ptr
-  real(c_double), dimension(:), pointer :: ts_surface_bb_input_ptr
+  real(c_double), dimension(:), pointer :: ts_deltau_vert_input_ptr
+  real(c_double), dimension(:,:), pointer :: ts_phasmoms_total_input_ptr
+  real(c_double), dimension(:), pointer :: ts_thermal_bb_input_ptr
+  real(c_double), pointer :: ts_lambertian_albedo_ptr
+  real(c_double), pointer :: ts_surface_bb_input_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -5759,78 +6950,63 @@ subroutine lidort_fixed_optical_c_init_only(transfer_struct_c, fortran_type_c) b
   fortran_type_f%ts_deltau_vert_input = 0_fpk
   ts_deltau_vert_input_ptr => fortran_type_f%ts_deltau_vert_input
   transfer_struct_c%ts_deltau_vert_input = c_loc(ts_deltau_vert_input_ptr(&
-    lbound(fortran_type_f%ts_deltau_vert_input,1),&
-    lbound(fortran_type_f%ts_deltau_vert_input,2)))
+    lbound(fortran_type_f%ts_deltau_vert_input,1)))
   inquire(iolength=transfer_struct_c%ts_deltau_vert_input_f_byte_size) fortran_type_f%ts_deltau_vert_input(&
-    lbound(fortran_type_f%ts_deltau_vert_input,1),&
-    lbound(fortran_type_f%ts_deltau_vert_input,2))
+    lbound(fortran_type_f%ts_deltau_vert_input,1))
 #ifdef ifort
   transfer_struct_c%ts_deltau_vert_input_f_byte_size = transfer_struct_c%ts_deltau_vert_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_deltau_vert_input_f_shapes(1) = size(fortran_type_f%ts_deltau_vert_input, 1)
-  transfer_struct_c%ts_deltau_vert_input_f_shapes(2) = size(fortran_type_f%ts_deltau_vert_input, 2)
   
   
   fortran_type_f%ts_phasmoms_total_input = 0_fpk
   ts_phasmoms_total_input_ptr => fortran_type_f%ts_phasmoms_total_input
   transfer_struct_c%ts_phasmoms_total_input = c_loc(ts_phasmoms_total_input_ptr(&
     lbound(fortran_type_f%ts_phasmoms_total_input,1),&
-    lbound(fortran_type_f%ts_phasmoms_total_input,2),&
-    lbound(fortran_type_f%ts_phasmoms_total_input,3)))
+    lbound(fortran_type_f%ts_phasmoms_total_input,2)))
   inquire(iolength=transfer_struct_c%ts_phasmoms_total_input_f_byte_size) fortran_type_f%ts_phasmoms_total_input(&
     lbound(fortran_type_f%ts_phasmoms_total_input,1),&
-    lbound(fortran_type_f%ts_phasmoms_total_input,2),&
-    lbound(fortran_type_f%ts_phasmoms_total_input,3))
+    lbound(fortran_type_f%ts_phasmoms_total_input,2))
 #ifdef ifort
   transfer_struct_c%ts_phasmoms_total_input_f_byte_size = transfer_struct_c%ts_phasmoms_total_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_phasmoms_total_input_f_shapes(1) = size(fortran_type_f%ts_phasmoms_total_input, 1)
   transfer_struct_c%ts_phasmoms_total_input_f_shapes(2) = size(fortran_type_f%ts_phasmoms_total_input, 2)
-  transfer_struct_c%ts_phasmoms_total_input_f_shapes(3) = size(fortran_type_f%ts_phasmoms_total_input, 3)
   
   
   fortran_type_f%ts_thermal_bb_input = 0_fpk
   ts_thermal_bb_input_ptr => fortran_type_f%ts_thermal_bb_input
   transfer_struct_c%ts_thermal_bb_input = c_loc(ts_thermal_bb_input_ptr(&
-    lbound(fortran_type_f%ts_thermal_bb_input,1),&
-    lbound(fortran_type_f%ts_thermal_bb_input,2)))
+    lbound(fortran_type_f%ts_thermal_bb_input,1)))
   inquire(iolength=transfer_struct_c%ts_thermal_bb_input_f_byte_size) fortran_type_f%ts_thermal_bb_input(&
-    lbound(fortran_type_f%ts_thermal_bb_input,1),&
-    lbound(fortran_type_f%ts_thermal_bb_input,2))
+    lbound(fortran_type_f%ts_thermal_bb_input,1))
 #ifdef ifort
   transfer_struct_c%ts_thermal_bb_input_f_byte_size = transfer_struct_c%ts_thermal_bb_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_thermal_bb_input_f_shapes(1) = size(fortran_type_f%ts_thermal_bb_input, 1)
-  transfer_struct_c%ts_thermal_bb_input_f_shapes(2) = size(fortran_type_f%ts_thermal_bb_input, 2)
   
   
   fortran_type_f%ts_lambertian_albedo = 0_fpk
   ts_lambertian_albedo_ptr => fortran_type_f%ts_lambertian_albedo
-  transfer_struct_c%ts_lambertian_albedo = c_loc(ts_lambertian_albedo_ptr(&
-    lbound(fortran_type_f%ts_lambertian_albedo,1)))
-  inquire(iolength=transfer_struct_c%ts_lambertian_albedo_f_byte_size) fortran_type_f%ts_lambertian_albedo(&
-    lbound(fortran_type_f%ts_lambertian_albedo,1))
+  transfer_struct_c%ts_lambertian_albedo = c_loc(ts_lambertian_albedo_ptr)
+  inquire(iolength=transfer_struct_c%ts_lambertian_albedo_f_byte_size) fortran_type_f%ts_lambertian_albedo
 #ifdef ifort
   transfer_struct_c%ts_lambertian_albedo_f_byte_size = transfer_struct_c%ts_lambertian_albedo_f_byte_size * 4
 #endif
   
-  transfer_struct_c%ts_lambertian_albedo_f_shapes(1) = size(fortran_type_f%ts_lambertian_albedo, 1)
   
   
   fortran_type_f%ts_surface_bb_input = 0_fpk
   ts_surface_bb_input_ptr => fortran_type_f%ts_surface_bb_input
-  transfer_struct_c%ts_surface_bb_input = c_loc(ts_surface_bb_input_ptr(&
-    lbound(fortran_type_f%ts_surface_bb_input,1)))
-  inquire(iolength=transfer_struct_c%ts_surface_bb_input_f_byte_size) fortran_type_f%ts_surface_bb_input(&
-    lbound(fortran_type_f%ts_surface_bb_input,1))
+  transfer_struct_c%ts_surface_bb_input = c_loc(ts_surface_bb_input_ptr)
+  inquire(iolength=transfer_struct_c%ts_surface_bb_input_f_byte_size) fortran_type_f%ts_surface_bb_input
 #ifdef ifort
   transfer_struct_c%ts_surface_bb_input_f_byte_size = transfer_struct_c%ts_surface_bb_input_f_byte_size * 4
 #endif
   
-  transfer_struct_c%ts_surface_bb_input_f_shapes(1) = size(fortran_type_f%ts_surface_bb_input, 1)
   
   
 end subroutine lidort_fixed_optical_c_init_only
@@ -5868,7 +7044,7 @@ subroutine lidort_fixed_optical_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_optical_c_copy
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_fixed_inputs
@@ -5885,7 +7061,7 @@ subroutine lidort_fixed_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_fixed_inputs_c_alloc_init
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -5996,7 +7172,7 @@ subroutine lidort_fixed_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine lidort_fixed_inputs_c_copy
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_boolean
@@ -6013,7 +7189,7 @@ subroutine lidort_modified_boolean_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_boolean_c_alloc_init
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_boolean_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6041,6 +7217,7 @@ subroutine lidort_modified_boolean_c_init_only(transfer_struct_c, fortran_type_c
   logical(kind=4), pointer :: ts_do_additional_mvout_ptr
   logical(kind=4), pointer :: ts_do_mvout_only_ptr
   logical(kind=4), pointer :: ts_do_thermal_transonly_ptr
+  logical(kind=4), pointer :: ts_do_observation_geometry_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -6221,6 +7398,16 @@ subroutine lidort_modified_boolean_c_init_only(transfer_struct_c, fortran_type_c
   
   
   
+  fortran_type_f%ts_do_observation_geometry = .FALSE.
+  ts_do_observation_geometry_ptr => fortran_type_f%ts_do_observation_geometry
+  transfer_struct_c%ts_do_observation_geometry = c_loc(ts_do_observation_geometry_ptr)
+  inquire(iolength=transfer_struct_c%ts_do_observation_geometry_f_byte_size) fortran_type_f%ts_do_observation_geometry
+#ifdef ifort
+  transfer_struct_c%ts_do_observation_geometry_f_byte_size = transfer_struct_c%ts_do_observation_geometry_f_byte_size * 4
+#endif
+  
+  
+  
 end subroutine lidort_modified_boolean_c_init_only
 
 subroutine lidort_modified_boolean_c_destroy(fortran_type_c) bind(C)
@@ -6264,11 +7451,12 @@ subroutine lidort_modified_boolean_c_copy(fortran_type_c_from, fortran_type_c_to
   fortran_type_f_to%ts_do_additional_mvout = fortran_type_f_from%ts_do_additional_mvout
   fortran_type_f_to%ts_do_mvout_only = fortran_type_f_from%ts_do_mvout_only
   fortran_type_f_to%ts_do_thermal_transonly = fortran_type_f_from%ts_do_thermal_transonly
+  fortran_type_f_to%ts_do_observation_geometry = fortran_type_f_from%ts_do_observation_geometry
   
 
 end subroutine lidort_modified_boolean_c_copy
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_control_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_control
@@ -6285,7 +7473,7 @@ subroutine lidort_modified_control_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_control_c_alloc_init
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_control_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6348,7 +7536,7 @@ subroutine lidort_modified_control_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_control_c_copy
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_sunrays
@@ -6365,7 +7553,7 @@ subroutine lidort_modified_sunrays_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_sunrays_c_alloc_init
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_sunrays_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6443,7 +7631,7 @@ subroutine lidort_modified_sunrays_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_sunrays_c_copy
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_uservalues_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_uservalues
@@ -6460,7 +7648,7 @@ subroutine lidort_modified_uservalues_c_alloc_init(transfer_struct_c, fortran_ty
 
 end subroutine lidort_modified_uservalues_c_alloc_init
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_uservalues_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6473,9 +7661,12 @@ subroutine lidort_modified_uservalues_c_init_only(transfer_struct_c, fortran_typ
 
   integer(c_int), pointer :: ts_n_user_relazms_ptr
   real(c_double), dimension(:), pointer :: ts_user_relazms_ptr
+  integer(c_int), pointer :: ts_n_user_streams_ptr
   real(c_double), dimension(:), pointer :: ts_user_angles_input_ptr
   real(c_double), dimension(:), pointer :: ts_user_levels_ptr
   real(c_double), pointer :: ts_geometry_specheight_ptr
+  integer(c_int), pointer :: ts_n_user_obsgeoms_ptr
+  real(c_double), dimension(:,:), pointer :: ts_user_obsgeom_input_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -6507,6 +7698,16 @@ subroutine lidort_modified_uservalues_c_init_only(transfer_struct_c, fortran_typ
 #endif
   
   transfer_struct_c%ts_user_relazms_f_shapes(1) = size(fortran_type_f%ts_user_relazms, 1)
+  
+  
+  fortran_type_f%ts_n_user_streams = 0
+  ts_n_user_streams_ptr => fortran_type_f%ts_n_user_streams
+  transfer_struct_c%ts_n_user_streams = c_loc(ts_n_user_streams_ptr)
+  inquire(iolength=transfer_struct_c%ts_n_user_streams_f_byte_size) fortran_type_f%ts_n_user_streams
+#ifdef ifort
+  transfer_struct_c%ts_n_user_streams_f_byte_size = transfer_struct_c%ts_n_user_streams_f_byte_size * 4
+#endif
+  
   
   
   fortran_type_f%ts_user_angles_input = 0_fpk
@@ -6545,6 +7746,32 @@ subroutine lidort_modified_uservalues_c_init_only(transfer_struct_c, fortran_typ
   
   
   
+  fortran_type_f%ts_n_user_obsgeoms = 0
+  ts_n_user_obsgeoms_ptr => fortran_type_f%ts_n_user_obsgeoms
+  transfer_struct_c%ts_n_user_obsgeoms = c_loc(ts_n_user_obsgeoms_ptr)
+  inquire(iolength=transfer_struct_c%ts_n_user_obsgeoms_f_byte_size) fortran_type_f%ts_n_user_obsgeoms
+#ifdef ifort
+  transfer_struct_c%ts_n_user_obsgeoms_f_byte_size = transfer_struct_c%ts_n_user_obsgeoms_f_byte_size * 4
+#endif
+  
+  
+  
+  fortran_type_f%ts_user_obsgeom_input = 0_fpk
+  ts_user_obsgeom_input_ptr => fortran_type_f%ts_user_obsgeom_input
+  transfer_struct_c%ts_user_obsgeom_input = c_loc(ts_user_obsgeom_input_ptr(&
+    lbound(fortran_type_f%ts_user_obsgeom_input,1),&
+    lbound(fortran_type_f%ts_user_obsgeom_input,2)))
+  inquire(iolength=transfer_struct_c%ts_user_obsgeom_input_f_byte_size) fortran_type_f%ts_user_obsgeom_input(&
+    lbound(fortran_type_f%ts_user_obsgeom_input,1),&
+    lbound(fortran_type_f%ts_user_obsgeom_input,2))
+#ifdef ifort
+  transfer_struct_c%ts_user_obsgeom_input_f_byte_size = transfer_struct_c%ts_user_obsgeom_input_f_byte_size * 4
+#endif
+  
+  transfer_struct_c%ts_user_obsgeom_input_f_shapes(1) = size(fortran_type_f%ts_user_obsgeom_input, 1)
+  transfer_struct_c%ts_user_obsgeom_input_f_shapes(2) = size(fortran_type_f%ts_user_obsgeom_input, 2)
+  
+  
 end subroutine lidort_modified_uservalues_c_init_only
 
 subroutine lidort_modified_uservalues_c_destroy(fortran_type_c) bind(C)
@@ -6573,14 +7800,17 @@ subroutine lidort_modified_uservalues_c_copy(fortran_type_c_from, fortran_type_c
 
   fortran_type_f_to%ts_n_user_relazms = fortran_type_f_from%ts_n_user_relazms
   fortran_type_f_to%ts_user_relazms = fortran_type_f_from%ts_user_relazms
+  fortran_type_f_to%ts_n_user_streams = fortran_type_f_from%ts_n_user_streams
   fortran_type_f_to%ts_user_angles_input = fortran_type_f_from%ts_user_angles_input
   fortran_type_f_to%ts_user_levels = fortran_type_f_from%ts_user_levels
   fortran_type_f_to%ts_geometry_specheight = fortran_type_f_from%ts_geometry_specheight
+  fortran_type_f_to%ts_n_user_obsgeoms = fortran_type_f_from%ts_n_user_obsgeoms
+  fortran_type_f_to%ts_user_obsgeom_input = fortran_type_f_from%ts_user_obsgeom_input
   
 
 end subroutine lidort_modified_uservalues_c_copy
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_chapman
@@ -6597,7 +7827,7 @@ subroutine lidort_modified_chapman_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_chapman_c_alloc_init
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_chapman_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6660,7 +7890,7 @@ subroutine lidort_modified_chapman_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_chapman_c_copy
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_optical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_optical
@@ -6677,7 +7907,7 @@ subroutine lidort_modified_optical_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_optical_c_alloc_init
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_optical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6688,7 +7918,7 @@ subroutine lidort_modified_optical_c_init_only(transfer_struct_c, fortran_type_c
 
   type(lidort_modified_optical), pointer :: fortran_type_f
 
-  real(c_double), dimension(:,:), pointer :: ts_omega_total_input_ptr
+  real(c_double), dimension(:), pointer :: ts_omega_total_input_ptr
   
 
   call c_f_pointer(fortran_type_c, fortran_type_f)
@@ -6702,17 +7932,14 @@ subroutine lidort_modified_optical_c_init_only(transfer_struct_c, fortran_type_c
   fortran_type_f%ts_omega_total_input = 0_fpk
   ts_omega_total_input_ptr => fortran_type_f%ts_omega_total_input
   transfer_struct_c%ts_omega_total_input = c_loc(ts_omega_total_input_ptr(&
-    lbound(fortran_type_f%ts_omega_total_input,1),&
-    lbound(fortran_type_f%ts_omega_total_input,2)))
+    lbound(fortran_type_f%ts_omega_total_input,1)))
   inquire(iolength=transfer_struct_c%ts_omega_total_input_f_byte_size) fortran_type_f%ts_omega_total_input(&
-    lbound(fortran_type_f%ts_omega_total_input,1),&
-    lbound(fortran_type_f%ts_omega_total_input,2))
+    lbound(fortran_type_f%ts_omega_total_input,1))
 #ifdef ifort
   transfer_struct_c%ts_omega_total_input_f_byte_size = transfer_struct_c%ts_omega_total_input_f_byte_size * 4
 #endif
   
   transfer_struct_c%ts_omega_total_input_f_shapes(1) = size(fortran_type_f%ts_omega_total_input, 1)
-  transfer_struct_c%ts_omega_total_input_f_shapes(2) = size(fortran_type_f%ts_omega_total_input, 2)
   
   
 end subroutine lidort_modified_optical_c_init_only
@@ -6746,7 +7973,7 @@ subroutine lidort_modified_optical_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_optical_c_copy
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def, only : lidort_modified_inputs
@@ -6763,7 +7990,7 @@ subroutine lidort_modified_inputs_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_modified_inputs_c_alloc_init
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def
@@ -6875,7 +8102,7 @@ subroutine lidort_modified_inputs_c_copy(fortran_type_c_from, fortran_type_c_to)
 end subroutine lidort_modified_inputs_c_copy
 
 
-! Wrapper for character variable "bs_brdf_names" of type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.F90"
+! Wrapper for character variable "bs_brdf_names" of type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def" in file: "brdf_sup_inputs_def.f90"
 subroutine brdf_sup_inputs_bs_brdf_names_get(fortran_type_c, bs_brdf_names_in_shape_1, &
       bs_brdf_names_in_len, &
       bs_brdf_names_in) bind(C)
@@ -6904,7 +8131,7 @@ subroutine brdf_sup_inputs_bs_brdf_names_get(fortran_type_c, bs_brdf_names_in_sh
   end do
 
 end subroutine brdf_sup_inputs_bs_brdf_names_get
-! Wrapper for character variable "bs_inputmessages" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Wrapper for character variable "bs_inputmessages" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 subroutine brdf_input_exception_handling_bs_inputmessages_get(fortran_type_c, bs_inputmessages_in_shape_1, &
       bs_inputmessages_in_len, &
       bs_inputmessages_in) bind(C)
@@ -6933,7 +8160,7 @@ subroutine brdf_input_exception_handling_bs_inputmessages_get(fortran_type_c, bs
   end do
 
 end subroutine brdf_input_exception_handling_bs_inputmessages_get
-! Wrapper for character variable "bs_inputactions" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.F90"
+! Wrapper for character variable "bs_inputactions" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
 subroutine brdf_input_exception_handling_bs_inputactions_get(fortran_type_c, bs_inputactions_in_shape_1, &
       bs_inputactions_in_len, &
       bs_inputactions_in) bind(C)
@@ -6962,7 +8189,36 @@ subroutine brdf_input_exception_handling_bs_inputactions_get(fortran_type_c, bs_
   end do
 
 end subroutine brdf_input_exception_handling_bs_inputactions_get
-! Wrapper for character variable "ts_checkmessages" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "bs_outputmessages" of type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def" in file: "brdf_sup_outputs_def.f90"
+subroutine brdf_output_exception_handling_bs_outputmessages_get(fortran_type_c, bs_outputmessages_in_shape_1, &
+      bs_outputmessages_in_len, &
+      bs_outputmessages_in) bind(C)
+  use brdf_sup_outputs_def, only : brdf_output_exception_handling
+
+  type(c_ptr), intent(inout) :: fortran_type_c
+  integer(c_int), intent(in) :: bs_outputmessages_in_shape_1
+  integer(c_int), intent(in) :: bs_outputmessages_in_len
+  character(kind=c_char) , intent(inout) :: bs_outputmessages_in(bs_outputmessages_in_shape_1, bs_outputmessages_in_len+1)
+
+  type(brdf_output_exception_handling), pointer :: fortran_type_f
+  integer :: dim_idx_1
+  integer :: lb_1
+  integer :: len_idx
+
+  call c_f_pointer(fortran_type_c, fortran_type_f)
+
+  lb_1 = lbound(fortran_type_f%bs_outputmessages,1)
+  do dim_idx_1 = 1, bs_outputmessages_in_shape_1
+    do len_idx = 1, bs_outputmessages_in_len
+      bs_outputmessages_in(dim_idx_1, len_idx) = &
+          fortran_type_f%bs_outputmessages(dim_idx_1-1+lb_1)(len_idx:len_idx)
+    end do
+    len_idx = len_trim(fortran_type_f%bs_outputmessages(dim_idx_1-1+lb_1)(:))+1
+    bs_outputmessages_in(dim_idx_1, len_idx) = c_null_char
+  end do
+
+end subroutine brdf_output_exception_handling_bs_outputmessages_get
+! Wrapper for character variable "ts_checkmessages" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_checkmessages_get(fortran_type_c, ts_checkmessages_in_shape_1, &
       ts_checkmessages_in_len, &
       ts_checkmessages_in) bind(C)
@@ -6991,7 +8247,7 @@ subroutine exception_handling_ts_checkmessages_get(fortran_type_c, ts_checkmessa
   end do
 
 end subroutine exception_handling_ts_checkmessages_get
-! Wrapper for character variable "ts_actions" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_actions" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_actions_get(fortran_type_c, ts_actions_in_shape_1, &
       ts_actions_in_len, &
       ts_actions_in) bind(C)
@@ -7020,7 +8276,7 @@ subroutine exception_handling_ts_actions_get(fortran_type_c, ts_actions_in_shape
   end do
 
 end subroutine exception_handling_ts_actions_get
-! Wrapper for character variable "ts_message" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_message" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_message_get(fortran_type_c, ts_message_in_len, &
       ts_message_in) bind(C)
   use lidort_outputs_def, only : lidort_exception_handling
@@ -7042,7 +8298,7 @@ subroutine exception_handling_ts_message_get(fortran_type_c, ts_message_in_len, 
   ts_message_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_message_get
-! Wrapper for character variable "ts_trace_1" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_1" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_1_get(fortran_type_c, ts_trace_1_in_len, &
       ts_trace_1_in) bind(C)
   use lidort_outputs_def, only : lidort_exception_handling
@@ -7064,7 +8320,7 @@ subroutine exception_handling_ts_trace_1_get(fortran_type_c, ts_trace_1_in_len, 
   ts_trace_1_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_1_get
-! Wrapper for character variable "ts_trace_2" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_2" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_2_get(fortran_type_c, ts_trace_2_in_len, &
       ts_trace_2_in) bind(C)
   use lidort_outputs_def, only : lidort_exception_handling
@@ -7086,7 +8342,7 @@ subroutine exception_handling_ts_trace_2_get(fortran_type_c, ts_trace_2_in_len, 
   ts_trace_2_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_2_get
-! Wrapper for character variable "ts_trace_3" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_3" of type: "lidort_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_3_get(fortran_type_c, ts_trace_3_in_len, &
       ts_trace_3_in) bind(C)
   use lidort_outputs_def, only : lidort_exception_handling
@@ -7108,7 +8364,7 @@ subroutine exception_handling_ts_trace_3_get(fortran_type_c, ts_trace_3_in_len, 
   ts_trace_3_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_3_get
-! Wrapper for character variable "ts_inputmessages" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_inputmessages" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine input_exception_handling_ts_inputmessages_get(fortran_type_c, ts_inputmessages_in_shape_1, &
       ts_inputmessages_in_len, &
       ts_inputmessages_in) bind(C)
@@ -7137,7 +8393,7 @@ subroutine input_exception_handling_ts_inputmessages_get(fortran_type_c, ts_inpu
   end do
 
 end subroutine input_exception_handling_ts_inputmessages_get
-! Wrapper for character variable "ts_inputactions" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_inputactions" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def" in file: "lidort_outputs_def.f90"
 subroutine input_exception_handling_ts_inputactions_get(fortran_type_c, ts_inputactions_in_shape_1, &
       ts_inputactions_in_len, &
       ts_inputactions_in) bind(C)

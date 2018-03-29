@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(simple_brdf)
     LRadDriver::PsMode ps_mode = LRadDriver::REGULAR;
      
     // Lambertian surface type
-    int surface_type = 3; // BREONVEG
+    int surface_type = 3; // BPDFVEGN
     Array<double, 1> surface_params(5);
    
     bool tms_correction = false;

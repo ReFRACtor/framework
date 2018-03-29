@@ -82,7 +82,6 @@ public:
   virtual ArrayAd<double, 2>
     intermediate_variable(double wn, int spec_index) const;
   %python_attribute_derived(ground, boost::shared_ptr<Ground>)
-  %python_attribute_derived(uplooking, bool)
   virtual void notify_update(const StateVector& Sv);
   virtual void notify_update(const Aerosol& A);
   virtual void reset_timer();

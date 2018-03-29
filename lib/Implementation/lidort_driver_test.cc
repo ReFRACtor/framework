@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE(simple)
   bool do_multiple_scattering_only = false;
 
   // Use simple BREON throughout
-  int surface_type = BREONVEG;
+  int surface_type = BPDFVEGN;
   ArrayAd<double, 1> surface_params(5, 1); 
   surface_params = 0.0;
 
@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE(simple)
                                                     od, ssa, pf, refl_calc, jac_atm, jac_surf);
 
   // Compare against an offline calculated value, or could compare against value from l_rad
-  double refl_expected = 0.03540780793662445;
+  double refl_expected = 0.035435854422713485;
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
 
   // Check surface jacobians against FD

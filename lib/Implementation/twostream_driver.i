@@ -28,7 +28,7 @@ public:
 
 class TwostreamRtDriver {
 public:
-  TwostreamRtDriver(int nlayers, int npars, int surface_type, bool do_fullquadrature = true);
+  TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true);
 
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
   void setup_geometry(double sza, double azm, double zen) const;
@@ -48,9 +48,8 @@ public:
 
   %python_attribute(twostream_brdf_driver, boost::shared_ptr<TwostreamBrdfDriver>)
   %python_attribute(brdf_interface, boost::shared_ptr<Twostream_Ls_Brdf_Supplement>)
-  %python_attribute(twostream_interface, boost::shared_ptr<Twostream_L_Master>)
+  %python_attribute(twostream_interface, boost::shared_ptr<Twostream_Lps_Master>)
 
   %python_attribute(do_full_quadrature, bool)
-  %python_attribute(pure_nadir, bool)
 };
 }

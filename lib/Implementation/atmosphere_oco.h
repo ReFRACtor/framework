@@ -146,7 +146,6 @@ public:
   }
 
   virtual const boost::shared_ptr<Ground> ground() const {return ground_ptr;}
-  virtual bool uplooking() const {return !ground_ptr;}
 
   // We use attach_notify to directly attach the various object that
   // Atmosphere contains. This means we don't need to do anything with

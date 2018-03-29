@@ -14,11 +14,12 @@ set(DIR_SOURCES
     l_rad_fortran/l_sscorr_nadir.F90
     l_rad_fortran/l_sscorr_outgoing.F90
     l_rad_fortran/l_sscorr_pp.F90
+    absco.cc
     absco_hdf.cc
     absorber_absco.cc
-    absorber_vmr_met.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
+    absorber_vmr_met.cc
     aerosol_extinction_linear.cc
     aerosol_extinction_log.cc
     aerosol_optical.cc
@@ -37,6 +38,8 @@ set(DIR_SOURCES
     chisq_convergence.cc
     composite_perturbation.cc
     connor_convergence.cc
+    connor_cost_function.cc
+    connor_iteration_log.cc
     connor_solver.cc
     connor_solver_map.cc
     cost_minimizer_gsl.cc
@@ -45,8 +48,6 @@ set(DIR_SOURCES
     empirical_orthogonal_function.cc
     error_analysis.cc
     fd_forward_model.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
-    #fdf_nlls_solver.cc
     fluorescence_effect.cc
     fm_nlls_problem.cc
     fp_logger.cc
@@ -67,7 +68,6 @@ set(DIR_SOURCES
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
-    observation_level_1b.cc
     jennrich_sampson_nlls_problem.cc
     l2_fp_configuration_lua.cc
     l_rad_driver.cc
@@ -76,10 +76,6 @@ set(DIR_SOURCES
     level_1b_average.cc
     level_1b_cache.cc
     level_1b_scale_radiance.cc
-    absco.cc
-    nlls_max_a_posteriori.cc
-    nlls_max_likelihood.cc
-    nlls_problem_scaled.cc
     lidort_driver.cc
     lidort_interface_masters.F90
     lidort_interface_masters_io.F90
@@ -95,13 +91,15 @@ set(DIR_SOURCES
     model_measure_bard.cc
     model_measure_meyer.cc
     model_measure_standard.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (3)
+    nlls_max_a_posteriori.cc
+    nlls_max_likelihood.cc
+    nlls_problem_scaled.cc
     nlls_solver_gsl.cc
     nlls_solver_gsl_lmder.cc
     nlls_solver_gsl_lmsder.cc
     nlls_solver_gsl_sm.cc
     nonuniform_spectrum_sampling.cc
-    standard_forward_model.cc
+    observation_level_1b.cc
     output_hdf.cc
     output_hdf_iteration.cc
     powell_nlls_problem.cc
@@ -129,11 +127,11 @@ set(DIR_SOURCES
     solver_iteration_log.cc
     spectral_window_range.cc
     spectrum_sampling_fixed_spacing.cc
-    connor_cost_function.cc
+    standard_forward_model.cc
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
-    temperature_met.cc
     temperature_level_offset.cc
+    temperature_met.cc
     twostream_driver.cc
     twostream_interface.F90
     twostream_rt.cc
@@ -167,8 +165,6 @@ set(TEST_SOURCES
     dispersion_polynomial_test.cc
     empirical_orthogonal_function_test.cc
     error_analysis_test.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
-    #fdf_nlls_solver_test.cc
     fluorescence_effect_test.cc
     fp_logger_test.cc
     full_output_test.cc
@@ -199,7 +195,6 @@ set(TEST_SOURCES
     met_data_fixture.cc
     nlls_max_a_posteriori_test.cc
     nlls_max_likelihood_test.cc
-    # Disabled due to incompatibility with GSL >= 2.0 due to change in interface it uses (1)
     nlls_solver_gsl_test.cc
     nlls_solver_gsl_sm_bard_test.cc
     nlls_solver_gsl_sm_brown_test.cc
@@ -248,12 +243,6 @@ set(TEST_SOURCES
 
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
-# Remove ununused SWIG files
-foreach(file ${SWIG_SOURCES})
-    if(${file} MATCHES "nlls_solver_gsl")
-        list(REMOVE_ITEM SWIG_SOURCES ${file})
-    endif()
-endforeach()
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
 # Add current source directory to source file names
