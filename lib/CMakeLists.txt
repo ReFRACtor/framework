@@ -7,6 +7,15 @@ set(FP_SOURCE_FILES "")
 set(FP_TEST_FILES "")
 set(SWIG_INTERFACE_FILES "")
 
+# Install all common include files
+#
+# The trailing / on the source dir ensures files get copied to the same destination path
+# instead of having the directory (ie lib/) copied to the destination path
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ DESTINATION include/refractor
+    FILES_MATCHING 
+        PATTERN "*.h" 
+        PATTERN "*.i")
+
 foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
     add_subdirectory(${sub_dir})
@@ -18,6 +27,7 @@ foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support E
     install(DIRECTORY ${sub_dir}/ DESTINATION include/refractor
         FILES_MATCHING 
             PATTERN "*.h" 
+            PATTERN "*.i" 
             PATTERN "*.hpp" 
             PATTERN "*_fixture.h" EXCLUDE
             PATTERN "unit_test*.h" EXCLUDE

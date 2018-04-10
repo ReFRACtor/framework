@@ -65,13 +65,17 @@ file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_swig_wrap.py ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx ${SWIG_MODULE_NAMES})
 
 # Create refractor SWIG library
-swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
+swig_add_library(swig_wrap TYPE SHARED LANGUAGE python SOURCES ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
+
 
 # Link with main library, which is also called refractor!
 swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} refractor)
 
 # Ensure that only this module has access to the SWIG type information
 target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
+
+# Ensure module has .so extension (required by python) on all platforms including OS X (where dylib would otherwise be the case)
+set_target_properties(_swig_wrap PROPERTIES SUFFIX ".so")
 
 # Find where Python distribution libaries should be located by querying distutils
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
