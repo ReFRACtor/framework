@@ -1,5 +1,5 @@
 #include "nonuniform_spectrum_sampling.h"
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 #include "unit_test_support.h"
 #include "fp_exception.h"
 
@@ -28,15 +28,15 @@ BOOST_AUTO_TEST_CASE(basic_test)
   SpectralDomain grid_dom3_sorted(grid_data3_sorted, units::inv_cm);
 
   boost::shared_ptr<SpectrumSampling> 
-    interpolated_spec(new UniformSpectrumSampling(31.8,34.5,0.05,
+    interpolated_spec(new SimpleFixedSpectrumSampling(31.8,34.5,0.05,
                                                   1.5, 10.5, 0.05,
                                                   21.7, 26.3, 0.05));
   boost::shared_ptr<SpectrumSampling> 
-    interpolated_spec1(new UniformSpectrumSampling(31.8,34.5,0.05));
+    interpolated_spec1(new SimpleFixedSpectrumSampling(31.8,34.5,0.05));
   boost::shared_ptr<SpectrumSampling> 
-    interpolated_spec2(new UniformSpectrumSampling(1.5, 10.5, 0.05));
+    interpolated_spec2(new SimpleFixedSpectrumSampling(1.5, 10.5, 0.05));
   boost::shared_ptr<SpectrumSampling> 
-    interpolated_spec3(new UniformSpectrumSampling(21.7, 26.3, 0.05));
+    interpolated_spec3(new SimpleFixedSpectrumSampling(21.7, 26.3, 0.05));
   NonuniformSpectrumSampling nonunif_rt_grid(grid_dom1, grid_dom2, grid_dom3, interpolated_spec);
   NonuniformSpectrumSampling nonunif_rt_grid_1(grid_dom1, interpolated_spec1);
   NonuniformSpectrumSampling nonunif_rt_grid_2(grid_dom2, interpolated_spec2);
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(basic_test)
               << nonunif_rt_grid_3_srtd << "\n";
   }
 
-  SpectralDomain dummy;                // Not used by UniformSpectrumSampling
+  SpectralDomain dummy;                // Not used by SimpleFixedSpectrumSampling
   DoubleWithUnit dummy2;
   BOOST_CHECK_EQUAL(nonunif_rt_grid.
                     spectral_domain(0, dummy, dummy2).wavenumber().size(), 7);

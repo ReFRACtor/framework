@@ -5,7 +5,6 @@
 #include "solar_absorption_table.h"
 #include "solar_continuum_polynomial.h"
 #include "solar_doppler_shift_polynomial.h"
-#include "uniform_spectrum_sampling.h"
 #include "standard_forward_model.h"
 #include "spectral_window_range.h"
 #include "unit_test_support.h"

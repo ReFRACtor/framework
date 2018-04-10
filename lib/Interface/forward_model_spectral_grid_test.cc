@@ -4,7 +4,7 @@
 #include <fstream>
 
 #include "nonuniform_spectrum_sampling.h"
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 
 #define OUTPUT_EXPECTED false 
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE(interpolate_spectrum)
     SpectralDomain grid_dom3(grid_data3, units::inv_cm);
 
     boost::shared_ptr<SpectrumSampling> interpolated_spec(
-            new UniformSpectrumSampling(12963.0, 13171.0, 0.05, 
+            new SimpleFixedSpectrumSampling(12963.0, 13171.0, 0.05, 
                                         6182, 6256.0, 0.05, 
                                         4809.0, 4882.0, 0.05));
 

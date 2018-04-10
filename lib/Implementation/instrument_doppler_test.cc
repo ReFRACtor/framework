@@ -1,7 +1,7 @@
 #include "instrument_doppler.h"
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 #include "forward_model_spectral_grid.h"
 #include "old_constant.h"
 
@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(wavenumber)
 
   InstrumentDoppler inst_dopp(rel_vel);
 
-  UniformSpectrumSampling grid(12930.15, 13209.94, 0.01);
+  SimpleFixedSpectrumSampling grid(12930.15, 13209.94, 0.01);
   SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), ils_half_width(0)));
   Array<double, 1> range_vals(sd.data().rows());
   range_vals = 0;
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(wavelength)
 
   InstrumentDoppler inst_dopp(rel_vel);
 
-  UniformSpectrumSampling grid(12930.15, 13209.94, 0.01);
+  SimpleFixedSpectrumSampling grid(12930.15, 13209.94, 0.01);
   SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), ils_half_width(0)));
   Array<double, 1> range_vals(sd.data().rows());
   range_vals = 0;

@@ -2,7 +2,7 @@
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
 #include <boost/shared_ptr.hpp>
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 #include "fluorescence_fixture.h"
 #include "forward_model_spectral_grid.h"
 #include "stokes_coefficient_constant.h"
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(small_range)
 
   // Loop over small range of wavenumbers 
   boost::shared_ptr<SpectrumSampling> spec_samp
-    (new UniformSpectrumSampling(12930.15, 12931.14, 0.01,
+    (new SimpleFixedSpectrumSampling(12930.15, 12931.14, 0.01,
                                  12930.15, 12931.14, 0.01,
                                  12930.15, 12931.14, 0.01) );
   ForwardModelSpectralGrid fg(config_instrument, config_spectral_window, spec_samp);

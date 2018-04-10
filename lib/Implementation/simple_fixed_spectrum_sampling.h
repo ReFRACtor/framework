@@ -1,5 +1,5 @@
-#ifndef UNIFORM_SPECTRUM_SAMPLING_H
-#define UNIFORM_SPECTRUM_SAMPLING_H
+#ifndef SIMPLE_FIXED_SPECTRUM_SAMPLING_H
+#define SIMPLE_FIXED_SPECTRUM_SAMPLING_H
 
 #include "spectrum_sampling.h"
 #include "fp_exception.h"
@@ -14,14 +14,14 @@ namespace FullPhysics {
   sounding names. See \ref spectrum_doxygen for a description of each
   of these.
 *******************************************************************/
-class UniformSpectrumSampling : public SpectrumSampling {
+class SimpleFixedSpectrumSampling : public SpectrumSampling {
 public:
-  UniformSpectrumSampling(double wn_start, double wn_end, double wn_step);
-  UniformSpectrumSampling(double wn_start1, double wn_end1, double wn_step1,
+  SimpleFixedSpectrumSampling(double wn_start, double wn_end, double wn_step);
+  SimpleFixedSpectrumSampling(double wn_start1, double wn_end1, double wn_step1,
 			  double wn_start2, double wn_end2, double wn_step2,
 			  double wn_start3, double wn_end3, double wn_step3);
 
-  virtual ~UniformSpectrumSampling() {}
+  virtual ~SimpleFixedSpectrumSampling() {}
 
 //-----------------------------------------------------------------------
 /// Wave numbers to use for the given spectrometer. 

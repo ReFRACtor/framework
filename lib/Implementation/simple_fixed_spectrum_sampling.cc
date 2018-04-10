@@ -1,4 +1,4 @@
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -9,7 +9,7 @@ using namespace blitz;
 /// some integer i.
 //-----------------------------------------------------------------------
 
-UniformSpectrumSampling::UniformSpectrumSampling(double wn_start, 
+SimpleFixedSpectrumSampling::SimpleFixedSpectrumSampling(double wn_start, 
 						 double wn_end, double wn_step)
 : SpectrumSampling(1)
 {
@@ -26,7 +26,7 @@ UniformSpectrumSampling::UniformSpectrumSampling(double wn_start,
 /// matches GOSAT)
 //-----------------------------------------------------------------------
 
-UniformSpectrumSampling::UniformSpectrumSampling(
+SimpleFixedSpectrumSampling::SimpleFixedSpectrumSampling(
                           double wn_start1, double wn_end1, double wn_step1,
 			  double wn_start2, double wn_end2, double wn_step2,
 			  double wn_start3, double wn_end3, double wn_step3)
@@ -53,9 +53,9 @@ UniformSpectrumSampling::UniformSpectrumSampling(
 /// Print to stream.
 //-----------------------------------------------------------------------
 
-void UniformSpectrumSampling::print(std::ostream& Os) const 
+void SimpleFixedSpectrumSampling::print(std::ostream& Os) const 
 { 
-  Os << "UniformSpectrumSampling";
+  Os << "SimpleFixedSpectrumSampling";
   for(int i = 0; i < number_spectrometer(); ++i)
     Os << "  " << i + 1 << ":\n"
        << "     wn_start: " << spec_domain[i].data()(0) << "\n"

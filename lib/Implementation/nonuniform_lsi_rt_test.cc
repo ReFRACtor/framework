@@ -1,6 +1,6 @@
 #include "closest_point.h"
 #include "nonuniform_spectrum_sampling.h"
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 #include "lsi_rt.h"
 #include "fp_logger.h"
 #include "lidort_fixture.h"
@@ -85,8 +85,8 @@ BOOST_AUTO_TEST_CASE(stokes)
   SpectralDomain grid_dom2(grid_data2, units::inv_cm);
   SpectralDomain grid_dom3(grid_data3, units::inv_cm);
 
-  boost::shared_ptr<UniformSpectrumSampling> 
-    unif_rt_grid(new UniformSpectrumSampling(12928.0-1, 13213.0+1, 0.01,
+  boost::shared_ptr<SimpleFixedSpectrumSampling> 
+    unif_rt_grid(new SimpleFixedSpectrumSampling(12928.0-1, 13213.0+1, 0.01,
                                              6145.0-1,  6307.0+1, 0.01,
                                              4790.0-1,  4917.0+1, 0.01));
   NonuniformSpectrumSampling nonunif_rt_grid(grid_dom1, grid_dom2, grid_dom3, unif_rt_grid);
@@ -126,8 +126,8 @@ BOOST_AUTO_TEST_CASE(stokes_and_jacobian)
   SpectralDomain grid_dom2(grid_data2, units::inv_cm);
   SpectralDomain grid_dom3(grid_data3, units::inv_cm);
 
-  boost::shared_ptr<UniformSpectrumSampling> 
-    unif_rt_grid(new UniformSpectrumSampling(12928.0-1, 13213.0+1, 0.01,
+  boost::shared_ptr<SimpleFixedSpectrumSampling> 
+    unif_rt_grid(new SimpleFixedSpectrumSampling(12928.0-1, 13213.0+1, 0.01,
                                              6145.0-1,  6307.0+1, 0.01,
                                              4790.0-1,  4917.0+1, 0.01));
   NonuniformSpectrumSampling nonunif_rt_grid(grid_dom1, grid_dom2, grid_dom3, unif_rt_grid);

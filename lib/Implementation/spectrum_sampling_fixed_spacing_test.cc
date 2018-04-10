@@ -1,5 +1,5 @@
 #include "spectrum_sampling_fixed_spacing.h"
-#include "uniform_spectrum_sampling.h"
+#include "simple_fixed_spectrum_sampling.h"
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
 
@@ -16,7 +16,7 @@ BOOST_AUTO_TEST_CASE(basic)
   SpectrumSamplingFixedSpacing ssamp(spec_spac_awu);
 
   // Hardcoded results that we expect;
-  UniformSpectrumSampling sexpect(12955.76, 13179.12, 0.01,
+  SimpleFixedSpectrumSampling sexpect(12955.76, 13179.12, 0.01,
                                   6177.24, 6262.14, 0.01,
                                   4805.1, 4886.96, 0.01);
 

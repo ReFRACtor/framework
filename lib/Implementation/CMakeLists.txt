@@ -114,6 +114,7 @@ set(DIR_SOURCES
     refractive_index.cc
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
+    simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
     solar_absorption_gfit_file.cc
     solar_absorption_gfit_file_f.F90
@@ -133,15 +134,14 @@ set(DIR_SOURCES
     twostream_driver.cc
     twostream_interface.F90
     twostream_rt.cc
-    uniform_spectrum_sampling.cc
 )
 
 set(TEST_SOURCES
     absco_hdf_test.cc
     absorber_absco_test.cc
-    absorber_vmr_met_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
+    absorber_vmr_met_test.cc
     aerosol_optical_test.cc
     aerosol_property_hdf_test.cc
     aerosol_property_rh_hdf_test.cc
@@ -157,6 +157,7 @@ set(TEST_SOURCES
     composite_perturbation_test.cc
     configuration_fixture.cc
     connor_convergence_test.cc
+    connor_cost_function_test.cc
     connor_solver_test.cc
     cost_minimizer_gsl_test.cc
     dispersion_fit_test.cc
@@ -196,7 +197,6 @@ set(TEST_SOURCES
     nlls_solver_gsl_test.cc
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
-    standard_forward_model_test.cc
     observation_level_1b_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
@@ -208,6 +208,7 @@ set(TEST_SOURCES
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
     relative_humidity_test.cc
+    simple_fixed_spectrum_sampling_test.cc
     solar_absorption_and_continuum_test.cc
     solar_absorption_gfit_file_test.cc
     solar_absorption_table_test.cc
@@ -218,15 +219,14 @@ set(TEST_SOURCES
     solver_finished_fixture.cc
     spectral_window_range_test.cc
     spectrum_sampling_fixed_spacing_test.cc
-    connor_cost_function_test.cc
+    standard_forward_model_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
-    temperature_met_test.cc
     temperature_level_offset_test.cc
+    temperature_met_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
-    uniform_spectrum_sampling_test.cc
 )
 
 # Full path already included
