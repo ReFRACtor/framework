@@ -134,6 +134,7 @@ set(DIR_SOURCES
     twostream_driver.cc
     twostream_interface.F90
     twostream_rt.cc
+    uniform_spectrum_sampling.cc
 )
 
 set(TEST_SOURCES
@@ -227,6 +228,7 @@ set(TEST_SOURCES
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
+    uniform_spectrum_sampling_test.cc
 )
 
 # Full path already included

@@ -68,7 +68,7 @@ config_def = {
         },
     },
     'spectrum_sampling': {
-        'creator': creator.forward_model.UniformSpectrumSampling,
+        'creator': creator.forward_model.FixedSpacingSpectrumSampling,
         'high_res_spacing': rf.DoubleWithUnit(0.01, "cm^-1"), 
     },
     'instrument': {

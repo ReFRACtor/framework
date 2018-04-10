@@ -30,11 +30,12 @@ class SpectralWindowRange(Creator):
         else:
             return rf.SpectralWindowRange(win_ranges)
 
-class UniformSpectrumSampling(Creator, PerChannelMixin):
+class SpectrumSamplingBase(Creator, PerChannelMixin):
 
     high_res_spacing = param.Choice(param.ArrayWithUnit(dims=1), param.DoubleWithUnit())
 
-    def create(self, **kwargs):
+    def spacing(self):
+        "Returns the array with unit value for spacing specified regardless if it was specified as an array or scalar value with unit"
 
         spacing_val = self.high_res_spacing()
         num_channels = self.num_channels()
@@ -46,7 +47,17 @@ class UniformSpectrumSampling(Creator, PerChannelMixin):
             check_num_channels(spacing_val.value.shape[0])
             spacing_used = spacing_val
 
-        return rf.SpectrumSamplingFixedSpacing(spacing_used)
+        return spacing_used
+
+class FixedSpacingSpectrumSampling(SpectrumSamplingBase):
+
+    def create(self, **kwargs):
+        return rf.SpectrumSamplingFixedSpacing(self.spacing())
+
+class UniformSpectrumSampling(SpectrumSamplingBase):
+
+    def create(self, **kwargs):
+        return rf.UniformSpectrumSampling(self.spacing())
 
 class SpectrumEffectList(Creator):
 
