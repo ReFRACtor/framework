@@ -59,6 +59,7 @@ set(DIR_SOURCES
     ground_lambertian.cc
     gsl_lsp.cc
     gsl_mdm.cc
+    gsl_sm_lsp.cc
     hdf_constant.cc
     helical_valley_nlls_problem.cc
     ils_convolution.cc
@@ -96,6 +97,7 @@ set(DIR_SOURCES
     nlls_solver_gsl.cc
     nlls_solver_gsl_lmder.cc
     nlls_solver_gsl_lmsder.cc
+    nlls_solver_gsl_sm.cc
     nonuniform_spectrum_sampling.cc
     observation_level_1b.cc
     output_hdf.cc
@@ -194,6 +196,16 @@ set(TEST_SOURCES
     nlls_max_a_posteriori_test.cc
     nlls_max_likelihood_test.cc
     nlls_solver_gsl_test.cc
+    nlls_solver_gsl_sm_bard_test.cc
+    nlls_solver_gsl_sm_brown_test.cc
+    nlls_solver_gsl_sm_freudenstein_roth_a_test.cc
+    nlls_solver_gsl_sm_freudenstein_roth_b_test.cc
+    nlls_solver_gsl_sm_helical_valley_test.cc
+    nlls_solver_gsl_sm_jennrich_sampson_test.cc
+    nlls_solver_gsl_sm_meyer_test.cc
+    nlls_solver_gsl_sm_powell_test.cc
+    nlls_solver_gsl_sm_powell_singular_test.cc
+    nlls_solver_gsl_sm_rosenbrock2_test.cc
     nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
     standard_forward_model_test.cc
