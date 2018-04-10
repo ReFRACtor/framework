@@ -43,7 +43,7 @@ class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
     # Normally use the distributed version of this file
     reference_atm_file = param.Scalar(str, required=False)
 
-    def create(self, **kwargs):
+    def create(self, gas_name=None, **kwargs):
 
         if self.gas_name() is not None:
             gas_name = self.gas_name()
@@ -169,11 +169,14 @@ class AbsorberAbsco(Creator):
         absorptions = rf.vector_gas_absorption()
 
         for gas_name in self.gases():
-            if gas_name in self.parameters:
+            if gas_name in self.config_def:
                 self.register_parameter(gas_name, param.Dict())
                 gas_def = self.param(gas_name, gas_name=gas_name)
             else:
                 gas_def = self.default_gas_definition(gas_name=gas_name)
+            
+            if gas_def is None:
+                raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
 
             if not "vmr" in gas_def:
                 raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)

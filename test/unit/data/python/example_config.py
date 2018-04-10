@@ -50,7 +50,7 @@ config_def = {
             'units': static_units("Common/band_reference_point"),
         },
         'num_channels': 3,
-        'absco_base_path': '/mnt/data1/absco',
+        'absco_base_path': '/mnt/data1/absco/v5.0.0',
         'constants': {
             'creator': creator.common.DefaultConstants,
         },
@@ -133,14 +133,13 @@ config_def = {
                     'creator': creator.absorber.AbsorberVmrLevel,
                     'value': {
                         'creator': creator.absorber.GasVmrAprioriMetL1b,
-                        'gas_name': 'CO2',
                         'reference_atm_file': static_input_file,
                     },
                 },
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,
                     'table_scale': [1.0, 1.0, 1.004],
-                    'filename': "v5.0.0/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
+                    'filename': "{absco_base_path}/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                 },
             },
             'H2O': {
@@ -152,7 +151,7 @@ config_def = {
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,
                     'table_scale': 1.0,
-                    'filename': "v5.0.0/h2o_hitran12.h5",
+                    'filename': "{absco_base_path}/h2o_hitran12.h5",
                 },
             },
             'O2': {
@@ -168,7 +167,7 @@ config_def = {
                 'absorption': {
                     'creator': creator.absorber.AbscoHdf,
                     'table_scale': 1.0,
-                    'filename': "v5.0.0/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
+                    'filename': "{absco_base_path}/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
                  },
             },
         },
