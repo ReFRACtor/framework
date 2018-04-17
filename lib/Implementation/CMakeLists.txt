@@ -131,6 +131,7 @@ set(DIR_SOURCES
     standard_forward_model.cc
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
+    surface_temperature_direct.cc
     temperature_level_offset.cc
     temperature_met.cc
     twostream_driver.cc

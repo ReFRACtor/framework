@@ -66,7 +66,7 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const boost::shared_ptr<Temperature>& temperaturev,
 	     const boost::shared_ptr<Aerosol>& aerosolv,
 	     const boost::shared_ptr<RelativeHumidity>& rhv,
-             const boost::shared_ptr<Ground>& groundv,
+         const boost::shared_ptr<Ground>& groundv,
 	     const std::vector<boost::shared_ptr<Altitude> >& altv,
 	     const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
