@@ -102,6 +102,8 @@ set(DIR_SOURCES
     observation_level_1b.cc
     output_hdf.cc
     output_hdf_iteration.cc
+    planck.F90
+    planck.cc
     powell_nlls_problem.cc
     powell_singular_nlls_problem.cc
     pressure_sigma.cc
@@ -214,6 +216,7 @@ set(TEST_SOURCES
     observation_level_1b_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
+    planck_test.cc
     pressure_sigma_test.cc
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
