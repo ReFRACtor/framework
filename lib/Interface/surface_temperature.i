@@ -13,8 +13,8 @@
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::SurfaceTemperature>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::SurfaceTemperature>)
 
-%template(ObservableTemperature) FullPhysics::Observable<FullPhysics::SurfaceTemperature>;
-%template(ObserverTemperature) FullPhysics::Observer<FullPhysics::SurfaceTemperature>;
+%template(ObservableSurfaceTemperature) FullPhysics::Observable<FullPhysics::SurfaceTemperature>;
+%template(ObserverSurfaceTemperature) FullPhysics::Observer<FullPhysics::SurfaceTemperature>;
 
 namespace FullPhysics {
 class SurfaceTemperature : virtual public StateVectorObserver, public Observable<SurfaceTemperature> {

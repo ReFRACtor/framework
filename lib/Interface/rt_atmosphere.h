@@ -213,6 +213,20 @@ public:
      int nummom = -1, int numscat = -1) const;
 
 //-----------------------------------------------------------------------
+/// The atmospheric thermal blackbody values per level.
+//-----------------------------------------------------------------------
+
+  virtual ArrayAd<double, 1>
+    atmosphere_blackbody(double wn, int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
+/// The surface thermal blackbody. 
+//-----------------------------------------------------------------------
+
+  virtual AutoDerivative<double>
+    surface_blackbody(double wn, int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
 /// This gives the values of the intermediate variables and the
 /// Jacobian with respect to the state vector. This is
 /// number_layer() x number variables

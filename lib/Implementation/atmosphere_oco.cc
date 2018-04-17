@@ -53,12 +53,43 @@ const int taur_index = 1;
 const int taua_0_index = 2;
 
 //-----------------------------------------------------------------------
-/// Create an Atmosphere with the given objects.
+/// Create an an Atmosphere with all available components:
 ///
-/// Note that it is ok for aerosolv and/or groundv to be null. For
-/// up looking mode (e.g, TCCON FTS), we don't include a ground
-/// portion. For a pure Rayleigh atmosphere, we don't include any
-/// aerosols.
+/// Required:
+/// * Pressure
+/// * Temperature
+/// * Relative Humdity
+/// * Altitude
+///
+/// Optional:
+/// * Aerosol
+/// * Ground
+/// * Surface temperature
+//-----------------------------------------------------------------------
+
+AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
+	     const boost::shared_ptr<Pressure>& pressurev,
+	     const boost::shared_ptr<Temperature>& temperaturev,
+	     const boost::shared_ptr<Aerosol>& aerosolv,
+	     const boost::shared_ptr<RelativeHumidity>& rhv,
+         const boost::shared_ptr<Ground>& groundv,
+         const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+	     const std::vector<boost::shared_ptr<Altitude> >& altv,
+	     const boost::shared_ptr<Constant>& C)
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
+    constant(C), alt(altv), 
+    sv_size(0),
+    wn_tau_cache(-1),
+    spec_index_tau_cache(-1),
+    nlay(-1)
+{
+  initialize();
+}
+
+//-----------------------------------------------------------------------
+/// Create an Atmosphere with required components and all optional
+/// components except for surface temperature.
 //-----------------------------------------------------------------------
 
 AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
@@ -70,33 +101,20 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const std::vector<boost::shared_ptr<Altitude> >& altv,
 	     const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
-    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), constant(C), alt(altv), 
+    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), 
+    constant(C), alt(altv), 
     sv_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
 {
-  if(!absorber)
-    throw Exception("Absorber is not allowed to be null in AtmosphereOco");
-  if(!pressure)
-    throw Exception("Pressure is not allowed to be null in AtmosphereOco");
-  if(!temperature)
-    throw Exception("Temperature is not allowed to be null in AtmosphereOco");
-  BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    if(!a)
-      throw Exception("Altitude is not allowed to be null in AtmosphereOco");
-  // Aerosol and ground actually is allowed to be null, so we don't check it.
-  
   initialize();
 }
 
 //-----------------------------------------------------------------------
-/// Create an Atmosphere with the given objects.
-///
-/// This is redundant with the other constructors, but Lua doesn't 
-/// support passing nulls, so we have versions that leave particular
-/// arguments off.
-//-----------------------------------------------------------------------
+/// Create an Atmosphere with required components and all optional
+/// components except for ground and surface temperature.
+///-----------------------------------------------------------------------
 
 AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const boost::shared_ptr<Pressure>& pressurev,
@@ -106,53 +124,67 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const std::vector<boost::shared_ptr<Altitude> >& altv,
 	     const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
-    aerosol(aerosolv), rh(rhv), constant(C), alt(altv), 
+    aerosol(aerosolv), rh(rhv), 
+    constant(C), alt(altv), 
     sv_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
 {
-  if(!absorber)
-    throw Exception("Absorber is not allowed to be null in AtmosphereOco");
-  if(!pressure)
-    throw Exception("Pressure is not allowed to be null in AtmosphereOco");
-  if(!temperature)
-    throw Exception("Temperature is not allowed to be null in AtmosphereOco");
-  BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    if(!a)
-      throw Exception("Altitude is not allowed to be null in AtmosphereOco");
-  // Aerosol and ground actually is allowed to be null, so we don't check it.
-  
   initialize();
 }
+
+//-----------------------------------------------------------------------
+/// Create an Atmosphere with required components and all optional
+/// components except for aerosol
+///-----------------------------------------------------------------------
 
 AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const boost::shared_ptr<Pressure>& pressurev,
 	     const boost::shared_ptr<Temperature>& temperaturev,
 	     const boost::shared_ptr<RelativeHumidity>& rhv,
 	     const boost::shared_ptr<Ground>& groundv,
-             const std::vector<boost::shared_ptr<Altitude> >& altv,
+         const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+         const std::vector<boost::shared_ptr<Altitude> >& altv,
 	     const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
-    rh(rhv), ground_ptr(groundv), constant(C), alt(altv), 
+    rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
+    constant(C), alt(altv), 
     sv_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
 {
-  if(!absorber)
-    throw Exception("Absorber is not allowed to be null in AtmosphereOco");
-  if(!pressure)
-    throw Exception("Pressure is not allowed to be null in AtmosphereOco");
-  if(!temperature)
-    throw Exception("Temperature is not allowed to be null in AtmosphereOco");
-  BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    if(!a)
-      throw Exception("Altitude is not allowed to be null in AtmosphereOco");
-  // Aerosol and ground actually is allowed to be null, so we don't check it.
-  
   initialize();
 }
+
+//-----------------------------------------------------------------------
+/// Create an Atmosphere with required components and all optional
+/// components except for aerosol and surface temperature
+///-----------------------------------------------------------------------
+
+AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
+	     const boost::shared_ptr<Pressure>& pressurev,
+	     const boost::shared_ptr<Temperature>& temperaturev,
+	     const boost::shared_ptr<RelativeHumidity>& rhv,
+	     const boost::shared_ptr<Ground>& groundv,
+         const std::vector<boost::shared_ptr<Altitude> >& altv,
+	     const boost::shared_ptr<Constant>& C)
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    rh(rhv), ground_ptr(groundv),
+    constant(C), alt(altv), 
+    sv_size(0),
+    wn_tau_cache(-1),
+    spec_index_tau_cache(-1),
+    nlay(-1)
+{
+  initialize();
+}
+
+//-----------------------------------------------------------------------
+/// Create an Atmosphere with required components and all optional
+/// components except for ground, aerosol and surface temperature
+//-----------------------------------------------------------------------
 
 AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const boost::shared_ptr<Pressure>& pressurev,
@@ -165,6 +197,11 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
     spec_index_tau_cache(-1),
     nlay(-1)
 {
+  initialize();
+}
+
+void AtmosphereOco::initialize()
+{
   if(!absorber)
     throw Exception("Absorber is not allowed to be null in AtmosphereOco");
   if(!pressure)
@@ -174,13 +211,7 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
     if(!a)
       throw Exception("Altitude is not allowed to be null in AtmosphereOco");
-  // Aerosol and ground actually is allowed to be null, so we don't check it.
-  
-  initialize();
-}
 
-void AtmosphereOco::initialize()
-{
   rayleigh.reset(new Rayleigh(pressure, alt, *constant));
   if(aerosol)
     aerosol->add_observer(*this);
@@ -524,6 +555,14 @@ void AtmosphereOco::calc_rt_parameters
       taur_wrt_iv.value()(i1) / (tau.value()(i1) * tau.value()(i1)) *
       tau.jacobian();
   }
+}
+
+ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int spec_index) const
+{
+}
+
+AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_index) const
+{
 }
 
 //-----------------------------------------------------------------------
