@@ -4,6 +4,7 @@
 #include "pressure_fixed_level.h"
 #include "temperature_fixed_level.h"
 #include "ground.h"
+#include "planck.h"
 #include "ostream_pad.h"
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -557,12 +558,33 @@ void AtmosphereOco::calc_rt_parameters
   }
 }
 
+//-----------------------------------------------------------------------
+/// The atmospheric thermal blackbody values per level.
+//-----------------------------------------------------------------------
+
 ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int spec_index) const
 {
+    ArrayAdWithUnit<double, 1> temp_grid = temperature->temperature_grid(*pressure);
+
+    ArrayAd<double, 1> black_body(temp_grid.rows(), temp_grid.number_variable());
+
+    for(int lev_idx = 0; lev_idx < temp_grid.rows(); lev_idx++) {
+        double temp_K = temp_grid(lev_idx).convert(Unit("K")).value.value();
+        black_body(lev_idx) = planck(wn, temp_K, temp_grid(lev_idx).value.gradient());
+    }
+
+    return black_body;
 }
+
+//-----------------------------------------------------------------------
+/// The surface thermal blackbody. 
+//-----------------------------------------------------------------------
 
 AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_index) const
 {
+    double surf_temp_K = surface_temp->surface_temperature().convert(Unit("K")).value.value();
+    Array<double, 1> surf_temp_grad = surface_temp->surface_temperature().value.gradient();
+    return planck(wn, surf_temp_K, surf_temp_grad);
 }
 
 //-----------------------------------------------------------------------
