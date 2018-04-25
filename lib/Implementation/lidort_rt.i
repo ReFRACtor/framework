@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "lidort_rt.h"
@@ -20,15 +18,16 @@ namespace FullPhysics {
 class LidortRt : public SpurrRt  {
 public:
   LidortRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-	   const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
-	   const blitz::Array<double, 1>& Sza, 
-	   const blitz::Array<double, 1>& Zen, 
-	   const blitz::Array<double, 1>& Azm,
-       bool Pure_nadir,
-	   int Number_streams, 
-	   int Number_moments, 
-	   bool Do_multi_scatt_only
-	   );
+           const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+           const blitz::Array<double, 1>& Sza, 
+           const blitz::Array<double, 1>& Zen, 
+           const blitz::Array<double, 1>& Azm,
+           bool Pure_nadir,
+           int Number_streams, 
+           int Number_moments, 
+           bool Do_multi_scatt_only,
+           bool do_solar = true,
+           bool do_thermal = false);
 
   %python_attribute(number_stream, virtual int)
   %python_attribute(number_moment, int)

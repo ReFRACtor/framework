@@ -13,15 +13,16 @@ namespace FullPhysics {
 class LidortRt : public SpurrRt {
 public:
   LidortRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-	   const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
-	   const blitz::Array<double, 1>& Sza, 
-	   const blitz::Array<double, 1>& Zen, 
-	   const blitz::Array<double, 1>& Azm,
-	   bool Pure_nadir,
-	   int Number_streams, 
-	   int Number_moments, 
-	   bool Do_multi_scatt_only
-	   );
+           const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+           const blitz::Array<double, 1>& Sza, 
+           const blitz::Array<double, 1>& Zen, 
+           const blitz::Array<double, 1>& Azm,
+           bool Pure_nadir,
+           int Number_streams, 
+           int Number_moments, 
+           bool Do_multi_scatt_only,
+           bool do_solar = true,
+           bool do_thermal = false);
 
   /// Number of quadtature streams in the cosine half space
   virtual int number_stream() const { return rt_driver()->number_stream(); }

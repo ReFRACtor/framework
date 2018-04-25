@@ -30,13 +30,17 @@ const bool dump_data = false;
 //-----------------------------------------------------------------------
 
 SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-		 const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
-		 const blitz::Array<double, 1>& Sza,
-		 const blitz::Array<double, 1>& Zen,
-		 const blitz::Array<double, 1>& Azm)
+                 const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+                 const blitz::Array<double, 1>& Sza,
+                 const blitz::Array<double, 1>& Zen,
+                 const blitz::Array<double, 1>& Azm,
+                 const bool do_solar,
+                 const bool do_thermal)
 : RadiativeTransferSingleWn(Stokes_coef, Atm),
   sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
-  alt_spec_index_cache(-1), geo_spec_index_cache(-1)
+  do_solar_sources(do_solar), do_thermal_emission(do_thermal),
+  alt_spec_index_cache(-1), geo_spec_index_cache(-1),
+  solar_spec_index_cache(-1), thermal_spec_index_cache(-1)
 {
   if(sza.rows() != number_spectrometer() ||
      zen.rows() != number_spectrometer() ||
@@ -106,8 +110,26 @@ void SpurrRt::update_geometry(int spec_index) const
   rt_driver_->setup_geometry(sza(spec_index), azm(spec_index), zen(spec_index));
   if(dump_data)
     std::cout << "# Geometry:\n" << sza(spec_index) << "\n"
-	      << azm(spec_index) << "\n"
-	      << zen(spec_index) << "\n";
+              << azm(spec_index) << "\n"
+              << zen(spec_index) << "\n";
+}
+
+void SpurrRt::update_solar_sources(int spec_index) const
+{
+  if(spec_index == solar_spec_index_cache || !do_solar_sources)
+    return;
+  solar_spec_index_cache = spec_index;
+
+  rt_driver_->setup_solar_sources();
+}
+
+void SpurrRt::update_thermal_emission(int spec_index) const
+{
+  if(spec_index == thermal_spec_index_cache || !do_thermal_emission)
+    return;
+  thermal_spec_index_cache = spec_index;
+
+  rt_driver_->setup_thermal_emission();
 }
 
 // See base class for description of this
@@ -135,6 +157,10 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const Array
 
   // Update geometry if necessary
   update_geometry(Spec_index);
+
+  // Update solar and thermal if enabled and if necessary
+  update_solar_sources(Spec_index);
+  update_thermal_emission(Spec_index);
 
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
@@ -188,6 +214,10 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   // Update geometry if necessary
   update_geometry(Spec_index);
 
+  // Update solar and thermal if enabled and if necessary
+  update_solar_sources(Spec_index);
+  update_thermal_emission(Spec_index);
+
   // Setup surface
   ArrayAd<double, 1> surface_parameters(atm->ground()->surface_parameter(Wn, Spec_index));
   ArrayAd<double, 1> lidort_surface = rt_driver_->brdf_driver()->setup_brdf_inputs(surface_type(), surface_parameters);
@@ -199,11 +229,11 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   if(dump_data &&
     fabs(Wn - 13050.47) < 0.005)
     std::cout << "# Surface type:\n " << surface_type() << "\n"
-	      << "# Surface paramters:\n" << surface_parameters << "\n"
-	      << "# Od:\n" << od << "\n"
-	      << "# SSA:\n" << ssa << "\n"
-	      << "# PF:\n" << pf << "\n"
-	      << "# Do surface pd:\n" << do_surface_pd << "\n";
+              << "# Surface paramters:\n" << surface_parameters << "\n"
+              << "# Od:\n" << od << "\n"
+              << "# SSA:\n" << ssa << "\n"
+              << "# PF:\n" << pf << "\n"
+              << "# Do surface pd:\n" << do_surface_pd << "\n";
 
   rt_driver_->setup_linear_inputs(od, ssa, pf, do_surface_pd);
   rt_driver_->calculate_rt();

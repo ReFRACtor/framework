@@ -32,7 +32,6 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int surface_type)
   brdf_params.reference( twostream_brdf_->brdf_parameters() );
   brdf_factors.reference( twostream_brdf_->brdf_factors() );
 
-  twostream_brdf_->do_solar_sources(true);
 }
 
 void TwostreamBrdfDriver::setup_geometry(double sza, double azm, double zen) const
@@ -124,11 +123,11 @@ void TwostreamBrdfDriver::do_shadow_effect(const bool do_shadow) const {
 }
 
 void TwostreamBrdfDriver::initialize_kernel_parameters(const int kernel_index,
-						       const int which_brdf,
-						       const bool lambertian_flag,
-						       const int n_brdf_parameters,
-						       const bool do_factor_wfs,
-						       const blitz::Array<bool, 1>& do_params_wfs)
+                                                       const int which_brdf,
+                                                       const bool lambertian_flag,
+                                                       const int n_brdf_parameters,
+                                                       const bool do_factor_wfs,
+                                                       const blitz::Array<bool, 1>& do_params_wfs)
 {
   Array<int, 1> ts_which_brdf( twostream_brdf_->which_brdf() );
   ts_which_brdf(kernel_index) = which_brdf;
@@ -190,9 +189,6 @@ void TwostreamRtDriver::initialize_rt()
 
   // Set a value or divide by zeros will occur
   twostream_interface_->bvpscalefactor(1.0);
-
-  // We are doing solar sources only
-  twostream_interface_->do_solar_sources(true);
 
   // Two choices of stream value................ CHOOSE One !!!!!
   if (do_fullquadrature_)
@@ -264,9 +260,22 @@ void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
   ts_zen(0) = zen;
 }
 
+void TwostreamRtDriver::setup_solar_sources() const
+{
+  // Enable solar sources for RT
+  twostream_interface_->do_solar_sources(true);
+
+  // Enable solar sources for BRDF
+  brdf_interface()->do_solar_sources(true);
+}
+
+void TwostreamRtDriver::setup_thermal_emission() const
+{
+}
+
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
-					     const blitz::Array<double, 1>& ssa,
-					     const blitz::Array<double, 2>& pf) const
+                                             const blitz::Array<double, 1>& ssa,
+                                             const blitz::Array<double, 2>& pf) const
 {
   // Ranges for copying inputs to method
   Range rlay(0, od.extent(firstDim) - 1);

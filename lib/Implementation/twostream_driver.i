@@ -32,15 +32,16 @@ public:
 
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
   void setup_geometry(double sza, double azm, double zen) const;
-
+  void setup_solar_sources() const;
+  void setup_thermal_emission() const;
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
-			    const blitz::Array<double, 1>& ssa,
-			    const blitz::Array<double, 2>& pf) const;
+                            const blitz::Array<double, 1>& ssa,
+                            const blitz::Array<double, 2>& pf) const;
   void clear_linear_inputs() const;
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
-			   const ArrayAd<double, 1>& ssa,
-			   const ArrayAd<double, 2>& pf,
-			   bool do_surface_linearization) const;
+                           const ArrayAd<double, 1>& ssa,
+                           const ArrayAd<double, 2>& pf,
+                           bool do_surface_linearization) const;
 
   void calculate_rt() const;
   double get_intensity() const;

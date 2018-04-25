@@ -41,9 +41,6 @@ LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment) : nmoment_(nmoment)
 
   brdf_params.reference( brdf_inputs.bs_brdf_parameters() );
   brdf_factors.reference( brdf_inputs.bs_brdf_factors() );
-
-  // Enable solar sources
-  brdf_inputs.bs_do_solar_sources(true);
 }
 
 void LidortBrdfDriver::setup_geometry(double sza, double azm, double zen) const
@@ -226,9 +223,6 @@ void LidortRtDriver::initialize_rt()
 
   // Number of Legendre expansion coefficients for the phase function
   mcontrol_inputs.ts_nmoments_input(nmoment_);
-
-  // Needed for atmospheric scattering of sunlight
-  mboolean_inputs.ts_do_solar_sources(true);
 
   // Always use BRDF supplement, don't use specialized lambertian_albedo mode
   brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
@@ -427,6 +421,21 @@ void LidortRtDriver::setup_geometry(double sza, double azm, double zen) const
   // off quadrature output.
   Array<double, 1> ld_zen( muser_inputs.ts_user_angles_input() );
   ld_zen(0) = zen;
+}
+
+void LidortRtDriver::setup_solar_sources() const
+{
+  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
+
+  // Needed for atmospheric scattering of sunlight
+  mboolean_inputs.ts_do_solar_sources(true);
+  
+  // Enable solar sources in the BRDF driver
+  brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
+}
+
+void LidortRtDriver::setup_thermal_emission() const
+{
 }
 
 void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 

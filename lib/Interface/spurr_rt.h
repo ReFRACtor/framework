@@ -14,22 +14,24 @@ namespace FullPhysics {
  *******************************************************************/
 
 class SpurrRt : public RadiativeTransferSingleWn,
-		public Observer<RtAtmosphere>,
-		public boost::noncopyable {
+                public Observer<RtAtmosphere>,
+                public boost::noncopyable {
 public:
 
   SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-	  const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
-	  const blitz::Array<double, 1>& Sza, 
-	  const blitz::Array<double, 1>& Zen, 
-	  const blitz::Array<double, 1>& Azm);
+          const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+          const blitz::Array<double, 1>& Sza, 
+          const blitz::Array<double, 1>& Zen, 
+          const blitz::Array<double, 1>& Azm,
+          const bool do_solar = true,
+          const bool do_thermal = false);
   
   //-----------------------------------------------------------------------
   /// For performance, we cache some data as we calculate it. This
   /// becomes stale when the Atmosphere is changed, so we observe atm
   /// and mark the cache when it changes. 
   //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& atm) { alt_spec_index_cache = -1; }
+  void notify_update(const RtAtmosphere& atm) { alt_spec_index_cache = -1; thermal_spec_index_cache = -1; }
 
   /// Number of stokes in returned stokes values
   /// Note that LIDORT will only ever calculate the first stoke index for I,
@@ -52,15 +54,18 @@ public:
 protected:
 
   int surface_type_int;
+  bool do_solar_sources, do_thermal_emission;
 
   blitz::Array<double, 1> sza, zen, azm;
 
   boost::shared_ptr<SpurrRtDriver> rt_driver_;
 
   // Last index we updates the altitude/geometry for.
-  mutable int alt_spec_index_cache, geo_spec_index_cache;
+  mutable int alt_spec_index_cache, geo_spec_index_cache, solar_spec_index_cache, thermal_spec_index_cache;
   virtual void update_altitude(int spec_index) const;
   virtual void update_geometry(int spec_index) const;
+  virtual void update_solar_sources(int spec_index) const;
+  virtual void update_thermal_emission(int spec_index) const;
 };
 }
 #endif

@@ -67,11 +67,11 @@ protected:
   virtual void do_shadow_effect(const bool do_shadow) const = 0;
 
   virtual void initialize_kernel_parameters(const int kernel_index,
-					    const int which_brdf,
-					    const bool lambertian_flag,
-					    const int n_brdf_parameters,
-					    const bool do_factor_wfs,
-					    const blitz::Array<bool, 1>& do_params_wfs) = 0;
+                                            const int which_brdf,
+                                            const bool lambertian_flag,
+                                            const int n_brdf_parameters,
+                                            const bool do_factor_wfs,
+                                            const blitz::Array<bool, 1>& do_params_wfs) = 0;
 
   // To speed up brdf setup, ie reduce the number of function calls
   // These are set through attributes linked to a valid array by the implementing class. 
@@ -92,24 +92,29 @@ class SpurrRtDriver : public virtual GenericObject {
 public:
   /// Computes reflectance without jacobians
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
-				    double sza, double azm, double zen,
-				    int surface_type,
-				    const blitz::Array<double, 1>& surface_parameters,
-				    const blitz::Array<double, 1>& od, 
-				    const blitz::Array<double, 1>& ssa,
-				    const blitz::Array<double, 2>& pf);
+                                    double sza, double azm, double zen,
+                                    int surface_type,
+                                    const blitz::Array<double, 1>& surface_parameters,
+                                    const blitz::Array<double, 1>& od, 
+                                    const blitz::Array<double, 1>& ssa,
+                                    const blitz::Array<double, 2>& pf,
+                                    const bool do_solar = true,
+                                    const bool do_thermal = false);
   
   // Computes reflectance and jacobians for profiles as well as surface
   virtual void reflectance_and_jacobian_calculate(const blitz::Array<double, 1>& height_grid,
-					       double sza, double azm, double zen,
-					       int surface_type,
-					       ArrayAd<double, 1>& surface_parameters,
-					       const ArrayAd<double, 1>& od, 
-					       const ArrayAd<double, 1>& ssa,
-					       const ArrayAd<double, 2>& pf,
-					       double& reflectance,
-					       blitz::Array<double, 2>& jac_atm, 
-					       blitz::Array<double, 1>& jac_surf);
+                                                double sza, double azm, double zen,
+                                                int surface_type,
+                                                ArrayAd<double, 1>& surface_parameters,
+                                                const ArrayAd<double, 1>& od, 
+                                                const ArrayAd<double, 1>& ssa,
+                                                const ArrayAd<double, 2>& pf,
+                                                double& reflectance,
+                                                blitz::Array<double, 2>& jac_atm, 
+                                                blitz::Array<double, 1>& jac_surf,
+                                                const bool do_solar = true,
+                                                const bool do_thermal = false);
+  
 
   /// Access to BRDF driver
   const boost::shared_ptr<SpurrBrdfDriver> brdf_driver() const { return brdf_driver_; }
@@ -122,20 +127,26 @@ public:
   /// the viewing geometry changes
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
 
+  /// Configure rt to computer solar sources
+  virtual void setup_solar_sources() const = 0;
+
+  /// Configure rt to compute thermal emission
+  virtual void setup_thermal_emission() const = 0;
+
   /// Set up optical depth, single scattering albedo and phase function
   /// Should be called per spectral point
   virtual void setup_optical_inputs(const blitz::Array<double, 1>& od, 
-				    const blitz::Array<double, 1>& ssa,
-				    const blitz::Array<double, 2>& pf) const = 0;
+                                    const blitz::Array<double, 1>& ssa,
+                                    const blitz::Array<double, 2>& pf) const = 0;
   
   /// Mark that we are not retrieving weighting functions
   virtual void clear_linear_inputs() const =  0;
 
   /// Set up linearization, weighting functions
   virtual void setup_linear_inputs(const ArrayAd<double, 1>& od,
-				   const ArrayAd<double, 1>& ssa,
-				   const ArrayAd<double, 2>& pf,
-				   bool do_surface_linearization) const = 0;
+                                   const ArrayAd<double, 1>& ssa,
+                                   const ArrayAd<double, 2>& pf,
+                                   bool do_surface_linearization) const = 0;
 
   /// Perform radiative transfer calculation with the values
   /// setup by setup_optical_inputs and setup_linear_inputs
