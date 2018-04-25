@@ -19,6 +19,9 @@ class LidortRt(Creator):
     pure_nadir = param.Scalar(bool, default=False)
     multiple_scattering_only = param.Scalar(bool, default=False)
 
+    use_solar_sources = param.Scalar(bool, default=True)
+    use_thermal_emission = param.Scalar(bool, default=False)
+
     def create(self, **kwargs):
         stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
 
@@ -26,7 +29,8 @@ class LidortRt(Creator):
                 self.solar_zenith().convert("deg").value, 
                 self.observation_zenith().convert("deg").value, 
                 self.observation_azimuth().convert("deg").value, 
-                self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only())
+                self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only(),
+                self.use_solar_sources(), self.use_thermal_emisson())
 
 class TwostreamRt(Creator):
 
@@ -38,6 +42,9 @@ class TwostreamRt(Creator):
 
     full_quadrature = param.Scalar(bool, default=True)
 
+    use_solar_sources = param.Scalar(bool, default=True)
+    use_thermal_emission = param.Scalar(bool, default=False)
+
     def create(self, **kwargs):
         stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
         
@@ -45,7 +52,8 @@ class TwostreamRt(Creator):
                 self.solar_zenith().convert("deg").value, 
                 self.observation_zenith().convert("deg").value, 
                 self.observation_azimuth().convert("deg").value, 
-                self.full_quadrature())
+                self.full_quadrature(),
+                self.use_solar_sources(), self.use_thermal_emisson())
 
 class LsiRt(Creator):
 

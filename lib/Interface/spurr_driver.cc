@@ -242,7 +242,9 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
                                             const Array<double, 1>& ssa,
                                             const Array<double, 2>& pf,
                                             const bool do_solar,
-                                            const bool do_thermal)
+                                            const bool do_thermal,
+                                            double surface_bb,
+                                            const Array<double, 1>& atmosphere_bb)
 {
   // Initialize scene 
   setup_height_grid(height_grid);
@@ -253,7 +255,7 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
       setup_solar_sources();
 
   if (do_thermal)
-      setup_thermal_emission();
+      setup_thermal_emission(surface_bb, atmosphere_bb);
 
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
@@ -276,17 +278,20 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
 //-----------------------------------------------------------------------
 
 void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& height_grid,
-                                                    double sza, double azm, double zen,
-                                                    int surface_type,
-                                                    ArrayAd<double, 1>& surface_parameters,
-                                                    const ArrayAd<double, 1>& od, 
-                                                    const ArrayAd<double, 1>& ssa,
-                                                    const ArrayAd<double, 2>& pf,
-                                                    double& reflectance,
-                                                    Array<double, 2>& jac_atm, 
-                                                    Array<double, 1>& jac_surf,
-                                                    const bool do_solar,
-                                                    const bool do_thermal)
+                                                       double sza, double azm, double zen,
+                                                       int surface_type,
+                                                       ArrayAd<double, 1>& surface_parameters,
+                                                       const ArrayAd<double, 1>& od, 
+                                                       const ArrayAd<double, 1>& ssa,
+                                                       const ArrayAd<double, 2>& pf,
+                                                       double& reflectance,
+                                                       Array<double, 2>& jac_atm, 
+                                                       Array<double, 1>& jac_surf,
+                                                       const bool do_solar,
+                                                       const bool do_thermal,
+                                                       double surface_bb,
+                                                       const Array<double, 1>& atmosphere_bb)
+
 {
   // Initialize scene 
   setup_height_grid(height_grid);
@@ -297,7 +302,7 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
       setup_solar_sources();
 
   if (do_thermal)
-      setup_thermal_emission();
+      setup_thermal_emission(surface_bb, atmosphere_bb);
 
   // Set up BRDF inputs and run
   surface_parameters = brdf_driver_->setup_brdf_inputs(surface_type, surface_parameters);

@@ -40,7 +40,7 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
   sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
   do_solar_sources(do_solar), do_thermal_emission(do_thermal),
   alt_spec_index_cache(-1), geo_spec_index_cache(-1),
-  solar_spec_index_cache(-1), thermal_spec_index_cache(-1)
+  solar_spec_index_cache(-1)
 {
   if(sza.rows() != number_spectrometer() ||
      zen.rows() != number_spectrometer() ||
@@ -114,7 +114,7 @@ void SpurrRt::update_geometry(int spec_index) const
               << zen(spec_index) << "\n";
 }
 
-void SpurrRt::update_solar_sources(int spec_index) const
+void SpurrRt::setup_solar_sources(int spec_index) const
 {
   if(spec_index == solar_spec_index_cache || !do_solar_sources)
     return;
@@ -123,13 +123,12 @@ void SpurrRt::update_solar_sources(int spec_index) const
   rt_driver_->setup_solar_sources();
 }
 
-void SpurrRt::update_thermal_emission(int spec_index) const
+void SpurrRt::setup_thermal_inputs(double wn, int spec_index) const
 {
-  if(spec_index == thermal_spec_index_cache || !do_thermal_emission)
+  if(!do_thermal_emission)
     return;
-  thermal_spec_index_cache = spec_index;
 
-  rt_driver_->setup_thermal_emission();
+  rt_driver_->setup_thermal_emission(atm->surface_blackbody(wn, spec_index).value(), atm->atmosphere_blackbody(wn, spec_index).value());
 }
 
 // See base class for description of this
@@ -159,8 +158,8 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const Array
   update_geometry(Spec_index);
 
   // Update solar and thermal if enabled and if necessary
-  update_solar_sources(Spec_index);
-  update_thermal_emission(Spec_index);
+  setup_solar_sources(Spec_index);
+  setup_thermal_inputs(Wn, Spec_index);
 
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
@@ -215,8 +214,8 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   update_geometry(Spec_index);
 
   // Update solar and thermal if enabled and if necessary
-  update_solar_sources(Spec_index);
-  update_thermal_emission(Spec_index);
+  setup_solar_sources(Spec_index);
+  setup_thermal_inputs(Wn, Spec_index);
 
   // Setup surface
   ArrayAd<double, 1> surface_parameters(atm->ground()->surface_parameter(Wn, Spec_index));

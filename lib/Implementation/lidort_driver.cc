@@ -434,8 +434,20 @@ void LidortRtDriver::setup_solar_sources() const
   brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
 }
 
-void LidortRtDriver::setup_thermal_emission() const
+void LidortRtDriver::setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
 {
+  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
+
+  fboolean_inputs.ts_do_thermal_emission(true);
+  fboolean_inputs.ts_do_surface_emission(true);
+
+  Lidort_Fixed_Optical& foptical_inputs = lidort_interface_->lidort_fixin().optical();
+
+  foptical_inputs.ts_surface_bb_input(surface_bb);
+
+  Range rlay(0, atmosphere_bb.extent(firstDim) - 1);
+  Array<double, 1> thermal_bb_input( foptical_inputs.ts_thermal_bb_input() );
+  thermal_bb_input(rlay) = atmosphere_bb;
 }
 
 void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 

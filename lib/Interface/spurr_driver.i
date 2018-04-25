@@ -26,29 +26,37 @@ public:
 class SpurrRtDriver {
 public:
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
-                                    double sza, double azm, double zen,
-                                    int surface_type,
-                                    const blitz::Array<double, 1>& surface_parameters,
-                                    const blitz::Array<double, 1>& od, 
-                                    const blitz::Array<double, 1>& ssa,
-                                    const blitz::Array<double, 2>& pf,
-                                    const bool do_solar = true,
-                                    const bool do_thermal = false);
+                                       double sza, double azm, double zen,
+                                       int surface_type,
+                                       const blitz::Array<double, 1>& surface_parameters,
+                                       const blitz::Array<double, 1>& od, 
+                                       const blitz::Array<double, 1>& ssa,
+                                       const blitz::Array<double, 2>& pf,
+                                       const bool do_solar = true,
+                                       const bool do_thermal = false,
+                                       double surface_bb = 0,
+                                       const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
+
   virtual void reflectance_and_jacobian_calculate(const blitz::Array<double, 1>& height_grid,
-                                               double sza, double azm, double zen,
-                                               int surface_type,
-                                               ArrayAd<double, 1>& surface_parameters,
-                                               const ArrayAd<double, 1>& od, 
-                                               const ArrayAd<double, 1>& ssa,
-                                               const ArrayAd<double, 2>& pf,
-                                               double& reflectance,
-                                               blitz::Array<double, 2>& jac_atm, 
-                                               blitz::Array<double, 1>& jac_surf,
-                                               const bool do_solar = true,
-                                               const bool do_thermal = false);
+                                                  double sza, double azm, double zen,
+                                                  int surface_type,
+                                                  ArrayAd<double, 1>& surface_parameters,
+                                                  const ArrayAd<double, 1>& od, 
+                                                  const ArrayAd<double, 1>& ssa,
+                                                  const ArrayAd<double, 2>& pf,
+                                                  double& reflectance,
+                                                  blitz::Array<double, 2>& jac_atm, 
+                                                  blitz::Array<double, 1>& jac_surf,
+                                                  const bool do_solar = true,
+                                                  const bool do_thermal = false,
+                                                  double surface_bb = 0,
+                                                  const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
+
   %python_attribute(brdf_driver, boost::shared_ptr<SpurrBrdfDriver>)
   virtual void setup_height_grid(const blitz::Array<double, 1>& height_grid) const = 0;
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
+  virtual void setup_solar_sources() const = 0;
+  virtual void setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
   virtual void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                     const blitz::Array<double, 1>& ssa,
                                     const blitz::Array<double, 2>& pf) const = 0;

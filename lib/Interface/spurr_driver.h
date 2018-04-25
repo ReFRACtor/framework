@@ -92,29 +92,32 @@ class SpurrRtDriver : public virtual GenericObject {
 public:
   /// Computes reflectance without jacobians
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
-                                    double sza, double azm, double zen,
-                                    int surface_type,
-                                    const blitz::Array<double, 1>& surface_parameters,
-                                    const blitz::Array<double, 1>& od, 
-                                    const blitz::Array<double, 1>& ssa,
-                                    const blitz::Array<double, 2>& pf,
-                                    const bool do_solar = true,
-                                    const bool do_thermal = false);
+                                       double sza, double azm, double zen,
+                                       int surface_type,
+                                       const blitz::Array<double, 1>& surface_parameters,
+                                       const blitz::Array<double, 1>& od, 
+                                       const blitz::Array<double, 1>& ssa,
+                                       const blitz::Array<double, 2>& pf,
+                                       const bool do_solar = true,
+                                       const bool do_thermal = false,
+                                       double surface_bb = 0,
+                                       const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
   
   // Computes reflectance and jacobians for profiles as well as surface
   virtual void reflectance_and_jacobian_calculate(const blitz::Array<double, 1>& height_grid,
-                                                double sza, double azm, double zen,
-                                                int surface_type,
-                                                ArrayAd<double, 1>& surface_parameters,
-                                                const ArrayAd<double, 1>& od, 
-                                                const ArrayAd<double, 1>& ssa,
-                                                const ArrayAd<double, 2>& pf,
-                                                double& reflectance,
-                                                blitz::Array<double, 2>& jac_atm, 
-                                                blitz::Array<double, 1>& jac_surf,
-                                                const bool do_solar = true,
-                                                const bool do_thermal = false);
-  
+                                                  double sza, double azm, double zen,
+                                                  int surface_type,
+                                                  ArrayAd<double, 1>& surface_parameters,
+                                                  const ArrayAd<double, 1>& od, 
+                                                  const ArrayAd<double, 1>& ssa,
+                                                  const ArrayAd<double, 2>& pf,
+                                                  double& reflectance,
+                                                  blitz::Array<double, 2>& jac_atm, 
+                                                  blitz::Array<double, 1>& jac_surf,
+                                                  const bool do_solar = true,
+                                                  const bool do_thermal = false,
+                                                  double surface_bb = 0,
+                                                  const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
   /// Access to BRDF driver
   const boost::shared_ptr<SpurrBrdfDriver> brdf_driver() const { return brdf_driver_; }
@@ -131,7 +134,7 @@ public:
   virtual void setup_solar_sources() const = 0;
 
   /// Configure rt to compute thermal emission
-  virtual void setup_thermal_emission() const = 0;
+  virtual void setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
 
   /// Set up optical depth, single scattering albedo and phase function
   /// Should be called per spectral point

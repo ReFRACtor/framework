@@ -2,6 +2,7 @@
 #include "unit_test_support.h"
 #include "lidort_fixture.h"
 #include "old_constant.h"
+#include "planck.h"
 
 #include "spurr_brdf_types.h"
 
@@ -117,6 +118,33 @@ BOOST_AUTO_TEST_CASE(simple)
   // Note the tolerance here is in %
   refl_expected = 2.387246757232095E-003;
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 6e-3);
+
+  ////////////////////////////////////
+  // Thermal only, no surface, no gas
+  surface_params(0) = 0.0;
+
+  taur = 2.0e-2/nlayer;
+  taug = 1.0e-6/nlayer;
+
+  od = taur + taug;
+  ssa = taur / od;
+
+  bool do_solar = false;
+  bool do_thermal = true;
+
+  // Just some nominal values to calculate the planck function
+  double wn = 568.69;
+  double temperature = 290.0;
+  double bb_surface = 0.0;
+  Array<double, 1> bb_atm(1);
+  bb_atm(0) = planck(wn, temperature);
+
+  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                   surface_type, surface_params,
+                                                   od, ssa, pf,
+                                                   do_solar, do_thermal,
+                                                   bb_surface, bb_atm);
+  std::cerr << "ref_calc thermal = " << refl_calc << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

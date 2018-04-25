@@ -317,7 +317,7 @@ const blitz::Array<double, 1> ReferenceVmrApriori::apply_seasonal_cycle(const bl
     try {
         amplitude = seasonal_amplitude.at(gas_name);
     } catch(const std::out_of_range& exc) {
-        Logger::warning() << "apply_seasonal_cycle: No seasonal cycle amplitude found for: " << gas_name;
+        Logger::warning() << "apply_seasonal_cycle: No seasonal cycle amplitude found for: " << gas_name << "\n";
         amplitude = 0.0;
     }
 

@@ -269,7 +269,7 @@ void TwostreamRtDriver::setup_solar_sources() const
   brdf_interface()->do_solar_sources(true);
 }
 
-void TwostreamRtDriver::setup_thermal_emission() const
+void TwostreamRtDriver::setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
 {
 }
 
