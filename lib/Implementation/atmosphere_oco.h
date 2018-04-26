@@ -219,7 +219,9 @@ public:
 /// aerosol content.
 //-----------------------------------------------------------------------
 
-  bool rayleigh_only_atmosphere() const {return !aerosol;}
+  bool rayleigh_only_atmosphere() const {
+      return !aerosol || aerosol->number_particle() == 0;
+  }
 
   void set_surface_pressure_for_testing(double x);
 private:

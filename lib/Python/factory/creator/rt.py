@@ -30,7 +30,7 @@ class LidortRt(Creator):
                 self.observation_zenith().convert("deg").value, 
                 self.observation_azimuth().convert("deg").value, 
                 self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only(),
-                self.use_solar_sources(), self.use_thermal_emisson())
+                self.use_solar_sources(), self.use_thermal_emission())
 
 class TwostreamRt(Creator):
 

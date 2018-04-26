@@ -284,7 +284,7 @@ const blitz::Array<double, 1> ReferenceVmrApriori::apply_secular_trend(const bli
     try {
         trend = secular_trend.at(gas_name);
     } catch(const std::out_of_range& exc) {
-        Logger::warning() << "apply_secular_trend: No secular trend found for: " << gas_name;
+        Logger::warning() << "apply_secular_trend: No secular trend found for: " << gas_name << "\n";
         trend = 0.0;
     }
 

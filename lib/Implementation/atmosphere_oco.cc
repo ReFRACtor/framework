@@ -582,6 +582,12 @@ ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int spec_index
 
 AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_index) const
 {
+    if (!surface_temp) {
+        Exception error;
+        error << "Cannot compute surface_blackbody, atmosphere was constructed without a surface tempererature object.";
+        throw error;
+    }
+
     double surf_temp_K = surface_temp->surface_temperature().convert(Unit("K")).value.value();
     Array<double, 1> surf_temp_grad = surface_temp->surface_temperature().value.gradient();
     return planck(wn, surf_temp_K, surf_temp_grad);
