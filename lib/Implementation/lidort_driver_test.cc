@@ -124,6 +124,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
+  // Expected values calculated offline in VLIDORT
   refl_expt = 4.1589832679596769E-007;
   BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
 
@@ -342,59 +343,28 @@ BOOST_AUTO_TEST_CASE(simple)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_brdf_veg, LidortDriverCommonFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_brdf_veg, LidortDriverBrdfVegFixture)
 
 BOOST_AUTO_TEST_CASE(simple)
 {
-
-  int nstreams = 4;
-  int nmoms = 2*nstreams;
-  bool do_multiple_scattering_only = false;
-
-  // Use simple BREON throughout
-  int surface_type = BPDFVEGN;
-  ArrayAd<double, 1> surface_params(5, 1); 
-  surface_params = 0.0;
-
-  boost::shared_ptr<LidortRtDriver> lidort_driver(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir));
-
-  int nlayer = 1;
-  Array<double, 1> heights(nlayer+1);
-  ArrayAd<double, 1> od(nlayer,1);
-  ArrayAd<double, 1> ssa(nlayer,1);
-  ArrayAd<double, 2> pf(lidort_driver->number_moment(),nlayer,1);
-  double taug, taur;
-  Range all = Range::all();
 
   double refl_calc;
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf;
 
-  // Turn off delta-m scaling
-  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
-
-  // Plane-parallel
-  lidort_driver->set_plane_parallel();
-
-  // Simple height grid evenly spaced
-  heights(0) = 100;
-  for(int hidx = 1; hidx < nlayer+1; hidx++) {
-    heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
-  }
-
-  // No aerosols, and depolization factor = 0 
-  // so simplified phase function moments:
-  pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
-
   ////////////////
   // Surface only
+
   surface_params(0) = 1.0; // rahman kernel factor
   surface_params(1) = 0.1; // hotspot parameter
   surface_params(2) = 0.3; // asymmetry
   surface_params(3) = 1.5; // anisotropy_parameter
   surface_params(4) = 1.0; // breon kernel factor
+
+  ArrayAd<double, 1> lidort_surface(surface_params.shape(), 1);
+
+  lidort_surface.value() = surface_params;
+  lidort_surface.jacobian() = 1.0;
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
@@ -407,7 +377,7 @@ BOOST_AUTO_TEST_CASE(simple)
   sza = 0.1;
 
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
-                                                    surface_type, surface_params,
+                                                    surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc, jac_atm, jac_surf);
 
   // Compare against an offline calculated value, or could compare against value from l_rad
@@ -428,7 +398,7 @@ BOOST_AUTO_TEST_CASE(simple)
   // First check PP mode against value just computed
   for(int p_idx = 0; p_idx < pert_values.extent(firstDim); p_idx++) {
     blitz::Array<double,1> surface_params_pert( surface_params.rows() );
-    surface_params_pert = surface_params.value();
+    surface_params_pert = surface_params;
     surface_params_pert(p_idx) += pert_values(p_idx);
 
     refl_fd = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),

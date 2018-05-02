@@ -51,6 +51,15 @@ public:
   virtual ~LidortDriverLambertianFixture() {};
 };
 
+/****************************************************************//**
+ Fixture for LidortRtDriver lambertian mode thermal mode
+*******************************************************************/
+
+class LidortDriverLambertianThermalFixture : public LidortDriverCommonFixture {
+public:
+  LidortDriverLambertianThermalFixture();
+  virtual ~LidortDriverLambertianThermalFixture() {};
+};
 
 /****************************************************************//**
  Fixture for LidortRtDriver coxmunk mode
@@ -63,13 +72,13 @@ public:
 };
 
 /****************************************************************//**
- Fixture for LidortRtDriver lambertian mode thermal mode
+ Fixture for LidortRtDriver coxmunk mode
 *******************************************************************/
 
-class LidortDriverLambertianThermalFixture : public LidortDriverCommonFixture {
+class LidortDriverBrdfVegFixture : public LidortDriverCommonFixture {
 public:
-  LidortDriverLambertianThermalFixture();
-  virtual ~LidortDriverLambertianThermalFixture() {};
+  LidortDriverBrdfVegFixture();
+  virtual ~LidortDriverBrdfVegFixture() {};
 };
 
 /****************************************************************//**
@@ -102,7 +111,7 @@ public:
   LidortRt based on the ConfigurationFixture.
 *******************************************************************/
 class LidortLambertianFixture : public LidortRtCommonFixture, 
-				public ConfigurationFixture {
+                                public ConfigurationFixture {
 public:
   LidortLambertianFixture(const std::string& Config_file = "config.lua");
   virtual ~LidortLambertianFixture() {};
@@ -114,7 +123,7 @@ public:
   LidortLambertianFixture but using coxmunk surface type
 *******************************************************************/
 class LidortCoxmunkFixture : public LidortRtCommonFixture, 
-			     public ConfigurationCoxmunkFixture {
+                             public ConfigurationCoxmunkFixture {
 public:
   LidortCoxmunkFixture(const std::string& Config_file = "config_coxmunk.lua");
   virtual ~LidortCoxmunkFixture() {};

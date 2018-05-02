@@ -50,7 +50,7 @@ LidortDriverLambertianFixture::LidortDriverLambertianFixture() : LidortDriverCom
   surface_params.resize(1); 
   surface_type = LAMBERTIAN;
 
-  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, LAMBERTIAN, zen, pure_nadir));  
+  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir));  
 
   // Turn off delta-m scaling
   lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
@@ -67,7 +67,7 @@ LidortDriverLambertianThermalFixture::LidortDriverLambertianThermalFixture() : L
   bool do_solar = false;
   bool do_thermal = true;
 
-  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, LAMBERTIAN, zen, pure_nadir, do_solar, do_thermal));
+  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir, do_solar, do_thermal));
 
   // Turn off delta-m scaling
   lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
@@ -81,7 +81,7 @@ LidortDriverCoxmunkFixture::LidortDriverCoxmunkFixture() : LidortDriverCommonFix
   surface_params.resize(4); 
   surface_type = COXMUNK;
 
-  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, COXMUNK, zen, pure_nadir));
+  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir));
 
   // Turn off delta-m scaling
   lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
@@ -89,6 +89,22 @@ LidortDriverCoxmunkFixture::LidortDriverCoxmunkFixture() : LidortDriverCommonFix
   // Plane-parallel
   lidort_driver->set_plane_parallel();
 }
+
+LidortDriverBrdfVegFixture::LidortDriverBrdfVegFixture() : LidortDriverCommonFixture()
+{
+  surface_params.resize(5); 
+  surface_type = BPDFVEGN;
+
+  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir));
+
+  // Turn off delta-m scaling
+  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  lidort_driver->set_plane_parallel();
+}
+
+
 
 /********************************************************************/
 
