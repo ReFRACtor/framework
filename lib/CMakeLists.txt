@@ -9,12 +9,9 @@ set(SWIG_INTERFACE_FILES "")
 
 # Install all common include files
 #
-# The trailing / on the source dir ensures files get copied to the same destination path
-# instead of having the directory (ie lib/) copied to the destination path
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ DESTINATION include/refractor
-    FILES_MATCHING 
-        PATTERN "*.h" 
-        PATTERN "*.i")
+# The top level lib folder has some header and interface files we need to install
+file(GLOB LIB_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
+install(FILES ${LIB_INCLUDE_FILES} DESTINATION include/refractor)
 
 foreach(sub_dir FixedLevel Implementation Interface Lua RegisterOutput Support Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
