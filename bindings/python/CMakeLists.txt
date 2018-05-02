@@ -65,8 +65,12 @@ file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
 execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_swig_wrap.py ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx ${SWIG_MODULE_NAMES})
 
 # Create refractor SWIG library
-swig_add_library(swig_wrap TYPE SHARED LANGUAGE python SOURCES ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
-
+if(CMAKE_VERSION VERSION_GREATER 3.7)
+    swig_add_library(swig_wrap TYPE SHARED LANGUAGE python SOURCES ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
+else()
+    # Add module was deprecated at CMake 3.8, only use it for older cmake versions
+    swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cxx)
+endif()
 
 # Link with main library, which is also called refractor!
 swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} refractor)

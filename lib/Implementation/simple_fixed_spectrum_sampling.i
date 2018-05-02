@@ -8,6 +8,7 @@
 %import "spectral_domain.i"
 %fp_shared_ptr(FullPhysics::SimpleFixedSpectrumSampling);
 namespace FullPhysics {
+%feature("notabstract") SimpleFixedSpectrumSampling;
 class SimpleFixedSpectrumSampling : public SpectrumSampling {
 public:
   SimpleFixedSpectrumSampling(double wn_start, double wn_end, double wn_step);
