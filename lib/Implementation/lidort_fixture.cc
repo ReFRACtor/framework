@@ -12,28 +12,85 @@ LidortDriverCommonFixture::LidortDriverCommonFixture() : sza(3), zen(3), azm(3)
   zen = 0.0;
   azm = 0.0;
   pure_nadir = false;
+  do_multiple_scattering_only = false;
 
-  wn_arr.resize(2);
-  wn_arr = 12929.94, 12930.30; 
+  nstreams = 4;
+  nmoms = 2*nstreams;
+
+  nlayer = 1;
+  heights.resize(nlayer+1);
+  od.resize(nlayer, 1);
+  ssa.resize(nlayer, 1);
+  pf.resize(nmoms, nlayer, 1);
+
+  // Simple height grid evenly spaced
+  heights(0) = 100;
+  for(int hidx = 1; hidx < nlayer+1; hidx++) {
+    heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
+  }
+
+  // No aerosols, and depolization factor = 0 
+  // so simplified phase function moments:
+  Range all = Range::all();
+  pf = 0.0;
+  pf(0, all) = 1.0;
+  pf(2, all) = 0.5; 
+
+  surface_params = 0.0;
+  surface_type = -1;
+  od = 0.0;
+  ssa = 0.0;
+
+  taug = 0.0;
+  taur = 0.0;
 }
 
 LidortDriverLambertianFixture::LidortDriverLambertianFixture() : LidortDriverCommonFixture()
 {
-  int nstreams = 4;
-  int nmoms = 3;
-  bool do_multiple_scattering_only = false;
+  surface_params.resize(1); 
+  surface_type = LAMBERTIAN;
 
   lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, LAMBERTIAN, zen, pure_nadir));  
+
+  // Turn off delta-m scaling
+  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  lidort_driver->set_plane_parallel();
+}
+
+LidortDriverLambertianThermalFixture::LidortDriverLambertianThermalFixture() : LidortDriverCommonFixture()
+{
+  surface_params.resize(1); 
+  surface_type = LAMBERTIAN;
+
+  bool do_solar = false;
+  bool do_thermal = true;
+
+  lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, LAMBERTIAN, zen, pure_nadir, do_solar, do_thermal));
+
+  // Turn off delta-m scaling
+  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  lidort_driver->set_plane_parallel();
 }
 
 LidortDriverCoxmunkFixture::LidortDriverCoxmunkFixture() : LidortDriverCommonFixture()
 {
-  int nstreams = 4;
-  int nmoms = 2*nstreams;
-  bool do_multiple_scattering_only = false;
+  surface_params.resize(4); 
+  surface_type = LAMBERTIAN;
 
   lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, COXMUNK, zen, pure_nadir));
+
+  // Turn off delta-m scaling
+  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  lidort_driver->set_plane_parallel();
 }
+
+/********************************************************************/
 
 LidortRtCommonFixture::LidortRtCommonFixture() : sza(3), zen(3), azm(3)
 {

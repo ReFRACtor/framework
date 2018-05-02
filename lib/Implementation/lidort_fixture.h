@@ -22,9 +22,23 @@ public:
   /// high_rt.
   blitz::Array<double, 1> sza, zen, azm;
   bool pure_nadir;
+  bool do_multiple_scattering_only;
 
-  /// Wavenumber array used for testing
-  blitz::Array<double, 1> wn_arr;
+  int nstreams;
+  int nmoms;
+
+  int nlayer;
+  blitz::Array<double, 1> heights;
+
+  blitz::Array<double, 1> surface_params;
+  int surface_type;
+
+  ArrayAd<double, 1> od;
+  ArrayAd<double, 1> ssa;
+  ArrayAd<double, 2> pf;
+
+  double taug;
+  double taur;
 };
 
 /****************************************************************//**
@@ -46,6 +60,16 @@ class LidortDriverCoxmunkFixture : public LidortDriverCommonFixture {
 public:
   LidortDriverCoxmunkFixture();
   virtual ~LidortDriverCoxmunkFixture() {};
+};
+
+/****************************************************************//**
+ Fixture for LidortRtDriver lambertian mode thermal mode
+*******************************************************************/
+
+class LidortDriverLambertianThermalFixture : public LidortDriverCommonFixture {
+public:
+  LidortDriverLambertianThermalFixture();
+  virtual ~LidortDriverLambertianThermalFixture() {};
 };
 
 /****************************************************************//**

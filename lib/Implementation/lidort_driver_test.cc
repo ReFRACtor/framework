@@ -24,43 +24,12 @@ bool check_brdf_inputs(boost::shared_ptr<LidortRtDriver>& lidort_driver) {
   return brdf_check_status.ts_status_inputcheck() == lid_pars.lidort_success;
 }
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_simple, LidortDriverLambertianFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_solar, LidortDriverLambertianFixture)
 
-BOOST_AUTO_TEST_CASE(simple)
+BOOST_AUTO_TEST_CASE(solar_sources)
 {
-  int nlayer = 1;
-  Array<double, 1> heights(nlayer+1);
-  Array<double, 1> surface_params(1); 
-  Array<double, 1> od(nlayer);
-  Array<double, 1> ssa(nlayer);
-  Array<double, 2> pf(lidort_driver->number_moment(),nlayer);
-  double taug, taur;
-  Range all = Range::all();
-
   double refl_calc;
   double refl_expected;
-
-  // Turn off delta-m scaling
-  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
-
-  // Plane-parallel
-  lidort_driver->set_plane_parallel();
-
-  // Simple height grid evenly spaced
-  heights(0) = 100;
-  for(int hidx = 1; hidx < nlayer+1; hidx++) {
-    heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
-  }
-
-  // No aerosols, and depolization factor = 0 
-  // so simplified phase function moments:
-  pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
-
-  // Use simple lambertian throughout
-  int surface_type = LAMBERTIAN;
-  surface_params = 0.0;
 
   ////////////////
   // Surface only
@@ -70,11 +39,11 @@ BOOST_AUTO_TEST_CASE(simple)
   taug = 1.0e-6/nlayer;
 
   od = taur + taug;
-  ssa = taur / od;
+  ssa.value() = taur / od.value();
 
   refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
-                                                   od, ssa, pf);
+                                                   od.value(), ssa.value(), pf.value());
   
   // Surface only = 1/pi
   // This checks % differerence, so tol is % diff
@@ -89,11 +58,11 @@ BOOST_AUTO_TEST_CASE(simple)
   taug = 1.0/nlayer;
 
   od = taur + taug;
-  ssa = taur / od;
+  ssa.value() = taur / od.value();
 
   refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
-                                                   od, ssa, pf);
+                                                   od.value(), ssa.value(), pf.value());
 
   refl_expected = 1/OldConstant::pi * exp(-1/cos(sza(0))) * exp(-1/cos(zen(0)));
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
@@ -106,11 +75,11 @@ BOOST_AUTO_TEST_CASE(simple)
   taug = 1.0e-6/nlayer;
 
   od = taur + taug;
-  ssa = taur / od;
+  ssa.value() = taur / od.value();
 
   refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
-                                                   od, ssa, pf);
+                                                   od.value(), ssa.value(), pf.value());
 
 
   // Expected value from VLIDORT, this is
@@ -119,75 +88,95 @@ BOOST_AUTO_TEST_CASE(simple)
   refl_expected = 2.387246757232095E-003;
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 6e-3);
 
-  ////////////////////////////////////
-  // Thermal only, no surface, no gas
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_thermal, LidortDriverLambertianThermalFixture)
+
+BOOST_AUTO_TEST_CASE(thermal_emission)
+{
+  double refl_calc;
+  double refl_expt;
+
+  /////////////////////////////////////////////
+  // Thermal setup
+
+  // Just some nominal values to calculate the planck function
+  double wn = 568.69;
+  double temperature = 290.0;
+  double bb_surface = planck(wn, temperature);
+  Array<double, 1> bb_atm(2);
+  bb_atm = planck(wn, temperature);
+
+  std::cerr << "bb_atm = " << bb_atm << std::endl;
+
+  ////////////////////////
+  // Thermal surface only
+  surface_params(0) = 1.0;
+
+  taur = 1.0e-6/nlayer;
+  taug = 1.0e-6/nlayer;
+
+  od = taur + taug;
+  ssa.value() = taur / od.value();
+
+  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                   surface_type, surface_params,
+                                                   od.value(), ssa.value(), pf.value(),
+                                                   bb_surface, bb_atm);
+
+  std::cerr << "ref_calc surface only = " << refl_calc << std::endl;
+  std::cerr << (*lidort_driver->brdf_interface()) << std::endl;
+  std::cerr << (*lidort_driver->lidort_interface()) << std::endl;
+
+  ////////////////////////
+  // Thermal gas + surface
+  surface_params(0) = 1.0;
+
+  taur = 1.0e-6/nlayer;
+  taug = 1.0/nlayer;
+
+  od = taur + taug;
+  ssa.value() = taur / od.value();
+
+  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                   surface_type, surface_params,
+                                                   od.value(), ssa.value(), pf.value(),
+                                                   bb_surface, bb_atm);
+
+  std::cerr << "ref_calc gas + surface only = " << refl_calc << std::endl;
+
+  /////////////////////////////////////////////
+  // Thermal rayleigh only, no surface, no gas
   surface_params(0) = 0.0;
 
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
 
   od = taur + taug;
-  ssa = taur / od;
-
-  bool do_solar = false;
-  bool do_thermal = true;
-
-  // Just some nominal values to calculate the planck function
-  double wn = 568.69;
-  double temperature = 290.0;
-  double bb_surface = 0.0;
-  Array<double, 1> bb_atm(1);
-  bb_atm(0) = planck(wn, temperature);
+  ssa.value() = taur / od.value();
 
   refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
-                                                   od, ssa, pf,
-                                                   do_solar, do_thermal,
+                                                   od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
-  std::cerr << "ref_calc thermal = " << refl_calc << std::endl;
+
+
+  std::cerr << "ref_calc rayleigh only = " << refl_calc << std::endl;
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
+ 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_simple, LidortDriverCoxmunkFixture)
 
 BOOST_AUTO_TEST_CASE(simple)
 {
-  int nlayer = 1;
-  Array<double, 1> heights(nlayer+1);
-  Array<double, 1> surface_params(4); 
-  Array<double, 1> od(nlayer);
-  Array<double, 1> ssa(nlayer);
-  Array<double, 2> pf(lidort_driver->number_moment(), nlayer);
-  double taug, taur;
-  Range all = Range::all();
-
   double refl_calc;
   double refl_expected;
-
-  // Turn off delta-m scaling
-  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
-
-  // Plane-parallel
-  lidort_driver->set_plane_parallel();
-
-  // Simple height grid evenly spaced
-  heights(0) = 100;
-  for(int hidx = 1; hidx < nlayer+1; hidx++) {
-    heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
-  }
-
-  // No aerosols, and depolization factor = 0 
-  // so simplified phase function moments:
-  pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
-
-  // Use simple lambertian throughout
-  int surface_type = COXMUNK;
-  surface_params = 0.0;
 
   ////////////////
   // Surface only
@@ -198,11 +187,11 @@ BOOST_AUTO_TEST_CASE(simple)
   taug = 1.0e-6/nlayer;
 
   od = taur + taug;
-  ssa = taur / od;
+  ssa.value() = taur / od.value();
 
   refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
-                                                   od, ssa, pf);
+                                                   od.value(), ssa.value(), pf.value());
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
   
@@ -220,33 +209,8 @@ BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_plus_lamb_simple, LidortDriverCox
 
 BOOST_AUTO_TEST_CASE(simple)
 {
-  int nlayer = 1;
-  Array<double, 1> heights(nlayer+1);
-  Array<double, 1> surface_params(4); 
-  ArrayAd<double, 1> od(nlayer, 1);
-  ArrayAd<double, 1> ssa(nlayer, 1);
-  ArrayAd<double, 2> pf(lidort_driver->number_moment(),nlayer, 1);
-  double taug, taur;
-  Range all = Range::all();
-
   double refl_calc;
   double refl_expt;
-
-  // Simple height grid evenly spaced
-  heights(0) = 100;
-  for(int hidx = 1; hidx < nlayer+1; hidx++) {
-    heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
-  }
-
-  // No aerosols, and depolization factor = 0 
-  // so simplified phase function moments:
-  pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
-
-  // Use simple lambertian throughout
-  int surface_type = COXMUNK;
-  surface_params = 0.0;
 
   ////////////////
   // Surface only
