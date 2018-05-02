@@ -95,11 +95,10 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   Array<double, 2> brdf_parameters(3,3);
 
   // Thermal variables
-  // Not using thermal variables
-  //double surfbb;
-  //Array<double, 1> thermal_bb_input(nlayers+1); // ( 0:NLAYERS )
-  //double emissivity;
-  //Array<double, 1> ls_emiss(nspars);
+  double surfbb;
+  Array<double, 1> thermal_bb_input(nlayers+1); // ( 0:NLAYERS )
+  double emissivity;
+  Array<double, 1> ls_emissivity(nspars);
 
   // Input thread
   int thread;
@@ -272,8 +271,8 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   ls_brdf_f.reference(twostream_brdf.ls_brdf_f());
   ls_ubrdf_f.reference(twostream_brdf.ls_ubrdf_f());
 
-  //emissivity = twostream_brdf.emissivity();
-  //ls_emiss.reference(twostream_brdf.ls_emissivity());
+  emissivity = twostream_brdf.emissivity();
+  ls_emissivity.reference(twostream_brdf.ls_emissivity());
 
   // Baseline calculation 2 : RADIANCE+ PROFILE/SURFACE WFS
   // ======================================================
@@ -391,11 +390,10 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   twostream_rt.brdf_f(brdf_f);
   twostream_rt.ubrdf_f(ubrdf_f);
 
-  // Not using thermal portions
-  //twostream_rt.thermal_bb_input(thermal_bb_input);
-  //twostream_rt.surfbb(surfbb);
-  //twostream_rt.emissivity(emissivity);
-  //twostream_rt.ls_emiss(ls_emiss);
+  twostream_rt.thermal_bb_input(thermal_bb_input);
+  twostream_rt.surfbb(surfbb);
+  twostream_rt.emissivity(emissivity);
+  twostream_rt.ls_emissivity(ls_emissivity);
 
   twostream_rt.ls_brdf_f_0(ls_brdf_f_0);
   twostream_rt.ls_brdf_f(ls_brdf_f);

@@ -191,7 +191,9 @@ void TwostreamRtDriver::initialize_rt()
   // Set a value or divide by zeros will occur
   twostream_interface_->bvpscalefactor(1.0);
 
-  // Two choices of stream value................ CHOOSE One !!!!!
+  // 2stream guide says this:
+  // For scattering applications, should be set to 0.5
+  // For thermal applications, should be set to sqrt(1/3)
   if (do_fullquadrature_)
     twostream_interface_->stream_value( sqrt(1.0e0 / 3.0e0 ) );
   else
@@ -214,17 +216,19 @@ void TwostreamRtDriver::initialize_rt()
   // Normally set to 1 for "sun-normalized" output
   twostream_interface_->flux_factor(1.0);
 
-  // Setup solar sources calculation
+  // Enable solar sources for RT & BRDF
   if (do_solar_sources) {
-      // Enable solar sources for RT
       twostream_interface_->do_solar_sources(true);
 
-      // Enable solar sources for BRDF
       brdf_interface()->do_solar_sources(true);
   }
 
-  // Setup thermal emission calculation
+  // Setup thermal emission calculation for RT and BRDF
   if (do_thermal_emission) {
+      twostream_interface_->do_thermal_emission(true);
+      twostream_interface_->do_surface_emission(true);
+
+      brdf_interface()->do_surface_emission(true);
   }
 
   // Flag for calculating profile Jacobians in layer n
@@ -276,6 +280,12 @@ void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
 
 void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
 {
+  twostream_interface_->surfbb(surface_bb);
+
+  // Thermal black body atmosphere inputs will be on levels instead of layers
+  Range rlev(0, atmosphere_bb.extent(firstDim) - 1);
+  Array<double, 1> thermal_bb_input( twostream_interface_->thermal_bb_input() );
+  thermal_bb_input(rlev) = atmosphere_bb;
 }
 
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 

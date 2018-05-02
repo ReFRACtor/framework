@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   double wn = 568.69;
   double temperature = 290.0;
   double bb_surface = planck(wn, temperature);
-  Array<double, 1> bb_atm(2);
+  Array<double, 1> bb_atm(nlayer + 1);
   bb_atm = planck(wn, temperature);
 
   ////////////////////////
