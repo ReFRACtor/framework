@@ -241,8 +241,6 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
                                             const Array<double, 1>& od, 
                                             const Array<double, 1>& ssa,
                                             const Array<double, 2>& pf,
-                                            const bool do_solar,
-                                            const bool do_thermal,
                                             double surface_bb,
                                             const Array<double, 1>& atmosphere_bb)
 {
@@ -251,11 +249,9 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
   brdf_driver_-> setup_geometry(sza, azm, zen);
   setup_geometry(sza, azm, zen);
 
-  if (do_solar)
-      setup_solar_sources();
 
-  if (do_thermal)
-      setup_thermal_emission(surface_bb, atmosphere_bb);
+  if (do_thermal_emission)
+      setup_thermal_inputs(surface_bb, atmosphere_bb);
 
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
@@ -287,8 +283,6 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
                                                        double& reflectance,
                                                        Array<double, 2>& jac_atm, 
                                                        Array<double, 1>& jac_surf,
-                                                       const bool do_solar,
-                                                       const bool do_thermal,
                                                        double surface_bb,
                                                        const Array<double, 1>& atmosphere_bb)
 
@@ -298,11 +292,8 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
   brdf_driver_->setup_geometry(sza, azm, zen);
   setup_geometry(sza, azm, zen);
 
-  if (do_solar)
-      setup_solar_sources();
-
-  if (do_thermal)
-      setup_thermal_emission(surface_bb, atmosphere_bb);
+  if (do_thermal_emission)
+      setup_thermal_inputs(surface_bb, atmosphere_bb);
 
   // Set up BRDF inputs and run
   surface_parameters = brdf_driver_->setup_brdf_inputs(surface_type, surface_parameters);

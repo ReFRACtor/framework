@@ -25,6 +25,9 @@ public:
 
 class SpurrRtDriver {
 public:
+
+  SpurrRtDriver(bool do_solar = true, bool do_thermal = false);
+
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
                                        double sza, double azm, double zen,
                                        int surface_type,
@@ -32,8 +35,6 @@ public:
                                        const blitz::Array<double, 1>& od, 
                                        const blitz::Array<double, 1>& ssa,
                                        const blitz::Array<double, 2>& pf,
-                                       const bool do_solar = true,
-                                       const bool do_thermal = false,
                                        double surface_bb = 0,
                                        const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
@@ -47,16 +48,13 @@ public:
                                                   double& reflectance,
                                                   blitz::Array<double, 2>& jac_atm, 
                                                   blitz::Array<double, 1>& jac_surf,
-                                                  const bool do_solar = true,
-                                                  const bool do_thermal = false,
                                                   double surface_bb = 0,
                                                   const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
   %python_attribute(brdf_driver, boost::shared_ptr<SpurrBrdfDriver>)
   virtual void setup_height_grid(const blitz::Array<double, 1>& height_grid) const = 0;
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
-  virtual void setup_solar_sources() const = 0;
-  virtual void setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
+  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
   virtual void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                     const blitz::Array<double, 1>& ssa,
                                     const blitz::Array<double, 2>& pf) const = 0;

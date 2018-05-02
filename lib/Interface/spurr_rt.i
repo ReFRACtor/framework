@@ -19,8 +19,9 @@ public:
           const blitz::Array<double, 1>& Sza, 
           const blitz::Array<double, 1>& Zen, 
           const blitz::Array<double, 1>& Azm,
-          const bool do_solar = true,
-          const bool do_thermal = false);
+          bool do_solar = true,
+          bool do_thermal = false);
+
   %python_attribute(number_stokes, virtual int)
   %python_attribute(surface_type, virtual int)
   virtual blitz::Array<double, 2> stokes(const SpectralDomain& Spec_domain,

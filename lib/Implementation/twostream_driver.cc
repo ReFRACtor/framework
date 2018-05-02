@@ -155,8 +155,9 @@ void TwostreamBrdfDriver::initialize_kernel_parameters(const int kernel_index,
 /// Use do_fullquadratures = false only for comparison against LIDORT 
 //=======================================================================
 
-TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature)
-  : surface_type_(surface_type), do_fullquadrature_(do_fullquadrature)
+TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature,
+        bool do_solar, bool do_thermal)
+  : surface_type_(surface_type), do_fullquadrature_(do_fullquadrature), SpurrRtDriver(do_solar, do_thermal)
 {
   brdf_driver_.reset( new TwostreamBrdfDriver(surface_type_) );
 
@@ -213,6 +214,19 @@ void TwostreamRtDriver::initialize_rt()
   // Normally set to 1 for "sun-normalized" output
   twostream_interface_->flux_factor(1.0);
 
+  // Setup solar sources calculation
+  if (do_solar_sources) {
+      // Enable solar sources for RT
+      twostream_interface_->do_solar_sources(true);
+
+      // Enable solar sources for BRDF
+      brdf_interface()->do_solar_sources(true);
+  }
+
+  // Setup thermal emission calculation
+  if (do_thermal_emission) {
+  }
+
   // Flag for calculating profile Jacobians in layer n
   // Calculate jacobians for all layers
   Array<bool, 1> layer_jac_flag(twostream_interface_->layer_vary_flag());
@@ -260,16 +274,7 @@ void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
   ts_zen(0) = zen;
 }
 
-void TwostreamRtDriver::setup_solar_sources() const
-{
-  // Enable solar sources for RT
-  twostream_interface_->do_solar_sources(true);
-
-  // Enable solar sources for BRDF
-  brdf_interface()->do_solar_sources(true);
-}
-
-void TwostreamRtDriver::setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
+void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
 {
 }
 

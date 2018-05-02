@@ -54,7 +54,7 @@ LidortRt::LidortRt(const boost::shared_ptr<RtAtmosphere>& Atm,
                    bool do_thermal)
 : SpurrRt(Atm, Stokes_coef, Sza, Zen, Azm, do_solar, do_thermal)
 {   
-  rt_driver_.reset(new LidortRtDriver(Number_streams, Number_moments, Do_multi_scatt_only, surface_type(), Zen, Pure_nadir));
+  rt_driver_.reset(new LidortRtDriver(Number_streams, Number_moments, Do_multi_scatt_only, surface_type(), Zen, Pure_nadir, do_solar, do_thermal));
 }
 
 //-----------------------------------------------------------------------

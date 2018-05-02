@@ -164,8 +164,11 @@ void LidortBrdfDriver::initialize_kernel_parameters(const int kernel_index,
 // LidortRtDriver
 //=======================================================================
 
-LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type, const blitz::Array<double, 1>& zen, bool pure_nadir)
-  : nstream_(nstream), nmoment_(nmoment), do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type), pure_nadir_(pure_nadir)
+LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, 
+        int surface_type, const blitz::Array<double, 1>& zen, bool pure_nadir,
+        bool do_solar, bool do_thermal)
+  : nstream_(nstream), nmoment_(nmoment), do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type), pure_nadir_(pure_nadir),
+    SpurrRtDriver(do_solar, do_thermal)
 {
   brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
@@ -253,6 +256,26 @@ void LidortRtDriver::initialize_rt()
   // Beam source flux, same value used for all solar angles
   // Normally set to 1 for "sun-normalized" output
   fbeam_inputs.ts_flux_factor(1.0);
+
+  // Enable solar sources calculations
+  if (do_solar_sources) {
+      // Needed for atmospheric scattering of sunlight
+      mboolean_inputs.ts_do_solar_sources(true);
+      
+      // Enable solar sources in the BRDF driver
+      brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
+  }
+
+  // Enable thermal emission calculation
+  if (do_thermal_emission) {
+      fboolean_inputs.ts_do_thermal_emission(true);
+      fboolean_inputs.ts_do_surface_emission(true);
+
+      // Number of coefficients used in treatment of blackbody emissions in a layer
+      // 1 implies constant within a layer
+      // 2 implies a lineaer treatment
+      fcontrol_inputs.ts_n_thermal_coeffs(2);
+  }
 
   // Number of solar beams
   mbeam_inputs.ts_nbeams(1);
@@ -423,31 +446,16 @@ void LidortRtDriver::setup_geometry(double sza, double azm, double zen) const
   ld_zen(0) = zen;
 }
 
-void LidortRtDriver::setup_solar_sources() const
+void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
 {
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-
-  // Needed for atmospheric scattering of sunlight
-  mboolean_inputs.ts_do_solar_sources(true);
-  
-  // Enable solar sources in the BRDF driver
-  brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
-}
-
-void LidortRtDriver::setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
-{
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
-
-  fboolean_inputs.ts_do_thermal_emission(true);
-  fboolean_inputs.ts_do_surface_emission(true);
-
   Lidort_Fixed_Optical& foptical_inputs = lidort_interface_->lidort_fixin().optical();
 
   foptical_inputs.ts_surface_bb_input(surface_bb);
 
-  Range rlay(0, atmosphere_bb.extent(firstDim) - 1);
+  // Thermal black body atmosphere inputs will be on levels instead of layers
+  Range rlev(0, atmosphere_bb.extent(firstDim) - 1);
   Array<double, 1> thermal_bb_input( foptical_inputs.ts_thermal_bb_input() );
-  thermal_bb_input(rlay) = atmosphere_bb;
+  thermal_bb_input(rlev) = atmosphere_bb;
 }
 
 void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 

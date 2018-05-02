@@ -53,16 +53,18 @@ protected:
 
 class TwostreamRtDriver : public SpurrRtDriver {
 public:
-  TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true);
+  TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true,
+          bool do_solar = true, bool do_thermal = false);
 
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
   void setup_geometry(double sza, double azm, double zen) const;
-  void setup_solar_sources() const;
-  void setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const;
+
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const;
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
                             const blitz::Array<double, 2>& pf) const;
+
   void clear_linear_inputs() const;
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,

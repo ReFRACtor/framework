@@ -39,8 +39,7 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
 : RadiativeTransferSingleWn(Stokes_coef, Atm),
   sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
   do_solar_sources(do_solar), do_thermal_emission(do_thermal),
-  alt_spec_index_cache(-1), geo_spec_index_cache(-1),
-  solar_spec_index_cache(-1)
+  alt_spec_index_cache(-1), geo_spec_index_cache(-1)
 {
   if(sza.rows() != number_spectrometer() ||
      zen.rows() != number_spectrometer() ||
@@ -114,21 +113,12 @@ void SpurrRt::update_geometry(int spec_index) const
               << zen(spec_index) << "\n";
 }
 
-void SpurrRt::setup_solar_sources(int spec_index) const
-{
-  if(spec_index == solar_spec_index_cache || !do_solar_sources)
-    return;
-  solar_spec_index_cache = spec_index;
-
-  rt_driver_->setup_solar_sources();
-}
-
 void SpurrRt::setup_thermal_inputs(double wn, int spec_index) const
 {
   if(!do_thermal_emission)
     return;
 
-  rt_driver_->setup_thermal_emission(atm->surface_blackbody(wn, spec_index).value(), atm->atmosphere_blackbody(wn, spec_index).value());
+  rt_driver_->setup_thermal_inputs(atm->surface_blackbody(wn, spec_index).value(), atm->atmosphere_blackbody(wn, spec_index).value());
 }
 
 // See base class for description of this
@@ -157,8 +147,7 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const Array
   // Update geometry if necessary
   update_geometry(Spec_index);
 
-  // Update solar and thermal if enabled and if necessary
-  setup_solar_sources(Spec_index);
+  // Updae thermal emission inputs if enabled
   setup_thermal_inputs(Wn, Spec_index);
 
   // Set up BRDF inputs, here we throw away the jacobian
@@ -213,8 +202,7 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   // Update geometry if necessary
   update_geometry(Spec_index);
 
-  // Update solar and thermal if enabled and if necessary
-  setup_solar_sources(Spec_index);
+  // Updae thermal emission inputs if enabled
   setup_thermal_inputs(Wn, Spec_index);
 
   // Setup surface

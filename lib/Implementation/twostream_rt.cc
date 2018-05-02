@@ -41,18 +41,18 @@ const bool dump_data = false;
 //-----------------------------------------------------------------------
 
 TwostreamRt::TwostreamRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-              const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+                         const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
                          const blitz::Array<double, 1>& Sza,
                          const blitz::Array<double, 1>& Zen,
                          const blitz::Array<double, 1>& Azm, 
-                         bool do_fullquadrature)
-: SpurrRt(Atm, Stokes_coef, Sza, Zen, Azm)
+                         bool do_fullquadrature, bool do_solar, bool do_thermal)
+: SpurrRt(Atm, Stokes_coef, Sza, Zen, Azm, do_solar, do_thermal)
 {   
-  rt_driver_.reset(new TwostreamRtDriver(atm->number_layer(), surface_type(), do_fullquadrature));
+  rt_driver_.reset(new TwostreamRtDriver(atm->number_layer(), surface_type(), do_fullquadrature, do_solar, do_thermal));
   if(dump_data)
     std::cout << "# Nlayer:\n" << atm->number_layer() << "\n"
-	      << "# Surface type:\n" << surface_type() << "\n"
-	      << "# do_fullquadrature:\n" << do_fullquadrature << "\n";
+              << "# Surface type:\n" << surface_type() << "\n"
+              << "# do_fullquadrature:\n" << do_fullquadrature << "\n";
 }
 
 //-----------------------------------------------------------------------

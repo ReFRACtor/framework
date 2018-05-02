@@ -90,6 +90,10 @@ protected:
 class SpurrRtDriver : public virtual GenericObject {
 
 public:
+
+  SpurrRtDriver(bool do_solar = true, bool do_thermal = false) 
+      : do_solar_sources(do_solar), do_thermal_emission(do_thermal) {}
+
   /// Computes reflectance without jacobians
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
                                        double sza, double azm, double zen,
@@ -98,8 +102,6 @@ public:
                                        const blitz::Array<double, 1>& od, 
                                        const blitz::Array<double, 1>& ssa,
                                        const blitz::Array<double, 2>& pf,
-                                       const bool do_solar = true,
-                                       const bool do_thermal = false,
                                        double surface_bb = 0,
                                        const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
   
@@ -114,8 +116,6 @@ public:
                                                   double& reflectance,
                                                   blitz::Array<double, 2>& jac_atm, 
                                                   blitz::Array<double, 1>& jac_surf,
-                                                  const bool do_solar = true,
-                                                  const bool do_thermal = false,
                                                   double surface_bb = 0,
                                                   const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
@@ -130,11 +130,8 @@ public:
   /// the viewing geometry changes
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
 
-  /// Configure rt to computer solar sources
-  virtual void setup_solar_sources() const = 0;
-
-  /// Configure rt to compute thermal emission
-  virtual void setup_thermal_emission(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
+  /// Set up thermal emission inputs
+  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
 
   /// Set up optical depth, single scattering albedo and phase function
   /// Should be called per spectral point
@@ -162,6 +159,9 @@ public:
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const = 0;
 
 protected:
+
+  bool do_solar_sources, do_thermal_emission;
+
   /// Initializes radiative transfer data structures
   virtual void initialize_rt() = 0;
 

@@ -17,7 +17,9 @@ public:
               const blitz::Array<double, 1>& Sza, 
               const blitz::Array<double, 1>& Zen, 
               const blitz::Array<double, 1>& Azm,
-              bool do_fullquadrature = true);
+              bool do_fullquadrature = true,
+              bool do_solar = true,
+              bool do_thermal = false);
 
   /// Number of quadtature streams in the cosine half space
   virtual int number_stream() const { return 1; }

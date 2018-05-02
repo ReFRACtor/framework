@@ -23,8 +23,8 @@ public:
           const blitz::Array<double, 1>& Sza, 
           const blitz::Array<double, 1>& Zen, 
           const blitz::Array<double, 1>& Azm,
-          const bool do_solar = true,
-          const bool do_thermal = false);
+          bool do_solar = true,
+          bool do_thermal = false);
   
   //-----------------------------------------------------------------------
   /// For performance, we cache some data as we calculate it. This
@@ -61,10 +61,9 @@ protected:
   boost::shared_ptr<SpurrRtDriver> rt_driver_;
 
   // Last index we updates the altitude/geometry for.
-  mutable int alt_spec_index_cache, geo_spec_index_cache, solar_spec_index_cache;
+  mutable int alt_spec_index_cache, geo_spec_index_cache;
   virtual void update_altitude(int spec_index) const;
   virtual void update_geometry(int spec_index) const;
-  virtual void setup_solar_sources(int spec_index) const;
   virtual void setup_thermal_inputs(double wn, int spec_index) const;
 
 };
