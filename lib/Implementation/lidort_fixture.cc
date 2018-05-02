@@ -79,7 +79,7 @@ LidortDriverLambertianThermalFixture::LidortDriverLambertianThermalFixture() : L
 LidortDriverCoxmunkFixture::LidortDriverCoxmunkFixture() : LidortDriverCommonFixture()
 {
   surface_params.resize(4); 
-  surface_type = LAMBERTIAN;
+  surface_type = COXMUNK;
 
   lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, COXMUNK, zen, pure_nadir));
 

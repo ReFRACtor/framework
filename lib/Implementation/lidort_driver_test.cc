@@ -109,8 +109,6 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   Array<double, 1> bb_atm(2);
   bb_atm = planck(wn, temperature);
 
-  std::cerr << "bb_atm = " << bb_atm << std::endl;
-
   ////////////////////////
   // Thermal surface only
   surface_params(0) = 1.0;
@@ -126,9 +124,8 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  std::cerr << "ref_calc surface only = " << refl_calc << std::endl;
-  std::cerr << (*lidort_driver->brdf_interface()) << std::endl;
-  std::cerr << (*lidort_driver->lidort_interface()) << std::endl;
+  refl_expt = 4.1589832679596769E-007;
+  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
 
   ////////////////////////
   // Thermal gas + surface
@@ -145,7 +142,8 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  std::cerr << "ref_calc gas + surface only = " << refl_calc << std::endl;
+  refl_expt = 0.12744448991675422;
+  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-2);
 
   /////////////////////////////////////////////
   // Thermal rayleigh only, no surface, no gas
@@ -162,8 +160,8 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-
-  std::cerr << "ref_calc rayleigh only = " << refl_calc << std::endl;
+  refl_expt = 0.13726029535967835;
+  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
 
 }
 

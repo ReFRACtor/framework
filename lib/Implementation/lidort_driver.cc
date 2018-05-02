@@ -275,6 +275,9 @@ void LidortRtDriver::initialize_rt()
       // 1 implies constant within a layer
       // 2 implies a lineaer treatment
       fcontrol_inputs.ts_n_thermal_coeffs(2);
+
+      // Enable solar sources in the BRDF driver
+      brdf_interface()->brdf_sup_in().bs_do_surface_emission(true);
   }
 
   // Number of solar beams
