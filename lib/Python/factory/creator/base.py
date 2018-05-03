@@ -14,6 +14,9 @@ from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Sca
 
 logger = logging.getLogger('factory.creator.base')
 
+class CreatorError(Exception):
+    pass
+
 class ParameterAccessor(object):
     "Proxy class to stand in place of ConfigParam defitions in Creator instances, to allow accessing as if a method of the creator class"
 

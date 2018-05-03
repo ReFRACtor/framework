@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 
-from .base import Creator, ParamPassThru
+from .base import Creator, ParamPassThru, CreatorError
 from .value import CreatorFlaggedValue
 from .. import param
 
@@ -18,6 +18,7 @@ class AtmosphereCreator(Creator):
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
     ground = param.InstanceOf(rf.Ground, required=False)
     aerosol = param.InstanceOf(rf.Aerosol, required=False)
+    surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
     constants = param.InstanceOf(rf.Constant)
 
     def create(self, **kwargs):
@@ -29,8 +30,16 @@ class AtmosphereCreator(Creator):
         relative_humidity = self.common_store["relative_humidity"] = self.relative_humidity()
         aerosol = self.common_store["aerosol"] = self.aerosol()
         ground = self.common_store["ground"] = self.ground()
+        surf_temp = self.common_store["surface_temperature"] = self.surface_temperature()
 
-        if aerosol and ground:
+        if surf_temp and not ground:
+            raise CreatorError("Surface temperature can not be defined without ground being defined for atmosphere setup")
+
+        if aerosol and ground and surf_temp:
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitudes, self.constants())
+        if ground and surf_temp:
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitudes, self.constants())
+        elif aerosol and ground:
             return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitudes, self.constants())
         elif aerosol:
             return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, altitudes, self.constants())
@@ -76,6 +85,13 @@ class TemperatureMet(CreatorFlaggedValue):
         ret_flag = bool(self.retrieval_flag()[0])
 
         return rf.TemperatureMet(self.met(), self.pressure(), offset, ret_flag)
+
+class SurfaceTemperature(CreatorFlaggedValue):
+    "Creates a SurfaceTemperature object for use by AtmospherCreator"
+
+    def create(self, **kwargs):
+
+        return rf.SurfaceTemperatureDirect(self.value(), self.retrieval_flag())
 
 class TemperatureLevelOffset(CreatorFlaggedValue):
     "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"

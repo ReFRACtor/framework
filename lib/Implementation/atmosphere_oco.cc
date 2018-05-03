@@ -588,8 +588,8 @@ AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_inde
         throw error;
     }
 
-    double surf_temp_K = surface_temp->surface_temperature().convert(Unit("K")).value.value();
-    Array<double, 1> surf_temp_grad = surface_temp->surface_temperature().value.gradient();
+    double surf_temp_K = surface_temp->surface_temperature(spec_index).convert(Unit("K")).value.value();
+    Array<double, 1> surf_temp_grad = surface_temp->surface_temperature(spec_index).value.gradient();
     return planck(wn, surf_temp_K, surf_temp_grad);
 }
 

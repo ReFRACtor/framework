@@ -17,7 +17,7 @@
 namespace FullPhysics {
 class SurfaceTemperatureDirect : public SubStateVectorArray<SurfaceTemperature> {
 public:
-    SurfaceTemperatureDirect(DoubleWithUnit surf_temp);
+    SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp, blitz::Array<bool, 1> flag);
     virtual ~SurfaceTemperatureDirect() {}
 
     //-----------------------------------------------------------------------
@@ -26,8 +26,11 @@ public:
     /// the temperature grid.
     //-----------------------------------------------------------------------
 
-    virtual AutoDerivativeWithUnit<double> surface_temperature() const;
+    virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const;
     virtual boost::shared_ptr<SurfaceTemperature> clone() const;
+
+    std::string state_vector_name_i(int i) const;
+
 private:
     Unit units;
 };

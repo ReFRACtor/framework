@@ -22,7 +22,7 @@ public:
     virtual ~SurfaceTemperature() {}
     virtual void add_observer(Observer<SurfaceTemperature>& Obs);
     virtual void remove_observer(Observer<SurfaceTemperature>& Obs);
-    virtual AutoDerivativeWithUnit<double> surface_temperature() const = 0;
+    virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const = 0;
     virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
 };
 }
