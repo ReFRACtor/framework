@@ -89,7 +89,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL
     FILES_MATCHING PATTERN "*.py")
 
 # Install SWIG Python code into refractor_swig/
-install(TARGETS _swig_wrap DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
+install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
     FILES_MATCHING PATTERN "*.py")
 

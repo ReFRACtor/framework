@@ -114,3 +114,37 @@ configure_file (
 
 install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTALL_PREFIX}")
 
+# Set up cmake project config file install and include locations 
+set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
+set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+
+# Add refractor (and python if building) targets to the build-tree export set
+if(BUILD_PYTHON_BINDING) 
+    export(TARGETS refractor _swig_wrap FILE "${PROJECT_BINARY_DIR}/RefractorTargets.cmake")
+else()
+    export(TARGETS refractor FILE "${PROJECT_BINARY_DIR}/RefractorTargets.cmake")
+endif()
+export(PACKAGE Refractor)
+
+# Create the RefractorConfig.cmake and RefractorConfigVersion.cmake files
+file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
+MESSAGE("Relative paths and full: ${RELATIVE_PATH} ${REL_INCLUDE_DIR} ${INSTALL_CMAKE_DIR} ${INSTALL_INCLUDE_DIR}")
+# ... for the build tree
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
+configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}/RefractorConfig.cmake" @ONLY)
+MESSAGE("CONF_INCLUDE_DIRS for build ${CONF_INCLUDE_DIRS}")
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${REFRACTOR_CMAKE_DIR}/${REL_INCLUDE_DIR}/refractor")
+configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/RefractorConfig.cmake" @ONLY)
+MESSAGE("CONF_INCLUDE_DIRS for install ${CONF_INCLUDE_DIRS}")
+# ... for both
+configure_file(cmake/Config/RefractorConfigVersion.cmake.in  "${PROJECT_BINARY_DIR}/RefractorConfigVersion.cmake" @ONLY)
+
+MESSAGE("\${PROJECT_BINARY_DIR}\${CMAKE_FILES_DIRECTORY} \${INSTALL_CMAKE_DIR} ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY} ${INSTALL_CMAKE_DIR}")
+# Install RefractorConfig.cmake and RefractorConfigVersion.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/RefractorConfig.cmake"
+  "${PROJECT_BINARY_DIR}/RefractorConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_DIR}")
+# Install the export set for use with the install-tree
+install(EXPORT RefractorTargets DESTINATION  "${INSTALL_CMAKE_DIR}")

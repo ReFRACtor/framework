@@ -51,5 +51,6 @@ set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
 
 # Create installation rules
 install(TARGETS refractor
+    EXPORT RefractorTargets
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib)
