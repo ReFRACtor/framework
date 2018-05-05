@@ -10,9 +10,9 @@ if [ -n "@PYTHON_INSTALL_DIR@" ]; then
 fi
 
 if [ -n "$LD_LIBRARY_PATH" ]; then
-  export LD_LIBRARY_PATH=$refr_install_path/lib:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$refr_install_path/lib:$refr_python_path/refractor_swig:$LD_LIBRARY_PATH
 else
-  export LD_LIBRARY_PATH=$refr_install_path/lib
+  export LD_LIBRARY_PATH=$refr_install_path/lib:$refr_python_path/refractor_swig
 fi
 
 if [ -n "$PYTHONPATH" ]; then
