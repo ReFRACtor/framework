@@ -97,6 +97,9 @@ install(TARGETS l2_fp
 install(DIRECTORY "support/utils/" DESTINATION bin
     USE_SOURCE_PERMISSIONS)
 
+# Install cmake modules
+install(DIRECTORY "cmake/Modules" DESTINATION cmake)
+
 # Build documentation for project
 add_subdirectory(doc)
 
