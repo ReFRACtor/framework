@@ -186,7 +186,8 @@ int AbscoHdf::wn_index(double Wn_in) const
   double f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
   if(f > 0.1 && f < 0.9) {
     Exception e;
-    e << "AbscoHDF does not interpolate in wavenumber direction.\n"
+    e << std::setprecision(8)
+      << "AbscoHDF does not interpolate in wavenumber direction.\n"
       << "The interpolation doesn't work well near peaks, so we\n"
       << "just don't do it. The requested Wn needs to be within 10%\n"
       << "of the absco wn grid, return the value for the closest number.\n"
