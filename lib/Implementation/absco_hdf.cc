@@ -25,7 +25,7 @@ luabind::class_<AbscoHdf,Absco,boost::shared_ptr<GasAbsorption> >
 //-----------------------------------------------------------------------
 
 AbscoHdf::AbscoHdf(const std::string& Fname, double Table_scale,
-		   int Cache_nline)
+                   int Cache_nline)
 {
   load_file(Fname, Table_scale, Cache_nline);
 }
@@ -37,9 +37,9 @@ AbscoHdf::AbscoHdf(const std::string& Fname, double Table_scale,
 //-----------------------------------------------------------------------
 
 AbscoHdf::AbscoHdf(const std::string& Fname, 
-		   const SpectralBound& Spectral_bound,
-		   const std::vector<double>& Table_scale,
-		   int Cache_nline)
+                   const SpectralBound& Spectral_bound,
+                   const std::vector<double>& Table_scale,
+                   int Cache_nline)
 {
   load_file(Fname, Spectral_bound, Table_scale, Cache_nline);
 }
@@ -65,7 +65,7 @@ void AbscoHdf::load_file(const std::string& Fname)
 //-----------------------------------------------------------------------
 
 void AbscoHdf::load_file(const std::string& Fname, double Table_scale, 
-			 int Cache_nline)
+                         int Cache_nline)
 {
   SpectralBound empty;
   std::vector<double> tscale;
@@ -81,9 +81,9 @@ void AbscoHdf::load_file(const std::string& Fname, double Table_scale,
 //-----------------------------------------------------------------------
 
 void AbscoHdf::load_file(const std::string& Fname, 
-			 const SpectralBound& Spectral_bound,
-			 const std::vector<double>& Table_scale,
-			 int Cache_nline)
+                         const SpectralBound& Spectral_bound,
+                         const std::vector<double>& Table_scale,
+                         int Cache_nline)
 {
   sb = Spectral_bound;
   std::vector<double> tcopy(Table_scale);
@@ -113,11 +113,19 @@ void AbscoHdf::load_file(const std::string& Fname,
   read_cache_double.resize(0,0,0,0);
 
   hfile.reset(new HdfFile(Fname));
+
+  // Read optional metadata
+  if (hfile->has_object("Extent_Range")) {
+      extent_range.reference(hfile->read_field<double, 2>("Extent_Range"));
+      extent_index.reference(hfile->read_field<int, 2>("Extent_Index"));
+  }
+
+  // Read data fields
   pgrid.reference(hfile->read_field<double, 1>("Pressure"));
   tgrid.reference(hfile->read_field<double, 2>("Temperature"));
-  wn.reference(hfile->read_field<double, 1>("Wavenumber"));
-  wnfront = &wn(0);
-  wnback = &wn(wn.rows() - 1);
+  wngrid.reference(hfile->read_field<double, 1>("Wavenumber"));
+  wnfront = &wngrid(0);
+
   // This may have a "\0" in it, so we create a string twice, the
   // second one ends at the first "\0".
   std::string t = hfile->read_field<std::string>("Gas_Index");
@@ -156,10 +164,42 @@ void AbscoHdf::load_file(const std::string& Fname,
     bvmr.reference(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR"));
 }
 
-// See base class for description
-bool AbscoHdf::have_data(double wn) const
+// Find the array locations where the wavenumber is contained
+// If no extents are defined, this just returns beginning and end of whole absco array
+const std::pair<double*, double*> AbscoHdf::wn_extent(double Wn_in) const
 {
-  return(wn >= *wnfront && wn <= *wnback && table_scale(wn) > 0.0);
+    if (extent_range.rows() > 0) {
+        // Find first valid range and return
+        for (int range_idx = 0; range_idx < extent_range.rows(); range_idx++) {
+            if (extent_range(range_idx, 0) <= Wn_in && Wn_in <= extent_range(range_idx, 1)) {
+                int beg_idx = extent_index(range_idx, 0);
+                int end_idx = extent_index(range_idx, 1);
+                // Remove const to satisfy std::pair constructor
+                double* beg_loc = const_cast<double*>(&wngrid(beg_idx));
+                double* end_loc = const_cast<double*>(&wngrid(end_idx));
+                return std::pair<double*, double*>(beg_loc, end_loc);
+            }
+        }
+
+        // If nothing matches in loop above then the wave number was not
+        // found within one of the ranges
+        Exception err;
+        err << "The ABSCO file " << hfile->file_name() 
+            << " does not have an extent that contains the wavenumber: "
+            << std::setprecision(8) << Wn_in;
+        throw err;
+    } else {
+        double* wnback = const_cast<double *>(&wngrid(wngrid.rows() - 1));
+
+        if (Wn_in >= *wnfront && Wn_in <= *wnback) {
+            return std::pair<double*, double*>(wnfront, wnback);
+        } else {
+            Exception err;
+            err << "The ASBCO file " << hfile->file_name() << "\n"
+                << " does not have data for wavenumber: " << Wn_in;
+            throw err;
+        }
+    }
 }
 
 double AbscoHdf::table_scale(double wn) const 
@@ -173,16 +213,29 @@ double AbscoHdf::table_scale(double wn) const
   return table_scale_[0];
 }
 
+// See base class for description
+bool AbscoHdf::have_data(double wn) const
+{
+    try {
+        // If wn_extent does not exception, then we know we have
+        // a wavenumber that falls with in a range, no need to check again
+        // now just check that the table scale for a wn is non zero
+        auto extents = wn_extent(wn);
+        return table_scale(wn) > 0.0;
+    } catch (Exception e) {
+        // If there is an exception that means wn_extent did 
+        // not find a valid wavenumber
+        return false;
+    }
+}
+
 // Calculate the wn index number of the data.
 int AbscoHdf::wn_index(double Wn_in) const
 {
-  if(!have_data(Wn_in)) {
-    Exception e;
-    e << "The ASBCO file " << hfile->file_name() << "\n"
-      << " does not have data for wavenumber " << Wn_in;
-    throw e;
-  }
-  double *wnptr = std::lower_bound(wnfront, wnback, Wn_in);
+  // This will throw an exception if it can not find the wavenumber's locations
+  auto extent = wn_extent(Wn_in);
+
+  double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
   double f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
   if(f > 0.1 && f < 0.9) {
     Exception e;
@@ -244,7 +297,7 @@ template<class T> void AbscoHdf::swap(int i) const
   TinyVector<int, 4> start, size;
   start = 0, 0, 0, (i / nl) * nl;
   size = tgrid.rows(), tgrid.cols(), std::max(number_broadener_vmr(), 1),
-    std::min(nl, wn.rows() - start(3));
+    std::min(nl, wngrid.rows() - start(3));
   bound_set<T>((i / nl) * nl, size(3));
   if(number_broadener_vmr() > 0) {
     // 4d case
@@ -255,7 +308,7 @@ template<class T> void AbscoHdf::swap(int i) const
     TinyVector<int, 3> start2, size2;
     start2 = 0, 0, (i / nl) * nl;
     size2 = tgrid.rows(), tgrid.cols(),
-      std::min(nl, wn.rows() - start(3));
+      std::min(nl, wngrid.rows() - start(3));
     read_cache<T>()(Range::all(), Range::all(), 0, Range(0, size(3) - 1)) =
       hfile->read_field<T, 3>(field_name, start2, size2);
   }
@@ -272,7 +325,7 @@ void AbscoHdf::print(std::ostream& Os) const
     for(int i = 0; i < (int) table_scale_.size(); ++i) {
       Os << table_scale_[i];
       if(i < (int) table_scale_.size() - 1)
-	Os << ", ";
+        Os << ", ";
     }
     Os << "]\n";
   }

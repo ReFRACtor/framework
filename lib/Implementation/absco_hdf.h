@@ -36,6 +36,7 @@ public:
   virtual std::string broadener_name() const { return bname; }
   virtual blitz::Array<double, 1> broadener_vmr_grid() const
   { return bvmr; }
+  virtual const std::pair<double*, double*> wn_extent(double Wn_in) const;
   virtual double table_scale(double wn) const;
   virtual blitz::Array<double, 1> pressure_grid() const {return pgrid;}
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
@@ -65,12 +66,14 @@ private:
   std::string bname;
   blitz::Array<double, 1> pgrid;
   blitz::Array<double, 2> tgrid;
-  blitz::Array<double, 1> wn;
+  blitz::Array<double, 1> wngrid;
   SpectralBound sb;
   std::vector<double> table_scale_;
-  // This just points to front and back of wn. We store this here so
+  blitz::Array<double, 2> extent_range;
+  blitz::Array<int, 2> extent_index;
+  // This just points to front of wn. We store this here so
   // don't need to keep calculating this.
-  double *wnfront, *wnback;
+  double *wnfront;
 };
 
 template<> inline blitz::Array<double, 4>& AbscoHdf::read_cache<double>() const
