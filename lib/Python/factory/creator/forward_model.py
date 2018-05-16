@@ -44,7 +44,7 @@ class SpectrumSamplingBase(Creator, PerChannelMixin):
             # Create an ArrayWithDouble matching the number of channels used
             spacing_used = rf.ArrayWithUnit_double_1(np.full(num_channels, spacing_val.value), spacing_val.units)
         else:
-            check_num_channels(spacing_val.value.shape[0])
+            self.check_num_channels(spacing_val.value.shape[0])
             spacing_used = spacing_val
 
         return spacing_used
