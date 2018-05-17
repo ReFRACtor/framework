@@ -310,7 +310,7 @@
 
 !  Control for limits of single scatter albedo
 
-   real(fpk), PARAMETER :: OMEGA_SMALLNUM = 0.00000001_fpk
+   real(fpk), PARAMETER :: OMEGA_SMALLNUM = 0.000000000000001_fpk
 
 !  Control for limits of extinction optical depth along solar path
 !  Control for limits of extinction optical depth along USER paths
