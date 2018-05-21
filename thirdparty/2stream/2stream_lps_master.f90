@@ -613,8 +613,8 @@ SUBROUTINE TWOSTREAM_LPS_MASTER &
 
 !  Test variables
 
-!      LOGICAL          :: DO_DEBUG_INPUT=.FALSE.
-      LOGICAL          :: DO_DEBUG_INPUT=.TRUE.
+      LOGICAL          :: DO_DEBUG_INPUT=.FALSE.
+!      LOGICAL          :: DO_DEBUG_INPUT=.TRUE.
 
 !  Initialize some variables
 !  -------------------------
