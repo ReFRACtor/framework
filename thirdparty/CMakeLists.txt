@@ -69,6 +69,10 @@ find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem syst
 list(APPEND THIRDPARTY_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 
+# Set up Eigen
+find_package(Eigen REQUIRED)
+list(APPEND THIRDPARTY_INCLUDES ${EIGEN_INCLUDE_DIRS})
+
 ################################################
 # Configure packages we will possibly build here
 include(blitz/blitz.cmake)

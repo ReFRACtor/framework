@@ -1,0 +1,36 @@
+# - Config file for the Refractor package
+# It defines the following variables
+#  REFRACTOR_INCLUDE_DIRS     - include directories for Refractor
+#  REFRACTOR_LIBRARIES        - libraries to link against
+#  REFRACTOR_PYTHON_LIBRARIES - python libraries to link against (if built)
+
+# Store whether python bindings built
+set(BUILD_PYTHON_BINDING @BUILD_PYTHON_BINDING@)
+
+# Compute paths
+get_filename_component(REFRACTOR_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(REFRACTOR_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET refractor AND NOT Refractor_BINARY_DIR)
+  include("${REFRACTOR_CMAKE_DIR}/RefractorTargets.cmake")
+endif()
+
+# These are IMPORTED targets created by RefractorTargets.cmake
+link_directories(${REFRACTOR_CMAKE_DIR}/../lib)
+set(REFRACTOR_LIBRARIES refractor)
+
+if( Refractor_FIND_COMPONENTS )
+  list(FIND Refractor_FIND_COMPONENTS "python" _index)
+  if (${_index} GREATER -1)
+    if(${BUILD_PYTHON_BINDING})
+	  set(Refractor_python_FOUND 1)
+      set(REFRACTOR_PYTHON_LIBRARIES "${REFRACTOR_CMAKE_DIR}/../@PYTHON_INSTALL_DIR@/refractor_swig/_swig_wrap.so")
+	else()
+	  message(FATAL_ERROR "ReFRACtor python bindings not built.")
+    endif()
+  endif()
+else()
+  message("Note: ReFRACtor python component not selected in find_package()")
+endif()
+

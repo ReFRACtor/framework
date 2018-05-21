@@ -19,7 +19,7 @@ except ImportError:
 ##
 # Fortran input filenames
 
-LIDORT_BASE_DIR = os.path.join(os.environ["L2_EXE_PATH"], "thirdparty/lidort-3.6/")
+LIDORT_BASE_DIR = os.path.join(os.environ["L2_EXE_PATH"], "thirdparty/lidort-3.7/")
 LIDORT_DEFS_DIR = os.path.join(LIDORT_BASE_DIR, "lidort_def")
 LIDORT_MAIN_DIR = os.path.join(LIDORT_BASE_DIR, "lidort_main")
 BRDF_MAIN_DIR = os.path.join(LIDORT_BASE_DIR, "sup/brdf")
