@@ -53,7 +53,7 @@ class TwostreamRt(Creator):
                 self.observation_zenith().convert("deg").value, 
                 self.observation_azimuth().convert("deg").value, 
                 self.full_quadrature(),
-                self.use_solar_sources(), self.use_thermal_emisson())
+                self.use_solar_sources(), self.use_thermal_emission())
 
 class LsiRt(Creator):
 
