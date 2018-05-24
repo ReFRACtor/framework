@@ -150,6 +150,9 @@ inline Unit operator/(double Scale_factor, const Unit& Unit)
     const Unit Pa("Pa", N / (m * m));
     const Unit J("J", N * m);
     const Unit W("W", J / s);
+    const Unit uW("uW", 1e-6 * W);
+    const Unit mW("mW", 1e-3 * W);
+    const Unit kW("kW", 1e3 * W);
   }
 }
 #endif
