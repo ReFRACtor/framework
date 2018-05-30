@@ -142,7 +142,39 @@ class InstrumentCorrectionList(Creator):
 
     def create(self, **kwargs):
 
-        # TBD
-        # Loop over each thing described in corrections and add a vector_spectrum_effect of those items
-        # Similar to how things are done by absorbers
-        return rf.vector_vector_instrument_correction()
+        all_corrections = []
+        for correction_name in self.corrections():
+            self.register_parameter(correction_name, param.Iterable())
+            all_corrections.append(self.param(correction_name))
+
+        # Map these into an outer vector for each channel, with an inner vector for each correction
+        inst_corr = rf.vector_vector_instrument_correction()
+        for chan_index in range(self.num_channels()):
+            per_channel_corr = rf.vector_instrument_correction()
+
+            for correction in all_corrections:
+                per_channel_corr.push_back(correction[chan_index])
+
+            inst_corr.push_back(per_channel_corr)
+
+        return inst_corr
+
+class RadianceScaling(CreatorFlaggedValueMultiChannel):
+
+    band_reference = param.ArrayWithUnit(dims=1)
+    num_channels = param.Scalar(int)
+    desc_band_name = param.Iterable(str)
+
+    def create(self, **kwargs):
+
+        params = self.value()
+        band_ref = self.band_reference()
+        retrieval_flag = self.retrieval_flag()
+        band_name = self.desc_band_name()
+
+        rad_scaling = []
+        for chan_index in range(self.num_channels()):
+
+            rad_scaling.append( rf.RadianceScalingSvFit(params[chan_index, :], retrieval_flag[chan_index, :], band_ref[chan_index], band_name[chan_index]) )
+
+        return rad_scaling

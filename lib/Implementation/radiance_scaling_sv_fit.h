@@ -13,7 +13,7 @@ namespace FullPhysics {
 *******************************************************************/
 
 class RadianceScalingSvFit : public RadianceScaling, 
-                              public SubStateVectorArray<InstrumentCorrection> {
+                             public SubStateVectorArray<InstrumentCorrection> {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.

@@ -17,8 +17,12 @@
 %fp_shared_ptr(FullPhysics::RadianceScalingSvFit);
 
 namespace FullPhysics {
+
+// Force to be not abstract, SWIG had troubles seeing that the clone methods ARE implemented below
+%feature("notabstract") RadianceScalingSvFit;
+
 class RadianceScalingSvFit : public RadianceScaling, 
-                              public SubStateVectorArray<InstrumentCorrection> {
+                             public SubStateVectorArray<InstrumentCorrection> {
 public:
   RadianceScalingSvFit(const blitz::Array<double, 1>& Coeff, 
                         const blitz::Array<bool, 1>& Used_flag,
