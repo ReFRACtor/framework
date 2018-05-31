@@ -24,7 +24,7 @@ public:
       throw Exception(err_msg.str());
     }
   }
-  ~DirChange() 
+  ~DirChange() noexcept(false)
   {
     int status = fchdir(dirhandle);
     close(dirhandle);
