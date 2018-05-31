@@ -95,6 +95,11 @@ install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refrac
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 
+# On systems with older cmake, it may try to link against lib_swig_wrap.so
+#  Add lib_swig_wrap.so as a symlink to _swig_wrap.so to support this
+install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_wrap.so lib_swig_wrap.so
+                              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/refractor_swig)")
+
 # Expose Python install path to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
 
