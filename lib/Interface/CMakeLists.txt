@@ -30,6 +30,7 @@ set(DIR_SOURCES
     iterative_solver.cc
     iterative_solver_der.cc
     level_1b.cc
+    level_1b_sample_coefficient.cc
     max_a_posteriori.cc
     max_likelihood.cc
     meteorology.cc
