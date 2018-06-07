@@ -22,7 +22,7 @@ bool ProblemState::parameters_different(const Array<double, 1>& x) const
   //
   // Most sensitive when less than or equal to zero.
   //
-  double abs_rel_diff_tol = 1.0e-12;
+  double abs_rel_diff_tol = 1.0e-17;
   for(int i=0; (i<X.rows()) && !different; i++) {
     if( X(i) == 0.0 )
       different = ( x(i) != 0.0 );
