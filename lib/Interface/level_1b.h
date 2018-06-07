@@ -4,6 +4,7 @@
 #include "printable.h"
 #include "double_with_unit.h"
 #include "spectral_range.h"
+#include "spectral_domain.h"
 #include <blitz/array.h>
 #include <stdint.h>
 
@@ -118,7 +119,7 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  //virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const;
 
 //-----------------------------------------------------------------------
 /// Returns the spectral grid (ie wavenumber, wavelength, etc) for the
@@ -127,7 +128,7 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain sample_spectral_domain(int Spec_index) const = 0;
+  virtual SpectralDomain sample_spectral_domain(int Spec_index) const;
 
 //-----------------------------------------------------------------------
 /// Time of sounding.

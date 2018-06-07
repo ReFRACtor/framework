@@ -259,4 +259,16 @@ DoubleWithUnit Level1b::signal(int Spec_index, const std::vector<int>& Sample_in
     return DoubleWithUnit(sum(used_rad(avg_range) / avg_range.length()), rad.units());
 }
 
+/* TODO: Fixup Dummy functions */
+ArrayWithUnit<double, 1> Level1b::spectral_coefficient(int Spec_index) const {
+    ArrayWithUnit<double, 1> _temp;
+    return _temp;
+}
+SpectralDomain Level1b::sample_spectral_domain(int Spec_index) const {
+    ArrayWithUnit<double, 1> data;
+    SpectralDomain _temp = SpectralDomain(data);
+    return _temp;
+}
+
+
 #endif

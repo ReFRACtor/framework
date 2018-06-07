@@ -4,7 +4,7 @@
 %include "common.i"
 
 %{
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 %}
 
 %base_import(level_1b)

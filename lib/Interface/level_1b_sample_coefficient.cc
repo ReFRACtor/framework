@@ -5,6 +5,8 @@ using namespace FullPhysics;
 using namespace blitz;
 
 /* TODO: Implement return of SpectralDomain from spectral_coefficient */
-SpectralDomain Level1bSampleCofficient::sample_spectral_domain(int Spec_index) const {
-    return 0;
+SpectralDomain Level1bSampleCoefficient::sample_spectral_domain(int Spec_index) const {
+    ArrayWithUnit<double, 1> data;
+    SpectralDomain _temp = SpectralDomain(data);
+    return _temp;
 }
