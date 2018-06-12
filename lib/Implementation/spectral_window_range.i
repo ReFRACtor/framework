@@ -16,6 +16,7 @@ class Dispersion;
 class SpectralWindowRange : public SpectralWindow {
 public:
   SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwindow_ranges);
+  SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwindow_ranges, const blitz::Array<double, 2>& Bad_sample_mask);
   virtual std::vector<int> grid_indexes(const SpectralDomain& Grid, int Spec_index) const;
   %python_attribute(number_spectrometer, int)
   %python_attribute_with_set(range_array, ArrayWithUnit<double, 3>)

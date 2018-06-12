@@ -18,7 +18,7 @@ class PerChannelMixin(object):
 class SpectralWindowRange(Creator):
     
     window_ranges = param.ArrayWithUnit(dims=3)
-    bad_sample_mask = param.Array(dims=3, required=False)
+    bad_sample_mask = param.Array(dims=2, required=False)
     
     def create(self, **kwargs):
 

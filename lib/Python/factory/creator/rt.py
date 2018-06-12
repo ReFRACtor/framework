@@ -80,9 +80,7 @@ class LsiRt(Creator):
         stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
 
         # Minimum nmom allowed by LIDORT is 3
-        nmom_low = self.num_low_streams() * 2
-        if(nmom_low < 3):
-            nmom_low = 3
+        nmom_low = min(self.num_low_streams() * 2, 3)
 
         if(self.num_low_streams() == 1 and self.dedicated_twostream()):
             rt_low = rf.TwostreamRt(self.atmosphere(), stokes_object,
