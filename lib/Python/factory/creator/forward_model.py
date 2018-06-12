@@ -59,6 +59,23 @@ class UniformSpectrumSampling(SpectrumSamplingBase):
     def create(self, **kwargs):
         return rf.UniformSpectrumSampling(self.spacing())
 
+class NonuniformSpectrumSampling(SpectrumSamplingBase):
+
+    channel_domains = param.Iterable()
+
+    def create(self, **kwargs):
+        domains = self.channel_domains()
+        full_spec_spacing = rf.SpectrumSamplingFixedSpacing(self.spacing())
+
+        if len(domains) != self.num_channels():
+            raise param.ParamError("Number of channel domains %d does not match the number of channels %d" % (len(domains), self.num_channels()))
+
+        for idx, dom in enumerate(domains):
+            if not isinstance(dom, rf.SpectralDomain):
+                raise param.ParamError("Channel domain value at index %d is not a instance of SpectralDomain" % idx)
+
+        return rf.NonuniformSpectrumSampling(*domains, full_spec_spacing)
+
 class SpectrumEffectList(Creator):
 
     effects = param.Iterable(str)

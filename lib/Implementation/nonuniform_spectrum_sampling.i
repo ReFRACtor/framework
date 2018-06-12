@@ -8,6 +8,9 @@
 %import "spectral_domain.i"
 %fp_shared_ptr(FullPhysics::NonuniformSpectrumSampling);
 namespace FullPhysics {
+
+%feature("notabstract") NonuniformSpectrumSampling;
+
 class NonuniformSpectrumSampling : public SpectrumSampling {
 public:
   NonuniformSpectrumSampling(const SpectralDomain& Wn,
