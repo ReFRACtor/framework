@@ -1,17 +1,21 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "iterative_solver.h"
 %}
 
 %base_import(observer)
+
+%import "observer.i"
+
 %fp_shared_ptr(FullPhysics::IterativeSolver);
+
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::IterativeSolver>);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::IterativeSolver>);
+%template(ObserverIterativeSolver) FullPhysics::Observer<FullPhysics::IterativeSolver>;
 %template(ObservableIterativeSolver) FullPhysics::Observable<FullPhysics::IterativeSolver>;
 
 namespace FullPhysics {
-class IterativeSolver : public GenericObject {
+class IterativeSolver : public Observable<IterativeSolver> {
 public:
   enum status_t {SUCCESS, CONTINUE, STALLED, ERROR, UNTRIED};
   IterativeSolver(int max_cost_function_calls, bool vrbs);
