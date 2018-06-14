@@ -5,7 +5,7 @@
 %}
 
 %base_import(observation)
-%include "level_1b.i"
+%include "level_1b_sample_coefficient.i"
 %include "forward_model_spectral_grid.i"
 
 %fp_shared_ptr(FullPhysics::ObservationLevel1b)
@@ -14,7 +14,7 @@ namespace FullPhysics {
 
 class ObservationLevel1b : public Observation {
 public:
-    ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, 
+    ObservationLevel1b(const boost::shared_ptr<Level1bSampleCoefficient>& level_1b, 
             const boost::shared_ptr<Instrument> &instrument,
             const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids);
 

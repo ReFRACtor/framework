@@ -1,7 +1,6 @@
 #ifndef LEVEL_1B_SAMPLE_COEFFICIENT_H
 #define LEVEL_1B_SAMPLE_COEFFICIENT_H
 #include "level_1b.h"
-#include "printable.h"
 #include "spectral_domain.h"
 #include <blitz/array.h>
 #include <stdint.h>
@@ -15,7 +14,7 @@ namespace FullPhysics {
   f(x) = x*(coeff[0]^0) + x*(coeff[1]^1) ... + x*(coeff[n]^n)
   Where n is spectral_coefficient length.
 *******************************************************************/
-class Level1bSampleCoefficient: public Level1b, public Printable<Level1bSampleCoefficient> {
+class Level1bSampleCoefficient: public Level1b {
 public:
   virtual ~Level1bSampleCoefficient() { };
 
