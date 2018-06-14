@@ -1,6 +1,6 @@
 #ifndef LEVEL_1B_AVERAGE_H
 #define LEVEL_1B_AVERAGE_H
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
@@ -10,9 +10,9 @@ namespace FullPhysics {
   values. This is used for example on Gosat, where we average the S
   and P data.
 *******************************************************************/
-class Level1bAverage: public Level1b {
+class Level1bAverage: public Level1bSampleCoefficient {
 public:
-  Level1bAverage(const std::vector<boost::shared_ptr<Level1b> >& Data)
+  Level1bAverage(const std::vector<boost::shared_ptr<Level1bSampleCoefficient> >& Data)
     : l1b(Data) {}
   virtual ~Level1bAverage() {}
   virtual int number_spectrometer() const 
@@ -35,7 +35,7 @@ public:
   virtual void print(std::ostream& Os) const;
   virtual SpectralRange radiance(int Spec_index) const;
 private:
-  std::vector<boost::shared_ptr<Level1b> > l1b;
+  std::vector<boost::shared_ptr<Level1bSampleCoefficient> > l1b;
 };
 }
 #endif

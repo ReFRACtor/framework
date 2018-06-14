@@ -1,7 +1,7 @@
 #ifndef EXAMPLE_L1B_H
 #define EXAMPLE_L1B_H
 
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 #include "hdf_file.h"
 #include "unit.h"
 #include "double_with_unit.h"
@@ -13,7 +13,7 @@ namespace FullPhysics {
   that corresponds one-to-one with the expected interface.
 *******************************************************************/
 
-class ExampleLevel1b: public Level1b {
+class ExampleLevel1b: public Level1bSampleCoefficient {
 public:
     ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
     ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);

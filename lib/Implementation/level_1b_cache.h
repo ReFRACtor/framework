@@ -1,6 +1,6 @@
 #ifndef LEVEL_1B_CACHE_H
 #define LEVEL_1B_CACHE_H
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 #include <vector>
 namespace FullPhysics {
 /****************************************************************//**
@@ -9,9 +9,9 @@ namespace FullPhysics {
   desired. This can be useful when setting up special run in Python, 
   among other uses.
 *******************************************************************/
-class Level1bCache: public Level1b {
+class Level1bCache: public Level1bSampleCoefficient {
 public:
-  Level1bCache(const Level1b& L1_in);
+  Level1bCache(const Level1bSampleCoefficient& L1_in);
   virtual ~Level1bCache() {}
   virtual void print(std::ostream& Os) const {Os << "Level1bCache";}
   virtual int number_spectrometer() const { return (int) lat.size(); }
@@ -215,7 +215,7 @@ public:
     }
     rad[i] = SpectralRange(rnew, V.units(), unew);
   }
-  
+
 private:
   std::vector<DoubleWithUnit> lat, lon, szen, sazm, solzen, solazm, alt,
 						    rvel;

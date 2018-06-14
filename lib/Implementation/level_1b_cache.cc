@@ -5,7 +5,7 @@ using namespace FullPhysics;
 /// Constructor.
 //-----------------------------------------------------------------------
 
-Level1bCache::Level1bCache(const Level1b& L1_in)
+Level1bCache::Level1bCache(const Level1bSampleCoefficient& L1_in)
 {
   for(int i = 0; i < L1_in.number_spectrometer(); ++i) {
     lat.push_back(L1_in.latitude(i));
