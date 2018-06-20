@@ -7,7 +7,7 @@
 #include "connor_solver.h"
 #include "spectral_window.h"
 #include "spectrum_sampling.h"
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 #include "initial_guess.h"
 #include "register_output_base.h"
 #include "instrument.h"
@@ -52,7 +52,7 @@ public:
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
   boost::shared_ptr<SpectrumSampling> config_spectrum_sampling;
-  boost::shared_ptr<Level1b> config_level_1b;
+  boost::shared_ptr<Level1bSampleCoefficient> config_level_1b;
   boost::shared_ptr<Ground> config_ground;
   boost::shared_ptr<ForwardModel> config_forward_model;
   boost::shared_ptr<Observation> config_observation;
