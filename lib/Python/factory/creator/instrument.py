@@ -178,3 +178,17 @@ class RadianceScaling(CreatorFlaggedValueMultiChannel):
             rad_scaling.append( rf.RadianceScalingSvFit(params[chan_index, :], retrieval_flag[chan_index, :], band_ref[chan_index], band_name[chan_index]) )
 
         return rad_scaling
+
+class ApplyInstrumentUnits(CreatorFlaggedValueMultiChannel):
+
+    units = param.InstanceOf(rf.Unit)
+    scale_factor = param.Scalar(float)
+    num_channels = param.Scalar(int)
+    
+    def create(self, **kwargs):
+
+        apply_units = []
+        for chan_index in range(self.num_channels()):
+            apply_units.append( rf.ApplyInstrumentUnits(self.units(), self.scale_factor()) )
+
+        return apply_units
