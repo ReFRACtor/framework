@@ -27,6 +27,7 @@ set(DIR_SOURCES
     aerosol_property_rh_hdf.cc
     aerosol_shape_gaussian.cc
     altitude_hydrostatic.cc
+    apply_instrument_units.cc
     atmosphere_oco.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
