@@ -691,14 +691,14 @@ SUBROUTINE TWOSTREAM_LPS_MASTER &
 
 ! @@ Rob Spurr, 17 July 2013, Version 2.2 --> Optional Output at ALL LEVELS
 
-      RADLEVEL_UP (:,:) = zero
-      RADLEVEL_DN (:,:) = zero
+      IF ( DO_2S_LEVELOUT ) RADLEVEL_UP (:,:) = zero
+      IF ( DO_2S_LEVELOUT ) RADLEVEL_DN (:,:) = zero
 
-      PROFJACLEVEL_UP (:,:,:,:) = zero
-      PROFJACLEVEL_DN (:,:,:,:) = zero
+      IF ( DO_2S_LEVELOUT ) PROFJACLEVEL_UP (:,:,:,:) = zero
+      IF ( DO_2S_LEVELOUT ) PROFJACLEVEL_DN (:,:,:,:) = zero
 
-      SURFJACLEVEL_UP (:,:,:) = zero
-      SURFJACLEVEL_DN (:,:,:) = zero
+      IF ( DO_2S_LEVELOUT ) SURFJACLEVEL_UP (:,:,:) = zero
+      IF ( DO_2S_LEVELOUT ) SURFJACLEVEL_DN (:,:,:) = zero
 
 ! @@ Rob Spurr, 05 November 2013, Version 2.3 --> BOA_TOA Flux outputs
 
@@ -1913,14 +1913,14 @@ SUBROUTINE TWOSTREAM_LPS_FOURIER_MASTER &
 !  Initialize new output. NOT EFFICIENT - MICK, any suggestions ???
 !     ! @@ Rob Spurr, 17 July 2013, Version 2.2 --> Optional output at ALL LEVELS
 
-      RADLEVEL_F_UP = zero
-      RADLEVEL_F_DN = zero
+      IF ( DO_2S_LEVELOUT ) RADLEVEL_F_UP = zero
+      IF ( DO_2S_LEVELOUT ) RADLEVEL_F_DN = zero
 
-      PROFJACLEVEL_F_UP = zero
-      PROFJACLEVEL_F_DN = zero
+      IF ( DO_2S_LEVELOUT ) PROFJACLEVEL_F_UP = zero
+      IF ( DO_2S_LEVELOUT ) PROFJACLEVEL_F_DN = zero
 
-      SURFJACLEVEL_F_UP = zero
-      SURFJACLEVEL_F_DN = zero
+      IF ( DO_2S_LEVELOUT ) SURFJACLEVEL_F_UP = zero
+      IF ( DO_2S_LEVELOUT ) SURFJACLEVEL_F_DN = zero
 
 !  Simulation only flag
 

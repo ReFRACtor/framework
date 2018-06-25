@@ -421,8 +421,9 @@ SUBROUTINE TWOSTREAM_LP_EMULTMASTER &
 
 !  Zero output
 
-      LP_EMULT_UP = zero
-      LP_EMULT_DN = zero
+      ! Commented out per Rob Spurr's recommendation (6/14/2018) in response to speed issues with this zeroing out
+      !LP_EMULT_UP = zero
+      !LP_EMULT_DN = zero
 
 !  Profile linearizations: Two cases --------
 !  (a) If N = K, multiplier for due to variations in the layer N
