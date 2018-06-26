@@ -12,8 +12,8 @@ BOOST_AUTO_TEST_CASE(basic)
     boost::shared_ptr<GroundBrdf> g_brdf = 
         boost::dynamic_pointer_cast<GroundBrdf>(config_ground);
 
-    boost::shared_ptr<Level1b> l1b =
-        boost::dynamic_pointer_cast<Level1b>(config_level_1b);
+    boost::shared_ptr<Level1bSampleCoefficient> l1b =
+        boost::dynamic_pointer_cast<Level1bSampleCoefficient>(config_level_1b);
 
     std::vector<std::string> band_name;
     band_name.push_back("A-Band");

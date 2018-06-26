@@ -6,7 +6,7 @@ extern "C" {
 #include <lualib.h>
 }
 #include <luabind/luabind.hpp>
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 #include "register_lua.h"
 #include "hdf_file.h"
 using namespace FullPhysics;
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(register_class)
      << "l1b_hdf = HdfFile(inp_file)\n"
      << "l1b = ExampleLevel1b(l1b_hdf, '" << sid << "')\n";
   luaL_dostring(ls, os.str().c_str());
-  boost::shared_ptr<Level1b> l1b =
-    luabind::object_cast<boost::shared_ptr<Level1b> >
+  boost::shared_ptr<Level1bSampleCoefficient> l1b =
+    luabind::object_cast<boost::shared_ptr<Level1bSampleCoefficient> >
     (luabind::globals(ls)["l1b"]);
   BOOST_CHECK_EQUAL(l1b->number_spectrometer(), 3);
   BOOST_CHECK_CLOSE(l1b->radiance(0).data()(402 + 10), 4.2060387955454771e+19, 1e-4);

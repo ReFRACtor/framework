@@ -10,7 +10,7 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_CLASS(DispersionFit)
-.def(luabind::constructor<const boost::shared_ptr<Level1b>&>())
+.def(luabind::constructor<const boost::shared_ptr<Level1bSampleCoefficient>&>())
 .def("fit", &DispersionFit::fit)
 .def("shift", &DispersionFit::shift)
 REGISTER_LUA_END()
@@ -34,7 +34,7 @@ const static double RADIUS = 6378.137e0; // Earth equatorial radius, in km
 /// Initialize class with data needed to perform fit
 //-----------------------------------------------------------------------
 
-DispersionFit::DispersionFit(const boost::shared_ptr<Level1b>& Level1b)
+DispersionFit::DispersionFit(const boost::shared_ptr<Level1bSampleCoefficient>& Level1b)
 : l1b(Level1b)
 {
 }

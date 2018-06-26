@@ -25,8 +25,10 @@ ArrayWithUnit<double, 2> level_1b_s_coeffs_with_unit(const Level1bSampleCoeffici
     res(i, blitz::Range::all()) = Lev1.spectral_coefficient(i).value;
   return ArrayWithUnit<double,2>(res, units);
 }
+
+
 #include "register_lua.h"
-REGISTER_LUA_CLASS(Level1bSampleCoefficient)
+REGISTER_LUA_DERIVED_CLASS(Level1bSampleCoefficient, Level1b)
 .def("spectral_coefficient", &level_1b_s_coeffs)
 .def("spectral_coefficient_with_unit", &Level1bSampleCoefficient::spectral_coefficient)
 .def("spectral_coefficient_with_unit", &level_1b_s_coeffs_with_unit)
@@ -42,6 +44,7 @@ REGISTER_LUA_CLASS_NAME(std::vector<boost::shared_ptr<Level1bSampleCoefficient> 
 .def("push_back", ((pbt1) &std::vector<boost::shared_ptr<Level1bSampleCoefficient> >::push_back))
 REGISTER_LUA_END()
 
+#endif
 
 /* TODO: Implement return of SpectralDomain from spectral_coefficient */
 SpectralDomain Level1bSampleCoefficient::sample_spectral_domain(int Spec_index) const {
@@ -58,4 +61,4 @@ SpectralDomain Level1bSampleCoefficient::sample_spectral_domain(int Spec_index) 
     return _temp;
 }
 
-#endif
+

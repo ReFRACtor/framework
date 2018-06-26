@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(apriori_calc)
         boost::shared_ptr<HdfFile> l1b_file(new HdfFile(test_data_dir() + "in/common/l1b_example_data.h5"));
         boost::shared_ptr<HdfFile> met_file(new HdfFile(test_data_dir() + "in/common/met_example_data.h5"));
 
-        boost::shared_ptr<Level1b> l1b(new ExampleLevel1b(l1b_file, curr_sid));
+        boost::shared_ptr<Level1bSampleCoefficient> l1b(new ExampleLevel1b(l1b_file, curr_sid));
         boost::shared_ptr<Meteorology> met(new ExampleMetFile(met_file, curr_sid));
 
         HdfFile hdf_static_input(test_data_dir() + "in/gas_vmr_apriori/reference_atmosphere.h5");
