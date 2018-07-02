@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(lidort_pars)
   BOOST_CHECK_CLOSE(tst_obj.smallnum, 0.000000001, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.bigexp, 32.0, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.hopital_tolerance, tst_obj.eps5, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.omega_smallnum, 0.00000001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.omega_smallnum, 0.000000000000001, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.max_tau_spath, tst_obj.bigexp, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.max_tau_upath, tst_obj.bigexp, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.max_tau_qpath, tst_obj.bigexp, 1e-10);
