@@ -9,7 +9,7 @@
 #include <rosenbrock2_nlls_problem.h>
 #include <unit_test_support.h>
 #include <fp_exception.h>
-#include <nlls_solver_gsl.h>
+#include <nlls_solver_lm.h>
 
 #include <bard_ml_problem.h>
 #include <meyer_ml_problem.h>
@@ -22,10 +22,11 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(nlls_solver_gsl, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(nlls_solver_lm, GlobalFixture)
 
 /* convergence check thresholds */
-double dx_tol_abs=1e-5, dx_tol_rel=1e-5, g_tol=1e-5;
+NLLSSolverLM::Options opt=NLLSSolverLM::Options();
+double dx_tol_abs=1e-5, dx_tol_rel=1e-5, g_tol_abs=1e-5, g_tol_rel=1e-5; //6.0555e-06;
 bool verbose=false;
 
 
@@ -34,8 +35,8 @@ BOOST_AUTO_TEST_CASE(bard)
   Array<double, 1> x0(3); x0 = 1.0, 1.0, 1.0;
   boost::shared_ptr<BardNLLSProblem> nlls(new BardNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -44,7 +45,7 @@ BOOST_AUTO_TEST_CASE(bard)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Bard function:" << std::endl
+     << "Testing NLLSSolverLM with Bard function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -68,7 +69,7 @@ BOOST_AUTO_TEST_CASE(bard)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
   BOOST_CHECK(n_f_calls < 10);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0041074) < 0.000001) || (abs(cst-8.71431) < 0.001) );
@@ -85,8 +86,8 @@ BOOST_AUTO_TEST_CASE(brown)
   Array<double, 1> x0(2); x0 = 1.0, 1.0;
   boost::shared_ptr<BrownNLLSProblem> nlls(new BrownNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -95,7 +96,7 @@ BOOST_AUTO_TEST_CASE(brown)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Brown function:" << std::endl
+     << "Testing NLLSSolverLM with Brown function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -119,8 +120,8 @@ BOOST_AUTO_TEST_CASE(brown)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK_CLOSE(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast])), 0.0, 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 20);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 25);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0e6, 0.01);
@@ -133,8 +134,8 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
   Array<double, 1> x0(2); x0 = 0.5, -2.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Freudenstein/Roth function:" << std::endl
+     << "Testing NLLSSolverLM with Freudenstein/Roth function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -167,8 +168,8 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__a)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 20);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 25);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) || (abs(cst-24.4921) < 0.001) );
   if( abs(cst-0.0) < 0.0000001 ) {
@@ -186,17 +187,17 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__b)
   Array<double, 1> x0(2); x0 = 6.0, 7.0;
   boost::shared_ptr<FreudensteinRothNLLSProblem> nlls(new FreudensteinRothNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
   int n_j_calls = nlls->num_jacobian_evaluations();
   double cst = nlls->cost();
 
- #ifdef VERBOSE
- std::cout 
-     << "Testing NLLSSolverGSL with Freudenstein/Roth function:" << std::endl
+#ifdef VERBOSE
+  std::cout 
+     << "Testing NLLSSolverLM with Freudenstein/Roth function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -220,8 +221,8 @@ BOOST_AUTO_TEST_CASE(freudenstein_roth__b)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK_CLOSE(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast])), 0.0, 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 10);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 15);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) || (abs(cst-24.4921) < 0.001) );
   if( abs(cst-0.0) < 0.0000001 ) {
@@ -239,8 +240,8 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   Array<double, 1> x0(3); x0 = -1.0, 0.0, 0.0;
   boost::shared_ptr<HelicalValleyNLLSProblem> nlls(new HelicalValleyNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -249,7 +250,7 @@ BOOST_AUTO_TEST_CASE(helical_valley)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Helical Valley function:" << std::endl
+     << "Testing NLLSSolverLM with Helical Valley function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -257,12 +258,12 @@ BOOST_AUTO_TEST_CASE(helical_valley)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -273,7 +274,7 @@ BOOST_AUTO_TEST_CASE(helical_valley)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK_CLOSE(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast])), 0.0, 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
   BOOST_CHECK(n_f_calls < 15);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
@@ -288,8 +289,8 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
   Array<double, 1> x0(2); x0 = 0.3, 0.4;
   boost::shared_ptr<JennrichSampsonNLLSProblem> nlls(new JennrichSampsonNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -298,7 +299,7 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Jennrich/Sampson function:" << std::endl
+     << "Testing NLLSSolverLM with Jennrich/Sampson function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -306,12 +307,12 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -322,7 +323,7 @@ BOOST_AUTO_TEST_CASE(jennrich_sampson)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast])) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
   BOOST_CHECK(n_f_calls < 25);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK_CLOSE(cst, 62.1813, 0.01);
@@ -336,8 +337,8 @@ BOOST_AUTO_TEST_CASE(meyer)
   Array<double, 1> x0(3); x0 = 0.02, 4000.0, 250.0;
   boost::shared_ptr<MeyerNLLSProblem> nlls(new MeyerNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 200, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 500, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -346,7 +347,7 @@ BOOST_AUTO_TEST_CASE(meyer)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Meyer function:" << std::endl
+     << "Testing NLLSSolverLM with Meyer function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -354,12 +355,12 @@ BOOST_AUTO_TEST_CASE(meyer)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -370,8 +371,8 @@ BOOST_AUTO_TEST_CASE(meyer)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-8);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 140);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 235);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
@@ -385,8 +386,8 @@ BOOST_AUTO_TEST_CASE(powell)
   Array<double, 1> x0(2); x0 = 0.0, 1.0;
   boost::shared_ptr<PowellNLLSProblem> nlls(new PowellNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -395,7 +396,7 @@ BOOST_AUTO_TEST_CASE(powell)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Powell function:" << std::endl
+     << "Testing NLLSSolverLM with Powell function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -419,8 +420,8 @@ BOOST_AUTO_TEST_CASE(powell)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) <  1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 20);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 65);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.09816e-5, 0.01);
@@ -433,8 +434,8 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, 1e-21, 1e-21, 1e-21);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, 1e-21, 1e-21, 1e-21, 6.0555e-06, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -443,7 +444,7 @@ BOOST_AUTO_TEST_CASE(powell_singular)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Powell Singular function:" << std::endl
+     << "Testing NLLSSolverLM with Powell Singular function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -451,12 +452,12 @@ BOOST_AUTO_TEST_CASE(powell_singular)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -467,8 +468,8 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 30);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 32);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);
@@ -483,8 +484,8 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
   Array<double, 1> x0(2); x0 = -1.2, 1.0;
   boost::shared_ptr<Rosenbrock2NLLSProblem> nlls(new Rosenbrock2NLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -493,7 +494,7 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Rosenbrock function:" << std::endl
+     << "Testing NLLSSolverLM with Rosenbrock function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -501,12 +502,12 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -517,8 +518,8 @@ BOOST_AUTO_TEST_CASE(rosenbrock2)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK_CLOSE(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast])), 0.0, 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 25);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 20);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 1.0, 0.01);
@@ -531,17 +532,17 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   Array<double, 1> x0(4); x0 = 3.0, -1.0, 0.0, 1.0;
   boost::shared_ptr<PowellSingularNLLSProblem> nlls(new PowellSingularNLLSProblem);
   nlls->parameters(x0);
-  NLLSSolverGSL solver1(nlls, 100, 1e-5, 1e-5, 1e-5, verbose);
-  NLLSSolverGSL solver2(nlls, 100, 1e-21, 1e-21, 1e-21, verbose);
-  BOOST_CHECK_EQUAL((int)solver1.status(), (int)NLLSSolverGSL::UNTRIED);
-  BOOST_CHECK_EQUAL((int)solver2.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver1(nlls, 100, opt, 1e-5, 1e-5, 1e-5, 6.0555e-06, verbose);
+  NLLSSolverLM solver2(nlls, 100, opt, 1e-21, 1e-21, 1e-21, 6.0555e-06, verbose);
+  BOOST_CHECK_EQUAL((int)solver1.status(), (int)NLLSSolverLM::UNTRIED);
+  BOOST_CHECK_EQUAL((int)solver2.status(), (int)NLLSSolverLM::UNTRIED);
 
 
 
-//   std::cout 
-//      << std::endl
-//      << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< nlls / solver1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" 
-//      << std::endl;
+  // std::cout 
+  //    << std::endl
+  //    << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< nlls / solver1 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" 
+  //    << std::endl;
 
   solver1.solve();
 
@@ -551,7 +552,7 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Powell Singular function:" << std::endl
+     << "Testing NLLSSolverLM with Powell Singular function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls1 << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls1 << std::endl
      << "   Final solver1 status = " << solver1.status_str() << std::endl
@@ -559,12 +560,12 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
      << "   Final problem status (cost value) = " << cst1 << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver1.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver1.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver1.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver1.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver1.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver1.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver1.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver1.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver1.accepted_points().size(), solver1.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver1.cost_at_accepted_points().size(), solver1.num_accepted_steps()+1);
@@ -575,16 +576,16 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver1.accepted_points()[iLast1])), 0.0, 1e-12);
   BOOST_CHECK_CLOSE(sum(abs(nlls->gradient()-solver1.gradient_at_accepted_points()[iLast1])), 0.0, 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver1.status(), (int)NLLSSolverGSL::SUCCESS);
+  BOOST_CHECK_EQUAL((int)solver1.status(), (int)NLLSSolverLM::SUCCESS);
   BOOST_CHECK(n_f_calls1 < 15);
   BOOST_CHECK(n_j_calls1 <= n_f_calls1);
 
 
 
-//   std::cout 
-//      << std::endl
-//      << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< nlls / solver2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-//      << std::endl;
+  // std::cout 
+  //    << std::endl
+  //    << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< nlls / solver2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+  //    << std::endl;
 
   solver2.solve();
 
@@ -594,7 +595,7 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Powell Singular function:" << std::endl
+     << "Testing NLLSSolverLM with Powell Singular function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls2 << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls2 << std::endl
      << "   Final solver2 status = " << solver2.status_str() << std::endl
@@ -602,12 +603,12 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
      << "   Final problem status (cost value) = " << cst2 << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver2.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver2.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver2.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver2.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver2.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver2.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver2.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver2.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver2.accepted_points().size(), solver2.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver2.cost_at_accepted_points().size(), solver2.num_accepted_steps()+1);
@@ -618,8 +619,8 @@ BOOST_AUTO_TEST_CASE(powell_singular_multiple)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver2.accepted_points()[iLast2])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver2.gradient_at_accepted_points()[iLast2]))) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver2.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls2 < 30);
+  BOOST_CHECK_EQUAL((int)solver2.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls2 < 32);
   BOOST_CHECK(n_j_calls2 <= n_f_calls2);
   BOOST_CHECK( (abs(cst2-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);
@@ -657,8 +658,8 @@ BOOST_AUTO_TEST_CASE(bard_ml)
   boost::shared_ptr<BardMLProblem> ml(new BardMLProblem(measurement, measurement_error_cov));
   boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 100, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 100, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -667,7 +668,7 @@ BOOST_AUTO_TEST_CASE(bard_ml)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Bard/ML function:" << std::endl
+     << "Testing NLLSSolverLM with Bard/ML function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -675,12 +676,12 @@ BOOST_AUTO_TEST_CASE(bard_ml)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -691,7 +692,7 @@ BOOST_AUTO_TEST_CASE(bard_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-12);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
   BOOST_CHECK(n_f_calls < 10);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0041074) < 0.000001) || (abs(cst-8.71431) < 0.001) );
@@ -716,8 +717,8 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   boost::shared_ptr<MeyerMLProblem> ml(new MeyerMLProblem(measurement, measurement_error_cov));
   boost::shared_ptr<NLLSMaxLikelihood> nlls(new NLLSMaxLikelihood(ml));
   nlls->parameters(x0);
-  NLLSSolverGSL solver(nlls, 200, dx_tol_abs, dx_tol_rel, g_tol, verbose);
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::UNTRIED);
+  NLLSSolverLM solver(nlls, 500, opt, dx_tol_abs, dx_tol_rel, g_tol_abs, g_tol_rel, verbose);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::UNTRIED);
   solver.solve();
 
   int n_f_calls = nlls->num_residual_evaluations();
@@ -726,7 +727,7 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
 
 #ifdef VERBOSE
   std::cout 
-     << "Testing NLLSSolverGSL with Meyer/ML function:" << std::endl
+     << "Testing NLLSSolverLM with Meyer/ML function:" << std::endl
      << "   Number of residual function evaluations = " << n_f_calls << std::endl
      << "   Number of jacobian function evaluations = " << n_j_calls << std::endl
      << "   Final solver status = " << solver.status_str() << std::endl
@@ -734,12 +735,12 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
      << "   Final problem status (cost value) = " << cst << std::endl
      << "   Final problem status (gradient) = " << nlls->gradient() << std::endl;
 #endif
-//   for( int i=0; i<=solver.num_accepted_steps(); i++ )
-//      std::cout 
-//         << "   ========================================" << std::endl
-//         << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
-//         << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
-//         << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
+  // for( int i=0; i<=solver.num_accepted_steps(); i++ )
+  //    std::cout 
+  //       << "   ========================================" << std::endl
+  //       << "   At point["<<i<<"] " << solver.accepted_points()[i] << std::endl
+  //       << "   Cost["<<i<<"] = " << solver.cost_at_accepted_points()[i] << std::endl
+  //       << "   Grad["<<i<<"] = " << solver.gradient_at_accepted_points()[i] << std::endl;
 
   BOOST_CHECK_EQUAL((int) solver.accepted_points().size(), solver.num_accepted_steps()+1);
   BOOST_CHECK_EQUAL((int) solver.cost_at_accepted_points().size(), solver.num_accepted_steps()+1);
@@ -750,8 +751,8 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-8);
 
-  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 140);
+  BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverLM::SUCCESS);
+  BOOST_CHECK(n_f_calls < 235);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);

@@ -99,6 +99,7 @@ set(DIR_SOURCES
     nlls_solver_gsl_lmder.cc
     nlls_solver_gsl_lmsder.cc
     nlls_solver_gsl_sm.cc
+    nlls_solver_lm.cc
     nonuniform_spectrum_sampling.cc
     observation_level_1b.cc
     output_hdf.cc
@@ -202,6 +203,7 @@ set(TEST_SOURCES
     nlls_max_a_posteriori_test.cc
     nlls_max_likelihood_test.cc
     nlls_solver_gsl_test.cc
+    nlls_solver_lm_test.cc
     nlls_solver_gsl_sm_bard_test.cc
     nlls_solver_gsl_sm_brown_test.cc
     nlls_solver_gsl_sm_freudenstein_roth_a_test.cc
