@@ -22,8 +22,6 @@ public:
 	  const boost::shared_ptr<RelativeHumidity>& Rh,
 	  double Reference_wn = 1e4/0.755);
   virtual ~AerosolOptical() {}
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   virtual void notify_update(const StateVector& Sv) 
   {
     nvar = Sv.state_with_derivative().number_variable();

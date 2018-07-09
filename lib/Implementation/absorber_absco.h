@@ -35,8 +35,6 @@ public:
 		const boost::shared_ptr<Constant>& C,
 		int Nsub = 10);
   virtual ~AbsorberAbsco() {}
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   // We use attach_notify to directly attach the various object that
   // AbsorberAbsco contains. This means we don't need to do anything with
   // changes to the StateVector in this class, it is already handled

@@ -1166,19 +1166,26 @@ end
 
 function ConfigCommon.instrument_correction_list:create_parent_object(sub_object)
    
+   self.all_ic = {}
    local res = VectorVectorInstrumentCorrection()
    local i
    for i=1,self.config.number_pixel:rows() do
       local icorr_vec = VectorInstrumentCorrection()
       local j, s
       for j, s in ipairs(sub_object) do
-	 if(s[i] ~= nil) then
-	    icorr_vec:push_back(s[i])
-	 end
+         if(s[i] ~= nil) then
+            icorr_vec:push_back(s[i])
+            table.insert(self.all_ic, s[i])
+         end
       end
       res:push_back(icorr_vec)
    end
    return res
+end
+
+function ConfigCommon.instrument_correction_list:add_to_statevector(sv)
+   CompositeCreator.add_to_statevector(self, sv)
+   sv:add_observer(self.config.instrument_correction)
 end
 
 ------------------------------------------------------------
@@ -1203,7 +1210,12 @@ end
 
 function ConfigCommon.ils_instrument:add_to_statevector(sv)
    CompositeCreator.add_to_statevector(self, sv)
-   sv:add_observer(self.config.instrument)
+   sv:add_observer(self.config.instrument) -- Probably unnecessary now
+
+   self.config:diagnostic_message("Adding Dispersion object to state vector")
+   for i, disp in ipairs(self.config.dispersion) do
+      sv:add_observer(disp)
+   end 
 end
 
 ------------------------------------------------------------
@@ -1817,8 +1829,31 @@ function ConfigCommon.atmosphere_oco:create_parent_object(sub_object)
 end
 
 function ConfigCommon.atmosphere_oco:add_to_statevector(sv)
-   CompositeCreator.add_to_statevector(self, sv)
-   sv:add_observer(self.config.atmosphere)
+   atm = self.config.atmosphere
+
+   -- Necessary to set up jacobians with number of variables for state vector
+   sv:add_observer(atm)
+
+   self.config:diagnostic_message("Adding Pressure, Temperature, Ground objects to state vector")
+
+   -- These need to be called in the order that things are added to the initial guess
+   -- Instead of using the call to the CompositeCreator.add_to_statevector we call the child
+   -- configuration objects' add_to_statevector routines directly to maintain the same order that 
+   -- things have been done in the past, otherwise every pressure and temperature Creator would
+   -- need to have their own add_to_statevector defined. But we are trying to keep this as close
+   -- to how things were done previously as possible.
+
+   local abs_c = self["absorber"].creator:new(self["absorber"], self.config, k)
+   abs_c:add_to_statevector(sv)
+
+   sv:add_observer(atm:pressure())
+   sv:add_observer(atm:temperature())
+
+   local aer_c = self["aerosol"].creator:new(self["aerosol"], self.config, k)
+   aer_c:add_to_statevector(sv)
+
+   sv:add_observer(atm:ground())
+
 end
 
 ------------------------------------------------------------
@@ -2495,6 +2530,20 @@ function ConfigCommon.aerosol_creator:register_output(ro)
    end
 end
 
+function ConfigCommon.aerosol_creator:add_to_statevector(sv)
+   self.config:diagnostic_message("Adding AerosolExtinction and AerosolProperty objects to state vector")
+   aerosol = config.aerosol
+
+   -- Necessary to set up jacobians with number of variables for state vector
+   sv:add_observer(aerosol)
+
+   for aer_idx = 0, aerosol:number_particle()-1 do
+       self.config:diagnostic_message(" - " .. (aer_idx + 1))
+       sv:add_observer(aerosol:aerosol_extinction(aer_idx))
+       sv:add_observer(aerosol:aerosol_property(aer_idx))
+   end
+end
+
 ------------------------------------------------------------
 --- Create aerosol using the MerraAerosol class.
 ------------------------------------------------------------
@@ -3004,6 +3053,17 @@ function ConfigCommon.absorber_creator:register_output(ro)
    if (self.config.ref_co2_ap_obj) then
        ro:push_back(GasVmrAprioriOutput(self.config.ref_co2_ap_obj))
    end
+end
+
+function ConfigCommon.absorber_creator:add_to_statevector(sv)
+    self.config:diagnostic_message("Adding AbsorberVmr objects to state vector")
+    absorber = config.absorber
+    for spec_idx = 0, absorber:number_species()-1 do
+        gas_name = absorber:gas_name(spec_idx)
+        self.config:diagnostic_message(" - " .. gas_name)
+        avmr = absorber:absorber_vmr(gas_name)
+        sv:add_observer(avmr) 
+    end
 end
 
 ------------------------------------------------------------

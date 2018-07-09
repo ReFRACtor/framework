@@ -34,10 +34,6 @@ public:
       ils_half_width_(Ils_half_width, units::inv_cm)
   { disp->add_observer(*this); }
   virtual ~IlsConvolution() {}
-  virtual void notify_update(const StateVector& Sv) 
-  { /* Nothing to do, we have everything done by attached Disp. */ }
-  virtual void notify_add(StateVector& Sv) { Sv.add_observer(*disp); }
-  virtual void notify_remove(StateVector& Sv) { Sv.remove_observer(*disp);}
   virtual void notify_update(const Dispersion& D)
   {
     notify_update_do(*this);

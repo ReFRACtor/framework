@@ -7,6 +7,9 @@ using namespace blitz;
 #include "register_lua.h"
 REGISTER_LUA_CLASS(Absorber)
 .def("gas_index", &Absorber::gas_index)
+.def("number_species", &Absorber::number_species)
+.def("gas_name", &Absorber::gas_name)
+.def("absorber_vmr", &Absorber::absorber_vmr)
 REGISTER_LUA_END()
 #endif
 

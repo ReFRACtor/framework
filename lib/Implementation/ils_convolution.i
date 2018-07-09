@@ -23,10 +23,6 @@ public:
   IlsConvolution(const boost::shared_ptr<Dispersion>& Disp,
 		 const boost::shared_ptr<IlsFunction>& Ils_func,
 		 double Ils_half_width);
-  virtual void notify_update(const StateVector& Sv);
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
-  virtual void notify_update(const Dispersion& D);
   virtual blitz::Array<double, 1> apply_ils
   (const blitz::Array<double, 1>& High_resolution_wave_number,
    const blitz::Array<double, 1>& High_resolution_radiance,

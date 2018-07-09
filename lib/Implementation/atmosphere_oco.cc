@@ -5,6 +5,7 @@
 #include "temperature_fixed_level.h"
 #include "ground.h"
 #include "planck.h"
+#include "aerosol_optical.h"
 #include "ostream_pad.h"
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -42,6 +43,9 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereOco, RtAtmosphere)
 	     const boost::shared_ptr<RelativeHumidity>&,
 	     const std::vector<boost::shared_ptr<Altitude> >&,
 	     const boost::shared_ptr<Constant>&>())
+.def("pressure", &AtmosphereOco::pressure_ptr)
+.def("temperature", &AtmosphereOco::temperature_ptr)
+.def("ground", &AtmosphereOco::ground)
 REGISTER_LUA_END()
 #endif
 
@@ -221,41 +225,6 @@ void AtmosphereOco::initialize()
   column_optical_depth_cache().reset( new ArrayAdMapCache<double, double, 1>() );
 }
 
-void AtmosphereOco::notify_add(StateVector& Sv)
-{
-  // Attach each of the classes we use directly. We then don't need to
-  // do anything in this class to handle state vector updates, we rely
-  // on absorber, pressure, temperature and aerosol to handle their
-  // own state.
-  Sv.add_observer(*absorber);
-  Sv.add_observer(*pressure);
-  Sv.add_observer(*temperature);
-  if(aerosol) {
-    Sv.add_observer(*aerosol);
-  }
-  if(ground_ptr) {
-    Sv.add_observer(*ground_ptr);
-  }
-  sv_size = Sv.state().size();
-}
-
-void AtmosphereOco::notify_remove(StateVector& Sv)
-{
-  // Attach each of the classes we use directly. We then don't need to
-  // do anything in this class to handle state vector updates, we rely
-  // on absorber, pressure, temperature and aerosol to handle their
-  // own state.
-  Sv.remove_observer(*absorber);
-  Sv.remove_observer(*pressure);
-  Sv.remove_observer(*temperature);
-  if(aerosol) {
-    Sv.remove_observer(*aerosol);
-  }
-  if(ground_ptr) {
-    Sv.remove_observer(*ground_ptr);
-  }
-}
-
 //-----------------------------------------------------------------------
 /// Changes the aerosol class used. Notifies the relevant obsevers 
 /// and invalidates the cache
@@ -270,7 +239,6 @@ void AtmosphereOco::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, StateVe
 
     // Register observers
     aerosol->add_observer(*this);
-    Sv.add_observer(*aerosol);
 
     // Run notify update so gradient is set up correctly
     aerosol->notify_update(Sv);
@@ -557,6 +525,18 @@ void AtmosphereOco::calc_rt_parameters
       tau.jacobian();
   }
 }
+//
+// See bass class for description
+ArrayAdWithUnit<double, 1> AtmosphereOco::altitude(int spec_index) const
+{
+  range_check(spec_index, 0, number_spectrometer());
+  ArrayAdWithUnit<double, 1> p = pressure->pressure_grid();
+  Array<AutoDerivative<double>, 1> res(p.rows());
+  Unit u = alt[spec_index]->altitude(p(0)).units;
+  for(int i = 0; i < res.rows(); ++i)
+    res(i) = alt[spec_index]->altitude(p(i)).convert(u).value;
+  return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
+}
 
 //-----------------------------------------------------------------------
 /// The atmospheric thermal blackbody values per level.
@@ -637,19 +617,6 @@ boost::shared_ptr<AtmosphereOco> AtmosphereOco::clone() const
   return res;
 }
 
-//-----------------------------------------------------------------------
-/// For unit test purposes, it is useful to be able to directly change
-/// the surface pressure. This is intended just for testing
-/// purposes. This only works if the Pressure is a
-/// PressureFixedLevel, otherwise it will fail.
-//-----------------------------------------------------------------------
-
-void AtmosphereOco::set_surface_pressure_for_testing(double x)
-{
-  PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
-  p.set_surface_pressure(x);
-}
-
 void AtmosphereOco::print(std::ostream& Os) const
 {
   Os << "AtmosphereOco:\n";
@@ -685,15 +652,54 @@ void AtmosphereOco::print(std::ostream& Os) const
   }
 }
 
-// See bass class for description
-ArrayAdWithUnit<double, 1> AtmosphereOco::altitude(int spec_index) const
+//-----------------------------------------------------------------------
+/// For unit test purposes, it is useful to be able to directly change
+/// the surface pressure. This is intended just for testing
+/// purposes. This only works if the Pressure is a
+/// PressureFixedLevel, otherwise it will fail.
+//-----------------------------------------------------------------------
+
+void AtmosphereOco::set_surface_pressure_for_testing(double x)
 {
-  range_check(spec_index, 0, number_spectrometer());
-  ArrayAdWithUnit<double, 1> p = pressure->pressure_grid();
-  Array<AutoDerivative<double>, 1> res(p.rows());
-  Unit u = alt[spec_index]->altitude(p(0)).units;
-  for(int i = 0; i < res.rows(); ++i)
-    res(i) = alt[spec_index]->altitude(p(i)).convert(u).value;
-  return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
+  PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
+  p.set_surface_pressure(x);
 }
+
+//-----------------------------------------------------------------------
+/// For unit test purposes, it is useful to be able to clone or create
+/// a new atmosphere class then attach all its nested children to the
+/// state vector in the historic order and in the manner done by the
+/// Lua configuration
+//-----------------------------------------------------------------------
+
+void AtmosphereOco::attach_children_to_sv(StateVector& statev)
+{
+  statev.add_observer(*this);
+
+  // Need to reattach the cloned atmosphere components to the SV one by one as done in the Lua config and in the same order
+  statev.add_observer(*this->absorber_ptr());
+  for (int spec_idx = 0; spec_idx < this->absorber_ptr()->number_species(); spec_idx++) {
+     std::string gas_name = this->absorber_ptr()->gas_name(spec_idx);
+     statev.add_observer(*this->absorber_ptr()->absorber_vmr(gas_name));
+  }
+
+  statev.add_observer(*this->pressure_ptr());
+  statev.add_observer(*this->temperature_ptr());
+
+  if(this->aerosol_ptr()) {
+    statev.add_observer(*this->aerosol_ptr());
+    for (int aer_idx = 0; aer_idx < this->aerosol_ptr()->number_particle(); aer_idx++) {
+      boost::shared_ptr<AerosolOptical> aer_optical(boost::dynamic_pointer_cast<AerosolOptical>(this->aerosol_ptr()));
+      if (aer_optical) {
+        statev.add_observer(*aer_optical->aerosol_extinction(aer_idx));
+        statev.add_observer(*aer_optical->aerosol_property(aer_idx));
+      }
+    }
+  }
+
+  if(this->ground()) {
+    statev.add_observer(*this->ground());
+  } 
+}
+
 

@@ -52,10 +52,6 @@ public:
     return ils_[Spec_index]->ils_half_width(half_width);
   }
   virtual void print(std::ostream& Os) const;
-  virtual void notify_update(const StateVector& Sv) 
-  { /* Nothing to do, we have everything done by attached ils. */ }
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   virtual void notify_update(const Ils& D)
   { notify_update_do(*this); }
   virtual void notify_update(const InstrumentCorrection& C)

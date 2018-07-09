@@ -55,10 +55,18 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   // We check that leaving out the aerosol gives the same results as
   // simply having the aerosol extinction set to 0.
   boost::shared_ptr<AtmosphereOco> atm_zeroext = atm->clone();
+
   // Set state vector so that the extinction coefficient of
-  // atm_zeroext is 0
+  // atm_zeroext is 0. The extiction object must be attached
+  // to the state vector for the update to have any effect
+  //
   StateVector sv;
-  sv.add_observer(*atm_zeroext->aerosol_ptr());
+  boost::shared_ptr<AerosolOptical> aer_optical(boost::dynamic_pointer_cast<AerosolOptical>(atm_zeroext->aerosol_ptr()));
+  for (int aer_idx = 0; aer_idx < atm_zeroext->aerosol_ptr()->number_particle(); aer_idx++) {
+    if (aer_optical) {
+      sv.add_observer(*aer_optical->aerosol_extinction(aer_idx));
+    }
+  }
   Array<double, 1> x(sv.observer_claimed_size());
   x = 1e-20;
   sv.update_state(x);
