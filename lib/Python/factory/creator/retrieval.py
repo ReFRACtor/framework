@@ -33,7 +33,7 @@ class NLLSRetrieval(Creator):
         return {
             'retrieval_components': retrieval_components,
             'state_vector': state_vector,
-            'intial_guess': initial_guess,
+            'initial_guess': initial_guess,
             'a_priori': a_priori,
             'covariance': covariance,
             'solver': solver,
