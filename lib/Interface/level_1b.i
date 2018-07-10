@@ -12,6 +12,7 @@
 %import "array_with_unit.i"
 %import "fp_time.i"
 %import "spectral_range.i"
+%import "spectral_domain.i"
 %fp_shared_ptr(FullPhysics::Level1b);
 
 namespace FullPhysics {
@@ -30,7 +31,7 @@ public:
   virtual DoubleWithUnit relative_azimuth(int i) const = 0;
   virtual DoubleWithUnit altitude(int i) const = 0;
   virtual DoubleWithUnit relative_velocity(int i) const = 0;
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
+  virtual SpectralDomain sample_grid(int Spec_index) const = 0;  
   virtual Time time(int Spec_index) const = 0;
   virtual SpectralRange radiance(int Spec_index) const = 0;
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;

@@ -2,7 +2,7 @@
 #define GROUND_BRDF_OUTPUT_H
 #include "register_output_base.h"
 #include "ground_brdf.h"
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -15,7 +15,7 @@ namespace FullPhysics {
 class GroundBrdfOutput : public RegisterOutputBase {
 public:
   GroundBrdfOutput(const boost::shared_ptr<GroundBrdf>& Brdf, 
-                   const boost::shared_ptr<Level1b>& L1b,
+                   const boost::shared_ptr<Level1bSampleCoefficient>& L1b,
                    const std::vector<std::string>& Hdf_band_names) 
     : brdf(Brdf), l1b(L1b), hdf_band_names(Hdf_band_names) {}
   virtual ~GroundBrdfOutput() {}
@@ -23,7 +23,7 @@ public:
   virtual void register_output(const boost::shared_ptr<Output>& out) const;
 private:
   boost::shared_ptr<GroundBrdf> brdf;
-  boost::shared_ptr<Level1b> l1b;
+  boost::shared_ptr<Level1bSampleCoefficient> l1b;
   std::vector<std::string> hdf_band_names;
   mutable std::string surface_type;
 };

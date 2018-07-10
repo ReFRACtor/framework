@@ -5,7 +5,7 @@
 #include "dispersion_fit.h"
 %}
 %base_import(generic_object)
-%import "level_1b.i"
+%import "level_1b_sample_coefficient.i"
 %import "double_with_unit.i"
 %import "array_with_unit.i"
 %fp_shared_ptr(FullPhysics::DispersionFit);
@@ -13,7 +13,7 @@
 namespace FullPhysics {
 class DispersionFit : public GenericObject {
 public:
-  DispersionFit(const boost::shared_ptr<Level1b>& Level1b);
+  DispersionFit(const boost::shared_ptr<Level1bSampleCoefficient>& Level1b);
   blitz::Array<double, 2> fit(const blitz::Array<double, 2> disp_initial, 
 			      const DoubleWithUnit& aband_solar_line_location,
 			      const DoubleWithUnit& aband_solar_line_width,

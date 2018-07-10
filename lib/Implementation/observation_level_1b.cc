@@ -6,11 +6,11 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(ObservationLevel1b, Observation)
-.def(luabind::constructor<const boost::shared_ptr<Level1b>&, const boost::shared_ptr<Instrument> &, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
+.def(luabind::constructor<const boost::shared_ptr<Level1bSampleCoefficient>&, const boost::shared_ptr<Instrument> &, const boost::shared_ptr<ForwardModelSpectralGrid>&>())
 REGISTER_LUA_END()
 #endif
 
-ObservationLevel1b::ObservationLevel1b(const boost::shared_ptr<Level1b>& level_1b, 
+ObservationLevel1b::ObservationLevel1b(const boost::shared_ptr<Level1bSampleCoefficient>& level_1b,
         const boost::shared_ptr<Instrument> &instrument,
         const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grids)
     : l1b(level_1b), inst(instrument), grids(spectral_grids)

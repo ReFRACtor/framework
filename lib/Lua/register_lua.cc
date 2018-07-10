@@ -173,7 +173,9 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(SpectralWindow);
   REGISTER_LUA_LIST(NoiseModel);
   REGISTER_LUA_LIST(Level1b);
+  REGISTER_LUA_LIST(Level1bSampleCoefficient);
   REGISTER_LUA_LIST(VectorLevel1b);
+  REGISTER_LUA_LIST(VectorLevel1bSampleCoefficient);
   REGISTER_LUA_LIST(Ils);
   REGISTER_LUA_LIST(VectorIls);
   REGISTER_LUA_LIST(Instrument);

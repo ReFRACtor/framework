@@ -3,7 +3,7 @@
 #include "example_level_1b.h"
 %}
 
-%base_import(level_1b)
+%base_import(level_1b_sample_coefficient)
 %import "hdf_file.i"
 
 %fp_shared_ptr(FullPhysics::ExampleLevel1b);
@@ -12,7 +12,7 @@ namespace FullPhysics {
 
 %feature("notabstract") ExampleLevel1b;
 
-class ExampleLevel1b: public Level1b {
+class ExampleLevel1b: public Level1bSampleCoefficient {
 public:
     ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
     ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);

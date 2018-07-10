@@ -57,25 +57,6 @@ blitz::Array<double, 2> level_1b_stokes(const Level1b& Lev1)
   return res;
 }
 
-blitz::Array<double, 2> level_1b_s_coeffs(const Level1b& Lev1)
-{
-  int nparam = Lev1.spectral_coefficient(0).value.rows();
-  blitz::Array<double, 2> res(Lev1.number_spectrometer(), nparam);
-  for(int i = 0; i < res.rows(); ++i)
-    res(i, blitz::Range::all()) = Lev1.spectral_coefficient(i).value;
-  return res;
-}
-
-ArrayWithUnit<double, 2> level_1b_s_coeffs_with_unit(const Level1b& Lev1)
-{
-  int nparam = Lev1.spectral_coefficient(0).value.rows();
-  Unit units = Lev1.spectral_coefficient(0).units;
-  blitz::Array<double, 2> res(Lev1.number_spectrometer(), nparam);
-  for(int i = 0; i < res.rows(); ++i)
-    res(i, blitz::Range::all()) = Lev1.spectral_coefficient(i).value;
-  return ArrayWithUnit<double,2>(res, units);
-}
-
 blitz::Array<double, 1> level_1b_radiance(const Level1b& Lev1, int Spec_index)
 {
   return Lev1.radiance(Spec_index).data();
@@ -171,9 +152,6 @@ REGISTER_LUA_CLASS(Level1b)
 .def("zen", &level_1b_zen_i)
 .def("zen_with_unit", &Level1b::sounding_zenith)
 .def("stokes_coef", &level_1b_stokes)
-.def("spectral_coefficient", &level_1b_s_coeffs)
-.def("spectral_coefficient_with_unit", &Level1b::spectral_coefficient)
-.def("spectral_coefficient_with_unit", &level_1b_s_coeffs_with_unit)
 .def("year", &level_1b_year)
 .def("month", &level_1b_month)
 .def("day", &level_1b_day)

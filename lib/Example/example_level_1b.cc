@@ -9,7 +9,7 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(ExampleLevel1b, Level1b)
+REGISTER_LUA_DERIVED_CLASS(ExampleLevel1b, Level1bSampleCoefficient)
 .def(luabind::constructor<const boost::shared_ptr<HdfFile>&, const std::string&>())
 REGISTER_LUA_END()
 #endif

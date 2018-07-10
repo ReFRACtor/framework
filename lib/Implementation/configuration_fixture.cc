@@ -60,7 +60,7 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
     lua_config["spec_samp"].value_ptr<SpectrumSampling>();
   config_error_analysis = 
     lua_config["error_analysis"].value_ptr<ErrorAnalysis>();
-  config_level_1b = lua_config["l1b"].value_ptr<Level1b>();
+  config_level_1b = lua_config["l1b"].value_ptr<Level1bSampleCoefficient>();
   config_rt = lua_config["rt"].value_ptr<RadiativeTransfer>();
   config_forward_model = lua_config["forward_model"].value_ptr<ForwardModel>();
   config_observation = lua_config["observation"].value_ptr<Observation>();

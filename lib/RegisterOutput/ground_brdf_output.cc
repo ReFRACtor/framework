@@ -8,14 +8,14 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 
-boost::shared_ptr<RegisterOutputBase> ground_brdf_output_create(const boost::shared_ptr<Ground>& ground, const boost::shared_ptr<Level1b>& l1b, const std::vector<std::string>& hdf_band_names)
+boost::shared_ptr<RegisterOutputBase> ground_brdf_output_create(const boost::shared_ptr<Ground>& ground, const boost::shared_ptr<Level1bSampleCoefficient>& l1b, const std::vector<std::string>& hdf_band_names)
 {
     return boost::shared_ptr<RegisterOutputBase>
-        (new GroundBrdfOutput(boost::dynamic_pointer_cast<GroundBrdf>(ground), boost::dynamic_pointer_cast<Level1b>(l1b), hdf_band_names));
+        (new GroundBrdfOutput(boost::dynamic_pointer_cast<GroundBrdf>(ground), boost::dynamic_pointer_cast<Level1bSampleCoefficient>(l1b), hdf_band_names));
 }
 
 REGISTER_LUA_DERIVED_CLASS(GroundBrdfOutput, RegisterOutputBase)
-.def(luabind::constructor<const boost::shared_ptr<GroundBrdf>&, const boost::shared_ptr<Level1b>&, const std::vector<std::string>&>())
+.def(luabind::constructor<const boost::shared_ptr<GroundBrdf>&, const boost::shared_ptr<Level1bSampleCoefficient>&, const std::vector<std::string>&>())
 .scope
 [
     luabind::def("create", &ground_brdf_output_create)
@@ -28,7 +28,7 @@ class BrdfOutputHelper {
 public:
 
     BrdfOutputHelper(const boost::shared_ptr<GroundBrdf>& Brdf, 
-                      const boost::shared_ptr<Level1b>& L1b)
+                      const boost::shared_ptr<Level1bSampleCoefficient>& L1b)
     : brdf(Brdf), l1b(L1b) { }
 
     double weight_intercept(int spec_idx)
@@ -141,7 +141,7 @@ public:
     }
 private:
     boost::shared_ptr<GroundBrdf> brdf;
-    boost::shared_ptr<Level1b> l1b;
+    boost::shared_ptr<Level1bSampleCoefficient> l1b;
 };
 
 void GroundBrdfOutput::register_output_apriori(const boost::shared_ptr<Output>& out) const

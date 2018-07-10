@@ -4,16 +4,16 @@
 %{
 #include "level_1b_average.h"
 %}
-%base_import(level_1b)
+%base_import(level_1b_sample_coefficient)
 %import "double_with_unit.i"
 %import "spectral_range.i"
 %import "fp_time.i"
 %fp_shared_ptr(FullPhysics::Level1bAverage);
 
 namespace FullPhysics {
-class Level1bAverage: public Level1b {
+class Level1bAverage: public Level1bSampleCoefficient {
 public:
-  Level1bAverage(const std::vector<boost::shared_ptr<Level1b> >& Data);
+  Level1bAverage(const std::vector<boost::shared_ptr<Level1bSampleCoefficient> >& Data);
   virtual DoubleWithUnit latitude(int i) const;
   virtual DoubleWithUnit longitude(int i) const;
   virtual DoubleWithUnit sounding_zenith(int i) const;

@@ -1,6 +1,6 @@
 #ifndef DISPERSION_FIT_H
 #define DISPERSION_FIT_H
-#include "level_1b.h"
+#include "level_1b_sample_coefficient.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -18,7 +18,7 @@ namespace FullPhysics {
   class DispersionFit : public Printable<DispersionFit> {
 public:
 
-    DispersionFit(const boost::shared_ptr<Level1b>& Level1b);
+    DispersionFit(const boost::shared_ptr<Level1bSampleCoefficient>& Level1b);
     blitz::Array<double, 2> fit(const blitz::Array<double, 2> disp_initial, 
 				const DoubleWithUnit& aband_solar_line_location,
 				const DoubleWithUnit& aband_solar_line_width,
@@ -33,7 +33,7 @@ public:
 
 private:
 
-  boost::shared_ptr<Level1b> l1b;
+  boost::shared_ptr<Level1bSampleCoefficient> l1b;
   mutable blitz::Array<double, 1> shift_;
 
 };

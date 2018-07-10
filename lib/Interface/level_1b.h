@@ -4,6 +4,7 @@
 #include "printable.h"
 #include "double_with_unit.h"
 #include "spectral_range.h"
+#include "spectral_domain.h"
 #include <blitz/array.h>
 #include <stdint.h>
 
@@ -111,14 +112,13 @@ public:
   virtual DoubleWithUnit relative_velocity(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// Returns coefficients for an equation describing the special domain
-/// used to translate radiance value indexes to their corresponding 
-/// spectral grid. (ie wavenumber, wavelength, etc)
+/// Returns the sample grid (ie wavenumber, wavelength, etc) for the
+/// corresponding radiance values.
 /// The meaning of these coefficients will be specific to the instrument
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
+  virtual SpectralDomain sample_grid(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Time of sounding.
