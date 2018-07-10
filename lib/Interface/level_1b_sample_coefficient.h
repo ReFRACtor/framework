@@ -4,6 +4,7 @@
 #include "spectral_domain.h"
 #include <blitz/array.h>
 #include <stdint.h>
+#include <cmath>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -29,13 +30,13 @@ public:
   virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// Returns the spectral grid (ie wavenumber, wavelength, etc) for the
+/// Returns the sample grid (ie wavenumber, wavelength, etc) for the
 /// corresponding radiance values.
 /// The meaning of these coefficients will be specific to the instrument
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain sample_spectral_domain(int Spec_index) const;
+  virtual SpectralDomain sample_grid(int Spec_index) const;
 
 //-----------------------------------------------------------------------
 /// Print description of object.
@@ -43,6 +44,8 @@ public:
 
   virtual void print(std::ostream& Os) const {Os << "Level1bSampleCoefficient";}
 
+private:
+  virtual double calculate_sample_value_from_coeffs(int Spec_index, int sample_idx) const;
 };
 } // End of FullPhysics namespace
 #endif

@@ -31,7 +31,7 @@ public:
   virtual DoubleWithUnit relative_azimuth(int i) const = 0;
   virtual DoubleWithUnit altitude(int i) const = 0;
   virtual DoubleWithUnit relative_velocity(int i) const = 0;
-  virtual SpectralDomain sample_spectral_domain(int Spec_index) const = 0;  
+  virtual SpectralDomain sample_grid(int Spec_index) const = 0;  
   virtual Time time(int Spec_index) const = 0;
   virtual SpectralRange radiance(int Spec_index) const = 0;
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;

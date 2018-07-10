@@ -112,13 +112,13 @@ public:
   virtual DoubleWithUnit relative_velocity(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// Returns the spectral grid (ie wavenumber, wavelength, etc) for the
+/// Returns the sample grid (ie wavenumber, wavelength, etc) for the
 /// corresponding radiance values.
 /// The meaning of these coefficients will be specific to the instrument
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain sample_spectral_domain(int Spec_index) const = 0;
+  virtual SpectralDomain sample_grid(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Time of sounding.

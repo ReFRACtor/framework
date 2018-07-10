@@ -17,6 +17,6 @@ class Level1bSampleCoefficient : public Level1b {
 public:
   virtual ~Level1bSampleCoefficient();
   virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
-  virtual SpectralDomain sample_spectral_domain(int Spec_index) const;
+  virtual SpectralDomain sample_grid(int Spec_index) const;
 };
 }
