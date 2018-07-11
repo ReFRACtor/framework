@@ -4,7 +4,7 @@
 #include <blitz/array.h>
 
 #include "meteorology.h"
-#include "level_1b_sample_coefficient.h"
+#include "level_1b.h"
 #include "altitude.h"
 #include "hdf_file.h"
 #include "pressure.h"
@@ -28,7 +28,7 @@ namespace FullPhysics {
 class GasVmrApriori : public Printable<GasVmrApriori> {
 public:
     GasVmrApriori(const boost::shared_ptr<Meteorology>& met_file,
-                  const boost::shared_ptr<Level1bSampleCoefficient>& l1b_file,
+                  const boost::shared_ptr<Level1b>& l1b_file,
                   const boost::shared_ptr<Altitude>& alt,
                   const HdfFile& hdf_static_input,
                   const std::string& hdf_group,

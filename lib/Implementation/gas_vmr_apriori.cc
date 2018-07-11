@@ -1,5 +1,6 @@
 #include "gas_vmr_apriori.h"
 #include "linear_interpolate.h"
+#include "level_1b_sample_coefficient.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -8,6 +9,19 @@ using namespace blitz;
 #include "register_lua.h"
 
 REGISTER_LUA_CLASS(GasVmrApriori)
+.def(luabind::constructor<const boost::shared_ptr<Meteorology>&,
+                          const boost::shared_ptr<Level1b>&,
+                          const boost::shared_ptr<Altitude>&,
+                          const HdfFile&,
+                          const std::string&,
+                          const std::string&>())
+.def(luabind::constructor<const boost::shared_ptr<Meteorology>&,
+                          const boost::shared_ptr<Level1b>&,
+                          const boost::shared_ptr<Altitude>&,
+                          const HdfFile&,
+                          const std::string&,
+                          const std::string&,
+                          const int>())
 .def(luabind::constructor<const boost::shared_ptr<Meteorology>&,
                           const boost::shared_ptr<Level1bSampleCoefficient>&,
                           const boost::shared_ptr<Altitude>&,
@@ -31,7 +45,7 @@ REGISTER_LUA_END()
 // to average among
 
 GasVmrApriori::GasVmrApriori(const boost::shared_ptr<Meteorology>& Met_file,
-                             const boost::shared_ptr<Level1bSampleCoefficient>& L1b_file,
+                             const boost::shared_ptr<Level1b>& L1b_file,
                              const boost::shared_ptr<Altitude>& altitude,
                              const HdfFile& reference_file,
                              const std::string& hdf_group,

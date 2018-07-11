@@ -7,7 +7,7 @@
 
 %base_import(generic_object)
 %import "meteorology.i"
-%import "level_1b_sample_coefficient.i"
+%import "level_1b.i"
 %import "pressure.i"
 %import "temperature.i"
 %import "altitude.i"
@@ -21,7 +21,7 @@ namespace FullPhysics {
 class GasVmrApriori : public GenericObject {
 public:
     GasVmrApriori(const boost::shared_ptr<Meteorology>& met_file,
-                  const boost::shared_ptr<Level1bSampleCoefficient>& l1b_file,
+                  const boost::shared_ptr<Level1b>& l1b_file,
                   const boost::shared_ptr<Altitude>& alt,
                   const HdfFile& hdf_static_input,
                   const std::string& hdf_group,
