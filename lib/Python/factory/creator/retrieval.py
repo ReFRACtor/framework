@@ -251,6 +251,10 @@ class MaxAPosterioriBase(Creator):
 
         return opt_problem
 
+    def attach_logging(self, solver):
+        iter_log = rf.SolverIterationLog(self.state_vector())
+        solver.add_observer(iter_log)
+
 class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
 
     dx_tol_abs = param.Scalar(float)
@@ -264,6 +268,7 @@ class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
                 True)
 
         self.init_state_vector()
+        self.attach_logging(solver)
 
         return solver
 
@@ -283,12 +288,46 @@ class ConnorSolverMAP(MaxAPosterioriBase):
                 self.max_cost_function_calls(), True,
                 self.gamma_initial())
 
-        iter_log = rf.SolverIterationLog(self.state_vector())
-        solver.add_observer(iter_log)
-
         self.init_state_vector()
+        self.attach_logging(solver)
 
         return solver
 
  
+class NLLSSolverLM(MaxAPosterioriBase):
 
+    max_iteration = param.Scalar(int)
+
+    dx_tol_abs = param.Scalar(float, default=1e-6)
+    dx_tol_rel = param.Scalar(float, default=1e-6)
+    g_tol_abs = param.Scalar(float, default=1e-6)
+    g_tol_rel = param.Scalar(float, default=1e-6)
+
+    min_W = param.Scalar(float, required=False)
+    tr_rad_tol = param.Scalar(float, required=False)
+    tr_rad = param.Scalar(float, required=False)
+    cr_ratio_tol = param.Scalar(float, required=False)
+
+    def create(self, **kwargs):
+
+        # Class comes with defaults, only overwrite the defaults if the config has a value supplied
+        opts = rf.NLLSSolverLMOptions()
+
+        if self.min_W() is not None:
+            opts.min_W = self.min_W
+
+        if self.tr_rad_tol() is not None:
+            opts.tr_rad_tol = self.tr_rad_tol
+
+        if self.tr_rad() is not None:
+            opts.tr_rad = self.tr_rad
+
+        if self.cr_ratio_tol() is not None:
+            opts.cr_ratio_tol = self.cr_ratio_tol
+
+        solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel())
+
+        self.init_state_vector()
+        self.attach_logging(solver)
+
+        return solver
