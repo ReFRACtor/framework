@@ -13,6 +13,7 @@ class NLLSSolver : public IterativeSolverDer {
 public:
   NLLSSolver(const boost::shared_ptr<NLLSProblem>& p, 
              int max_cost_function_calls, bool vrbs);
+  %python_attribute(problem, boost::shared_ptr<NLLSProblem>);
   virtual ~NLLSSolver();
 };
 }

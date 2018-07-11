@@ -46,6 +46,7 @@ public:
       P(p)
   {}
 
+  virtual const boost::shared_ptr<NLLSProblem> problem() const { return P; };
 
   virtual ~NLLSSolver() {}
 
