@@ -95,8 +95,6 @@ public:
                 const boost::shared_ptr<Constant>& C);
 
   virtual ~AtmosphereOco() {}
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   virtual ArrayAdWithUnit<double, 1> altitude(int spec_index) const;
   virtual int number_spectrometer() const {return alt.size();}
   virtual int number_layer() const 
@@ -183,12 +181,14 @@ public:
 
   virtual const boost::shared_ptr<Ground> ground() const {return ground_ptr;}
 
-  // We use attach_notify to directly attach the various object that
-  // Atmosphere contains. This means we don't need to do anything with
-  // changes to the StateVector in this class, it is already handled
-  // by the objects we contain.
+  // Use the state vector observer routines to update the length of the
+  // state vector size used internally to allocated intermediate variables
+  virtual void notify_add(StateVector& Sv)
+  { sv_size = (int) Sv.state().size(); }
+  virtual void notify_remove(StateVector& Sv) 
+  { sv_size = (int) Sv.state().size(); }
   virtual void notify_update(const StateVector& Sv) 
-  { notify_update_do(*this); sv_size = (int) Sv.state().size();}
+  { notify_update_do(*this); sv_size = (int) Sv.state().size(); }
 
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const Aerosol& A);
@@ -224,6 +224,8 @@ public:
   }
 
   void set_surface_pressure_for_testing(double x);
+
+  void attach_children_to_sv(StateVector& statev);
 private:
 
   boost::shared_ptr<Absorber> absorber;

@@ -34,9 +34,6 @@ public:
 		 const ArrayAd<double, 1>& Od) const;
   virtual ArrayAd<double, 1> 
   ssa_each_layer(double wn) const;
-  virtual void notify_update(const Pressure& P);
-  virtual void notify_update(const AerosolExtinction& A);
-  virtual void notify_update(const AerosolProperty& A);
   virtual ArrayAd<double, 3> pf_mom(double wn, int pindex) const;
   virtual blitz::Array<double, 3> pf_mom(double wn, 
 				 const blitz::Array<double, 2>& frac_aer) const;

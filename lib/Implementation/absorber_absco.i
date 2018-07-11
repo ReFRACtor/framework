@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "absorber_absco.h"
@@ -46,17 +44,10 @@ public:
   optical_depth_each_layer_direct_integrate(double wn, int Spec_index,
 					    double eps_abs = 0,
 					    double eps_rel = 1e-4) const;
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
-  virtual void notify_update(const StateVector& Sv);
   %python_attribute_derived(number_species, int)
   %python_attribute_derived(number_spectrometer, int)
   %python_attribute_derived(number_layer, int)
   virtual std::string gas_name(int Species_index) const;
-  virtual void notify_update(const Pressure& P);
-  virtual void notify_update(const Temperature& T);
-  virtual void notify_update(const Altitude& A);
-  virtual void notify_update(const AbsorberVmr& A);
   virtual ArrayAd<double, 2> 
     optical_depth_each_layer(double wn, int spec_index) const;
   %python_attribute(specific_humidity_layer, ArrayAdWithUnit<double, 1>)

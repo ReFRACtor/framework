@@ -592,18 +592,6 @@ AbsorberAbsco::AbsorberAbsco
     }
 }
 
-void AbsorberAbsco::notify_add(StateVector& Sv)
-{
-  BOOST_FOREACH(boost::shared_ptr<AbsorberVmr>& a, vmr)
-    Sv.add_observer(*a);
-}
-
-void AbsorberAbsco::notify_remove(StateVector& Sv)
-{
-  BOOST_FOREACH(boost::shared_ptr<AbsorberVmr>& a, vmr)
-    Sv.remove_observer(*a);
-}
-
 // See base class for description
 ArrayAd<double, 2> 
 AbsorberAbsco::optical_depth_each_layer(double wn, int spec_index) const

@@ -10,7 +10,13 @@ using namespace blitz;
 #include "register_lua.h"
 #include "rt_atmosphere.h"
 #include "instrument.h"
+#include "instrument_correction.h"
 #include "stokes_coefficient.h"
+#include "absorber_vmr.h"
+#include "aerosol_optical.h"
+#include "aerosol_extinction.h"
+#include "aerosol_property.h"
+#include "dispersion.h"
 
 void state_vector_add_observer_instrument(StateVector& Sv, Instrument& inst)
 {
@@ -35,6 +41,55 @@ void state_vector_add_observer_spec_effect(StateVector& Sv, std::vector<std::vec
     }
 }
 
+void state_vector_add_observer_inst_corr(StateVector& Sv, std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >& se)
+{
+    BOOST_FOREACH(std::vector<boost::shared_ptr<InstrumentCorrection> >& i, se) {
+        BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection>& j, i)
+        Sv.add_observer(*j);
+    }
+}
+
+void state_vector_add_observer_absorber_vmr(StateVector& Sv, AbsorberVmr& avmr)
+{
+    Sv.add_observer(avmr);
+}
+
+void state_vector_add_observer_aerosol_optical(StateVector& Sv, AerosolOptical& aopt)
+{
+    Sv.add_observer(aopt);
+}
+
+void state_vector_add_observer_aerosol_extinction(StateVector& Sv, AerosolExtinction& aext)
+{
+    Sv.add_observer(aext);
+}
+
+void state_vector_add_observer_aerosol_property(StateVector& Sv, AerosolProperty& aprop)
+{
+    Sv.add_observer(aprop);
+}
+
+void state_vector_add_observer_pressure(StateVector& Sv, Pressure& press)
+{
+    Sv.add_observer(press);
+}
+
+void state_vector_add_observer_temperature(StateVector& Sv, Temperature& temp)
+{
+    Sv.add_observer(temp);
+}
+
+void state_vector_add_observer_ground(StateVector& Sv, Ground& ground)
+{
+    Sv.add_observer(ground);
+}
+
+
+void state_vector_add_observer_disp(StateVector& Sv, Dispersion& disp)
+{
+    Sv.add_observer(disp);
+}
+
 void state_vector_print_names(StateVector& Sv)
 {
     BOOST_FOREACH(const std::string & s, Sv.state_vector_name())
@@ -48,6 +103,15 @@ REGISTER_LUA_CLASS(StateVector)
 .def("add_observer", &state_vector_add_observer_atm)
 .def("add_observer", &state_vector_add_observer_scoeff)
 .def("add_observer", &state_vector_add_observer_spec_effect)
+.def("add_observer", &state_vector_add_observer_inst_corr)
+.def("add_observer", &state_vector_add_observer_absorber_vmr)
+.def("add_observer", &state_vector_add_observer_aerosol_optical)
+.def("add_observer", &state_vector_add_observer_aerosol_extinction)
+.def("add_observer", &state_vector_add_observer_aerosol_property)
+.def("add_observer", &state_vector_add_observer_pressure)
+.def("add_observer", &state_vector_add_observer_temperature)
+.def("add_observer", &state_vector_add_observer_ground)
+.def("add_observer", &state_vector_add_observer_disp)
 .def("update_state", ((us1) &StateVector::update_state))
 .def("update_state", ((us2) &StateVector::update_state))
 .def("print_names", &state_vector_print_names)
@@ -71,12 +135,16 @@ void StateVector::update_state(const blitz::Array<double, 1>& X)
         x_.jacobian()(i, i) = 1;
     }
 
-    cov_.resize(x_.rows(), x_.rows());
-    cov_ = 0;
+    // Only set dummy covariance values when it is empty or the state vector size change. Don't
+    // overwrite anything that may have been written by the other overloaded update_state method
+    //if (cov_.rows() != x_.rows() or cov_.cols() == x_.rows()) {
+        cov_.resize(x_.rows(), x_.rows());
+        cov_ = 0;
 
-    for(int i = 0; i < x_.rows(); ++i) {
-        cov_(i, i) = 1;
-    }
+        for(int i = 0; i < x_.rows(); ++i) {
+            cov_(i, i) = 1;
+        }
+    //}
 
     notify_update_do(*this);
 }

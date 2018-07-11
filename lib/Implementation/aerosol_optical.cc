@@ -8,7 +8,11 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
+
 typedef const boost::shared_ptr<AerosolExtinction>& (AerosolOptical::*a1)(int) const;
+
+typedef const boost::shared_ptr<AerosolProperty>& (AerosolOptical::*a2)(int) const;
+
 REGISTER_LUA_DERIVED_CLASS(AerosolOptical, Aerosol)
 .def(luabind::constructor<const std::vector<boost::shared_ptr<AerosolExtinction> >&,
      const std::vector<boost::shared_ptr<AerosolProperty> >&,
@@ -16,6 +20,7 @@ REGISTER_LUA_DERIVED_CLASS(AerosolOptical, Aerosol)
      const boost::shared_ptr<RelativeHumidity>&>())
 .def("number_particle", &AerosolOptical::number_particle)
 .def("aerosol_extinction", ((a1) &AerosolOptical::aerosol_extinction))
+.def("aerosol_property", ((a2) &AerosolOptical::aerosol_property))
 REGISTER_LUA_END()
 #endif
 
@@ -52,22 +57,6 @@ AerosolOptical::AerosolOptical
     aext[i]->add_observer(*this);
   }
   press->add_observer(*this);
-}
-
-void AerosolOptical::notify_add(StateVector& Sv)
-{
-  BOOST_FOREACH(boost::shared_ptr<AerosolExtinction>& i, aext)
-    Sv.add_observer(*i);
-  BOOST_FOREACH(boost::shared_ptr<AerosolProperty>& i, aprop)
-    Sv.add_observer(*i);
-}
-
-void AerosolOptical::notify_remove(StateVector& Sv)
-{
-  BOOST_FOREACH(boost::shared_ptr<AerosolExtinction>& i, aext)
-    Sv.remove_observer(*i);
-  BOOST_FOREACH(boost::shared_ptr<AerosolProperty>& i, aprop)
-    Sv.remove_observer(*i);
 }
 
 //-----------------------------------------------------------------------

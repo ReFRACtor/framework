@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "atmosphere_oco.h"
@@ -84,8 +82,6 @@ public:
                 const boost::shared_ptr<RelativeHumidity>& Rh,
                 const std::vector<boost::shared_ptr<Altitude> >& altv,
                 const boost::shared_ptr<Constant>& C);
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   virtual ArrayAdWithUnit<double, 1> altitude(int spec_index) const;
   %python_attribute_derived(number_spectrometer, int)
   %python_attribute_derived(number_layer, int)
@@ -115,8 +111,6 @@ public:
   virtual ArrayAd<double, 2>
     intermediate_variable(double wn, int spec_index) const;
   %python_attribute_derived(ground, boost::shared_ptr<Ground>)
-  virtual void notify_update(const StateVector& Sv);
-  virtual void notify_update(const Aerosol& A);
   virtual void reset_timer();
   %python_attribute_derived(timer_info, std::string)
   %python_attribute2(pressure, pressure_ptr, boost::shared_ptr<Pressure>)

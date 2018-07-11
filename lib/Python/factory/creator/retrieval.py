@@ -33,7 +33,7 @@ class NLLSRetrieval(Creator):
         return {
             'retrieval_components': retrieval_components,
             'state_vector': state_vector,
-            'intial_guess': initial_guess,
+            'initial_guess': initial_guess,
             'a_priori': a_priori,
             'covariance': covariance,
             'solver': solver,
@@ -153,12 +153,13 @@ class InitialGuessFromSV(Creator):
             used_indexes = np.nonzero(ret_component.used_flag_value)
             ig_values.append(ret_component.coefficient.value[used_indexes])
 
+        if len(ig_values) == 0:
+            raise param.ParamError("InitialGuessFromSV: No initial guess values available as identified by the retrieval components")
+
         ig = np.concatenate(ig_values)
 
         if ig.shape[0] != sv.observer_claimed_size:
             raise ValueError("The initial guess vector size %d does not match expected state vector size %d" % (ig.shape[0], sv.observer_claimed_size))
-        
-        sv.update_state(ig)
 
         return ig
 
@@ -258,11 +259,11 @@ class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
 
     def create(self, **kwargs):
 
-        self.init_state_vector()
-
         solver = rf.NLLSSolverGSLLMSDER(self.opt_problem(),
                 self.max_cost_function_calls(), self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
                 True)
+
+        self.init_state_vector()
 
         return solver
 
@@ -276,8 +277,6 @@ class ConnorSolverMAP(MaxAPosterioriBase):
 
     def create(self, **kwargs):
 
-        self.init_state_vector()
-
         conv = rf.ConnorConvergence(self.forward_model(), self.threshold(), self.max_iteration(), self.max_divergence(), self.max_chisq())
 
         solver = rf.ConnorSolverMAP(self.opt_problem(), conv,
@@ -286,6 +285,8 @@ class ConnorSolverMAP(MaxAPosterioriBase):
 
         iter_log = rf.SolverIterationLog(self.state_vector())
         solver.add_observer(iter_log)
+
+        self.init_state_vector()
 
         return solver
 

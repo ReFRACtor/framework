@@ -11,6 +11,10 @@ AtmosphereFixture::AtmosphereFixture()
   // Create a new SV for our cloned Atmosphere to use
   statev.reset(new StateVector);
   statev->add_observer(*atm);
+
+  // Need to reattach the cloned atmosphere components to the SV one by one as done in the Lua config and in the same order
+  atm->attach_children_to_sv(*statev);
+
   statev->update_state(config_initial_guess->initial_guess());
 }
 

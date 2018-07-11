@@ -29,9 +29,6 @@ public:
     int Spec_index) const;
   virtual std::string band_name(int Spec_index) const;
   virtual std::string hdf_band_name(int Spec_index) const;
-  virtual void notify_update(const StateVector& Sv);
-  virtual void notify_add(StateVector& Sv);
-  virtual void notify_remove(StateVector& Sv);
   virtual void notify_update(const Ils& D);
   virtual void notify_update(const InstrumentCorrection& C);
   virtual boost::shared_ptr<Instrument> clone() const;

@@ -55,30 +55,6 @@ boost::shared_ptr<Instrument> IlsInstrument::clone() const
 							 inst_corr_vec));
 }
 
-// See base class for description.
-void IlsInstrument::notify_add(StateVector& Sv) 
-{ 
-  BOOST_FOREACH(boost::shared_ptr<Ils> i, ils_)
-    Sv.add_observer(*i); 
-  BOOST_FOREACH(std::vector<boost::shared_ptr<InstrumentCorrection> >& i, 
-		inst_corr) {
-    BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection>& j, i)
-      Sv.add_observer(*j);
-  }
-}
-// See base class for description.
-
-void IlsInstrument::notify_remove(StateVector& Sv) 
-{ 
-  BOOST_FOREACH(boost::shared_ptr<Ils> i, ils_)
-    Sv.remove_observer(*i);
-  BOOST_FOREACH(std::vector<boost::shared_ptr<InstrumentCorrection> >& i, 
-		inst_corr) {
-    BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection>& j, i)
-      Sv.remove_observer(*j);
-  }
-}
-
 Spectrum IlsInstrument::apply_instrument_model(
     const Spectrum& High_resolution_spectrum,
     const std::vector<int>& Pixel_list,
