@@ -2,6 +2,8 @@
 #define LEVEL_1B_SAMPLE_COEFFICIENT_H
 #include "level_1b.h"
 #include "spectral_domain.h"
+#include "array_ad.h"
+#include "polynomial_eval.h"
 #include <blitz/array.h>
 #include <stdint.h>
 #include <cmath>

@@ -5,8 +5,8 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(Level1bScaleRadiance, Level1bSampleCoefficient)
-.def(luabind::constructor<const boost::shared_ptr<Level1bSampleCoefficient> &, const blitz::Array<double, 1>&>())
+REGISTER_LUA_DERIVED_CLASS(Level1bScaleRadiance, Level1b)
+.def(luabind::constructor<const boost::shared_ptr<Level1b> &, const blitz::Array<double, 1>&>())
 REGISTER_LUA_END()
 #endif
 

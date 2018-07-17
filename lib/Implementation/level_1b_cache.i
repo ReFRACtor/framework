@@ -4,14 +4,15 @@
 %{
 #include "level_1b_cache.h"
 %}
-%base_import(level_1b_sample_coefficient)
+%base_import(level_1b)
 %import "spectral_range.i"
+%import "spectral_domain.i"
 %fp_shared_ptr(FullPhysics::Level1bCache);
 
 namespace FullPhysics {
-class Level1bCache : public Level1bSampleCoefficient {
+class Level1bCache : public Level1b {
 public:
-  Level1bCache(const Level1bSampleCoefficient& L1_in);
+  Level1bCache(const Level1b& L1_in);
   virtual DoubleWithUnit latitude(int i) const;
   void set_latitude(int i, const DoubleWithUnit& V);
   virtual DoubleWithUnit longitude(int i) const;
@@ -29,9 +30,9 @@ public:
   virtual DoubleWithUnit altitude(int i) const;
   void set_altitude(int i, const DoubleWithUnit& V);
   virtual DoubleWithUnit relative_velocity(int i) const;
-  void set_relative_velocity(int i, const DoubleWithUnit& V);
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int i) const;
-  void set_spectral_coefficient(int i, const ArrayWithUnit<double, 1>& V);
+  void set_relative_velocity(int i, const DoubleWithUnit& V);  
+  virtual SpectralDomain sample_grid(int i) const;
+  void set_sample_grid(int i, const SpectralDomain& V);  
   virtual Time time(int i) const;
   void set_time(int i, const Time& V);
   virtual SpectralRange radiance(int Spec_index) const;

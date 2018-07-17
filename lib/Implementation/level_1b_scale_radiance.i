@@ -4,16 +4,17 @@
 %{
 #include "level_1b_scale_radiance.h"
 %}
-%base_import(level_1b_sample_coefficient)
+%base_import(level_1b)
 %import "double_with_unit.i"
 %import "spectral_range.i"
+%import "spectral_domain.i"
 %import "fp_time.i"
 %fp_shared_ptr(FullPhysics::Level1bScaleRadiance);
 
 namespace FullPhysics {
-class Level1bScaleRadiance: public Level1bSampleCoefficient {
+class Level1bScaleRadiance: public Level1b {
 public:
-    Level1bScaleRadiance(const boost::shared_ptr<Level1bSampleCoefficient>& L1b, const blitz::Array<double, 1>& Scaling);
+    Level1bScaleRadiance(const boost::shared_ptr<Level1b>& L1b, const blitz::Array<double, 1>& Scaling);
     virtual DoubleWithUnit latitude(int i) const;
     virtual DoubleWithUnit longitude(int i) const;
     virtual DoubleWithUnit sounding_zenith(int i) const;
@@ -25,5 +26,6 @@ public:
     virtual DoubleWithUnit relative_velocity(int i) const;
     virtual Time time(int i) const;
     virtual SpectralRange radiance(int Spec_index) const;
+    virtual SpectralDomain sample_grid(int Spec_index) const;
 };
 }

@@ -48,11 +48,16 @@ REGISTER_LUA_END()
 
 double Level1bSampleCoefficient::calculate_sample_value_from_coeffs(int Spec_index, int sample_index) const {
     ArrayWithUnit<double, 1> spectral_coefficients = this->spectral_coefficient(Spec_index);
+    ArrayAd<double, 1> spectral_coeff_ad = ArrayAd<double, 1>(spectral_coefficients.value);
+    Poly1d spectral_poly = Poly1d(spectral_coeff_ad);
+    return spectral_poly(sample_index);
+    /*
     double sample_val = 0;
     for (int coeff_index = 0; coeff_index < spectral_coefficients.rows(); coeff_index++) {
         sample_val += (spectral_coefficients(coeff_index).value * std::pow(sample_index, coeff_index));
     }
     return sample_val;
+    */
 }
 
 
