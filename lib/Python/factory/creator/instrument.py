@@ -69,9 +69,12 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
  
 class IlsTable(Creator):
 
+    # Supply these either as a combined 3D array or 3 different 2D arrays
+    delta_lambda = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray))
+    response = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray))
+    wavenumber = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray), default=None, required=False)
+
     dispersion = param.Iterable(rf.Dispersion)
-    delta_lambda = param.Array(dims=3)
-    response = param.Array(dims=3)
     hdf_band_name = param.Iterable(str)
     desc_band_name = param.Iterable(str)
     interpolate = param.Scalar(bool, default=False)
@@ -80,9 +83,19 @@ class IlsTable(Creator):
 
     def create(self, **kwargs):
 
-        dispersion = self.dispersion()
         delta_lambda = self.delta_lambda()
         response = self.response()
+        wavenumber = self.wavenumber()
+
+        if type(delta_lambda) != type(response) or (wavenumber and type(wavenumber) != type(delta_lambda)):
+            raise param.ParamError("delta_lambda, response and wavenumber (if supplied) must have the same data type")
+
+        if isinstance(delta_lambda, np.ndarray):
+            combined = True
+        else:
+            combined = False
+
+        dispersion = self.dispersion()
         desc_band_name = self.desc_band_name()
         hdf_band_name = self.hdf_band_name()
         interpolate = self.interpolate()
@@ -94,11 +107,21 @@ class IlsTable(Creator):
 
         ils_func = []
         for chan_idx in range(self.num_channels()):
+            if wavenumber is None:
+                chan_wn = dispersion[chan_idx].pixel_grid.data
+            else:
+                if combined:
+                    chan_wn = wavenumber[chan_idx, :]
+                else:
+                    chan_wn = wavenumber[chan_idx]
 
-            wavenumber = dispersion[chan_idx].pixel_grid.data
+            if combined:
+                ils_func.append( IlsClass(chan_wn, delta_lambda[chan_idx, :, :], response[chan_idx, :, :], 
+                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
+            else:
+                ils_func.append( IlsClass(chan_wn, delta_lambda[chan_idx], response[chan_idx], 
+                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
 
-            ils_func.append( IlsClass(wavenumber, delta_lambda[chan_idx, :, :], response[chan_idx, :, :], 
-                                      desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
         return ils_func
 
 class IlsGaussian(Creator):
