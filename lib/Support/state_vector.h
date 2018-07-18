@@ -53,8 +53,7 @@ public:
   const blitz::Array<double, 2>& state_covariance() const {return cov_;}
 
   void update_state(const blitz::Array<double, 1>& X);
-  void update_state(const blitz::Array<double, 1>& X, 
-		    const blitz::Array<double, 2>& Cov);
+  void update_state(const blitz::Array<double, 1>& X, const blitz::Array<double, 2>& Cov);
   blitz::Array<bool, 1> used_flag() const;
 
 //-----------------------------------------------------------------------
@@ -81,7 +80,7 @@ private:
   // claimed by observers. We don't do anything with this value in
   // this class, except make it available to StateVectorObservers when 
   // they are attached.
-  int pstart;			
+  int pstart;
 };
 }
 
