@@ -5,8 +5,8 @@
 %}
 
 %base_import(observation)
-%include "level_1b.i"
-%include "forward_model_spectral_grid.i"
+%import "level_1b.i"
+%import "forward_model_spectral_grid.i"
 
 %fp_shared_ptr(FullPhysics::ObservationLevel1b)
 
