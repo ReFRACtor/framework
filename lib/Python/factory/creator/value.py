@@ -1,5 +1,5 @@
 import numpy as np
-import h5py
+import netCDF4
 
 from .base import Creator
 from .. import param
@@ -78,12 +78,15 @@ class LoadValuesFromHDF(Creator):
 
         values = {}
 
-        contents = h5py.File(self.filename(), "r")
+        contents = netCDF4.Dataset(self.filename(), "r")
 
-        def visit_datasets(name, obj):
-            if type(obj) is h5py.Dataset:
-                values[name] = obj[:]
+        def extract_datasets(group, values):
+            for v_name, v_ds in group.variables.items():
+                v_path = (group.path + "/" + v_ds.name).lstrip("/")
+                values[v_path] = v_ds[:]
+            for g_name, child_group in group.groups.items():
+                extract_datasets(child_group, values)
 
-        contents.visititems(visit_datasets)
+        extract_datasets(contents, values)
 
         return values

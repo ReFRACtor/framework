@@ -3,6 +3,7 @@
 numpy
 pytest
 attrdict
+netCDF4
 
 # Needed to support both Python 2 and 3
 future
