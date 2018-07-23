@@ -314,16 +314,16 @@ class NLLSSolverLM(MaxAPosterioriBase):
         opts = rf.NLLSSolverLMOptions()
 
         if self.min_W() is not None:
-            opts.min_W = self.min_W
+            opts.min_W = self.min_W()
 
         if self.tr_rad_tol() is not None:
-            opts.tr_rad_tol = self.tr_rad_tol
+            opts.tr_rad_tol = self.tr_rad_tol()
 
         if self.tr_rad() is not None:
-            opts.tr_rad = self.tr_rad
+            opts.tr_rad = self.tr_rad()
 
         if self.cr_ratio_tol() is not None:
-            opts.cr_ratio_tol = self.cr_ratio_tol
+            opts.cr_ratio_tol = self.cr_ratio_tol()
 
         solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel())
 
