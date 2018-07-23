@@ -16,9 +16,13 @@ namespace FullPhysics {
   It calculautes the wavelength/wavenumber as follows:
   f(x) = x*(coeff[0]^0) + x*(coeff[1]^1) ... + x*(coeff[n]^n)
   Where n is spectral_coefficient length.
+
+  one_based_ describes whether the first index at which the
+  polynomial is evaluted is index 0 or 1 (one-based).
 *******************************************************************/
 class Level1bSampleCoefficient: public Level1b {
 public:
+  Level1bSampleCoefficient(const bool One_based = true) : one_based_(One_based) { };
   virtual ~Level1bSampleCoefficient() { };
 
 //-----------------------------------------------------------------------
@@ -47,6 +51,7 @@ public:
   virtual void print(std::ostream& Os) const {Os << "Level1bSampleCoefficient";}
 
 private:
+  bool one_based_;
   virtual double calculate_sample_value_from_coeffs(int Spec_index, int sample_idx) const;
 };
 } // End of FullPhysics namespace
