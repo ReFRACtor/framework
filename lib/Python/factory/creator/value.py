@@ -90,3 +90,11 @@ class LoadValuesFromHDF(Creator):
         extract_datasets(contents, values)
 
         return values
+
+class NamedCommonValue(Creator):
+
+    name = param.Scalar(str)
+
+    def create(self, **kwargs):
+        self.register_parameter(self.name(), param.AnyValue())
+        return self.param(self.name())
