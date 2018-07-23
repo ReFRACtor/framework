@@ -55,14 +55,14 @@ double hdf_file_read_double_scalar(const HdfFile& h, const std::string& gname)
 }
 
 Array<double, 1> hdf_file_read_double_1d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field<double, 1>(fname);
 }
 
 double hdf_file_read_double_1d_i(const HdfFile& h, 
-				 const std::string& fname,
-				 int I)
+                                 const std::string& fname,
+                                 int I)
 {
   blitz::TinyVector<int,1> start;
   blitz::TinyVector<int,1> sz;  
@@ -72,21 +72,21 @@ double hdf_file_read_double_1d_i(const HdfFile& h,
 }
 
 ArrayWithUnit<double, 1> hdf_file_read_double_with_unit_1d(const HdfFile& h, 
-							   const std::string& fname)
+                                                           const std::string& fname)
 {
   return h.read_field_with_unit<double, 1>(fname);
 }
 
 
 Array<double, 2> hdf_file_read_double_2d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field<double, 2>(fname);
 }
 
 double hdf_file_read_double_2d_i(const HdfFile& h, 
-			       const std::string& fname,
-			       int I, int J)
+                               const std::string& fname,
+                               int I, int J)
 {
   blitz::TinyVector<int,2> start;
   blitz::TinyVector<int,2> sz;  
@@ -96,21 +96,21 @@ double hdf_file_read_double_2d_i(const HdfFile& h,
 }
 
 ArrayWithUnit<double, 2> hdf_file_read_double_with_unit_2d(const HdfFile& h, 
-							   const std::string& fname)
+                                                           const std::string& fname)
 {
   return h.read_field_with_unit<double, 2>(fname);
 }
 
 
 Array<double, 3> hdf_file_read_double_3d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field<double, 3>(fname);
 }
 
 double hdf_file_read_double_3d_i(const HdfFile& h, 
-			       const std::string& fname,
-			       int I, int J, int K)
+                               const std::string& fname,
+                               int I, int J, int K)
 {
   blitz::TinyVector<int,3> start;
   blitz::TinyVector<int,3> sz;  
@@ -120,13 +120,13 @@ double hdf_file_read_double_3d_i(const HdfFile& h,
 }
 
 ArrayWithUnit<double, 3> hdf_file_read_double_with_unit_3d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field_with_unit<double, 3>(fname);
 }
 
 Array<double, 4> hdf_file_read_double_4d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field<double, 4>(fname);
 }
@@ -134,8 +134,8 @@ Array<double, 4> hdf_file_read_double_4d(const HdfFile& h,
 // We have a number of places where we read a 4d field and only want
 // one sounding number. Have code for doing this.
 Array<double, 3> hdf_file_read_double_4d_sounding(const HdfFile& h,
-						  const std::string& fname,
-						  int Sounding_num)
+                                                  const std::string& fname,
+                                                  int Sounding_num)
 {
   TinyVector<int, 4> shp = h.read_shape<4>(fname);
   TinyVector<int,4> start;
@@ -143,13 +143,13 @@ Array<double, 3> hdf_file_read_double_4d_sounding(const HdfFile& h,
   start = 0, Sounding_num, 0, 0;
   sz = shp(0), 1, shp(2), shp(3);
   return h.read_field<double, 4>(fname, start, sz)(Range::all(), 0, 
-						   Range::all(), Range::all());
+                                                   Range::all(), Range::all());
 }
 
 
 double hdf_file_read_double_4d_i(const HdfFile& h, 
-			       const std::string& fname,
-			       int I, int J, int K, int L)
+                               const std::string& fname,
+                               int I, int J, int K, int L)
 {
   blitz::TinyVector<int,4> start;
   blitz::TinyVector<int,4> sz;  
@@ -159,65 +159,65 @@ double hdf_file_read_double_4d_i(const HdfFile& h,
 }
 
 Array<double, 5> hdf_file_read_double_5d(const HdfFile& h, 
-					 const std::string& fname)
+                                         const std::string& fname)
 {
   return h.read_field<double, 5>(fname);
 }
 
 Array<double, 1> hdf_file_apriori(const HdfFile& h, 
-				  const std::string& gname)
+                                  const std::string& gname)
 {
   return h.read_field<double, 1>(gname + "/a_priori");
 }
 
 ArrayWithUnit<double, 1> hdf_file_apriori_with_unit(const HdfFile& h, 
-						    const std::string& gname)
+                                                    const std::string& gname)
 {
   return h.read_field_with_unit<double, 1>(gname + "/a_priori");
 }
 
 Array<double, 1> hdf_file_apriori2(const HdfFile& h, 
-				   const std::string& gname,
-				   int row)
+                                   const std::string& gname,
+                                   int row)
 {
   return h.read_field<double, 2>(gname + "/a_priori")(row, Range::all());
 }
 
 Array<double, 1> hdf_file_apriori3(const HdfFile& h, 
-				   const std::string& gname,
-				   int row, int col)
+                                   const std::string& gname,
+                                   int row, int col)
 {
   return h.read_field<double, 3>(gname + "/a_priori")(row, col, Range::all());
 }
 
 ArrayWithUnit<double, 1> hdf_file_apriori2_with_unit(const HdfFile& h, 
-						     const std::string& gname,
-						     int row)
+                                                     const std::string& gname,
+                                                     int row)
 {
   ArrayWithUnit<double, 1> res = h.read_field_with_unit<double, 2>(gname + "/a_priori")(row, Range::all());
   return res;
 }
 
 Array<double, 2> hdf_file_covariance(const HdfFile& h, 
-				     const std::string& gname)
+                                     const std::string& gname)
 {
   return h.read_field<double, 2>(gname + "/covariance");
 }
 
 Array<double, 2> hdf_file_covariance2(const HdfFile& h, 
-				      const std::string& gname,
-				      int row)
+                                      const std::string& gname,
+                                      int row)
 {
   return h.read_field<double, 3>(gname + "/covariance")(row, Range::all(), 
-							Range::all());
+                                                        Range::all());
 }
 
 Array<double, 2> hdf_file_covariance3(const HdfFile& h, 
-				      const std::string& gname,
-				      int row, int col)
+                                      const std::string& gname,
+                                      int row, int col)
 {
   return h.read_field<double, 4>(gname + "/covariance")(row, col, Range::all(), 
-							Range::all());
+                                                        Range::all());
 }
 
 REGISTER_LUA_CLASS(HdfFile)
@@ -275,11 +275,15 @@ HdfFile::HdfFile(const std::string& Fname, Mode M)
   default:
     throw Exception("This shouldn't happen");
   }
-  H5::Exception::dontPrint();	// We'll report exceptions ourself,
-				// don't have HDF library print
-				// Warning messages.
+  H5::Exception::dontPrint();        // We'll report exceptions ourself,
+                                // don't have HDF library print
+                                // Warning messages.
   try {
-    h.reset(new H5File(Fname, flag));
+
+    FileAccPropList file_access = FileAccPropList();
+    file_access.setFcloseDegree(H5F_CLOSE_SEMI);
+
+    h.reset(new H5File(Fname, flag, FileCreatPropList::DEFAULT, file_access));
   } catch(const H5::Exception& e) {
     Exception en;
     en << "While trying to open file '" << Fname 
@@ -297,7 +301,7 @@ HdfFile::HdfFile(const std::string& Fname, Mode M)
 // In HDF5 1.10: "CommonFG will be deprecated in future releases. In 1.10.1, most member functions are moved to H5Location."
 #if H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 8
 void HdfFile::create_group_if_needed(const std::string& Dataname, 
-				     H5::CommonFG& Parent)
+                                     H5::CommonFG& Parent)
 #elif H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10
 void HdfFile::create_group_if_needed(const std::string& Dataname,
                                      H5::H5Location& Parent)
@@ -306,8 +310,8 @@ void HdfFile::create_group_if_needed(const std::string& Dataname,
   size_t i = Dataname.find_first_of('/');
   if(i ==std::string::npos)
     return;
-  if(i ==0)			// If "/" is at beginning, then just
-				// strip it off
+  if(i ==0)                        // If "/" is at beginning, then just
+                                // strip it off
     create_group_if_needed(Dataname.substr(i + 1), Parent);
   else {
     std::string gname = Dataname.substr(0, i);
@@ -339,10 +343,10 @@ bool HdfFile::is_group(const std::string& Objname) const
 // In HDF5 1.10: "CommonFG will be deprecated in future releases. In 1.10.1, most member functions are moved to H5Location."
 #if H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 8
 bool HdfFile::is_present(const std::string& Objname, 
-			 const H5::CommonFG& Parent) const
+                         const H5::CommonFG& Parent) const
 #elif H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10
 bool HdfFile::is_present(const std::string& Objname, 
-			 const H5::H5Location& Parent) const
+                         const H5::H5Location& Parent) const
 #endif
 {
   try {
@@ -418,7 +422,7 @@ Unit HdfFile::read_units(const std::string& Dataname) const
       res = units::micron;
     else
       throw Exception("Unrecognized unit '" + u + " found for attribute "
-		      + Dataname + "/Unit");
+                      + Dataname + "/Unit");
   } else
     // Otherwise, just process the Units string.
     res = Unit(read_attribute<std::string>(Dataname + "/Units"));
@@ -430,7 +434,7 @@ Unit HdfFile::read_units(const std::string& Dataname) const
 //-----------------------------------------------------------------------
 
 H5::Attribute HdfFile::create_attribute(const std::string& Aname, 
-		const H5::DataSpace& Ds, const H5::DataType& P)
+                const H5::DataSpace& Ds, const H5::DataType& P)
 {
   size_t i = Aname.find_last_of('/');
   if(i == std::string::npos) {
@@ -459,8 +463,8 @@ H5::Attribute HdfFile::create_attribute(const std::string& Aname,
 //-----------------------------------------------------------------------
 
 void HdfFile::dimension_metadata(const std::string& Name,
-				 const std::string& Description,
-				 int Size)
+                                 const std::string& Description,
+                                 int Size)
 {
   write_attribute("/Dimensions/" + Name + "/Size", Size);
   write_attribute("/Dimensions/" + Name + "/Description", Description);
@@ -487,7 +491,7 @@ void HdfFile::shape_metadata(const std::string& Name, const std::string& Dim1)
 //-----------------------------------------------------------------------
 
 void HdfFile::shape_metadata(const std::string& Name, const std::string& Dim1,
-			     const std::string& Dim2)
+                             const std::string& Dim2)
 {
   write_attribute("/Shapes/" + Name + "/Rank", 2);
   std::vector<std::string> dim;
@@ -504,8 +508,8 @@ void HdfFile::shape_metadata(const std::string& Name, const std::string& Dim1,
 //-----------------------------------------------------------------------
 
 void HdfFile::shape_metadata(const std::string& Name, const std::string& Dim1,
-			     const std::string& Dim2,
-			     const std::string& Dim3)
+                             const std::string& Dim2,
+                             const std::string& Dim3)
 {
   write_attribute("/Shapes/" + Name + "/Rank", 3);
   std::vector<std::string> dim;
