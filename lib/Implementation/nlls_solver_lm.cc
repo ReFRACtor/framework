@@ -56,7 +56,6 @@ NLLSSolverLM::NLLSSolverLM(
       G_tol_abs(g_tol_abs), G_tol_rel(g_tol_rel),
       CR_ratio(0), Lambda(0)
 {
-  W = MAP_BRM_ERM( p->jacobian() ).colwise().stableNorm().cwiseMax(Opt.min_W);
 }
 
 
@@ -126,6 +125,8 @@ NLLSSolver::status_t NLLSSolverLM::test_grad_abs(
 
 void NLLSSolverLM::solve()
 {
+  W = MAP_BRM_ERM( P->jacobian() ).colwise().stableNorm().cwiseMax(Opt.min_W);
+
   VectorXd X( MAP_BV_ECV(P->parameters()) );
 
   stat = UNTRIED;
