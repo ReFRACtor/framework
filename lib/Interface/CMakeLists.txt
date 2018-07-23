@@ -47,6 +47,7 @@ set(DIR_SOURCES
     radiative_transfer_fixed_stokes_coefficient.cc
     radiative_transfer_single_wn.cc
     rt_atmosphere.cc
+    sample_grid.cc
     solar_absorption_spectrum.cc
     solar_continuum_spectrum.cc
     solar_doppler_shift.cc
