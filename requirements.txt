@@ -3,7 +3,11 @@
 numpy
 pytest
 attrdict
-netCDF4
+
+# Always install netCDF4 from source so that the HDF5 library it uses
+# matches the one used for ReFRACtor, or else random memory errors
+# could happen
+netCDF4 --no-binary netCDF4
 
 # Needed to support both Python 2 and 3
 future
