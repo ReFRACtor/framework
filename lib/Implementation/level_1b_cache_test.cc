@@ -65,7 +65,12 @@ BOOST_AUTO_TEST_CASE(basic)
     BOOST_CHECK_EQUAL(l1b_cache.radiance(2).data().extent(blitz::firstDim), 1016);
     BOOST_CHECK_CLOSE(l1b_cache.radiance(2).data()(1005), 8.0934638603730944e+18, 1e-4);
 
-    /* TODO: Add test for sample grid */
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(0).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(0).data()(1005), 0.7724454693899255, 1e-4);
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(1).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(1).data()(1005), 1.6214942358960505, 1e-4);
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(2).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(2).data()(1005), 2.082915352703643, 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
