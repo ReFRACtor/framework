@@ -222,7 +222,6 @@ private:
   std::vector<DoubleWithUnit> lat, lon, szen, sazm, solzen, solazm, alt,
 						    rvel;
   std::vector<blitz::Array<double, 1> > stk_coeff;
-  std::vector<ArrayWithUnit<double, 1> > spec_coeff;
   std::vector<SpectralDomain> samp_grid;
   std::vector<Time> tm;
   std::vector<SpectralRange> rad;
