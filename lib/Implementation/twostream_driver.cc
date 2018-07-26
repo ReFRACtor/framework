@@ -245,6 +245,10 @@ void TwostreamRtDriver::initialize_rt()
   twostream_interface_->ls_brdf_f_0().reference(brdf_interface()->ls_brdf_f_0());
   twostream_interface_->ls_brdf_f().reference(brdf_interface()->ls_brdf_f());
   twostream_interface_->ls_ubrdf_f().reference(brdf_interface()->ls_ubrdf_f());
+
+  if (do_thermal_emission) {
+      twostream_interface_->ls_emissivity().reference(brdf_interface()->ls_emissivity());
+  }
 }
 
 void TwostreamRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid) const
@@ -286,6 +290,9 @@ void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Arr
   Range rlev(0, atmosphere_bb.extent(firstDim) - 1);
   Array<double, 1> thermal_bb_input( twostream_interface_->thermal_bb_input() );
   thermal_bb_input(rlev) = atmosphere_bb;
+
+  // Copy emissivity from the BRDF module, assumes that the brdf_interface setup has been run
+  twostream_interface_->emissivity(brdf_interface()->emissivity());
 }
 
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
