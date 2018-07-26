@@ -165,7 +165,7 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_ts(rjac,rlay), 1e-6);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_ts(rjac,rlay), jac_atm_fd(rjac,rlay), 1e-4);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_ts(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
 
   if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
@@ -217,41 +217,57 @@ void test_twostream_lambertian(bool do_solar, bool do_thermal, bool debug_output
 
   // Perturbation value for surface fd checking
   Array<double, 1> pert_surf(1);
-  pert_surf = 1e-8;
 
   ////////////////
   // Surface only
-  surface_params.value() = 1.0;
+  if (do_thermal && !do_solar) {
+      // Make emissivity a large number
+      surface_params.value() = 1.0e-6;
+  } else {
+      surface_params.value() = 1.0;
+  }
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
 
   if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
+  pert_surf = 1e-8;
   test_twostream(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Rayleigh only
 
-  // 2stream will divide by 0 in thermal mode if surface param is set to identically 0 for lambertian mode
-  surface_params.value() = 1.0e-6;
+  if (do_thermal && !do_solar) {
+      // For thermal mode make the surface makes emissivity close to 0. Finite difference goes screwy if this is set == 1.0
+      surface_params.value() = 0.98;
+  } else {
+      // 2stream will divide by 0 in thermal mode if surface param is set to identically 0 for lambertian mode
+      surface_params.value() = 1.0e-6;
+  }
 
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
 
   if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
-  pert_atm = 1e-2, 1e-4;
+  pert_atm = 1e-3, -1e-4;
+  pert_surf = 1e-8;
   test_twostream(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Gas + Surface
-  surface_params.value() = 1.0;
+  if (do_thermal && !do_solar) {
+      surface_params.value() = 1.0e-6;
+  } else {
+      surface_params.value() = 1.0;
+  }
 
   taur = 1.0e-6/nlayer;
   taug = 1.0/nlayer;
 
   if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
+  pert_surf = 1e-8;
   test_twostream(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
 }

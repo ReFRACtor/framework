@@ -249,10 +249,6 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
   brdf_driver_-> setup_geometry(sza, azm, zen);
   setup_geometry(sza, azm, zen);
 
-
-  if (do_thermal_emission)
-      setup_thermal_inputs(surface_bb, atmosphere_bb);
-
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
   ArrayAd<double, 1> surf_param_ad(surface_parameters.rows(), 0);
@@ -261,6 +257,10 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
 
   // Set up LIDORT inputs and run
   setup_optical_inputs(od, ssa, pf);
+
+  if (do_thermal_emission)
+      setup_thermal_inputs(surface_bb, atmosphere_bb);
+
   clear_linear_inputs();
   calculate_rt();
 
@@ -292,13 +292,14 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
   brdf_driver_->setup_geometry(sza, azm, zen);
   setup_geometry(sza, azm, zen);
 
-  if (do_thermal_emission)
-      setup_thermal_inputs(surface_bb, atmosphere_bb);
-
   // Set up BRDF inputs and run
   surface_parameters = brdf_driver_->setup_brdf_inputs(surface_type, surface_parameters);
 
   setup_optical_inputs(od.value(), ssa.value(), pf.value());
+
+  if (do_thermal_emission)
+      setup_thermal_inputs(surface_bb, atmosphere_bb);
+
   bool do_surface_pd = true;
   setup_linear_inputs(od, ssa, pf, do_surface_pd);
   calculate_rt();

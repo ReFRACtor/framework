@@ -1,6 +1,6 @@
 #ifndef LEVEL_1B_CACHE_H
 #define LEVEL_1B_CACHE_H
-#include "level_1b_sample_coefficient.h"
+#include "level_1b.h"
 #include <vector>
 namespace FullPhysics {
 /****************************************************************//**
@@ -9,9 +9,9 @@ namespace FullPhysics {
   desired. This can be useful when setting up special run in Python, 
   among other uses.
 *******************************************************************/
-class Level1bCache: public Level1bSampleCoefficient {
+class Level1bCache: public Level1b {
 public:
-  Level1bCache(const Level1bSampleCoefficient& L1_in);
+  Level1bCache(const Level1b& L1_in);
   virtual ~Level1bCache() {}
   virtual void print(std::ostream& Os) const {Os << "Level1bCache";}
   virtual int number_spectrometer() const { return (int) lat.size(); }
@@ -150,21 +150,23 @@ public:
     range_check(i, 0, number_spectrometer());
     stk_coeff[i].reference(V.copy());
   }
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int i) const
+
+  SpectralDomain sample_grid(int i) const
   {
     range_check(i, 0, number_spectrometer());
-    return spec_coeff[i];
+    return samp_grid[i];
   }
 
 //-----------------------------------------------------------------------
 /// Change value.
 //-----------------------------------------------------------------------
 
-  void set_spectral_coefficient(int i, const ArrayWithUnit<double, 1>& V)
-  { 
+  void set_sample_grid(int i, const SpectralDomain& V)
+  {
     range_check(i, 0, number_spectrometer());
-    spec_coeff[i] = V;
+    samp_grid[i] = V;
   }
+
   virtual Time time(int i) const
   {
     range_check(i, 0, number_spectrometer());
@@ -201,7 +203,7 @@ public:
 /// from the ForwardModelSpectralGrid for example.
 //-----------------------------------------------------------------------
 
-  void set_radiance(int i, const SpectralRange& V,
+ void set_radiance(int i, const SpectralRange& V,
 		    const std::vector<int>& Plist)
   { 
     range_check(i, 0, number_spectrometer());
@@ -220,7 +222,7 @@ private:
   std::vector<DoubleWithUnit> lat, lon, szen, sazm, solzen, solazm, alt,
 						    rvel;
   std::vector<blitz::Array<double, 1> > stk_coeff;
-  std::vector<ArrayWithUnit<double, 1> > spec_coeff;
+  std::vector<SpectralDomain> samp_grid;
   std::vector<Time> tm;
   std::vector<SpectralRange> rad;
 };

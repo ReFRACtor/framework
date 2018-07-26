@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(powell_singular_gsl_sm__lmaccel_more_svd)
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSLSM::SUCCESS);
-  BOOST_CHECK(n_f_calls < 80);
+  BOOST_CHECK(n_f_calls < 85);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);

@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
 
   ////////////////////////
   // Thermal surface only
-  surface_params(0) = 1.0;
+  surface_params(0) = 0.1;
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
@@ -125,12 +125,12 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    bb_surface, bb_atm);
 
   // Expected values calculated offline in VLIDORT
-  refl_expt = 4.1589832679596769E-007;
+  refl_expt = 0.12476970639470732;
   BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
 
   ////////////////////////
   // Thermal gas + surface
-  surface_params(0) = 1.0;
+  surface_params(0) = 0.1;
 
   taur = 1.0e-6/nlayer;
   taug = 1.0/nlayer;
@@ -143,12 +143,12 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  refl_expt = 0.12744448991675422;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-2);
+  refl_expt = 0.13751414471789294;
+  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
 
   /////////////////////////////////////////////
   // Thermal rayleigh only, no surface, no gas
-  surface_params(0) = 0.0;
+  surface_params(0) = 0.9;
 
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
@@ -161,8 +161,8 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  refl_expt = 0.13726029535967835;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
+  refl_expt = 1.3967e-002;
+  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 7e-3);
 
 }
 

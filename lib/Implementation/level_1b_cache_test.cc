@@ -65,13 +65,12 @@ BOOST_AUTO_TEST_CASE(basic)
     BOOST_CHECK_EQUAL(l1b_cache.radiance(2).data().extent(blitz::firstDim), 1016);
     BOOST_CHECK_CLOSE(l1b_cache.radiance(2).data()(1005), 8.0934638603730944e+18, 1e-4);
 
-    blitz::Array<double, 1> expt_coeff(10);
-    expt_coeff = 0.757632, 1.75147e-05, -2.84853e-09, 1.66737e-13, -9.85258e-17, 7.87483e-21;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_cache.spectral_coefficient(0).value, expt_coeff, 1e-5);
-    expt_coeff = 1.59055, 3.64377e-05, -5.96467e-09, 1.01796e-12, -1.05804e-15, 3.64091e-19;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_cache.spectral_coefficient(1).value, expt_coeff, 1e-5);
-    expt_coeff = 2.04304, 4.6962e-05, -7.69783e-09, 4.5771e-13, 1.10487e-17, -5.54788e-20;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_cache.spectral_coefficient(2).value, expt_coeff, 1e-5);
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(0).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(0).data()(1005), 0.7724454693899255, 1e-4);
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(1).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(1).data()(1005), 1.6214942358960505, 1e-4);
+    BOOST_CHECK_EQUAL(l1b_cache.sample_grid(2).data().extent(blitz::firstDim), 1016);
+    BOOST_CHECK_CLOSE(l1b_cache.sample_grid(2).data()(1005), 2.082915352703643, 1e-4);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

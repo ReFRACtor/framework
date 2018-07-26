@@ -1,6 +1,6 @@
 #ifndef LEVEL_1B_SCALE_RADIANCE_H
 #define LEVEL_1B_SCALE_RADIANCE_H
-#include "level_1b_sample_coefficient.h"
+#include "level_1b.h"
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
@@ -10,9 +10,9 @@ namespace FullPhysics {
   spectral band.
 *******************************************************************/
 
-class Level1bScaleRadiance: public Level1bSampleCoefficient {
+class Level1bScaleRadiance: public Level1b {
 public:
-    Level1bScaleRadiance(const boost::shared_ptr<Level1bSampleCoefficient>& L1b, const blitz::Array<double, 1>& Scaling)
+    Level1bScaleRadiance(const boost::shared_ptr<Level1b>& L1b, const blitz::Array<double, 1>& Scaling)
     : l1b(L1b), scaling(Scaling) {}
 
     virtual ~Level1bScaleRadiance() {}
@@ -50,14 +50,14 @@ public:
     virtual DoubleWithUnit altitude(int i) const
     { return l1b->altitude(i); }
 
-    virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const
-    { return l1b->spectral_coefficient(Spec_index); }
+    virtual SpectralDomain sample_grid(int Spec_index) const
+    { return l1b->sample_grid(Spec_index); }
 
     virtual SpectralRange radiance(int Spec_index) const;
 
     virtual void print(std::ostream& Os) const;
 private:
-    boost::shared_ptr<Level1bSampleCoefficient> l1b;
+    boost::shared_ptr<Level1b> l1b;
     blitz::Array<double, 1> scaling;
 };
 }

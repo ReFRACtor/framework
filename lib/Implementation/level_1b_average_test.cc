@@ -12,12 +12,12 @@ BOOST_AUTO_TEST_CASE(basic)
 {
     boost::shared_ptr<HdfFile> hf(new HdfFile(test_data_dir() + "in/common/l1b_example_data.h5"));
 
-    std::vector<boost::shared_ptr<Level1bSampleCoefficient> > l1b;
+    std::vector<boost::shared_ptr<Level1b> > l1b;
 
-    boost::shared_ptr<Level1bSampleCoefficient> l1b_1(new ExampleLevel1b(hf, "2014090915251774"));
+    boost::shared_ptr<Level1b> l1b_1(new ExampleLevel1b(hf, "2014090915251774"));
     l1b.push_back(l1b_1);
 
-    boost::shared_ptr<Level1bSampleCoefficient> l1b_2(new ExampleLevel1b(hf, "2014120112331638"));
+    boost::shared_ptr<Level1b> l1b_2(new ExampleLevel1b(hf, "2014120112331638"));
     l1b.push_back(l1b_2);
 
     Level1bAverage h(l1b);

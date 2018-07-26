@@ -1358,6 +1358,11 @@ public:
   }
 
   
+  // MANUAL EDIT //
+  blitz::Array<double, 1>& ls_emissivity() {
+    return ls_emissivity_;
+  }
+  // MANUAL EDIT //
 
   const blitz::Array<double, 1>& ls_emissivity() const {
     return ls_emissivity_;

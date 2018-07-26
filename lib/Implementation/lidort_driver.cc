@@ -661,7 +661,7 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
   Range ra(Range::all());
 
   // Surface Jacobians KR(r,t,v,d) with respect to surface variable r
-  // at output level t, geometry v, direction d
+  // at output level t, geometry v, direction 
   jac_surf.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx-1).copy() );
 
   // Get profile jacobians

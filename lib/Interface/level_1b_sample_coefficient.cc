@@ -48,20 +48,18 @@ REGISTER_LUA_END()
 
 double Level1bSampleCoefficient::calculate_sample_value_from_coeffs(int Spec_index, int sample_index) const {
     ArrayWithUnit<double, 1> spectral_coefficients = this->spectral_coefficient(Spec_index);
-    double sample_val = 0;
-    for (int coeff_index = 0; coeff_index < spectral_coefficients.rows(); coeff_index++) {
-        sample_val += (spectral_coefficients(coeff_index).value * std::pow(sample_index, coeff_index));
-    }
-    return sample_val;
+    ArrayAd<double, 1> spectral_coeff_ad = ArrayAd<double, 1>(spectral_coefficients.value);
+    Poly1d spectral_poly = Poly1d(spectral_coeff_ad, false);
+    return spectral_poly(sample_index);
 }
 
 
 SpectralDomain Level1bSampleCoefficient::sample_grid(int Spec_index) const {
-    // Get number samples
     int num_samples = this->radiance(Spec_index).data().rows();
+    int sample_offset = (this->one_based_) ? 1 : 0;
     Array<double, 1> grid_data = Array<double, 1>(num_samples);
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
-        grid_data(sample_index) = this->calculate_sample_value_from_coeffs(Spec_index, sample_index);
+        grid_data(sample_index) = this->calculate_sample_value_from_coeffs(Spec_index, sample_index + sample_offset);
     }
     ArrayWithUnit<double, 1> sample_grid_data = ArrayWithUnit<double, 1>(grid_data, this->spectral_coefficient(Spec_index).units);
     SpectralDomain sample_grid = SpectralDomain(sample_grid_data);
