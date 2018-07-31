@@ -105,6 +105,12 @@ public:
   ArrayWithUnit<double, 1> photon_to_radiance_factor() const;
   void print(std::ostream& Os) const { Os << "SpectralDomain";}
 
+  /// We can define != in terms of this operator.
+  //-----------------------------------------------------------------------
+  // TODO: Add robustness by converting to common unit instead of require ==
+  inline bool operator==(const SpectralDomain& A)
+  { return (A.data_ == this->data_) && (A.units_ == this->units_) ; }
+
   /// Default constructor needed for SWIG
   SpectralDomain() {}
 

@@ -374,6 +374,13 @@ public:
   { os << V.val << "\n" << V.jac << "\n"; return os;}
   friend std::istream& operator>>(std::istream& is, ArrayAd<T, D>& V)
   { is >> V.val >> V.jac; return is; }
+
+  /// We can define != in terms of this operator.
+  //-----------------------------------------------------------------------
+  // TODO: Apparently need to check shape here too
+  inline bool operator==(const ArrayAd<T, D>& A) const
+  { return blitz::all(A.val == this->val) && blitz::all(A.jac == this->jac) ; }
+
 private:
   blitz::Array<T, D> val;
   blitz::Array<T, D + 1> jac;
