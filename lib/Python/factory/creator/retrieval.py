@@ -15,7 +15,7 @@ class NLLSRetrieval(Creator):
     initial_guess = param.Array(dims=1)
     a_priori = param.Array(dims=1)
     covariance = param.Array(dims=2)
-    solver = param.InstanceOf(rf.NLLSSolver)
+    solver = param.Choice(param.InstanceOf(rf.NLLSSolver), param.InstanceOf(rf.ConnorSolver))
 
     def __init__(self, *vargs, **kwargs):
         super().__init__(*vargs, **kwargs)
@@ -218,6 +218,62 @@ class CovarianceByComponent(Creator):
             offset += cov.shape[0]
 
         return total_covariance
+
+class LegacyConnorSolver(Creator):
+
+    l1b = param.InstanceOf(rf.Level1b)
+    instrument = param.InstanceOf(rf.Instrument)
+    forward_model = param.InstanceOf(rf.ForwardModel)
+
+    state_vector = param.InstanceOf(rf.StateVector)
+
+    initial_guess = param.Array(dims=1)
+    a_priori = param.Array(dims=1)
+    covariance = param.Array(dims=2)
+
+    max_iteration = param.Scalar(int)
+    max_divergence = param.Scalar(int)
+    max_chisq = param.Scalar(float)
+    threshold = param.Scalar(float)
+    gamma_initial = param.Scalar(float)
+
+    def create(self, **kwargs):
+        sv = self.state_vector()
+        fm = self.forward_model()
+
+        observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
+    
+        cost_func = rf.ConnorCostFunction(sv, fm, observation)
+        conv = rf.ConnorConvergence(fm,
+                                 self.threshold(), 
+                                 self.max_iteration(), 
+                                 self.max_divergence(), 
+                                 self.max_chisq())
+
+        # Create wrapper function to make the ConnorSolver interface match that of IterativeSolver
+        # for at least the solve routine
+        def create_solve_wrapper(conn_solver, conn_creator):
+            orig_solve_func = conn_solver.solve
+
+            def solve_wrapper(**vargs):
+                "Automatically pass initial guess, apriori and covariance to solve routine if no arguments supplied"
+
+                if len(vargs) == 3:
+                    return orig_solve_func()
+                elif len(vargs) == 0:
+                    return orig_solve_func(conn_creator.initial_guess(), conn_creator.a_priori(), conn_creator.covariance())
+                else:
+                    raise Exception("Wrong number of arguments to ConnorSolver::solve. Expected 0 or 3 arguments.")
+
+            return solve_wrapper
+
+        solver = rf.ConnorSolver(cost_func, conv, self.gamma_initial())
+        solver.solve = create_solve_wrapper(solver, self)
+
+        iter_log = rf.ConnorIterationLog(sv)
+        solver.add_observer(iter_log)
+
+        return solver
 
 class MaxAPosterioriBase(Creator):
 

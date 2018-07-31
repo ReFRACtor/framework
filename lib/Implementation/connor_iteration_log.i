@@ -1,12 +1,16 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "connor_iteration_log.h"
 %}
-%base_import(connor_solver)
+
+%base_import(observer)
+%import "connor_solver.i"
 %import "state_vector.i"
+
 %fp_shared_ptr(FullPhysics::ConnorIterationLog);
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::ConnorSolver>);
+
+%template(ObserverConnorIterationLog) FullPhysics::Observer<FullPhysics::ConnorSolver>;
 
 namespace FullPhysics {
   class ConnorIterationLog : public Observer<ConnorSolver> {
