@@ -10,6 +10,33 @@ REGISTER_LUA_DERIVED_CLASS(Level1bAverage, Level1b)
 REGISTER_LUA_END()
 #endif
 
+
+int Level1bAverage::number_spectrometer() const
+{
+    assert_field_equal(&Level1b::number_spectrometer);
+    return  l1b[0]->number_spectrometer();
+}
+
+DoubleWithUnit Level1bAverage::relative_velocity(int Spec_index) const
+{
+    assert_field_equal(&Level1b::relative_velocity, Spec_index);
+    return l1b[0]->relative_velocity(Spec_index);
+}
+
+Time Level1bAverage::time(int Spec_index) const
+{
+    // TODO: Enable assert
+    // assert_field_equal(&Level1b::time, Spec_index);
+    return l1b[0]->time(Spec_index);
+}
+
+SpectralDomain Level1bAverage::sample_grid(int Spec_index) const
+{
+    // TODO: Enable assert
+    // assert_field_equal(&Level1b::sample_grid, Spec_index);
+    return l1b[0]->sample_grid(Spec_index);
+}
+
 DoubleWithUnit Level1bAverage::latitude(int i) const
 {
   DoubleWithUnit sum(0, l1b[0]->latitude(i).units);
@@ -97,6 +124,41 @@ SpectralRange Level1bAverage::radiance(int Spec_index) const
     uncer.reference(Array<double,1>(sqrt(sum) / (int) l1b.size()));
   return SpectralRange(rad, t.units(), uncer);
 }
+
+template <typename T>
+bool Level1bAverage::check_field_equal(T && check_field) const {
+    auto first_result = std::bind(check_field, l1b[0])();
+    return std::all_of(l1b.begin() + 1, l1b.end(), [first_result, check_field](boost::shared_ptr<Level1b> l1b_i){return std::bind(check_field, l1b_i)() == first_result;});
+}
+
+template <typename T>
+bool Level1bAverage::check_field_equal(T && check_field, int arg1) const {
+    auto first_result = std::bind(check_field, l1b[0], arg1)();
+    return std::all_of(l1b.begin() + 1, l1b.end(), [first_result, check_field, arg1](boost::shared_ptr<Level1b> l1b_i){return std::bind(check_field, l1b_i, arg1)() == first_result;});
+}
+
+/* TODO: change signature to accept string name of function to provide better error output? */
+template <typename T>
+void Level1bAverage::assert_field_equal(T && check_field) const {
+    bool field_equal = check_field_equal(check_field);
+    if(!field_equal) {
+        Exception e;
+        e << "All instances of checked field not equal.\n";
+        throw e;
+    }
+}
+
+/* TODO: change signature to accept string name of function to provide better error output? */
+template <typename T>
+void Level1bAverage::assert_field_equal(T && check_field, int arg1) const {
+    bool field_equal = check_field_equal(check_field, arg1);
+    if(!field_equal) {
+        Exception e;
+        e << "All instances of checked field not equal.\n";
+        throw e;
+    }
+}
+
 
 void Level1bAverage::print(std::ostream& Os) const
 {
