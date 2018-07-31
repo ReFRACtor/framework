@@ -73,12 +73,11 @@ public:
 /// We define <=, >= and > in terms of this operator.
 //-----------------------------------------------------------------------
 inline bool operator<(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return A.value < B.value; }
+{ return A.value < B.convert(A.units).value; }
 /// We define != in terms of this operator.
 //-----------------------------------------------------------------------
-// TODO: Add check for unit
 inline bool operator==(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return A.value == B.value; }
+{ return A.value == B.convert(A.units).value; }
 
 }
 
