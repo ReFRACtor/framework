@@ -56,8 +56,6 @@ set(DIR_SOURCES
     spectrum_effect.cc
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
-    spurr_driver.cc
-    spurr_rt.cc
     stokes_coefficient.cc
     temperature.cc
     temperature_offset.cc
