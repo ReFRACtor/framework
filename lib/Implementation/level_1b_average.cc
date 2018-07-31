@@ -19,7 +19,8 @@ int Level1bAverage::number_spectrometer() const
 
 DoubleWithUnit Level1bAverage::relative_velocity(int Spec_index) const
 {
-    assert_field_equal(&Level1b::relative_velocity, Spec_index);
+    // TODO: Re-enable or remove after consultation
+    // assert_field_equal(&Level1b::relative_velocity, Spec_index);
     return l1b[0]->relative_velocity(Spec_index);
 }
 
@@ -32,8 +33,7 @@ Time Level1bAverage::time(int Spec_index) const
 
 SpectralDomain Level1bAverage::sample_grid(int Spec_index) const
 {
-    // TODO: Enable assert
-    // assert_field_equal(&Level1b::sample_grid, Spec_index);
+    assert_field_equal(&Level1b::sample_grid, Spec_index);
     return l1b[0]->sample_grid(Spec_index);
 }
 
