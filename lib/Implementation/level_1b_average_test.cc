@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
         BOOST_CHECK_MATRIX_CLOSE_TOL(h.stokes_coefficient(i), st_expect(i, Range::all()), 1e-4);
     }
-    BOOST_CHECK_CLOSE(h.relative_velocity(0).value, 3.3503947754e+03, 1e-4);
+    BOOST_CHECK_CLOSE(h.relative_velocity(0).value, 2.8214946289e+03, 1e-4);
     BOOST_CHECK_CLOSE(h.time(0).pgs_time(), 6.8442992565e+08, 1e-4);
 
     IfstreamCs expected_data(test_data_dir() + "expected/level_1b_average/basic");
