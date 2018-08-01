@@ -2,6 +2,7 @@
 #define ARRAY_AD_H
 #include "auto_derivative.h"
 #include "fp_exception.h"
+#include <blitz/tinyvec-et.h>
 
 // Turn on trace messages, useful for debugging problems with this class.
 // #define ARRAY_AD_DIAGNOSTIC
@@ -377,9 +378,16 @@ public:
 
   /// We can define != in terms of this operator.
   //-----------------------------------------------------------------------
-  // TODO: Apparently need to check shape here too
   inline bool operator==(const ArrayAd<T, D>& A) const
-  { return blitz::all(A.val == this->val) && blitz::all(A.jac == this->jac) ; }
+  {
+      return blitz::all(A.val == this->val) &&
+             blitz::all(A.jac == this->jac) &&
+             A.val.dimensions() == this->val.dimensions() &&
+             A.jac.dimensions() == this->jac.dimensions() &&
+             blitz::all(A.val.shape() == this->val.shape()) &&
+             blitz::all(A.jac.shape() == this->jac.shape());
+
+  }
 
 private:
   blitz::Array<T, D> val;
