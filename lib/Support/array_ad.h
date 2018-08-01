@@ -376,7 +376,7 @@ public:
   friend std::istream& operator>>(std::istream& is, ArrayAd<T, D>& V)
   { is >> V.val >> V.jac; return is; }
 
-  /// We can define != in terms of this operator.
+  /// We define != in terms of this operator.
   //-----------------------------------------------------------------------
   inline bool operator==(const ArrayAd<T, D>& A) const
   {
@@ -388,6 +388,8 @@ public:
              blitz::all(A.jac.shape() == this->jac.shape());
 
   }
+  inline bool operator!=(const ArrayAd<T, D>& A) const
+  { return !(A == *this);  }
 
 private:
   blitz::Array<T, D> val;

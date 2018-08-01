@@ -74,12 +74,22 @@ public:
 //-----------------------------------------------------------------------
 inline bool operator<(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
 { return A.value < B.convert(A.units).value; }
+inline bool operator<=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
+{ return !(B < A); }
+inline bool operator>=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
+{ return !(A < B); }
+inline bool operator>(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
+{ return (B < A); }
 /// We define != in terms of this operator.
 //-----------------------------------------------------------------------
 inline bool operator==(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
 { return A.value == B.convert(A.units).value; }
+inline bool operator!=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
+{ return !(A == B); }
+
 
 }
+
 
 //-----------------------------------------------------------------------
 /// Math functions.
