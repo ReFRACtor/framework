@@ -11,7 +11,7 @@ namespace FullPhysics {
   simple structure that just keeps these two things together.
 *******************************************************************/
 class DoubleWithUnit : public Printable<DoubleWithUnit>,
-		       boost::field_operators<DoubleWithUnit> {
+		       boost::ordered_field_operators<DoubleWithUnit> {
 public:
   DoubleWithUnit() {}
   DoubleWithUnit(double V, const Unit& U)
@@ -74,18 +74,11 @@ public:
 //-----------------------------------------------------------------------
 inline bool operator<(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
 { return A.value < B.convert(A.units).value; }
-inline bool operator<=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return !(B < A); }
-inline bool operator>=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return !(A < B); }
-inline bool operator>(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return (B < A); }
+
 /// We define != in terms of this operator.
 //-----------------------------------------------------------------------
 inline bool operator==(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
 { return A.value == B.convert(A.units).value; }
-inline bool operator!=(const FullPhysics::DoubleWithUnit& A, const FullPhysics::DoubleWithUnit& B)
-{ return !(A == B); }
 
 
 }
