@@ -127,5 +127,11 @@ inline double operator-(const Time& T1, const Time& T2)
 inline bool operator<(const Time& T1, const Time& T2)
 { return T1.unix_time() <  T2.unix_time(); }
 
+/// We define != in terms of this operator.
+//-----------------------------------------------------------------------
+
+inline bool operator==(const Time& T1, const Time& T2)
+{ return T1.unix_time() ==  T2.unix_time(); }
+
 }
 #endif
