@@ -108,8 +108,11 @@ public:
   /// We can define != in terms of this operator.
   //-----------------------------------------------------------------------
   // TODO: Add robustness by converting to common unit instead of require ==
-  inline bool operator==(const SpectralDomain& A)
+  inline bool operator==(const SpectralDomain& A) const
   { return (A.data_ == this->data_) && (A.units_ == this->units_) ; }
+  inline bool operator!= (const SpectralDomain& A) const
+  { return !(A == *this); }
+
 
   /// Default constructor needed for SWIG
   SpectralDomain() {}
