@@ -2,6 +2,7 @@
 #define ARRAY_AD_H
 #include "auto_derivative.h"
 #include "fp_exception.h"
+#include <blitz/tinyvec-et.h>
 
 // Turn on trace messages, useful for debugging problems with this class.
 // #define ARRAY_AD_DIAGNOSTIC
@@ -374,6 +375,22 @@ public:
   { os << V.val << "\n" << V.jac << "\n"; return os;}
   friend std::istream& operator>>(std::istream& is, ArrayAd<T, D>& V)
   { is >> V.val >> V.jac; return is; }
+
+  /// We define != in terms of this operator.
+  //-----------------------------------------------------------------------
+  inline bool operator==(const ArrayAd<T, D>& A) const
+  {
+      return blitz::all(A.val == this->val) &&
+             blitz::all(A.jac == this->jac) &&
+             A.val.dimensions() == this->val.dimensions() &&
+             A.jac.dimensions() == this->jac.dimensions() &&
+             blitz::all(A.val.shape() == this->val.shape()) &&
+             blitz::all(A.jac.shape() == this->jac.shape());
+
+  }
+  inline bool operator!=(const ArrayAd<T, D>& A) const
+  { return !(A == *this);  }
+
 private:
   blitz::Array<T, D> val;
   blitz::Array<T, D + 1> jac;

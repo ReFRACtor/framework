@@ -18,9 +18,10 @@ class ConnorSolverState;
 
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::ConnorSolver>);
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::ConnorSolver>);
+%template(ObserverConnorSolver) FullPhysics::Observer<FullPhysics::ConnorSolver>;
+%template(ObservableConnorSolver) FullPhysics::Observable<FullPhysics::ConnorSolver>;
 
 namespace FullPhysics {
-%template(ObservableConnor) FullPhysics::Observable<ConnorSolver>;
 
 class ConnorSolver : public Observable<ConnorSolver> {
 public:
@@ -105,20 +106,5 @@ public:
 	       self.gamma_last_step, self.gamma_initial,
 	       self.residual, self.se, self.k, self.kt_se_m1_k,
 	       self.dx, self.fstat)
-};
-}
-
-// Do this so we can derive from this and have it able to be used by the C++ code
-// Defined here since rename does not like being inside of a namespace
-%feature("director") FullPhysics::Observer<FullPhysics::ConnorSolver>;
-%rename(ObserverConnorSolver) FullPhysics::Observer<FullPhysics::ConnorSolver>;
-
-namespace FullPhysics {
-class FullPhysics::Observer<FullPhysics::ConnorSolver> {
-public:
-  virtual ~Observer<FullPhysics::ConnorSolver>();
-  virtual void notify_add(ConnorSolver& Obs);
-  virtual void notify_remove(ConnorSolver& Obs);
-  virtual void notify_update(const ConnorSolver& Obs);
 };
 }

@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
 #include "solver_iteration_log.h"

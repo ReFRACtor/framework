@@ -19,21 +19,20 @@ int Level1bAverage::number_spectrometer() const
 
 DoubleWithUnit Level1bAverage::relative_velocity(int Spec_index) const
 {
-    assert_field_equal(&Level1b::relative_velocity, Spec_index);
-    return l1b[0]->relative_velocity(Spec_index);
+    DoubleWithUnit sum(0, l1b[0]->relative_velocity(Spec_index).units);
+    BOOST_FOREACH(const boost::shared_ptr<Level1b>& f, l1b)
+      sum += f->relative_velocity(Spec_index);
+    return sum / ((int) l1b.size());
 }
 
 Time Level1bAverage::time(int Spec_index) const
 {
-    // TODO: Enable assert
-    // assert_field_equal(&Level1b::time, Spec_index);
     return l1b[0]->time(Spec_index);
 }
 
 SpectralDomain Level1bAverage::sample_grid(int Spec_index) const
 {
-    // TODO: Enable assert
-    // assert_field_equal(&Level1b::sample_grid, Spec_index);
+    assert_field_equal(&Level1b::sample_grid, Spec_index);
     return l1b[0]->sample_grid(Spec_index);
 }
 
@@ -128,13 +127,23 @@ SpectralRange Level1bAverage::radiance(int Spec_index) const
 template <typename T>
 bool Level1bAverage::check_field_equal(T && check_field) const {
     auto first_result = std::bind(check_field, l1b[0])();
-    return std::all_of(l1b.begin() + 1, l1b.end(), [first_result, check_field](boost::shared_ptr<Level1b> l1b_i){return std::bind(check_field, l1b_i)() == first_result;});
+    BOOST_FOREACH(const boost::shared_ptr<Level1b>& f, l1b) {
+        if (std::bind(check_field, f)() != first_result) {
+            return false;
+        }
+    }
+    return true;
 }
 
 template <typename T>
 bool Level1bAverage::check_field_equal(T && check_field, int arg1) const {
     auto first_result = std::bind(check_field, l1b[0], arg1)();
-    return std::all_of(l1b.begin() + 1, l1b.end(), [first_result, check_field, arg1](boost::shared_ptr<Level1b> l1b_i){return std::bind(check_field, l1b_i, arg1)() == first_result;});
+    BOOST_FOREACH(const boost::shared_ptr<Level1b>& f, l1b) {
+        if (std::bind(check_field, f, arg1)() != first_result) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /* TODO: change signature to accept string name of function to provide better error output? */

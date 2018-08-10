@@ -34,7 +34,7 @@ class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
     l1b = param.InstanceOf(rf.Level1b)
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
-    altitudes = param.ObjectVector("altitude")
+    altitude = param.ObjectVector("altitude")
     temp_avg_window = param.Scalar(int, default=11)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
@@ -50,7 +50,7 @@ class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitudes()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
+        apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitude()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
         return apriori_obj.apriori_vmr(self.pressure())
 
 class GasVmrApriori(Creator, ReferenceAtmFileMixin):
@@ -60,7 +60,7 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
     temperature = param.InstanceOf(rf.Temperature)
     latitude = param.ArrayWithUnit(dims=1)
     time = param.Iterable(rf.Time)
-    altitudes = param.ObjectVector("altitude")
+    altitude = param.ObjectVector("altitude")
     reference_atm_file = param.Scalar(str)
     temp_avg_window = param.Scalar(int, default=11)
 
@@ -81,7 +81,7 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
         temperature_levels = self.temperature().temperature_grid(self.pressure()).value.value
 
         apriori_obj = rf.GasVmrApriori(pressure_levels, temperature_levels, self.latitude().value[0], self.time()[0], \
-                self.altitudes()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
+                self.altitude()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
         return apriori_obj.apriori_vmr()
 
 class AbsorberVmrLevel(CreatorFlaggedValue):
@@ -158,7 +158,7 @@ class AbsorberAbsco(Creator):
     gases = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
-    altitudes = param.ObjectVector("altitude")
+    altitude = param.ObjectVector("altitude")
     num_sub_layers = param.Scalar(int, required=False)
     constants = param.InstanceOf(rf.Constant)
     default_gas_definition = param.Dict(required=False)
@@ -188,7 +188,7 @@ class AbsorberAbsco(Creator):
             absorptions.push_back(gas_def['absorption'])
 
         if self.num_sub_layers() is not None:
-            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), absorptions, self.constants(), self.number_sub_layers())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants(), self.number_sub_layers())
         else:
-            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitudes(), absorptions, self.constants())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
 

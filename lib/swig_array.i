@@ -251,10 +251,14 @@ public:
 
 %typemap(in) blitz::Array<TYPE, DIM> (PythonObject numpy) 
 {
-  numpy.obj = to_numpy<TYPE>($input);
-  if(!numpy.obj)
-    return NULL;
-  $1 = to_blitz_array<TYPE, DIM>(numpy);
+  int res = SWIG_ConvertPtr($input, (void**)(&$1), $descriptor(blitz::Array<TYPE, DIM>*), 
+                            %convertptr_flags);
+  if(!SWIG_IsOK(res)) {
+    numpy.obj = to_numpy<TYPE>($input);
+    if(!numpy.obj)
+      return NULL;
+    $1 = to_blitz_array<TYPE, DIM>(numpy);
+  }
 }
 
 //--------------------------------------------------------------
