@@ -8,14 +8,11 @@ from .. import param
 
 from refractor import framework as rf
 
-class NLLSRetrieval(Creator):
+class RetrievalBaseCreator(Creator):
 
     retrieval_components = param.Dict()
     state_vector = param.InstanceOf(rf.StateVector)
     initial_guess = param.Array(dims=1)
-    a_priori = param.Array(dims=1)
-    covariance = param.Array(dims=2)
-    solver = param.Choice(param.InstanceOf(rf.NLLSSolver), param.InstanceOf(rf.ConnorSolver))
 
     def __init__(self, *vargs, **kwargs):
         super().__init__(*vargs, **kwargs)
@@ -26,18 +23,37 @@ class NLLSRetrieval(Creator):
         retrieval_components = self.common_store["retrieval_components"] = self.retrieval_components()
         state_vector = self.common_store["state_vector"] = self.state_vector()
         initial_guess = self.common_store["initial_guess"] = self.initial_guess()
-        a_priori = self.common_store["a_priori"] = self.a_priori()
-        covariance = self.common_store["covariance"] = self.covariance()
-        solver = self.common_store["solver"] = self.solver()
 
         return {
             'retrieval_components': retrieval_components,
             'state_vector': state_vector,
             'initial_guess': initial_guess,
+        }
+  
+class NLLSRetrieval(RetrievalBaseCreator):
+
+    a_priori = param.Array(dims=1)
+    covariance = param.Array(dims=2)
+    solver = param.Choice(param.InstanceOf(rf.NLLSSolver), param.InstanceOf(rf.ConnorSolver))
+
+    def __init__(self, *vargs, **kwargs):
+        super().__init__(*vargs, **kwargs)
+
+    def create(self, **kwargs):
+        retrieval_objects = super().create(**kwargs)
+
+        # The order these are accessed matters, store values into common for subsequent steps
+        a_priori = self.common_store["a_priori"] = self.a_priori()
+        covariance = self.common_store["covariance"] = self.covariance()
+        solver = self.common_store["solver"] = self.solver()
+
+        retrieval_objects.update({
             'a_priori': a_priori,
             'covariance': covariance,
             'solver': solver,
-        }
+        })
+
+        return retrieval_objects
 
 class SVObserverComponents(Creator):
 
