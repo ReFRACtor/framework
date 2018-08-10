@@ -13,7 +13,7 @@ class AtmosphereCreator(Creator):
 
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
-    altitudes = param.ObjectVector("altitude")
+    altitude = param.ObjectVector("altitude")
     absorber = param.InstanceOf(rf.Absorber)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
     ground = param.InstanceOf(rf.Ground, required=False)
@@ -25,7 +25,7 @@ class AtmosphereCreator(Creator):
 
         pressure = self.common_store["pressure"] = self.pressure()
         temperature = self.common_store["temperature"] = self.temperature()
-        altitudes = self.common_store["altitudes"] = self.altitudes()
+        altitude = self.common_store["altitude"] = self.altitude()
         absorber = self.common_store["absorber"] = self.absorber()
         relative_humidity = self.common_store["relative_humidity"] = self.relative_humidity()
         aerosol = self.common_store["aerosol"] = self.aerosol()
@@ -36,17 +36,17 @@ class AtmosphereCreator(Creator):
             raise CreatorError("Surface temperature can not be defined without ground being defined for atmosphere setup")
 
         if aerosol and ground and surf_temp:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitude, self.constants())
         if ground and surf_temp:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitude, self.constants())
         elif aerosol and ground:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitude, self.constants())
         elif aerosol:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, altitude, self.constants())
         elif ground:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitude, self.constants())
         else:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, altitudes, self.constants())
+            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, altitude, self.constants())
 
 
 class PressureSigma(CreatorFlaggedValue):
@@ -121,12 +121,12 @@ class AltitudeHydrostatic(Creator):
         latitudes = self.latitude()
         surface_heights = self.surface_height()
 
-        altitudes = rf.vector_altitude()
+        altitude = rf.vector_altitude()
         for chan_idx in range(self.num_channels()):
             chan_alt = rf.AltitudeHydrostatic(self.pressure(), self.temperature(), latitudes[chan_idx], surface_heights[chan_idx])
-            altitudes.push_back(chan_alt)
+            altitude.push_back(chan_alt)
 
-        return altitudes
+        return altitude
 
 class ConstantForAllLevels(Creator):
 

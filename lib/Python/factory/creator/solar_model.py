@@ -24,7 +24,7 @@ class SolarDopplerShiftPolynomial(Creator):
     latitude = param.ArrayWithUnit(dims=1)
     solar_zenith = param.ArrayWithUnit(dims=1)
     solar_azimuth = param.ArrayWithUnit(dims=1)
-    altitude = param.ArrayWithUnit(dims=1)
+    surface_height = param.ArrayWithUnit(dims=1)
     constants = param.InstanceOf(rf.Constant)
     num_channels = param.Scalar(int)
 
@@ -38,7 +38,7 @@ class SolarDopplerShiftPolynomial(Creator):
                                                               self.latitude()[chan_index],
                                                               self.solar_zenith()[chan_index],
                                                               self.solar_azimuth()[chan_index],
-                                                              self.altitude()[chan_index],
+                                                              self.surface_height()[chan_index],
                                                               self.constants(),
                                                               do_doppler_shift) )
         return doppler_shift
