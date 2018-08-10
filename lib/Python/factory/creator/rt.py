@@ -8,7 +8,7 @@ from refractor import framework as rf
 class LidortRt(Creator):
 
     atmosphere = param.InstanceOf(rf.RtAtmosphere)
-    stokes_coefficients = param.Array(dims=2)
+    stokes_coefficient = param.Array(dims=2)
     solar_zenith = param.ArrayWithUnit(dims=1)
     observation_zenith = param.ArrayWithUnit(dims=1)
     observation_azimuth = param.ArrayWithUnit(dims=1)
@@ -23,7 +23,7 @@ class LidortRt(Creator):
     use_thermal_emission = param.Scalar(bool, default=False)
 
     def create(self, **kwargs):
-        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficient())
 
         return rf.LidortRt(self.atmosphere(), stokes_object, 
                 self.solar_zenith().convert("deg").value, 
@@ -35,7 +35,7 @@ class LidortRt(Creator):
 class TwostreamRt(Creator):
 
     atmosphere = param.InstanceOf(rf.RtAtmosphere)
-    stokes_coefficients = param.Array(dims=2)
+    stokes_coefficient = param.Array(dims=2)
     solar_zenith = param.ArrayWithUnit(dims=1)
     observation_zenith = param.ArrayWithUnit(dims=1)
     observation_azimuth = param.ArrayWithUnit(dims=1)
@@ -46,7 +46,7 @@ class TwostreamRt(Creator):
     use_thermal_emission = param.Scalar(bool, default=False)
 
     def create(self, **kwargs):
-        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficient())
         
         return rf.TwostreamRt(self.atmosphere(), stokes_object,
                 self.solar_zenith().convert("deg").value, 
@@ -58,7 +58,7 @@ class TwostreamRt(Creator):
 class LsiRt(Creator):
 
     atmosphere = param.InstanceOf(rf.RtAtmosphere)
-    stokes_coefficients = param.Array(dims=2)
+    stokes_coefficient = param.Array(dims=2)
     solar_zenith = param.ArrayWithUnit(dims=1)
     observation_zenith = param.ArrayWithUnit(dims=1)
     observation_azimuth = param.ArrayWithUnit(dims=1)
@@ -77,7 +77,7 @@ class LsiRt(Creator):
         # Just use LIDORT for multiple scattering, when we use LRadRt
         do_multiple_scattering_only = self.use_lrad()
 
-        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficients())
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficient())
 
         # Minimum nmom allowed by LIDORT is 3
         nmom_low = min(self.num_low_streams() * 2, 3)
