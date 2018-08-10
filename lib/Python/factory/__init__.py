@@ -4,7 +4,7 @@ from . import param
 def process_config(config_def):
 
     if not isinstance(config_def, dict):
-        raise TypeError("Configiguration definition is expected to be a dict instance")
+        raise TypeError("Configuration definition is expected to be a dict instance")
 
     if "creator" in config_def:
         creator_class = config_def["creator"]
