@@ -85,18 +85,11 @@ std::string DispersionPolynomial::state_vector_name_i(int i) const
 SpectralDomain
 DispersionPolynomial::pixel_grid() const
 {
-  firstIndex i1; secondIndex i2;
-  ArrayAd<double, 1> res(index_array.rows(), coeff.number_variable());
-  res.value() = 0;
-  res.jacobian() = 0;
-  for(int i = coeff.rows() - 1; i >= 0; --i) {
-    res.value() = res.value() * index_array + coeff.value()(i);
-    if(coeff.number_variable() > 0) {
-      Array<double, 1> coeff_jac_sub(coeff.jacobian()(i, Range::all()));
-      res.jacobian() = res.jacobian() * index_array(i1) + coeff_jac_sub(i2);
-    }
-  }
-  return SpectralDomain(res, spectral_index, coeff_unit);
+  Poly1d spectral_poly = Poly1d(coeff, false);
+  ArrayAd<double, 1> index_array_ad(index_array);
+  index_array_ad.resize_number_variable(coeff.number_variable());
+  SpectralDomain sample_grid = SpectralDomain(spectral_poly(index_array_ad), spectral_index, coeff_unit);
+  return sample_grid;
 }
 
 boost::shared_ptr<Dispersion> DispersionPolynomial::clone() const

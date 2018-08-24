@@ -3,6 +3,7 @@
 #include "dispersion.h"
 #include "unit.h"
 #include "sub_state_vector_array.h"
+#include "polynomial_eval.h"
 
 namespace FullPhysics {
 /****************************************************************//**
