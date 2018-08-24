@@ -1,0 +1,27 @@
+var a02994 =
+[
+    [ "Lidort_Linsup_Brdf", "a02994.html#a1075f54966d8b3531ed5b86ceda77cee", null ],
+    [ "Lidort_Linsup_Brdf", "a02994.html#a264d83bec4bc3512b6c5cc82435022e2", null ],
+    [ "~Lidort_Linsup_Brdf", "a02994.html#adfa7764e88a769f19b88a59c8a5d6c66", null ],
+    [ "check_byte_sizes", "a02994.html#a8f5a5a7efa6c8bb110153b9751dc9148", null ],
+    [ "copy_from_sup", "a02994.html#a6e216d6f711fbbbcb88813df37b728c2", null ],
+    [ "fortran_type_ptr", "a02994.html#af1f9a2f8cc4b0d6d661df474e8c3a910", null ],
+    [ "print", "a02994.html#a79683c34f55993b064c0e1fee493ece1", null ],
+    [ "print_to_string", "a02994.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "ts_ls_brdf_f", "a02994.html#ae657a0f7035bdc7610de6c6f2c981ac3", null ],
+    [ "ts_ls_brdf_f", "a02994.html#a3152deb0098dda67e989b434770ba25c", null ],
+    [ "ts_ls_brdf_f_0", "a02994.html#a0a0b274f147e8a1181bfd0b0acbd46ce", null ],
+    [ "ts_ls_brdf_f_0", "a02994.html#a185303eb34095dbeabd49f9bcd248a35", null ],
+    [ "ts_ls_emissivity", "a02994.html#a2a05f5e984781ad260437525db39f21d", null ],
+    [ "ts_ls_emissivity", "a02994.html#abfbf40387285b4bdb23d5faabeb91312", null ],
+    [ "ts_ls_exactdb_brdfunc", "a02994.html#a7c8524b7babd8ca9d0f6ef4ee8c7546e", null ],
+    [ "ts_ls_exactdb_brdfunc", "a02994.html#acb812167d95de669d7b209c19f28865a", null ],
+    [ "ts_ls_user_brdf_f", "a02994.html#ad6ee76868d074078661bfdebef72ca43", null ],
+    [ "ts_ls_user_brdf_f", "a02994.html#a581cf688559abd188a3195638edc11f8", null ],
+    [ "ts_ls_user_brdf_f_0", "a02994.html#a9588526fc4a9ba7ba2e10698fe4165ae", null ],
+    [ "ts_ls_user_brdf_f_0", "a02994.html#ac418b36d9ea9bb84d0c9dfbacb5f906b", null ],
+    [ "ts_ls_user_emissivity", "a02994.html#a3bc1de96f611b39864e8f4e1dfc6d1c2", null ],
+    [ "ts_ls_user_emissivity", "a02994.html#aada039f3d61e6ae4416c88bd0adde413", null ],
+    [ "fortran_type_c", "a02994.html#a4ad8c958b21c4ffdfe812410ff96992c", null ],
+    [ "owns_pointer", "a02994.html#a47d6495523d09a3d38ff44f297a5d2cb", null ]
+];

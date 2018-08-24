@@ -1,0 +1,6 @@
+<map id="FullPhysics::AutoDerivativeWithUnit&lt; T &gt;" name="FullPhysics::AutoDerivativeWithUnit&lt; T &gt;">
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; AutoDerivativeWithUnit\l\&lt; T \&gt; \&gt;\n||+ print_to_string()\l}" alt="" coords="36,248,207,355"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
+<area shape="rect" id="node6" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="117,132,267,224"/>
+<area shape="rect" id="node5" href="$a04678.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="487,379,633,676"/>
+</map>

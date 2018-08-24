@@ -1,0 +1,20 @@
+<map id="Implementation/dispersion_fit.cc" name="Implementation/dispersion_fit.cc">
+<area shape="rect" id="node2" href="$a00269.html" title="dispersion_fit.h" alt="" coords="955,95,1065,121"/>
+<area shape="rect" id="node34" href="$a01739.html" title="polynomial_eval.h" alt="" coords="1085,244,1212,271"/>
+<area shape="rect" id="node35" href="$a01730.html" title="old_constant.h" alt="" coords="443,169,550,196"/>
+<area shape="rect" id="node36" href="$a01700.html" title="linear_algebra.h" alt="" coords="804,95,917,121"/>
+<area shape="rect" id="node3" href="$a01028.html" title="level_1b_sample_coefficient.h" alt="" coords="911,169,1109,196"/>
+<area shape="rect" id="node4" href="$a01022.html" title="level_1b.h" alt="" coords="539,244,620,271"/>
+<area shape="rect" id="node19" href="$a01574.html" title="array_ad.h" alt="" coords="1055,393,1138,420"/>
+<area shape="rect" id="node32" href="$a01766.html" title="spectral_domain.h" alt="" coords="885,319,1013,345"/>
+<area shape="rect" id="node5" href="$a01658.html" title="fp_time.h" alt="" coords="156,543,232,569"/>
+<area shape="rect" id="node6" href="$a01742.html" title="printable.h" alt="" coords="627,625,710,651"/>
+<area shape="rect" id="node11" href="$a01625.html" title="double_with_unit.h" alt="" coords="274,468,405,495"/>
+<area shape="rect" id="node16" href="$a01772.html" title="spectral_range.h" alt="" coords="568,319,687,345"/>
+<area shape="rect" id="node7" href="$a01670.html" title="generic_object.h" alt="" coords="610,707,727,733"/>
+<area shape="rect" id="node12" href="$a01814.html" title="unit.h" alt="" coords="400,543,455,569"/>
+<area shape="rect" id="node17" href="$a01586.html" title="array_with_unit.h" alt="" coords="587,393,708,420"/>
+<area shape="rect" id="node20" href="$a01589.html" title="auto_derivative.h" alt="" coords="1180,468,1301,495"/>
+<area shape="rect" id="node21" href="$a01640.html" title="fp_exception.h" alt="" coords="1239,543,1346,569"/>
+<area shape="rect" id="node22" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1296,625,1436,651"/>
+</map>

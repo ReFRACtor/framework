@@ -1,2 +1,7 @@
-<map id="Python.factory.creator.instrument.IlsGaussian" name="Python.factory.creator.instrument.IlsGaussian">
+<map id="FullPhysics::StandardForwardModel" name="FullPhysics::StandardForwardModel">
+<area shape="rect" id="node2" href="$a03558.html" title="The forward model represents the encapsulation of modeling spectra from an atmospheric state then app..." alt="" coords="79,366,259,546"/>
+<area shape="rect" id="node3" href="$a04642.html" title="{FullPhysics::StackedRadiance\lMixin\n||+ num_channels()\l+ radiance()\l+ radiance_all()\l+ spectral_domain()\l+ stacked_pixel_range()\l}" alt="" coords="5,131,207,281"/>
+<area shape="rect" id="node4" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ForwardModel \&gt;\n||+ print_to_string()\l}" alt="" coords="231,160,381,252"/>
+<area shape="rect" id="node5" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="271,5,453,83"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; boost::shared_ptr\&lt; NamedSpectrum \&gt; \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="283,329,553,583"/>
 </map>

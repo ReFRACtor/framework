@@ -1,6 +1,0 @@
-<map id="FixedLevel/temperature_fixed_level.h" name="FixedLevel/temperature_fixed_level.h">
-<area shape="rect" id="node2" href="$a00501.html" title="FixedLevel/temperature\l_fixed_level.cc" alt="" coords="5,95,164,136"/>
-<area shape="rect" id="node3" href="$a00504.html" title="FixedLevel/temperature\l_fixed_level_output.h" alt="" coords="188,95,347,136"/>
-<area shape="rect" id="node5" href="$a00533.html" title="Implementation/atmosphere\l_oco.cc" alt="" coords="371,95,553,136"/>
-<area shape="rect" id="node4" href="$a00503.html" title="FixedLevel/temperature\l_fixed_level_output.cc" alt="" coords="188,184,347,225"/>
-</map>

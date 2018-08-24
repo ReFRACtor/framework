@@ -1,0 +1,17 @@
+<map id="Implementation/connor_convergence.h" name="Implementation/connor_convergence.h">
+<area shape="rect" id="node2" href="$a00902.html" title="convergence_check.h" alt="" coords="399,468,549,495"/>
+<area shape="rect" id="node7" href="$a00950.html" title="forward_model.h" alt="" coords="604,95,723,121"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="737,617,819,644"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="719,692,837,719"/>
+<area shape="rect" id="node8" href="$a01778.html" title="spectrum.h" alt="" coords="861,244,948,271"/>
+<area shape="rect" id="node31" href="$a01784.html" title="stacked_radiance_mixin.h" alt="" coords="686,169,859,196"/>
+<area shape="rect" id="node9" href="$a01766.html" title="spectral_domain.h" alt="" coords="799,319,927,345"/>
+<area shape="rect" id="node30" href="$a01772.html" title="spectral_range.h" alt="" coords="1071,319,1189,345"/>
+<area shape="rect" id="node10" href="$a01814.html" title="unit.h" alt="" coords="1373,543,1428,569"/>
+<area shape="rect" id="node14" href="$a01574.html" title="array_ad.h" alt="" coords="822,393,905,420"/>
+<area shape="rect" id="node28" href="$a01586.html" title="array_with_unit.h" alt="" coords="1069,393,1191,420"/>
+<area shape="rect" id="node15" href="$a01589.html" title="auto_derivative.h" alt="" coords="971,468,1092,495"/>
+<area shape="rect" id="node16" href="$a01640.html" title="fp_exception.h" alt="" coords="391,543,498,569"/>
+<area shape="rect" id="node17" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="252,617,392,644"/>
+<area shape="rect" id="node29" href="$a01625.html" title="double_with_unit.h" alt="" coords="1167,468,1298,495"/>
+</map>

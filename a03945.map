@@ -1,0 +1,7 @@
+<map id="Python.factory.creator.forward_model.SpectrumSamplingBase" name="Python.factory.creator.forward_model.SpectrumSamplingBase">
+<area shape="rect" id="node5" href="$a03950.html" title="{Python.factory.creator.forward\l_model.FixedSpacingSpectrumSampling\n||+ create()\l}" alt="" coords="5,543,263,635"/>
+<area shape="rect" id="node6" href="$a03958.html" title="{Python.factory.creator.forward\l_model.NonuniformSpectrumSampling\n|+ channel_domains\l|+ create()\l}" alt="" coords="287,543,533,635"/>
+<area shape="rect" id="node7" href="$a03954.html" title="{Python.factory.creator.forward\l_model.UniformSpectrumSampling\n||+ create()\l}" alt="" coords="557,543,781,635"/>
+<area shape="rect" id="node2" href="$a03914.html" title="{Python.factory.creator.base.\lCreator\n|+ common_store\l+ config_def\l+ parameters\l|+ __init__()\l+ __call__()\l+ create()\l+ deregister_to_receive()\l+ param()\l+ receive()\l+ register_parameter()\l+ register_to_receive()\l}" alt="" coords="209,131,395,355"/>
+<area shape="rect" id="node4" href="$a03938.html" title="{Python.factory.creator.forward\l_model.PerChannelMixin\n|+ num_channels\l|+ check_num_channels()\l}" alt="" coords="420,197,619,289"/>
+</map>

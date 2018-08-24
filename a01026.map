@@ -1,0 +1,18 @@
+<map id="Interface/level_1b_sample_coefficient.cc" name="Interface/level_1b_sample_coefficient.cc">
+<area shape="rect" id="node2" href="$a01028.html" title="level_1b_sample_coefficient.h" alt="" coords="698,95,895,121"/>
+<area shape="rect" id="node34" href="$a01634.html" title="fe_disable_exception.h" alt="" coords="975,95,1130,121"/>
+<area shape="rect" id="node3" href="$a01022.html" title="level_1b.h" alt="" coords="973,169,1055,196"/>
+<area shape="rect" id="node18" href="$a01574.html" title="array_ad.h" alt="" coords="578,319,661,345"/>
+<area shape="rect" id="node31" href="$a01766.html" title="spectral_domain.h" alt="" coords="950,244,1078,271"/>
+<area shape="rect" id="node33" href="$a01739.html" title="polynomial_eval.h" alt="" coords="556,169,683,196"/>
+<area shape="rect" id="node4" href="$a01658.html" title="fp_time.h" alt="" coords="1521,468,1597,495"/>
+<area shape="rect" id="node5" href="$a01742.html" title="printable.h" alt="" coords="955,550,1038,577"/>
+<area shape="rect" id="node10" href="$a01625.html" title="double_with_unit.h" alt="" coords="1062,393,1193,420"/>
+<area shape="rect" id="node15" href="$a01772.html" title="spectral_range.h" alt="" coords="1103,244,1221,271"/>
+<area shape="rect" id="node6" href="$a01670.html" title="generic_object.h" alt="" coords="938,632,1055,659"/>
+<area shape="rect" id="node11" href="$a01814.html" title="unit.h" alt="" coords="1228,468,1283,495"/>
+<area shape="rect" id="node16" href="$a01586.html" title="array_with_unit.h" alt="" coords="1015,319,1136,345"/>
+<area shape="rect" id="node19" href="$a01589.html" title="auto_derivative.h" alt="" coords="419,393,540,420"/>
+<area shape="rect" id="node20" href="$a01640.html" title="fp_exception.h" alt="" coords="329,468,435,495"/>
+<area shape="rect" id="node21" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="259,550,399,577"/>
+</map>

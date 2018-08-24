@@ -1,4 +1,5 @@
-<map id="FullPhysics::SpectrumSampling" name="FullPhysics::SpectrumSampling">
-<area shape="rect" id="node2" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; SpectrumSampling \&gt;\n||+ print_to_string()\l}" alt="" coords="33,131,189,223"/>
-<area shape="rect" id="node3" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="20,5,201,83"/>
+<map id="FullPhysics::Lidort_Modified_Chapman" name="FullPhysics::Lidort_Modified_Chapman">
+<area shape="rect" id="node2" href="$a02874.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="39,271,173,421"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="31,131,181,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="15,5,197,83"/>
 </map>

@@ -1,0 +1,8 @@
+<map id="FullPhysics::SpectrumSampling" name="FullPhysics::SpectrumSampling">
+<area shape="rect" id="node4" href="$a03294.html" title="This is a simple SpectrumSampling that is just a nonuniform sampling. " alt="" coords="5,499,232,679"/>
+<area shape="rect" id="node5" href="$a03374.html" title="This is a simple SpectrumSampling that is just a uniform sampling. " alt="" coords="256,513,488,664"/>
+<area shape="rect" id="node6" href="$a03422.html" title="This generates a spectrum sampling that covers all the high resolution points needed to create the sp..." alt="" coords="513,521,751,657"/>
+<area shape="rect" id="node7" href="$a03470.html" title="This spectrum sampling creates a grid that begins the nearest ils_half_width before the low resolutio..." alt="" coords="775,521,982,657"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; SpectrumSampling \&gt;\n||+ print_to_string()\l}" alt="" coords="423,131,579,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="411,5,592,83"/>
+</map>

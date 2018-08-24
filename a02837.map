@@ -1,4 +1,6 @@
-<map id="FullPhysics::Logger" name="FullPhysics::Logger">
-<area shape="rect" id="node2" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Logger \&gt;\n||+ print_to_string()\l}" alt="" coords="21,131,171,223"/>
-<area shape="rect" id="node3" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
+<map id="FullPhysics::LidortLowHighCoxmunkPlusLambertianFixture" name="FullPhysics::LidortLowHighCoxmunkPlusLambertianFixture">
+<area shape="rect" id="node2" href="$a02822.html" title="{FullPhysics::LidortLowHigh\lCommon\n|+ azm\l+ high_rt\l+ low_rt\l+ nmoms_high\l+ nmoms_low\l+ nstreams_high\l+ nstreams_low\l+ pure_nadir\l+ stokes_coefs\l+ sza\l+ zen\l|+ LidortLowHighCommon()\l+ ~LidortLowHighCommon()\l}" alt="" coords="5,593,192,847"/>
+<area shape="rect" id="node3" href="$a02602.html" title="There are a number of tests that need to use a standard set of objects, similar to what we generate w..." alt="" coords="216,652,424,788"/>
+<area shape="rect" id="node4" href="$a02594.html" title="There are a number of tests that need to use a standard set of objects, similar to what we generate w..." alt="" coords="233,248,407,545"/>
+<area shape="rect" id="node5" href="$a04502.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="233,5,407,200"/>
 </map>

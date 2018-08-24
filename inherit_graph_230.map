@@ -1,3 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$a00232.html" title="FullPhysics::lidort\l_fixed_control" alt="" coords="5,5,132,47"/>
+<area shape="rect" id="node1" title="STL class. " alt="" coords="5,81,105,108"/>
+<area shape="rect" id="node2" title="STL class. " alt="" coords="153,81,308,108"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="358,41,487,82"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="356,106,489,147"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="539,48,630,75"/>
+<area shape="rect" id="node5" href="$a04458.html" title="This allows filtering stream to created on top of an underlying ifstream. " alt="" coords="683,48,871,75"/>
+<area shape="rect" id="node6" href="$a04514.html" title="It can be convenient to allow comments in a text data file that are ignored by the program reading it..." alt="" coords="945,5,1108,32"/>
+<area shape="rect" id="node7" href="$a04494.html" title="/ This opens a file for reading, possibly with automatic / decompression. " alt="" coords="925,56,1128,83"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="537,113,632,140"/>
+<area shape="rect" id="node10" href="$a04454.html" title="This allows filtering stream to created on top of an underlying ofstream. " alt="" coords="680,113,875,140"/>
+<area shape="rect" id="node11" href="$a04490.html" title="/ This opens a file for writing, possibly with automatic / compression. " alt="" coords="923,113,1131,140"/>
 </map>

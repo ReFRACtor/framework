@@ -1,0 +1,4 @@
+<map id="FullPhysics::InterpolatePoint&lt; TX, TY &gt;" name="FullPhysics::InterpolatePoint&lt; TX, TY &gt;">
+<area shape="rect" id="node2" href="$a04526.html" title="This does linear interpolate between two points. " alt="" coords="5,175,207,325"/>
+<area shape="rect" id="node3" href="$a04522.html" title="This just returns the same y value, always. " alt="" coords="231,175,405,325"/>
+</map>

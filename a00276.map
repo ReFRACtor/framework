@@ -1,0 +1,23 @@
+<map id="Implementation/dispersion_polynomial.h" name="Implementation/dispersion_polynomial.h">
+<area shape="rect" id="node2" href="$a00944.html" title="dispersion.h" alt="" coords="542,169,634,196"/>
+<area shape="rect" id="node31" href="$a01814.html" title="unit.h" alt="" coords="1272,557,1326,584"/>
+<area shape="rect" id="node36" href="$a01796.html" title="sub_state_vector_array.h" alt="" coords="897,95,1066,121"/>
+<area shape="rect" id="node42" href="$a01739.html" title="polynomial_eval.h" alt="" coords="1208,244,1334,271"/>
+<area shape="rect" id="node3" href="$a01793.html" title="state_vector_observer.h" alt="" coords="626,244,788,271"/>
+<area shape="rect" id="node8" href="$a01724.html" title="observer.h" alt="" coords="387,401,470,427"/>
+<area shape="rect" id="node30" href="$a01766.html" title="spectral_domain.h" alt="" coords="632,319,760,345"/>
+<area shape="rect" id="node4" href="$a01790.html" title="state_vector.h" alt="" coords="785,319,890,345"/>
+<area shape="rect" id="node5" href="$a01742.html" title="printable.h" alt="" coords="767,632,850,659"/>
+<area shape="rect" id="node16" href="$a01574.html" title="array_ad.h" alt="" coords="1387,401,1470,427"/>
+<area shape="rect" id="node18" href="$a01640.html" title="fp_exception.h" alt="" coords="1090,557,1196,584"/>
+<area shape="rect" id="node6" href="$a01670.html" title="generic_object.h" alt="" coords="92,707,210,733"/>
+<area shape="rect" id="node9" href="$a01721.html" title="null_deleter.h" alt="" coords="136,483,235,509"/>
+<area shape="rect" id="node17" href="$a01589.html" title="auto_derivative.h" alt="" coords="833,483,954,509"/>
+<area shape="rect" id="node19" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="925,632,1065,659"/>
+<area shape="rect" id="node34" href="$a01586.html" title="array_with_unit.h" alt="" coords="636,401,757,427"/>
+<area shape="rect" id="node35" href="$a01625.html" title="double_with_unit.h" alt="" coords="979,483,1110,509"/>
+<area shape="rect" id="node37" href="$a01802.html" title="sub_state_vector_observer.h" alt="" coords="658,169,849,196"/>
+<area shape="rect" id="node38" href="$a01103.html" title="pressure.h" alt="" coords="874,169,956,196"/>
+<area shape="rect" id="node39" href="$a01580.html" title="array_ad_with_unit.h" alt="" coords="1184,319,1326,345"/>
+<area shape="rect" id="node40" href="$a01592.html" title="auto_derivative_with\l_unit.h" alt="" coords="1120,393,1262,435"/>
+</map>

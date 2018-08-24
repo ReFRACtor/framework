@@ -1,0 +1,16 @@
+<map id="Implementation/level_1b_average.cc" name="Implementation/level_1b_average.cc">
+<area shape="rect" id="node2" href="$a00452.html" title="level_1b_average.h" alt="" coords="965,95,1099,121"/>
+<area shape="rect" id="node3" href="$a01022.html" title="level_1b.h" alt="" coords="373,169,454,196"/>
+<area shape="rect" id="node4" href="$a01658.html" title="fp_time.h" alt="" coords="649,468,725,495"/>
+<area shape="rect" id="node5" href="$a01742.html" title="printable.h" alt="" coords="343,550,425,577"/>
+<area shape="rect" id="node10" href="$a01625.html" title="double_with_unit.h" alt="" coords="260,393,391,420"/>
+<area shape="rect" id="node15" href="$a01772.html" title="spectral_range.h" alt="" coords="145,244,263,271"/>
+<area shape="rect" id="node31" href="$a01766.html" title="spectral_domain.h" alt="" coords="288,244,416,271"/>
+<area shape="rect" id="node6" href="$a01670.html" title="generic_object.h" alt="" coords="325,632,443,659"/>
+<area shape="rect" id="node11" href="$a01814.html" title="unit.h" alt="" coords="231,468,286,495"/>
+<area shape="rect" id="node16" href="$a01586.html" title="array_with_unit.h" alt="" coords="278,319,399,345"/>
+<area shape="rect" id="node18" href="$a01574.html" title="array_ad.h" alt="" coords="636,319,719,345"/>
+<area shape="rect" id="node19" href="$a01589.html" title="auto_derivative.h" alt="" coords="761,393,882,420"/>
+<area shape="rect" id="node20" href="$a01640.html" title="fp_exception.h" alt="" coords="800,468,907,495"/>
+<area shape="rect" id="node21" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="969,550,1109,577"/>
+</map>

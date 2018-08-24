@@ -1,0 +1,6 @@
+<map id="FullPhysics::Level1bSampleCoefficient" name="FullPhysics::Level1bSampleCoefficient">
+<area shape="rect" id="node5" href="$a02434.html" title="This is an example L1B reader that reads a HDF formatted file that corresponds one&#45;to&#45;one with the ex..." alt="" coords="9,741,204,965"/>
+<area shape="rect" id="node2" href="$a03606.html" title="This is used to read a Level 1B file. " alt="" coords="23,271,191,495"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Level1b \&gt;\n||+ print_to_string()\l}" alt="" coords="32,131,181,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="16,5,197,83"/>
+</map>

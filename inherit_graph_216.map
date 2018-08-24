@@ -1,3 +1,495 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$a00088.html" title="FullPhysics::brdf_sup\l_inputs" alt="" coords="5,5,153,47"/>
+<area shape="rect" id="node2" href="$a04654.html" title="It is common to have a class that is an Observable with a set of coefficients, a subset of which are ..." alt="" coords="1171,946,1361,987"/>
+<area shape="rect" id="node4" href="$a04478.html" title="This is a simple time class. " alt="" coords="618,9819,745,9845"/>
+<area shape="rect" id="node5" href="$a04430.html" title="boost::backtrace" alt="" coords="307,6152,426,6179"/>
+<area shape="rect" id="node6" href="$a04462.html" title="This is the base of the exception hierarchy for Full Physics code. " alt="" coords="603,6093,759,6120"/>
+<area shape="rect" id="node8" href="$a04678.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="620,10000,743,10027"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="315,6035,419,6061"/>
+<area shape="rect" id="node12" href="$a04410.html" title="FullPhysics::ArrayWithUnit\l\&lt; double, 1 \&gt;" alt="" coords="591,5447,771,5489"/>
+<area shape="rect" id="node13" href="$a04410.html" title="FullPhysics::ArrayWithUnit\l\&lt; double, 3 \&gt;" alt="" coords="591,5382,771,5423"/>
+<area shape="rect" id="node14" href="$a04410.html" title="We frequently have a array of numbers with units associated with them. " alt="" coords="591,5513,771,5554"/>
+<area shape="rect" id="node15" href="$a04422.html" title="This is a AutoDerivative that also has units associated with it. " alt="" coords="589,5578,773,5619"/>
+<area shape="rect" id="node16" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,4343,187,4369"/>
+<area shape="rect" id="node17" href="$a04590.html" title="Mixin for a class that allows other classes to observe it state. " alt="" coords="269,1519,465,1545"/>
+<area shape="rect" id="node18" href="$a04594.html" title="Simple Mixin to be and Observer of another object of class T. " alt="" coords="275,1569,458,1596"/>
+<area shape="rect" id="node19" href="$a03666.html" title="FullPhysics::OutputBlitz1d" alt="" coords="278,1620,455,1647"/>
+<area shape="rect" id="node20" href="$a03670.html" title="FullPhysics::OutputBlitz2d" alt="" coords="278,1671,455,1697"/>
+<area shape="rect" id="node21" href="$a03662.html" title="FullPhysics::OutputDouble" alt="" coords="277,1721,456,1748"/>
+<area shape="rect" id="node22" href="$a04618.html" title="This is a Mixin for classes that can be printed. " alt="" coords="276,1772,457,1799"/>
+<area shape="rect" id="node23" href="$a03714.html" title="This determines the sample grid that should be used for each of the instrument indexes. " alt="" coords="283,1823,450,1849"/>
+<area shape="rect" id="node24" href="$a03750.html" title="Abstracts away set up of BRDF kernel interfaces. " alt="" coords="273,1315,461,1341"/>
+<area shape="rect" id="node27" href="$a03754.html" title="Abstracts away set up of Radiative Transfer software from Rob Spurr into a simpler common inteface us..." alt="" coords="277,1401,456,1428"/>
+<area shape="rect" id="node30" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Absorber \&gt;" alt="" coords="599,1645,763,1686"/>
+<area shape="rect" id="node33" href="$a04590.html" title="FullPhysics::Observable\l\&lt; AbsorberVmr \&gt;" alt="" coords="599,1958,763,1999"/>
+<area shape="rect" id="node43" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Aerosol \&gt;" alt="" coords="599,1893,763,1934"/>
+<area shape="rect" id="node46" href="$a04590.html" title="FullPhysics::Observable\l\&lt; AerosolExtinction \&gt;" alt="" coords="599,2023,763,2065"/>
+<area shape="rect" id="node53" href="$a04590.html" title="FullPhysics::Observable\l\&lt; AerosolProperty \&gt;" alt="" coords="599,2089,763,2130"/>
+<area shape="rect" id="node59" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Altitude \&gt;" alt="" coords="285,2193,449,2234"/>
+<area shape="rect" id="node62" href="$a04590.html" title="FullPhysics::Observable\l\&lt; boost::shared_ptr\&lt; NamedSpectrum \&gt; \&gt;" alt="" coords="547,4321,816,4362"/>
+<area shape="rect" id="node64" href="$a04590.html" title="FullPhysics::Observable\l\&lt; ConnorSolver \&gt;" alt="" coords="285,3770,449,3811"/>
+<area shape="rect" id="node66" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Dispersion \&gt;" alt="" coords="599,2154,763,2195"/>
+<area shape="rect" id="node70" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Ground \&gt;" alt="" coords="599,2219,763,2261"/>
+<area shape="rect" id="node79" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Ils \&gt;" alt="" coords="599,2873,763,2914"/>
+<area shape="rect" id="node82" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Instrument \&gt;" alt="" coords="599,3802,763,3843"/>
+<area shape="rect" id="node85" href="$a04590.html" title="FullPhysics::Observable\l\&lt; InstrumentCorrection \&gt;" alt="" coords="597,2742,765,2783"/>
+<area shape="rect" id="node93" href="$a04590.html" title="FullPhysics::Observable\l\&lt; IterativeSolver \&gt;" alt="" coords="285,4302,449,4343"/>
+<area shape="rect" id="node105" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Pressure \&gt;" alt="" coords="599,2285,763,2326"/>
+<area shape="rect" id="node111" href="$a04590.html" title="FullPhysics::Observable\l\&lt; RadiativeTransferRetrievable \&gt;" alt="" coords="574,2677,789,2718"/>
+<area shape="rect" id="node115" href="$a04590.html" title="FullPhysics::Observable\l\&lt; RtAtmosphere \&gt;" alt="" coords="599,3003,763,3045"/>
+<area shape="rect" id="node118" href="$a04590.html" title="FullPhysics::Observable\l\&lt; SpectrumEffect \&gt;" alt="" coords="599,2546,763,2587"/>
+<area shape="rect" id="node126" href="$a04590.html" title="FullPhysics::Observable\l\&lt; StateVector \&gt;" alt="" coords="285,4433,449,4474"/>
+<area shape="rect" id="node128" href="$a04590.html" title="FullPhysics::Observable\l\&lt; std::vector\&lt; boost::\lshared_ptr\&lt; NamedSpectrum \&gt; \&gt; \&gt;" alt="" coords="567,3721,796,3777"/>
+<area shape="rect" id="node138" href="$a04590.html" title="FullPhysics::Observable\l\&lt; StokesCoefficient \&gt;" alt="" coords="599,2611,763,2653"/>
+<area shape="rect" id="node144" href="$a04590.html" title="FullPhysics::Observable\l\&lt; SurfaceTemperature \&gt;" alt="" coords="599,2415,763,2457"/>
+<area shape="rect" id="node148" href="$a04590.html" title="FullPhysics::Observable\l\&lt; Temperature \&gt;" alt="" coords="599,2481,763,2522"/>
+<area shape="rect" id="node156" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Absorber \&gt;" alt="" coords="291,4659,442,4701"/>
+<area shape="rect" id="node157" href="$a04594.html" title="FullPhysics::Observer\l\&lt; AbsorberVmr \&gt;" alt="" coords="606,1097,757,1138"/>
+<area shape="rect" id="node158" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Aerosol \&gt;" alt="" coords="606,3069,757,3110"/>
+<area shape="rect" id="node159" href="$a04594.html" title="FullPhysics::Observer\l\&lt; AerosolExtinction \&gt;" alt="" coords="606,1710,757,1751"/>
+<area shape="rect" id="node160" href="$a04594.html" title="FullPhysics::Observer\l\&lt; AerosolProperty \&gt;" alt="" coords="606,1775,757,1817"/>
+<area shape="rect" id="node161" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Altitude \&gt;" alt="" coords="606,1162,757,1203"/>
+<area shape="rect" id="node163" href="$a04594.html" title="FullPhysics::Observer\l\&lt; boost::shared_ptr\&lt;\l NamedSpectrum \&gt; \&gt;" alt="" coords="291,4579,442,4635"/>
+<area shape="rect" id="node165" href="$a04594.html" title="FullPhysics::Observer\l\&lt; ConnorSolver \&gt;" alt="" coords="291,4855,442,4897"/>
+<area shape="rect" id="node169" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Dispersion \&gt;" alt="" coords="606,2938,757,2979"/>
+<area shape="rect" id="node170" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Ground \&gt;" alt="" coords="291,5314,442,5355"/>
+<area shape="rect" id="node171" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Ils \&gt;" alt="" coords="606,3970,757,4011"/>
+<area shape="rect" id="node172" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Instrument \&gt;" alt="" coords="291,5379,442,5421"/>
+<area shape="rect" id="node173" href="$a04594.html" title="FullPhysics::Observer\l\&lt; InstrumentCorrection \&gt;" alt="" coords="597,4153,765,4194"/>
+<area shape="rect" id="node174" href="$a04594.html" title="FullPhysics::Observer\l\&lt; IterativeSolver \&gt;" alt="" coords="291,5117,442,5158"/>
+<area shape="rect" id="node176" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Pressure \&gt;" alt="" coords="606,1579,757,1621"/>
+<area shape="rect" id="node177" href="$a04594.html" title="FullPhysics::Observer\l\&lt; RadiativeTransferRetrievable \&gt;" alt="" coords="259,5642,474,5683"/>
+<area shape="rect" id="node178" href="$a04594.html" title="FullPhysics::Observer\l\&lt; RtAtmosphere \&gt;" alt="" coords="606,4035,757,4077"/>
+<area shape="rect" id="node180" href="$a04594.html" title="FullPhysics::Observer\l\&lt; SpectrumEffect \&gt;" alt="" coords="291,5838,442,5879"/>
+<area shape="rect" id="node181" href="$a04594.html" title="FullPhysics::Observer\l\&lt; StateVector \&gt;" alt="" coords="291,2614,442,2655"/>
+<area shape="rect" id="node185" href="$a04594.html" title="FullPhysics::Observer\l\&lt; std::vector\&lt; boost\l::shared_ptr\&lt; NamedSpectrum \&gt; \&gt; \&gt;" alt="" coords="248,4499,485,4555"/>
+<area shape="rect" id="node186" href="$a04594.html" title="FullPhysics::Observer\l\&lt; StokesCoefficient \&gt;" alt="" coords="291,5903,442,5945"/>
+<area shape="rect" id="node187" href="$a04594.html" title="FullPhysics::Observer\l\&lt; SurfaceTemperature \&gt;" alt="" coords="285,5969,449,6010"/>
+<area shape="rect" id="node188" href="$a04594.html" title="FullPhysics::Observer\l\&lt; Temperature \&gt;" alt="" coords="606,1514,757,1555"/>
+<area shape="rect" id="node189" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AbscoInterpolator \&gt;" alt="" coords="292,6203,441,6245"/>
+<area shape="rect" id="node191" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AccumulatedTimer \&gt;" alt="" coords="289,6269,444,6310"/>
+<area shape="rect" id="node193" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Altitude \&gt;" alt="" coords="292,2127,441,2169"/>
+<area shape="rect" id="node194" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ApplyInstrumentUnits \&gt;" alt="" coords="595,3134,767,3175"/>
+<area shape="rect" id="node195" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ArrayWithUnit\&lt; double,\l D \&gt; \&gt;" alt="" coords="281,5183,452,5239"/>
+<area shape="rect" id="node196" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ArrayWithUnit\&lt; T, D \&gt; \&gt;" alt="" coords="277,5445,456,5486"/>
+<area shape="rect" id="node197" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AutoDerivative\&lt; double \&gt; \&gt;" alt="" coords="269,5707,464,5749"/>
+<area shape="rect" id="node199" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AutoDerivative\&lt; T \&gt; \&gt;" alt="" coords="285,5773,449,5814"/>
+<area shape="rect" id="node201" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AutoDerivativeRef\&lt; T \&gt; \&gt;" alt="" coords="274,6451,459,6493"/>
+<area shape="rect" id="node203" href="$a04618.html" title="FullPhysics::Printable\l\&lt; AutoDerivativeWithUnit\l\&lt; T \&gt; \&gt;" alt="" coords="281,5511,452,5567"/>
+<area shape="rect" id="node204" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ConnorIterationLog \&gt;" alt="" coords="289,4790,445,4831"/>
+<area shape="rect" id="node205" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ConnorSolver \&gt;" alt="" coords="292,3705,441,3746"/>
+<area shape="rect" id="node206" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ConnorSolverState \&gt;" alt="" coords="289,3354,445,3395"/>
+<area shape="rect" id="node208" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Constant \&gt;" alt="" coords="292,6517,441,6558"/>
+<area shape="rect" id="node212" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ConvergenceCheck \&gt;" alt="" coords="286,6582,447,6623"/>
+<area shape="rect" id="node216" href="$a04618.html" title="FullPhysics::Printable\l\&lt; CostFunction \&gt;" alt="" coords="292,6647,441,6689"/>
+<area shape="rect" id="node219" href="$a04618.html" title="FullPhysics::Printable\l\&lt; DispersionFit \&gt;" alt="" coords="292,6713,441,6754"/>
+<area shape="rect" id="node221" href="$a04618.html" title="FullPhysics::Printable\l\&lt; DoubleWithUnit \&gt;" alt="" coords="292,6334,441,6375"/>
+<area shape="rect" id="node223" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ErrorAnalysis \&gt;" alt="" coords="292,6778,441,6819"/>
+<area shape="rect" id="node225" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Exception \&gt;" alt="" coords="292,6086,441,6127"/>
+<area shape="rect" id="node226" href="$a04618.html" title="FullPhysics::Printable\l\&lt; FitStatistic \&gt;" alt="" coords="292,6843,441,6885"/>
+<area shape="rect" id="node228" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ForwardModel \&gt;" alt="" coords="292,4119,441,4161"/>
+<area shape="rect" id="node231" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ForwardModelSpectralGrid \&gt;" alt="" coords="267,6909,467,6950"/>
+<area shape="rect" id="node233" href="$a04618.html" title="FullPhysics::Printable\l\&lt; GasAbsorption \&gt;" alt="" coords="292,6974,441,7015"/>
+<area shape="rect" id="node237" href="$a04618.html" title="FullPhysics::Printable\l\&lt; GasVmrApriori \&gt;" alt="" coords="292,7323,441,7365"/>
+<area shape="rect" id="node239" href="$a04618.html" title="FullPhysics::Printable\l\&lt; HdfFile \&gt;" alt="" coords="292,7389,441,7430"/>
+<area shape="rect" id="node241" href="$a04618.html" title="FullPhysics::Printable\l\&lt; HdfFileGenerating \&gt;" alt="" coords="291,7630,442,7671"/>
+<area shape="rect" id="node243" href="$a04618.html" title="FullPhysics::Printable\l\&lt; IlsFunction \&gt;" alt="" coords="292,7871,441,7913"/>
+<area shape="rect" id="node247" href="$a04618.html" title="FullPhysics::Printable\l\&lt; InitialGuess \&gt;" alt="" coords="292,7937,441,7978"/>
+<area shape="rect" id="node250" href="$a04618.html" title="FullPhysics::Printable\l\&lt; InitialGuessBuilder \&gt;" alt="" coords="289,8214,444,8255"/>
+<area shape="rect" id="node253" href="$a04618.html" title="FullPhysics::Printable\l\&lt; IterativeSolver \&gt;" alt="" coords="292,4237,441,4278"/>
+<area shape="rect" id="node254" href="$a04618.html" title="FullPhysics::Printable\l\&lt; L2FpConfiguration \&gt;" alt="" coords="291,8279,443,8321"/>
+<area shape="rect" id="node257" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Level1b \&gt;" alt="" coords="292,8345,441,8386"/>
+<area shape="rect" id="node264" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;" alt="" coords="292,8410,441,8451"/>
+<area shape="rect" id="node308" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate2Point\l\&lt; AutoDerivative\&lt; double\l \&gt;, AutoDerivative\&lt; double \&gt; \&gt; \&gt;" alt="" coords="259,7039,474,7110"/>
+<area shape="rect" id="node310" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate2Point\l\&lt; double, blitz::Array\&lt; double,\l 2 \&gt; \&gt; \&gt;" alt="" coords="268,7454,465,7525"/>
+<area shape="rect" id="node312" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate2Point\l\&lt; double, blitz::Array\&lt; double,\l 3 \&gt; \&gt; \&gt;" alt="" coords="268,7695,465,7766"/>
+<area shape="rect" id="node314" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate2Point\l\&lt; TX, TY \&gt; \&gt;" alt="" coords="283,8003,450,8059"/>
+<area shape="rect" id="node316" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\&lt; double \&gt; \&gt; \&gt;" alt="" coords="235,8476,499,8532"/>
+<area shape="rect" id="node318" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate\&lt; double,\l double \&gt; \&gt;" alt="" coords="275,8556,459,8612"/>
+<area shape="rect" id="node320" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate\&lt; FullPhysics\l::AutoDerivative\&lt; double \&gt;,\l FullPhysics::AutoDerivative\l\&lt; double \&gt; \&gt; \&gt;" alt="" coords="261,8636,472,8721"/>
+<area shape="rect" id="node322" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearInterpolate\&lt; TX,\l TY \&gt; \&gt;" alt="" coords="285,8745,448,8801"/>
+<area shape="rect" id="node324" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearLogInterpolate\l\&lt; AutoDerivative\&lt; double\l \&gt;, AutoDerivative\&lt; double \&gt; \&gt; \&gt;" alt="" coords="259,8826,474,8897"/>
+<area shape="rect" id="node326" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LinearLogInterpolate\l\&lt; TX, TY \&gt; \&gt;" alt="" coords="291,8921,442,8977"/>
+<area shape="rect" id="node328" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Logger \&gt;" alt="" coords="292,9002,441,9043"/>
+<area shape="rect" id="node330" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LogImp \&gt;" alt="" coords="292,9067,441,9109"/>
+<area shape="rect" id="node333" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LogLinearInterpolate\l\&lt; TX, TY \&gt; \&gt;" alt="" coords="291,9133,442,9189"/>
+<area shape="rect" id="node335" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LogLogInterpolate\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\&lt; double \&gt; \&gt; \&gt;" alt="" coords="235,9213,499,9269"/>
+<area shape="rect" id="node337" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LogLogInterpolate\&lt; TX,\l TY \&gt; \&gt;" alt="" coords="281,9293,452,9349"/>
+<area shape="rect" id="node339" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LogTiming \&gt;" alt="" coords="292,4921,441,4962"/>
+<area shape="rect" id="node340" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LRadDriver \&gt;" alt="" coords="292,3471,441,3513"/>
+<area shape="rect" id="node342" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LuabindObject \&gt;" alt="" coords="292,9374,441,9415"/>
+<area shape="rect" id="node344" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LuaCallback \&gt;" alt="" coords="292,9439,441,9481"/>
+<area shape="rect" id="node346" href="$a04618.html" title="FullPhysics::Printable\l\&lt; LuaState \&gt;" alt="" coords="292,9505,441,9546"/>
+<area shape="rect" id="node348" href="$a04618.html" title="FullPhysics::Printable\l\&lt; MerraAerosol \&gt;" alt="" coords="292,9570,441,9611"/>
+<area shape="rect" id="node350" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Meteorology \&gt;" alt="" coords="292,9635,441,9677"/>
+<area shape="rect" id="node353" href="$a04618.html" title="FullPhysics::Printable\l\&lt; NoiseModel \&gt;" alt="" coords="292,10323,441,10365"/>
+<area shape="rect" id="node357" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Observation \&gt;" alt="" coords="292,3989,441,4030"/>
+<area shape="rect" id="node360" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Output \&gt;" alt="" coords="292,4986,441,5027"/>
+<area shape="rect" id="node366" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Perturbation \&gt;" alt="" coords="292,223,441,265"/>
+<area shape="rect" id="node369" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Poly1d \&gt;" alt="" coords="292,298,441,339"/>
+<area shape="rect" id="node371" href="$a04618.html" title="FullPhysics::Printable\l\&lt; PressureLevelInput \&gt;" alt="" coords="287,363,446,405"/>
+<area shape="rect" id="node373" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ProblemState \&gt;" alt="" coords="292,429,441,470"/>
+<area shape="rect" id="node404" href="$a04618.html" title="FullPhysics::Printable\l\&lt; RadianceScaling \&gt;" alt="" coords="607,2807,756,2849"/>
+<area shape="rect" id="node405" href="$a04618.html" title="FullPhysics::Printable\l\&lt; RadiativeTransfer \&gt;" alt="" coords="292,3537,441,3578"/>
+<area shape="rect" id="node407" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Rayleigh \&gt;" alt="" coords="292,1453,441,1494"/>
+<area shape="rect" id="node408" href="$a04618.html" title="FullPhysics::Printable\l\&lt; ReferenceVmrApriori \&gt;" alt="" coords="283,494,450,535"/>
+<area shape="rect" id="node410" href="$a04618.html" title="FullPhysics::Printable\l\&lt; RegisterOutputBase \&gt;" alt="" coords="285,4725,449,4766"/>
+<area shape="rect" id="node447" href="$a04618.html" title="FullPhysics::Printable\l\&lt; RelativeHumidity \&gt;" alt="" coords="292,559,441,601"/>
+<area shape="rect" id="node449" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Return1Point\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\l\&lt; double \&gt; \&gt; \&gt;" alt="" coords="263,7229,471,7299"/>
+<area shape="rect" id="node451" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Return1Point\&lt; TX, TY \&gt; \&gt;" alt="" coords="273,8149,461,8190"/>
+<area shape="rect" id="node453" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SolarAbsorptionSpectrum \&gt;" alt="" coords="269,625,464,666"/>
+<area shape="rect" id="node457" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SolarContinuumSpectrum \&gt;" alt="" coords="269,690,464,731"/>
+<area shape="rect" id="node461" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SolarDopplerShift \&gt;" alt="" coords="292,755,441,797"/>
+<area shape="rect" id="node465" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SolverIterationLog \&gt;" alt="" coords="291,5051,442,5093"/>
+<area shape="rect" id="node466" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SpectralBound \&gt;" alt="" coords="292,821,441,862"/>
+<area shape="rect" id="node468" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SpectralDomain \&gt;" alt="" coords="292,886,441,927"/>
+<area shape="rect" id="node470" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SpectralRange \&gt;" alt="" coords="292,951,441,993"/>
+<area shape="rect" id="node472" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SpectralWindow \&gt;" alt="" coords="292,1017,441,1058"/>
+<area shape="rect" id="node475" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Spectrum \&gt;" alt="" coords="292,1082,441,1123"/>
+<area shape="rect" id="node478" href="$a04618.html" title="FullPhysics::Printable\l\&lt; SpectrumSampling \&gt;" alt="" coords="289,1147,445,1189"/>
+<area shape="rect" id="node484" href="$a04618.html" title="FullPhysics::Printable\l\&lt; StateVector \&gt;" alt="" coords="292,4367,441,4409"/>
+<area shape="rect" id="node485" href="$a04618.html" title="FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;" alt="" coords="283,2679,451,2721"/>
+<area shape="rect" id="node486" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Time \&gt;" alt="" coords="292,9753,441,9794"/>
+<area shape="rect" id="node487" href="$a04618.html" title="FullPhysics::Printable\l\&lt; Unit \&gt;" alt="" coords="292,10022,441,10063"/>
+<area shape="rect" id="node25" href="$a02778.html" title="LIDORT specific BRDF driver implementation. " alt="" coords="587,1228,776,1255"/>
+<area shape="rect" id="node26" href="$a03450.html" title="TwoStream specific BRDF driver implementation. " alt="" coords="588,1279,775,1321"/>
+<area shape="rect" id="node28" href="$a02782.html" title="LIDORT specific Radiative transfer interface implementation. " alt="" coords="592,1345,771,1372"/>
+<area shape="rect" id="node29" href="$a03454.html" title="TwoStream specific Radiative transfer driver implementation. " alt="" coords="593,1397,770,1438"/>
+<area shape="rect" id="node31" href="$a03474.html" title="This class maintains the absorber portion of the state. " alt="" coords="904,1684,1055,1711"/>
+<area shape="rect" id="node32" href="$a02502.html" title="This class maintains the absorber portion of the state. " alt="" coords="1173,1481,1359,1508"/>
+<area shape="rect" id="node34" href="$a03478.html" title="This gives the Gas Absorber Volumn mixing ratio for a single gas. " alt="" coords="892,1965,1067,1992"/>
+<area shape="rect" id="node35" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; AbsorberVmr \&gt;" alt="" coords="1171,1867,1361,1909"/>
+<area shape="rect" id="node36" href="$a03482.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1462,1705,1637,1746"/>
+<area shape="rect" id="node37" href="$a02446.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="1747,1705,1922,1746"/>
+<area shape="rect" id="node38" href="$a02458.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="1747,1770,1922,1811"/>
+<area shape="rect" id="node39" href="$a02506.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="1747,1574,1922,1615"/>
+<area shape="rect" id="node40" href="$a03486.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="1747,1639,1922,1681"/>
+<area shape="rect" id="node41" href="$a02510.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="2019,1610,2193,1651"/>
+<area shape="rect" id="node42" href="$a02514.html" title="This class maps the state vector to the absorber VMR on each level. " alt="" coords="2008,1676,2204,1703"/>
+<area shape="rect" id="node44" href="$a03490.html" title="This class maintains the aerosol portion of the state. " alt="" coords="908,1900,1051,1927"/>
+<area shape="rect" id="node45" href="$a02526.html" title="Implementation of Aerosol. " alt="" coords="1175,1760,1357,1787"/>
+<area shape="rect" id="node47" href="$a03494.html" title="This class maps the state vector to the aerosol extinction on each level. " alt="" coords="879,2031,1079,2057"/>
+<area shape="rect" id="node48" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; AerosolExtinction \&gt;" alt="" coords="1171,1933,1361,1974"/>
+<area shape="rect" id="node49" href="$a03498.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1449,1922,1649,1963"/>
+<area shape="rect" id="node50" href="$a02518.html" title="This class maps the state vector to the aerosol extinction on each level. " alt="" coords="1735,1901,1935,1942"/>
+<area shape="rect" id="node51" href="$a02522.html" title="This class maps the state vector to the aerosol extinction on each level. " alt="" coords="1724,1967,1945,1993"/>
+<area shape="rect" id="node52" href="$a02538.html" title="This class maps the state vector to aerosol extinction defined by a Gaussian parameterization. " alt="" coords="1745,1835,1924,1877"/>
+<area shape="rect" id="node54" href="$a03502.html" title="This gives the Aerosol properties for an Aerosol. " alt="" coords="884,2096,1075,2123"/>
+<area shape="rect" id="node55" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; AerosolProperty \&gt;" alt="" coords="1171,1998,1361,2039"/>
+<area shape="rect" id="node56" href="$a03506.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1454,1998,1645,2039"/>
+<area shape="rect" id="node57" href="$a02530.html" title="This gives the Aerosol properties for an Aerosol. " alt="" coords="1729,2017,1941,2044"/>
+<area shape="rect" id="node58" href="$a02534.html" title="This gives the Aerosol properties for an Aerosol. " alt="" coords="1739,2069,1930,2110"/>
+<area shape="rect" id="node60" href="$a03510.html" title="The class handles the calculation of the altitude and gravity constants. " alt="" coords="610,1841,753,1868"/>
+<area shape="rect" id="node61" href="$a02542.html" title="This class handles the calculation of the altitude an gravity constants, automatically updating with ..." alt="" coords="875,1583,1084,1609"/>
+<area shape="rect" id="node63" href="$a03426.html" title="This is the forward model used form GOSAT/OCO. " alt="" coords="881,4118,1078,4159"/>
+<area shape="rect" id="node65" href="$a02626.html" title="FullPhysics::ConnorSolver" alt="" coords="593,3919,770,3945"/>
+<area shape="rect" id="node67" href="$a03554.html" title="This class calculates the wavenumber for each pixel in a single band of an Instrument. " alt="" coords="899,2149,1059,2176"/>
+<area shape="rect" id="node68" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; Dispersion \&gt;" alt="" coords="1171,2063,1361,2105"/>
+<area shape="rect" id="node69" href="$a02646.html" title="This is an implementation of Dispersion that uses a polynomial expression to calculate the wavenumber..." alt="" coords="1437,2064,1661,2091"/>
+<area shape="rect" id="node71" href="$a03570.html" title="This class maintains the ground portion of the state. " alt="" coords="909,2200,1049,2227"/>
+<area shape="rect" id="node72" href="$a02702.html" title="This class implements a Coxmunk plus Lambertian ground type. " alt="" coords="1451,2115,1647,2157"/>
+<area shape="rect" id="node73" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; Ground \&gt;" alt="" coords="1171,2246,1361,2287"/>
+<area shape="rect" id="node74" href="$a02686.html" title="This class implements the Breon + Rahman ground type. " alt="" coords="1467,2283,1631,2309"/>
+<area shape="rect" id="node77" href="$a02698.html" title="This class implements a Coxmunk ground type. " alt="" coords="1451,2181,1647,2208"/>
+<area shape="rect" id="node78" href="$a02710.html" title="This class implements a Lambertian albedo as a ground type. " alt="" coords="1447,2232,1651,2259"/>
+<area shape="rect" id="node75" href="$a02694.html" title="FullPhysics::GroundBrdfSoil" alt="" coords="1741,2179,1928,2205"/>
+<area shape="rect" id="node76" href="$a02690.html" title="FullPhysics::GroundBrdfVeg" alt="" coords="1741,2229,1928,2256"/>
+<area shape="rect" id="node80" href="$a03578.html" title="This class models an Instrument Line Shape (ILS). " alt="" coords="923,2885,1035,2912"/>
+<area shape="rect" id="node81" href="$a02722.html" title="This is a ILS where we use a Dispersion object to determine the wavenumbers of each pixel..." alt="" coords="1175,2941,1357,2968"/>
+<area shape="rect" id="node83" href="$a03590.html" title="This applies a instrument model to radiances. " alt="" coords="899,3595,1059,3621"/>
+<area shape="rect" id="node84" href="$a02730.html" title="This is a instrument that uses a Ils object for each spectrometer to model the instrument. " alt="" coords="1179,3747,1353,3773"/>
+<area shape="rect" id="node86" href="$a03594.html" title="This class models an Instrument correction. " alt="" coords="869,2784,1089,2811"/>
+<area shape="rect" id="node87" href="$a02546.html" title="An InstrumentCorrection class that applies units and scales monochromatic radiances in those cases wh..." alt="" coords="1169,3093,1363,3134"/>
+<area shape="rect" id="node88" href="$a03322.html" title="This abstract class provides the generic capabilities for applying a radiance scaling to a Radiance..." alt="" coords="1168,2887,1364,2913"/>
+<area shape="rect" id="node91" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; InstrumentCorrection \&gt;" alt="" coords="1167,2821,1365,2862"/>
+<area shape="rect" id="node89" href="$a03326.html" title="Implements a fitted radiance scaling correction where the correction is determined by a linear fit of..." alt="" coords="1451,2945,1647,2986"/>
+<area shape="rect" id="node90" href="$a03330.html" title="Implements a fitted radiance scaling correction. " alt="" coords="1451,2879,1647,2921"/>
+<area shape="rect" id="node92" href="$a02650.html" title="This class applies a empirical orthogonal function (EOF) correction to instrument data..." alt="" coords="1442,2814,1657,2855"/>
+<area shape="rect" id="node94" href="$a03598.html" title="The base class for all iterative optimizers. " alt="" coords="590,4387,773,4413"/>
+<area shape="rect" id="node95" href="$a03550.html" title="The base class for all iterative cost minimizers that do not require derivatives of any order..." alt="" coords="888,4235,1071,4261"/>
+<area shape="rect" id="node97" href="$a03602.html" title="The base class for all iterative optimizers that use first order derivatives. " alt="" coords="878,4184,1081,4211"/>
+<area shape="rect" id="node96" href="$a02638.html" title="FullPhysics::CostMinimizerGSL" alt="" coords="1162,4235,1370,4261"/>
+<area shape="rect" id="node98" href="$a03642.html" title="The base class for the solvers of the Nonlinear&#45;Least&#45;Squares Problem. " alt="" coords="1182,4184,1350,4211"/>
+<area shape="rect" id="node99" href="$a02634.html" title="This solves a nonlinear least squares problem using Levenberg&#45;Marquardt. " alt="" coords="1446,4209,1653,4236"/>
+<area shape="rect" id="node100" href="$a03270.html" title="FullPhysics::NLLSSolverGSL" alt="" coords="1452,4260,1647,4287"/>
+<area shape="rect" id="node103" href="$a03282.html" title="FullPhysics::NLLSSolverGSLSM" alt="" coords="1442,4108,1657,4135"/>
+<area shape="rect" id="node104" href="$a03286.html" title="FullPhysics::NLLSSolverLM" alt="" coords="1456,4159,1643,4185"/>
+<area shape="rect" id="node101" href="$a03274.html" title="FullPhysics::NLLSSolverGSLLMDER" alt="" coords="1714,4235,1955,4261"/>
+<area shape="rect" id="node102" href="$a03278.html" title="FullPhysics::NLLSSolverGSLLMSDER" alt="" coords="1709,4285,1960,4312"/>
+<area shape="rect" id="node106" href="$a03678.html" title="This class maintains the pressure portion of the state. " alt="" coords="904,2368,1055,2395"/>
+<area shape="rect" id="node107" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; Pressure \&gt;" alt="" coords="1171,2311,1361,2353"/>
+<area shape="rect" id="node108" href="$a03682.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1448,2333,1651,2360"/>
+<area shape="rect" id="node109" href="$a02466.html" title="This class maintains the pressure portion of the state. " alt="" coords="1743,2281,1926,2322"/>
+<area shape="rect" id="node110" href="$a03318.html" title="This class maintains the pressure portion of the state. " alt="" coords="1741,2347,1928,2373"/>
+<area shape="rect" id="node112" href="$a03702.html" title="Interface class for radiative transfer implementations that happen to have retrievable parameters..." alt="" coords="879,2697,1080,2738"/>
+<area shape="rect" id="node113" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; RadiativeTransferRetrievable \&gt;" alt="" coords="1143,2755,1389,2797"/>
+<area shape="rect" id="node114" href="$a03698.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1449,2749,1650,2790"/>
+<area shape="rect" id="node116" href="$a03710.html" title="This class is responsible for setting up the atmosphere and ground information needed to run the Radi..." alt="" coords="888,3000,1071,3027"/>
+<area shape="rect" id="node117" href="$a02554.html" title="This class maintains the atmosphere portion of the state, and uses this to set up the atmosphere and ..." alt="" coords="1170,3000,1362,3027"/>
+<area shape="rect" id="node119" href="$a03738.html" title="This class models models any effects that need to be applied to high resolution spectra after the rad..." alt="" coords="885,2545,1074,2572"/>
+<area shape="rect" id="node120" href="$a03730.html" title="This applies a solar model to reflectance to model the incoming solar irradiance. ..." alt="" coords="1185,2639,1347,2665"/>
+<area shape="rect" id="node122" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; SpectrumEffect \&gt;" alt="" coords="1171,2442,1361,2483"/>
+<area shape="rect" id="node121" href="$a03378.html" title="This applies a solar model to radiances to model the incoming solar irradiance. " alt="" coords="1454,2646,1645,2687"/>
+<area shape="rect" id="node123" href="$a03742.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1455,2450,1644,2491"/>
+<area shape="rect" id="node124" href="$a02662.html" title="Implements adding the effect of fluorescence to A&#45;Band spectrum by using a retrievable across the ban..." alt="" coords="1747,2398,1923,2439"/>
+<area shape="rect" id="node125" href="$a02742.html" title="Corrects Spectrum spectral domain to account for the doppler shift due to the relative velocity betwe..." alt="" coords="1732,2464,1937,2491"/>
+<area shape="rect" id="node127" href="$a04646.html" title="This handles informing a set of interested objects when the state vector has updated. " alt="" coords="598,4439,765,4465"/>
+<area shape="rect" id="node129" href="$a03694.html" title="For GOSAT and OCO, we have a set of stokes coefficients to go from Stokes vector to radiation..." alt="" coords="879,3529,1080,3570"/>
+<area shape="rect" id="node130" href="$a03222.html" title="This does a Low Stream Interpolator correction to another RadiativeTransfer object. " alt="" coords="1201,3645,1331,3672"/>
+<area shape="rect" id="node131" href="$a03706.html" title="This is a RadiativeTransfer that supplies an interface that can be called for a single wavenumber..." alt="" coords="1165,3579,1367,3621"/>
+<area shape="rect" id="node132" href="$a03574.html" title="For timing purposes, it can be useful to separate out the high resolution radiative transfer vs..." alt="" coords="1462,3612,1637,3639"/>
+<area shape="rect" id="node133" href="$a02762.html" title="This class drives the LRAD code, which gives a polarization correction to scalar intensity and jacobi..." alt="" coords="1478,3561,1621,3588"/>
+<area shape="rect" id="node134" href="$a03334.html" title="This class drives the RADIANT Radiative Transfer code. " alt="" coords="1460,3848,1639,3875"/>
+<area shape="rect" id="node135" href="$a03758.html" title="Abstract Interface for Rt classes based on Spurr driver implementations. " alt="" coords="1478,3477,1621,3504"/>
+<area shape="rect" id="node136" href="$a03214.html" title="Uses the Spurr interfaces to construct a radiative transfer class connecting L2 FP and LIDORT 3..." alt="" coords="1763,3503,1907,3529"/>
+<area shape="rect" id="node137" href="$a03466.html" title="Uses the Spurr interfaces to construct a radiative transfer class connecting L2 FP and TwoStream..." alt="" coords="1746,3452,1923,3479"/>
+<area shape="rect" id="node139" href="$a03762.html" title="This class maintains the stokes coefficient portion of the state. " alt="" coords="878,2611,1081,2637"/>
+<area shape="rect" id="node140" href="$a03430.html" title="This class maintains the stokes coefficient portion of the state. " alt="" coords="1165,2690,1367,2731"/>
+<area shape="rect" id="node141" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; StokesCoefficient \&gt;" alt="" coords="1171,2573,1361,2614"/>
+<area shape="rect" id="node142" href="$a03766.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1448,2581,1651,2622"/>
+<area shape="rect" id="node143" href="$a03434.html" title="This class maintains the stokes coefficient portion of the state. " alt="" coords="1733,2646,1936,2687"/>
+<area shape="rect" id="node145" href="$a03770.html" title="This class represents the surface of the temperature under observation. " alt="" coords="871,2419,1087,2445"/>
+<area shape="rect" id="node146" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; SurfaceTemperature \&gt;" alt="" coords="1169,2377,1363,2418"/>
+<area shape="rect" id="node147" href="$a03438.html" title="Implements a direct representation of the surface temperature in the atmospheric state from the suppl..." alt="" coords="1441,2385,1657,2426"/>
+<area shape="rect" id="node149" href="$a03774.html" title="This class maintains the temperature portion of the state. " alt="" coords="894,2488,1065,2515"/>
+<area shape="rect" id="node150" href="$a04654.html" title="FullPhysics::SubStateVector\lArray\&lt; Temperature \&gt;" alt="" coords="1171,2507,1361,2549"/>
+<area shape="rect" id="node151" href="$a03778.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="1464,2515,1635,2557"/>
+<area shape="rect" id="node152" href="$a02482.html" title="This class maintains the temperature portion of the state. " alt="" coords="1749,2515,1920,2557"/>
+<area shape="rect" id="node153" href="$a03782.html" title="This class maintains the temperature portion of the state. " alt="" coords="1749,2581,1920,2622"/>
+<area shape="rect" id="node154" href="$a03442.html" title="This class maintains the temperature portion of the state. " alt="" coords="2021,2551,2191,2593"/>
+<area shape="rect" id="node155" href="$a03446.html" title="This class maintains the temperature portion of the state. " alt="" coords="2009,2617,2203,2644"/>
+<area shape="rect" id="node162" href="$a03338.html" title="This class calculates the Rayleigh portion of the optical depth. " alt="" coords="905,1431,1054,1457"/>
+<area shape="rect" id="node164" href="$a04310.html" title="This class will recieve observer notifications from any class that pushes out NamedSpectrum and write..." alt="" coords="877,4286,1082,4327"/>
+<area shape="rect" id="node166" href="$a02622.html" title="This is an observer of the ConnorSolver that writes out the state vector values in a nicely formated ..." alt="" coords="577,5128,785,5155"/>
+<area shape="rect" id="node167" href="$a03218.html" title="This is a helper class that logs basic timing information to the Logger. " alt="" coords="602,5229,761,5256"/>
+<area shape="rect" id="node168" href="$a03306.html" title="This write the output of the Level 2 Full physics. " alt="" coords="1163,6639,1369,6665"/>
+<area shape="rect" id="node175" href="$a03410.html" title="This is an observer of IterativeSolver that writes out the state vector values in a nicely formated w..." alt="" coords="580,5331,783,5357"/>
+<area shape="rect" id="node179" href="$a02578.html" title="FullPhysics::ChapmanBoaRT" alt="" coords="882,3645,1077,3672"/>
+<area shape="rect" id="node182" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="598,2350,765,2391"/>
+<area shape="rect" id="node183" href="$a04658.html" title="A common StateVectorObserver just &quot;owns&quot; a subset of the StateVector. " alt="" coords="884,2251,1075,2293"/>
+<area shape="rect" id="node184" href="$a04662.html" title="Proxies for multiple SubStateVectorObserver classes that are combined for a result, but handle their state vector data seperately. " alt="" coords="1171,2181,1361,2222"/>
+<area shape="rect" id="node190" href="$a02490.html" title="This is a helper class that calculates the absorption cross section for a fixed set of Pressure..." alt="" coords="581,6211,781,6237"/>
+<area shape="rect" id="node192" href="$a04378.html" title="This is a simple timer class that can be used to accumulate the time spent in multiple calls to a fun..." alt="" coords="594,6269,769,6310"/>
+<area shape="rect" id="node198" href="$a04414.html" title="FullPhysics::AutoDerivative\l\&lt; double \&gt;" alt="" coords="589,5702,773,5743"/>
+<area shape="rect" id="node200" href="$a04414.html" title="There are a number of tools that can be used to do &quot;Automatic Differentiation&quot; (see for example http:..." alt="" coords="573,5775,789,5801"/>
+<area shape="rect" id="node202" href="$a04418.html" title="Helper class that gives us a reference that we can assign a AutoDerivative to and write into the corr..." alt="" coords="589,6451,773,6493"/>
+<area shape="rect" id="node207" href="$a02630.html" title="Class that saves the state of a ConnorSolver. " alt="" coords="593,3199,770,3241"/>
+<area shape="rect" id="node209" href="$a04438.html" title="This class contains various constants. " alt="" coords="606,6575,757,6601"/>
+<area shape="rect" id="node210" href="$a04442.html" title="This class is an implementation of Constant that uses hard coded values suitable for Earth..." alt="" coords="883,6868,1076,6895"/>
+<area shape="rect" id="node211" href="$a02714.html" title="FullPhysics::HdfConstant" alt="" coords="893,6817,1065,6844"/>
+<area shape="rect" id="node213" href="$a03526.html" title="This class tests for convergence of a Levenberg&#45;Marquardt solver. " alt="" coords="594,6626,769,6667"/>
+<area shape="rect" id="node214" href="$a02582.html" title="This class tests for convergence of a Levenberg&#45;Marquardt solver. " alt="" coords="875,6969,1084,6996"/>
+<area shape="rect" id="node215" href="$a02614.html" title="This class tests for convergence of a Levenberg&#45;Marquardt solver. " alt="" coords="871,6919,1088,6945"/>
+<area shape="rect" id="node217" href="$a03546.html" title="This class calculates a cost function, along with a jacobian. " alt="" coords="593,6692,769,6719"/>
+<area shape="rect" id="node218" href="$a02618.html" title="FullPhysics::ConnorCostFunction" alt="" coords="870,7020,1089,7047"/>
+<area shape="rect" id="node220" href="$a02642.html" title="Given a single frame of data, estimate the spectral shift in band 1P. " alt="" coords="594,6743,769,6769"/>
+<area shape="rect" id="node222" href="$a04446.html" title="We frequently have a double with units associated with it. " alt="" coords="586,6371,777,6397"/>
+<area shape="rect" id="node224" href="$a02654.html" title="This calculates a variety of values to help with the error analysis of a Level 2 Full Physics Run..." alt="" coords="593,6793,769,6820"/>
+<area shape="rect" id="node227" href="$a03522.html" title="This class holds various parameters describing how good of a fit we have. " alt="" coords="601,6851,762,6877"/>
+<area shape="rect" id="node229" href="$a03558.html" title="The forward model represents the encapsulation of modeling spectra from an atmospheric state then app..." alt="" coords="591,4269,771,4296"/>
+<area shape="rect" id="node230" href="$a02658.html" title="This a forward model class that calcualtes jacobians using the finite difference method. " alt="" coords="882,4067,1077,4093"/>
+<area shape="rect" id="node232" href="$a03562.html" title="This is the Forward Model spectral grid. " alt="" coords="591,6909,771,6950"/>
+<area shape="rect" id="node234" href="$a03566.html" title="This class determine the gaseous absorption coefficient for a given wave number, temperature and pres..." alt="" coords="589,7029,773,7056"/>
+<area shape="rect" id="node235" href="$a02494.html" title="This class is used to read the absco tables. " alt="" coords="912,7071,1047,7097"/>
+<area shape="rect" id="node236" href="$a02498.html" title="This class is used to read the absco tables. " alt="" coords="1188,7071,1344,7097"/>
+<area shape="rect" id="node238" href="$a02682.html" title="Adapts the ReferenceVmrApriori class into a form that is easier to work with in the context of how th..." alt="" coords="590,7331,773,7357"/>
+<area shape="rect" id="node240" href="$a04506.html" title="This class reads and writes a HDF5 file. " alt="" coords="611,7396,751,7423"/>
+<area shape="rect" id="node242" href="$a04510.html" title="To avoid creating files when an error occurs, we create the file with the name &quot;.generating&quot; appended..." alt="" coords="580,7637,783,7664"/>
+<area shape="rect" id="node244" href="$a03582.html" title="This class models an Instrument Line Shape (ILS) function. " alt="" coords="600,7783,763,7809"/>
+<area shape="rect" id="node245" href="$a02726.html" title="This is an ILS function that is a Gaussian. " alt="" coords="896,7188,1063,7215"/>
+<area shape="rect" id="node246" href="$a02734.html" title="This class in a IlsFunction where we get the ILS response by using a table of measured values..." alt="" coords="907,7122,1051,7163"/>
+<area shape="rect" id="node248" href="$a03586.html" title="This gets the initial guess and the apriori state vector values. " alt="" coords="598,7889,765,7916"/>
+<area shape="rect" id="node249" href="$a03518.html" title="A common way to create an initial guess is to have other classes responsible for portions of the stat..." alt="" coords="883,7239,1075,7281"/>
+<area shape="rect" id="node251" href="$a03514.html" title="Class that builds a portion of the state vector. " alt="" coords="598,8106,765,8147"/>
+<area shape="rect" id="node252" href="$a02738.html" title="This is a simple implementation of InitialGuessBuilder that just has variables used to give the aprio..." alt="" coords="896,7305,1063,7346"/>
+<area shape="rect" id="node255" href="$a02750.html" title="Before running L2 full physics, we need to create the solver that we will be using, along with registering whatever output we will be generating. " alt="" coords="579,8172,783,8199"/>
+<area shape="rect" id="node256" href="$a02754.html" title="This is an implementation of L2FpConfiguration that uses Lua. " alt="" coords="867,7371,1092,7397"/>
+<area shape="rect" id="node258" href="$a03606.html" title="This is used to read a Level 1B file. " alt="" coords="610,8223,753,8249"/>
+<area shape="rect" id="node259" href="$a02766.html" title="This reads averages a set of Level1b classes to get the various values. " alt="" coords="884,7488,1075,7515"/>
+<area shape="rect" id="node260" href="$a02770.html" title="This is a Level1b implementation that just saves the data read from another Level1b object..." alt="" coords="889,7539,1070,7565"/>
+<area shape="rect" id="node261" href="$a03610.html" title="This is used to wrap the nominal Level 1B file reader. " alt="" coords="886,7590,1073,7631"/>
+<area shape="rect" id="node263" href="$a02774.html" title="Scales the measured radiance of another Level1b class for each spectral band. " alt="" coords="891,7422,1067,7463"/>
+<area shape="rect" id="node262" href="$a02434.html" title="This is an example L1B reader that reads a HDF formatted file that corresponds one&#45;to&#45;one with the ex..." alt="" coords="1169,7597,1363,7624"/>
+<area shape="rect" id="node265" href="$a02874.html" title="FullPhysics::Lidort\l_Structure" alt="" coords="616,8570,747,8611"/>
+<area shape="rect" id="node266" href="$a02914.html" title="FullPhysics::Brdf_Input\l_Exception_Handling" alt="" coords="900,9158,1059,9199"/>
+<area shape="rect" id="node267" href="$a02882.html" title="FullPhysics::Brdf_Linsup\l_Inputs" alt="" coords="896,9223,1063,9265"/>
+<area shape="rect" id="node268" href="$a02890.html" title="FullPhysics::Brdf_Linsup\l_Outputs" alt="" coords="896,9289,1063,9330"/>
+<area shape="rect" id="node269" href="$a02922.html" title="FullPhysics::Brdf_Output\l_Exception_Handling" alt="" coords="895,9354,1063,9395"/>
+<area shape="rect" id="node270" href="$a02898.html" title="FullPhysics::Brdf_Sup\l_Inputs" alt="" coords="903,9419,1055,9461"/>
+<area shape="rect" id="node271" href="$a02906.html" title="FullPhysics::Brdf_Sup\l_Outputs" alt="" coords="903,9485,1055,9526"/>
+<area shape="rect" id="node272" href="$a03050.html" title="FullPhysics::Lidort\l_Exception_Handling" alt="" coords="907,9550,1052,9591"/>
+<area shape="rect" id="node273" href="$a03106.html" title="FullPhysics::Lidort\l_Fixed_Boolean" alt="" coords="914,9615,1045,9657"/>
+<area shape="rect" id="node274" href="$a03138.html" title="FullPhysics::Lidort\l_Fixed_Chapman" alt="" coords="914,9681,1045,9722"/>
+<area shape="rect" id="node275" href="$a03114.html" title="FullPhysics::Lidort\l_Fixed_Control" alt="" coords="914,9746,1045,9787"/>
+<area shape="rect" id="node276" href="$a03154.html" title="FullPhysics::Lidort\l_Fixed_Inputs" alt="" coords="914,9811,1045,9853"/>
+<area shape="rect" id="node277" href="$a02938.html" title="FullPhysics::Lidort\l_Fixed_Lincontrol" alt="" coords="914,9877,1045,9918"/>
+<area shape="rect" id="node278" href="$a02954.html" title="FullPhysics::Lidort\l_Fixed_Lininputs" alt="" coords="914,9942,1045,9983"/>
+<area shape="rect" id="node279" href="$a02946.html" title="FullPhysics::Lidort\l_Fixed_Linoptical" alt="" coords="914,10007,1045,10049"/>
+<area shape="rect" id="node280" href="$a03146.html" title="FullPhysics::Lidort\l_Fixed_Optical" alt="" coords="914,10073,1045,10114"/>
+<area shape="rect" id="node281" href="$a03122.html" title="FullPhysics::Lidort\l_Fixed_Sunrays" alt="" coords="914,10138,1045,10179"/>
+<area shape="rect" id="node282" href="$a03130.html" title="FullPhysics::Lidort\l_Fixed_Uservalues" alt="" coords="912,10203,1047,10245"/>
+<area shape="rect" id="node283" href="$a03058.html" title="FullPhysics::Lidort\l_Input_Exception_Handling" alt="" coords="889,10269,1070,10310"/>
+<area shape="rect" id="node284" href="$a02970.html" title="FullPhysics::Lidort\l_Linatmos" alt="" coords="914,10334,1045,10375"/>
+<area shape="rect" id="node285" href="$a02986.html" title="FullPhysics::Lidort\l_Linoutputs" alt="" coords="914,7655,1045,7697"/>
+<area shape="rect" id="node286" href="$a02994.html" title="FullPhysics::Lidort\l_Linsup_Brdf" alt="" coords="914,7721,1045,7762"/>
+<area shape="rect" id="node287" href="$a03034.html" title="FullPhysics::Lidort\l_Linsup_Inout" alt="" coords="914,7786,1045,7827"/>
+<area shape="rect" id="node288" href="$a03026.html" title="FullPhysics::Lidort\l_Linsup_Sleave" alt="" coords="914,7851,1045,7893"/>
+<area shape="rect" id="node289" href="$a03018.html" title="FullPhysics::Lidort\l_Linsup_Ss" alt="" coords="914,7917,1045,7958"/>
+<area shape="rect" id="node290" href="$a03002.html" title="FullPhysics::Lidort\l_Linsup_Ss_Atmos" alt="" coords="912,7982,1047,8023"/>
+<area shape="rect" id="node291" href="$a03010.html" title="FullPhysics::Lidort\l_Linsup_Ss_Surf" alt="" coords="914,8047,1045,8089"/>
+<area shape="rect" id="node292" href="$a02978.html" title="FullPhysics::Lidort\l_Linsurf" alt="" coords="914,8113,1045,8154"/>
+<area shape="rect" id="node293" href="$a03042.html" title="FullPhysics::Lidort\l_Main_Outputs" alt="" coords="914,8178,1045,8219"/>
+<area shape="rect" id="node294" href="$a03162.html" title="FullPhysics::Lidort\l_Modified_Boolean" alt="" coords="913,8243,1045,8285"/>
+<area shape="rect" id="node295" href="$a03194.html" title="FullPhysics::Lidort\l_Modified_Chapman" alt="" coords="909,8309,1050,8350"/>
+<area shape="rect" id="node296" href="$a03170.html" title="FullPhysics::Lidort\l_Modified_Control" alt="" coords="914,8374,1045,8415"/>
+<area shape="rect" id="node297" href="$a03210.html" title="FullPhysics::Lidort\l_Modified_Inputs" alt="" coords="914,8439,1045,8481"/>
+<area shape="rect" id="node298" href="$a02962.html" title="FullPhysics::Lidort\l_Modified_Lininputs" alt="" coords="911,8505,1048,8546"/>
+<area shape="rect" id="node299" href="$a03202.html" title="FullPhysics::Lidort\l_Modified_Optical" alt="" coords="914,8570,1045,8611"/>
+<area shape="rect" id="node300" href="$a03178.html" title="FullPhysics::Lidort\l_Modified_Sunrays" alt="" coords="913,8635,1046,8677"/>
+<area shape="rect" id="node301" href="$a03186.html" title="FullPhysics::Lidort\l_Modified_Uservalues" alt="" coords="904,8701,1055,8742"/>
+<area shape="rect" id="node302" href="$a03066.html" title="FullPhysics::Lidort\l_Outputs" alt="" coords="914,8766,1045,8807"/>
+<area shape="rect" id="node303" href="$a03074.html" title="FullPhysics::Lidort\l_Sup_Brdf" alt="" coords="914,8831,1045,8873"/>
+<area shape="rect" id="node304" href="$a03098.html" title="FullPhysics::Lidort\l_Sup_Inout" alt="" coords="914,8897,1045,8938"/>
+<area shape="rect" id="node305" href="$a03082.html" title="FullPhysics::Lidort\l_Sup_Sleave" alt="" coords="914,8962,1045,9003"/>
+<area shape="rect" id="node306" href="$a03090.html" title="FullPhysics::Lidort\l_Sup_Ss" alt="" coords="914,9027,1045,9069"/>
+<area shape="rect" id="node307" href="$a02930.html" title="FullPhysics::Sleave\l_Sup_Inputs" alt="" coords="910,9093,1049,9134"/>
+<area shape="rect" id="node309" href="$a04542.html" title="This is a specialization of LinearInterpolate2Point for AutoDerivative. " alt="" coords="580,7089,783,7145"/>
+<area shape="rect" id="node311" href="$a04526.html" title="FullPhysics::LinearInterpolate2\lPoint\&lt; double, blitz::Array\l\&lt; double, 2 \&gt; \&gt;" alt="" coords="581,7505,782,7561"/>
+<area shape="rect" id="node313" href="$a04526.html" title="FullPhysics::LinearInterpolate2\lPoint\&lt; double, blitz::Array\l\&lt; double, 3 \&gt; \&gt;" alt="" coords="581,7703,782,7759"/>
+<area shape="rect" id="node315" href="$a04526.html" title="This does linear interpolate between two points. " alt="" coords="581,7975,782,8017"/>
+<area shape="rect" id="node317" href="$a04546.html" title="This is a specialization of LinearInterpolate for AutoDerivative. " alt="" coords="584,8636,779,8692"/>
+<area shape="rect" id="node319" href="$a04530.html" title="FullPhysics::LinearInterpolate\l\&lt; double, double \&gt;" alt="" coords="584,8717,779,8758"/>
+<area shape="rect" id="node321" href="$a04530.html" title="FullPhysics::LinearInterpolate\l\&lt; FullPhysics::AutoDerivative\l\&lt; double \&gt;, FullPhysics::AutoDerivative\l\&lt; double \&gt; \&gt;" alt="" coords="554,8782,809,8853"/>
+<area shape="rect" id="node323" href="$a04530.html" title="This class takes a set of points and values, and linearly interpolates between those values..." alt="" coords="584,8877,779,8918"/>
+<area shape="rect" id="node325" href="$a04566.html" title="Specialization for AutoDerivative&lt;double&gt; types. " alt="" coords="574,8943,789,8999"/>
+<area shape="rect" id="node327" href="$a04562.html" title="Wrapper around LinearInterpolate that uses log(y) rather than x and y when interpolating. " alt="" coords="574,9023,789,9065"/>
+<area shape="rect" id="node329" href="$a04578.html" title="This is a simple logger. " alt="" coords="613,9089,750,9116"/>
+<area shape="rect" id="node331" href="$a04570.html" title="The actual implementation of the Logger. " alt="" coords="611,9140,752,9167"/>
+<area shape="rect" id="node332" href="$a02674.html" title="This is the implementation of the Logger used for the Full Physics program. " alt="" coords="903,10400,1055,10427"/>
+<area shape="rect" id="node334" href="$a04550.html" title="Wrapper around LinearInterpolate that uses log(x) rather than x in interpolating. ..." alt="" coords="574,9191,789,9233"/>
+<area shape="rect" id="node336" href="$a04558.html" title="Specialization for AutoDerivative&lt;double&gt; types. " alt="" coords="581,9257,782,9313"/>
+<area shape="rect" id="node338" href="$a04554.html" title="Wrapper around LinearInterpolate that uses log(x) and log(y) rather than x and y when interpolating..." alt="" coords="581,9338,782,9379"/>
+<area shape="rect" id="node341" href="$a02758.html" title="This class drives the LRAD code, which gives a polarization correction to scalar intensity and jacobi..." alt="" coords="599,3620,763,3647"/>
+<area shape="rect" id="node343" href="$a03806.html" title="This is a light wrapper around the luabind::object. " alt="" coords="591,9404,772,9431"/>
+<area shape="rect" id="node345" href="$a03790.html" title="This is a simple object to call a callback that can be used in Lua. " alt="" coords="596,9455,767,9481"/>
+<area shape="rect" id="node347" href="$a03798.html" title="This is a light wrapper around the lua_state object. " alt="" coords="606,9512,757,9539"/>
+<area shape="rect" id="node349" href="$a03230.html" title="This class is used to create the Aerosol from a Merra climatology file. " alt="" coords="594,9577,769,9604"/>
+<area shape="rect" id="node351" href="$a03622.html" title="Defines the interface for supplying meteorological data. " alt="" coords="597,9705,766,9732"/>
+<area shape="rect" id="node352" href="$a02438.html" title="This class implements and example Meteorological reader that reads data from an HDF file with dataset..." alt="" coords="883,10451,1075,10477"/>
+<area shape="rect" id="node354" href="$a03646.html" title="Interface for calculating noise/uncertainty values from radiance data given some internal representat..." alt="" coords="598,10509,765,10536"/>
+<area shape="rect" id="node355" href="$a02558.html" title="When we have bad samples, we usually pass this to the spectral window to prevent the sample from even..." alt="" coords="880,10567,1079,10609"/>
+<area shape="rect" id="node356" href="$a03418.html" title="Adds a spectrally varying modification to an existing noise model. " alt="" coords="874,10502,1085,10543"/>
+<area shape="rect" id="node358" href="$a03650.html" title="FullPhysics::Observation" alt="" coords="597,4219,765,4245"/>
+<area shape="rect" id="node359" href="$a03298.html" title="FullPhysics::Observation\lLevel1b" alt="" coords="895,4001,1063,4042"/>
+<area shape="rect" id="node361" href="$a03654.html" title="This is the base class for classes that write output for Level 2 Full Physics. " alt="" coords="613,5280,750,5307"/>
+<area shape="rect" id="node362" href="$a03658.html" title="Most of the time the write_data needed by Output is best done through a template. ..." alt="" coords="868,6635,1091,6661"/>
+<area shape="rect" id="node363" href="$a03658.html" title="FullPhysics::OutputTemplate\l\&lt; OutputHdf \&gt;" alt="" coords="884,6751,1075,6793"/>
+<area shape="rect" id="node365" href="$a03658.html" title="FullPhysics::OutputTemplate\l\&lt; OutputHdfIteration \&gt;" alt="" coords="884,6686,1075,6727"/>
+<area shape="rect" id="node364" href="$a03302.html" title="This write the output of the Level 2 Full physics. " alt="" coords="1187,6759,1345,6785"/>
+<area shape="rect" id="node367" href="$a03674.html" title="This gets the perturbation to use with a finite difference Jacobian. " alt="" coords="597,229,765,256"/>
+<area shape="rect" id="node368" href="$a02590.html" title="A common way to create a perturbation is to have other classes responsible for portions of the state ..." alt="" coords="864,225,1095,252"/>
+<area shape="rect" id="node370" href="$a04614.html" title="A one&#45;dimensional polynomial class. " alt="" coords="612,305,751,332"/>
+<area shape="rect" id="node372" href="$a02478.html" title="In a retrieval, there are typically two different pressure levels of interest. " alt="" coords="591,358,772,399"/>
+<area shape="rect" id="node374" href="$a03686.html" title="The base class for all problem states. " alt="" coords="593,424,770,451"/>
+<area shape="rect" id="node375" href="$a03530.html" title="The base class for all problem classes that implement a cost function. " alt="" coords="902,377,1057,404"/>
+<area shape="rect" id="node391" href="$a03542.html" title="The state for a problem that only its cost function is implemented. " alt="" coords="886,276,1073,303"/>
+<area shape="rect" id="node393" href="$a03630.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="897,327,1061,353"/>
+<area shape="rect" id="node403" href="$a03638.html" title="The state for a NLLS problem with implemented residual function and its Jacobian. ..." alt="" coords="1460,610,1639,651"/>
+<area shape="rect" id="node376" href="$a03534.html" title="The base class for all problem classes that implement a cost function and its gradient. " alt="" coords="1178,377,1354,404"/>
+<area shape="rect" id="node377" href="$a03634.html" title="The base class for the Non&#45;Linear Least Squares problem. " alt="" coords="1460,533,1639,560"/>
+<area shape="rect" id="node378" href="$a02566.html" title="FullPhysics::BardNLLSProblem" alt="" coords="1731,579,1938,605"/>
+<area shape="rect" id="node379" href="$a02570.html" title="FullPhysics::BrownNLLSProblem" alt="" coords="1727,629,1943,656"/>
+<area shape="rect" id="node380" href="$a02670.html" title="This is the forward model cost function, rewritten to match the standard format used in nonlinear lea..." alt="" coords="1735,295,1934,321"/>
+<area shape="rect" id="node381" href="$a02678.html" title="FullPhysics::Freudenstein\lRothNLLSProblem" alt="" coords="1748,681,1921,722"/>
+<area shape="rect" id="node382" href="$a02718.html" title="FullPhysics::HelicalValley\lNLLSProblem" alt="" coords="1747,746,1922,787"/>
+<area shape="rect" id="node383" href="$a02746.html" title="FullPhysics::JennrichSampson\lNLLSProblem" alt="" coords="1733,811,1936,853"/>
+<area shape="rect" id="node384" href="$a03242.html" title="FullPhysics::MeyerNLLSProblem" alt="" coords="1727,877,1942,904"/>
+<area shape="rect" id="node385" href="$a03258.html" title="FullPhysics::NLLSMaxAPosteriori" alt="" coords="1725,928,1945,955"/>
+<area shape="rect" id="node386" href="$a03262.html" title="FullPhysics::NLLSMaxLikelihood" alt="" coords="1727,345,1942,372"/>
+<area shape="rect" id="node387" href="$a03266.html" title="FullPhysics::NLLSProblem\lScaled" alt="" coords="1745,229,1924,270"/>
+<area shape="rect" id="node388" href="$a03310.html" title="FullPhysics::PowellNLLSProblem" alt="" coords="1725,396,1944,423"/>
+<area shape="rect" id="node389" href="$a03314.html" title="FullPhysics::PowellSingular\lNLLSProblem" alt="" coords="1743,447,1927,489"/>
+<area shape="rect" id="node390" href="$a03362.html" title="FullPhysics::Rosenbrock2\lNLLSProblem" alt="" coords="1747,513,1922,554"/>
+<area shape="rect" id="node392" href="$a03538.html" title="The state for a problem with implemented cost function and its gradient. " alt="" coords="1178,114,1354,155"/>
+<area shape="rect" id="node394" href="$a03626.html" title="The base class for models and measurements. " alt="" coords="1175,180,1357,207"/>
+<area shape="rect" id="node395" href="$a03614.html" title="The base class for maximum a posteriori estimation. " alt="" coords="1456,239,1643,265"/>
+<area shape="rect" id="node397" href="$a03618.html" title="The base class for maximum likelihood estimation. " alt="" coords="1459,56,1640,83"/>
+<area shape="rect" id="node400" href="$a03246.html" title="FullPhysics::ModelMeasureBard" alt="" coords="1444,5,1655,32"/>
+<area shape="rect" id="node401" href="$a03250.html" title="FullPhysics::ModelMeasure\lMeyer" alt="" coords="1458,107,1641,149"/>
+<area shape="rect" id="node402" href="$a03254.html" title="FullPhysics::ModelMeasure\lStandard" alt="" coords="1458,173,1641,214"/>
+<area shape="rect" id="node396" href="$a03226.html" title="FullPhysics::MaxAPosteriori\lStandard" alt="" coords="1741,163,1928,205"/>
+<area shape="rect" id="node398" href="$a02562.html" title="FullPhysics::BardMLProblem" alt="" coords="1739,13,1930,40"/>
+<area shape="rect" id="node399" href="$a03238.html" title="FullPhysics::MeyerMLProblem" alt="" coords="1735,80,1935,107"/>
+<area shape="rect" id="node406" href="$a03690.html" title="This runs a Radiative Transfer code to determine the reflectance for a given set of wavelengths..." alt="" coords="581,3671,782,3697"/>
+<area shape="rect" id="node409" href="$a03342.html" title="Creates a VMR profile for a gas using a set of dated reference VMRs with a known latitude. " alt="" coords="590,478,773,519"/>
+<area shape="rect" id="node411" href="$a04334.html" title="As described in the Output class, we have a decentralized model of producing output for L2 Full Physi..." alt="" coords="573,5077,789,5104"/>
+<area shape="rect" id="node412" href="$a04218.html" title="This registers the portions of the Absorber class that should be written as output. " alt="" coords="886,4939,1073,4981"/>
+<area shape="rect" id="node413" href="$a02454.html" title="This registers the portions of the AbsorberVmrFixedLevel class that should be written as output..." alt="" coords="892,5005,1067,5046"/>
+<area shape="rect" id="node414" href="$a02462.html" title="This registers the portions of the AbsorberVmrFixedLevel class that should be written as output..." alt="" coords="892,5070,1067,5111"/>
+<area shape="rect" id="node415" href="$a04226.html" title="This registers the portions of the AbsorberVmrLevel class that should be written as output..." alt="" coords="892,5135,1067,5177"/>
+<area shape="rect" id="node416" href="$a04230.html" title="This registers the portions of the AbsorberVmrLevelScaled class that should be written as output..." alt="" coords="892,5201,1067,5242"/>
+<area shape="rect" id="node417" href="$a04234.html" title="This registers the portions of the AbsorberVmrMet class that should be written as output..." alt="" coords="892,5266,1067,5307"/>
+<area shape="rect" id="node418" href="$a04238.html" title="This registers the portions of the Aerosol class that should be written as output. " alt="" coords="877,5332,1081,5359"/>
+<area shape="rect" id="node419" href="$a04246.html" title="This registers the portions of the Aerosol class that should be written as output. " alt="" coords="870,5383,1089,5425"/>
+<area shape="rect" id="node420" href="$a04250.html" title="This registers the coefficients used for classes that inherits from AerosolExtinctionBaseImp. " alt="" coords="889,5449,1069,5490"/>
+<area shape="rect" id="node421" href="$a04254.html" title="This registers the portions of the Altitude class that should be written as output. " alt="" coords="889,5515,1070,5541"/>
+<area shape="rect" id="node422" href="$a04258.html" title="This registers the portions of the ConnorConvergence class that should be written as output..." alt="" coords="871,5566,1088,5607"/>
+<area shape="rect" id="node423" href="$a04262.html" title="This registers the portions of the ConnorSolver class that should be written as output. " alt="" coords="891,5631,1068,5673"/>
+<area shape="rect" id="node424" href="$a04266.html" title="This registers the portions of the DispersionFit class that should be written as output. " alt="" coords="892,5697,1067,5738"/>
+<area shape="rect" id="node425" href="$a04270.html" title="This registers the portions of the DispersionPolynomial class that should be written as output..." alt="" coords="867,5762,1091,5803"/>
+<area shape="rect" id="node426" href="$a04274.html" title="This registers the portions of the EmpiricalOrthogonalFunction class that should be written as output..." alt="" coords="872,5827,1087,5869"/>
+<area shape="rect" id="node427" href="$a04278.html" title="This registers the portions of the ErrorAnalysis class that should be written as output. " alt="" coords="891,5893,1067,5934"/>
+<area shape="rect" id="node428" href="$a04282.html" title="This registers the portions of the FluorescenceEffect class that should be written as output..." alt="" coords="891,5958,1067,5999"/>
+<area shape="rect" id="node429" href="$a04286.html" title="This registers the portions of the GasVmrApriori class that should be written as output. " alt="" coords="888,6023,1071,6065"/>
+<area shape="rect" id="node430" href="$a04294.html" title="This registers the portions of the GroundBrdf class that should be written as output. " alt="" coords="878,6089,1081,6116"/>
+<area shape="rect" id="node431" href="$a04298.html" title="This registers the portions of the GroundCoxmunk class that should be written as output. " alt="" coords="881,6141,1077,6182"/>
+<area shape="rect" id="node432" href="$a04302.html" title="This registers the portions of the GroundCoxmunkPlusLambertian class that should be written as output..." alt="" coords="881,6206,1077,6247"/>
+<area shape="rect" id="node433" href="$a04306.html" title="This registers the portions of the GroundLambertian class that should be written as output..." alt="" coords="877,6271,1081,6313"/>
+<area shape="rect" id="node434" href="$a04314.html" title="This registers the portions of the MaxAPosteriori class that should be written as output..." alt="" coords="886,6337,1073,6378"/>
+<area shape="rect" id="node435" href="$a04318.html" title="Writes source filenames into the output file. " alt="" coords="881,6402,1078,6443"/>
+<area shape="rect" id="node436" href="$a02474.html" title="This registers the portions of the PressureFixedLevel class that should be written as output..." alt="" coords="888,6467,1071,6509"/>
+<area shape="rect" id="node437" href="$a04326.html" title="This registers the portions of the Pressure class that should be written as output. " alt="" coords="885,6533,1074,6560"/>
+<area shape="rect" id="node438" href="$a04330.html" title="This registers the portions of the RadianceScaling class that should be written as output..." alt="" coords="881,4351,1077,4393"/>
+<area shape="rect" id="node439" href="$a04338.html" title="Writes source filenames into the output file. " alt="" coords="896,4417,1063,4458"/>
+<area shape="rect" id="node440" href="$a04346.html" title="This registers the portions of the ForwardModel class that should be written as output. " alt="" coords="873,4482,1086,4523"/>
+<area shape="rect" id="node441" href="$a04354.html" title="This registers the portions of the StandardForwardModel class that should be written as output..." alt="" coords="881,4547,1078,4589"/>
+<area shape="rect" id="node442" href="$a04358.html" title="This registers the portions of the StateVector class that should be written as output. " alt="" coords="896,4613,1063,4654"/>
+<area shape="rect" id="node443" href="$a04366.html" title="This registers the portions of the StokesCoefficientFraction class that should be written as output..." alt="" coords="878,4678,1081,4719"/>
+<area shape="rect" id="node444" href="$a02486.html" title="This registers the portions of the TemperatureFixedLevel class that should be written as output..." alt="" coords="894,4743,1065,4785"/>
+<area shape="rect" id="node445" href="$a04370.html" title="This registers the portions of the TemperatureLevelOffset class that should be written as output..." alt="" coords="894,4809,1065,4850"/>
+<area shape="rect" id="node446" href="$a04374.html" title="This registers the portions of the TemperatureMet class that should be written as output..." alt="" coords="894,4874,1065,4915"/>
+<area shape="rect" id="node448" href="$a03358.html" title="This calculates the relative humidity. " alt="" coords="582,544,781,571"/>
+<area shape="rect" id="node450" href="$a04538.html" title="FullPhysics::Return1Point\l\&lt; AutoDerivative\&lt; double\l \&gt;, AutoDerivative\&lt; double \&gt; \&gt;" alt="" coords="580,7203,783,7259"/>
+<area shape="rect" id="node452" href="$a04522.html" title="This just returns the same y value, always. " alt="" coords="594,8041,769,8082"/>
+<area shape="rect" id="node454" href="$a03718.html" title="This class calculates the solar absorption spectrum. " alt="" coords="586,595,777,637"/>
+<area shape="rect" id="node455" href="$a03382.html" title="This class calculates the solar absorption spectrum. " alt="" coords="884,530,1075,571"/>
+<area shape="rect" id="node456" href="$a03386.html" title="This class calculates the solar absorption spectrum. " alt="" coords="884,595,1075,637"/>
+<area shape="rect" id="node458" href="$a03722.html" title="This class calculates the solar continuum spectrum. " alt="" coords="586,661,777,702"/>
+<area shape="rect" id="node459" href="$a03390.html" title="This class calculates the solar continuum spectrum. " alt="" coords="884,661,1075,702"/>
+<area shape="rect" id="node460" href="$a03394.html" title="This class calculates the solar continuum spectrum. " alt="" coords="884,726,1075,767"/>
+<area shape="rect" id="node462" href="$a03726.html" title="This class handles the solar Doppler stretch to calculate the shift of the solar lines with respect t..." alt="" coords="595,726,768,767"/>
+<area shape="rect" id="node463" href="$a03398.html" title="This class handles the solar Doppler stretch to calculate the shift of the solar lines with respect t..." alt="" coords="893,791,1066,833"/>
+<area shape="rect" id="node464" href="$a03402.html" title="This class handles the solar Doppler stretch to calculate the shift of the solar lines with respect t..." alt="" coords="893,857,1066,898"/>
+<area shape="rect" id="node467" href="$a04626.html" title="This gives the upper and lower bounds of the SpectralWindow. " alt="" coords="590,792,773,819"/>
+<area shape="rect" id="node469" href="$a04630.html" title="For different instruments, it is more natural to either work with wavenumbers (e.g., GOSAT) or wavelength (e.g., OCO). " alt="" coords="586,843,777,869"/>
+<area shape="rect" id="node471" href="$a04634.html" title="We have a number of different spectrums that appear in different parts of the code. " alt="" coords="589,893,773,920"/>
+<area shape="rect" id="node473" href="$a03734.html" title="This class represents a the spectral window. " alt="" coords="585,944,778,971"/>
+<area shape="rect" id="node474" href="$a03414.html" title="This is an implementation of a SpectralWindow that covers a fixed window. " alt="" coords="883,922,1076,963"/>
+<area shape="rect" id="node476" href="$a04638.html" title="This is a full spectrum, which contains a SpectralRange and SpectralDomain. " alt="" coords="604,995,759,1021"/>
+<area shape="rect" id="node477" href="$a04582.html" title="Adds name and spec index fields to a Spectrum. " alt="" coords="881,988,1077,1015"/>
+<area shape="rect" id="node479" href="$a03746.html" title="This determines the sampling of the spectrum that should be used for each of the spectrum indexes..." alt="" coords="577,1045,785,1072"/>
+<area shape="rect" id="node480" href="$a03294.html" title="This is a simple SpectrumSampling that is just a nonuniform sampling. " alt="" coords="869,1170,1090,1211"/>
+<area shape="rect" id="node481" href="$a03374.html" title="This is a simple SpectrumSampling that is just a uniform sampling. " alt="" coords="894,1235,1065,1277"/>
+<area shape="rect" id="node482" href="$a03422.html" title="This generates a spectrum sampling that covers all the high resolution points needed to create the sp..." alt="" coords="875,1039,1083,1081"/>
+<area shape="rect" id="node483" href="$a03470.html" title="This spectrum sampling creates a grid that begins the nearest ils_half_width before the low resolutio..." alt="" coords="879,1105,1079,1146"/>
+<area shape="rect" id="node488" href="$a04518.html" title="Interface for interpolating values. " alt="" coords="287,8083,446,8125"/>
+<area shape="rect" id="node489" href="$a04534.html" title="FullPhysics::Interpolate\lPoint\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\l\&lt; double \&gt; \&gt;" alt="" coords="277,7134,456,7205"/>
+<area shape="rect" id="node490" href="$a04518.html" title="FullPhysics::Interpolate\lPoint\&lt; double, blitz::\lArray\&lt; double, 2 \&gt; \&gt;" alt="" coords="287,7549,446,7605"/>
+<area shape="rect" id="node491" href="$a04518.html" title="FullPhysics::Interpolate\lPoint\&lt; double, blitz::\lArray\&lt; double, 3 \&gt; \&gt;" alt="" coords="287,7791,446,7847"/>
+<area shape="rect" id="node495" href="$a04382.html" title="Helper class for AccumulatedTimer. " alt="" coords="586,3316,777,3343"/>
+<area shape="rect" id="node496" href="$a04466.html" title="This is a thin wrapper around the GSL integration function. " alt="" coords="597,3367,766,3393"/>
+<area shape="rect" id="node497" href="$a04470.html" title="This provides thin wrapper around the GNU Scientific Library gsl_matrix. " alt="" coords="604,3417,759,3444"/>
+<area shape="rect" id="node498" href="$a04474.html" title="This provides thin wrapper around the GNU Scientific Library gsl_vector. " alt="" coords="603,3468,759,3495"/>
+<area shape="rect" id="node499" href="$a03794.html" title="FullPhysics::LuaStateImp" alt="" coords="595,3265,767,3292"/>
+<area shape="rect" id="node501" href="$a04642.html" title="FullPhysics::StackedRadiance\lMixin" alt="" coords="266,4054,467,4095"/>
+<area shape="rect" id="node504" href="$a04486.html" title="This is a wrapper around std::type_info that allows it to be used as an index in a associative contai..." alt="" coords="601,5644,762,5671"/>
 </map>

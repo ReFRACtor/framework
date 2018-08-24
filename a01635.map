@@ -1,7 +1,2 @@
-<map id="Interface/ils.h" name="Interface/ils.h">
-<area shape="rect" id="node2" href="$a00652.html" title="Implementation/ils\l_convolution.h" alt="" coords="5,80,133,121"/>
-<area shape="rect" id="node4" href="$a00656.html" title="Implementation/ils\l_instrument.h" alt="" coords="157,80,285,121"/>
-<area shape="rect" id="node6" href="$a00837.html" title="Interface/ils.cc" alt="" coords="310,87,418,114"/>
-<area shape="rect" id="node3" href="$a00651.html" title="Implementation/ils\l_convolution.cc" alt="" coords="5,169,133,211"/>
-<area shape="rect" id="node5" href="$a00655.html" title="Implementation/ils\l_instrument.cc" alt="" coords="157,169,285,211"/>
+<map id="Support/fe_disable_exception.h" name="Support/fe_disable_exception.h">
 </map>

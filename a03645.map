@@ -1,0 +1,6 @@
+<map id="FullPhysics::NoiseModel" name="FullPhysics::NoiseModel">
+<area shape="rect" id="node4" href="$a02558.html" title="When we have bad samples, we usually pass this to the spectral window to prevent the sample from even..." alt="" coords="5,425,204,591"/>
+<area shape="rect" id="node5" href="$a03418.html" title="Adds a spectrally varying modification to an existing noise model. " alt="" coords="227,440,438,576"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; NoiseModel \&gt;\n||+ print_to_string()\l}" alt="" coords="143,131,293,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="127,5,309,83"/>
+</map>

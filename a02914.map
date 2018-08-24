@@ -1,8 +1,0 @@
-<map id="FullPhysics::ModelMeasureMeyer" name="FullPhysics::ModelMeasureMeyer">
-<area shape="rect" id="node7" href="$a00349.html" title="{FullPhysics::MeyerMLProblem\n||+ MeyerMLProblem()\l+ ~MeyerMLProblem()\l+ print()\l}" alt="" coords="5,1329,205,1436"/>
-<area shape="rect" id="node2" href="$a00351.html" title="The base class for models and measurements. " alt="" coords="14,800,197,1053"/>
-<area shape="rect" id="node3" href="$a00355.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="23,587,187,752"/>
-<area shape="rect" id="node4" href="$a00416.html" title="The base class for all problem states. " alt="" coords="10,271,201,539"/>
-<area shape="rect" id="node5" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="31,131,180,223"/>
-<area shape="rect" id="node6" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="15,5,196,83"/>
-</map>

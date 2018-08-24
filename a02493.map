@@ -1,2 +1,6 @@
-<map id="FullPhysics::lidort_fixed_chapman" name="FullPhysics::lidort_fixed_chapman">
+<map id="FullPhysics::Absco" name="FullPhysics::Absco">
+<area shape="rect" id="node5" href="$a02498.html" title="This class is used to read the absco tables. " alt="" coords="23,829,179,1083"/>
+<area shape="rect" id="node2" href="$a03566.html" title="This class determine the gaseous absorption coefficient for a given wave number, temperature and pres..." alt="" coords="5,271,196,421"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; GasAbsorption \&gt;\n||+ print_to_string()\l}" alt="" coords="26,131,175,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="10,5,191,83"/>
 </map>

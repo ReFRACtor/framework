@@ -1,0 +1,27 @@
+var a03738 =
+[
+    [ "~SpectrumEffect", "a03738.html#af52d8a1c01a87b308d0a4deed1e7f27a", null ],
+    [ "add_observer", "a03738.html#a4a750b9f9f81c2731639bb7de6905038", null ],
+    [ "add_observer_and_keep_reference", "a03738.html#a3dc34330b9a84e38b6a1fa05a0012335", null ],
+    [ "add_observer_do", "a03738.html#a7970e17e040afd9e5df213d9ea9868b0", null ],
+    [ "add_observer_do", "a03738.html#a5bf89406b6dca0f10d93d8c2134b308b", null ],
+    [ "apply_effect", "a03738.html#a1410450f477a14495505bd629d041cd6", null ],
+    [ "clean_dead_ptr", "a03738.html#a7314770d025eb25151f8086d311e7970", null ],
+    [ "clone", "a03738.html#a6b93deae510d8c22051924e71da7cd47", null ],
+    [ "mark_used", "a03738.html#ac936b6c343d4610bb01ea2cc0a541735", null ],
+    [ "name", "a03738.html#a55658124213d295b44935a4be3c9a305", null ],
+    [ "notify_add", "a03738.html#a3f6f571daf6fd0cafbccc78f3067b70d", null ],
+    [ "notify_add", "a03738.html#a5f76c13a4b078e8b82e5ef7175508cc4", null ],
+    [ "notify_remove", "a03738.html#a9297d361bb8506be11e8b72480ad4a3d", null ],
+    [ "notify_remove", "a03738.html#a196eb6fa56b49dfa4f927d56133d85f2", null ],
+    [ "notify_update", "a03738.html#a15c6c36910e17a536f45998f0b651082", null ],
+    [ "notify_update_do", "a03738.html#aa421058599b4fdf31fee1c3bbefd37b8", null ],
+    [ "print", "a03738.html#a0728380f72bbf320da003217cb177acf", null ],
+    [ "print_to_string", "a03738.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "remove_observer", "a03738.html#ad6acd63d55f92775f40fdb6d7b684f70", null ],
+    [ "remove_observer_do", "a03738.html#a4bf93566609435bf648a170f6ee4f5fa", null ],
+    [ "remove_observer_do", "a03738.html#ae3e1aeb7e65acda6147ae292a665c556", null ],
+    [ "state_vector_name", "a03738.html#a3b4aa8827f676e881d0210c253b0e90f", null ],
+    [ "olist", "a03738.html#a9a2122b1d0f4bfe1269def978c34b32a", null ],
+    [ "ref_list", "a03738.html#aae4b1ee50224cb361dc646986c729849", null ]
+];

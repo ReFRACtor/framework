@@ -1,5 +1,5 @@
-<map id="FullPhysics::Lidort_Modified_Lininputs" name="FullPhysics::Lidort_Modified_Lininputs">
-<area shape="rect" id="node2" href="$a00293.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="37,271,171,421"/>
-<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="29,131,179,223"/>
-<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="13,5,195,83"/>
+<map id="FullPhysics::IlsGaussian" name="FullPhysics::IlsGaussian">
+<area shape="rect" id="node2" href="$a03582.html" title="This class models an Instrument Line Shape (ILS) function. " alt="" coords="15,271,177,407"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; IlsFunction \&gt;\n||+ print_to_string()\l}" alt="" coords="21,131,171,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
 </map>

@@ -1,0 +1,27 @@
+var a03074 =
+[
+    [ "Lidort_Sup_Brdf", "a03074.html#a3e2e20a3ba77561eca173642b4c5cda4", null ],
+    [ "Lidort_Sup_Brdf", "a03074.html#ae8fb0305d7238995239a291f877ce282", null ],
+    [ "~Lidort_Sup_Brdf", "a03074.html#a44e60cf7731b22b0b5f047b85be5e143", null ],
+    [ "check_byte_sizes", "a03074.html#a0f65f1e3743fd1b626ef13910ba7c091", null ],
+    [ "copy_from_sup", "a03074.html#a56ffc604b9f3e5784b4d5887ce56bf10", null ],
+    [ "fortran_type_ptr", "a03074.html#af1f9a2f8cc4b0d6d661df474e8c3a910", null ],
+    [ "print", "a03074.html#a2abccb1bf5bfb1aebbaf934729fe5e71", null ],
+    [ "print_to_string", "a03074.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "ts_brdf_f", "a03074.html#a53267563951d5232cb2f3c2f37f95c6a", null ],
+    [ "ts_brdf_f", "a03074.html#aa2aedb1da58afbe311c912993bc54ed5", null ],
+    [ "ts_brdf_f_0", "a03074.html#a04a99a5a02360e54dc178f59a02df2d8", null ],
+    [ "ts_brdf_f_0", "a03074.html#a6038aa6109db64be6e38cdbba0cb5ab6", null ],
+    [ "ts_emissivity", "a03074.html#a45fb4d6cfe1e38f44a423fdce1254008", null ],
+    [ "ts_emissivity", "a03074.html#a1a0338c3358109c5b45da3a317cad54f", null ],
+    [ "ts_exactdb_brdfunc", "a03074.html#a8658790d7ff4b3393685d254b90f8c07", null ],
+    [ "ts_exactdb_brdfunc", "a03074.html#a93c2b661e81f321499aa848a40901ef2", null ],
+    [ "ts_user_brdf_f", "a03074.html#a7398dfdb52feb89e1be5a5e49b69dfd0", null ],
+    [ "ts_user_brdf_f", "a03074.html#a986a56ff7544c48a295ea6c62216c383", null ],
+    [ "ts_user_brdf_f_0", "a03074.html#a193b5fbbda4f0950020bb008496ce5ca", null ],
+    [ "ts_user_brdf_f_0", "a03074.html#ab26f650724f0b0da404c6ba7b87762ff", null ],
+    [ "ts_user_emissivity", "a03074.html#a110ed95a632df92432f347d62f4fcb3e", null ],
+    [ "ts_user_emissivity", "a03074.html#ab1bf1bebe824a5a70876fc4ed96f4b90", null ],
+    [ "fortran_type_c", "a03074.html#a4ad8c958b21c4ffdfe812410ff96992c", null ],
+    [ "owns_pointer", "a03074.html#a47d6495523d09a3d38ff44f297a5d2cb", null ]
+];

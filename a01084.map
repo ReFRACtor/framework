@@ -1,3 +1,7 @@
-<map id="Deprecated/solar_continuum_polynomial.h" name="Deprecated/solar_continuum_polynomial.h">
-<area shape="rect" id="node2" href="$a00479.html" title="Deprecated/solar_continuum\l_polynomial.cc" alt="" coords="5,95,193,136"/>
+<map id="Interface/noise_model.h" name="Interface/noise_model.h">
+<area shape="rect" id="node2" href="$a00179.html" title="Implementation/bad\l_sample_noise_model.h" alt="" coords="10,80,173,121"/>
+<area shape="rect" id="node4" href="$a00776.html" title="Implementation/spectrally\l_resolved_noise.h" alt="" coords="198,80,369,121"/>
+<area shape="rect" id="node6" href="$a01079.html" title="Interface/noise_model.cc" alt="" coords="393,87,561,114"/>
+<area shape="rect" id="node3" href="$a00176.html" title="Implementation/bad\l_sample_noise_model.cc" alt="" coords="5,169,175,211"/>
+<area shape="rect" id="node5" href="$a00773.html" title="Implementation/spectrally\l_resolved_noise.cc" alt="" coords="199,169,370,211"/>
 </map>

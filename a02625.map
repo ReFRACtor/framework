@@ -1,5 +1,5 @@
-<map id="FullPhysics::Lidort_Fixed_Optical" name="FullPhysics::Lidort_Fixed_Optical">
-<area shape="rect" id="node2" href="$a00293.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="33,271,168,421"/>
-<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="26,131,175,223"/>
-<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="10,5,191,83"/>
+<map id="FullPhysics::ConnorSolver" name="FullPhysics::ConnorSolver">
+<area shape="rect" id="node2" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; ConnorSolver \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="5,131,180,384"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="95,5,277,83"/>
+<area shape="rect" id="node4" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ConnorSolver \&gt;\n||+ print_to_string()\l}" alt="" coords="205,211,354,303"/>
 </map>

@@ -1,0 +1,14 @@
+<map id="FullPhysics::Ground" name="FullPhysics::Ground">
+<area shape="rect" id="node7" href="$a02702.html" title="This class implements a Coxmunk plus Lambertian ground type. " alt="" coords="62,939,293,1119"/>
+<area shape="rect" id="node8" href="$a04654.html" title="{FullPhysics::SubStateVector\lArray\&lt; Ground \&gt;\n|# coeff\l# cov\l# mark_according_to_press\l# pdep_start\l# press\l# used_flag\l|+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ ~SubStateVectorArray()\l+ coefficient()\l+ init()\l+ mark_used_sub()\l+ pressure()\l+ state_vector_name_i()\l+ state_vector_name_sub()\l+ statevector_covariance()\l+ sub_state_identifier()\l+ update_sub_state()\l+ update_sub_state_hook()\l+ used_flag_value()\l}" alt="" coords="317,844,507,1215"/>
+<area shape="rect" id="node2" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="110,417,282,553"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="12,175,180,267"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="189,5,371,83"/>
+<area shape="rect" id="node5" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="205,131,355,311"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; Ground \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="306,359,481,612"/>
+<area shape="rect" id="node9" href="$a02686.html" title="This class implements the Breon + Rahman ground type. " alt="" coords="118,1263,290,1545"/>
+<area shape="rect" id="node12" href="$a02698.html" title="This class implements a Coxmunk ground type. " alt="" coords="314,1299,510,1509"/>
+<area shape="rect" id="node13" href="$a02710.html" title="This class implements a Lambertian albedo as a ground type. " alt="" coords="534,1270,738,1538"/>
+<area shape="rect" id="node10" href="$a02694.html" title="{FullPhysics::GroundBrdfSoil\n||+ GroundBrdfSoil()\l+ black_sky_albedo()\l+ breon_type()\l+ clone()\l+ kernel_value()\l}" alt="" coords="5,1593,192,1729"/>
+<area shape="rect" id="node11" href="$a02690.html" title="{FullPhysics::GroundBrdfVeg\n||+ GroundBrdfVeg()\l+ black_sky_albedo()\l+ breon_type()\l+ clone()\l+ kernel_value()\l}" alt="" coords="216,1593,403,1729"/>
+</map>

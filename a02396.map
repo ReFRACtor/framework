@@ -1,9 +1,0 @@
-<map id="FullPhysics::HelicalValleyNLLSProblem" name="FullPhysics::HelicalValleyNLLSProblem">
-<area shape="rect" id="node2" href="$a00333.html" title="The base class for the Non&#45;Linear Least Squares problem. " alt="" coords="45,1145,239,1413"/>
-<area shape="rect" id="node3" href="$a00106.html" title="The base class for all problem classes that implement a cost function and its gradient. " alt="" coords="5,844,201,1097"/>
-<area shape="rect" id="node4" href="$a00105.html" title="The base class for all problem classes that implement a cost function. " alt="" coords="24,587,220,796"/>
-<area shape="rect" id="node5" href="$a00384.html" title="The base class for all problem states. " alt="" coords="95,271,285,539"/>
-<area shape="rect" id="node8" href="$a00335.html" title="The state for a NLLS problem with implemented residual function and its Jacobian. ..." alt="" coords="226,881,405,1061"/>
-<area shape="rect" id="node6" href="$a00383.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="115,131,265,223"/>
-<area shape="rect" id="node7" href="$a00151.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="99,5,281,83"/>
-</map>

@@ -1,2 +1,10 @@
-<map id="FullPhysics::lidort_modified_inputs" name="FullPhysics::lidort_modified_inputs">
+<map id="FullPhysics::IlsConvolution" name="FullPhysics::IlsConvolution">
+<area shape="rect" id="node2" href="$a03578.html" title="This class models an Instrument Line Shape (ILS). " alt="" coords="532,871,675,1095"/>
+<area shape="rect" id="node3" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="517,634,689,770"/>
+<area shape="rect" id="node4" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="637,219,805,311"/>
+<area shape="rect" id="node5" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="501,20,682,97"/>
+<area shape="rect" id="node6" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="461,175,612,355"/>
+<area shape="rect" id="node7" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; Ils \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="271,583,445,821"/>
+<area shape="rect" id="node11" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; Dispersion \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="692,379,843,559"/>
+<area shape="rect" id="node10" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; Ils \&gt; \&gt;\n||}" alt="" coords="223,5,378,112"/>
 </map>

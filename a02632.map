@@ -1,2 +1,17 @@
-<map id="FullPhysics::lidort_fixed_sunrays" name="FullPhysics::lidort_fixed_sunrays">
+<map id="FullPhysics::ConnorSolverMAP" name="FullPhysics::ConnorSolverMAP">
+<area shape="rect" id="node2" href="$a03642.html" title="The base class for the solvers of the Nonlinear&#45;Least&#45;Squares Problem. " alt="" coords="189,1547,357,1668"/>
+<area shape="rect" id="node3" href="$a03602.html" title="The base class for all iterative optimizers that use first order derivatives. " alt="" coords="147,1319,349,1484"/>
+<area shape="rect" id="node4" href="$a03598.html" title="The base class for all iterative optimizers. " alt="" coords="160,632,347,929"/>
+<area shape="rect" id="node5" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; IterativeSolver \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="353,344,527,583"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="127,189,308,267"/>
+<area shape="rect" id="node10" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; IterativeSolver \&gt;\n||+ print_to_string()\l}" alt="" coords="179,417,328,509"/>
+<area shape="rect" id="node18" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; FitStatistic \&gt;\n||+ print_to_string()\l}" alt="" coords="5,417,155,509"/>
+<area shape="rect" id="node8" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; IterativeSolver \&gt; \&gt;\n||}" alt="" coords="363,5,517,112"/>
+<area shape="rect" id="node11" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::NLLSProblem \&gt;\n||}" alt="" coords="373,1355,568,1447"/>
+<area shape="rect" id="node12" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::MaxAPosteriori \&gt;\n||}" alt="" coords="381,1561,584,1653"/>
+<area shape="rect" id="node13" title="STL class. " alt="" coords="608,1569,688,1646"/>
+<area shape="rect" id="node14" title="STL class. " alt="" coords="593,1355,719,1447"/>
+<area shape="rect" id="node15" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::NLLSProblemScaled \&gt;\n||}" alt="" coords="712,1561,947,1653"/>
+<area shape="rect" id="node16" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ConvergenceCheck \&gt;\n||}" alt="" coords="971,1561,1200,1653"/>
+<area shape="rect" id="node17" href="$a03522.html" title="This class holds various parameters describing how good of a fit we have. " alt="" coords="22,953,189,1295"/>
 </map>

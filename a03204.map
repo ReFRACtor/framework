@@ -1,4 +1,2 @@
-<map id="FullPhysics::SpurrRtDriver" name="FullPhysics::SpurrRtDriver">
-<area shape="rect" id="node2" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,13,187,90"/>
-<area shape="rect" id="node3" href="$a00443.html" title="{boost::shared_ptr\&lt;\l FullPhysics::SpurrBrdfDriver \&gt;\n||}" alt="" coords="211,5,415,97"/>
+<map id="FullPhysics::lidort_modified_inputs" name="FullPhysics::lidort_modified_inputs">
 </map>

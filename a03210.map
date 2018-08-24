@@ -1,8 +1,0 @@
-<map id="FullPhysics::StandardForwardModel" name="FullPhysics::StandardForwardModel">
-<area shape="rect" id="node2" href="$a00157.html" title="The forward model represents the encapsulation of modeling spectra from an atmospheric state then app..." alt="" coords="216,417,396,597"/>
-<area shape="rect" id="node3" href="$a00481.html" title="{FullPhysics::StackedRadiance\lMixin\n||+ num_channels()\l+ radiance()\l+ radiance_all()\l+ spectral_domain()\l+ stacked_pixel_range()\l}" alt="" coords="5,175,207,325"/>
-<area shape="rect" id="node4" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; ForwardModel \&gt;\n||+ print_to_string()\l}" alt="" coords="231,204,381,296"/>
-<area shape="rect" id="node5" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="215,20,397,97"/>
-<area shape="rect" id="node6" href="$a00373.html" title="{FullPhysics::Observable\l\&lt; boost::shared_ptr\&lt; NamedSpectrum \&gt; \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="421,388,690,627"/>
-<area shape="rect" id="node8" href="$a00443.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; boost::shared_ptr\&lt; NamedSpectrum \&gt; \&gt; \&gt;\n||}" alt="" coords="421,5,703,112"/>
-</map>

@@ -1,0 +1,7 @@
+<map id="Python.factory.creator.value.CreatorFlaggedValueMultiChannel" name="Python.factory.creator.value.CreatorFlaggedValueMultiChannel">
+<area shape="rect" id="node4" href="$a03974.html" title="{Python.factory.creator.ground.\lGroundLambertian\n|+ band_reference\l+ desc_band_name\l|+ create()\l}" alt="" coords="5,594,204,701"/>
+<area shape="rect" id="node5" href="$a04006.html" title="{Python.factory.creator.instrument.\lApplyInstrumentUnits\n|+ num_channels\l+ scale_factor\l+ units\l|+ create()\l}" alt="" coords="228,587,448,708"/>
+<area shape="rect" id="node6" href="$a03982.html" title="{Python.factory.creator.instrument.\lDispersionPolynomial\n|+ desc_band_name\l+ is_one_based\l+ num_channels\l+ num_parameters\l+ number_samples\l+ spec_win\l|+ create()\l+ retrieval_flag()\l}" alt="" coords="472,557,692,737"/>
+<area shape="rect" id="node7" href="$a04002.html" title="{Python.factory.creator.instrument.\lRadianceScaling\n|+ band_reference\l+ desc_band_name\l+ num_channels\l|+ create()\l}" alt="" coords="716,587,936,708"/>
+<area shape="rect" id="node2" href="$a03914.html" title="{Python.factory.creator.base.\lCreator\n|+ common_store\l+ config_def\l+ parameters\l|+ __init__()\l+ __call__()\l+ create()\l+ deregister_to_receive()\l+ param()\l+ receive()\l+ register_parameter()\l+ register_to_receive()\l}" alt="" coords="366,131,553,355"/>
+</map>

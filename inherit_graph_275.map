@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$a00398.html" title="FullPhysics::Observable\l\&lt; T \&gt;::PointerEqual" alt="" coords="5,5,169,47"/>
+<area shape="rect" id="node1" href="$a02786.html" title="Base fixture for testing LidortRtDriver. " alt="" coords="5,104,171,145"/>
+<area shape="rect" id="node2" href="$a02802.html" title="Fixture for LidortRtDriver coxmunk mode. " alt="" coords="223,5,388,47"/>
+<area shape="rect" id="node3" href="$a02798.html" title="Fixture for LidortRtDriver coxmunk mode. " alt="" coords="223,71,388,112"/>
+<area shape="rect" id="node4" href="$a02790.html" title="Fixture for LidortRtDriver lambertian mode. " alt="" coords="223,136,388,177"/>
+<area shape="rect" id="node5" href="$a02794.html" title="Fixture for LidortRtDriver lambertian mode thermal mode. " alt="" coords="219,201,392,243"/>
 </map>

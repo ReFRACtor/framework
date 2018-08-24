@@ -1,7 +1,5 @@
-<map id="Implementation/refractive_index.h" name="Implementation/refractive_index.h">
-<area shape="rect" id="node3" href="$a01037.html" title="auto_derivative.h" alt="" coords="211,95,333,121"/>
-<area shape="rect" id="node4" href="$a01054.html" title="fp_exception.h" alt="" coords="219,169,325,196"/>
-<area shape="rect" id="node5" href="$a01088.html" title="printable.h" alt="" coords="140,244,223,271"/>
-<area shape="rect" id="node8" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="353,244,493,271"/>
-<area shape="rect" id="node6" href="$a01064.html" title="generic_object.h" alt="" coords="5,319,123,345"/>
+<map id="RegisterOutput/ground_lambertian_output.h" name="RegisterOutput/ground_lambertian_output.h">
+<area shape="rect" id="node2" href="$a01484.html" title="RegisterOutput/ground\l_coxmunk_plus_lambertian\l_output.h" alt="" coords="5,95,185,151"/>
+<area shape="rect" id="node4" href="$a01487.html" title="RegisterOutput/ground\l_lambertian_output.cc" alt="" coords="209,102,363,143"/>
+<area shape="rect" id="node3" href="$a01481.html" title="RegisterOutput/ground\l_coxmunk_plus_lambertian\l_output.cc" alt="" coords="5,199,185,255"/>
 </map>

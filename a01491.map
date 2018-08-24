@@ -1,8 +1,24 @@
-<map id="Implementation/refractive_index.cc" name="Implementation/refractive_index.cc">
-<area shape="rect" id="node2" href="$a00745.html" title="refractive_index.h" alt="" coords="199,95,324,121"/>
-<area shape="rect" id="node5" href="$a01054.html" title="fp_exception.h" alt="" coords="567,244,673,271"/>
-<area shape="rect" id="node4" href="$a01037.html" title="auto_derivative.h" alt="" coords="201,169,322,196"/>
-<area shape="rect" id="node6" href="$a01088.html" title="printable.h" alt="" coords="231,319,313,345"/>
-<area shape="rect" id="node9" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="550,319,690,345"/>
-<area shape="rect" id="node7" href="$a01064.html" title="generic_object.h" alt="" coords="155,393,272,420"/>
+<map id="RegisterOutput/ground_lambertian_output.h" name="RegisterOutput/ground_lambertian_output.h">
+<area shape="rect" id="node2" href="$a01526.html" title="register_output_base.h" alt="" coords="574,475,729,502"/>
+<area shape="rect" id="node16" href="$a00353.html" title="ground_lambertian.h" alt="" coords="899,95,1038,121"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="1182,707,1265,733"/>
+<area shape="rect" id="node6" href="$a01094.html" title="output.h" alt="" coords="609,557,678,584"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="1745,781,1862,808"/>
+<area shape="rect" id="node17" href="$a00968.html" title="ground.h" alt="" coords="1479,244,1551,271"/>
+<area shape="rect" id="node39" href="$a01586.html" title="array_with_unit.h" alt="" coords="857,475,979,502"/>
+<area shape="rect" id="node44" href="$a01796.html" title="sub_state_vector_array.h" alt="" coords="1027,169,1196,196"/>
+<area shape="rect" id="node18" href="$a01793.html" title="state_vector_observer.h" alt="" coords="1306,319,1469,345"/>
+<area shape="rect" id="node20" href="$a01724.html" title="observer.h" alt="" coords="1894,475,1977,502"/>
+<area shape="rect" id="node28" href="$a01589.html" title="auto_derivative.h" alt="" coords="1263,557,1384,584"/>
+<area shape="rect" id="node19" href="$a01790.html" title="state_vector.h" alt="" coords="1356,393,1461,420"/>
+<area shape="rect" id="node27" href="$a01574.html" title="array_ad.h" alt="" coords="1406,475,1489,502"/>
+<area shape="rect" id="node29" href="$a01640.html" title="fp_exception.h" alt="" coords="1613,632,1719,659"/>
+<area shape="rect" id="node21" href="$a01721.html" title="null_deleter.h" alt="" coords="1799,557,1898,584"/>
+<area shape="rect" id="node30" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="2155,707,2295,733"/>
+<area shape="rect" id="node40" href="$a01814.html" title="unit.h" alt="" coords="895,632,949,659"/>
+<area shape="rect" id="node43" href="$a01625.html" title="double_with_unit.h" alt="" coords="1006,557,1137,584"/>
+<area shape="rect" id="node45" href="$a01802.html" title="sub_state_vector_observer.h" alt="" coords="1264,244,1455,271"/>
+<area shape="rect" id="node46" href="$a01103.html" title="pressure.h" alt="" coords="1157,244,1239,271"/>
+<area shape="rect" id="node47" href="$a01580.html" title="array_ad_with_unit.h" alt="" coords="1127,393,1269,420"/>
+<area shape="rect" id="node48" href="$a01592.html" title="auto_derivative_with\l_unit.h" alt="" coords="1127,468,1269,509"/>
 </map>

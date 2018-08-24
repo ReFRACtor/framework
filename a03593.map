@@ -1,0 +1,13 @@
+<map id="FullPhysics::InstrumentCorrection" name="FullPhysics::InstrumentCorrection">
+<area shape="rect" id="node7" href="$a02546.html" title="An InstrumentCorrection class that applies units and scales monochromatic radiances in those cases wh..." alt="" coords="5,961,199,1097"/>
+<area shape="rect" id="node8" href="$a03322.html" title="This abstract class provides the generic capabilities for applying a radiance scaling to a Radiance..." alt="" coords="223,903,419,1156"/>
+<area shape="rect" id="node11" href="$a04654.html" title="{FullPhysics::SubStateVector\lArray\&lt; InstrumentCorrection \&gt;\n|# coeff\l# cov\l# mark_according_to_press\l# pdep_start\l# press\l# used_flag\l|+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ ~SubStateVectorArray()\l+ coefficient()\l+ init()\l+ mark_used_sub()\l+ pressure()\l+ state_vector_name_i()\l+ state_vector_name_sub()\l+ statevector_covariance()\l+ sub_state_identifier()\l+ update_sub_state()\l+ update_sub_state_hook()\l+ used_flag_value()\l}" alt="" coords="443,844,641,1215"/>
+<area shape="rect" id="node2" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="136,417,308,553"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="38,175,206,267"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="215,5,397,83"/>
+<area shape="rect" id="node5" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="231,131,381,311"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; InstrumentCorrection \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="332,359,507,612"/>
+<area shape="rect" id="node9" href="$a03326.html" title="Implements a fitted radiance scaling correction where the correction is determined by a linear fit of..." alt="" coords="111,1314,309,1494"/>
+<area shape="rect" id="node10" href="$a03330.html" title="Implements a fitted radiance scaling correction. " alt="" coords="333,1292,529,1516"/>
+<area shape="rect" id="node12" href="$a02650.html" title="This class applies a empirical orthogonal function (EOF) correction to instrument data..." alt="" coords="553,1263,771,1545"/>
+</map>

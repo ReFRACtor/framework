@@ -1,15 +1,8 @@
-<map id="Interface/spurr_driver.cc" name="Interface/spurr_driver.cc">
-<area shape="rect" id="node2" href="$a00910.html" title="spurr_driver.h" alt="" coords="171,229,272,256"/>
-<area shape="rect" id="node21" href="$a00908.html" title="spurr_brdf_types.h" alt="" coords="287,80,417,107"/>
-<area shape="rect" id="node22" href="$a00834.html" title="ground.h" alt="" coords="445,80,517,107"/>
-<area shape="rect" id="node5" href="$a01032.html" title="array_ad.h" alt="" coords="347,304,429,331"/>
-<area shape="rect" id="node9" href="$a01064.html" title="generic_object.h" alt="" coords="359,603,476,629"/>
-<area shape="rect" id="node6" href="$a01037.html" title="auto_derivative.h" alt="" coords="290,379,411,405"/>
-<area shape="rect" id="node7" href="$a01054.html" title="fp_exception.h" alt="" coords="504,453,611,480"/>
-<area shape="rect" id="node8" href="$a01088.html" title="printable.h" alt="" coords="408,528,491,555"/>
-<area shape="rect" id="node11" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="759,528,899,555"/>
-<area shape="rect" id="node23" href="$a01105.html" title="state_vector_observer.h" alt="" coords="417,155,580,181"/>
-<area shape="rect" id="node25" href="$a01082.html" title="observer.h" alt="" coords="888,304,971,331"/>
-<area shape="rect" id="node24" href="$a01104.html" title="state_vector.h" alt="" coords="459,229,565,256"/>
-<area shape="rect" id="node26" href="$a01081.html" title="null_deleter.h" alt="" coords="837,379,936,405"/>
+<map id="Support/polynomial_eval.h" name="Support/polynomial_eval.h">
+<area shape="rect" id="node2" href="$a01574.html" title="array_ad.h" alt="" coords="694,95,777,121"/>
+<area shape="rect" id="node3" href="$a01589.html" title="auto_derivative.h" alt="" coords="675,169,796,196"/>
+<area shape="rect" id="node4" href="$a01640.html" title="fp_exception.h" alt="" coords="453,244,559,271"/>
+<area shape="rect" id="node5" href="$a01742.html" title="printable.h" alt="" coords="687,319,770,345"/>
+<area shape="rect" id="node8" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="303,319,443,345"/>
+<area shape="rect" id="node6" href="$a01670.html" title="generic_object.h" alt="" coords="683,393,801,420"/>
 </map>

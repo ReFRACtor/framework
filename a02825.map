@@ -1,5 +1,5 @@
-<map id="FullPhysics::LinearInterpolate2Point&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;" name="FullPhysics::LinearInterpolate2Point&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;">
-<area shape="rect" id="node2" href="$a00214.html" title="{FullPhysics::Interpolate\lPoint\&lt; AutoDerivative\l\&lt; double \&gt;, AutoDerivative\l\&lt; double \&gt; \&gt;\n||+ interpolate()\l+ x_max()\l+ x_min()\l}" alt="" coords="5,131,184,281"/>
-<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; LinearInterpolate2Point\l\&lt; AutoDerivative\&lt; double\l \&gt;, AutoDerivative\&lt; double \&gt; \&gt; \&gt;\n||+ print_to_string()\l}" alt="" coords="209,145,423,267"/>
-<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="225,5,407,83"/>
+<map id="FullPhysics::LidortLowHighLambertianFixture" name="FullPhysics::LidortLowHighLambertianFixture">
+<area shape="rect" id="node2" href="$a02822.html" title="{FullPhysics::LidortLowHigh\lCommon\n|+ azm\l+ high_rt\l+ low_rt\l+ nmoms_high\l+ nmoms_low\l+ nstreams_high\l+ nstreams_low\l+ pure_nadir\l+ stokes_coefs\l+ sza\l+ zen\l|+ LidortLowHighCommon()\l+ ~LidortLowHighCommon()\l}" alt="" coords="5,270,192,523"/>
+<area shape="rect" id="node3" href="$a02594.html" title="There are a number of tests that need to use a standard set of objects, similar to what we generate w..." alt="" coords="217,248,391,545"/>
+<area shape="rect" id="node4" href="$a04502.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="217,5,391,200"/>
 </map>

@@ -1,0 +1,6 @@
+<map id="FullPhysics::SolarDopplerShift" name="FullPhysics::SolarDopplerShift">
+<area shape="rect" id="node4" href="$a03398.html" title="This class handles the solar Doppler stretch to calculate the shift of the solar lines with respect t..." alt="" coords="5,469,179,649"/>
+<area shape="rect" id="node5" href="$a03402.html" title="This class handles the solar Doppler stretch to calculate the shift of the solar lines with respect t..." alt="" coords="203,455,419,664"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; SolarDopplerShift \&gt;\n||+ print_to_string()\l}" alt="" coords="127,131,276,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="111,5,292,83"/>
+</map>

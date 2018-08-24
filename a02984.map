@@ -1,10 +1,5 @@
-<map id="FullPhysics::OstreamCompress" name="FullPhysics::OstreamCompress">
-<area shape="rect" id="node2" href="$a00151.html" title="This allows filtering stream to created on top of an underlying ofstream. " alt="" coords="19,848,213,940"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="34,607,129,684"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="5,375,139,467"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="11,132,165,209"/>
-<area shape="rect" id="node9" title="STL class. " alt="" coords="111,259,244,351"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="38,5,138,83"/>
-<area shape="rect" id="node7" title="STL class. " alt="" coords="123,708,221,785"/>
-<area shape="rect" id="node8" title="STL class. " alt="" coords="110,491,247,583"/>
+<map id="FullPhysics::Lidort_Linoutputs" name="FullPhysics::Lidort_Linoutputs">
+<area shape="rect" id="node2" href="$a02874.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="29,271,163,421"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="21,131,171,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
 </map>

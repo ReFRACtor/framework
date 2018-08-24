@@ -1,6 +1,7 @@
 var a00356 =
 [
-    [ "__init__", "a00356.html#a975be9ed5f3aff4d0cb00808d60f2a32", null ],
-    [ "call", "a00356.html#a9dd52bf42feab0b89540523016a4f235", null ],
-    [ "ls", "a00356.html#af83b33dcd0a6b665366868b548abdba2", null ]
+    [ "gsl_get_lsp_fdf", "a00356.html#ab906461205485c073f7805b5bf14853f", null ],
+    [ "gsl_lsp_f", "a00356.html#adf5d1ca607cc38444fe313c5510eaa8b", null ],
+    [ "gsl_lsp_fj", "a00356.html#aed421bccfa547eae2597911b169e9539", null ],
+    [ "gsl_lsp_j", "a00356.html#a4f70ccb2081e1cb143d42807adee18fa", null ]
 ];

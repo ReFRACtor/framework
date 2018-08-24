@@ -1,3 +1,7 @@
-<map id="FullPhysics::SwigTypeMapper&lt; T &gt;" name="FullPhysics::SwigTypeMapper&lt; T &gt;">
-<area shape="rect" id="node2" href="$a00499.html" title="This is the base class that is used by fp_shared_ptr.i to map a shared_ptr to a python object..." alt="" coords="6,5,235,83"/>
+<map id="FullPhysics::ModelMeasureMeyer" name="FullPhysics::ModelMeasureMeyer">
+<area shape="rect" id="node2" href="$a03626.html" title="The base class for models and measurements. " alt="" coords="9,800,192,1053"/>
+<area shape="rect" id="node3" href="$a03630.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="19,587,183,752"/>
+<area shape="rect" id="node4" href="$a03686.html" title="The base class for all problem states. " alt="" coords="5,271,196,539"/>
+<area shape="rect" id="node5" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="26,131,175,223"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="10,5,191,83"/>
 </map>

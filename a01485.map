@@ -1,21 +1,26 @@
-<map id="Implementation/rayleigh.cc" name="Implementation/rayleigh.cc">
-<area shape="rect" id="node2" href="$a00741.html" title="rayleigh.h" alt="" coords="958,80,1037,107"/>
-<area shape="rect" id="node3" href="$a00877.html" title="pressure.h" alt="" coords="847,155,929,181"/>
-<area shape="rect" id="node35" href="$a00808.html" title="altitude.h" alt="" coords="967,304,1041,331"/>
-<area shape="rect" id="node36" href="$a01045.html" title="constant.h" alt="" coords="1161,229,1244,256"/>
-<area shape="rect" id="node37" href="$a01047.html" title="default_constant.h" alt="" coords="1035,155,1165,181"/>
-<area shape="rect" id="node4" href="$a01105.html" title="state_vector_observer.h" alt="" coords="776,229,939,256"/>
-<area shape="rect" id="node9" href="$a01082.html" title="observer.h" alt="" coords="484,386,567,413"/>
-<area shape="rect" id="node29" href="$a01034.html" title="array_ad_with_unit.h" alt="" coords="1067,304,1210,331"/>
-<area shape="rect" id="node5" href="$a01104.html" title="state_vector.h" alt="" coords="803,304,909,331"/>
-<area shape="rect" id="node6" href="$a01088.html" title="printable.h" alt="" coords="1007,617,1089,644"/>
-<area shape="rect" id="node17" href="$a01032.html" title="array_ad.h" alt="" coords="975,386,1057,413"/>
-<area shape="rect" id="node19" href="$a01054.html" title="fp_exception.h" alt="" coords="788,543,895,569"/>
-<area shape="rect" id="node7" href="$a01064.html" title="generic_object.h" alt="" coords="836,692,953,719"/>
-<area shape="rect" id="node10" href="$a01081.html" title="null_deleter.h" alt="" coords="43,468,141,495"/>
-<area shape="rect" id="node18" href="$a01037.html" title="auto_derivative.h" alt="" coords="993,468,1114,495"/>
-<area shape="rect" id="node20" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="490,617,630,644"/>
-<area shape="rect" id="node30" href="$a01038.html" title="auto_derivative_with\l_unit.h" alt="" coords="1081,379,1223,420"/>
-<area shape="rect" id="node32" href="$a01112.html" title="unit.h" alt="" coords="1370,543,1425,569"/>
-<area shape="rect" id="node31" href="$a01049.html" title="double_with_unit.h" alt="" coords="1195,468,1325,495"/>
+<map id="RegisterOutput/ground_coxmunk_plus_lambertian_output.h" name="RegisterOutput/ground_coxmunk_plus_lambertian_output.h">
+<area shape="rect" id="node2" href="$a01526.html" title="register_output_base.h" alt="" coords="918,184,1073,211"/>
+<area shape="rect" id="node16" href="$a01478.html" title="ground_coxmunk_output.h" alt="" coords="1033,109,1208,136"/>
+<area shape="rect" id="node47" href="$a01490.html" title="ground_lambertian_output.h" alt="" coords="1232,109,1415,136"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="1237,781,1319,808"/>
+<area shape="rect" id="node6" href="$a01094.html" title="output.h" alt="" coords="553,632,622,659"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="1790,856,1907,883"/>
+<area shape="rect" id="node17" href="$a00338.html" title="ground_coxmunk.h" alt="" coords="1168,184,1300,211"/>
+<area shape="rect" id="node18" href="$a00968.html" title="ground.h" alt="" coords="1254,333,1326,360"/>
+<area shape="rect" id="node29" href="$a01589.html" title="auto_derivative.h" alt="" coords="1148,632,1269,659"/>
+<area shape="rect" id="node39" href="$a01796.html" title="sub_state_vector_array.h" alt="" coords="1361,259,1531,285"/>
+<area shape="rect" id="node19" href="$a01793.html" title="state_vector_observer.h" alt="" coords="1363,408,1526,435"/>
+<area shape="rect" id="node21" href="$a01724.html" title="observer.h" alt="" coords="1585,557,1667,584"/>
+<area shape="rect" id="node20" href="$a01790.html" title="state_vector.h" alt="" coords="1040,483,1145,509"/>
+<area shape="rect" id="node28" href="$a01574.html" title="array_ad.h" alt="" coords="1097,557,1179,584"/>
+<area shape="rect" id="node30" href="$a01640.html" title="fp_exception.h" alt="" coords="875,707,982,733"/>
+<area shape="rect" id="node22" href="$a01721.html" title="null_deleter.h" alt="" coords="1663,632,1762,659"/>
+<area shape="rect" id="node31" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="988,781,1128,808"/>
+<area shape="rect" id="node40" href="$a01802.html" title="sub_state_vector_observer.h" alt="" coords="1351,333,1541,360"/>
+<area shape="rect" id="node41" href="$a01103.html" title="pressure.h" alt="" coords="1742,333,1825,360"/>
+<area shape="rect" id="node42" href="$a01580.html" title="array_ad_with_unit.h" alt="" coords="1603,483,1745,509"/>
+<area shape="rect" id="node43" href="$a01814.html" title="unit.h" alt="" coords="2040,707,2095,733"/>
+<area shape="rect" id="node48" href="$a00353.html" title="ground_lambertian.h" alt="" coords="1359,184,1498,211"/>
+<area shape="rect" id="node49" href="$a01586.html" title="array_with_unit.h" alt="" coords="1891,557,2012,584"/>
+<area shape="rect" id="node50" href="$a01625.html" title="double_with_unit.h" alt="" coords="1989,632,2119,659"/>
 </map>

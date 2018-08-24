@@ -1,2 +1,4 @@
-<map id="Python.factory.creator.rt.TwostreamRt" name="Python.factory.creator.rt.TwostreamRt">
+<map id="FullPhysics::TwostreamRtDriver" name="FullPhysics::TwostreamRtDriver">
+<area shape="rect" id="node2" href="$a03754.html" title="Abstracts away set up of Radiative Transfer software from Rob Spurr into a simpler common inteface us..." alt="" coords="5,131,187,443"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
 </map>

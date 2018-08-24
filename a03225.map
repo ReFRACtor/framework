@@ -1,8 +1,9 @@
-<map id="FullPhysics::StokesCoefficient" name="FullPhysics::StokesCoefficient">
-<area shape="rect" id="node2" href="$a00487.html" title="This is an observer of a StateVector. " alt="" coords="187,469,359,605"/>
-<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,219,173,311"/>
-<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="183,20,364,97"/>
-<area shape="rect" id="node5" href="$a00377.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,175,349,355"/>
-<area shape="rect" id="node6" href="$a00373.html" title="{FullPhysics::Observable\l\&lt; StokesCoefficient \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="418,417,593,656"/>
-<area shape="rect" id="node8" href="$a00443.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; StokesCoefficient \&gt; \&gt;\n||}" alt="" coords="460,5,623,112"/>
+<map id="FullPhysics::MaxAPosterioriStandard" name="FullPhysics::MaxAPosterioriStandard">
+<area shape="rect" id="node2" href="$a03614.html" title="The base class for maximum a posteriori estimation. " alt="" coords="5,1109,192,1391"/>
+<area shape="rect" id="node3" href="$a03626.html" title="The base class for models and measurements. " alt="" coords="114,800,297,1053"/>
+<area shape="rect" id="node8" href="$a03254.html" title="{FullPhysics::ModelMeasure\lStandard\n|# fm\l# meas_units\l# obs\l# sv\l|+ ~ModelMeasureStandard()\l+ expected_parameter_size()\l+ jacobian_eval()\l+ model_eval()\l+ model_jacobian_eval()\l+ parameters()\l+ parameters()\l+ print()\l# ModelMeasureStandard()\l# ModelMeasureStandard()\l# radiance_from_fm()\l# vanishing_params_update()\l}" alt="" coords="216,1101,408,1399"/>
+<area shape="rect" id="node4" href="$a03630.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="123,587,287,752"/>
+<area shape="rect" id="node5" href="$a03686.html" title="The base class for all problem states. " alt="" coords="110,271,301,539"/>
+<area shape="rect" id="node6" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="131,131,280,223"/>
+<area shape="rect" id="node7" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="115,5,296,83"/>
 </map>

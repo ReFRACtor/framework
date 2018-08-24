@@ -1,0 +1,38 @@
+var a03602 =
+[
+    [ "status_t", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0", [
+      [ "SUCCESS", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0a20713b5938508e525d81cd1f0d242e4c", null ],
+      [ "CONTINUE", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0a2d914b2efc926e5be7d27175eb0b4bc5", null ],
+      [ "STALLED", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0a1f0c60e4e0b2c055c58e87fe004d45e4", null ],
+      [ "ERROR", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0a47873968f8cb6a80247bde3561307edb", null ],
+      [ "UNTRIED", "a03602.html#a8cef3cf27ce873edf2870083cf9b0de0a4f6402de0c388c22f2d148bcfa6e228d", null ]
+    ] ],
+    [ "IterativeSolverDer", "a03602.html#ae9b7e600e7188ee463671b2ceba8392a", null ],
+    [ "~IterativeSolverDer", "a03602.html#a79248673f35b526ed7f0eda775ef7d2e", null ],
+    [ "accepted_points", "a03602.html#a322b04b9a4aed104678ebe1c9ca2dae1", null ],
+    [ "add_observer", "a03602.html#ac37d73c72f21b4b87e21d3034f66c71c", null ],
+    [ "add_observer_and_keep_reference", "a03602.html#a3dc34330b9a84e38b6a1fa05a0012335", null ],
+    [ "add_observer_do", "a03602.html#a7970e17e040afd9e5df213d9ea9868b0", null ],
+    [ "add_observer_do", "a03602.html#a5bf89406b6dca0f10d93d8c2134b308b", null ],
+    [ "clean_dead_ptr", "a03602.html#a7314770d025eb25151f8086d311e7970", null ],
+    [ "cost_at_accepted_points", "a03602.html#a258ef05fa491b7ce6302c62f461b81da", null ],
+    [ "gradient_at_accepted_points", "a03602.html#a1690857952b1a97e198033060ddc3ced", null ],
+    [ "notify_update_do", "a03602.html#aa421058599b4fdf31fee1c3bbefd37b8", null ],
+    [ "num_accepted_steps", "a03602.html#a0f744a5ea53af3709a1efb6b294cfae5", null ],
+    [ "print", "a03602.html#a3259eaa50a0157f2d7655ab098ecb406", null ],
+    [ "print_to_string", "a03602.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "record_accepted_point", "a03602.html#a27a6d6002b04d3f21be8258a0e90a9bf", null ],
+    [ "record_cost_at_accepted_point", "a03602.html#af982397b15209de479477b2604717871", null ],
+    [ "record_gradient_at_accepted_point", "a03602.html#acae9aa2825e60454d25c3ce201af12c2", null ],
+    [ "remove_observer", "a03602.html#a65c783ba172ebb24b62a1b5b9d43d89b", null ],
+    [ "remove_observer_do", "a03602.html#a4bf93566609435bf648a170f6ee4f5fa", null ],
+    [ "remove_observer_do", "a03602.html#ae3e1aeb7e65acda6147ae292a665c556", null ],
+    [ "solve", "a03602.html#ae292838898d1d0836dc0c6d7f16fa6f9", null ],
+    [ "status", "a03602.html#ae192f7757f70beca405c8798c280e33d", null ],
+    [ "status_str", "a03602.html#a70fe9e9fbbec6e66d5ac13fcd98dc797", null ],
+    [ "max_cost_f_calls", "a03602.html#ad78d9d2767f3ee53f52d0d57148b7ca5", null ],
+    [ "olist", "a03602.html#a9a2122b1d0f4bfe1269def978c34b32a", null ],
+    [ "ref_list", "a03602.html#aae4b1ee50224cb361dc646986c729849", null ],
+    [ "stat", "a03602.html#a2c54bf6f447542be16f78f6da78261b1", null ],
+    [ "verbose", "a03602.html#a1db313c529ed9d698ddbb175cf86e4d3", null ]
+];

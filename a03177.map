@@ -1,4 +1,5 @@
-<map id="FullPhysics::SpectralWindow" name="FullPhysics::SpectralWindow">
-<area shape="rect" id="node2" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; SpectralWindow \&gt;\n||+ print_to_string()\l}" alt="" coords="27,131,177,223"/>
-<area shape="rect" id="node3" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="11,5,193,83"/>
+<map id="FullPhysics::Lidort_Modified_Sunrays" name="FullPhysics::Lidort_Modified_Sunrays">
+<area shape="rect" id="node2" href="$a02874.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="35,271,169,421"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="27,131,177,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="11,5,193,83"/>
 </map>

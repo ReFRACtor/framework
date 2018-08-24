@@ -1,0 +1,8 @@
+<map id="FullPhysics::Pressure" name="FullPhysics::Pressure">
+<area shape="rect" id="node2" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="187,469,359,605"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,219,173,311"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="183,20,364,97"/>
+<area shape="rect" id="node5" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,175,349,355"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; Pressure \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="407,417,582,656"/>
+<area shape="rect" id="node9" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; Pressure \&gt; \&gt;\n||}" alt="" coords="648,5,803,112"/>
+</map>

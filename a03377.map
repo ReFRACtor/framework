@@ -1,2 +1,9 @@
-<map id="Python.factory.creator.atmosphere.TemperatureMet" name="Python.factory.creator.atmosphere.TemperatureMet">
+<map id="FullPhysics::SolarAbsorptionAndContinuum" name="FullPhysics::SolarAbsorptionAndContinuum">
+<area shape="rect" id="node2" href="$a03730.html" title="This applies a solar model to reflectance to model the incoming solar irradiance. ..." alt="" coords="207,859,369,1009"/>
+<area shape="rect" id="node3" href="$a03738.html" title="This class models models any effects that need to be applied to high resolution spectra after the rad..." alt="" coords="193,660,383,811"/>
+<area shape="rect" id="node4" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="103,417,275,553"/>
+<area shape="rect" id="node5" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,175,173,267"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="183,5,364,83"/>
+<area shape="rect" id="node7" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,131,349,311"/>
+<area shape="rect" id="node8" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; SpectrumEffect \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="299,359,474,612"/>
 </map>

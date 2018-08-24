@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$a00080.html" title="This is a map that takes and index and returns a value. " alt="" coords="5,5,180,32"/>
+<area shape="rect" id="node1" href="$a04394.html" title="Defines an interface for caching ArrayAd objects such that the underlying caching mechanism is not ne..." alt="" coords="5,39,188,80"/>
+<area shape="rect" id="node2" href="$a04398.html" title="Caches ArrayAd objects using a std::map. " alt="" coords="236,5,444,47"/>
+<area shape="rect" id="node3" href="$a04402.html" title="Caches ArrayAd objects using a std::vector. " alt="" coords="249,71,431,112"/>
 </map>

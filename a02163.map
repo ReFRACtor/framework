@@ -1,5 +1,0 @@
-<map id="FullPhysics::CompositePerturbation" name="FullPhysics::CompositePerturbation">
-<area shape="rect" id="node2" href="$a00365.html" title="This gets the perturbation to use with a finite difference Jacobian. " alt="" coords="37,271,205,377"/>
-<area shape="rect" id="node3" href="$a00383.html" title="{FullPhysics::Printable\l\&lt; Perturbation \&gt;\n||+ print_to_string()\l}" alt="" coords="46,131,195,223"/>
-<area shape="rect" id="node4" href="$a00151.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="30,5,211,83"/>
-</map>

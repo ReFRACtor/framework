@@ -1,0 +1,27 @@
+var a03750 =
+[
+    [ "calculate_brdf", "a03750.html#ad1e47ebe8384f0d4e4f6608a74401aad", null ],
+    [ "do_kparams_derivs", "a03750.html#af992f5bc48f66cb1b769a542a15d6114", null ],
+    [ "do_kparams_derivs", "a03750.html#a527f7f75ba08e29114d35cea7a8ad576", null ],
+    [ "do_shadow_effect", "a03750.html#a1e72268c7f2b319f7499a78088cda87c", null ],
+    [ "do_shadow_effect", "a03750.html#a0806a6c6cb88e38651b608341fcddcb6", null ],
+    [ "initialize_brdf_inputs", "a03750.html#a02feb2183b70eccaf9c859efbec446d4", null ],
+    [ "initialize_brdf_kernel", "a03750.html#ab2a45c57a28250b5f6f848db0123b38b", null ],
+    [ "initialize_kernel_parameters", "a03750.html#aecfe1d493203fce3b401c8fa3feb813e", null ],
+    [ "n_brdf_kernels", "a03750.html#a9e82970ac04f1abb2932c6c4e64570fa", null ],
+    [ "n_brdf_kernels", "a03750.html#a4bb70b2171a3b37da51366fb723f04cf", null ],
+    [ "n_kernel_factor_wfs", "a03750.html#a22693cce7731b09a06980a22790510c4", null ],
+    [ "n_kernel_factor_wfs", "a03750.html#a7f14bb13f9a10ba56f4d8e6cbe3bca9f", null ],
+    [ "n_kernel_params_wfs", "a03750.html#ae320ecfddce0e173380ad07779496d0b", null ],
+    [ "n_kernel_params_wfs", "a03750.html#a4a59b10ac96d1cc1f7e6d19c36c79ba8", null ],
+    [ "n_surface_wfs", "a03750.html#accbabeccdb250ffa26f4fa0806d26d10", null ],
+    [ "n_surface_wfs", "a03750.html#add09330885cf6189a13e21215bba4abb", null ],
+    [ "setup_brdf_inputs", "a03750.html#a3d2be920138ca296288ee90157a316b9", null ],
+    [ "setup_breon_inputs", "a03750.html#a3edb736af2d7d3658b798bf322879205", null ],
+    [ "setup_coxmunk_inputs", "a03750.html#ae1b303d653c90ff04d3072a40599c49e", null ],
+    [ "setup_geometry", "a03750.html#a0ecf529e2fa9b40215eb6e0273a379a7", null ],
+    [ "setup_lambertian_inputs", "a03750.html#aa89c2d3f01103f5fe329c5835c9d04c6", null ],
+    [ "setup_rahman_inputs", "a03750.html#a2b03e666c23050ce57163dc043777eae", null ],
+    [ "brdf_factors", "a03750.html#aa43a97e4a2728451d8431dd9eb405e45", null ],
+    [ "brdf_params", "a03750.html#a1b39ca85fc8b7afdf6d0f2d8bee3d72b", null ]
+];

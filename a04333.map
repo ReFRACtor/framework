@@ -1,0 +1,40 @@
+<map id="FullPhysics::RegisterOutputBase" name="FullPhysics::RegisterOutputBase">
+<area shape="rect" id="node4" href="$a04218.html" title="This registers the portions of the Absorber class that should be written as output. " alt="" coords="5,491,192,627"/>
+<area shape="rect" id="node5" href="$a02454.html" title="This registers the portions of the AbsorberVmrFixedLevel class that should be written as output..." alt="" coords="217,491,445,627"/>
+<area shape="rect" id="node6" href="$a02462.html" title="This registers the portions of the AbsorberVmrFixedLevel class that should be written as output..." alt="" coords="469,477,691,642"/>
+<area shape="rect" id="node7" href="$a04226.html" title="This registers the portions of the AbsorberVmrLevel class that should be written as output..." alt="" coords="715,491,911,627"/>
+<area shape="rect" id="node8" href="$a04230.html" title="This registers the portions of the AbsorberVmrLevelScaled class that should be written as output..." alt="" coords="935,491,1171,627"/>
+<area shape="rect" id="node9" href="$a04234.html" title="This registers the portions of the AbsorberVmrMet class that should be written as output..." alt="" coords="1196,491,1383,627"/>
+<area shape="rect" id="node10" href="$a04238.html" title="This registers the portions of the Aerosol class that should be written as output. " alt="" coords="1407,499,1611,620"/>
+<area shape="rect" id="node11" href="$a04246.html" title="This registers the portions of the Aerosol class that should be written as output. " alt="" coords="1636,484,1855,635"/>
+<area shape="rect" id="node12" href="$a04250.html" title="This registers the coefficients used for classes that inherits from AerosolExtinctionBaseImp. " alt="" coords="1879,491,2059,627"/>
+<area shape="rect" id="node13" href="$a04254.html" title="This registers the portions of the Altitude class that should be written as output. " alt="" coords="2084,499,2265,620"/>
+<area shape="rect" id="node14" href="$a04258.html" title="This registers the portions of the ConnorConvergence class that should be written as output..." alt="" coords="2290,499,2507,620"/>
+<area shape="rect" id="node15" href="$a04262.html" title="This registers the portions of the ConnorSolver class that should be written as output. " alt="" coords="2531,499,2709,620"/>
+<area shape="rect" id="node16" href="$a04266.html" title="This registers the portions of the DispersionFit class that should be written as output. " alt="" coords="2733,491,2907,627"/>
+<area shape="rect" id="node17" href="$a04270.html" title="This registers the portions of the DispersionPolynomial class that should be written as output..." alt="" coords="2932,491,3156,627"/>
+<area shape="rect" id="node18" href="$a04274.html" title="This registers the portions of the EmpiricalOrthogonalFunction class that should be written as output..." alt="" coords="3181,477,3395,642"/>
+<area shape="rect" id="node19" href="$a04278.html" title="This registers the portions of the ErrorAnalysis class that should be written as output. " alt="" coords="3420,499,3596,620"/>
+<area shape="rect" id="node20" href="$a04282.html" title="This registers the portions of the FluorescenceEffect class that should be written as output..." alt="" coords="3620,491,3823,627"/>
+<area shape="rect" id="node21" href="$a04286.html" title="This registers the portions of the GasVmrApriori class that should be written as output. " alt="" coords="3847,491,4030,627"/>
+<area shape="rect" id="node22" href="$a04294.html" title="This registers the portions of the GroundBrdf class that should be written as output. " alt="" coords="4055,499,4257,620"/>
+<area shape="rect" id="node23" href="$a04298.html" title="This registers the portions of the GroundCoxmunk class that should be written as output. " alt="" coords="4282,491,4478,627"/>
+<area shape="rect" id="node24" href="$a04302.html" title="This registers the portions of the GroundCoxmunkPlusLambertian class that should be written as output..." alt="" coords="4502,477,4733,642"/>
+<area shape="rect" id="node25" href="$a04306.html" title="This registers the portions of the GroundLambertian class that should be written as output..." alt="" coords="4757,491,4961,627"/>
+<area shape="rect" id="node26" href="$a04310.html" title="This class will recieve observer notifications from any class that pushes out NamedSpectrum and write..." alt="" coords="4985,455,5191,664"/>
+<area shape="rect" id="node27" href="$a04314.html" title="This registers the portions of the MaxAPosteriori class that should be written as output..." alt="" coords="5215,499,5401,620"/>
+<area shape="rect" id="node28" href="$a04318.html" title="Writes source filenames into the output file. " alt="" coords="5425,499,5623,620"/>
+<area shape="rect" id="node29" href="$a02474.html" title="This registers the portions of the PressureFixedLevel class that should be written as output..." alt="" coords="5647,491,5851,627"/>
+<area shape="rect" id="node30" href="$a04326.html" title="This registers the portions of the Pressure class that should be written as output. " alt="" coords="5876,499,6065,620"/>
+<area shape="rect" id="node31" href="$a04330.html" title="This registers the portions of the RadianceScaling class that should be written as output..." alt="" coords="6090,491,6286,627"/>
+<area shape="rect" id="node32" href="$a04338.html" title="Writes source filenames into the output file. " alt="" coords="6310,499,6477,620"/>
+<area shape="rect" id="node33" href="$a04346.html" title="This registers the portions of the ForwardModel class that should be written as output. " alt="" coords="6501,499,6715,620"/>
+<area shape="rect" id="node34" href="$a04354.html" title="This registers the portions of the StandardForwardModel class that should be written as output..." alt="" coords="6739,499,6962,620"/>
+<area shape="rect" id="node35" href="$a04358.html" title="This registers the portions of the StateVector class that should be written as output. " alt="" coords="6987,491,7157,627"/>
+<area shape="rect" id="node36" href="$a04366.html" title="This registers the portions of the StokesCoefficientFraction class that should be written as output..." alt="" coords="7181,477,7384,642"/>
+<area shape="rect" id="node37" href="$a02486.html" title="This registers the portions of the TemperatureFixedLevel class that should be written as output..." alt="" coords="7409,491,7634,627"/>
+<area shape="rect" id="node38" href="$a04370.html" title="This registers the portions of the TemperatureLevelOffset class that should be written as output..." alt="" coords="7659,491,7888,627"/>
+<area shape="rect" id="node39" href="$a04374.html" title="This registers the portions of the TemperatureMet class that should be written as output..." alt="" coords="7912,491,8096,627"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; RegisterOutputBase \&gt;\n||+ print_to_string()\l}" alt="" coords="3965,131,4129,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="3956,5,4137,83"/>
+</map>

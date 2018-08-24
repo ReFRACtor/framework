@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['spectrum_20related_20classes',['Spectrum related classes',['../a00003.html',1,'']]]
+  ['python_20specific_20documentation',['Python specific documentation',['../a06924.html',1,'']]]
 ];

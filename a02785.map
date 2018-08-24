@@ -1,0 +1,6 @@
+<map id="FullPhysics::LidortDriverCommonFixture" name="FullPhysics::LidortDriverCommonFixture">
+<area shape="rect" id="node2" href="$a02802.html" title="Fixture for LidortRtDriver coxmunk mode. " alt="" coords="5,321,209,428"/>
+<area shape="rect" id="node3" href="$a02798.html" title="Fixture for LidortRtDriver coxmunk mode. " alt="" coords="234,321,447,428"/>
+<area shape="rect" id="node4" href="$a02790.html" title="Fixture for LidortRtDriver lambertian mode. " alt="" coords="471,321,693,428"/>
+<area shape="rect" id="node5" href="$a02794.html" title="Fixture for LidortRtDriver lambertian mode thermal mode. " alt="" coords="717,307,937,443"/>
+</map>

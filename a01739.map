@@ -1,7 +1,0 @@
-<map id="Interface/spurr_brdf_types.h" name="Interface/spurr_brdf_types.h">
-<area shape="rect" id="node2" href="$a00678.html" title="Implementation/lidort\l_driver.cc" alt="" coords="5,95,148,136"/>
-<area shape="rect" id="node3" href="$a00680.html" title="Implementation/lidort\l_fixture.cc" alt="" coords="172,95,315,136"/>
-<area shape="rect" id="node4" href="$a00785.html" title="Implementation/twostream\l_driver.cc" alt="" coords="339,95,515,136"/>
-<area shape="rect" id="node5" href="$a00909.html" title="Interface/spurr_driver.cc" alt="" coords="539,102,702,129"/>
-<area shape="rect" id="node6" href="$a00911.html" title="Interface/spurr_rt.cc" alt="" coords="726,102,865,129"/>
-</map>

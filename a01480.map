@@ -1,24 +1,5 @@
-<map id="Implementation/radiance_scaling_sv_fit.h" name="Implementation/radiance_scaling_sv_fit.h">
-<area shape="rect" id="node2" href="$a00733.html" title="radiance_scaling.h" alt="" coords="353,95,484,121"/>
-<area shape="rect" id="node3" href="$a00846.html" title="instrument_correction.h" alt="" coords="189,169,347,196"/>
-<area shape="rect" id="node34" href="$a01049.html" title="double_with_unit.h" alt="" coords="423,483,553,509"/>
-<area shape="rect" id="node36" href="$a01106.html" title="sub_state_vector_array.h" alt="" coords="669,95,838,121"/>
-<area shape="rect" id="node6" href="$a01088.html" title="printable.h" alt="" coords="763,632,845,659"/>
-<area shape="rect" id="node29" href="$a01098.html" title="spectral_range.h" alt="" coords="91,319,210,345"/>
-<area shape="rect" id="node35" href="$a01096.html" title="spectral_domain.h" alt="" coords="235,319,363,345"/>
-<area shape="rect" id="node4" href="$a01105.html" title="state_vector_observer.h" alt="" coords="772,244,935,271"/>
-<area shape="rect" id="node5" href="$a01104.html" title="state_vector.h" alt="" coords="873,319,978,345"/>
-<area shape="rect" id="node9" href="$a01082.html" title="observer.h" alt="" coords="1361,483,1444,509"/>
-<area shape="rect" id="node17" href="$a01032.html" title="array_ad.h" alt="" coords="740,401,823,427"/>
-<area shape="rect" id="node19" href="$a01054.html" title="fp_exception.h" alt="" coords="977,557,1084,584"/>
-<area shape="rect" id="node7" href="$a01064.html" title="generic_object.h" alt="" coords="940,707,1057,733"/>
-<area shape="rect" id="node10" href="$a01081.html" title="null_deleter.h" alt="" coords="1311,557,1409,584"/>
-<area shape="rect" id="node18" href="$a01037.html" title="auto_derivative.h" alt="" coords="679,483,801,509"/>
-<area shape="rect" id="node20" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1311,632,1451,659"/>
-<area shape="rect" id="node30" href="$a01112.html" title="unit.h" alt="" coords="105,557,159,584"/>
-<area shape="rect" id="node33" href="$a01036.html" title="array_with_unit.h" alt="" coords="123,401,245,427"/>
-<area shape="rect" id="node37" href="$a01108.html" title="sub_state_vector_observer.h" alt="" coords="751,169,942,196"/>
-<area shape="rect" id="node38" href="$a00877.html" title="pressure.h" alt="" coords="967,169,1049,196"/>
-<area shape="rect" id="node39" href="$a01034.html" title="array_ad_with_unit.h" alt="" coords="643,319,786,345"/>
-<area shape="rect" id="node40" href="$a01038.html" title="auto_derivative_with\l_unit.h" alt="" coords="575,393,716,435"/>
+<map id="RegisterOutput/ground_coxmunk_output.h" name="RegisterOutput/ground_coxmunk_output.h">
+<area shape="rect" id="node2" href="$a01475.html" title="RegisterOutput/ground\l_coxmunk_output.cc" alt="" coords="5,102,159,143"/>
+<area shape="rect" id="node3" href="$a01484.html" title="RegisterOutput/ground\l_coxmunk_plus_lambertian\l_output.h" alt="" coords="183,95,363,151"/>
+<area shape="rect" id="node4" href="$a01481.html" title="RegisterOutput/ground\l_coxmunk_plus_lambertian\l_output.cc" alt="" coords="183,199,363,255"/>
 </map>

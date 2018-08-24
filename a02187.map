@@ -1,5 +1,0 @@
-<map id="FullPhysics::ArrayAdWithUnit&lt; T, D &gt;" name="FullPhysics::ArrayAdWithUnit&lt; T, D &gt;">
-<area shape="rect" id="node2" href="$a00523.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="465,273,612,571"/>
-<area shape="rect" id="node3" href="$a00415.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="21,132,171,224"/>
-<area shape="rect" id="node4" href="$a00171.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
-</map>

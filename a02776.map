@@ -1,0 +1,5 @@
+<map id="FullPhysics::LidortBrdfDriver" name="FullPhysics::LidortBrdfDriver">
+<area shape="rect" id="node2" href="$a03750.html" title="Abstracts away set up of BRDF kernel interfaces. " alt="" coords="5,132,208,532"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="16,5,197,83"/>
+<area shape="rect" id="node4" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Brdf_Linsup\l_Masters \&gt;\n||}" alt="" coords="232,279,403,385"/>
+</map>

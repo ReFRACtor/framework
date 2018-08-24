@@ -1,0 +1,27 @@
+var a03694 =
+[
+    [ "~RadiativeTransferFixedStokesCoefficient", "a03694.html#a4af291fc0b193b984daa060d96a18770", null ],
+    [ "RadiativeTransferFixedStokesCoefficient", "a03694.html#ade7169d50cbff7d8395e1db779a0dde7", null ],
+    [ "RadiativeTransferFixedStokesCoefficient", "a03694.html#ac108a1fed4454b2bb636208102ddf499", null ],
+    [ "add_observer", "a03694.html#a077578c1dd2f6eb3e434c58f3c93b40d", null ],
+    [ "add_observer_and_keep_reference", "a03694.html#a3dc34330b9a84e38b6a1fa05a0012335", null ],
+    [ "add_observer_do", "a03694.html#a7970e17e040afd9e5df213d9ea9868b0", null ],
+    [ "add_observer_do", "a03694.html#a5bf89406b6dca0f10d93d8c2134b308b", null ],
+    [ "clean_dead_ptr", "a03694.html#a7314770d025eb25151f8086d311e7970", null ],
+    [ "notify_update_do", "a03694.html#aa421058599b4fdf31fee1c3bbefd37b8", null ],
+    [ "number_spectrometer", "a03694.html#a037446a4e80665aae934bb7068cf3793", null ],
+    [ "number_stokes", "a03694.html#a96a55008f2885b8fba62383b20c98fcb", null ],
+    [ "print", "a03694.html#aed00e8f54a1d7f4ed18eeea797ce5766", null ],
+    [ "print_to_string", "a03694.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "progress_display", "a03694.html#ab4e411b24e65c26283021bfa136d23e5", null ],
+    [ "reflectance", "a03694.html#ae6d62fcb446022cbd4668eb691879aa1", null ],
+    [ "remove_observer", "a03694.html#a94b0c5e6044cab431ebe4b6725eea321", null ],
+    [ "remove_observer_do", "a03694.html#a4bf93566609435bf648a170f6ee4f5fa", null ],
+    [ "remove_observer_do", "a03694.html#ae3e1aeb7e65acda6147ae292a665c556", null ],
+    [ "stokes", "a03694.html#aad3a3065dc66ec68d18ed8d43f5d2588", null ],
+    [ "stokes_and_jacobian", "a03694.html#ae5c8df5de56cdf8cd497aaaff1e6efc0", null ],
+    [ "stokes_coefficient", "a03694.html#a26a1f14c78ec15f482d6aedbe548d62b", null ],
+    [ "olist", "a03694.html#a9a2122b1d0f4bfe1269def978c34b32a", null ],
+    [ "ref_list", "a03694.html#aae4b1ee50224cb361dc646986c729849", null ],
+    [ "stokes_coef", "a03694.html#ab682e087413d8179f87ec0ef878aabd9", null ]
+];

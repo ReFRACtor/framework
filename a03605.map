@@ -1,0 +1,9 @@
+<map id="FullPhysics::Level1b" name="FullPhysics::Level1b">
+<area shape="rect" id="node4" href="$a02766.html" title="This reads averages a set of Level1b classes to get the various values. " alt="" coords="5,550,196,774"/>
+<area shape="rect" id="node5" href="$a02770.html" title="This is a Level1b implementation that just saves the data read from another Level1b object..." alt="" coords="221,550,402,774"/>
+<area shape="rect" id="node6" href="$a03610.html" title="This is used to wrap the nominal Level 1B file reader. " alt="" coords="426,587,629,737"/>
+<area shape="rect" id="node8" href="$a02774.html" title="Scales the measured radiance of another Level1b class for each spectral band. " alt="" coords="653,543,836,781"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Level1b \&gt;\n||+ print_to_string()\l}" alt="" coords="345,131,494,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="329,5,510,83"/>
+<area shape="rect" id="node7" href="$a02434.html" title="This is an example L1B reader that reads a HDF formatted file that corresponds one&#45;to&#45;one with the ex..." alt="" coords="430,829,625,1053"/>
+</map>

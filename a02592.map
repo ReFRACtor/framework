@@ -1,2 +1,26 @@
-<map id="FullPhysics::lidort_fixed_boolean" name="FullPhysics::lidort_fixed_boolean">
+<map id="FullPhysics::ConfigurationFixture" name="FullPhysics::ConfigurationFixture">
+<area shape="rect" id="node2" href="$a04502.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="5,388,180,583"/>
+<area shape="rect" id="node3" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Instrument \&gt;\n||}" alt="" coords="205,439,381,531"/>
+<area shape="rect" id="node4" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Absorber \&gt;\n||}" alt="" coords="405,439,572,531"/>
+<area shape="rect" id="node5" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ErrorAnalysis \&gt;\n||}" alt="" coords="597,439,789,531"/>
+<area shape="rect" id="node6" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Aerosol \&gt;\n||}" alt="" coords="813,439,972,531"/>
+<area shape="rect" id="node7" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::SpectrumSampling \&gt;\n||}" alt="" coords="997,439,1221,531"/>
+<area shape="rect" id="node9" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::RegisterOutput\lBase \&gt;\n||}" alt="" coords="1236,175,1427,281"/>
+<area shape="rect" id="node10" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ConnorSolver \&gt;\n||}" alt="" coords="1441,439,1635,531"/>
+<area shape="rect" id="node11" href="$a03806.html" title="This is a light wrapper around the luabind::object. " alt="" coords="1659,359,1841,612"/>
+<area shape="rect" id="node12" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; LuabindObject \&gt;\n||+ print_to_string()\l}" alt="" coords="1567,182,1717,274"/>
+<area shape="rect" id="node13" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="1551,20,1733,97"/>
+<area shape="rect" id="node15" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::BridgeLuabind\lAndGenericBase \&gt;\n||}" alt="" coords="1766,5,1950,112"/>
+<area shape="rect" id="node16" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Ground \&gt;\n||}" alt="" coords="1865,439,2021,531"/>
+<area shape="rect" id="node17" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::RtAtmosphere \&gt;\n||}" alt="" coords="2045,439,2244,531"/>
+<area shape="rect" id="node18" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Temperature \&gt;\n||}" alt="" coords="2269,439,2455,531"/>
+<area shape="rect" id="node19" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::SpectralWindow \&gt;\n||}" alt="" coords="2480,439,2689,531"/>
+<area shape="rect" id="node20" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observation \&gt;\n||}" alt="" coords="2714,439,2898,531"/>
+<area shape="rect" id="node21" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ForwardModel \&gt;\n||}" alt="" coords="2923,439,3119,531"/>
+<area shape="rect" id="node22" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::StateVector \&gt;\n||}" alt="" coords="3143,439,3325,531"/>
+<area shape="rect" id="node23" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::RadiativeTransfer \&gt;\n||}" alt="" coords="3349,439,3567,531"/>
+<area shape="rect" id="node24" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Level1bSample\lCoefficient \&gt;\n||}" alt="" coords="3591,432,3781,539"/>
+<area shape="rect" id="node25" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::PressureLevel\lInput \&gt;\n||}" alt="" coords="3805,432,3991,539"/>
+<area shape="rect" id="node26" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Pressure \&gt;\n||}" alt="" coords="4015,439,4181,531"/>
+<area shape="rect" id="node27" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::InitialGuess \&gt;\n||}" alt="" coords="4205,439,4388,531"/>
 </map>

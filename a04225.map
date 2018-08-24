@@ -1,0 +1,5 @@
+<map id="FullPhysics::AbsorberVmrLevelOutput" name="FullPhysics::AbsorberVmrLevelOutput">
+<area shape="rect" id="node2" href="$a04334.html" title="As described in the Output class, we have a decentralized model of producing output for L2 Full Physi..." alt="" coords="5,271,221,407"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; RegisterOutputBase \&gt;\n||+ print_to_string()\l}" alt="" coords="31,131,195,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="23,5,204,83"/>
+</map>

@@ -1,0 +1,23 @@
+<map id="Implementation/solar_absorption_and_continuum.h" name="Implementation/solar_absorption_and_continuum.h">
+<area shape="rect" id="node2" href="$a01172.html" title="solar_model.h" alt="" coords="1235,95,1338,121"/>
+<area shape="rect" id="node39" href="$a01166.html" title="solar_doppler_shift.h" alt="" coords="1622,244,1765,271"/>
+<area shape="rect" id="node40" href="$a01154.html" title="solar_absorption_spectrum.h" alt="" coords="857,169,1047,196"/>
+<area shape="rect" id="node41" href="$a01160.html" title="solar_continuum_spectrum.h" alt="" coords="1843,169,2032,196"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="1243,617,1325,644"/>
+<area shape="rect" id="node6" href="$a01574.html" title="array_ad.h" alt="" coords="1043,393,1125,420"/>
+<area shape="rect" id="node22" href="$a01778.html" title="spectrum.h" alt="" coords="1205,244,1291,271"/>
+<area shape="rect" id="node30" href="$a01187.html" title="spectrum_effect.h" alt="" coords="1122,169,1249,196"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="839,692,956,719"/>
+<area shape="rect" id="node7" href="$a01589.html" title="auto_derivative.h" alt="" coords="1077,468,1198,495"/>
+<area shape="rect" id="node8" href="$a01640.html" title="fp_exception.h" alt="" coords="843,543,949,569"/>
+<area shape="rect" id="node9" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="231,617,371,644"/>
+<area shape="rect" id="node23" href="$a01766.html" title="spectral_domain.h" alt="" coords="1473,319,1601,345"/>
+<area shape="rect" id="node29" href="$a01772.html" title="spectral_range.h" alt="" coords="1181,319,1299,345"/>
+<area shape="rect" id="node24" href="$a01814.html" title="unit.h" alt="" coords="1735,543,1790,569"/>
+<area shape="rect" id="node27" href="$a01586.html" title="array_with_unit.h" alt="" coords="1477,393,1598,420"/>
+<area shape="rect" id="node28" href="$a01625.html" title="double_with_unit.h" alt="" coords="1628,468,1759,495"/>
+<area shape="rect" id="node31" href="$a01793.html" title="state_vector_observer.h" alt="" coords="824,244,987,271"/>
+<area shape="rect" id="node32" href="$a01790.html" title="state_vector.h" alt="" coords="823,319,929,345"/>
+<area shape="rect" id="node33" href="$a01724.html" title="observer.h" alt="" coords="397,468,480,495"/>
+<area shape="rect" id="node34" href="$a01721.html" title="null_deleter.h" alt="" coords="197,543,296,569"/>
+</map>

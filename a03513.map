@@ -1,0 +1,6 @@
+<map id="FullPhysics::InitialGuessBuilder" name="FullPhysics::InitialGuessBuilder">
+<area shape="rect" id="node4" href="$a03518.html" title="A common way to create an initial guess is to have other classes responsible for portions of the stat..." alt="" coords="5,535,197,774"/>
+<area shape="rect" id="node5" href="$a02738.html" title="This is a simple implementation of InitialGuessBuilder that just has variables used to give the aprio..." alt="" coords="221,499,403,811"/>
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; InitialGuessBuilder \&gt;\n||+ print_to_string()\l}" alt="" coords="129,131,284,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="116,5,297,83"/>
+</map>

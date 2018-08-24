@@ -1,4 +1,5 @@
-<map id="Example/example_met_file.h" name="Example/example_met_file.h">
-<area shape="rect" id="node2" href="$a00531.html" title="Example/example_met\l_file.cc" alt="" coords="5,95,160,136"/>
-<area shape="rect" id="node3" href="$a00694.html" title="Implementation/met\l_data_fixture.cc" alt="" coords="185,95,322,136"/>
+<map id="Interface/solar_model.h" name="Interface/solar_model.h">
+<area shape="rect" id="node2" href="$a00716.html" title="Implementation/solar\l_absorption_and_continuum.h" alt="" coords="9,80,204,121"/>
+<area shape="rect" id="node4" href="$a01169.html" title="Interface/solar_model.cc" alt="" coords="228,87,393,114"/>
+<area shape="rect" id="node3" href="$a00713.html" title="Implementation/solar\l_absorption_and_continuum.cc" alt="" coords="5,169,208,211"/>
 </map>

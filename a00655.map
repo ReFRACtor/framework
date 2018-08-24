@@ -1,0 +1,9 @@
+<map id="Implementation/radiance_scaling.h" name="Implementation/radiance_scaling.h">
+<area shape="rect" id="node2" href="$a00650.html" title="Implementation/radiance\l_scaling.cc" alt="" coords="5,95,169,136"/>
+<area shape="rect" id="node3" href="$a00659.html" title="Implementation/radiance\l_scaling_linear_fit.h" alt="" coords="193,95,357,136"/>
+<area shape="rect" id="node5" href="$a00665.html" title="Implementation/radiance\l_scaling_sv_fit.h" alt="" coords="381,95,545,136"/>
+<area shape="rect" id="node7" href="$a01520.html" title="RegisterOutput/radiance\l_scaling_output.h" alt="" coords="570,95,733,136"/>
+<area shape="rect" id="node4" href="$a00656.html" title="Implementation/radiance\l_scaling_linear_fit.cc" alt="" coords="193,184,357,225"/>
+<area shape="rect" id="node6" href="$a00662.html" title="Implementation/radiance\l_scaling_sv_fit.cc" alt="" coords="381,184,545,225"/>
+<area shape="rect" id="node8" href="$a01517.html" title="RegisterOutput/radiance\l_scaling_output.cc" alt="" coords="570,184,733,225"/>
+</map>

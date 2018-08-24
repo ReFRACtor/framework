@@ -1,0 +1,4 @@
+<map id="FullPhysics::InterpolatePoint&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;" name="FullPhysics::InterpolatePoint&lt; AutoDerivative&lt; double &gt;, AutoDerivative&lt; double &gt; &gt;">
+<area shape="rect" id="node2" href="$a04542.html" title="This is a specialization of LinearInterpolate2Point for AutoDerivative. " alt="" coords="5,204,208,369"/>
+<area shape="rect" id="node3" href="$a04538.html" title="{FullPhysics::Return1Point\l\&lt; AutoDerivative\&lt; double\l \&gt;, AutoDerivative\&lt; double \&gt; \&gt;\n||+ Return1Point()\l+ interpolate()\l+ print()\l+ x_max()\l+ x_min()\l}" alt="" coords="232,204,435,369"/>
+</map>

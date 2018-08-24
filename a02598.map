@@ -1,5 +1,0 @@
-<map id="FullPhysics::Lidort_Modified_Boolean" name="FullPhysics::Lidort_Modified_Boolean">
-<area shape="rect" id="node2" href="$a00268.html" title="{FullPhysics::Lidort\l_Structure\n|# fortran_type_c\l# owns_pointer\l|+ Lidort_Structure()\l+ Lidort_Structure()\l+ fortran_type_ptr()\l+ print()\l}" alt="" coords="34,271,169,421"/>
-<area shape="rect" id="node3" href="$a00383.html" title="{FullPhysics::Printable\l\&lt; Lidort_Structure \&gt;\n||+ print_to_string()\l}" alt="" coords="27,131,176,223"/>
-<area shape="rect" id="node4" href="$a00151.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="11,5,192,83"/>
-</map>

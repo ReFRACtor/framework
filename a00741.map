@@ -1,0 +1,19 @@
+<map id="Implementation/solar_continuum_table.h" name="Implementation/solar_continuum_table.h">
+<area shape="rect" id="node2" href="$a01682.html" title="hdf_file.h" alt="" coords="1056,244,1131,271"/>
+<area shape="rect" id="node29" href="$a01160.html" title="solar_continuum_spectrum.h" alt="" coords="355,95,544,121"/>
+<area shape="rect" id="node37" href="$a01703.html" title="linear_interpolate.h" alt="" coords="1584,244,1715,271"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="453,543,536,569"/>
+<area shape="rect" id="node6" href="$a01640.html" title="fp_exception.h" alt="" coords="1160,468,1267,495"/>
+<area shape="rect" id="node15" href="$a01700.html" title="linear_algebra.h" alt="" coords="717,319,830,345"/>
+<area shape="rect" id="node18" href="$a01586.html" title="array_with_unit.h" alt="" coords="314,319,435,345"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="436,617,553,644"/>
+<area shape="rect" id="node7" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="995,543,1135,569"/>
+<area shape="rect" id="node19" href="$a01814.html" title="unit.h" alt="" coords="41,468,95,495"/>
+<area shape="rect" id="node23" href="$a01625.html" title="double_with_unit.h" alt="" coords="308,393,439,420"/>
+<area shape="rect" id="node30" href="$a01778.html" title="spectrum.h" alt="" coords="406,169,493,196"/>
+<area shape="rect" id="node31" href="$a01766.html" title="spectral_domain.h" alt="" coords="460,244,588,271"/>
+<area shape="rect" id="node36" href="$a01772.html" title="spectral_range.h" alt="" coords="315,244,434,271"/>
+<area shape="rect" id="node32" href="$a01574.html" title="array_ad.h" alt="" coords="855,319,937,345"/>
+<area shape="rect" id="node33" href="$a01589.html" title="auto_derivative.h" alt="" coords="1039,393,1161,420"/>
+<area shape="rect" id="node39" href="$a01706.html" title="linear_interpolate_ad.h" alt="" coords="1611,319,1763,345"/>
+</map>

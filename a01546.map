@@ -1,5 +1,3 @@
-<map id="Implementation/stokes_coefficient_fraction.h" name="Implementation/stokes_coefficient_fraction.h">
-<area shape="rect" id="node2" href="$a00779.html" title="Implementation/stokes\l_coefficient_fraction.cc" alt="" coords="5,102,163,143"/>
-<area shape="rect" id="node3" href="$a01026.html" title="RegisterOutput/stokes\l_coefficient_fraction\l_output.h" alt="" coords="187,95,341,151"/>
-<area shape="rect" id="node4" href="$a01025.html" title="RegisterOutput/stokes\l_coefficient_fraction\l_output.cc" alt="" coords="187,199,341,255"/>
+<map id="RegisterOutput/standard_forward_model_output.h" name="RegisterOutput/standard_forward_model_output.h">
+<area shape="rect" id="node2" href="$a01541.html" title="RegisterOutput/standard\l_forward_model_output.cc" alt="" coords="5,95,180,136"/>
 </map>

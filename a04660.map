@@ -1,0 +1,8 @@
+<map id="FullPhysics::SubStateVectorProxy" name="FullPhysics::SubStateVectorProxy">
+<area shape="rect" id="node2" href="$a04658.html" title="A common StateVectorObserver just &quot;owns&quot; a subset of the StateVector. " alt="" coords="173,677,368,1019"/>
+<area shape="rect" id="node3" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="94,413,266,549"/>
+<area shape="rect" id="node4" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,176,173,268"/>
+<area shape="rect" id="node5" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="89,5,271,83"/>
+<area shape="rect" id="node6" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,132,349,312"/>
+<area shape="rect" id="node7" href="$a04390.html" title="{FullPhysics::ArrayAd\l\&lt; double, 1 \&gt;\n||+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\land 43 more...\l}" alt="" coords="290,361,435,600"/>
+</map>

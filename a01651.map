@@ -1,9 +1,0 @@
-<map id="Interface/iterative_solver_der.cc" name="Interface/iterative_solver_der.cc">
-<area shape="rect" id="node2" href="$a00850.html" title="iterative_solver_der.h" alt="" coords="253,95,400,121"/>
-<area shape="rect" id="node3" href="$a00848.html" title="iterative_solver.h" alt="" coords="194,169,315,196"/>
-<area shape="rect" id="node12" href="$a00816.html" title="cost_func_diff.h" alt="" coords="343,169,457,196"/>
-<area shape="rect" id="node5" href="$a01088.html" title="printable.h" alt="" coords="325,393,408,420"/>
-<area shape="rect" id="node10" href="$a00814.html" title="cost_func.h" alt="" coords="357,244,448,271"/>
-<area shape="rect" id="node6" href="$a01064.html" title="generic_object.h" alt="" coords="249,468,367,495"/>
-<area shape="rect" id="node11" href="$a00880.html" title="problem_state.h" alt="" coords="357,319,472,345"/>
-</map>

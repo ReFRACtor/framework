@@ -1,0 +1,21 @@
+<map id="Interface/instrument.cc" name="Interface/instrument.cc">
+<area shape="rect" id="node2" href="$a00998.html" title="instrument.h" alt="" coords="1198,80,1293,107"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="655,603,737,629"/>
+<area shape="rect" id="node6" href="$a01178.html" title="spectral_window.h" alt="" coords="929,155,1060,181"/>
+<area shape="rect" id="node25" href="$a01778.html" title="spectrum.h" alt="" coords="578,229,665,256"/>
+<area shape="rect" id="node27" href="$a01574.html" title="array_ad.h" alt="" coords="851,379,933,405"/>
+<area shape="rect" id="node32" href="$a01793.html" title="state_vector_observer.h" alt="" coords="1285,155,1448,181"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="864,677,981,704"/>
+<area shape="rect" id="node9" href="$a01760.html" title="spectral_bound.h" alt="" coords="1027,304,1149,331"/>
+<area shape="rect" id="node18" href="$a01625.html" title="double_with_unit.h" alt="" coords="429,453,560,480"/>
+<area shape="rect" id="node10" href="$a01640.html" title="fp_exception.h" alt="" coords="1048,528,1155,555"/>
+<area shape="rect" id="node24" href="$a01586.html" title="array_with_unit.h" alt="" coords="434,379,555,405"/>
+<area shape="rect" id="node11" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1223,603,1363,629"/>
+<area shape="rect" id="node19" href="$a01814.html" title="unit.h" alt="" coords="111,528,166,555"/>
+<area shape="rect" id="node26" href="$a01766.html" title="spectral_domain.h" alt="" coords="547,304,675,331"/>
+<area shape="rect" id="node31" href="$a01772.html" title="spectral_range.h" alt="" coords="403,304,522,331"/>
+<area shape="rect" id="node28" href="$a01589.html" title="auto_derivative.h" alt="" coords="635,453,757,480"/>
+<area shape="rect" id="node33" href="$a01790.html" title="state_vector.h" alt="" coords="1297,304,1402,331"/>
+<area shape="rect" id="node34" href="$a01724.html" title="observer.h" alt="" coords="1672,453,1755,480"/>
+<area shape="rect" id="node35" href="$a01721.html" title="null_deleter.h" alt="" coords="1955,528,2053,555"/>
+</map>

@@ -1,0 +1,22 @@
+<map id="Implementation/spectral_window_range.cc" name="Implementation/spectral_window_range.cc">
+<area shape="rect" id="node2" href="$a00770.html" title="spectral_window_range.h" alt="" coords="367,95,537,121"/>
+<area shape="rect" id="node10" href="$a01640.html" title="fp_exception.h" alt="" coords="1140,543,1247,569"/>
+<area shape="rect" id="node32" href="$a00944.html" title="dispersion.h" alt="" coords="1317,169,1409,196"/>
+<area shape="rect" id="node3" href="$a01178.html" title="spectral_window.h" alt="" coords="387,169,517,196"/>
+<area shape="rect" id="node24" href="$a01586.html" title="array_with_unit.h" alt="" coords="253,393,374,420"/>
+<area shape="rect" id="node4" href="$a01742.html" title="printable.h" alt="" coords="629,617,712,644"/>
+<area shape="rect" id="node9" href="$a01760.html" title="spectral_bound.h" alt="" coords="150,319,271,345"/>
+<area shape="rect" id="node18" href="$a01625.html" title="double_with_unit.h" alt="" coords="144,468,275,495"/>
+<area shape="rect" id="node25" href="$a01778.html" title="spectrum.h" alt="" coords="449,244,535,271"/>
+<area shape="rect" id="node5" href="$a01670.html" title="generic_object.h" alt="" coords="1281,692,1399,719"/>
+<area shape="rect" id="node11" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1474,617,1614,644"/>
+<area shape="rect" id="node19" href="$a01814.html" title="unit.h" alt="" coords="238,543,293,569"/>
+<area shape="rect" id="node26" href="$a01766.html" title="spectral_domain.h" alt="" coords="552,319,680,345"/>
+<area shape="rect" id="node31" href="$a01772.html" title="spectral_range.h" alt="" coords="405,319,523,345"/>
+<area shape="rect" id="node27" href="$a01574.html" title="array_ad.h" alt="" coords="921,393,1004,420"/>
+<area shape="rect" id="node28" href="$a01589.html" title="auto_derivative.h" alt="" coords="1001,468,1122,495"/>
+<area shape="rect" id="node33" href="$a01793.html" title="state_vector_observer.h" alt="" coords="1231,244,1393,271"/>
+<area shape="rect" id="node35" href="$a01724.html" title="observer.h" alt="" coords="1535,468,1617,495"/>
+<area shape="rect" id="node34" href="$a01790.html" title="state_vector.h" alt="" coords="1234,319,1339,345"/>
+<area shape="rect" id="node36" href="$a01721.html" title="null_deleter.h" alt="" coords="1844,543,1943,569"/>
+</map>

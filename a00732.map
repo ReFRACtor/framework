@@ -1,0 +1,17 @@
+<map id="Implementation/solar_continuum_polynomial.cc" name="Implementation/solar_continuum_polynomial.cc">
+<area shape="rect" id="node2" href="$a00734.html" title="solar_continuum_polynomial.h" alt="" coords="775,95,972,121"/>
+<area shape="rect" id="node15" href="$a01640.html" title="fp_exception.h" alt="" coords="904,557,1011,584"/>
+<area shape="rect" id="node31" href="$a01733.html" title="ostream_pad.h" alt="" coords="1070,95,1178,121"/>
+<area shape="rect" id="node3" href="$a01160.html" title="solar_continuum_spectrum.h" alt="" coords="755,177,944,203"/>
+<area shape="rect" id="node28" href="$a01586.html" title="array_with_unit.h" alt="" coords="111,408,233,435"/>
+<area shape="rect" id="node4" href="$a01742.html" title="printable.h" alt="" coords="461,632,544,659"/>
+<area shape="rect" id="node7" href="$a01778.html" title="spectrum.h" alt="" coords="517,259,603,285"/>
+<area shape="rect" id="node5" href="$a01670.html" title="generic_object.h" alt="" coords="405,707,523,733"/>
+<area shape="rect" id="node8" href="$a01766.html" title="spectral_domain.h" alt="" coords="313,333,441,360"/>
+<area shape="rect" id="node30" href="$a01772.html" title="spectral_range.h" alt="" coords="501,333,619,360"/>
+<area shape="rect" id="node9" href="$a01814.html" title="unit.h" alt="" coords="46,557,101,584"/>
+<area shape="rect" id="node13" href="$a01574.html" title="array_ad.h" alt="" coords="608,408,691,435"/>
+<area shape="rect" id="node14" href="$a01589.html" title="auto_derivative.h" alt="" coords="411,483,533,509"/>
+<area shape="rect" id="node16" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="878,632,1018,659"/>
+<area shape="rect" id="node29" href="$a01625.html" title="double_with_unit.h" alt="" coords="104,483,235,509"/>
+</map>

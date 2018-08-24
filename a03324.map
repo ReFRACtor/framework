@@ -1,2 +1,20 @@
-<map id="Python.factory.creator.absorber.AbsorberGasDefinition" name="Python.factory.creator.absorber.AbsorberGasDefinition">
+<map id="FullPhysics::RadianceScalingLinearFit" name="FullPhysics::RadianceScalingLinearFit">
+<area shape="rect" id="node2" href="$a03322.html" title="This abstract class provides the generic capabilities for applying a radiance scaling to a Radiance..." alt="" coords="2102,1156,2298,1365"/>
+<area shape="rect" id="node3" href="$a03594.html" title="This class models an Instrument correction. " alt="" coords="617,906,837,1042"/>
+<area shape="rect" id="node4" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="641,575,813,711"/>
+<area shape="rect" id="node5" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="549,219,717,311"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="1103,20,1284,97"/>
+<area shape="rect" id="node7" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="742,175,893,355"/>
+<area shape="rect" id="node8" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; InstrumentCorrection \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="275,524,450,763"/>
+<area shape="rect" id="node12" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; RadianceScaling \&gt;\n||+ print_to_string()\l}" alt="" coords="2481,379,2631,471"/>
+<area shape="rect" id="node14" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; AutoDerivative\&lt; double \&gt; \&gt;\n||+ print_to_string()\l}" alt="" coords="1096,219,1291,311"/>
+<area shape="rect" id="node20" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; DoubleWithUnit \&gt;\n||+ print_to_string()\l}" alt="" coords="1448,379,1597,471"/>
+<area shape="rect" id="node23" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="2415,219,2564,311"/>
+<area shape="rect" id="node11" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; InstrumentCorrection \&gt; \&gt;\n||}" alt="" coords="42,5,222,112"/>
+<area shape="rect" id="node13" href="$a04414.html" title="{FullPhysics::AutoDerivative\l\&lt; double \&gt;\n||+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ copy()\l+ gradient()\l+ gradient()\l+ is_constant()\land 19 more...\l}" alt="" coords="1241,524,1425,763"/>
+<area shape="rect" id="node17" title="STL class. " alt="" coords="2259,935,2339,1013"/>
+<area shape="rect" id="node18" title="STL class. " alt="" coords="2259,597,2386,689"/>
+<area shape="rect" id="node19" href="$a04446.html" title="We frequently have a double with units associated with it. " alt="" coords="1855,855,2046,1093"/>
+<area shape="rect" id="node22" href="$a04678.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="1815,495,1961,792"/>
+<area shape="rect" id="node29" href="$a04390.html" title="{FullPhysics::ArrayAd\l\&lt; double, 1 \&gt;\n||+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\land 43 more...\l}" alt="" coords="2363,855,2509,1093"/>
 </map>

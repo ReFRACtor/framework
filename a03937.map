@@ -1,0 +1,6 @@
+<map id="Python.factory.creator.forward_model.PerChannelMixin" name="Python.factory.creator.forward_model.PerChannelMixin">
+<area shape="rect" id="node3" href="$a03946.html" title="{Python.factory.creator.forward\l_model.SpectrumSamplingBase\n|+ high_res_spacing\l|+ spacing()\l}" alt="" coords="306,271,514,363"/>
+<area shape="rect" id="node4" href="$a03950.html" title="{Python.factory.creator.forward\l_model.FixedSpacingSpectrumSampling\n||+ create()\l}" alt="" coords="5,411,263,503"/>
+<area shape="rect" id="node5" href="$a03958.html" title="{Python.factory.creator.forward\l_model.NonuniformSpectrumSampling\n|+ channel_domains\l|+ create()\l}" alt="" coords="287,411,533,503"/>
+<area shape="rect" id="node6" href="$a03954.html" title="{Python.factory.creator.forward\l_model.UniformSpectrumSampling\n||+ create()\l}" alt="" coords="557,411,781,503"/>
+</map>

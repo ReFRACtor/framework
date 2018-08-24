@@ -1,3 +1,8 @@
-<map id="Python.factory.param.Array" name="Python.factory.param.Array">
-<area shape="rect" id="node2" href="$a00103.html" title="{Python.factory.param.Config\lParam\n|+ accessor_func\l+ default\l+ required\l|+ __init__()\l+ check_type()\l+ evaluate()\l}" alt="" coords="5,131,195,281"/>
+<map id="FullPhysics::Absorber" name="FullPhysics::Absorber">
+<area shape="rect" id="node7" href="$a02502.html" title="This class maintains the absorber portion of the state. " alt="" coords="195,947,381,1215"/>
+<area shape="rect" id="node2" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="103,417,275,553"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,175,173,267"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="183,5,364,83"/>
+<area shape="rect" id="node5" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,131,349,311"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; Absorber \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="299,359,474,612"/>
 </map>

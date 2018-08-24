@@ -1,2 +1,15 @@
-<map id="Python.factory.creator.instrument.IlsTable" name="Python.factory.creator.instrument.IlsTable">
+<map id="FullPhysics::StokesCoefficientFraction" name="FullPhysics::StokesCoefficientFraction">
+<area shape="rect" id="node2" href="$a03766.html" title="As a design principle, we have each base class with the absolutely minimum interface needed for use f..." alt="" coords="385,1541,591,1751"/>
+<area shape="rect" id="node3" href="$a04654.html" title="{FullPhysics::SubStateVector\lArray\&lt; StokesCoefficient \&gt;\n|# cov\l# mark_according_to_press\l# pdep_start\l# used_flag\l|+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ ~SubStateVectorArray()\l+ coefficient()\l+ init()\l+ mark_used_sub()\l+ pressure()\l+ state_vector_name_i()\l+ state_vector_name_sub()\l+ statevector_covariance()\l+ sub_state_identifier()\l+ update_sub_state()\l+ update_sub_state_hook()\l+ used_flag_value()\l}" alt="" coords="297,1137,487,1479"/>
+<area shape="rect" id="node4" href="$a03762.html" title="This class maintains the stokes coefficient portion of the state. " alt="" coords="375,836,577,972"/>
+<area shape="rect" id="node5" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="187,469,359,605"/>
+<area shape="rect" id="node13" href="$a04658.html" title="A common StateVectorObserver just &quot;owns&quot; a subset of the StateVector. " alt="" coords="156,733,351,1075"/>
+<area shape="rect" id="node6" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="5,219,173,311"/>
+<area shape="rect" id="node7" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="183,20,364,97"/>
+<area shape="rect" id="node8" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="198,175,349,355"/>
+<area shape="rect" id="node9" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; StokesCoefficient \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="414,417,589,656"/>
+<area shape="rect" id="node11" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; StokesCoefficient \&gt; \&gt;\n||}" alt="" coords="460,5,623,112"/>
+<area shape="rect" id="node14" href="$a04390.html" title="{FullPhysics::ArrayAd\l\&lt; double, 1 \&gt;\n||+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\land 43 more...\l}" alt="" coords="18,417,163,656"/>
+<area shape="rect" id="node15" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Pressure \&gt;\n||}" alt="" coords="602,858,769,950"/>
+<area shape="rect" id="node16" href="$a04390.html" title="{FullPhysics::ArrayAd\l\&lt; double, 2 \&gt;\n||+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\land 43 more...\l}" alt="" coords="511,1189,657,1427"/>
 </map>

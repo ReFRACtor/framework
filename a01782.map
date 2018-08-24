@@ -1,3 +1,15 @@
-<map id="RegisterOutput/absorber_vmr_level_scaled_output.h" name="RegisterOutput/absorber_vmr_level_scaled_output.h">
-<area shape="rect" id="node2" href="$a00968.html" title="RegisterOutput/absorber\l_vmr_level_scaled_output.cc" alt="" coords="5,95,196,136"/>
+<map id="Support/stacked_radiance_mixin.cc" name="Support/stacked_radiance_mixin.cc">
+<area shape="rect" id="node2" href="$a01784.html" title="stacked_radiance_mixin.h" alt="" coords="415,95,588,121"/>
+<area shape="rect" id="node3" href="$a01766.html" title="spectral_domain.h" alt="" coords="439,244,567,271"/>
+<area shape="rect" id="node28" href="$a01778.html" title="spectrum.h" alt="" coords="499,169,586,196"/>
+<area shape="rect" id="node4" href="$a01742.html" title="printable.h" alt="" coords="645,543,728,569"/>
+<area shape="rect" id="node7" href="$a01814.html" title="unit.h" alt="" coords="943,468,998,495"/>
+<area shape="rect" id="node11" href="$a01574.html" title="array_ad.h" alt="" coords="461,319,544,345"/>
+<area shape="rect" id="node26" href="$a01586.html" title="array_with_unit.h" alt="" coords="691,319,813,345"/>
+<area shape="rect" id="node5" href="$a01670.html" title="generic_object.h" alt="" coords="683,617,800,644"/>
+<area shape="rect" id="node12" href="$a01589.html" title="auto_derivative.h" alt="" coords="541,393,662,420"/>
+<area shape="rect" id="node13" href="$a01640.html" title="fp_exception.h" alt="" coords="257,468,364,495"/>
+<area shape="rect" id="node14" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="241,543,381,569"/>
+<area shape="rect" id="node27" href="$a01625.html" title="double_with_unit.h" alt="" coords="687,393,817,420"/>
+<area shape="rect" id="node29" href="$a01772.html" title="spectral_range.h" alt="" coords="693,244,811,271"/>
 </map>

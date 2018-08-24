@@ -1,0 +1,5 @@
+<map id="FullPhysics::SpurrBrdfDriver" name="FullPhysics::SpurrBrdfDriver">
+<area shape="rect" id="node3" href="$a02778.html" title="LIDORT specific BRDF driver implementation. " alt="" coords="5,579,208,920"/>
+<area shape="rect" id="node4" href="$a03450.html" title="TwoStream specific BRDF driver implementation. " alt="" coords="232,579,435,920"/>
+<area shape="rect" id="node2" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="129,5,311,83"/>
+</map>

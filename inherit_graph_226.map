@@ -1,3 +1,4 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$a00213.html" title="FullPhysics::Interpolate\lPoint\&lt; FullPhysics::AutoDerivative\l\&lt; double \&gt;, FullPhysics::AutoDerivative\l\&lt; double \&gt; \&gt;" alt="" coords="5,5,260,76"/>
+<area shape="rect" id="node1" href="$a03802.html" title="For use with python, it is useful to map all the LuabindObject that are a class defined in full physi..." alt="" coords="5,5,185,47"/>
+<area shape="rect" id="node2" href="$a03814.html" title="Instance of BridgeLuabindAndGenericBase for a particular type. " alt="" coords="233,5,413,47"/>
 </map>

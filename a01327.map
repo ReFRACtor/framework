@@ -1,8 +1,0 @@
-<map id="Implementation/ground_brdf.h" name="Implementation/ground_brdf.h">
-<area shape="rect" id="node2" href="$a00634.html" title="Implementation/ground\l_brdf.cc" alt="" coords="5,95,160,136"/>
-<area shape="rect" id="node3" href="$a00640.html" title="Implementation/ground\l_fixture.h" alt="" coords="184,95,339,136"/>
-<area shape="rect" id="node4" href="$a00670.html" title="Implementation/l_rad\l_rt.cc" alt="" coords="363,95,506,136"/>
-<area shape="rect" id="node5" href="$a00911.html" title="Interface/spurr_rt.cc" alt="" coords="531,102,669,129"/>
-<area shape="rect" id="node6" href="$a00998.html" title="RegisterOutput/ground\l_brdf_output.h" alt="" coords="694,95,847,136"/>
-<area shape="rect" id="node7" href="$a00997.html" title="RegisterOutput/ground\l_brdf_output.cc" alt="" coords="694,184,847,225"/>
-</map>

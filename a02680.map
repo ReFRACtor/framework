@@ -1,3 +1,4 @@
-<map id="FullPhysics::LidortDriverCommonFixture" name="FullPhysics::LidortDriverCommonFixture">
-<area shape="rect" id="node2" href="$a00410.html" title="{boost::shared_ptr\&lt;\l FullPhysics::LidortRtDriver \&gt;\n||}" alt="" coords="13,5,208,97"/>
+<map id="FullPhysics::GasVmrApriori" name="FullPhysics::GasVmrApriori">
+<area shape="rect" id="node2" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; GasVmrApriori \&gt;\n||+ print_to_string()\l}" alt="" coords="22,131,171,223"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="6,5,187,83"/>
 </map>

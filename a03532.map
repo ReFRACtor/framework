@@ -1,0 +1,6 @@
+<map id="FullPhysics::CostFuncDiff" name="FullPhysics::CostFuncDiff">
+<area shape="rect" id="node2" href="$a03530.html" title="The base class for all problem classes that implement a cost function. " alt="" coords="5,587,201,825"/>
+<area shape="rect" id="node3" href="$a03686.html" title="The base class for all problem states. " alt="" coords="8,271,199,539"/>
+<area shape="rect" id="node4" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="29,131,178,223"/>
+<area shape="rect" id="node5" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="13,5,194,83"/>
+</map>

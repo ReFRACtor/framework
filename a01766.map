@@ -1,9 +1,0 @@
-<map id="Lua/lua_state.h" name="Lua/lua_state.h">
-<area shape="rect" id="node2" href="$a01088.html" title="printable.h" alt="" coords="1307,304,1390,331"/>
-<area shape="rect" id="node5" href="$a00930.html" title="register_lua.h" alt="" coords="483,155,583,181"/>
-<area shape="rect" id="node16" href="$a00928.html" title="luabind_object.h" alt="" coords="1084,80,1200,107"/>
-<area shape="rect" id="node3" href="$a01064.html" title="generic_object.h" alt="" coords="1290,379,1407,405"/>
-<area shape="rect" id="node17" href="$a01054.html" title="fp_exception.h" alt="" coords="1026,229,1133,256"/>
-<area shape="rect" id="node24" href="$a00921.html" title="dir_change.h" alt="" coords="1137,155,1233,181"/>
-<area shape="rect" id="node18" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="613,304,753,331"/>
-</map>

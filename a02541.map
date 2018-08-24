@@ -1,0 +1,8 @@
+<map id="FullPhysics::AltitudeHydrostatic" name="FullPhysics::AltitudeHydrostatic">
+<area shape="rect" id="node2" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; Temperature \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="5,432,156,612"/>
+<area shape="rect" id="node3" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="195,5,377,83"/>
+<area shape="rect" id="node4" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; Pressure \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="180,432,331,612"/>
+<area shape="rect" id="node6" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; Altitude \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="261,131,436,384"/>
+<area shape="rect" id="node7" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Altitude \&gt;\n||+ print_to_string()\l}" alt="" coords="461,211,610,303"/>
+<area shape="rect" id="node5" href="$a03510.html" title="The class handles the calculation of the altitude and gravity constants. " alt="" coords="355,432,497,612"/>
+</map>

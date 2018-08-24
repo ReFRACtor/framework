@@ -1,2 +1,5 @@
-<map id="FullPhysics::lidort_modified_inputs" name="FullPhysics::lidort_modified_inputs">
+<map id="FullPhysics::ConnorCostFunction" name="FullPhysics::ConnorCostFunction">
+<area shape="rect" id="node2" href="$a03546.html" title="This class calculates a cost function, along with a jacobian. " alt="" coords="27,271,203,377"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; CostFunction \&gt;\n||+ print_to_string()\l}" alt="" coords="40,131,189,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="24,5,205,83"/>
 </map>

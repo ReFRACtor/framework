@@ -1,0 +1,21 @@
+<map id="Implementation/connor_cost_function.h" name="Implementation/connor_cost_function.h">
+<area shape="rect" id="node2" href="$a00932.html" title="cost_function.h" alt="" coords="451,468,562,495"/>
+<area shape="rect" id="node7" href="$a01790.html" title="state_vector.h" alt="" coords="1231,319,1337,345"/>
+<area shape="rect" id="node29" href="$a00950.html" title="forward_model.h" alt="" coords="809,95,927,121"/>
+<area shape="rect" id="node40" href="$a01088.html" title="observation.h" alt="" coords="685,95,785,121"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="860,617,943,644"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="1269,692,1387,719"/>
+<area shape="rect" id="node8" href="$a01724.html" title="observer.h" alt="" coords="1760,468,1843,495"/>
+<area shape="rect" id="node16" href="$a01574.html" title="array_ad.h" alt="" coords="932,393,1015,420"/>
+<area shape="rect" id="node18" href="$a01640.html" title="fp_exception.h" alt="" coords="1281,543,1388,569"/>
+<area shape="rect" id="node9" href="$a01721.html" title="null_deleter.h" alt="" coords="1935,543,2033,569"/>
+<area shape="rect" id="node17" href="$a01589.html" title="auto_derivative.h" alt="" coords="841,468,962,495"/>
+<area shape="rect" id="node19" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1805,617,1945,644"/>
+<area shape="rect" id="node30" href="$a01778.html" title="spectrum.h" alt="" coords="798,244,885,271"/>
+<area shape="rect" id="node38" href="$a01784.html" title="stacked_radiance_mixin.h" alt="" coords="652,169,825,196"/>
+<area shape="rect" id="node31" href="$a01766.html" title="spectral_domain.h" alt="" coords="536,319,664,345"/>
+<area shape="rect" id="node37" href="$a01772.html" title="spectral_range.h" alt="" coords="790,319,909,345"/>
+<area shape="rect" id="node32" href="$a01814.html" title="unit.h" alt="" coords="166,543,221,569"/>
+<area shape="rect" id="node35" href="$a01586.html" title="array_with_unit.h" alt="" coords="539,393,661,420"/>
+<area shape="rect" id="node36" href="$a01625.html" title="double_with_unit.h" alt="" coords="296,468,427,495"/>
+</map>

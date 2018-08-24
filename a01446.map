@@ -1,13 +1,27 @@
-<map id="Implementation/nlls_solver_gsl_lmder.cc" name="Implementation/nlls_solver_gsl_lmder.cc">
-<area shape="rect" id="node2" href="$a00715.html" title="nlls_solver_gsl_lmder.h" alt="" coords="178,95,337,121"/>
-<area shape="rect" id="node3" href="$a00713.html" title="nlls_solver_gsl.h" alt="" coords="198,169,317,196"/>
-<area shape="rect" id="node5" href="$a00868.html" title="nlls_solver.h" alt="" coords="282,244,377,271"/>
-<area shape="rect" id="node6" href="$a00850.html" title="iterative_solver_der.h" alt="" coords="180,319,327,345"/>
-<area shape="rect" id="node17" href="$a00864.html" title="nlls_problem.h" alt="" coords="351,319,457,345"/>
-<area shape="rect" id="node7" href="$a00848.html" title="iterative_solver.h" alt="" coords="193,393,314,420"/>
-<area shape="rect" id="node16" href="$a00816.html" title="cost_func_diff.h" alt="" coords="345,393,460,420"/>
-<area shape="rect" id="node9" href="$a01088.html" title="printable.h" alt="" coords="325,617,408,644"/>
-<area shape="rect" id="node14" href="$a00814.html" title="cost_func.h" alt="" coords="357,468,448,495"/>
-<area shape="rect" id="node10" href="$a01064.html" title="generic_object.h" alt="" coords="249,692,367,719"/>
-<area shape="rect" id="node15" href="$a00880.html" title="problem_state.h" alt="" coords="357,543,472,569"/>
+<map id="RegisterOutput/empirical_orthogonal_function_output.h" name="RegisterOutput/empirical_orthogonal_function_output.h">
+<area shape="rect" id="node2" href="$a01526.html" title="register_output_base.h" alt="" coords="932,333,1087,360"/>
+<area shape="rect" id="node16" href="$a00281.html" title="empirical_orthogonal\l_function.h" alt="" coords="1527,95,1668,136"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="1962,632,2044,659"/>
+<area shape="rect" id="node6" href="$a01094.html" title="output.h" alt="" coords="571,408,640,435"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="1716,707,1834,733"/>
+<area shape="rect" id="node17" href="$a00944.html" title="dispersion.h" alt="" coords="1878,259,1970,285"/>
+<area shape="rect" id="node36" href="$a01586.html" title="array_with_unit.h" alt="" coords="2129,408,2250,435"/>
+<area shape="rect" id="node39" href="$a01004.html" title="instrument_correction.h" alt="" coords="1994,259,2153,285"/>
+<area shape="rect" id="node41" href="$a01682.html" title="hdf_file.h" alt="" coords="1263,333,1338,360"/>
+<area shape="rect" id="node46" href="$a01796.html" title="sub_state_vector_array.h" alt="" coords="1513,184,1682,211"/>
+<area shape="rect" id="node18" href="$a01793.html" title="state_vector_observer.h" alt="" coords="1702,333,1864,360"/>
+<area shape="rect" id="node20" href="$a01724.html" title="observer.h" alt="" coords="1606,483,1688,509"/>
+<area shape="rect" id="node31" href="$a01766.html" title="spectral_domain.h" alt="" coords="2010,333,2138,360"/>
+<area shape="rect" id="node19" href="$a01790.html" title="state_vector.h" alt="" coords="1730,408,1836,435"/>
+<area shape="rect" id="node27" href="$a01574.html" title="array_ad.h" alt="" coords="1919,483,2002,509"/>
+<area shape="rect" id="node28" href="$a01640.html" title="fp_exception.h" alt="" coords="1844,557,1951,584"/>
+<area shape="rect" id="node21" href="$a01721.html" title="null_deleter.h" alt="" coords="1047,557,1146,584"/>
+<area shape="rect" id="node29" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1277,632,1417,659"/>
+<area shape="rect" id="node32" href="$a01814.html" title="unit.h" alt="" coords="2293,557,2348,584"/>
+<area shape="rect" id="node37" href="$a01625.html" title="double_with_unit.h" alt="" coords="2127,483,2258,509"/>
+<area shape="rect" id="node40" href="$a01772.html" title="spectral_range.h" alt="" coords="2229,333,2348,360"/>
+<area shape="rect" id="node42" href="$a01700.html" title="linear_algebra.h" alt="" coords="1389,408,1502,435"/>
+<area shape="rect" id="node47" href="$a01802.html" title="sub_state_vector_observer.h" alt="" coords="1664,259,1854,285"/>
+<area shape="rect" id="node48" href="$a01103.html" title="pressure.h" alt="" coords="1556,259,1639,285"/>
+<area shape="rect" id="node49" href="$a01580.html" title="array_ad_with_unit.h" alt="" coords="1860,408,2002,435"/>
 </map>

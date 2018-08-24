@@ -1,0 +1,7 @@
+<map id="FullPhysics::CompositeInitialGuess" name="FullPhysics::CompositeInitialGuess">
+<area shape="rect" id="node2" href="$a03586.html" title="This gets the initial guess and the apriori state vector values. " alt="" coords="5,293,172,429"/>
+<area shape="rect" id="node3" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; InitialGuess \&gt;\n||+ print_to_string()\l}" alt="" coords="25,131,174,223"/>
+<area shape="rect" id="node4" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="97,5,278,83"/>
+<area shape="rect" id="node6" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; InitialGuessBuilder \&gt;\n||+ print_to_string()\l}" alt="" coords="203,131,358,223"/>
+<area shape="rect" id="node5" href="$a03514.html" title="Class that builds a portion of the state vector. " alt="" coords="197,271,378,451"/>
+</map>

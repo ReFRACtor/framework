@@ -1,4 +1,2 @@
-<map id="FullPhysics::TwostreamRtDriver" name="FullPhysics::TwostreamRtDriver">
-<area shape="rect" id="node2" href="$a00440.html" title="Abstracts away set up of Radiative Transfer software from Rob Spurr into a simpler common inteface us..." alt="" coords="5,131,187,384"/>
-<area shape="rect" id="node3" href="$a00151.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="5,5,187,83"/>
+<map id="FullPhysics::lidort_modified_sunrays" name="FullPhysics::lidort_modified_sunrays">
 </map>

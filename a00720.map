@@ -1,0 +1,16 @@
+<map id="Implementation/solar_absorption_gfit_file.cc" name="Implementation/solar_absorption_gfit_file.cc">
+<area shape="rect" id="node2" href="$a00722.html" title="solar_absorption_gfit\l_file.h" alt="" coords="811,95,954,136"/>
+<area shape="rect" id="node15" href="$a01640.html" title="fp_exception.h" alt="" coords="944,557,1051,584"/>
+<area shape="rect" id="node3" href="$a01154.html" title="solar_absorption_spectrum.h" alt="" coords="776,184,965,211"/>
+<area shape="rect" id="node4" href="$a01742.html" title="printable.h" alt="" coords="607,632,689,659"/>
+<area shape="rect" id="node7" href="$a01778.html" title="spectrum.h" alt="" coords="467,259,554,285"/>
+<area shape="rect" id="node5" href="$a01670.html" title="generic_object.h" alt="" coords="589,707,707,733"/>
+<area shape="rect" id="node8" href="$a01766.html" title="spectral_domain.h" alt="" coords="447,333,575,360"/>
+<area shape="rect" id="node30" href="$a01772.html" title="spectral_range.h" alt="" coords="298,333,417,360"/>
+<area shape="rect" id="node9" href="$a01814.html" title="unit.h" alt="" coords="111,557,166,584"/>
+<area shape="rect" id="node13" href="$a01574.html" title="array_ad.h" alt="" coords="567,408,649,435"/>
+<area shape="rect" id="node28" href="$a01586.html" title="array_with_unit.h" alt="" coords="297,408,418,435"/>
+<area shape="rect" id="node14" href="$a01589.html" title="auto_derivative.h" alt="" coords="691,483,813,509"/>
+<area shape="rect" id="node16" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1038,632,1178,659"/>
+<area shape="rect" id="node29" href="$a01625.html" title="double_with_unit.h" alt="" coords="292,483,423,509"/>
+</map>

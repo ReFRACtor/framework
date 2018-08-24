@@ -1,2 +1,4 @@
-<map id="FullPhysics::InterpolatePoint&lt; TX, TY &gt;" name="FullPhysics::InterpolatePoint&lt; TX, TY &gt;">
+<map id="FullPhysics::AtmosphereFixture" name="FullPhysics::AtmosphereFixture">
+<area shape="rect" id="node2" href="$a02594.html" title="There are a number of tests that need to use a standard set of objects, similar to what we generate w..." alt="" coords="22,248,197,545"/>
+<area shape="rect" id="node3" href="$a04502.html" title="This is a global fixture that is available to all unit tests. " alt="" coords="22,5,197,200"/>
 </map>

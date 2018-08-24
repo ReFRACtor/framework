@@ -1,0 +1,4 @@
+<map id="Python.factory.creator.forward_model.SpectrumSamplingBase" name="Python.factory.creator.forward_model.SpectrumSamplingBase">
+<area shape="rect" id="node2" href="$a03914.html" title="{Python.factory.creator.base.\lCreator\n|+ common_store\l+ config_def\l+ parameters\l|+ __init__()\l+ __call__()\l+ create()\l+ deregister_to_receive()\l+ param()\l+ receive()\l+ register_parameter()\l+ register_to_receive()\l}" alt="" coords="5,131,192,355"/>
+<area shape="rect" id="node4" href="$a03938.html" title="{Python.factory.creator.forward\l_model.PerChannelMixin\n|+ num_channels\l|+ check_num_channels()\l}" alt="" coords="217,197,415,289"/>
+</map>

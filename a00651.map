@@ -1,0 +1,21 @@
+<map id="Implementation/radiance_scaling.cc" name="Implementation/radiance_scaling.cc">
+<area shape="rect" id="node2" href="$a00653.html" title="radiance_scaling.h" alt="" coords="403,95,533,121"/>
+<area shape="rect" id="node38" href="$a01739.html" title="polynomial_eval.h" alt="" coords="795,259,922,285"/>
+<area shape="rect" id="node39" href="$a01733.html" title="ostream_pad.h" alt="" coords="1157,95,1265,121"/>
+<area shape="rect" id="node3" href="$a01004.html" title="instrument_correction.h" alt="" coords="447,177,606,203"/>
+<area shape="rect" id="node6" href="$a01742.html" title="printable.h" alt="" coords="817,632,900,659"/>
+<area shape="rect" id="node31" href="$a01772.html" title="spectral_range.h" alt="" coords="627,333,746,360"/>
+<area shape="rect" id="node36" href="$a01625.html" title="double_with_unit.h" alt="" coords="245,483,376,509"/>
+<area shape="rect" id="node37" href="$a01766.html" title="spectral_domain.h" alt="" coords="403,333,531,360"/>
+<area shape="rect" id="node4" href="$a01793.html" title="state_vector_observer.h" alt="" coords="557,259,720,285"/>
+<area shape="rect" id="node5" href="$a01790.html" title="state_vector.h" alt="" coords="951,333,1057,360"/>
+<area shape="rect" id="node9" href="$a01724.html" title="observer.h" alt="" coords="1488,483,1571,509"/>
+<area shape="rect" id="node17" href="$a01574.html" title="array_ad.h" alt="" coords="817,408,900,435"/>
+<area shape="rect" id="node19" href="$a01640.html" title="fp_exception.h" alt="" coords="1016,557,1123,584"/>
+<area shape="rect" id="node7" href="$a01670.html" title="generic_object.h" alt="" coords="1020,707,1137,733"/>
+<area shape="rect" id="node10" href="$a01721.html" title="null_deleter.h" alt="" coords="1573,557,1672,584"/>
+<area shape="rect" id="node18" href="$a01589.html" title="auto_derivative.h" alt="" coords="798,483,919,509"/>
+<area shape="rect" id="node20" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="1390,632,1530,659"/>
+<area shape="rect" id="node32" href="$a01814.html" title="unit.h" alt="" coords="203,557,258,584"/>
+<area shape="rect" id="node35" href="$a01586.html" title="array_with_unit.h" alt="" coords="406,408,527,435"/>
+</map>

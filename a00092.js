@@ -1,26 +1,4 @@
 var a00092 =
 [
-    [ "Brdf_Sup_Outputs", "a00092.html#a8df6e50fdc6e862f8f735defbca66748", null ],
-    [ "Brdf_Sup_Outputs", "a00092.html#afaf2f65f41ea57c44650c22e41a5c955", null ],
-    [ "~Brdf_Sup_Outputs", "a00092.html#a8b44e5b2ed8935449fcf5862a85dacbf", null ],
-    [ "bs_brdf_f", "a00092.html#a2b3fad8393e33503db1ebfd1fa324989", null ],
-    [ "bs_brdf_f", "a00092.html#a5ee282fb43eed5d2eb2065b4ca8288df", null ],
-    [ "bs_brdf_f_0", "a00092.html#a32fb335c3dd96dbe5c13073012c57407", null ],
-    [ "bs_brdf_f_0", "a00092.html#ab552445fd72c54ad3229199daf4a8276", null ],
-    [ "bs_emissivity", "a00092.html#ada6e68785c7e3321ff6c9183322dd99c", null ],
-    [ "bs_emissivity", "a00092.html#ad24c62ca1702973561c908d6ef7503b8", null ],
-    [ "bs_exactdb_brdfunc", "a00092.html#a71ee859bd8137cc69ba9340fb9c1dd9e", null ],
-    [ "bs_exactdb_brdfunc", "a00092.html#a19f2b0473bd3f460d92403b8c7959ee7", null ],
-    [ "bs_user_brdf_f", "a00092.html#a712d333609b21abd9cedabccb6cee6af", null ],
-    [ "bs_user_brdf_f", "a00092.html#abf99bc0bc8427598a8621c65752c6122", null ],
-    [ "bs_user_brdf_f_0", "a00092.html#aa14f4e6d5e7b6e27cf263ca4f527f1f7", null ],
-    [ "bs_user_brdf_f_0", "a00092.html#a7532b5604eabce42e9852fda974a2587", null ],
-    [ "bs_user_emissivity", "a00092.html#af6cc40ee64483306411868cda67905c0", null ],
-    [ "bs_user_emissivity", "a00092.html#a05a3edf4d4e51edbf54e7ffbfa563b45", null ],
-    [ "check_byte_sizes", "a00092.html#a3ea31dde1ccce7f301f47a41d8652dff", null ],
-    [ "fortran_type_ptr", "a00092.html#af1f9a2f8cc4b0d6d661df474e8c3a910", null ],
-    [ "print", "a00092.html#a53b0774f1244eaf572f1cd69a9476db7", null ],
-    [ "print_to_string", "a00092.html#adb52c1f4ab60cbabfdcb8aa32fac7b20", null ],
-    [ "fortran_type_c", "a00092.html#a4ad8c958b21c4ffdfe812410ff96992c", null ],
-    [ "owns_pointer", "a00092.html#a47d6495523d09a3d38ff44f297a5d2cb", null ]
+    [ "sqr", "a00092.html#a22f4e97ed7ca9e188dc4e074a1b2e5a7", null ]
 ];

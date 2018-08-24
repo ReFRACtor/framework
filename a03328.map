@@ -1,0 +1,23 @@
+<map id="FullPhysics::RadianceScalingSvFit" name="FullPhysics::RadianceScalingSvFit">
+<area shape="rect" id="node2" href="$a03322.html" title="This abstract class provides the generic capabilities for applying a radiance scaling to a Radiance..." alt="" coords="1601,1339,1797,1549"/>
+<area shape="rect" id="node3" href="$a03594.html" title="This class models an Instrument correction. " alt="" coords="1763,972,1983,1108"/>
+<area shape="rect" id="node30" href="$a04654.html" title="{FullPhysics::SubStateVector\lArray\&lt; InstrumentCorrection \&gt;\n|# cov\l# mark_according_to_press\l# pdep_start\l# used_flag\l|+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ SubStateVectorArray()\l+ ~SubStateVectorArray()\l+ coefficient()\l+ init()\l+ mark_used_sub()\l+ pressure()\l+ state_vector_name_i()\l+ state_vector_name_sub()\l+ statevector_covariance()\l+ sub_state_identifier()\l+ update_sub_state()\l+ update_sub_state_hook()\l+ used_flag_value()\l}" alt="" coords="2130,1273,2329,1615"/>
+<area shape="rect" id="node4" href="$a04650.html" title="This is an observer of a StateVector. " alt="" coords="1985,575,2157,711"/>
+<area shape="rect" id="node31" href="$a04658.html" title="A common StateVectorObserver just &quot;owns&quot; a subset of the StateVector. " alt="" coords="2337,869,2532,1211"/>
+<area shape="rect" id="node5" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; StateVectorObserver \&gt;\n||+ print_to_string()\l}" alt="" coords="2171,219,2339,311"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="1600,20,1781,97"/>
+<area shape="rect" id="node7" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; StateVector \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="1995,175,2146,355"/>
+<area shape="rect" id="node8" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; InstrumentCorrection \&gt;\n||+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="1786,524,1961,763"/>
+<area shape="rect" id="node12" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; RadianceScaling \&gt;\n||+ print_to_string()\l}" alt="" coords="1572,379,1721,471"/>
+<area shape="rect" id="node14" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; AutoDerivative\&lt; double \&gt; \&gt;\n||+ print_to_string()\l}" alt="" coords="184,219,379,311"/>
+<area shape="rect" id="node20" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; DoubleWithUnit \&gt;\n||+ print_to_string()\l}" alt="" coords="532,379,681,471"/>
+<area shape="rect" id="node23" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="996,219,1145,311"/>
+<area shape="rect" id="node11" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observer\l\&lt; InstrumentCorrection \&gt; \&gt;\n||}" alt="" coords="2399,5,2579,112"/>
+<area shape="rect" id="node13" href="$a04414.html" title="{FullPhysics::AutoDerivative\l\&lt; double \&gt;\n||+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ AutoDerivative()\l+ copy()\l+ gradient()\l+ gradient()\l+ is_constant()\land 19 more...\l}" alt="" coords="288,524,472,763"/>
+<area shape="rect" id="node17" title="STL class. " alt="" coords="1659,1001,1739,1079"/>
+<area shape="rect" id="node18" title="STL class. " alt="" coords="1635,597,1762,689"/>
+<area shape="rect" id="node19" href="$a04446.html" title="We frequently have a double with units associated with it. " alt="" coords="1038,921,1229,1159"/>
+<area shape="rect" id="node22" href="$a04678.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="1132,495,1279,792"/>
+<area shape="rect" id="node29" href="$a04390.html" title="{FullPhysics::ArrayAd\l\&lt; double, 1 \&gt;\n||+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\l+ ArrayAd()\land 43 more...\l}" alt="" coords="2362,524,2507,763"/>
+<area shape="rect" id="node32" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Pressure \&gt;\n||}" alt="" coords="2146,994,2313,1086"/>
+</map>

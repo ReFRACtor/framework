@@ -1,0 +1,18 @@
+<map id="Implementation/solar_doppler_shift_l1b.cc" name="Implementation/solar_doppler_shift_l1b.cc">
+<area shape="rect" id="node2" href="$a00746.html" title="solar_doppler_shift\l_l1b.h" alt="" coords="177,95,308,136"/>
+<area shape="rect" id="node33" href="$a01730.html" title="old_constant.h" alt="" coords="32,102,139,129"/>
+<area shape="rect" id="node3" href="$a01166.html" title="solar_doppler_shift.h" alt="" coords="747,184,890,211"/>
+<area shape="rect" id="node7" href="$a01625.html" title="double_with_unit.h" alt="" coords="272,408,403,435"/>
+<area shape="rect" id="node29" href="$a01658.html" title="fp_time.h" alt="" coords="194,483,270,509"/>
+<area shape="rect" id="node31" href="$a01619.html" title="default_constant.h" alt="" coords="297,184,426,211"/>
+<area shape="rect" id="node4" href="$a01742.html" title="printable.h" alt="" coords="697,565,780,591"/>
+<area shape="rect" id="node13" href="$a01766.html" title="spectral_domain.h" alt="" coords="755,259,883,285"/>
+<area shape="rect" id="node5" href="$a01670.html" title="generic_object.h" alt="" coords="563,647,680,673"/>
+<area shape="rect" id="node8" href="$a01814.html" title="unit.h" alt="" coords="310,483,365,509"/>
+<area shape="rect" id="node14" href="$a01574.html" title="array_ad.h" alt="" coords="777,333,860,360"/>
+<area shape="rect" id="node28" href="$a01586.html" title="array_with_unit.h" alt="" coords="631,333,753,360"/>
+<area shape="rect" id="node15" href="$a01589.html" title="auto_derivative.h" alt="" coords="671,408,793,435"/>
+<area shape="rect" id="node16" href="$a01640.html" title="fp_exception.h" alt="" coords="827,483,933,509"/>
+<area shape="rect" id="node17" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="959,565,1099,591"/>
+<area shape="rect" id="node32" href="$a01613.html" title="constant.h" alt="" coords="296,259,379,285"/>
+</map>

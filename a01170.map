@@ -1,16 +1,20 @@
-<map id="Example/example_level_1b.h" name="Example/example_level_1b.h">
-<area shape="rect" id="node2" href="$a00852.html" title="level_1b.h" alt="" coords="631,80,713,107"/>
-<area shape="rect" id="node9" href="$a01049.html" title="double_with_unit.h" alt="" coords="569,304,700,331"/>
-<area shape="rect" id="node10" href="$a01112.html" title="unit.h" alt="" coords="295,379,350,405"/>
-<area shape="rect" id="node29" href="$a01068.html" title="hdf_file.h" alt="" coords="1149,155,1224,181"/>
-<area shape="rect" id="node3" href="$a01060.html" title="fp_time.h" alt="" coords="374,379,450,405"/>
-<area shape="rect" id="node4" href="$a01088.html" title="printable.h" alt="" coords="783,461,865,487"/>
-<area shape="rect" id="node14" href="$a01098.html" title="spectral_range.h" alt="" coords="543,155,662,181"/>
-<area shape="rect" id="node5" href="$a01064.html" title="generic_object.h" alt="" coords="765,543,883,569"/>
-<area shape="rect" id="node15" href="$a01036.html" title="array_with_unit.h" alt="" coords="710,229,831,256"/>
-<area shape="rect" id="node17" href="$a01032.html" title="array_ad.h" alt="" coords="856,229,939,256"/>
-<area shape="rect" id="node18" href="$a01037.html" title="auto_derivative.h" alt="" coords="763,304,885,331"/>
-<area shape="rect" id="node19" href="$a01054.html" title="fp_exception.h" alt="" coords="1211,379,1317,405"/>
-<area shape="rect" id="node20" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="1391,461,1531,487"/>
-<area shape="rect" id="node30" href="$a01074.html" title="linear_algebra.h" alt="" coords="1471,229,1585,256"/>
+<map id="Interface/solar_model.cc" name="Interface/solar_model.cc">
+<area shape="rect" id="node2" href="$a01172.html" title="solar_model.h" alt="" coords="1102,80,1205,107"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="1199,603,1281,629"/>
+<area shape="rect" id="node6" href="$a01574.html" title="array_ad.h" alt="" coords="1087,379,1169,405"/>
+<area shape="rect" id="node22" href="$a01778.html" title="spectrum.h" alt="" coords="1161,229,1247,256"/>
+<area shape="rect" id="node30" href="$a01187.html" title="spectrum_effect.h" alt="" coords="1090,155,1217,181"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="832,677,949,704"/>
+<area shape="rect" id="node7" href="$a01589.html" title="auto_derivative.h" alt="" coords="1166,453,1287,480"/>
+<area shape="rect" id="node8" href="$a01640.html" title="fp_exception.h" alt="" coords="1075,528,1181,555"/>
+<area shape="rect" id="node9" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="242,603,382,629"/>
+<area shape="rect" id="node23" href="$a01766.html" title="spectral_domain.h" alt="" coords="1115,304,1243,331"/>
+<area shape="rect" id="node29" href="$a01772.html" title="spectral_range.h" alt="" coords="1318,304,1437,331"/>
+<area shape="rect" id="node24" href="$a01814.html" title="unit.h" alt="" coords="1605,528,1659,555"/>
+<area shape="rect" id="node27" href="$a01586.html" title="array_with_unit.h" alt="" coords="1317,379,1438,405"/>
+<area shape="rect" id="node28" href="$a01625.html" title="double_with_unit.h" alt="" coords="1312,453,1443,480"/>
+<area shape="rect" id="node31" href="$a01793.html" title="state_vector_observer.h" alt="" coords="785,229,948,256"/>
+<area shape="rect" id="node32" href="$a01790.html" title="state_vector.h" alt="" coords="703,304,809,331"/>
+<area shape="rect" id="node33" href="$a01724.html" title="observer.h" alt="" coords="327,453,409,480"/>
+<area shape="rect" id="node34" href="$a01721.html" title="null_deleter.h" alt="" coords="232,528,331,555"/>
 </map>

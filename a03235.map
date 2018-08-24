@@ -1,4 +1,0 @@
-<map id="Python.factory.param.DoubleWithUnit" name="Python.factory.param.DoubleWithUnit">
-<area shape="rect" id="node2" href="$a00184.html" title="{Python.factory.param.InstanceOf\n|+ cls_type\l|+ __init__()\l+ check_type()\l}" alt="" coords="5,315,220,407"/>
-<area shape="rect" id="node3" href="$a00091.html" title="{Python.factory.param.Config\lParam\n|+ accessor_func\l+ required\l|+ __init__()\l+ check_type()\l+ evaluate()\l}" alt="" coords="18,131,207,267"/>
-</map>

@@ -1,12 +1,5 @@
-<map id="Interface/gas_absorption.h" name="Interface/gas_absorption.h">
-<area shape="rect" id="node2" href="$a00554.html" title="Implementation/absco.h" alt="" coords="249,80,410,107"/>
-<area shape="rect" id="node11" href="$a00831.html" title="Interface/gas_absorption.cc" alt="" coords="434,80,617,107"/>
-<area shape="rect" id="node3" href="$a00553.html" title="Implementation/absco.cc" alt="" coords="5,162,173,189"/>
-<area shape="rect" id="node4" href="$a00556.html" title="Implementation/absco\l_hdf.h" alt="" coords="198,155,349,196"/>
-<area shape="rect" id="node6" href="$a00558.html" title="Implementation/absorber\l_absco.h" alt="" coords="452,155,617,196"/>
-<area shape="rect" id="node7" href="$a00557.html" title="Implementation/absorber\l_absco.cc" alt="" coords="304,244,469,285"/>
-<area shape="rect" id="node5" href="$a00555.html" title="Implementation/absco\l_hdf.cc" alt="" coords="129,244,279,285"/>
-<area shape="rect" id="node8" href="$a00617.html" title="Implementation/error\l_analysis.cc" alt="" coords="493,244,635,285"/>
-<area shape="rect" id="node9" href="$a00965.html" title="RegisterOutput/absorber\l_absco_output.h" alt="" coords="659,244,823,285"/>
-<area shape="rect" id="node10" href="$a00964.html" title="RegisterOutput/absorber\l_absco_output.cc" alt="" coords="659,333,823,375"/>
+<map id="Support/double_with_unit.h" name="Support/double_with_unit.h">
+<area shape="rect" id="node2" href="$a01742.html" title="printable.h" alt="" coords="81,169,164,196"/>
+<area shape="rect" id="node5" href="$a01814.html" title="unit.h" alt="" coords="223,95,278,121"/>
+<area shape="rect" id="node3" href="$a01670.html" title="generic_object.h" alt="" coords="5,244,123,271"/>
 </map>

@@ -1,8 +1,0 @@
-<map id="Support/fp_gsl_integrate.h" name="Support/fp_gsl_integrate.h">
-<area shape="rect" id="node2" href="$a00558.html" title="Implementation/absorber\l_absco.h" alt="" coords="183,80,348,121"/>
-<area shape="rect" id="node7" href="$a01055.html" title="Support/fp_gsl_integrate.cc" alt="" coords="372,87,553,114"/>
-<area shape="rect" id="node3" href="$a00557.html" title="Implementation/absorber\l_absco.cc" alt="" coords="5,169,171,211"/>
-<area shape="rect" id="node4" href="$a00617.html" title="Implementation/error\l_analysis.cc" alt="" coords="195,169,336,211"/>
-<area shape="rect" id="node5" href="$a00965.html" title="RegisterOutput/absorber\l_absco_output.h" alt="" coords="361,169,525,211"/>
-<area shape="rect" id="node6" href="$a00964.html" title="RegisterOutput/absorber\l_absco_output.cc" alt="" coords="361,259,525,300"/>
-</map>

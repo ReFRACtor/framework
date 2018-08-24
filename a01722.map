@@ -1,12 +1,2 @@
-<map id="Interface/solar_doppler_shift.h" name="Interface/solar_doppler_shift.h">
-<area shape="rect" id="node2" href="$a01088.html" title="printable.h" alt="" coords="481,393,564,420"/>
-<area shape="rect" id="node5" href="$a01049.html" title="double_with_unit.h" alt="" coords="236,244,367,271"/>
-<area shape="rect" id="node11" href="$a01096.html" title="spectral_domain.h" alt="" coords="441,95,569,121"/>
-<area shape="rect" id="node3" href="$a01064.html" title="generic_object.h" alt="" coords="464,468,581,495"/>
-<area shape="rect" id="node6" href="$a01112.html" title="unit.h" alt="" coords="182,319,237,345"/>
-<area shape="rect" id="node12" href="$a01032.html" title="array_ad.h" alt="" coords="664,169,747,196"/>
-<area shape="rect" id="node24" href="$a01036.html" title="array_with_unit.h" alt="" coords="343,169,465,196"/>
-<area shape="rect" id="node13" href="$a01037.html" title="auto_derivative.h" alt="" coords="645,244,766,271"/>
-<area shape="rect" id="node14" href="$a01054.html" title="fp_exception.h" alt="" coords="920,319,1027,345"/>
-<area shape="rect" id="node15" href="$a01041.html" title="boost/backtrace.hpp" alt="" coords="899,393,1039,420"/>
+<map id="Support/null_deleter.h" name="Support/null_deleter.h">
 </map>

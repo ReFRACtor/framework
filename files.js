@@ -7,11 +7,12 @@ var files =
     [ "Interface", "dir_86b2acb48dc403d1a3fcbb48606cba44.html", "dir_86b2acb48dc403d1a3fcbb48606cba44" ],
     [ "Lua", "dir_80c5aae1158239b7a446671bc53df8bc.html", "dir_80c5aae1158239b7a446671bc53df8bc" ],
     [ "Python", "dir_9bf9b44e740e1563db58b756f3828e2a.html", "dir_9bf9b44e740e1563db58b756f3828e2a" ],
+    [ "RadiativeTransfer", "dir_1523bfaa5926718362c3283d9a0961c2.html", "dir_1523bfaa5926718362c3283d9a0961c2" ],
     [ "RegisterOutput", "dir_a83254288943f6b0d8a7f32dfc5a5743.html", "dir_a83254288943f6b0d8a7f32dfc5a5743" ],
     [ "Support", "dir_f0dc79bace318df7ec0fa0bdb179ed95.html", "dir_f0dc79bace318df7ec0fa0bdb179ed95" ],
-    [ "swig_to_python.h", "a01115.html", "a01115" ],
-    [ "swig_type_mapper.h", "a01116.html", [
-      [ "SwigTypeMapper", "a00498.html", "a00498" ]
+    [ "swig_to_python.h", "a01823.html", "a01823" ],
+    [ "swig_type_mapper.h", "a01826.html", [
+      [ "SwigTypeMapper", "a04682.html", "a04682" ]
     ] ],
-    [ "swig_type_mapper_base.h", "a01117.html", "a01117" ]
+    [ "swig_type_mapper_base.h", "a01829.html", "a01829" ]
 ];

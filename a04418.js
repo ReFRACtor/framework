@@ -1,0 +1,25 @@
+var a04418 =
+[
+    [ "AutoDerivativeRef", "a04418.html#a211caa83389cbb1c8e5f821f8f995ed2", null ],
+    [ "AutoDerivativeRef", "a04418.html#aec39ab8e4eb0b60516a9f8be8f24d89a", null ],
+    [ "gradient", "a04418.html#ac75fc9ce68087ce20723ef6c089b59a8", null ],
+    [ "gradient_ref", "a04418.html#a18851f97c1e5ceeca97036ed3cbe25c6", null ],
+    [ "operator=", "a04418.html#a3c1a14d6209ab2c16906f74d00fc3471", null ],
+    [ "print", "a04418.html#a2ac7c846753929be5021dfd11343b41b", null ],
+    [ "print_to_string", "a04418.html#aaa21f558fa22a1f06175a1357c7f5a22", null ],
+    [ "value", "a04418.html#a5481a36c1a73ede8c251737d677ab547", null ],
+    [ "value_ref", "a04418.html#a241b683ecc7de6a922504337eb4f2655", null ],
+    [ "operator*", "a04418.html#ae0f5e565e6485d6221ef3e27dcabe9b3", null ],
+    [ "operator*", "a04418.html#ad08a18cb33091f526cdb43d4c1f14cd5", null ],
+    [ "operator*", "a04418.html#ab76b613f6b2fa0800b1475f5c00b8ee5", null ],
+    [ "operator+", "a04418.html#abbe2d68b8ca04a4167b64012ec2a844f", null ],
+    [ "operator+", "a04418.html#a38bbb9797d31c0d7ebfa85c635b85857", null ],
+    [ "operator+", "a04418.html#affe9015812fc895edcb8e8e3b39341b0", null ],
+    [ "operator-", "a04418.html#a8c200b9b1fb03b1769bbc66610fdf294", null ],
+    [ "operator-", "a04418.html#abb234f176c3d5fac265e2c26699245cb", null ],
+    [ "operator-", "a04418.html#a0861e320f97f51fc3baf2acebc14b189", null ],
+    [ "operator-", "a04418.html#a05648e508ede944a44564862c5bc8a97", null ],
+    [ "operator/", "a04418.html#aba2577fde5e68ee17cf2ee746cc1c0cd", null ],
+    [ "operator/", "a04418.html#a06cbbff89ba47ad10cf63cdacb8fbe82", null ],
+    [ "operator/", "a04418.html#a829242cf7d205ec894ba4c57bb54648b", null ]
+];

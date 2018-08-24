@@ -1,2 +1,10 @@
-<map id="Python.factory.creator.solar_model.SolarDopplerShiftPolynomial" name="Python.factory.creator.solar_model.SolarDopplerShiftPolynomial">
+<map id="FullPhysics::TwostreamRt" name="FullPhysics::TwostreamRt">
+<area shape="rect" id="node2" href="$a03758.html" title="Abstract Interface for Rt classes based on Spurr driver implementations. " alt="" coords="396,1189,565,1560"/>
+<area shape="rect" id="node3" href="$a03706.html" title="This is a RadiativeTransfer that supplies an interface that can be called for a single wavenumber..." alt="" coords="217,888,427,1141"/>
+<area shape="rect" id="node4" href="$a03694.html" title="For GOSAT and OCO, we have a set of stokes coefficients to go from Stokes vector to radiation..." alt="" coords="179,587,398,840"/>
+<area shape="rect" id="node5" href="$a03690.html" title="This runs a Radiative Transfer code to determine the reflectance for a given set of wavelengths..." alt="" coords="5,315,207,495"/>
+<area shape="rect" id="node6" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; RadiativeTransfer \&gt;\n||+ print_to_string()\l}" alt="" coords="95,131,245,223"/>
+<area shape="rect" id="node7" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="255,5,437,83"/>
+<area shape="rect" id="node8" href="$a04590.html" title="{FullPhysics::Observable\l\&lt; std::vector\&lt; boost::\lshared_ptr\&lt; NamedSpectrum \&gt; \&gt; \&gt;\n|# olist\l# ref_list\l|+ ~Observable()\l+ add_observer()\l+ add_observer_and_keep\l_reference()\l+ remove_observer()\l# add_observer_do()\l# add_observer_do()\l# clean_dead_ptr()\l# notify_update_do()\l# remove_observer_do()\l# remove_observer_do()\l}" alt="" coords="231,271,461,539"/>
+<area shape="rect" id="node9" href="$a04594.html" title="{FullPhysics::Observer\l\&lt; RtAtmosphere \&gt;\n||+ Observer()\l+ ~Observer()\l+ notify_add()\l+ notify_add()\l+ notify_remove()\l+ notify_remove()\l+ notify_update()\l}" alt="" coords="423,623,573,803"/>
 </map>

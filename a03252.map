@@ -1,2 +1,12 @@
-<map id="FullPhysics::SwigTypeMapperBase" name="FullPhysics::SwigTypeMapperBase">
+<map id="FullPhysics::ModelMeasureStandard" name="FullPhysics::ModelMeasureStandard">
+<area shape="rect" id="node2" href="$a03626.html" title="The base class for models and measurements. " alt="" coords="258,848,441,1101"/>
+<area shape="rect" id="node3" href="$a03630.html" title="The state for a parametrized mathematical model (a vector function) and its Jacobian. " alt="" coords="219,620,383,785"/>
+<area shape="rect" id="node4" href="$a03686.html" title="The base class for all problem states. " alt="" coords="194,288,385,556"/>
+<area shape="rect" id="node5" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; ProblemState \&gt;\n||+ print_to_string()\l}" alt="" coords="5,132,155,224"/>
+<area shape="rect" id="node6" href="$a04498.html" title="For use with SWIG, it is useful to have a base class that everything can be cast to. " alt="" coords="75,5,256,83"/>
+<area shape="rect" id="node8" href="$a04618.html" title="{FullPhysics::Printable\l\&lt; Unit \&gt;\n||+ print_to_string()\l}" alt="" coords="179,132,328,224"/>
+<area shape="rect" id="node7" href="$a04678.html" title="Libraries such as boost::units allow unit handling where we know the units at compile time..." alt="" coords="548,273,695,571"/>
+<area shape="rect" id="node14" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::Observation \&gt;\n||}" alt="" coords="587,929,771,1021"/>
+<area shape="rect" id="node15" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::StateVector \&gt;\n||}" alt="" coords="795,929,978,1021"/>
+<area shape="rect" id="node16" href="$a02430.html" title="{boost::shared_ptr\&lt;\l FullPhysics::ForwardModel \&gt;\n||}" alt="" coords="1002,929,1198,1021"/>
 </map>

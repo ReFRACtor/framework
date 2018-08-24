@@ -1,10 +1,12 @@
-<map id="Interface/forward_model_spectral_grid.h" name="Interface/forward_model_spectral_grid.h">
-<area shape="rect" id="node2" href="$a00623.html" title="Implementation/fluorescence\l_effect.cc" alt="" coords="5,95,195,136"/>
-<area shape="rect" id="node3" href="$a00721.html" title="Implementation/observation\l_level_1b.h" alt="" coords="219,95,402,136"/>
-<area shape="rect" id="node5" href="$a00776.html" title="Implementation/standard\l_forward_model.h" alt="" coords="427,95,592,136"/>
-<area shape="rect" id="node9" href="$a00829.html" title="Interface/forward_model\l_spectral_grid.cc" alt="" coords="616,95,779,136"/>
-<area shape="rect" id="node4" href="$a00720.html" title="Implementation/observation\l_level_1b.cc" alt="" coords="219,184,402,225"/>
-<area shape="rect" id="node6" href="$a00775.html" title="Implementation/standard\l_forward_model.cc" alt="" coords="427,184,592,225"/>
-<area shape="rect" id="node7" href="$a01022.html" title="RegisterOutput/standard\l_forward_model_output.h" alt="" coords="616,184,784,225"/>
-<area shape="rect" id="node8" href="$a01021.html" title="RegisterOutput/standard\l_forward_model_output.cc" alt="" coords="613,273,787,315"/>
+<map id="Support/double_with_unit.cc" name="Support/double_with_unit.cc">
+<area shape="rect" id="node2" href="$a01625.html" title="double_with_unit.h" alt="" coords="216,244,347,271"/>
+<area shape="rect" id="node11" href="$a01766.html" title="spectral_domain.h" alt="" coords="371,95,499,121"/>
+<area shape="rect" id="node3" href="$a01742.html" title="printable.h" alt="" coords="508,393,591,420"/>
+<area shape="rect" id="node6" href="$a01814.html" title="unit.h" alt="" coords="158,319,213,345"/>
+<area shape="rect" id="node4" href="$a01670.html" title="generic_object.h" alt="" coords="491,468,608,495"/>
+<area shape="rect" id="node12" href="$a01574.html" title="array_ad.h" alt="" coords="680,169,763,196"/>
+<area shape="rect" id="node26" href="$a01586.html" title="array_with_unit.h" alt="" coords="323,169,445,196"/>
+<area shape="rect" id="node13" href="$a01589.html" title="auto_derivative.h" alt="" coords="589,244,710,271"/>
+<area shape="rect" id="node14" href="$a01640.html" title="fp_exception.h" alt="" coords="840,319,947,345"/>
+<area shape="rect" id="node15" href="$a01601.html" title="boost/backtrace.hpp" alt="" coords="905,393,1045,420"/>
 </map>
