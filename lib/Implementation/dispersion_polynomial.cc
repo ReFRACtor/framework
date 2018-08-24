@@ -86,8 +86,7 @@ SpectralDomain
 DispersionPolynomial::pixel_grid() const
 {
   Poly1d spectral_poly = Poly1d(coeff, false);
-  ArrayAd<double, 1> index_array_ad(index_array);
-  index_array_ad.resize_number_variable(coeff.number_variable());
+  ArrayAd<double, 1> index_array_ad(index_array, coeff.number_variable());
   SpectralDomain sample_grid = SpectralDomain(spectral_poly(index_array_ad), spectral_index, coeff_unit);
   return sample_grid;
 }
