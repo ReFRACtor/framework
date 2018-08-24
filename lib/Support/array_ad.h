@@ -106,6 +106,17 @@ public:
     jac.resize(s2);
     jac = 0;
   }
+  ArrayAd(const blitz::Array<T, D>& Val, int nvar, bool Force_copy = false)
+    : val(Force_copy ? Val.copy() : Val), is_const(nvar == 0)
+  {
+    blitz::TinyVector<int, D + 1> s2;
+    for(int i = 0; i < D; ++i)
+      s2(i) = val.shape()(i);
+    s2(D) = nvar;
+    jac.resize(s2);
+    if(is_const)
+      jac = 0;
+  }
   ArrayAd() :val(0), jac(0,1), is_const(false) {}
   ArrayAd(int n1, int nvar)
     : val(n1), jac(n1, std::max(nvar, 1)), is_const(nvar == 0) 
