@@ -83,6 +83,7 @@ private:
   {
     if(cache_stale) {
       stokes_coeff.resize_number_variable(coeff.number_variable());
+      stokes_coeff.jacobian() = 0;
       calc_stokes_coeff();
     }
     cache_stale = false;
