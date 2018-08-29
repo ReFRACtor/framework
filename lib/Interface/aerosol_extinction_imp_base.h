@@ -145,6 +145,7 @@ private:
   {
     if(cache_stale) {
       aext.resize_number_variable(coeff.number_variable());
+      aext.jacobian() = 0;
       calc_aerosol_extinction();
     }
     cache_stale = false;

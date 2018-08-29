@@ -83,6 +83,7 @@ private:
   {
     if(cache_stale) {
       pgrid.value.resize_number_variable(coeff.number_variable());
+      pgrid.value.jacobian() = 0;
       calc_pressure_grid();
     }
     cache_stale = false;
