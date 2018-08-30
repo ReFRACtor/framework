@@ -14,6 +14,7 @@ set(DIR_SOURCES
     l_rad_fortran/l_sscorr_nadir.F90
     l_rad_fortran/l_sscorr_outgoing.F90
     l_rad_fortran/l_sscorr_pp.F90
+    pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
     chapman_boa.cc
     chapman_boa_rt.cc
     l_rad_driver.cc
@@ -26,6 +27,7 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    pca_binning.cc
     radiant2.8_direct.F90
     radiant_driver.cc
     spurr_driver.cc
