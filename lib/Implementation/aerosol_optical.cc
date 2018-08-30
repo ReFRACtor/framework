@@ -136,8 +136,10 @@ AerosolOptical::optical_depth_each_layer(double wn) const
   ArrayAd<double, 2> res(od_ind_wn.copy());
   for(int i = 0; i < number_particle(); ++i) {
     ArrayAd<double, 1> t = aprop[i]->extinction_coefficient_each_layer(wn);
-    if(res.is_constant() && !t.is_constant())
+    if(res.is_constant() && !t.is_constant()) {
       res.resize_number_variable(t.number_variable());
+      res.jacobian() = 0;
+    }
     Array<double, 1> v(res.value()(ra, i));
     Array<double, 2> jac(res.jacobian()(ra, i, ra));
     v *= t.value();

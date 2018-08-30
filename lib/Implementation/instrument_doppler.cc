@@ -47,6 +47,7 @@ void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
   ArrayAd<double, 1> spec_dom_ad(Spec.spectral_domain().data_ad());
   if (spec_dom_ad.number_variable() == 0) {
     spec_dom_ad.resize_number_variable(coefficient().number_variable());
+    spec_dom_ad.jacobian() = 0;
   }
   for(int w_idx = 0; w_idx < Spec.spectral_domain().data().rows(); w_idx++) {
     if (Spec.spectral_domain().type_preference() == SpectralDomain::PREFER_WAVELENGTH)

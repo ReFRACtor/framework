@@ -60,7 +60,6 @@ boost::shared_ptr<StokesCoefficient> StokesCoefficientFraction::clone() const
 void StokesCoefficientFraction::calc_stokes_coeff() const
 {
   stokes_coeff.value() = stokes_coeff_parallel;
-  stokes_coeff.jacobian() = 0;
   for(int i = 0; i < stokes_coeff.rows(); ++i) {
     stokes_coeff(i, 1) = stokes_coeff(i, 1) * (1 - 2 * coeff(i));
     stokes_coeff(i, 2) = stokes_coeff(i, 2) * (1 - 2 * coeff(i));
