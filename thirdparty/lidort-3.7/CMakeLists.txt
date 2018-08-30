@@ -10,7 +10,7 @@ file(GLOB_RECURSE LIDORT_SRC "*.f90")
 
 # Configure overridable LIDORT parameters file
 if(NOT DEFINED LIDORT_MAXLAYER OR "${LIDORT_MAXLAYER}" STREQUAL "")
-    set(LIDORT_MAXLAYER 23 CACHE STRING "Maximum number of LIDORT layers" FORCE)
+    set(LIDORT_MAXLAYER 70 CACHE STRING "Maximum number of LIDORT layers" FORCE)
 endif()
 message(STATUS "Using LIDORT_MAXLAYER value: ${LIDORT_MAXLAYER}")
 

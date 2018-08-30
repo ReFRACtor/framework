@@ -28,6 +28,7 @@ namespace FullPhysics {
 
 class Time : public Printable<Time>,
              private boost::less_than_comparable<Time>,
+             private boost::equality_comparable<Time>,
 	     private boost::addable<Time, double>,
 	     private boost::subtractable<Time, double> {
 public:
@@ -126,6 +127,12 @@ inline double operator-(const Time& T1, const Time& T2)
 
 inline bool operator<(const Time& T1, const Time& T2)
 { return T1.unix_time() <  T2.unix_time(); }
+
+/// We define != in terms of this operator.
+//-----------------------------------------------------------------------
+
+inline bool operator==(const Time& T1, const Time& T2)
+{ return T1.unix_time() ==  T2.unix_time(); }
 
 }
 #endif

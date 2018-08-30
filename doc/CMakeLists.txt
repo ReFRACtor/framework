@@ -26,10 +26,11 @@ if(DOXYGEN_FOUND)
     if (EXISTS ${GHP_IMPORT})
         add_custom_target(gh-pages)
         add_custom_command(TARGET gh-pages
-            COMMAND ${GHP_IMPORT} -n -p "${CMAKE_INSTALL_PREFIX}/doc/api"
+            COMMAND ${GHP_IMPORT} -n -p "${CMAKE_BINARY_DIR}/doc/api/html"
             COMMENT "Importing API documentation into ghp-pages branch"
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            DEPENDS doc)
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+        add_dependencies(gh-pages doc)
+            
     else()
         message(STATUS "ghp-import not found, can not import Doxygen into Github Pages branch")
     endif()

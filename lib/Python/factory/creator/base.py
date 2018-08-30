@@ -14,6 +14,10 @@ from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Sca
 
 logger = logging.getLogger('factory.creator.base')
 
+# Other creators subscribed to the output of creators by type
+# Maintain this once in the module so the reference to it contained in every single creator
+subscribed_observers = OrderedDict()
+
 class CreatorError(Exception):
     pass
 
@@ -25,7 +29,7 @@ class ParameterAccessor(object):
         self.param_def = param_def
         self.config_def = creator.config_def
         self.common_store = creator.common_store
-        self.creator = creator
+        self.creator_name = creator.__class__.__name__
 
     def value(self, **kwargs):
         "Retrieve a parameter from the configuration definition"
@@ -37,23 +41,20 @@ class ParameterAccessor(object):
         elif self.param_name in self.common_store:
             param_val = self.common_store[self.param_name]
         elif self.param_def.required:
-            raise KeyError("The parameter name %s requested from config definition by %s was not found and is required" % (self.param_name, self.creator.__class__.__name__))
+            raise KeyError("The parameter name %s requested from config definition by %s was not found and is required" % (self.param_name, self.creator_name))
         else:
             return self.param_def.default
 
         try:
             return self.param_def.evaluate(param_val, **kwargs)
         except ParamError as exc:
-            raise ParamError("The parameter named %s requested by creator %s fails with error: %s" % (self.param_name, self.creator.__class__.__name__, exc))
+            raise ParamError("The parameter named %s requested by creator %s fails with error: %s" % (self.param_name, self.creator_name, exc))
 
     def __call__(self, **kwargs):
         return self.value(**kwargs)
 
 class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
-
-    # Other creators subscribed to the output of creators by type
-    observers = OrderedDict()
 
     def __init__(self, config_def, common_store=None):
 
@@ -119,14 +120,35 @@ class Creator(object):
             return param_proxy.value(**kwargs)
 
     def register_to_receive(self, RfType):
-        dispatch_list = self.observers.get(RfType, [])
+        dispatch_list = subscribed_observers.get(RfType, [])
         dispatch_list.append(self)
-        self.observers[RfType] = dispatch_list
+        subscribed_observers[RfType] = dispatch_list
+
+    def deregister_to_receive(self, RfType=None):
+
+        if RfType is None:
+            # Deregister this creator from all observations
+            for obj_type, dispatch_list in subscribed_observers.items():
+                if self in dispatch_list:
+                    dispatch_list.remove(self)
+        else:
+            dispatch_list = subscribed_observers.get(RfType, [])
+            if self in dispatch_list:
+                dispatch_list.remove(self)
+
+        # Clean out empty lists of creators 
+        types_to_del = []
+        for obj_type in subscribed_observers.keys():
+            if len(subscribed_observers[obj_type]) == 0:
+                types_to_del.append(obj_type)
+
+        for obj_type in types_to_del:
+            del subscribed_observers[obj_type]
 
     def _dispatch(self, rf_obj):
         "Called when the creator's object has been created to be sent to other creators who have registered to recieve objects of that type"
 
-        for RfType, dispatch_list in self.observers.items():
+        for RfType, dispatch_list in subscribed_observers.items():
             if isinstance(rf_obj, RfType):
                 for observer in dispatch_list:
                     observer.receive(rf_obj)
@@ -136,6 +158,7 @@ class Creator(object):
         pass
 
     def create(self, **kwargs):
+        "Implements the action to create the object referred to by the Creator class. Should not be called directly."
         raise NotImplementedError("Create must be defined in inheriting Creator classes")
 
     def __call__(self, **kwargs):
@@ -152,6 +175,9 @@ class Creator(object):
                 self._dispatch(result_item)
         else:
             self._dispatch(result)
+
+        # Remove this class from the subscribed observers once its create routine has run
+        self.deregister_to_receive()
 
         return result
 
