@@ -25,6 +25,7 @@ void RadianceScalingSvFit::apply_correction
     grid_ad(i) = Pixel_grid.data_ad()(Pixel_list[i]);
   }
   grid_ad.resize_number_variable(coeff.number_variable());
+  grid_ad.jacobian() = 0;
   SpectralDomain grid_sd(grid_ad, Pixel_grid.units());
   apply_scaling(grid_sd, Radiance);
 }

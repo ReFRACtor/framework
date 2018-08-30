@@ -239,6 +239,7 @@ BOOST_AUTO_TEST_CASE(simple_brdf)
     // Must be called AFTER setup_geometry or else the correct values will not be used
     ArrayAd<double, 2> z_matrix(l_rad->z_matrix(phase_func));
     z_matrix.resize_number_variable(1);
+    z_matrix.jacobian() = 0;
 
     l_rad->setup_optical_inputs(od.value(), ssa.value(), phase_func.value(), z_matrix.value());
 
