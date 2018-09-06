@@ -7,6 +7,7 @@
 %import "atmosphere_oco.i"
 %import "spectral_domain.i"
 
+%fp_shared_ptr(FullPhysics::PCAOpticalProperties);
 %fp_shared_ptr(FullPhysics::PCABinning);
 
 %include "pca_binning.h"
