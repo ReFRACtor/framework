@@ -2,6 +2,7 @@
 #define PCA_BINNING_H
 
 #include "atmosphere_oco.h"
+#include "ground_lambertian.h"
 #include "spectral_domain.h"
 
 namespace FullPhysics {
@@ -22,12 +23,14 @@ public:
     blitz::Array<double, 2> total_optical_depth() const { return total_optical_depth_; }
     blitz::Array<double, 2> single_scattering_albedo() const { return single_scattering_albedo_; }
     blitz::Array<int, 1> primary_gas_dominates() const { return primary_gas_dominates_; }
+    blitz::Array<double, 1> surface_albedo() const { return surface_albedo_; }
 
 private:
 
     void compute_properties();
 
     boost::shared_ptr<AtmosphereOco> atmosphere;
+    boost::shared_ptr<GroundLambertian> lambertian;
 
     bool show_progress_;
 
@@ -39,6 +42,7 @@ private:
     blitz::Array<double, 2> total_optical_depth_;
     blitz::Array<double, 2> single_scattering_albedo_;
     blitz::Array<int, 1> primary_gas_dominates_;
+    blitz::Array<double, 1> surface_albedo_;
 };
 
 /****************************************************************//**
@@ -47,7 +51,7 @@ private:
 
 class PCABinning {
 public:
-    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins);
+    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins, int num_eofs);
     virtual ~PCABinning() = default;
 
     /// Number of spectral points in each bin
@@ -58,9 +62,11 @@ public:
 
 private:
     void compute_bins();
+    void compute_eofs();
 
     boost::shared_ptr<PCAOpticalProperties> opt_props_;
     int num_bins_;
+    int num_eofs_;
 
     blitz::Array<int, 1> num_bin_points_;
     std::vector<blitz::Array<int, 1> > bin_indexes_;

@@ -302,7 +302,7 @@ subroutine pca_eigensolver &
              n_Eofs, npoints, nlayers, nlayers2,          & ! Input control
              taudp, omega,                                & ! Input optical properties
              Atmosmean, Eofs, PrinComps,                  & ! Outputs
-             fail, message, trace )                         ! Exception handling
+             fail, message_len, message, trace_len, trace) bind(C)  ! Exception handling
 
 !  PCA using Eigenproblem methods
 
@@ -313,33 +313,35 @@ subroutine pca_eigensolver &
 
 !  Dimensioning
 
-   integer, intent(in)       :: Max_Eofs, maxpoints, maxlayers, maxlayers2
+   integer(c_int), intent(in)       :: Max_Eofs, maxpoints, maxlayers, maxlayers2
 
 !  Control
 
-   integer, intent(in)       :: n_Eofs, npoints, nlayers, nlayers2
+   integer(c_int), intent(in)       :: n_Eofs, npoints, nlayers, nlayers2
 
 !  Optical properties
 
-   real(kind=dp), intent(in) :: taudp(maxlayers,maxpoints)
-   real(kind=dp), intent(in) :: omega(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: taudp(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: omega(maxlayers,maxpoints)
 
 !  outputs
 !  -------
 
 !  Mean values
 
-   real(kind=dp), intent(out) :: atmosmean(maxlayers,2)
+   real(kind=c_double), intent(out) :: atmosmean(maxlayers,2)
 
 !  EOFS and Principal Components (Latter is allocatable)
 
-   real(kind=dp), intent(out) :: eofs  (Max_Eofs,maxlayers2)
-   real(kind=dp), intent(out) :: PrinComps(n_Eofs,npoints)
+   real(kind=c_double), intent(out) :: eofs  (Max_Eofs,maxlayers2)
+   real(kind=c_double), intent(out) :: PrinComps(n_Eofs,npoints)
 
 !  Exception handling and status
 
    logical, intent(out)       :: fail
-   character*(*), intent(out) :: message, trace
+   integer(c_int), intent(in) :: message_len, trace_len
+   character(kind=c_char), intent(out) :: message(message_len+1)
+   character(kind=c_char), intent(out) :: trace(trace_len+1)
 
 !  local data arrays
 !  -----------------
@@ -374,6 +376,9 @@ subroutine pca_eigensolver &
    integer       :: i,k,i1,w,aa,it,nlayers1,nlayers4
    real(kind=dp) :: stdv, norm, ddim
    real(kind=dp) :: eigenmat_save(nlayers2,nlayers2)
+
+   character(kind=c_char, len=message_len) :: asymtx_message
+   integer :: len_idx
 
 !  initialize exception handling
 
@@ -443,7 +448,7 @@ subroutine pca_eigensolver &
    tol = 1.0d-6
 
    CALL PCA_ASYMTX ( eigenmat, nlayers2,  nlayers2,  nlayers2, 2*nlayers2, tol, &
-                     EVEC, KSQ, IER, WK, MESSAGE, ASYMTX_FAILURE )
+                     EVEC, KSQ, IER, WK, asymtx_message, ASYMTX_FAILURE )
 
 !  Change tolerance and rerun PCA_ASYMTX if eigenvalue has not converged
 
@@ -451,12 +456,17 @@ subroutine pca_eigensolver &
       eigenmat = eigenmat_save
       tol = tol * 10.d0
       CALL PCA_ASYMTX ( eigenmat, nlayers2,  nlayers2,  nlayers2, 2*nlayers2, tol, &
-                        EVEC, KSQ, IER, WK, MESSAGE, ASYMTX_FAILURE )
+                        EVEC, KSQ, IER, WK, asymtx_message, ASYMTX_FAILURE )
    ENDDO
 
 !  Exception handling 1
 
    IF ( ASYMTX_FAILURE  ) THEN
+     ! Convert asymtx_message to character array compatible with C
+     do len_idx = 1, message_len
+        message(len_idx) = asymtx_message(len_idx:len_idx)
+     end do
+
      TRACE   = 'ASYMTX error in pca_eigensolver'
      fail = .true. ; RETURN
    ENDIF
