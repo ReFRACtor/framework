@@ -14,6 +14,8 @@ set(DIR_SOURCES
     l_rad_fortran/l_sscorr_nadir.F90
     l_rad_fortran/l_sscorr_outgoing.F90
     l_rad_fortran/l_sscorr_pp.F90
+    pca_fortran/pca_auxiliaries.f90
+    pca_fortran/pca_eigensolvers.f90
     pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
     chapman_boa.cc
     chapman_boa_rt.cc
