@@ -16,7 +16,6 @@ class PCAOpticalProperties {
 public:
     virtual ~PCAOpticalProperties() = default;
 
-    virtual blitz::Array<double, 1> wavenumber() const = 0;
     virtual blitz::Array<double, 2> gas_optical_depth() const = 0;
     virtual blitz::Array<double, 2> total_optical_depth() const = 0;
     virtual blitz::Array<double, 2> single_scattering_albedo() const = 0;
