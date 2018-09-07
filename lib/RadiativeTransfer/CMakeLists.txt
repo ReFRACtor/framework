@@ -30,6 +30,7 @@ set(DIR_SOURCES
     lidort_rt.cc
     lsi_rt.cc
     pca_binning.cc
+    pca_optical_properties.cc
     radiant2.8_direct.F90
     radiant_driver.cc
     spurr_driver.cc
