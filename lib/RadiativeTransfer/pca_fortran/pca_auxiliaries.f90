@@ -2,6 +2,8 @@ Module pca_auxiliaries_m
 
 !  Collection of Numerical routines
 
+use iso_c_binding
+
 private
 public PCA_ASYMTX, PCA_Ranker, PCA_LINTP2, PCA_DGETRF, PCA_DGETRS
 
@@ -40,9 +42,8 @@ contains
 ! #                                                             #
 ! ###############################################################
 
-!SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, EVECD, EVALD, IER, WKD, &
 SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
-                   MESSAGE, BAD_STATUS )
+                       MESSAGE_LEN, MESSAGE, BAD_STATUS ) bind(C)
 
    implicit none
 
@@ -95,8 +96,9 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
 !                   in that case eigenvalues IER+1,IER+2,...,M  are
 !                   correct but eigenvalues 1,...,IER are set to zero.
 
-      LOGICAL      , intent(out) :: BAD_STATUS
-      CHARACTER*(*), intent(out) :: MESSAGE
+      LOGICAL(c_bool)       , intent(out) :: BAD_STATUS
+      integer(c_int), intent(in) :: message_len
+      character(kind=c_char), intent(out) :: MESSAGE(MESSAGE_LEN+1)
 
 !   S ! R A T ! H   V A R I A B L E S:
 
@@ -104,22 +106,16 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
 
 !  input/output arguments
 
-      INTEGER, intent(in)   :: M, IA, IEVEC, IEVEC2
-      INTEGER, intent(out)  :: IER
+      INTEGER(c_int), intent(in)         :: M, IA, IEVEC, IEVEC2
+      INTEGER(c_int), intent(out)        :: IER
 
-      REAL(kind=dp), intent(in) :: TOL
+      REAL(kind=c_double), intent(in)    :: TOL
 
-!      REAL(kind=dp), intent(inout) :: AAD(MAXSTREAMS,MAXSTREAMS)
-!      REAL(kind=dp), intent(inout) :: WKD(MAXSTREAMS_2)
+      REAL(kind=c_double), intent(inout) :: AAD(IEVEC,IEVEC)
+      REAL(kind=c_double), intent(inout) :: WKD(IEVEC2)
 
-!      REAL(kind=dp), intent(out)   :: EVALD(MAXSTREAMS)
-!      REAL(kind=dp), intent(out)   :: EVECD(MAXSTREAMS,MAXSTREAMS)
-
-      REAL(kind=dp), intent(inout) :: AAD(IEVEC,IEVEC)
-      REAL(kind=dp), intent(inout) :: WKD(IEVEC2)
-
-      REAL(kind=dp), intent(out)   :: EVALD(IEVEC)
-      REAL(kind=dp), intent(out)   :: EVECD(IEVEC,IEVEC)
+      REAL(kind=c_double), intent(out)   :: EVALD(IEVEC)
+      REAL(kind=c_double), intent(out)   :: EVECD(IEVEC,IEVEC)
 
 !  local variables (explicit declaration
 
@@ -802,7 +798,7 @@ END SUBROUTINE PCA_ASYMTX
 
 !
 
-subroutine PCA_Ranker(n,arrin,indx)
+subroutine PCA_Ranker(n,arrin,indx) bind(C)
 
 ! sorting the array indices in ascending order of array values
 !   Numerical recipes routine, renamed
@@ -811,12 +807,12 @@ subroutine PCA_Ranker(n,arrin,indx)
 
 !  inputs
 
-   integer      :: n
-   real(kind=dp) :: arrin(n)
+   integer(c_int)      :: n
+   real(kind=c_double) :: arrin(n)
 
 !  outputs
 
-   integer      :: indx(n)
+   integer(c_int)      :: indx(n)
 
 !  local variables
 
