@@ -10,16 +10,20 @@ extern "C" {
     void prepare_eigenmatrix(int *m, int *n, int *t, double *x, double* y, double *ccm);
     void pca_asymtx(double *aad, int *m, int *ia, int *ievec, int *ievec2, double *tol, double *evecd, double *evald, int *ier, double *wkd, int *message_len, char *message, bool *bad_status);
     void pca_ranker(int *n, double* arrin, int *indx);
+
+    void pca_eigensolver(int *Max_Eofs, int *maxpoints, int *maxlayers, int *maxlayers2, int *n_Eofs, int *npoints, int *nlayers, int *nlayers2, double *taudp, double *omega, double *Atmosmean, double *Eofs, double *PrinComps, bool *fail, int *message_len, char *message, int *trace_len, char *trace);
+    void pca_eigensolver_alb(int *Max_Eofs, int *maxpoints, int *maxlayers, int *maxlayers21, int *n_Eofs, int *npoints, int *nlayers, int *nlayers2, int *nlayers21, double *taudp, double *omega, double *albedo, double *Atmosmean, double *Albmean, double *Eofs, double *PrinComps, bool *fail, int *message_len, char *message, int *trace_len, char *trace);
+
 }
 
-PCAEigenSolver::PCAEigenSolver(std::vector<Array<double, 2> >& gridded_data, int num_eofs)
+PCAEigenSolverGeneric::PCAEigenSolverGeneric(const std::vector<Array<double, 2> >& gridded_data, int num_eofs)
 {
     solve(gridded_data, num_eofs);
 }
 
 // Adapted from the original Fortran code to be more generic
 
-void PCAEigenSolver::solve(std::vector<Array<double, 2> >& gridded_data, int num_eofs)
+void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_data, int num_eofs)
 {
     Range all = Range::all();
     secondIndex i2;
@@ -31,7 +35,7 @@ void PCAEigenSolver::solve(std::vector<Array<double, 2> >& gridded_data, int num
     // be the number of grid points and all variables should be the same
     int num_packed = 0;
     int num_points = 0;
-    for(int ivar; ivar < num_vars; ivar++) {
+    for(int ivar = 0; ivar < num_vars; ivar++) {
         // Ensure that all variables use the same number of points
         if(num_points == 0) {
             num_points = gridded_data[ivar].cols();
@@ -186,4 +190,64 @@ void PCAEigenSolver::solve(std::vector<Array<double, 2> >& gridded_data, int num
         prin_comps_(aa, all) = prin_comps_(aa, all) / stdv;
     }
 
+}
+
+// ----------
+
+PCAEigenSolverFortran::PCAEigenSolverFortran(const blitz::Array<double, 3>& gridded_data, int num_eofs)
+{
+    solve(gridded_data, num_eofs);
+}
+    
+std::vector<blitz::Array<double, 1> > PCAEigenSolverFortran::data_mean() const
+{
+    std::vector<blitz::Array<double, 1> > result;
+    for (int ivar = 0; ivar < atmos_mean_.cols(); ivar++) {
+        result.push_back( atmos_mean_(Range::all(), ivar) );
+    }
+    return result;
+}
+
+void PCAEigenSolverFortran::solve(const blitz::Array<double, 3>& gridded_data, int num_eofs)
+{
+    Range all = Range::all();
+
+    if(gridded_data.rows() != 2) {
+        throw Exception("First dimension of gridded_data must equal 2");
+    }
+
+    int nlayers = gridded_data.cols();
+    int npoints = gridded_data.depth();
+    int nlayers2 = nlayers*2;
+
+    Array<double, 2> taudp(nlayers, npoints, blitz::ColumnMajorArray<2>());
+    Array<double, 2> omega(nlayers, npoints, blitz::ColumnMajorArray<2>());
+
+    taudp = gridded_data(0, all, all);
+    omega = gridded_data(1, all, all);
+
+    atmos_mean_.reference(Array<double, 2>(nlayers, 2, blitz::ColumnMajorArray<2>()));
+    eofs_.reference(Array<double, 2>(num_eofs, nlayers2, blitz::ColumnMajorArray<2>()));
+    prin_comps_.reference(Array<double, 2>(num_eofs, npoints, blitz::ColumnMajorArray<2>()));
+
+    bool fail;
+    int message_len = 100;
+    int trace_len = 100;
+    blitz::Array<char, 1> message(message_len);
+    blitz::Array<char, 1> trace(trace_len);
+
+    pca_eigensolver(
+            &num_eofs, &npoints, &nlayers, &nlayers2, &num_eofs, &npoints, &nlayers, &nlayers2, 
+            taudp.dataFirst(), omega.dataFirst(), 
+            atmos_mean_.dataFirst(), eofs_.dataFirst(), prin_comps_.dataFirst(),
+            &fail, &message_len, message.dataFirst(), &trace_len, trace.dataFirst());
+
+    if (fail) {
+        Exception err;
+        std::string message_str = std::string(message(all).begin(), message(all).end());
+        std::string trace_str = std::string(trace(all).begin(), trace(all).end());
+        err << "Fortran pca_eigensolver failure: " 
+            << message_str << ", " << trace_str;
+        throw err;
+    }
 }

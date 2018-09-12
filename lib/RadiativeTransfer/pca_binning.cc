@@ -5,16 +5,12 @@ using namespace blitz;
 
 extern "C" {
     void create_bin_uvvswir_v3(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *absflag, int *ncnt, int *index, int *bin);
-
-    void pca_eigensolver(int *Max_Eofs, int *maxpoints, int *maxlayers, int *maxlayers21, int *n_Eofs, int *npoints, int *nlayers, int *nlayers2, int *nlayers21, double *taudp, double *omega, double *Atmosmean, double *Eofs, double *PrinComps, bool *fail, int *message_len, char *message, int *trace_len, char *trace);
-    void pca_eigensolver_alb(int *Max_Eofs, int *maxpoints, int *maxlayers, int *maxlayers21, int *n_Eofs, int *npoints, int *nlayers, int *nlayers2, int *nlayers21, double *taudp, double *omega, double *albedo, double *Atmosmean, double *Albmean, double *Eofs, double *PrinComps, bool *fail, int *message_len, char *message, int *trace_len, char *trace);
 }
 
 PCABinning::PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins, int num_eofs)
 : opt_props_(optical_properties), num_bins_(num_bins), num_eofs_(num_eofs)
 {
     compute_bins();
-    compute_eofs();
 }
 
 void PCABinning::compute_bins()
@@ -51,49 +47,6 @@ void PCABinning::compute_bins()
         curr_indexes = indexes_packed(Range(pack_start, pack_start + npoints));
         pack_start += npoints;
         bin_indexes_.push_back(curr_indexes);
-    }
-
-}
-
-void PCABinning::compute_eofs()
-{
-    int nlayers = opt_props_->gas_optical_depth().rows();
-    int nlayers2 = nlayers*2;
-    int nlayers21 = nlayers2 + 1;
-
-    Array<double, 2> atmosmean(nlayers, 2, blitz::ColumnMajorArray<2>());
-    Array<double, 2> albmean(nlayers, 2, blitz::ColumnMajorArray<2>());;
-    Array<double, 2> eofs(num_eofs_, nlayers21, blitz::ColumnMajorArray<2>());;
-
-    bool fail;
-    int message_len = 100;
-    int trace_len = 100;
-    blitz::Array<char, 1> message(message_len);
-    blitz::Array<char, 1> trace(trace_len);
-
-    for(int bidx = 0; bidx < num_bins_; bidx++) {
-        int npoints = num_bin_points_(bidx);
-
-        Array<double, 2> princomps(num_eofs_, npoints, blitz::ColumnMajorArray<2>());;
-
-        if (opt_props_->surface_albedo().rows() > 0) {
-            // Use eigen solver capable of utilizing albedo if those values are available
-            pca_eigensolver_alb(
-                    &num_eofs_, &npoints, &nlayers, &nlayers21, &num_eofs_, &npoints, &nlayers, &nlayers2, &nlayers21, 
-                    opt_props_->total_optical_depth().dataFirst(), 
-                    opt_props_->single_scattering_albedo().dataFirst(), 
-                    opt_props_->surface_albedo().dataFirst(), 
-                    atmosmean.dataFirst(), albmean.dataFirst(), eofs.dataFirst(), princomps.dataFirst(),
-                    &fail, &message_len, message.dataFirst(), &trace_len, trace.dataFirst());
-        } else {
-            // No surface albedo available
-            pca_eigensolver(
-                    &num_eofs_, &npoints, &nlayers, &nlayers21, &num_eofs_, &npoints, &nlayers, &nlayers2, &nlayers21, 
-                    opt_props_->total_optical_depth().dataFirst(), 
-                    opt_props_->surface_albedo().dataFirst(), 
-                    atmosmean.dataFirst(), eofs.dataFirst(), princomps.dataFirst(),
-                    &fail, &message_len, message.dataFirst(), &trace_len, trace.dataFirst());
-        }
     }
 
 }

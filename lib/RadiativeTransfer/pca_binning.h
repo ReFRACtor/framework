@@ -22,7 +22,6 @@ public:
 
 private:
     void compute_bins();
-    void compute_eofs();
 
     boost::shared_ptr<PCAOpticalProperties> opt_props_;
     int num_bins_;
