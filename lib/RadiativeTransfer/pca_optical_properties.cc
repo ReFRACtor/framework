@@ -72,3 +72,45 @@ void PCAOpticalPropertiesAtmosphere::compute_properties()
     }
 
 }
+
+// -----------
+
+PCAOpticalPropertiesFile::PCAOpticalPropertiesFile(const std::string& filename)
+{
+    hdf_file.reset(new HdfFile(filename));
+}
+
+PCAOpticalPropertiesFile::PCAOpticalPropertiesFile(const boost::shared_ptr<HdfFile>& file)
+: hdf_file(file)
+{
+}
+
+blitz::Array<double, 2> PCAOpticalPropertiesFile::gas_optical_depth() const
+{
+    return hdf_file->read_field<double, 2>("gas_optical_depth");
+}
+
+blitz::Array<double, 2> PCAOpticalPropertiesFile::total_optical_depth() const
+{
+    return hdf_file->read_field<double, 2>("total_optical_depth");
+}
+
+blitz::Array<double, 2> PCAOpticalPropertiesFile::single_scattering_albedo() const
+{
+    return hdf_file->read_field<double, 2>("single_scattering_albedo");
+}
+
+blitz::Array<int, 1> PCAOpticalPropertiesFile::primary_gas_dominates() const
+{
+    return hdf_file->read_field<int, 1>("primary_gas_dominates");
+}
+
+blitz::Array<double, 3> PCAOpticalPropertiesFile::intermediate_variable() const
+{
+    return hdf_file->read_field<double, 3>("intermediate_variable");
+}
+
+blitz::Array<double, 1> PCAOpticalPropertiesFile::surface_albedo() const
+{
+    return hdf_file->read_field<double, 1>("surface_albedo");
+}

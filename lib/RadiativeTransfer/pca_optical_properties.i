@@ -6,8 +6,10 @@
 
 %import "atmosphere_oco.i"
 %import "spectral_domain.i"
+%import "hdf_file.i"
 
 %fp_shared_ptr(FullPhysics::PCAOpticalProperties);
 %fp_shared_ptr(FullPhysics::PCAOpticalPropertiesAtmosphere);
+%fp_shared_ptr(FullPhysics::PCAOpticalPropertiesFile);
 
 %include "pca_optical_properties.h"

@@ -4,6 +4,7 @@
 #include "atmosphere_oco.h"
 #include "ground_lambertian.h"
 #include "spectral_domain.h"
+#include "hdf_file.h"
 
 namespace FullPhysics {
 
@@ -63,6 +64,29 @@ private:
     blitz::Array<int, 1> primary_gas_dominates_;
     blitz::Array<double, 3> intermediate_;
     blitz::Array<double, 1> surface_albedo_;
+};
+
+/****************************************************************//**
+  Loads precomputed atmospheric optical properties from a file.
+  Mainly intended for use in testing.
+ *******************************************************************/
+
+
+class PCAOpticalPropertiesFile : public PCAOpticalProperties {
+public:
+    PCAOpticalPropertiesFile(const std::string& filename);
+    PCAOpticalPropertiesFile(const boost::shared_ptr<HdfFile>& file);
+
+    virtual blitz::Array<double, 2> gas_optical_depth() const;
+    virtual blitz::Array<double, 2> total_optical_depth() const;
+    virtual blitz::Array<double, 2> single_scattering_albedo() const;
+    virtual blitz::Array<int, 1> primary_gas_dominates() const;
+    virtual blitz::Array<double, 3> intermediate_variable() const;
+    virtual blitz::Array<double, 1> surface_albedo() const;
+
+private:
+    boost::shared_ptr<HdfFile> hdf_file;
+
 };
 
 }
