@@ -58,8 +58,8 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
     int ipacked = 0;
     for(int ivar = 0; ivar < num_vars; ivar++) {
         int num_data = gridded_data[ivar].rows();
-        Range packed_r(ipacked, ipacked + num_data);
-        packed_data(packed_r, all) = log(packed_data(all, all));
+        Range packed_r(ipacked, ipacked + num_data - 1);
+        packed_data(packed_r, all) = log(gridded_data[ivar](all, all));
         ipacked += num_data;
     }
 
@@ -96,13 +96,13 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
     Array<double, 2> evec(num_packed, num_packed, ColumnMajorArray<2>());
     Array<double, 1> ksq(num_packed);
     Array<double, 1> wk(2 * num_packed);
-    int ier = 999;
     bool asymtx_failure = false;
     
     int message_len = 100;
     blitz::Array<char, 1> asymtx_message(message_len);
 
     // Solve eigenproblem using PCA_ASYMTX
+    int ier = 999;
     int num_packed2 = 2*num_packed;
     while(ier > 0 && not asymtx_failure) {
         pca_asymtx(eigenmat.dataFirst(), &num_packed, &num_packed, &num_packed, &num_packed2, &tol,
@@ -152,7 +152,7 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
     Array<double, 2> evec_2(num_packed, num_packed, ColumnMajorArray<2>());
 
     for(int ipack2 = 0; ipack2 < num_packed; ipack2++) {
-        int iord = num_packed + 1 - ipack2;
+        int iord = num_packed - ipack2 - 1;
         ksq_ordered(ipack2) = ksq_abs(order(iord)-1);
 
         for(int ipack1 = 0; ipack1 < num_packed; ipack1++) {
