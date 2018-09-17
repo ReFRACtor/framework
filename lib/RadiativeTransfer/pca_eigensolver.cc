@@ -16,6 +16,32 @@ extern "C" {
 
 }
 
+std::vector<blitz::Array<double, 3> > PCAEigenSolver::data_perturbations() const
+{
+    auto all = Range::all();
+    int num_vars = data_mean().size();
+    int num_eofs = eof_properties()[0].cols();
+
+    std::vector<Array<double, 3> > result;
+    for(int ivar = 0; ivar < num_vars; ivar++) {
+        int num_data = data_mean()[ivar].rows();
+        Array<double, 3> var_pert(num_data, 2, num_eofs);
+        Array<double, 1> var_mean(data_mean()[ivar]);
+        Array<double, 2> var_eof(eof_properties()[ivar]);
+
+        for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+            var_pert(all, 0, eof_idx) = var_mean + var_eof(all, eof_idx);
+            var_pert(all, 1, eof_idx) = var_mean - var_eof(all, eof_idx);
+        }
+
+        result.push_back(var_pert);
+    }
+
+    return result;
+}
+
+// ----------
+
 PCAEigenSolverGeneric::PCAEigenSolverGeneric(const std::vector<Array<double, 2> >& gridded_data, int num_eofs)
 {
     solve(gridded_data, num_eofs);
@@ -73,7 +99,7 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
         int num_data = gridded_data[ivar].rows();
 
         Array<double, 1> var_mean(num_data);
-        var_mean = mean(log(gridded_data[ivar]), i2);
+        var_mean = exp(mean(log(gridded_data[ivar]), i2));
         atmos_mean_.push_back(var_mean);
     }
 
@@ -164,7 +190,7 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
     // =========================
     
     // Resize EOFS and Principal Components
-    eofs_.resize(num_eofs, num_packed);
+    Array<double, 2> eofs_packed(num_eofs, num_packed);
     prin_comps_.resize(num_eofs, num_points);
 
     // *** Only perform for the first few EOFs
@@ -177,17 +203,29 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
         double stdv = std::sqrt(lambda);
 
         // EOFs (Unnormalized) --> Transpose the Eigenvectors
-        eofs_(aa, all) = evec_2(all, aa);
+        eofs_packed(aa, all) = evec_2(all, aa);
 
         // Project data onto E1 basis
         // -- Set the principal components (unnormalized)
         for(int w = 0; w < num_points; w++) {
-            prin_comps_(aa, w) = sum(eofs_(aa, all) * packed_data(all,w));
+            prin_comps_(aa, w) = sum(eofs_packed(aa, all) * packed_data(all,w));
         }
 
         // Final normalization of EOFs and PCs
-        eofs_(aa, all) = eofs_(aa, all) * stdv;
+        eofs_packed(aa, all) = eofs_packed(aa, all) * stdv;
         prin_comps_(aa, all) = prin_comps_(aa, all) / stdv;
+    }
+
+    // Unpack eofs array values
+    ipacked = 0;
+    for(int ivar = 0; ivar < num_vars; ivar++) {
+        int num_data = gridded_data[ivar].rows();
+        Range packed_r(ipacked, ipacked + num_data - 1);
+    
+        Array<double, 2> data_eofs(num_data, num_eofs);
+        data_eofs = eofs_packed(all, packed_r).transpose(secondDim, firstDim);
+        eofs_.push_back( data_eofs );
+        ipacked += num_data;
     }
 
 }
@@ -203,7 +241,25 @@ std::vector<blitz::Array<double, 1> > PCAEigenSolverFortran::data_mean() const
 {
     std::vector<blitz::Array<double, 1> > result;
     for (int ivar = 0; ivar < atmos_mean_.cols(); ivar++) {
-        result.push_back( atmos_mean_(Range::all(), ivar) );
+        result.push_back( Array<double, 1>(exp(atmos_mean_(Range::all(), ivar))) );
+    }
+    return result;
+}
+
+std::vector<blitz::Array<double, 2> > PCAEigenSolverFortran::eof_properties() const
+{
+    auto all = Range::all();
+    int num_layers = atmos_mean_.rows();
+    int num_eofs = eofs_.rows();
+
+    int ipacked = 0;
+    std::vector<blitz::Array<double, 2> > result;
+    for (int ivar = 0; ivar < atmos_mean_.cols(); ivar++) {
+        Array<double, 2> data_eofs(num_layers, num_eofs);
+        Range packed_r(ipacked, ipacked + num_layers - 1);
+        data_eofs = eofs_(all, packed_r).transpose(secondDim, firstDim);
+        result.push_back(data_eofs);
+        ipacked += num_layers;
     }
     return result;
 }

@@ -35,12 +35,15 @@ BOOST_AUTO_TEST_CASE(compare_with_fortran)
 
     auto eigen_f = PCAEigenSolverFortran(gridded_data_f, num_eofs);
 
-    int num_packed = gridded_data_g.size();
-    BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.eofs(), eigen_g.eofs(), 1e-10);
+    int num_var = gridded_data_g.size();
     BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.principal_components(), eigen_g.principal_components(), 1e-10);
 
-    for (int ipack = 0; ipack < num_packed; ipack++) {
-        BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.data_mean()[ipack], eigen_g.data_mean()[ipack], 1e-10);
+    for (int ivar = 0; ivar < num_var; ivar++) {
+        BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.eof_properties()[ivar], eigen_g.eof_properties()[ivar], 1e-10);
+        BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.data_mean()[ivar], eigen_g.data_mean()[ivar], 1e-10);
+
+        // These should always match since the routine is defined in the base class
+        BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.data_perturbations()[ivar], eigen_g.data_perturbations()[ivar], 1e-10);
     }
 }
 
