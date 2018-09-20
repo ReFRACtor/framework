@@ -384,3 +384,431 @@ subroutine fo_ssgeometry_master_m_fo_ssgeometry_master_wrap (maxgeoms, &
 end subroutine fo_ssgeometry_master_m_fo_ssgeometry_master_wrap
 
 end module FO_SSGEOMETRY_MASTER_M_WRAP
+
+module FO_SCALARSS_RTCALCS_I_M_WRAP
+
+use iso_c_binding
+use fo_scalarss_rtcalcs_i_m
+
+! This module was auto-generated 
+
+implicit none
+
+contains
+
+subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_dn_wrap (maxgeoms, &
+                                                          maxlayers, &
+                                                          maxfine, &
+                                                          max_user_levels, &
+                                                          do_deltam_scaling, &
+                                                          do_planpar, &
+                                                          do_regular_ps, &
+                                                          do_enhanced_ps, &
+                                                          donadir, &
+                                                          ngeoms, &
+                                                          nlayers, &
+                                                          nfinedivs, &
+                                                          n_user_levels, &
+                                                          user_levels, &
+                                                          extinction, &
+                                                          deltaus, &
+                                                          exactscat_dn, &
+                                                          flux, &
+                                                          mu1, &
+                                                          ncrit, &
+                                                          radcrit, &
+                                                          cotcrit, &
+                                                          xfine, &
+                                                          wfine, &
+                                                          csqfine, &
+                                                          cotfine, &
+                                                          raycon, &
+                                                          radii, &
+                                                          cota, &
+                                                          sunpaths, &
+                                                          ntraverse, &
+                                                          sunpathsfine, &
+                                                          ntraversefine, &
+                                                          intensity_dn, &
+                                                          cumsource_dn) bind(C)
+
+  ! Arguments
+  integer(c_int), intent(in) :: maxgeoms
+  integer(c_int), intent(in) :: maxlayers
+  integer(c_int), intent(in) :: maxfine
+  integer(c_int), intent(in) :: max_user_levels
+  logical(c_bool), intent(in) :: do_deltam_scaling
+  logical(c_bool), intent(in) :: do_planpar
+  logical(c_bool), intent(in) :: do_regular_ps
+  logical(c_bool), intent(in) :: do_enhanced_ps
+  logical(c_bool), dimension(MAXGEOMS), intent(in) :: donadir
+  integer(c_int), intent(in) :: ngeoms
+  integer(c_int), intent(in) :: nlayers
+  integer(c_int), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: nfinedivs
+  integer(c_int), intent(in) :: n_user_levels
+  integer(c_int), dimension(MAX_USER_LEVELS), intent(in) :: user_levels
+  real(c_double), dimension(MAXLAYERS), intent(in) :: extinction
+  real(c_double), dimension(MAXLAYERS), intent(in) :: deltaus
+  real(c_double), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: exactscat_dn
+  real(c_double), intent(in) :: flux
+  real(c_double), dimension(MAXGEOMS), intent(in) :: mu1
+  integer(c_int), dimension(MAXGEOMS), intent(in) :: ncrit
+  real(c_double), dimension(MAXGEOMS), intent(in) :: radcrit
+  real(c_double), dimension(MAXGEOMS), intent(in) :: cotcrit
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: xfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: wfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: csqfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: cotfine
+  real(c_double), dimension(MAXGEOMS), intent(in) :: raycon
+  real(c_double), dimension(0:MAXLAYERS), intent(in) :: radii
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: cota
+  real(c_double), dimension(0:MAXLAYERS, MAXLAYERS, MAXGEOMS), intent(in) :: sunpaths
+  integer(c_int), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: ntraverse
+  real(c_double), dimension(MAXLAYERS, MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: sunpathsfine
+  integer(c_int), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: ntraversefine
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_dn
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(out) :: cumsource_dn
+
+  ! Local variables
+  logical(kind=4) :: do_deltam_scaling_lcl
+  logical(kind=4) :: do_planpar_lcl
+  logical(kind=4) :: do_regular_ps_lcl
+  logical(kind=4) :: do_enhanced_ps_lcl
+  logical(kind=4), dimension(MAXGEOMS) :: donadir_lcl
+
+  ! Convert input arguments
+  do_deltam_scaling_lcl = do_deltam_scaling
+  do_planpar_lcl = do_planpar
+  do_regular_ps_lcl = do_regular_ps
+  do_enhanced_ps_lcl = do_enhanced_ps
+  donadir_lcl = donadir
+
+  call ss_integral_i_dn(maxgeoms, &
+                        maxlayers, &
+                        maxfine, &
+                        max_user_levels, &
+                        do_deltam_scaling_lcl, &
+                        do_planpar_lcl, &
+                        do_regular_ps_lcl, &
+                        do_enhanced_ps_lcl, &
+                        donadir_lcl, &
+                        ngeoms, &
+                        nlayers, &
+                        nfinedivs, &
+                        n_user_levels, &
+                        user_levels, &
+                        extinction, &
+                        deltaus, &
+                        exactscat_dn, &
+                        flux, &
+                        mu1, &
+                        ncrit, &
+                        radcrit, &
+                        cotcrit, &
+                        xfine, &
+                        wfine, &
+                        csqfine, &
+                        cotfine, &
+                        raycon, &
+                        radii, &
+                        cota, &
+                        sunpaths, &
+                        ntraverse, &
+                        sunpathsfine, &
+                        ntraversefine, &
+                        intensity_dn, &
+                        cumsource_dn)
+
+end subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_dn_wrap
+
+subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_up_wrap (maxgeoms, &
+                                                          maxlayers, &
+                                                          maxfine, &
+                                                          max_user_levels, &
+                                                          do_deltam_scaling, &
+                                                          do_planpar, &
+                                                          do_regular_ps, &
+                                                          do_enhanced_ps, &
+                                                          donadir, &
+                                                          ngeoms, &
+                                                          nlayers, &
+                                                          nfinedivs, &
+                                                          n_user_levels, &
+                                                          user_levels, &
+                                                          reflec, &
+                                                          extinction, &
+                                                          deltaus, &
+                                                          exactscat_up, &
+                                                          flux, &
+                                                          mu0, &
+                                                          mu1, &
+                                                          ncrit, &
+                                                          xfine, &
+                                                          wfine, &
+                                                          csqfine, &
+                                                          cotfine, &
+                                                          raycon, &
+                                                          cota, &
+                                                          sunpaths, &
+                                                          ntraverse, &
+                                                          sunpathsfine, &
+                                                          ntraversefine, &
+                                                          intensity_up, &
+                                                          intensity_db, &
+                                                          cumsource_up) bind(C)
+
+  ! Arguments
+  integer(c_int), intent(in) :: maxgeoms
+  integer(c_int), intent(in) :: maxlayers
+  integer(c_int), intent(in) :: maxfine
+  integer(c_int), intent(in) :: max_user_levels
+  logical(c_bool), intent(in) :: do_deltam_scaling
+  logical(c_bool), intent(in) :: do_planpar
+  logical(c_bool), intent(in) :: do_regular_ps
+  logical(c_bool), intent(in) :: do_enhanced_ps
+  logical(c_bool), dimension(MAXGEOMS), intent(in) :: donadir
+  integer(c_int), intent(in) :: ngeoms
+  integer(c_int), intent(in) :: nlayers
+  integer(c_int), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: nfinedivs
+  integer(c_int), intent(in) :: n_user_levels
+  integer(c_int), dimension(MAX_USER_LEVELS), intent(in) :: user_levels
+  real(c_double), dimension(MAXGEOMS), intent(in) :: reflec
+  real(c_double), dimension(MAXLAYERS), intent(in) :: extinction
+  real(c_double), dimension(MAXLAYERS), intent(in) :: deltaus
+  real(c_double), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: exactscat_up
+  real(c_double), intent(in) :: flux
+  real(c_double), dimension(MAXGEOMS), intent(in) :: mu0
+  real(c_double), dimension(MAXGEOMS), intent(in) :: mu1
+  integer(c_int), dimension(MAXGEOMS), intent(in) :: ncrit
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: xfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: wfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: csqfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: cotfine
+  real(c_double), dimension(MAXGEOMS), intent(in) :: raycon
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: cota
+  real(c_double), dimension(0:MAXLAYERS, MAXLAYERS, MAXGEOMS), intent(in) :: sunpaths
+  integer(c_int), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: ntraverse
+  real(c_double), dimension(MAXLAYERS, MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: sunpathsfine
+  integer(c_int), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: ntraversefine
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_up
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_db
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(out) :: cumsource_up
+
+  ! Local variables
+  logical(kind=4) :: do_deltam_scaling_lcl
+  logical(kind=4) :: do_planpar_lcl
+  logical(kind=4) :: do_regular_ps_lcl
+  logical(kind=4) :: do_enhanced_ps_lcl
+  logical(kind=4), dimension(MAXGEOMS) :: donadir_lcl
+
+  ! Convert input arguments
+  do_deltam_scaling_lcl = do_deltam_scaling
+  do_planpar_lcl = do_planpar
+  do_regular_ps_lcl = do_regular_ps
+  do_enhanced_ps_lcl = do_enhanced_ps
+  donadir_lcl = donadir
+
+  call ss_integral_i_up(maxgeoms, &
+                        maxlayers, &
+                        maxfine, &
+                        max_user_levels, &
+                        do_deltam_scaling_lcl, &
+                        do_planpar_lcl, &
+                        do_regular_ps_lcl, &
+                        do_enhanced_ps_lcl, &
+                        donadir_lcl, &
+                        ngeoms, &
+                        nlayers, &
+                        nfinedivs, &
+                        n_user_levels, &
+                        user_levels, &
+                        reflec, &
+                        extinction, &
+                        deltaus, &
+                        exactscat_up, &
+                        flux, &
+                        mu0, &
+                        mu1, &
+                        ncrit, &
+                        xfine, &
+                        wfine, &
+                        csqfine, &
+                        cotfine, &
+                        raycon, &
+                        cota, &
+                        sunpaths, &
+                        ntraverse, &
+                        sunpathsfine, &
+                        ntraversefine, &
+                        intensity_up, &
+                        intensity_db, &
+                        cumsource_up)
+
+end subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_up_wrap
+
+subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap (maxgeoms, &
+                                                            maxlayers, &
+                                                            maxfine, &
+                                                            max_user_levels, &
+                                                            do_upwelling, &
+                                                            do_dnwelling, &
+                                                            do_deltam_scaling, &
+                                                            do_planpar, &
+                                                            do_regular_ps, &
+                                                            do_enhanced_ps, &
+                                                            donadir, &
+                                                            ngeoms, &
+                                                            nlayers, &
+                                                            nfinedivs, &
+                                                            n_user_levels, &
+                                                            user_levels, &
+                                                            reflec, &
+                                                            extinction, &
+                                                            deltaus, &
+                                                            exactscat_up, &
+                                                            exactscat_dn, &
+                                                            flux, &
+                                                            mu0, &
+                                                            mu1, &
+                                                            ncrit, &
+                                                            radcrit, &
+                                                            cotcrit, &
+                                                            xfine, &
+                                                            wfine, &
+                                                            csqfine, &
+                                                            cotfine, &
+                                                            raycon, &
+                                                            radii, &
+                                                            cota, &
+                                                            sunpaths_up, &
+                                                            ntraverse_up, &
+                                                            sunpathsfine_up, &
+                                                            ntraversefine_up, &
+                                                            sunpaths_dn, &
+                                                            ntraverse_dn, &
+                                                            sunpathsfine_dn, &
+                                                            ntraversefine_dn, &
+                                                            intensity_up, &
+                                                            intensity_db, &
+                                                            cumsource_up, &
+                                                            intensity_dn, &
+                                                            cumsource_dn) bind(C)
+
+  ! Arguments
+  integer(c_int), intent(in) :: maxgeoms
+  integer(c_int), intent(in) :: maxlayers
+  integer(c_int), intent(in) :: maxfine
+  integer(c_int), intent(in) :: max_user_levels
+  logical(c_bool), intent(in) :: do_upwelling
+  logical(c_bool), intent(in) :: do_dnwelling
+  logical(c_bool), intent(in) :: do_deltam_scaling
+  logical(c_bool), intent(in) :: do_planpar
+  logical(c_bool), intent(in) :: do_regular_ps
+  logical(c_bool), intent(in) :: do_enhanced_ps
+  logical(c_bool), dimension(MAXGEOMS), intent(in) :: donadir
+  integer(c_int), intent(in) :: ngeoms
+  integer(c_int), intent(in) :: nlayers
+  integer(c_int), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: nfinedivs
+  integer(c_int), intent(in) :: n_user_levels
+  integer(c_int), dimension(MAX_USER_LEVELS), intent(in) :: user_levels
+  real(c_double), dimension(MAXGEOMS), intent(in) :: reflec
+  real(c_double), dimension(MAXLAYERS), intent(in) :: extinction
+  real(c_double), dimension(MAXLAYERS), intent(in) :: deltaus
+  real(c_double), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: exactscat_up
+  real(c_double), dimension(MAXLAYERS, MAXGEOMS), intent(in) :: exactscat_dn
+  real(c_double), intent(in) :: flux
+  real(c_double), dimension(MAXGEOMS), intent(in) :: mu0
+  real(c_double), dimension(MAXGEOMS), intent(in) :: mu1
+  integer(c_int), dimension(MAXGEOMS), intent(in) :: ncrit
+  real(c_double), dimension(MAXGEOMS), intent(in) :: radcrit
+  real(c_double), dimension(MAXGEOMS), intent(in) :: cotcrit
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: xfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: wfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: csqfine
+  real(c_double), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: cotfine
+  real(c_double), dimension(MAXGEOMS), intent(in) :: raycon
+  real(c_double), dimension(0:MAXLAYERS), intent(in) :: radii
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: cota
+  real(c_double), dimension(0:MAXLAYERS, MAXLAYERS, MAXGEOMS), intent(in) :: sunpaths_up
+  integer(c_int), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: ntraverse_up
+  real(c_double), dimension(MAXLAYERS, MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: sunpathsfine_up
+  integer(c_int), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: ntraversefine_up
+  real(c_double), dimension(0:MAXLAYERS, MAXLAYERS, MAXGEOMS), intent(in) :: sunpaths_dn
+  integer(c_int), dimension(0:MAXLAYERS, MAXGEOMS), intent(in) :: ntraverse_dn
+  real(c_double), dimension(MAXLAYERS, MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: sunpathsfine_dn
+  integer(c_int), dimension(MAXLAYERS, MAXFINE, MAXGEOMS), intent(in) :: ntraversefine_dn
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_up
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_db
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(out) :: cumsource_up
+  real(c_double), dimension(MAX_USER_LEVELS, MAXGEOMS), intent(out) :: intensity_dn
+  real(c_double), dimension(0:MAXLAYERS, MAXGEOMS), intent(out) :: cumsource_dn
+
+  ! Local variables
+  logical(kind=4) :: do_upwelling_lcl
+  logical(kind=4) :: do_dnwelling_lcl
+  logical(kind=4) :: do_deltam_scaling_lcl
+  logical(kind=4) :: do_planpar_lcl
+  logical(kind=4) :: do_regular_ps_lcl
+  logical(kind=4) :: do_enhanced_ps_lcl
+  logical(kind=4), dimension(MAXGEOMS) :: donadir_lcl
+
+  ! Convert input arguments
+  do_upwelling_lcl = do_upwelling
+  do_dnwelling_lcl = do_dnwelling
+  do_deltam_scaling_lcl = do_deltam_scaling
+  do_planpar_lcl = do_planpar
+  do_regular_ps_lcl = do_regular_ps
+  do_enhanced_ps_lcl = do_enhanced_ps
+  donadir_lcl = donadir
+
+  call ss_integral_i_updn(maxgeoms, &
+                          maxlayers, &
+                          maxfine, &
+                          max_user_levels, &
+                          do_upwelling_lcl, &
+                          do_dnwelling_lcl, &
+                          do_deltam_scaling_lcl, &
+                          do_planpar_lcl, &
+                          do_regular_ps_lcl, &
+                          do_enhanced_ps_lcl, &
+                          donadir_lcl, &
+                          ngeoms, &
+                          nlayers, &
+                          nfinedivs, &
+                          n_user_levels, &
+                          user_levels, &
+                          reflec, &
+                          extinction, &
+                          deltaus, &
+                          exactscat_up, &
+                          exactscat_dn, &
+                          flux, &
+                          mu0, &
+                          mu1, &
+                          ncrit, &
+                          radcrit, &
+                          cotcrit, &
+                          xfine, &
+                          wfine, &
+                          csqfine, &
+                          cotfine, &
+                          raycon, &
+                          radii, &
+                          cota, &
+                          sunpaths_up, &
+                          ntraverse_up, &
+                          sunpathsfine_up, &
+                          ntraversefine_up, &
+                          sunpaths_dn, &
+                          ntraverse_dn, &
+                          sunpathsfine_dn, &
+                          ntraversefine_dn, &
+                          intensity_up, &
+                          intensity_db, &
+                          cumsource_up, &
+                          intensity_dn, &
+                          cumsource_dn)
+
+end subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap
+
+end module FO_SCALARSS_RTCALCS_I_M_WRAP
