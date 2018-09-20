@@ -19,6 +19,7 @@ set(DIR_SOURCES
     pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
     chapman_boa.cc
     chapman_boa_rt.cc
+    first_order_interface.F90
     l_rad_driver.cc
     l_rad_driver_f.F90
     l_rad_rt.cc
