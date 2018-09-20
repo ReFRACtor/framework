@@ -11,7 +11,7 @@ namespace FullPhysics {
 
 class PCABinning {
 public:
-    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins, int num_eofs);
+    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins);
     virtual ~PCABinning() = default;
 
     /// Number of spectral points in each bin
@@ -25,7 +25,6 @@ private:
 
     boost::shared_ptr<PCAOpticalProperties> opt_props_;
     int num_bins_;
-    int num_eofs_;
 
     blitz::Array<int, 1> num_bin_points_;
     std::vector<blitz::Array<int, 1> > bin_indexes_;
