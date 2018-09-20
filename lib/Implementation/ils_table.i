@@ -12,7 +12,6 @@
 %fp_shared_ptr(FullPhysics::IlsTableLog);
 
 namespace FullPhysics {
-
 class IlsTableLinear : public IlsFunction {
 public:
   IlsTableLinear(const blitz::Array<double, 1>& Wavenumber, 
@@ -26,6 +25,9 @@ public:
   virtual void ils
   (const AutoDerivative<double>& wn_center,
    const blitz::Array<double, 1>& wn, ArrayAd<double, 1>& OUTPUT) const;
+
+  %python_attribute(band_name, std::string)
+  %python_attribute(hdf_band_name, std::string)
 
   %python_attribute(wavenumber, blitz::Array<double, 1>)
   %python_attribute(delta_lambda, blitz::Array<double, 2>)
@@ -49,6 +51,9 @@ public:
   virtual void ils
   (const AutoDerivative<double>& wn_center,
    const blitz::Array<double, 1>& wn, ArrayAd<double, 1>& OUTPUT) const;
+
+  %python_attribute(band_name, std::string)
+  %python_attribute(hdf_band_name, std::string)
 
   %python_attribute(wavenumber, blitz::Array<double, 1>)
   %python_attribute(delta_lambda, blitz::Array<double, 2>)
