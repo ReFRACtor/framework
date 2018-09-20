@@ -50,6 +50,7 @@ set(DIR_SOURCES
     ils_convolution.cc
     ils_gaussian.cc
     ils_instrument.cc
+    ils_sample_grid_convolution.cc
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
@@ -92,6 +93,7 @@ set(DIR_SOURCES
     refractive_index.cc
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
+    sample_grid_spectral_domain.cc
     simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
     solar_absorption_gfit_file.cc
@@ -186,6 +188,7 @@ set(TEST_SOURCES
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
     relative_humidity_test.cc
+    sample_grid_spectral_domain_test.cc
     simple_fixed_spectrum_sampling_test.cc
     solar_absorption_and_continuum_test.cc
     solar_absorption_gfit_file_test.cc
