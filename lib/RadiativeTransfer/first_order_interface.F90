@@ -812,3 +812,58 @@ subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap (maxgeoms, &
 end subroutine fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap
 
 end module FO_SCALARSS_RTCALCS_I_M_WRAP
+
+module FO_SCALARSS_SPHERFUNCS_M_WRAP
+
+use iso_c_binding
+use fo_scalarss_spherfuncs_m
+
+! This module was auto-generated 
+
+implicit none
+
+contains
+
+subroutine fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap (starter, &
+                                                                 maxmoms, &
+                                                                 maxgeoms, &
+                                                                 nmoms, &
+                                                                 ngeoms, &
+                                                                 df1, &
+                                                                 df2, &
+                                                                 cosscat, &
+                                                                 ss_pleg) bind(C)
+
+  ! Arguments
+  logical(c_bool), intent(inout) :: starter
+  integer(c_int), intent(in) :: maxmoms
+  integer(c_int), intent(in) :: maxgeoms
+  integer(c_int), intent(in) :: nmoms
+  integer(c_int), intent(in) :: ngeoms
+  real(c_double), dimension(MAXMOMS), intent(inout) :: df1
+  real(c_double), dimension(MAXMOMS), intent(inout) :: df2
+  real(c_double), dimension(MAXGEOMS), intent(in) :: cosscat
+  real(c_double), dimension(0:MAXMOMS, MAXGEOMS), intent(out) :: ss_pleg
+
+  ! Local variables
+  logical(kind=4) :: starter_lcl
+
+  ! Convert input arguments
+  starter_lcl = starter
+
+  call fo_scalarss_spherfuncs(starter_lcl, &
+                              maxmoms, &
+                              maxgeoms, &
+                              nmoms, &
+                              ngeoms, &
+                              df1, &
+                              df2, &
+                              cosscat, &
+                              ss_pleg)
+
+  ! Convert output arguments
+  starter = starter_lcl
+
+end subroutine fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap
+
+end module FO_SCALARSS_SPHERFUNCS_M_WRAP

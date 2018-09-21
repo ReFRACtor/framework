@@ -371,7 +371,7 @@ public:
   
 
   
-  void run() {
+  void fo_dtgeometry_master() {
     int message_len = (int) message_.extent(0) - 1;
     int trace_len = (int) trace_.extent(0) - 1;
     
@@ -988,7 +988,7 @@ public:
   
 
   
-  void run() {
+  void fo_ssgeometry_master() {
     int message_len = (int) message_.extent(0) - 1;
     int trace_len = (int) trace_.extent(0) - 1;
     
@@ -1805,6 +1805,133 @@ private:
   blitz::Array<int, 2> ntraverse_dn_;
   blitz::Array<double, 4> sunpathsfine_dn_;
   blitz::Array<int, 3> ntraversefine_dn_;
+};
+
+//-----------------------------------------------------------------------
+// Links to module: "fo_scalarss_spherfuncs_m" in file: "FO_ScalarSS_Spherfuncs.f90"
+//-----------------------------------------------------------------------
+
+extern "C" {
+
+  void fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap(const bool* starter_in, const int* maxmoms_in, const int* maxgeoms_in, const int* nmoms_in, const int* ngeoms_in, const double* df1_in, const double* df2_in, const double* cosscat_in, const double* ss_pleg_in);
+}
+
+class Fo_Scalarss_Spherfuncs {
+
+public:
+  Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in) : starter_(starter_in), maxmoms_(maxmoms_in), maxgeoms_(maxgeoms_in), nmoms_(nmoms_in), ngeoms_(ngeoms_in) 
+  { 
+    df1_.reference( blitz::Array<double, 1>(maxmoms_, blitz::ColumnMajorArray<1>()) );
+    df1_ = 0;
+    df2_.reference( blitz::Array<double, 1>(maxmoms_, blitz::ColumnMajorArray<1>()) );
+    df2_ = 0;
+    cosscat_.reference( blitz::Array<double, 1>(maxgeoms_, blitz::ColumnMajorArray<1>()) );
+    cosscat_ = 0;
+    ss_pleg_.reference( blitz::Array<double, 2>(maxmoms_-0+1, maxgeoms_, blitz::ColumnMajorArray<2>()) );
+    ss_pleg_ = 0;
+    // Initialize type pointers
+    
+  }
+
+  const bool& starter() const {
+    return starter_;
+  }
+
+  
+
+  const int& maxmoms() const {
+    return maxmoms_;
+  }
+
+  
+
+  const int& maxgeoms() const {
+    return maxgeoms_;
+  }
+
+  
+
+  const int& nmoms() const {
+    return nmoms_;
+  }
+
+  
+
+  const int& ngeoms() const {
+    return ngeoms_;
+  }
+
+  
+
+  const blitz::Array<double, 1>& df1() const {
+    return df1_;
+  }
+
+  void df1(const blitz::Array<double, 1>& df1_in) {
+    df1_ = df1_in;
+  }
+
+  
+
+  const blitz::Array<double, 1>& df2() const {
+    return df2_;
+  }
+
+  void df2(const blitz::Array<double, 1>& df2_in) {
+    df2_ = df2_in;
+  }
+
+  
+
+  const blitz::Array<double, 1>& cosscat() const {
+    return cosscat_;
+  }
+
+  void cosscat(const blitz::Array<double, 1>& cosscat_in) {
+    cosscat_ = cosscat_in;
+  }
+
+  
+
+  const blitz::Array<double, 2>& ss_pleg() const {
+    return ss_pleg_;
+  }
+
+  
+
+  
+  void run() {
+    
+    
+    fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap(&starter_, &maxmoms_, &maxgeoms_, &nmoms_, &ngeoms_, df1_.dataFirst(), df2_.dataFirst(), cosscat_.dataFirst(), ss_pleg_.dataFirst());
+    
+  }
+
+  friend std::ostream& operator<<(std::ostream &output_stream, const Fo_Scalarss_Spherfuncs &obj) {
+    output_stream << "Fo_Scalarss_Spherfuncs:" << std::endl
+      << " starter: " << obj.starter()  << std::endl
+      << " maxmoms: " << obj.maxmoms()  << std::endl
+      << "maxgeoms: " << obj.maxgeoms()  << std::endl
+      << "   nmoms: " << obj.nmoms()  << std::endl
+      << "  ngeoms: " << obj.ngeoms()  << std::endl
+      << "     df1: " << std::endl << obj.df1()  << std::endl
+      << "     df2: " << std::endl << obj.df2()  << std::endl
+      << " cosscat: " << std::endl << obj.cosscat()  << std::endl
+      << " ss_pleg: " << std::endl << obj.ss_pleg()  << std::endl;
+    return output_stream;
+
+  }
+
+private:
+  bool starter_;
+  int maxmoms_;
+  int maxgeoms_;
+  int nmoms_;
+  int ngeoms_;
+  blitz::Array<double, 1> df1_;
+  blitz::Array<double, 1> df2_;
+  blitz::Array<double, 1> cosscat_;
+  blitz::Array<double, 2> ss_pleg_;
 };
 
 

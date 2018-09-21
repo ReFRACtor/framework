@@ -52,7 +52,7 @@ public:
   std::string message() const;
   std::string trace() const;
   
-  void run();
+  void fo_dtgeometry_master();
 };
 
 
@@ -116,7 +116,7 @@ public:
   std::string message() const;
   std::string trace() const;
   
-  void run();
+  void fo_ssgeometry_master();
 };
 
 
@@ -180,6 +180,25 @@ public:
   void ss_integral_i_dn();
   void ss_integral_i_up();
   void ss_integral_i_updn();
+};
+
+
+class Fo_Scalarss_Spherfuncs {
+
+public:
+  Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in);
+  
+  %python_attribute(starter, bool&);
+  %python_attribute(maxmoms, int&);
+  %python_attribute(maxgeoms, int&);
+  %python_attribute(nmoms, int&);
+  %python_attribute(ngeoms, int&);
+  %python_attribute(df1, blitz::Array<double, 1>&);
+  %python_attribute(df2, blitz::Array<double, 1>&);
+  %python_attribute(cosscat, blitz::Array<double, 1>&);
+  %python_attribute(ss_pleg, blitz::Array<double, 2>&);
+  
+  void run();
 };
 
 }
