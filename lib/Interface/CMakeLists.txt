@@ -43,9 +43,6 @@ set(DIR_SOURCES
     output.cc
     pressure.cc
     problem_state.cc
-    radiative_transfer.cc
-    radiative_transfer_fixed_stokes_coefficient.cc
-    radiative_transfer_single_wn.cc
     rt_atmosphere.cc
     sample_grid.cc
     solar_absorption_spectrum.cc

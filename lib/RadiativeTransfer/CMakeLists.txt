@@ -35,6 +35,9 @@ set(DIR_SOURCES
     pca_optical_properties.cc
     radiant2.8_direct.F90
     radiant_driver.cc
+    radiative_transfer.cc
+    radiative_transfer_fixed_stokes_coefficient.cc
+    radiative_transfer_single_wn.cc
     spurr_driver.cc
     spurr_rt.cc
     twostream_driver.cc
