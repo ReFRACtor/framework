@@ -20,7 +20,6 @@ set(DIR_SOURCES
     forward_model_spectral_grid.cc
     gas_absorption.cc
     ground.cc
-    hres_wrapper.cc
     ils.cc
     ils_function.cc
     initial_guess.cc
