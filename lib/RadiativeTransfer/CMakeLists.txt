@@ -20,6 +20,7 @@ set(DIR_SOURCES
     chapman_boa.cc
     chapman_boa_rt.cc
     first_order_interface.F90
+    first_order_rt.cc
     l_rad_driver.cc
     l_rad_driver_f.F90
     l_rad_rt.cc
