@@ -66,7 +66,6 @@ set(DIR_SOURCES
     ils_convolution.cc
     ils_gaussian.cc
     ils_instrument.cc
-    ils_sample_grid_convolution.cc
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
