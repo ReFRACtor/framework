@@ -25,7 +25,7 @@ public:
   virtual ~DispersionPolynomial() {}
   %python_attribute(sub_state_identifier, std::string);
   %python_attribute(pixel_grid, SpectralDomain)
-  virtual boost::shared_ptr<Dispersion> clone() const;
+  virtual boost::shared_ptr<FullPhysics::SampleGrid> clone() const;
 };
 
 }

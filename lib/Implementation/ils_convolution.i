@@ -33,6 +33,6 @@ public:
    const std::vector<int>& Pixel_list) const;
   virtual boost::shared_ptr<Ils> clone() const;
   %python_attribute(ils_function, boost::shared_ptr<IlsFunction>);
-  %python_attribute(dispersion, boost::shared_ptr<Dispersion>);
+  %python_attribute(dispersion, boost::shared_ptr<FullPhysics::SampleGrid>);
 };
 }

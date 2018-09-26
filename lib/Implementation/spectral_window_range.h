@@ -3,9 +3,9 @@
 
 #include "spectral_window.h"
 #include "array_with_unit.h"
+#include "dispersion.h"
 
 namespace FullPhysics {
-  class Dispersion;
 
 /****************************************************************//**
   This is an implementation of a SpectralWindow that covers a fixed

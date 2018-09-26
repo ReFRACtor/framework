@@ -78,6 +78,7 @@ public:
 
   virtual std::string state_vector_name_i(int i) const;
   virtual SpectralDomain pixel_grid() const;
+  virtual SpectralDomain sample_grid() const { return this->pixel_grid(); };
   virtual void print(std::ostream& Os) const;
 private:
   void initialize();
