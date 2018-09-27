@@ -371,7 +371,7 @@ public:
   
 
   
-  void fo_dtgeometry_master() {
+  void run() {
     int message_len = (int) message_.extent(0) - 1;
     int trace_len = (int) trace_.extent(0) - 1;
     
@@ -988,7 +988,7 @@ public:
   
 
   
-  void fo_ssgeometry_master() {
+  void run() {
     int message_len = (int) message_.extent(0) - 1;
     int trace_len = (int) trace_.extent(0) - 1;
     

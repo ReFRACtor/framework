@@ -52,7 +52,7 @@ public:
   std::string message() const;
   std::string trace() const;
   
-  void fo_dtgeometry_master();
+  void run();
 };
 
 
@@ -116,7 +116,7 @@ public:
   std::string message() const;
   std::string trace() const;
   
-  void fo_ssgeometry_master();
+  void run();
 };
 
 
