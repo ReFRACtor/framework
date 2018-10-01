@@ -50,6 +50,7 @@ set(DIR_SOURCES
 set(TEST_SOURCES
     chapman_boa_rt_test.cc
     chapman_boa_test.cc
+    first_order_driver_test.cc
     l_rad_driver_test.cc
     l_rad_rt_test.cc
     lidort_driver_test.cc
