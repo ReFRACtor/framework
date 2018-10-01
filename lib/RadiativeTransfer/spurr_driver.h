@@ -162,9 +162,6 @@ protected:
 
   bool do_solar_sources, do_thermal_emission;
 
-  /// Initializes radiative transfer data structures
-  virtual void initialize_rt() = 0;
-
   /// Spurr BRDF class interface class to use
   mutable boost::shared_ptr<SpurrBrdfDriver> brdf_driver_;
 

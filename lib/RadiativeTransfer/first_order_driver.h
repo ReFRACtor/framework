@@ -9,13 +9,12 @@
 
 namespace FullPhysics {
 
-class FirstOrderDriver : SpurrRtDriver {
+class FirstOrderDriver : public SpurrRtDriver {
 
 public:
 
     FirstOrderDriver(int number_layers, int surface_type, int number_moments,
                      bool do_solar = true, bool do_thermal = false); 
-
   
     void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
     void setup_geometry(double sza, double azm, double zen) const;
@@ -38,7 +37,6 @@ public:
  
 private:
 
-    void initialize_rt();
     void init_interfaces(int nlayers);
 
     int num_moments_;

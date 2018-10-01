@@ -12,9 +12,6 @@ using namespace blitz;
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_moments, bool do_solar, bool do_thermal) 
 : num_moments_(number_moments), surface_type_(surface_type), SpurrRtDriver(do_solar, do_thermal)
 {
-    // Recommended value by manual of 50 in case we use cox-munk
-    int n_brdf_stream = 50;
-    brdf_driver_.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
     init_interfaces(number_layers);
 }
 
@@ -27,11 +24,8 @@ void FirstOrderDriver::init_interfaces(int nlayers)
     int nazms = 1;
     int ngeoms = nszas * nvzas * nazms;
 
-    // Use value used by PCA driver code
-    int nfine = 3;
-
-    // ?? Value used by 2 stream
-    int num_moments = 3;
+    // Match what is used by LIDORT driver
+    int nfine = 4;
 
     geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
 
@@ -74,17 +68,14 @@ void FirstOrderDriver::init_interfaces(int nlayers)
     // Should always be true  before first Spherfuncs call
     bool starter = true;
 
-    legendre.reset(new Fo_Scalarss_Spherfuncs(starter, num_moments_, ngeoms, num_moments, ngeoms));
+    legendre.reset(new Fo_Scalarss_Spherfuncs(starter, num_moments_, ngeoms, num_moments_, ngeoms));
 
     // Initialize radiance object
 
     // Top of atmosphere only
     int n_user_levels = 1;
     fo_interface.reset(new Fo_Scalarss_Rtcalcs_I(ngeoms, nlayers, nfine, n_user_levels, ngeoms, nlayers, n_user_levels));
-}
 
-void FirstOrderDriver::initialize_rt()
-{
     // Same setting as LIDORT would have
     fo_interface->do_deltam_scaling(true);
 
@@ -94,8 +85,23 @@ void FirstOrderDriver::initialize_rt()
     fo_interface->do_enhanced_ps(geometry->do_enhanced_ps());
     fo_interface->donadir(geometry->donadir());
 
+    // Turn on upwelling calculation or else we get no results
+    fo_interface->do_upwelling(true);
+
     // Set solar flux to 1.0 for solar spectrum case
     fo_interface->flux(1.0);
+
+    // Recommended value by manual of 50 in case we use cox-munk
+    int n_brdf_stream = 50;
+    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver(new LidortBrdfDriver(n_brdf_stream, num_moments_));
+    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_directbounce_only(true);
+    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
+    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_user_streams(true);
+    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_solar_sources(do_solar_sources);
+    //l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_surface_emission(do_thermal_emission);
+
+    brdf_driver_ = l_brdf_driver;
+    brdf_driver_->initialize_brdf_inputs(surface_type_);
 }
 
 void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid) const
@@ -199,7 +205,7 @@ void FirstOrderDriver::calculate_rt() const
 
 double FirstOrderDriver::get_intensity() const
 {
-    return fo_interface->intensity_up()(0, 0);
+    return fo_interface->intensity_db()(0, 0) + fo_interface->intensity_up()(0, 0);
 }
 
 void FirstOrderDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const
