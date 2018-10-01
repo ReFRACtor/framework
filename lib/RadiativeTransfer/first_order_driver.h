@@ -34,6 +34,8 @@ public:
     void calculate_rt() const;
     double get_intensity() const;
     void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const;
+
+    const boost::shared_ptr<Fo_Scalarss_Rtcalcs_I> interface() const { return fo_interface; }
  
 private:
 
