@@ -16,7 +16,6 @@ namespace FullPhysics {
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void twostream_ls_brdf_supplement_m_twostream_ls_brdfmaster_wrap(const int* maxbeams_in, const int* max_user_streams_in, const int* max_user_obsgeoms_in, const int* maxstreams_brdf_in, const int* max_brdf_kernels_in, const int* max_brdf_parameters_in, const int* max_surfacewfs_in, const bool* do_solar_sources_in, const bool* do_user_obsgeoms_in, const bool* lambertian_kernel_flag_in, const bool* do_shadow_effect_in, const bool* do_surface_emission_in, const int* nbeams_in, const int* n_user_streams_in, const int* n_user_obsgeoms_in, const double* beam_szas_in, const double* user_angles_in, const double* user_obsgeoms_in, const double* stream_value_in, const int* nstreams_brdf_in, const int* n_brdf_kernels_in, const int* which_brdf_in, const double* brdf_factors_in, const int* n_brdf_parameters_in, const double* brdf_parameters_in, const bool* do_kernel_factor_wfs_in, const bool* do_kernel_params_wfs_in, const bool* do_kparams_derivs_in, const int* n_surface_wfs_in, const int* n_kernel_factor_wfs_in, const int* n_kernel_params_wfs_in, const double* brdf_f_0_in, const double* brdf_f_in, const double* ubrdf_f_in, const double* emissivity_in, const double* ls_brdf_f_0_in, const double* ls_brdf_f_in, const double* ls_ubrdf_f_in, const double* ls_emissivity_in, const int* status_brdfsup_in, const int* message_len, const char* message_in, const int* action_len, const char* action_in);
 }
 
@@ -82,6 +81,13 @@ public:
   }
 
   virtual ~Twostream_Ls_Brdf_Supplement() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   const int& maxbeams() const {
     return maxbeams_;
@@ -661,6 +667,13 @@ public:
   }
 
   virtual ~Twostream_Lps_Master() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   const int& maxlayers() const {
     return maxlayers_;

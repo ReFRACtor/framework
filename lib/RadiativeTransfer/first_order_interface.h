@@ -79,6 +79,13 @@ public:
 
   virtual ~Fo_Dtgeometry_Master() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   const int& maxgeoms() const {
     return maxgeoms_;
   }
@@ -548,6 +555,13 @@ public:
   }
 
   virtual ~Fo_Ssgeometry_Master() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -1217,6 +1231,13 @@ public:
 
   virtual ~Fo_Scalarss_Rtcalcs_I() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   const int& maxgeoms() const {
     return maxgeoms_;
   }
@@ -1836,6 +1857,13 @@ public:
   }
 
   virtual ~Fo_Scalarss_Spherfuncs() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   const bool& starter() const {
     return starter_;

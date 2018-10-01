@@ -22,7 +22,8 @@ class Fo_Dtgeometry_Master {
 public:
   Fo_Dtgeometry_Master(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nlayers_in, const int& nfine_in);
   virtual ~Fo_Dtgeometry_Master();
-  
+  std::string print_to_string() const;
+
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
   %python_attribute(maxfine, int&)
@@ -67,7 +68,8 @@ class Fo_Ssgeometry_Master {
 public:
   Fo_Ssgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in);
   virtual ~Fo_Ssgeometry_Master();
-  
+  std::string print_to_string() const;
+
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxszas, int&)
   %python_attribute(maxvzas, int&)
@@ -132,7 +134,8 @@ class Fo_Scalarss_Rtcalcs_I {
 public:
   Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in);
   virtual ~Fo_Scalarss_Rtcalcs_I();
-  
+  std::string print_to_string() const;
+
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
   %python_attribute(maxfine, int&)
@@ -196,7 +199,8 @@ class Fo_Scalarss_Spherfuncs {
 public:
   Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in);
   virtual ~Fo_Scalarss_Spherfuncs();
-  
+  std::string print_to_string() const;
+
   %python_attribute(starter, bool&)
   %python_attribute(maxmoms, int&)
   %python_attribute(maxgeoms, int&)

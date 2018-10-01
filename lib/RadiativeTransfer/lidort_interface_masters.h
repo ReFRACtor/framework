@@ -40,6 +40,13 @@ public:
 
   virtual ~Brdf_Linsup_Masters() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
   }
@@ -228,6 +235,13 @@ public:
 
   virtual ~Brdf_Sup_Masters() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
   }
@@ -379,6 +393,13 @@ public:
   }
 
   virtual ~Lidort_Lcs_Masters() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -646,6 +667,13 @@ public:
 
   virtual ~Lidort_Lps_Masters() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
   }
@@ -907,6 +935,13 @@ public:
 
   virtual ~Lidort_Inputs() = default;
 
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
+
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
   }
@@ -1028,6 +1063,13 @@ public:
   }
 
   virtual ~Lidort_Masters() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -1196,6 +1238,13 @@ public:
   }
 
   virtual ~Lidort_Sup_Accessories() = default;
+
+  std::string print_to_string() const
+  {
+      std::ostringstream output;
+      output << *this;
+      return output.str();
+  }
 
   Sleave_Sup_Inputs& sleave_sup_in() {
     return *sleave_sup_in_;
