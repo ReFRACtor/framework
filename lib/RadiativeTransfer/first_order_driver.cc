@@ -89,7 +89,9 @@ void FirstOrderDriver::init_interfaces(int nlayers)
     fo_interface->do_upwelling(true);
 
     // Set solar flux to 1.0 for solar spectrum case
-    fo_interface->flux(1.0);
+    // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
+    float lidort_flux_factor = 1.0;
+    fo_interface->flux(0.25 * lidort_flux_factor / geometry->pie());
 
     // Recommended value by manual of 50 in case we use cox-munk
     int n_brdf_stream = 50;
@@ -168,12 +170,12 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     extinction = optical_depth / height_diffs;
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
-    Array<double, 2> phase_function(fo_interface->exactscat_up());
+    Array<double, 2> exactscat(fo_interface->exactscat_up());
 
-    phase_function = 0;
+    exactscat = 0;
     for(int lay_idx = 0; lay_idx < od.rows(); lay_idx++) {
         for(int mom_idx = 0; mom_idx < num_moments_; mom_idx++) {
-            phase_function(lay_idx, 0) = phase_function(lay_idx, 0) + legendre->ss_pleg()(mom_idx, 0) * phase_function(mom_idx, lay_idx);
+            exactscat(lay_idx, 0) += legendre->ss_pleg()(mom_idx, 0) * pf(mom_idx, lay_idx);
         }
     }
     
