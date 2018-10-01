@@ -20,7 +20,7 @@ extern "C" {
   void twostream_ls_brdf_supplement_m_twostream_ls_brdfmaster_wrap(const int* maxbeams_in, const int* max_user_streams_in, const int* max_user_obsgeoms_in, const int* maxstreams_brdf_in, const int* max_brdf_kernels_in, const int* max_brdf_parameters_in, const int* max_surfacewfs_in, const bool* do_solar_sources_in, const bool* do_user_obsgeoms_in, const bool* lambertian_kernel_flag_in, const bool* do_shadow_effect_in, const bool* do_surface_emission_in, const int* nbeams_in, const int* n_user_streams_in, const int* n_user_obsgeoms_in, const double* beam_szas_in, const double* user_angles_in, const double* user_obsgeoms_in, const double* stream_value_in, const int* nstreams_brdf_in, const int* n_brdf_kernels_in, const int* which_brdf_in, const double* brdf_factors_in, const int* n_brdf_parameters_in, const double* brdf_parameters_in, const bool* do_kernel_factor_wfs_in, const bool* do_kernel_params_wfs_in, const bool* do_kparams_derivs_in, const int* n_surface_wfs_in, const int* n_kernel_factor_wfs_in, const int* n_kernel_params_wfs_in, const double* brdf_f_0_in, const double* brdf_f_in, const double* ubrdf_f_in, const double* emissivity_in, const double* ls_brdf_f_0_in, const double* ls_brdf_f_in, const double* ls_ubrdf_f_in, const double* ls_emissivity_in, const int* status_brdfsup_in, const int* message_len, const char* message_in, const int* action_len, const char* action_in);
 }
 
-class Twostream_Ls_Brdf_Supplement {
+class Twostream_Ls_Brdf_Supplement : public virtual GenericObject {
 
 public:
   Twostream_Ls_Brdf_Supplement(const int& maxbeams_in, const int& max_user_streams_in, const int& max_user_obsgeoms_in, const int& maxstreams_brdf_in, const int& max_brdf_kernels_in, const int& max_brdf_parameters_in, const int& max_surfacewfs_in, const int& nbeams_in, const int& n_user_streams_in, const int& nstreams_brdf_in) : maxbeams_(maxbeams_in), max_user_streams_(max_user_streams_in), max_user_obsgeoms_(max_user_obsgeoms_in), maxstreams_brdf_(maxstreams_brdf_in), max_brdf_kernels_(max_brdf_kernels_in), max_brdf_parameters_(max_brdf_parameters_in), max_surfacewfs_(max_surfacewfs_in), nbeams_(nbeams_in), n_user_streams_(n_user_streams_in), nstreams_brdf_(nstreams_brdf_in) 
@@ -80,6 +80,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Twostream_Ls_Brdf_Supplement() = default;
 
   const int& maxbeams() const {
     return maxbeams_;
@@ -512,11 +514,10 @@ private:
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void twostream_lps_master_m_twostream_lps_master_wrap(const int* maxlayers_in, const int* maxtotal_in, const int* maxmessages_in, const int* maxbeams_in, const int* max_geometries_in, const int* max_user_streams_in, const int* max_user_relazms_in, const int* max_user_obsgeoms_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const int* max_sleavewfs_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_plane_parallel_in, const bool* do_2s_levelout_in, const bool* do_mvout_only_in, const bool* do_additional_mvout_in, const bool* do_solar_sources_in, const bool* do_thermal_emission_in, const bool* do_surface_emission_in, const bool* do_d2s_scaling_in, const bool* do_brdf_surface_in, const bool* do_user_obsgeoms_in, const bool* do_surface_leaving_in, const bool* do_sl_isotropic_in, const bool* do_pentadiag_inverse_in, const int* bvpindex_in, const double* bvpscalefactor_in, const int* taylor_order_in, const double* taylor_small_in, const double* tcutoff_in, const int* nlayers_in, const int* ntotal_in, const double* stream_value_in, const int* n_user_obsgeoms_in, const double* user_obsgeoms_in, const int* n_user_streams_in, const double* user_angles_in, const int* n_user_relazms_in, const double* user_relazms_in, const double* flux_factor_in, const int* nbeams_in, const double* beam_szas_in, const double* earth_radius_in, const double* height_grid_in, const double* deltau_input_in, const double* omega_input_in, const double* asymm_input_in, const double* d2s_scaling_in, const double* thermal_bb_input_in, const double* lambertian_albedo_in, const double* brdf_f_0_in, const double* brdf_f_in, const double* ubrdf_f_in, const double* emissivity_in, const double* surfbb_in, const double* slterm_isotropic_in, const double* slterm_f_0_in, const bool* do_profile_wfs_in, const bool* do_surface_wfs_in, const bool* do_sleave_wfs_in, const bool* layer_vary_flag_in, const int* layer_vary_number_in, const int* n_surface_wfs_in, const int* n_sleave_wfs_in, const double* lssl_slterm_isotropic_in, const double* lssl_slterm_f_0_in, const double* l_deltau_input_in, const double* l_omega_input_in, const double* l_asymm_input_in, const double* l_d2s_scaling_in, const double* ls_brdf_f_0_in, const double* ls_brdf_f_in, const double* ls_ubrdf_f_in, const double* ls_emissivity_in, const double* intensity_toa_in, const double* profilewf_toa_in, const double* surfacewf_toa_in, const double* intensity_boa_in, const double* profilewf_boa_in, const double* surfacewf_boa_in, const double* radlevel_up_in, const double* radlevel_dn_in, const int* n_geometries_in, const double* profjaclevel_up_in, const double* profjaclevel_dn_in, const double* surfjaclevel_up_in, const double* surfjaclevel_dn_in, const double* fluxes_toa_in, const double* profjacfluxes_toa_in, const double* surfjacfluxes_toa_in, const double* fluxes_boa_in, const double* profjacfluxes_boa_in, const double* surfjacfluxes_boa_in, const int* status_inputcheck_in, const int* c_nmessages_in, const int* c_messages_shape_1, const int* c_messages_len, const char* c_messages_in, const int* c_actions_shape_1, const int* c_actions_len, const char* c_actions_in, const int* status_execution_in, const int* e_message_len, const char* e_message_in, const int* e_trace_1_len, const char* e_trace_1_in, const int* e_trace_2_len, const char* e_trace_2_in);
 }
 
-class Twostream_Lps_Master {
+class Twostream_Lps_Master : public virtual GenericObject {
 
 public:
   Twostream_Lps_Master(const int& maxlayers_in, const int& maxtotal_in, const int& maxmessages_in, const int& maxbeams_in, const int& max_geometries_in, const int& max_user_streams_in, const int& max_user_relazms_in, const int& max_user_obsgeoms_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& nlayers_in, const int& ntotal_in, const int& n_user_streams_in, const int& n_user_relazms_in, const int& nbeams_in, const double& earth_radius_in, const int& n_geometries_in) : maxlayers_(maxlayers_in), maxtotal_(maxtotal_in), maxmessages_(maxmessages_in), maxbeams_(maxbeams_in), max_geometries_(max_geometries_in), max_user_streams_(max_user_streams_in), max_user_relazms_(max_user_relazms_in), max_user_obsgeoms_(max_user_obsgeoms_in), max_atmoswfs_(max_atmoswfs_in), max_surfacewfs_(max_surfacewfs_in), max_sleavewfs_(max_sleavewfs_in), nlayers_(nlayers_in), ntotal_(ntotal_in), n_user_streams_(n_user_streams_in), n_user_relazms_(n_user_relazms_in), nbeams_(nbeams_in), earth_radius_(earth_radius_in), n_geometries_(n_geometries_in) 
@@ -658,6 +659,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Twostream_Lps_Master() = default;
 
   const int& maxlayers() const {
     return maxlayers_;

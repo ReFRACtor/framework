@@ -8,6 +8,14 @@
 
 %import "lidort_interface_types.i"
 
+%fp_shared_ptr(FullPhysics::Brdf_Linsup_Masters);
+%fp_shared_ptr(FullPhysics::Brdf_Sup_Masters);
+%fp_shared_ptr(FullPhysics::Lidort_Lcs_Masters);
+%fp_shared_ptr(FullPhysics::Lidort_Lps_Masters);
+%fp_shared_ptr(FullPhysics::Lidort_Inputs);
+%fp_shared_ptr(FullPhysics::Lidort_Masters);
+%fp_shared_ptr(FullPhysics::Lidort_Sup_Accessories);
+
 namespace FullPhysics {
 
 
@@ -16,6 +24,7 @@ class Brdf_Linsup_Masters {
 
 public:
   Brdf_Linsup_Masters();
+  virtual ~Brdf_Linsup_Masters();
   
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)
   %python_attribute(brdf_linsup_in, Brdf_Linsup_Inputs&)
@@ -33,6 +42,7 @@ class Brdf_Sup_Masters {
 
 public:
   Brdf_Sup_Masters();
+  virtual ~Brdf_Sup_Masters();
   
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)
   %python_attribute(brdf_sup_inputstatus, Brdf_Input_Exception_Handling&)
@@ -48,6 +58,7 @@ class Lidort_Lcs_Masters {
 
 public:
   Lidort_Lcs_Masters();
+  virtual ~Lidort_Lcs_Masters();
   
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -66,6 +77,7 @@ class Lidort_Lps_Masters {
 
 public:
   Lidort_Lps_Masters();
+  virtual ~Lidort_Lps_Masters();
   
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -84,6 +96,7 @@ class Lidort_Inputs {
 
 public:
   Lidort_Inputs();
+  virtual ~Lidort_Inputs();
   
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -97,6 +110,7 @@ class Lidort_Masters {
 
 public:
   Lidort_Masters();
+  virtual ~Lidort_Masters();
   
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -111,6 +125,7 @@ class Lidort_Sup_Accessories {
 
 public:
   Lidort_Sup_Accessories(boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_in, boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_in, boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_in);
+  virtual ~Lidort_Sup_Accessories();
   
   %python_attribute(sleave_sup_in, Sleave_Sup_Inputs&)
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)

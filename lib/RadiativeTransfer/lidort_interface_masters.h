@@ -22,7 +22,7 @@ extern "C" {
   void brdf_linsup_masters_m_brdf_lin_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_linsup_in_in, void** brdf_sup_out_in, void** brdf_linsup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Linsup_Masters {
+class Brdf_Linsup_Masters : public virtual GenericObject {
 
 public:
   Brdf_Linsup_Masters() 
@@ -37,6 +37,8 @@ public:
     brdf_sup_outputstatus_.reset( new Brdf_Output_Exception_Handling() );
     
   }
+
+  virtual ~Brdf_Linsup_Masters() = default;
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
@@ -210,7 +212,7 @@ extern "C" {
   void brdf_sup_masters_m_brdf_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_sup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Sup_Masters {
+class Brdf_Sup_Masters : public virtual GenericObject {
 
 public:
   Brdf_Sup_Masters() 
@@ -223,6 +225,8 @@ public:
     brdf_sup_outputstatus_.reset( new Brdf_Output_Exception_Handling() );
     
   }
+
+  virtual ~Brdf_Sup_Masters() = default;
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
@@ -356,7 +360,7 @@ extern "C" {
   void lcs_masters_lcs_master_wrap(void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lcs_Masters {
+class Lidort_Lcs_Masters : public virtual GenericObject {
 
 public:
   Lidort_Lcs_Masters() 
@@ -373,6 +377,8 @@ public:
     lidort_linout_.reset( new Lidort_Linoutputs() );
     
   }
+
+  virtual ~Lidort_Lcs_Masters() = default;
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -620,7 +626,7 @@ extern "C" {
   void lps_masters_lps_master_wrap(void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lps_Masters {
+class Lidort_Lps_Masters : public virtual GenericObject {
 
 public:
   Lidort_Lps_Masters() 
@@ -637,6 +643,8 @@ public:
     lidort_linout_.reset( new Lidort_Linoutputs() );
     
   }
+
+  virtual ~Lidort_Lps_Masters() = default;
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -884,7 +892,7 @@ extern "C" {
   void inputs_input_master_wrap(const int* filnam_in_len, const char* filnam_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_inputstatus_in);
 }
 
-class Lidort_Inputs {
+class Lidort_Inputs : public virtual GenericObject {
 
 public:
   Lidort_Inputs() 
@@ -896,6 +904,8 @@ public:
     lidort_inputstatus_.reset( new Lidort_Input_Exception_Handling() );
     
   }
+
+  virtual ~Lidort_Inputs() = default;
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -1003,7 +1013,7 @@ extern "C" {
   void masters_master_wrap(void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in);
 }
 
-class Lidort_Masters {
+class Lidort_Masters : public virtual GenericObject {
 
 public:
   Lidort_Masters() 
@@ -1016,6 +1026,8 @@ public:
     lidort_out_.reset( new Lidort_Outputs() );
     
   }
+
+  virtual ~Lidort_Masters() = default;
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -1170,7 +1182,7 @@ extern "C" {
   void sup_accessories_brdf_input_checker_wrap(void** brdf_sup_in_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_brdfcheck_status_in);
 }
 
-class Lidort_Sup_Accessories {
+class Lidort_Sup_Accessories : public virtual GenericObject {
 
 public:
   Lidort_Sup_Accessories(boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_in, boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_in, boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_in) : brdf_sup_in_(brdf_sup_in_in), lidort_fixin_(lidort_fixin_in), lidort_modin_(lidort_modin_in) 
@@ -1182,6 +1194,8 @@ public:
     lidort_brdfcheck_status_.reset( new Lidort_Exception_Handling() );
     
   }
+
+  virtual ~Lidort_Sup_Accessories() = default;
 
   Sleave_Sup_Inputs& sleave_sup_in() {
     return *sleave_sup_in_;

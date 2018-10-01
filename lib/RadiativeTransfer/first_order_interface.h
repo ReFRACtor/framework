@@ -16,11 +16,10 @@ namespace FullPhysics {
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void fo_dtgeometry_master_m_fo_dtgeometry_master_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const int* ngeoms_in, const int* nlayers_in, const int* nfine_in, const double* dtr_in, const double* eradius_in, const double* heights_in, const double* alpha_boa_in, const bool* donadir_in, const bool* docrit_in, const double* acrit_in, const double* extinc_in, const double* raycon_in, const double* radii_in, const double* alpha_in, const double* cota_in, const int* nfinedivs_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* alphafine_in, const double* radiifine_in, const int* ncrit_in, const double* radcrit_in, const double* cotcrit_in, const double* mu1_in, const bool* fail_in, const int* message_len, const char* message_in, const int* trace_len, const char* trace_in);
 }
 
-class Fo_Dtgeometry_Master {
+class Fo_Dtgeometry_Master : public virtual GenericObject {
 
 public:
   Fo_Dtgeometry_Master(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nlayers_in, const int& nfine_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxfine_(maxfine_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), nfine_(nfine_in) 
@@ -77,6 +76,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Fo_Dtgeometry_Master() = default;
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -461,11 +462,10 @@ private:
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void fo_ssgeometry_master_m_fo_ssgeometry_master_wrap(const int* maxgeoms_in, const int* maxszas_in, const int* maxvzas_in, const int* maxazms_in, const int* maxlayers_in, const int* maxfine_in, const bool* do_obsgeom_in, const bool* do_chapman_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const int* ngeoms_in, const int* nszas_in, const int* nvzas_in, const int* nazms_in, const int* nlayers_in, const int* nfine_in, const double* dtr_in, const double* pie_in, const double* vsign_in, const double* eradius_in, const double* heights_in, const double* obsgeom_boa_in, const double* alpha_boa_in, const double* theta_boa_in, const double* phi_boa_in, const bool* donadir_in, const bool* docrit_in, const double* acrit_in, const double* extinc_in, const double* raycon_in, const double* radii_in, const double* alpha_in, const double* cota_in, const int* nfinedivs_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* alphafine_in, const double* radiifine_in, const int* ncrit_in, const double* radcrit_in, const double* cotcrit_in, const double* mu0_in, const double* mu1_in, const double* cosscat_in, const double* chapfacs_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in, const bool* fail_in, const int* message_len, const char* message_in, const int* trace_len, const char* trace_in);
 }
 
-class Fo_Ssgeometry_Master {
+class Fo_Ssgeometry_Master : public virtual GenericObject {
 
 public:
   Fo_Ssgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in) : maxgeoms_(maxgeoms_in), maxszas_(maxszas_in), maxvzas_(maxvzas_in), maxazms_(maxazms_in), maxlayers_(maxlayers_in), maxfine_(maxfine_in), ngeoms_(ngeoms_in), nszas_(nszas_in), nvzas_(nvzas_in), nazms_(nazms_in), nlayers_(nlayers_in), nfine_(nfine_in) 
@@ -546,6 +546,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Fo_Ssgeometry_Master() = default;
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -1118,13 +1120,12 @@ private:
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void fo_scalarss_rtcalcs_i_m_ss_integral_i_dn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const int* max_user_levels_in, const bool* do_deltam_scaling_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* n_user_levels_in, const int* user_levels_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_dn_in, const double* flux_in, const double* mu1_in, const int* ncrit_in, const double* radcrit_in, const double* cotcrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* radii_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in, const double* intensity_dn_in, const double* cumsource_dn_in);
   void fo_scalarss_rtcalcs_i_m_ss_integral_i_up_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const int* max_user_levels_in, const bool* do_deltam_scaling_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* n_user_levels_in, const int* user_levels_in, const double* reflec_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* flux_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in, const double* intensity_up_in, const double* intensity_db_in, const double* cumsource_up_in);
   void fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const int* max_user_levels_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_deltam_scaling_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* n_user_levels_in, const int* user_levels_in, const double* reflec_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* exactscat_dn_in, const double* flux_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* radcrit_in, const double* cotcrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* radii_in, const double* cota_in, const double* sunpaths_up_in, const int* ntraverse_up_in, const double* sunpathsfine_up_in, const int* ntraversefine_up_in, const double* sunpaths_dn_in, const int* ntraverse_dn_in, const double* sunpathsfine_dn_in, const int* ntraversefine_dn_in, const double* intensity_up_in, const double* intensity_db_in, const double* cumsource_up_in, const double* intensity_dn_in, const double* cumsource_dn_in);
 }
 
-class Fo_Scalarss_Rtcalcs_I {
+class Fo_Scalarss_Rtcalcs_I : public virtual GenericObject {
 
 public:
   Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxfine_(maxfine_in), max_user_levels_(max_user_levels_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), n_user_levels_(n_user_levels_in) 
@@ -1213,6 +1214,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Fo_Scalarss_Rtcalcs_I() = default;
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -1812,11 +1815,10 @@ private:
 //-----------------------------------------------------------------------
 
 extern "C" {
-
   void fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap(const bool* starter_in, const int* maxmoms_in, const int* maxgeoms_in, const int* nmoms_in, const int* ngeoms_in, const double* df1_in, const double* df2_in, const double* cosscat_in, const double* ss_pleg_in);
 }
 
-class Fo_Scalarss_Spherfuncs {
+class Fo_Scalarss_Spherfuncs : public virtual GenericObject {
 
 public:
   Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in) : starter_(starter_in), maxmoms_(maxmoms_in), maxgeoms_(maxgeoms_in), nmoms_(nmoms_in), ngeoms_(ngeoms_in) 
@@ -1832,6 +1834,8 @@ public:
     // Initialize type pointers
     
   }
+
+  virtual ~Fo_Scalarss_Spherfuncs() = default;
 
   const bool& starter() const {
     return starter_;
