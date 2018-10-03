@@ -2,7 +2,7 @@
 #define ILS_CONVOLUTION_H
 #include "ils.h"
 #include "ils_function.h"
-#include "dispersion.h"
+#include "sample_grid.h"
 
 namespace FullPhysics {
   class HdfFile;
@@ -11,12 +11,12 @@ namespace FullPhysics {
   wavenumbers of each pixel, and convolve against a IlsFunction.
 *******************************************************************/
 
-class IlsConvolution : public Ils, public Observer<Dispersion> {
+class IlsConvolution : public Ils, public Observer<SampleGrid> {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
 //-----------------------------------------------------------------------
-  IlsConvolution(const boost::shared_ptr<Dispersion>& Disp,
+  IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
 		 const boost::shared_ptr<IlsFunction>& Ils_func,
 		 const DoubleWithUnit&
 		 Ils_half_width = DoubleWithUnit(20, units::inv_cm))
@@ -27,14 +27,14 @@ public:
 /// Constructor.
 //-----------------------------------------------------------------------
 
-  IlsConvolution(const boost::shared_ptr<Dispersion>& Disp,
+  IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
 		 const boost::shared_ptr<IlsFunction>& Ils_func,
 		 double Ils_half_width)
     : disp(Disp), ils_func(Ils_func), 
       ils_half_width_(Ils_half_width, units::inv_cm)
   { disp->add_observer(*this); }
   virtual ~IlsConvolution() {}
-  virtual void notify_update(const Dispersion& D)
+  virtual void notify_update(const SampleGrid& D)
   {
     notify_update_do(*this);
   }
@@ -66,10 +66,10 @@ public:
 //-----------------------------------------------------------------------
 /// Underlying dispersion.
 //-----------------------------------------------------------------------
-  boost::shared_ptr<Dispersion> dispersion() const {return disp; }
+  boost::shared_ptr<SampleGrid> dispersion() const {return disp; }
 
 private:
-  boost::shared_ptr<Dispersion> disp;
+  boost::shared_ptr<SampleGrid> disp;
   boost::shared_ptr<IlsFunction> ils_func;
   DoubleWithUnit ils_half_width_;
   double integrate(const blitz::Array<double, 1>& x, 

@@ -24,7 +24,7 @@ const blitz::Array<double, 1>& Val)
      Band_name, Hdf_group, Val(4));
 }
 REGISTER_LUA_DERIVED_CLASS(EmpiricalOrthogonalFunction, InstrumentCorrection)
-.def(luabind::constructor<double, bool, const Dispersion&, const HdfFile&,
+.def(luabind::constructor<double, bool, const SampleGrid&, const HdfFile&,
      int, int, int, const std::string&, const std::string&>())
 .def(luabind::constructor<double, bool, const HdfFile&,
      int, int, int, const std::string&, const std::string&>())
@@ -70,7 +70,7 @@ REGISTER_LUA_END()
 EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 (double Coeff, 
  bool Used_flag,
- const Dispersion& Disp,
+ const SampleGrid& Disp,
  const HdfFile& Hdf_static_input,
  int Spec_index,
  int Sounding_number,

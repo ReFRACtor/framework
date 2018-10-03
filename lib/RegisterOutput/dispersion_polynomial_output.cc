@@ -7,7 +7,7 @@ using namespace FullPhysics;
 // Lua doesn't know to cast a pointer type of base class to a derived class.
 // Add a conversion routine.
 boost::shared_ptr<RegisterOutputBase> disp_pol_create
-(const boost::shared_ptr<Dispersion>& Disp, const std::string& Hdf_band_name)
+(const boost::shared_ptr<SampleGrid>& Disp, const std::string& Hdf_band_name)
 {
   return boost::shared_ptr<RegisterOutputBase>
     (new DispersionPolynomialOutput

@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(empty_spectral_bounds)
       1, 1;
 
   // Create dispersion vector
-  std::vector<boost::shared_ptr<Dispersion> > spec_disp;
+  std::vector<boost::shared_ptr<SampleGrid> > spec_disp;
   Array<bool, 1> disp_flag(2);
   disp_flag = true, false;
   Array<double, 1> disp_coeff(2);

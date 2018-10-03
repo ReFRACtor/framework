@@ -7,7 +7,7 @@
 %}
 %base_import(ils)
 %base_import(observer)
-%base_import(dispersion)
+%base_import(sample_grid)
 %import "double_with_unit.i"
 %import "state_vector.i"
 %import "array_ad.i"
@@ -15,12 +15,12 @@
 %fp_shared_ptr(FullPhysics::IlsConvolution);
 
 namespace FullPhysics {
-class IlsConvolution : public Ils, public Observer<Dispersion> {
+class IlsConvolution : public Ils, public Observer<SampleGrid> {
 public:
-  IlsConvolution(const boost::shared_ptr<Dispersion>& Disp,
+  IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
 		 const boost::shared_ptr<IlsFunction>& Ils_func,
 		 const DoubleWithUnit& Ils_half_width = DoubleWithUnit(20, units::inv_cm));
-  IlsConvolution(const boost::shared_ptr<Dispersion>& Disp,
+  IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
 		 const boost::shared_ptr<IlsFunction>& Ils_func,
 		 double Ils_half_width);
   virtual blitz::Array<double, 1> apply_ils

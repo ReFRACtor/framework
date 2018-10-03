@@ -9,7 +9,7 @@ from refractor import framework as rf
 class IlsInstrument(Creator):
 
     ils_half_width = param.ArrayWithUnit(dims=1)
-    dispersion = param.Iterable(rf.Dispersion)
+    dispersion = param.Iterable(rf.SampleGrid)
     ils_function = param.Iterable(rf.IlsFunction)
     instrument_correction = param.ObjectVector("vector_instrument_correction")
 
@@ -48,7 +48,7 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
         is_one_based = self.is_one_based()
 
         disp = []
-        vec_disp = rf.vector_dispersion()
+        vec_disp = rf.vector_sample_grid()
         for chan_idx in range(self.num_channels()):
             chan_disp = rf.DispersionPolynomial(disp_coeffs.value[chan_idx, :], retrieval_flag[chan_idx, :], disp_coeffs.units,
                                                 desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
@@ -74,7 +74,7 @@ class IlsTable(Creator):
     response = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray))
     wavenumber = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray), default=None, required=False)
 
-    dispersion = param.Iterable(rf.Dispersion)
+    dispersion = param.Iterable(rf.SampleGrid)
     hdf_band_name = param.Iterable(str)
     desc_band_name = param.Iterable(str)
     interpolate = param.Scalar(bool, default=False)

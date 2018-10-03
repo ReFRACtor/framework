@@ -8,9 +8,9 @@ using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(IlsConvolution, Ils)
-.def(luabind::constructor<const boost::shared_ptr<Dispersion>&,
+.def(luabind::constructor<const boost::shared_ptr<SampleGrid>&,
 			  const boost::shared_ptr<IlsFunction>&>())
-.def(luabind::constructor<const boost::shared_ptr<Dispersion>&,
+.def(luabind::constructor<const boost::shared_ptr<SampleGrid>&,
 			  const boost::shared_ptr<IlsFunction>&, DoubleWithUnit&>())
 REGISTER_LUA_END()
 #endif
