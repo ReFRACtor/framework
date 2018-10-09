@@ -176,7 +176,7 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
   // Check inputs against sizes allowed by LIDORT
   Lidort_Pars lid_pars = Lidort_Pars::instance();
   range_check(nstream, 1, lid_pars.maxstreams+1);
-  range_check(nmoment, 3, lid_pars.maxmoments_input+1);
+  range_check(nmoment, 2, lid_pars.maxmoments_input+1);
 
   // Initialize BRDF data structure
   brdf_driver()->initialize_brdf_inputs(surface_type_);
