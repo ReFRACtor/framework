@@ -235,12 +235,12 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     exactscat = 0;
 
-    Array<double, 1> moment_sum(geometry->ngeoms());
+    Array<double, 1> moment_sum(pf.cols(), geometry->ngeoms());
     moment_sum = 0;
     for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
         for (int lay_idx = 0; lay_idx < pf.cols(); lay_idx++) {
             for(int mom_idx = 0; mom_idx < pf.rows(); mom_idx++) {
-                moment_sum(geom_idx) += legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx);
+                moment_sum(lay_idx, geom_idx) += legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx);
             }
         }
     }
@@ -249,7 +249,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     double dnm1 = 4 * num_streams_ + 1;
     for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
         for (int lay_idx = 0; lay_idx < geometry->nlayers(); lay_idx++) {
-            exactscat(lay_idx, geom_idx) = moment_sum(geom_idx);
+            exactscat(lay_idx, geom_idx) = moment_sum(lay_idx, geom_idx);
             double omw = ssa(lay_idx);
             double tms;
             if (fo_interface->do_deltam_scaling()) {
