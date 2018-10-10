@@ -15,32 +15,42 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
-  sza = 0.001;
+  sza = 0.0;
   zen = 0.0;
   azm = 0.0;
   bool pure_nadir = false;
-  int nmoms = 3;
+  int nstreams = 1;
+  int nmoms = 2;
 
   int nlayer = taug.rows();
 
   // Set up convenience ranges
   Range all = Range::all();
-  Range rlay(0,nlayer-1);
   double refl_fo;
   double refl_lid;
 
-  FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nmoms);
+  FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms);
+
+  // Use plane parallel and turn off delta-m scaling since it has to be off from LIDORT
+  fo_driver.set_plane_parallel();
+  fo_driver.rt_interface()->do_deltam_scaling(false);
 
   // Use LIDORT for comparison
-  int lid_nstreams = 1;
   bool do_multiple_scattering_only = false;
-  LidortRtDriver lidort_driver = LidortRtDriver(lid_nstreams, nmoms, 
+  LidortRtDriver lidort_driver = LidortRtDriver(nstreams, nmoms, 
                                                 do_multiple_scattering_only,
                                                 surface_type, zen, pure_nadir,
                                                 do_solar, do_thermal);  
 
   // Plane-parallel
   lidort_driver.set_plane_parallel();
+
+  // Set up LIDORT to turn on single scattering calculations
+  auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
+  auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
+  fbool.ts_do_ssfull(true);
+  mbool.ts_do_sscorr_nadir(true);
+  mbool.ts_do_deltam_scaling(false);
 
   // Simple height grid evenly spaced
   Array<double, 1> heights(nlayer+1);

@@ -13,6 +13,8 @@ FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int numb
 : num_streams_(number_streams), num_moments_(number_moments), SpurrRtDriver(do_solar, do_thermal)
 {
     init_interfaces(number_layers, surface_type);
+    // Use pseudo spherical correction by default
+    set_pseudo_spherical();
 }
 
 
