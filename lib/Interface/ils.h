@@ -62,12 +62,6 @@ public:
    const std::vector<int>& Pixel_list) const = 0;
 
 //-----------------------------------------------------------------------
-/// Descriptive name of the band.
-//-----------------------------------------------------------------------
-
-  virtual std::string band_name() const = 0;
-
-//-----------------------------------------------------------------------
 /// Clone an Ils object. Note that the cloned version will *not*
 /// be attached to and StateVector or Observer<Ils>, although you
 /// can of course attach them after receiving the cloned object.
@@ -79,28 +73,16 @@ public:
   virtual boost::shared_ptr<Ils> clone() const = 0;
 
 //-----------------------------------------------------------------------
-/// In general, the name used in HDF files for a particular band is
-/// similar but not identical to the more human readable band_name.
-/// For example, with GOSAT we use the HDF field name "weak_co2", but
-/// the band name is "WC-Band". This gives the HDF name to use.
-///
-/// The default implementation just returns the same string as the
-/// band name.
-//-----------------------------------------------------------------------
-
-  virtual std::string hdf_band_name() const { return band_name();}
-
-//-----------------------------------------------------------------------
 /// This is the pixel grid for each pixel.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain pixel_grid() const = 0;
+  virtual const SpectralDomain pixel_grid() const = 0;
 
 //-----------------------------------------------------------------------
 /// This is the half width of the ILS.
 //-----------------------------------------------------------------------
 
-  virtual DoubleWithUnit ils_half_width() const = 0;
+  virtual const DoubleWithUnit ils_half_width() const = 0;
 
 //-----------------------------------------------------------------------
 /// Set the half width of the ILS.
