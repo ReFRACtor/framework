@@ -37,7 +37,7 @@ REGISTER_LUA_END()
 /// wavenumber (1/Length) or wavelength (Length)
 //-----------------------------------------------------------------------
 SpectralDomain::SpectralDomain(const ArrayAd<double, 1>& Data,
-			       const Unit& Units)
+                               const Unit& Units)
 : data_(Data),
   units_(Units)
 {
@@ -55,8 +55,8 @@ SpectralDomain::SpectralDomain(const ArrayAd<double, 1>& Data,
 /// wavenumber (1/Length) or wavelength (Length)
 //-----------------------------------------------------------------------
 SpectralDomain::SpectralDomain(const ArrayAd<double, 1>& Data,
-			       const blitz::Array<int, 1>& Sindex,
-			       const Unit& Units)
+                               const blitz::Array<int, 1>& Sindex,
+                               const Unit& Units)
 : data_(Data),
   sindex_(Sindex),
   units_(Units)
@@ -77,7 +77,7 @@ SpectralDomain::SpectralDomain(const ArrayAd<double, 1>& Data,
 /// wavenumber (1/Length) or wavelength (Length)
 //-----------------------------------------------------------------------
  SpectralDomain::SpectralDomain(const blitz::Array<double, 1>& Data,
-			       const Unit& Units)
+                               const Unit& Units)
 : data_(Data),
   units_(Units)
 {
@@ -95,8 +95,8 @@ SpectralDomain::SpectralDomain(const ArrayAd<double, 1>& Data,
 /// wavenumber (1/Length) or wavelength (Length)
 //-----------------------------------------------------------------------
  SpectralDomain::SpectralDomain(const blitz::Array<double, 1>& Data,
-				const blitz::Array<int, 1>& Sindex,
-				const Unit& Units)
+                                const blitz::Array<int, 1>& Sindex,
+                                const Unit& Units)
 : data_(Data),
   sindex_(Sindex),
   units_(Units)
@@ -134,7 +134,7 @@ SpectralDomain::SpectralDomain(const ArrayWithUnit<double, 1>& Data)
 /// wavenumber (1/Length) or wavelength (Length)
 //-----------------------------------------------------------------------
 SpectralDomain::SpectralDomain(const ArrayWithUnit<double, 1>& Data,
-			       const blitz::Array<int, 1>& Sindex)
+                               const blitz::Array<int, 1>& Sindex)
   : data_(Data.value),
     sindex_(Sindex),
     units_(Data.units)
@@ -176,9 +176,9 @@ Array<double, 1> SpectralDomain::wavenumber(const Unit& Units) const
   else {
     stringstream err_msg;
     err_msg << "Supplied units: " 
-	    << Units.name() 
-	    << " are not commensurate with target units: " 
-	    << units::inv_cm.name();
+            << Units.name() 
+            << " are not commensurate with target units: " 
+            << units::inv_cm.name();
     throw Exception(err_msg.str());
   }
 }
@@ -197,9 +197,9 @@ Array<double, 1> SpectralDomain::wavelength(const Unit& Units) const
   else {
     stringstream err_msg;
     err_msg << "Supplied units: " 
-	    << Units.name() 
-	    << " are not commensurate with target units: " 
-	    << units::micron.name();
+            << Units.name() 
+            << " are not commensurate with target units: " 
+            << units::micron.name();
     throw Exception(err_msg.str());
   } 
 }
