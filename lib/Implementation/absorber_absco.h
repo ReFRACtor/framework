@@ -117,6 +117,7 @@ public:
 
   ArrayAdWithUnit<double, 1> temperature_sublayer() const;
   ArrayAdWithUnit<double, 1> h2o_vmr_sublayer() const;
+  ArrayAdWithUnit<double, 1> o2_vmr_sublayer() const;
   ArrayAdWithUnit<double, 1> gravity_sublayer(int Spec_index) const;
   ArrayAdWithUnit<double, 1> vmr_sublayer(const std::string& Gas_name) const;
   AutoDerivativeWithUnit<double> integrand_independent_wn
@@ -150,6 +151,9 @@ private:
   // The species index that corresponds to water.
   int h2o_index;
 
+  // The species index that corresponds to O2.
+  int o2_index;
+  
   // Constants used to get things like avogadro_constant and
   // molar_weight_water. 
   boost::shared_ptr<Constant> c;
@@ -224,6 +228,14 @@ private:
       return AutoDerivativeWithUnit<double>(0, units::dimensionless);
     else
       return AutoDerivativeWithUnit<double>(vmr[h2o_index]->volume_mixing_ratio(P.convert(Unit("Pa")).value), units::dimensionless);
+  }
+  AutoDerivativeWithUnit<double>
+  o2_vmr_func(const DoubleWithUnit& P) const
+  {     
+    if(o2_index < 0)
+      return AutoDerivativeWithUnit<double>(0, units::dimensionless);
+    else
+      return AutoDerivativeWithUnit<double>(vmr[o2_index]->volume_mixing_ratio(P.convert(Unit("Pa")).value), units::dimensionless);
   }
   AutoDerivativeWithUnit<double>
   vmr_func(int Species_index, const DoubleWithUnit& P) const
