@@ -35,6 +35,7 @@ public:
     SpectralDomain(const ArrayWithUnit<double, 1>& Data,
                    const blitz::Array<int, 1>& FORCE_COPY);
     %python_attribute(data, blitz::Array<double, 1>)
+    %python_attribute(data_ad, ArrayAd<double, 1>)
     %python_attribute(sample_index, blitz::Array<int, 1>)
     %python_attribute(units, Unit);
     %python_attribute(type_preference, TypePreference);
