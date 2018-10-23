@@ -18,8 +18,8 @@ BOOST_AUTO_TEST_CASE(basic)
     boost::shared_ptr<TemperatureFixedLevel> temp_met(new TemperatureFixedLevel(flag_temp, flag_offset, temp, toffset, pressure, press_level));
 
     TemperatureFixedLevelOutput po(temp_met);
-    boost::shared_ptr<OutputHdf> out(new OutputHdf("temperature_output.h5", 20, 112, 5, 3));
-    add_file_to_cleanup("temperature_output.h5");
+    boost::shared_ptr<OutputHdf> out(new OutputHdf("temperature_fixed_level_output.h5", 20, 112, 5, 3));
+    add_file_to_cleanup("temperature_fixed_level_output.h5");
     po.register_output(out);
 
     // Simple test, we just make sure that we can write output. All the
