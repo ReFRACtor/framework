@@ -113,6 +113,25 @@ std::string GlobalFixture::absco_data_dir() const
 }
 
 //-----------------------------------------------------------------------
+/// Location of absco table. 
+//-----------------------------------------------------------------------
+
+std::string GlobalFixture::absco_aer_data_dir() const
+{
+  char* srcdir = getenv("abscodir");
+  // This should get set in set_default_value, but just in case
+  // something odd happens print an error message.
+  if(!srcdir)
+    BOOST_FAIL("To run this test, you must set the 'abscodir' environment\n"
+	       "variable to the top of the source tree. This is automatically\n"
+	       "done if you are running 'make check', but you need to\n"
+	       "manually set this if you are running outside of make (e.g.,\n"
+	       "running in a debugger");
+  return std::string(srcdir) + "/absco_aer";
+}
+
+
+//-----------------------------------------------------------------------
 /// Location of merra data. 
 //-----------------------------------------------------------------------
 

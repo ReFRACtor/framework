@@ -14,6 +14,7 @@ public:
   std::string input_dir() const;
   std::string test_data_dir() const;
   std::string absco_data_dir() const;
+  std::string absco_aer_data_dir() const;
   std::string merra_data_dir() const;
   std::string absco_4d_dir() const;
   void turn_on_logger() const;
