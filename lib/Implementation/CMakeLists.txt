@@ -16,6 +16,7 @@ set(DIR_SOURCES
     l_rad_fortran/l_sscorr_pp.F90
     absco.cc
     absco_hdf.cc
+    absco_aer.cc
     absorber_absco.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
@@ -147,6 +148,7 @@ set(DIR_SOURCES
 
 set(TEST_SOURCES
     absco_hdf_test.cc
+    absco_aer_test.cc
     absorber_absco_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
