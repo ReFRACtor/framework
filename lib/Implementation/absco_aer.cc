@@ -121,15 +121,22 @@ void AbscoAer::load_file(const std::string& Fname,
   }
 
   // Read data fields
-  pgrid.reference(hfile->read_field<double, 1>("Pressure"));
-  tgrid.reference(hfile->read_field<double, 2>("Temperature"));
-  wngrid.reference(hfile->read_field<double, 1>("Wavenumber"));
+  ArrayWithUnit<double, 1> pgrid_unit =
+    hfile->read_field_with_unit<double, 1>("P_level").convert(Unit("Pa"));
+  pgrid.reference(pgrid_unit.value);
+  ArrayWithUnit<double, 2> tgrid_unit =
+    hfile->read_field_with_unit<double, 2>("Temperature").convert(Unit("K"));
+  tgrid.reference(tgrid_unit.value);
+  // TODO - This might be freq instead of wn. Should perhaps read
+  // array with units
+  ArrayWithUnit<double, 1> sg =
+    hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));
+  wngrid.reference(sg.value);
   wnfront = &wngrid(0);
 
   // This may have a "\0" in it, so we create a string twice, the
   // second one ends at the first "\0".
-  std::string t = hfile->read_field<std::string>("Gas_Index");
-  field_name = std::string("Gas_") + t.c_str() + "_Absorption";
+  field_name = "Cross_Section";
   // Determine if data is float or double. We use this to optimize the
   // read. 
   H5::DataSet d = hfile->h5_file().openDataSet(field_name);
@@ -138,30 +145,13 @@ void AbscoAer::load_file(const std::string& Fname,
   else
     is_float_ = false;
   std::string bindex = "";
-  try {
-    bindex = hfile->read_field<std::string>("Broadener_Index");
-    bindex = std::string(bindex.c_str()); // In case this ends in "\0"
-  } catch(const Exception& E) {
-    // It is ok if we don't have a broadener, this just means that we
-    // are reading a 3D file.
-  }
-  if(bindex == "")
-    ;                                // Nothing to do
-  else if(bindex == "01")        
-    // This is HITRAN index 01, which is H2O. This is documented in
-    // HITRAN papers, such as "The HITRAN 2008 molecular spectroscopic
-    // database", Journal of Quantitative Spectroscopy and Radiative
-    // Transfer, vol. 110, pp. 533-572 (2009)
+  if(hfile->has_object("H2O_VMR")) {
     bname = "h2o";
-  else {
-    Exception e;
-    e << "Right now we only support H2O as a broadener (HITRAN index \"01\"). "
-      << "File " << Fname << " has index of \"" << bindex << "\"";
-    throw e;
+    bvmr.reference(hfile->read_field<double, 1>("H2O_VMR"));
+  } else if(hfile->has_object("O2_VMR")) {
+    bname = "o2";
+    bvmr.reference(hfile->read_field<double, 1>("O2_VMR"));
   }
-
-  if(bname != "")
-    bvmr.reference(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR"));
 }
 
 // Find the array locations where the wavenumber is contained
