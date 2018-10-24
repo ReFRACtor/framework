@@ -79,7 +79,6 @@ class SampleGridSpectralDomain(CreatorValueMultiChannel):
     # TODO: Need spectral_window addition same as DispersionPolynomial? (Add it + vec_sample_grid)
 
     def create(self, **kwargs):
-        import pdb; pdb.set_trace()
         spectral_domains = self.value()
 
         number_samples = self.number_samples()
