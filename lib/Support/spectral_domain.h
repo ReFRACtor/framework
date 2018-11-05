@@ -91,7 +91,7 @@ public:
 /// Clones object into a new copy
 //-----------------------------------------------------------------------
 
-  const SpectralDomain clone() const { return SpectralDomain(data_.copy(), sindex_.copy(), units_); }
+  const SpectralDomain clone() const;
 
 //-----------------------------------------------------------------------
 /// Indicate if this class prefers wavelength or wavenumber. This is

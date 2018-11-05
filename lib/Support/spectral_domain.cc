@@ -224,3 +224,14 @@ ArrayWithUnit<double, 1> SpectralDomain::photon_to_radiance_factor() const
   res.units = alpha.units / wavenumber_unit / ph;
   return res.convert(output_units);
 }
+
+/// Clones object into a new copy
+
+const SpectralDomain SpectralDomain::clone() const
+{ 
+    if (sindex_.rows() > 0) {
+        return SpectralDomain(data_.copy(), sindex_.copy(), units_); 
+    } else {
+        return SpectralDomain(data_.copy(), units_); 
+    }
+}
