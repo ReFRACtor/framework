@@ -126,6 +126,7 @@ public:
       data_.reference(sd.data().copy());
       sindex_.reference(sd.sample_index().copy());
       units_ = sd.units();
+      return *this;
   }
 
   /// Default constructor needed for SWIG
