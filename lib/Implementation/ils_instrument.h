@@ -30,16 +30,6 @@ public:
     range_check(Spec_index, 0, number_spectrometer());
     return ils_[Spec_index]->pixel_grid();
   }
-  virtual std::string band_name(int Spec_index) const
-  { 
-    range_check(Spec_index, 0, number_spectrometer());
-    return ils_[Spec_index]->hdf_band_name();
-  }
-  virtual std::string hdf_band_name(int Spec_index) const
-  { 
-    range_check(Spec_index, 0, number_spectrometer());
-    return ils_[Spec_index]->hdf_band_name();
-  }
   virtual DoubleWithUnit
   ils_half_width(int Spec_index) const 
   {

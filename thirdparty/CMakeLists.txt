@@ -49,8 +49,8 @@ find_package(GSL REQUIRED)
 list(APPEND THIRDPARTY_INCLUDES ${GSL_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${GSL_LIBRARIES})
 
-if(GSL_VERSION VERSION_LESS 2.0)
-    message(FATAL_ERROR "GSL version > 2.0 required, found ${GSL_VERSION}")
+if(GSL_VERSION VERSION_LESS 2.2.1)
+    message(FATAL_ERROR "GSL version >= 2.2.1 required, found ${GSL_VERSION}")
 endif()
 
 # Set up HDF5 using the C and C++ bindings

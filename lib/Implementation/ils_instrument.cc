@@ -51,8 +51,7 @@ boost::shared_ptr<Instrument> IlsInstrument::clone() const
     inst_corr_vec.push_back(t);
   }
   
-  return boost::shared_ptr<Instrument>(new IlsInstrument(ils_vec, 
-							 inst_corr_vec));
+  return boost::shared_ptr<Instrument>(new IlsInstrument(ils_vec, inst_corr_vec));
 }
 
 Spectrum IlsInstrument::apply_instrument_model(
@@ -101,7 +100,7 @@ void IlsInstrument::print(std::ostream& Os) const
   Os << "IlsInstrument:\n";
   OstreamPad opad(Os, "    ");
   for(int i = 0; i < number_spectrometer(); ++i) {
-    Os << "  " << band_name(i) << ":\n";
+    Os << "  Channel " << (i + 1) << ":\n";
     opad << *ils_[i] << "\n";
     BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection> ic, inst_corr[i])
       opad << *ic << "\n";

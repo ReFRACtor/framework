@@ -6,6 +6,7 @@ from .. import param
 
 from refractor import framework as rf
 
+
 class CreatorFlaggedValue(Creator):
 
     value = param.Choice(param.Array(dims=1), param.ArrayWithUnit(dims=1))
@@ -25,6 +26,7 @@ class CreatorFlaggedValue(Creator):
             return np.ones(val_shape, dtype=bool)
         else:
             return np.zeros(val_shape, dtype=bool)
+
 
 class CreatorFlaggedValueMultiChannel(Creator):
 
@@ -49,6 +51,12 @@ class CreatorFlaggedValueMultiChannel(Creator):
                 flags[chan_idx, :] = chan_flag
             return flags
 
+
+class CreatorValueMultiChannel(Creator):
+
+    value = param.AnyValue()
+
+
 class ArrayWithUnit(Creator):
     "Create an array with unit class from a numpy array and type string"
 
@@ -70,6 +78,7 @@ class ArrayWithUnit(Creator):
         else:
             raise param.ParamError("Unsupported number of dimensions %s for array" % (num_dims))
 
+
 class LoadValuesFromHDF(Creator):
 
     filename = param.Scalar(str)
@@ -90,6 +99,7 @@ class LoadValuesFromHDF(Creator):
         extract_datasets(contents, values)
 
         return values
+
 
 class NamedCommonValue(Creator):
 

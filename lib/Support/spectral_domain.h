@@ -32,19 +32,24 @@ class SpectralDomain: public Printable<SpectralDomain> {
 public:
   enum TypePreference {PREFER_WAVENUMBER, PREFER_WAVELENGTH};
 
+  SpectralDomain(const SpectralDomain& sd) 
+  : data_(sd.data().copy()), sindex_(sd.sample_index()), units_(sd.units()) {}
+
+  ~SpectralDomain() = default;
+
   SpectralDomain(const ArrayAd<double, 1>& Data, 
-		 const Unit& U);
+                 const Unit& U);
   SpectralDomain(const blitz::Array<double, 1>& Data,
-		 const Unit& Units = units::inv_cm);
+                 const Unit& Units = units::inv_cm);
   SpectralDomain(const ArrayWithUnit<double, 1>& Data);
   SpectralDomain(const ArrayAd<double, 1>& Data, 
-		 const blitz::Array<int, 1>& Sindex,
-		 const Unit& U);
+                 const blitz::Array<int, 1>& Sindex,
+                 const Unit& U);
   SpectralDomain(const blitz::Array<double, 1>& Data,
-		 const blitz::Array<int, 1>& Sindex,
-		 const Unit& Units = units::inv_cm);
+                 const blitz::Array<int, 1>& Sindex,
+                 const Unit& Units = units::inv_cm);
   SpectralDomain(const ArrayWithUnit<double, 1>& Data,
-		 const blitz::Array<int, 1>& Sindex);
+                 const blitz::Array<int, 1>& Sindex);
 
 //-----------------------------------------------------------------------
 /// Return data. This is either wavenumber or wavelength. This member
@@ -86,7 +91,7 @@ public:
 /// Clones object into a new copy
 //-----------------------------------------------------------------------
 
-  const SpectralDomain clone() const { return SpectralDomain(data_.copy(), units_); }
+  const SpectralDomain clone() const;
 
 //-----------------------------------------------------------------------
 /// Indicate if this class prefers wavelength or wavenumber. This is
@@ -96,7 +101,7 @@ public:
   TypePreference type_preference() const
   {
     return (units_.is_commensurate(units::inv_cm) ? 
-	    PREFER_WAVENUMBER : PREFER_WAVELENGTH); 
+            PREFER_WAVENUMBER : PREFER_WAVELENGTH); 
   }
 
   blitz::Array<double, 1> convert_wave(const Unit& Units) const;
@@ -113,9 +118,19 @@ public:
   inline bool operator!= (const SpectralDomain& A) const
   { return !(A == *this); }
 
+  // We must defined a copy operator because the default one will not copy sindex_ properly and leave it empty,
+  // The default copy operator for Blitz++ assumes that the LHS is already sized appropriately
+  // This operator will be used by SWIG when using directors
+  SpectralDomain& operator=(const SpectralDomain& sd)
+  {
+      data_.reference(sd.data().copy());
+      sindex_.reference(sd.sample_index().copy());
+      units_ = sd.units();
+      return *this;
+  }
 
   /// Default constructor needed for SWIG
-  SpectralDomain() {}
+  SpectralDomain() = default;
 
 private:
   ArrayAd<double, 1> data_;

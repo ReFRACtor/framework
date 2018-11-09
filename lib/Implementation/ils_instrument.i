@@ -27,8 +27,6 @@ public:
     const Spectrum& High_resolution_spectrum,
     const std::vector<int>& Pixel_list,
     int Spec_index) const;
-  virtual std::string band_name(int Spec_index) const;
-  virtual std::string hdf_band_name(int Spec_index) const;
   virtual void notify_update(const Ils& D);
   virtual void notify_update(const InstrumentCorrection& C);
   virtual boost::shared_ptr<Instrument> clone() const;
