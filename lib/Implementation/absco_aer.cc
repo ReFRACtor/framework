@@ -254,8 +254,11 @@ Array<double, 3> AbscoAer::read_double(double Wn_in) const
   if(wi < cache_double_lbound ||
      wi >= cache_double_ubound)
     swap<double>(wi);
-  return read_cache<double>()(Range::all(), Range::all(), Range::all(), 
-                              wi - cache_double_lbound);
+  // The Aer data is in temperature x pressure x broadner order. The
+  // base class expects this to be pressure x temperature x broadner,
+  // so we transpose this.
+  return read_cache<double>()(wi - cache_double_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
 }
 
 // See base class for description
@@ -265,8 +268,11 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
   if(wi < cache_float_lbound ||
      wi >= cache_float_ubound)
     swap<float>(wi);
-  return read_cache<float>()(Range::all(), Range::all(), Range::all(), 
-                             wi - cache_float_lbound);
+  // The Aer data is in temperature x pressure x broadner order. The
+  // base class expects this to be pressure x temperature x broadner,
+  // so we transpose this.
+  return read_cache<float>()(wi - cache_float_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
 }
 
 //-----------------------------------------------------------------------
@@ -278,28 +284,28 @@ template<class T> void AbscoAer::swap(int i) const
 {
   // First time through, set up space for cache.
  if(read_cache<T>().extent(fourthDim) == 0)
-      read_cache<T>().resize(tgrid.rows(), tgrid.cols(), 
-                    std::max(1, number_broadener_vmr()),
-                    cache_nline);
-  int nl = read_cache<T>().extent(fourthDim);
+   read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
+			  std::max(1, number_broadener_vmr()));
+  int nl = read_cache<T>().extent(firstDim);
   // Either read 3d or 4d data. We tell which kind by whether or not
   // we have a number_broadener_vmr() > 0 or not.
   TinyVector<int, 4> start, size;
-  start = 0, 0, 0, (i / nl) * nl;
-  size = tgrid.rows(), tgrid.cols(), std::max(number_broadener_vmr(), 1),
-    std::min(nl, wngrid.rows() - start(3));
+  start = (i / nl) * nl, 0, 0, 0;
+  size = std::min(nl, wngrid.rows() - start(3)), tgrid.cols(), tgrid.rows() - 1,
+    std::max(number_broadener_vmr(), 1);
   bound_set<T>((i / nl) * nl, size(3));
   if(number_broadener_vmr() > 0) {
     // 4d case
-    read_cache<T>()(Range::all(), Range::all(), Range::all(), Range(0, size(3) - 1)) =
+    read_cache<T>()(Range(0, size(0) - 1), Range::all(),
+		    Range::all(), Range::all()) =
       hfile->read_field<T, 4>(field_name, start, size);
   } else {
     // 3d case
     TinyVector<int, 3> start2, size2;
     start2 = 0, 0, (i / nl) * nl;
-    size2 = tgrid.rows(), tgrid.cols(),
-      std::min(nl, wngrid.rows() - start(3));
-    read_cache<T>()(Range::all(), Range::all(), 0, Range(0, size(3) - 1)) =
+    size2 = std::min(nl, wngrid.rows() - start(3)), tgrid.cols(),
+      tgrid.rows() - 1;
+    read_cache<T>()(Range(0, size(3) - 1), Range::all(), Range::all(), 0) =
       hfile->read_field<T, 3>(field_name, start2, size2);
   }
 }
