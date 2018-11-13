@@ -113,7 +113,10 @@ class AbsorberVmrMet(CreatorFlaggedValue):
 
         return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
 
-class AbscoHdf(Creator):
+class AbscoCreator(Creator):
+    "Do not use directly, defines the generic interface that uses a specific Absco class specified in inheriting creators"
+
+    absco_class = None
 
     absco_base_path = param.Scalar(str)
     filename = param.Scalar(str)
@@ -121,6 +124,9 @@ class AbscoHdf(Creator):
     spec_win = param.InstanceOf(rf.SpectralWindow)
 
     def create(self, gas_name=None, **kwargs):
+
+        if (self.absco_class is None):
+            raise param.ParamError("Do not use AbscoCreator directly, instead of an inherited creator that defines the type of ABSCO file reader to use")
 
         # Use ExtendedFormatter that allows using l and u conversion codes for upper/lower case conversion
         fn_formatter = ExtendedFormatter()
@@ -135,7 +141,7 @@ class AbscoHdf(Creator):
         table_scale = self.table_scale()
 
         if np.isscalar(table_scale):
-            return rf.AbscoHdf(absco_filename, table_scale)
+            return self.absco_class(absco_filename, table_scale)
         else:
             spectral_bound = self.spec_win().spectral_bound
 
@@ -144,7 +150,17 @@ class AbscoHdf(Creator):
             for val in table_scale:
                 table_scale_vector.push_back(val)
 
-            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale_vector)
+            return self.absco_class(absco_filename, spectral_bound, table_scale_vector)
+
+class AbscoLegacy(AbscoCreator):
+    "Legacy HDF format created for OCO"
+
+    absco_class = rf.AbscoHdf
+
+class AbscoAer(AbscoCreator):
+    "Newer AER generated ABSCO format"
+
+    absco_class = rf.AbscoAer
 
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
