@@ -127,8 +127,6 @@ void AbscoAer::load_file(const std::string& Fname,
   ArrayWithUnit<double, 2> tgrid_unit =
     hfile->read_field_with_unit<double, 2>("Temperature").convert(Unit("K"));
   tgrid.reference(tgrid_unit.value);
-  // TODO - This might be freq instead of wn. Should perhaps read
-  // array with units
   ArrayWithUnit<double, 1> sg =
     hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));
   wngrid.reference(sg.value);
@@ -283,7 +281,7 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
 template<class T> void AbscoAer::swap(int i) const
 {
   // First time through, set up space for cache.
- if(read_cache<T>().extent(fourthDim) == 0)
+ if(read_cache<T>().extent(firstDim) == 0)
    read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
 			  std::max(1, number_broadener_vmr()));
   int nl = read_cache<T>().extent(firstDim);
@@ -291,9 +289,9 @@ template<class T> void AbscoAer::swap(int i) const
   // we have a number_broadener_vmr() > 0 or not.
   TinyVector<int, 4> start, size;
   start = (i / nl) * nl, 0, 0, 0;
-  size = std::min(nl, wngrid.rows() - start(3)), tgrid.cols(), tgrid.rows() - 1,
+  size = std::min(nl, wngrid.rows() - start(0)), tgrid.cols(), tgrid.rows() - 1,
     std::max(number_broadener_vmr(), 1);
-  bound_set<T>((i / nl) * nl, size(3));
+  bound_set<T>((i / nl) * nl, size(0));
   if(number_broadener_vmr() > 0) {
     // 4d case
     read_cache<T>()(Range(0, size(0) - 1), Range::all(),
@@ -302,10 +300,10 @@ template<class T> void AbscoAer::swap(int i) const
   } else {
     // 3d case
     TinyVector<int, 3> start2, size2;
-    start2 = 0, 0, (i / nl) * nl;
-    size2 = std::min(nl, wngrid.rows() - start(3)), tgrid.cols(),
+    start2 = (i / nl) * nl, 0, 0;
+    size2 = std::min(nl, wngrid.rows() - start2(0)), tgrid.cols(),
       tgrid.rows() - 1;
-    read_cache<T>()(Range(0, size(3) - 1), Range::all(), Range::all(), 0) =
+    read_cache<T>()(Range(0, size2(0) - 1), Range::all(), Range::all(), 0) =
       hfile->read_field<T, 3>(field_name, start2, size2);
   }
 }

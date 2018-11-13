@@ -40,6 +40,7 @@ public:
   virtual double table_scale(double wn) const;
   virtual blitz::Array<double, 1> pressure_grid() const {return pgrid;}
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
+  blitz::Array<double, 1> wavenumber_grid() const { return wngrid; }
   virtual bool have_data(double wn) const;
   virtual bool is_float() const { return is_float_;}
   virtual std::string file_name() const { return hfile->file_name(); } 
