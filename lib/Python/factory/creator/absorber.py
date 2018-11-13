@@ -1,4 +1,5 @@
 import os
+from glob import glob
 
 import numpy as np
 
@@ -134,7 +135,17 @@ class AbscoCreator(Creator):
             absco_filename = fn_formatter.format(self.filename(), gas=gas_name, **self.common_store)
         except ValueError as exc:
             raise param.ParamError('Error formatting absco filename template "%s": %s' % (self.filename(), exc))
+        
+        # Try expanding globs
+        if not os.path.exists(absco_filename):
+            filename_matches = glob(absco_filename)
 
+            if len(filename_matches) > 1:
+                raise param.ParamError("ABSCO filename expanded to multiple files: %s" % absco_filename)
+            else:
+                absco_filename = filename_matches[0]
+
+        # Error if filename still not found
         if not os.path.exists(absco_filename):
             raise param.ParamError("HDF ABSCO filename does not exist: %s" % absco_filename)
 
