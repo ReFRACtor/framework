@@ -12,12 +12,11 @@ namespace FullPhysics {
 class AbsorberVmrScaled : public AbsorberVmrImpBase {
 public:
   AbsorberVmrScaled(const boost::shared_ptr<Pressure>& Press,
-		    double Scale,                         
-		    bool Scale_flag,
-		    const std::string& Gas_name);
-  virtual boost::shared_ptr<AbsorberVmr> clone();
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+                    double Scale,                         
+                    bool Scale_flag,
+                    const std::string& Gas_name);
+  virtual boost::shared_ptr<AbsorberVmr> clone() const;
+  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(scale_factor, double)

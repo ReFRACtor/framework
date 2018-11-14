@@ -40,8 +40,7 @@ public:
   // From AbsorberVmrImpBase
   virtual ~AbsorberVmrImpBase();
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   %python_attribute(gas_name, std::string)
   virtual AutoDerivative<double> 
   volume_mixing_ratio(const AutoDerivative<double>& P) const;
