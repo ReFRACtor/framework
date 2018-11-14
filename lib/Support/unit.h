@@ -147,6 +147,8 @@ inline Unit operator/(double Scale_factor, const Unit& Unit)
     const Unit inv_sr("sr^-1", pow(sr, -1));
     // Derived units
     const Unit N("N", kg * m / (s*s));
+    const Unit bar("bar", 100000 * N / (m * m));
+    const Unit mbar("mbar", 0.001 * bar);
     const Unit Pa("Pa", N / (m * m));
     const Unit J("J", N * m);
     const Unit W("W", J / s);

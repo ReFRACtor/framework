@@ -72,6 +72,7 @@ public:
   %python_attribute(pressure_sublayer, ArrayWithUnit<double, 1>)
   %python_attribute(temperature_sublayer, ArrayAdWithUnit<double, 1>)
   %python_attribute(h2o_vmr_sublayer, ArrayAdWithUnit<double, 1>)
+  %python_attribute(o2_vmr_sublayer, ArrayAdWithUnit<double, 1>)
   ArrayAdWithUnit<double, 1> vmr_sublayer(const std::string& Gas_name) const;
   ArrayAdWithUnit<double, 1> gravity_sublayer(int Spec_index) const;
 };

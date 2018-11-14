@@ -421,9 +421,19 @@ Unit HdfFile::read_units(const std::string& Dataname) const
     else
       throw Exception("Unrecognized unit '" + u + " found for attribute "
                       + Dataname + "/Unit");
-  } else
+    // netcdf files use the name "units", so check for this first.
+  } else if(has_attribute(Dataname + "/units")) {
+    std::string t = read_attribute<std::string>(Dataname + "/units");
+    // The absco_aer data oddly uses cm-1 to mean cm^-1. Handle this
+    // case.
+    if(t == "cm-1")
+      res = Unit("cm^-1");
+    else
+      res = Unit(t);
+  } else {
     // Otherwise, just process the Units string.
     res = Unit(read_attribute<std::string>(Dataname + "/Units"));
+  }
   return res;
 }
 

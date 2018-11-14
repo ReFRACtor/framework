@@ -1,5 +1,5 @@
 #include "spectral_window_range.h"
-#include "dispersion.h"
+#include "sample_grid.h"
 #include "fp_exception.h"
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -9,7 +9,7 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-typedef void (SpectralWindowRange::*cfunc)(const std::vector<boost::shared_ptr<Dispersion> >&);
+typedef void (SpectralWindowRange::*cfunc)(const std::vector<boost::shared_ptr<SampleGrid> >&);
 typedef const ArrayWithUnit<double, 3>& (SpectralWindowRange::*a1)(void) const;
 REGISTER_LUA_DERIVED_CLASS(SpectralWindowRange, SpectralWindow)
 .def(luabind::constructor<const ArrayWithUnit<double, 3>&>())

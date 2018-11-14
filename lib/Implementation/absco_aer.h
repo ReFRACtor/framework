@@ -1,5 +1,5 @@
-#ifndef ABSCO_HDF_H
-#define ABSCO_HDF_H
+#ifndef ABSCO_AER_H
+#define ABSCO_AER_H
 #include "absco.h"
 #include "hdf_file.h"
 #include "spectral_bound.h"
@@ -17,11 +17,11 @@ namespace FullPhysics {
   large. This can be adjusted if needed, either up for better
   performance or down for less memory.
 *******************************************************************/
-class AbscoHdf: public Absco {
+class AbscoAer: public Absco {
 public:
-  AbscoHdf(const std::string& Fname, double Table_scale = 1.0, 
+  AbscoAer(const std::string& Fname, double Table_scale = 1.0, 
 	   int Cache_nline = 5000);
-  AbscoHdf(const std::string& Fname, 
+  AbscoAer(const std::string& Fname, 
 	   const SpectralBound& Spectral_bound,
 	   const std::vector<double>& Table_scale,
 	   int Cache_nline = 5000);
@@ -32,7 +32,7 @@ public:
 		 const SpectralBound& Spectral_bound,
 		 const std::vector<double>& Table_scale,
 		 int Cache_nline = 5000);
-  virtual ~AbscoHdf() {}
+  virtual ~AbscoAer() {}
   virtual std::string broadener_name() const { return bname; }
   virtual blitz::Array<double, 1> broadener_vmr_grid() const
   { return bvmr; }
@@ -77,19 +77,19 @@ private:
   double *wnfront;
 };
 
-template<> inline blitz::Array<double, 4>& AbscoHdf::read_cache<double>() const
+template<> inline blitz::Array<double, 4>& AbscoAer::read_cache<double>() const
 { return read_cache_double; }
 
-template<> inline blitz::Array<float, 4>& AbscoHdf::read_cache<float>() const
+template<> inline blitz::Array<float, 4>& AbscoAer::read_cache<float>() const
 { return read_cache_float; }
 
-template<> inline void AbscoHdf::bound_set<double>(int lbound, int sz) const
+template<> inline void AbscoAer::bound_set<double>(int lbound, int sz) const
 {
   cache_double_lbound = lbound;
   cache_double_ubound = lbound + sz;
 }
 
-template<> inline void AbscoHdf::bound_set<float>(int lbound, int sz) const
+template<> inline void AbscoAer::bound_set<float>(int lbound, int sz) const
 {
   cache_float_lbound = lbound;
   cache_float_ubound = lbound + sz;

@@ -7,7 +7,7 @@
 %base_import(sub_state_vector_array)
 %base_import(instrument_correction)
 %import "array_with_unit.i"
-%import "dispersion.i"
+%import "sample_grid.i"
 %import "hdf_file.i"
 %fp_shared_ptr(FullPhysics::EmpiricalOrthogonalFunction);
 
@@ -23,7 +23,7 @@ public:
 			      const std::string& Hdf_group = "N/A");
   EmpiricalOrthogonalFunction(double Coeff, 
 			      bool Used_flag,
-			      const Dispersion& Disp,
+			      const SampleGrid& Disp,
 			      const HdfFile& Hdf_static_input,
 			      int Spec_index,
 			      int Sounding_number,

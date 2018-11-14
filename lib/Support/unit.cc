@@ -230,6 +230,8 @@ struct base_unit_ : qi::symbols<char, Unit>
       ("dimensionless", dimensionless)
       ("N", N)
       ("Pa", Pa)
+      ("bar", bar)
+      ("mbar", mbar)
       ("J", J)
       ("W", W)
       ("Wavenumbers", inv_cm)

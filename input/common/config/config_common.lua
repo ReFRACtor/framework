@@ -3104,7 +3104,7 @@ end
 
 function ConfigCommon:spectral_bound()
    local i
-   local d = VectorDispersion()
+   local d = VectorSampleGrid()
    for i=1,self.number_pixel:rows() do
       d:push_back(self.dispersion[i])
    end

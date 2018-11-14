@@ -29,7 +29,7 @@ public:
   blitz::Array<double, 1> absorption_cross_section_noderiv(double wn) const;
   ArrayAd<double, 1> absorption_cross_section_deriv(double wn) const;
 private:
-  double interpol(double X, const std::vector<double>& Xv, 
+  double interpol(double X, bool is_reversed, const std::vector<double>& Xv, 
 		  int& i, double& df_dx) const;
   template<class T> blitz::Array<double, 1> 
   absorption_cross_section_noderiv_calc(double wn) const;
@@ -37,6 +37,8 @@ private:
   absorption_cross_section_deriv_calc(double wn) const;
   boost::shared_ptr<Absco> absco;
   blitz::Array<double, 1> p;     // This is in Pascals
+  bool p_reversed;		 // True if p goes from high to low
+				 // rather than low to high
   ArrayAd<double, 1> t;		// This is in K
   ArrayAd<double, 1> b;		// This is dimensionless
   blitz::Array<double, 2> t_jac; // t.jacobian(), in C order and contiguous
@@ -170,6 +172,7 @@ private:
 		  int& i, double& df_dx) const;
   mutable std::vector<double> pgrid;
   mutable std::vector<std::vector<double> > tgrid;
+  mutable std::vector<int> tstart_offset;
   mutable std::vector<double> bgrid;
   void fill_pgrid_tgrid_and_bgrid() const;
 };

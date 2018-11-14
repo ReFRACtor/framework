@@ -1,4 +1,5 @@
 import os
+from glob import glob
 
 import numpy as np
 
@@ -101,6 +102,25 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
 
         return rf.AbsorberVmrLevel(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
 
+class AbsorberVmrLevelScaled(CreatorFlaggedValue):
+    "Creates a AbsorberVmrLevelScaled that supplies a AbsorberVmr class for use in an creating an Atmosphere"
+
+    pressure = param.InstanceOf(rf.Pressure)
+
+    # Normally passed from through the create method from the AbsorberGasDefinition creator
+    gas_name = param.Scalar(str, required=False)
+    scaling = param.Scalar(float, required=False, default=1.0)
+
+    def create(self, gas_name=None, **kwargs):
+
+        if self.gas_name() is not None:
+            gas_name = self.gas_name()
+        elif gas_name is None:
+            raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
+
+        ret_flag = bool(self.retrieval_flag(gas_name=gas_name)[0])
+        return rf.AbsorberVmrLevelScaled(self.pressure(), self.value(gas_name=gas_name), self.scaling(), ret_flag, gas_name)
+
 class AbsorberVmrMet(CreatorFlaggedValue):
 
     met = param.InstanceOf(rf.Meteorology)
@@ -113,7 +133,10 @@ class AbsorberVmrMet(CreatorFlaggedValue):
 
         return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
 
-class AbscoHdf(Creator):
+class AbscoCreator(Creator):
+    "Do not use directly, defines the generic interface that uses a specific Absco class specified in inheriting creators"
+
+    absco_class = None
 
     absco_base_path = param.Scalar(str)
     filename = param.Scalar(str)
@@ -122,20 +145,33 @@ class AbscoHdf(Creator):
 
     def create(self, gas_name=None, **kwargs):
 
+        if (self.absco_class is None):
+            raise param.ParamError("Do not use AbscoCreator directly, instead of an inherited creator that defines the type of ABSCO file reader to use")
+
         # Use ExtendedFormatter that allows using l and u conversion codes for upper/lower case conversion
         fn_formatter = ExtendedFormatter()
         try:
             absco_filename = fn_formatter.format(self.filename(), gas=gas_name, **self.common_store)
         except ValueError as exc:
             raise param.ParamError('Error formatting absco filename template "%s": %s' % (self.filename(), exc))
+        
+        # Try expanding globs
+        if not os.path.exists(absco_filename):
+            filename_matches = glob(absco_filename)
 
+            if len(filename_matches) > 1:
+                raise param.ParamError("ABSCO filename expanded to multiple files: %s" % absco_filename)
+            else:
+                absco_filename = filename_matches[0]
+
+        # Error if filename still not found
         if not os.path.exists(absco_filename):
             raise param.ParamError("HDF ABSCO filename does not exist: %s" % absco_filename)
 
         table_scale = self.table_scale()
 
         if np.isscalar(table_scale):
-            return rf.AbscoHdf(absco_filename, table_scale)
+            return self.absco_class(absco_filename, table_scale)
         else:
             spectral_bound = self.spec_win().spectral_bound
 
@@ -144,7 +180,17 @@ class AbscoHdf(Creator):
             for val in table_scale:
                 table_scale_vector.push_back(val)
 
-            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale_vector)
+            return self.absco_class(absco_filename, spectral_bound, table_scale_vector)
+
+class AbscoLegacy(AbscoCreator):
+    "Legacy HDF format created for OCO"
+
+    absco_class = rf.AbscoHdf
+
+class AbscoAer(AbscoCreator):
+    "Newer AER generated ABSCO format"
+
+    absco_class = rf.AbscoAer
 
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"

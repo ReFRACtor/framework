@@ -1,7 +1,7 @@
 #ifndef EMPIRICAL_ORTHOGONAL_FUNCTION_H
 #define EMPIRICAL_ORTHOGONAL_FUNCTION_H
 
-#include "dispersion.h"
+#include "sample_grid.h"
 #include "instrument_correction.h"
 #include "hdf_file.h"
 #include "sub_state_vector_array.h"
@@ -63,7 +63,7 @@ public:
 
   EmpiricalOrthogonalFunction(double Coeff, 
 			      bool Used_flag,
-			      const Dispersion& Disp,
+			      const SampleGrid& Disp,
 			      const HdfFile& Hdf_static_input,
 			      int Spec_index,
 			      int Sounding_number,

@@ -1,15 +1,16 @@
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
+from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel, CreatorValueMultiChannel
 from .. import param
 
 from refractor import framework as rf
 
+
 class IlsInstrument(Creator):
 
     ils_half_width = param.ArrayWithUnit(dims=1)
-    dispersion = param.Iterable(rf.Dispersion)
+    dispersion = param.Iterable(rf.SampleGrid)
     ils_function = param.Iterable(rf.IlsFunction)
     instrument_correction = param.ObjectVector("vector_instrument_correction")
 
@@ -20,8 +21,9 @@ class IlsInstrument(Creator):
 
         ils_vec = rf.vector_ils()
         for disp, ils_func, half_width in zip(dispersion, self.ils_function(), self.ils_half_width()):
-            ils_vec.push_back( rf.IlsConvolution(disp, ils_func, half_width) )
+            ils_vec.push_back(rf.IlsConvolution(disp, ils_func, half_width))
         return rf.IlsInstrument(ils_vec, self.instrument_correction())
+
 
 class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
@@ -48,7 +50,7 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
         is_one_based = self.is_one_based()
 
         disp = []
-        vec_disp = rf.vector_dispersion()
+        vec_disp = rf.vector_sample_grid()
         for chan_idx in range(self.num_channels()):
             chan_disp = rf.DispersionPolynomial(disp_coeffs.value[chan_idx, :], retrieval_flag[chan_idx, :], disp_coeffs.units,
                                                 desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
@@ -66,7 +68,31 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
             self.spec_win().dispersion = vec_disp
 
         return disp
- 
+
+
+class SampleGridSpectralDomain(CreatorValueMultiChannel):
+
+    number_samples = param.Array(dims=1)
+    is_one_based = param.Scalar(bool, default=False)
+    num_parameters = param.Scalar(int, default=2)
+    num_channels = param.Scalar(int)
+    # TODO: Need spectral_window addition same as DispersionPolynomial? (Add it + vec_sample_grid)
+
+    def create(self, **kwargs):
+        spectral_domains = self.value()
+
+        number_samples = self.number_samples()
+        is_one_based = self.is_one_based()
+
+        sample_grid = []
+        for chan_idx in range(self.num_channels()):
+            chan_sample_grid = rf.SampleGridSpectralDomain(spectral_domains[chan_idx], "",
+                                                           int(number_samples[chan_idx]), is_one_based)
+            sample_grid.append(chan_sample_grid)
+
+        return sample_grid
+
+
 class IlsTable(Creator):
 
     # Supply these either as a combined 3D array or 3 different 2D arrays
@@ -74,7 +100,7 @@ class IlsTable(Creator):
     response = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray))
     wavenumber = param.Choice(param.Array(dims=3), param.Iterable(np.ndarray), default=None, required=False)
 
-    dispersion = param.Iterable(rf.Dispersion)
+    dispersion = param.Iterable(rf.SampleGrid)
     hdf_band_name = param.Iterable(str)
     desc_band_name = param.Iterable(str)
     interpolate = param.Scalar(bool, default=False)
@@ -116,13 +142,14 @@ class IlsTable(Creator):
                     chan_wn = wavenumber[chan_idx]
 
             if combined:
-                ils_func.append( IlsClass(chan_wn, delta_lambda[chan_idx, :, :], response[chan_idx, :, :], 
-                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
+                ils_func.append(IlsClass(chan_wn, delta_lambda[chan_idx, :, :], response[chan_idx, :, :],
+                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate))
             else:
-                ils_func.append( IlsClass(chan_wn, delta_lambda[chan_idx], response[chan_idx], 
-                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate) )
+                ils_func.append(IlsClass(chan_wn, delta_lambda[chan_idx], response[chan_idx],
+                                          desc_band_name[chan_idx], hdf_band_name[chan_idx], interpolate))
 
         return ils_func
+
 
 class IlsGaussian(Creator):
 
@@ -139,9 +166,10 @@ class IlsGaussian(Creator):
 
         ils_func = []
         for chan_idx in range(self.num_channels()):
-            ils_func.append( rf.IlsGaussian(hwhm.value[chan_idx], desc_band_name[chan_idx], hdf_band_name[chan_idx]) )
+            ils_func.append(rf.IlsGaussian(hwhm.value[chan_idx], desc_band_name[chan_idx], hdf_band_name[chan_idx]))
 
         return ils_func
+
 
 class InstrumentDoppler(CreatorFlaggedValue):
 
@@ -154,9 +182,10 @@ class InstrumentDoppler(CreatorFlaggedValue):
 
         inst_doppler = []
         for chan_idx in range(self.num_channels()):
-            inst_doppler.append( rf.InstrumentDoppler(rel_vel[chan_idx], bool(ret_flag[chan_idx])) ) 
+            inst_doppler.append(rf.InstrumentDoppler(rel_vel[chan_idx], bool(ret_flag[chan_idx])))
 
         return inst_doppler
+
 
 class InstrumentCorrectionList(Creator):
 
@@ -182,6 +211,7 @@ class InstrumentCorrectionList(Creator):
 
         return inst_corr
 
+
 class RadianceScaling(CreatorFlaggedValueMultiChannel):
 
     band_reference = param.ArrayWithUnit(dims=1)
@@ -198,20 +228,21 @@ class RadianceScaling(CreatorFlaggedValueMultiChannel):
         rad_scaling = []
         for chan_index in range(self.num_channels()):
 
-            rad_scaling.append( rf.RadianceScalingSvFit(params[chan_index, :], retrieval_flag[chan_index, :], band_ref[chan_index], band_name[chan_index]) )
+            rad_scaling.append(rf.RadianceScalingSvFit(params[chan_index, :], retrieval_flag[chan_index, :], band_ref[chan_index], band_name[chan_index]))
 
         return rad_scaling
+
 
 class ApplyInstrumentUnits(CreatorFlaggedValueMultiChannel):
 
     units = param.InstanceOf(rf.Unit)
     scale_factor = param.Scalar(float)
     num_channels = param.Scalar(int)
-    
+
     def create(self, **kwargs):
 
         apply_units = []
         for chan_index in range(self.num_channels()):
-            apply_units.append( rf.ApplyInstrumentUnits(self.units(), self.scale_factor()) )
+            apply_units.append(rf.ApplyInstrumentUnits(self.units(), self.scale_factor()))
 
         return apply_units

@@ -13,6 +13,7 @@ class ValueFromLevel1b(Creator):
 
     list_fields = [
         'time',
+        'sample_grid'
     ]
 
     array_fields = [
@@ -70,7 +71,6 @@ class ValueFromLevel1b(Creator):
             raise param.ParamError("Unhandled return value size from L1b class")
 
     def create(self, channel_index=None, **kwargs):
-
         field_val = getattr(self.l1b(), self.field(), None)
 
         if field_val is None:

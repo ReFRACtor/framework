@@ -16,7 +16,7 @@ using namespace blitz;
 #include "aerosol_optical.h"
 #include "aerosol_extinction.h"
 #include "aerosol_property.h"
-#include "dispersion.h"
+#include "sample_grid.h"
 
 void state_vector_add_observer_instrument(StateVector& Sv, Instrument& inst)
 {
@@ -85,7 +85,7 @@ void state_vector_add_observer_ground(StateVector& Sv, Ground& ground)
 }
 
 
-void state_vector_add_observer_disp(StateVector& Sv, Dispersion& disp)
+void state_vector_add_observer_disp(StateVector& Sv, SampleGrid& disp)
 {
     Sv.add_observer(disp);
 }

@@ -11,7 +11,7 @@
 #include "initial_guess.h"
 #include "register_output_base.h"
 #include "instrument.h"
-#include "dispersion.h"
+#include "sample_grid.h"
 #include "rt_atmosphere.h"
 #include "radiative_transfer.h"
 #include "lua_state.h"

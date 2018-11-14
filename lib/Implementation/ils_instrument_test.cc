@@ -2,6 +2,7 @@
 #include "ils_convolution.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
+#include "sample_grid_spectral_domain.h"
 #include "ils_table.h"
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
@@ -93,6 +94,41 @@ BOOST_AUTO_TEST_CASE(basic)
     spectral_range().data();
   jacd(Range::all(), 3) = (v2 - v0) / epsilon;
   BOOST_CHECK_MATRIX_CLOSE(jac, jacd);
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(ils_instrument_static, ConfigurationFixture)
+
+BOOST_AUTO_TEST_CASE(basic_static_test)
+{
+  HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
+  boost::shared_ptr<IlsTableLinear> ils_tab(new IlsTableLinear(hf, 0, "A-Band", "o2"));
+  IfstreamCs sd_in_data(test_data_dir() + "expected/dispersion_polynomial/gosat");
+  Array<double, 1> pwn_in;
+  sd_in_data >> pwn_in;
+  SpectralDomain sd_in(pwn_in, units::inv_cm);
+  boost::shared_ptr<SampleGridSpectralDomain>
+    sg(new SampleGridSpectralDomain(sd_in, ils_tab->band_name(), 1805, true ));
+  std::vector<boost::shared_ptr<Ils> > ils;
+  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(sg, ils_tab)));
+
+  IlsInstrument inst(ils);
+
+  std::vector<int> plist;
+  // Arbitrary list of pixels.
+  plist.push_back(403);
+  plist.push_back(405);
+  for(int i = 407; i <= 414; ++i)
+    plist.push_back(i);
+
+  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  Array<double, 1> wn_in, rad_hres_in, rad_out_expect;
+  expected >> wn_in >> rad_hres_in >> rad_out_expect;
+  SpectralDomain sd(wn_in, units::inv_cm);
+  SpectralRange sr(rad_hres_in, units::dimensionless); // Ignore units
+  BOOST_CHECK_MATRIX_CLOSE(inst.apply_instrument_model(Spectrum(sd, sr),
+                                                       plist, 0).
+                           spectral_range().data(), rad_out_expect);
 }
 BOOST_AUTO_TEST_SUITE_END()
 

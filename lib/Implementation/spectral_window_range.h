@@ -3,9 +3,9 @@
 
 #include "spectral_window.h"
 #include "array_with_unit.h"
+#include "sample_grid.h"
 
 namespace FullPhysics {
-  class Dispersion;
 
 /****************************************************************//**
   This is an implementation of a SpectralWindow that covers a fixed
@@ -31,9 +31,9 @@ public:
 /// sample_index to wavelength/wavenumber.
 //-----------------------------------------------------------------------
   
-  const std::vector<boost::shared_ptr<Dispersion> >& dispersion() const 
+  const std::vector<boost::shared_ptr<SampleGrid> >& dispersion() const
   {return disp_;}
-  void dispersion(const std::vector<boost::shared_ptr<Dispersion> >& D)
+  void dispersion(const std::vector<boost::shared_ptr<SampleGrid> >& D)
   { disp_ = D; }
   
   virtual int number_spectrometer() const {return range_.value.rows();}
@@ -52,7 +52,7 @@ private:
   ArrayWithUnit<double, 3> range_;
   // Mask of bad samples, True for a bad sample, False for a good one
   blitz::Array<bool, 2> bad_sample_mask_;
-  std::vector<boost::shared_ptr<Dispersion> > disp_;
+  std::vector<boost::shared_ptr<SampleGrid> > disp_;
 };
 }
 #endif

@@ -2,6 +2,8 @@
 #include "fp_exception.h"
 #include "linear_algebra.h"
 #include <algorithm>
+#include <functional>
+#include <cmath>
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -32,11 +34,16 @@ double Absco::interpol(double X, const std::vector<double>& Xv,
 /// Find interpolation factor in sorted array.
 //-----------------------------------------------------------------------
 
-double AbscoInterpolator::interpol(double X, const std::vector<double>& Xv, 
+double AbscoInterpolator::interpol(double X, bool is_reversed,
+				   const std::vector<double>& Xv, 
 				   int& i, double& df_dx) const
 {
   // Find index number of largest Xv that is < X.
-  i = (int) (std::lower_bound(Xv.begin(), Xv.end(), X) - Xv.begin()) - 1;
+  if(is_reversed)
+    i = (int) (std::lower_bound(Xv.begin(), Xv.end(), X,
+				std::greater<double>()) - Xv.begin()) - 1;
+  else
+    i = (int) (std::lower_bound(Xv.begin(), Xv.end(), X) - Xv.begin()) - 1;
   if(i < 0)
     i = 0;
   if(i > (int) Xv.size() - 2)
@@ -61,6 +68,7 @@ void Absco::fill_pgrid_tgrid_and_bgrid() const
     Array<double, 1> bgridg(broadener_vmr_grid());
     pgrid.resize(pgridg.rows());
     tgrid.resize(tg.rows());
+    tstart_offset.resize(tg.rows());
     bgrid.resize(std::max(bgridg.rows(), 1));
     for(int i = 0; i < pgridg.rows(); ++i)
       pgrid[i] = pgridg(i);
@@ -68,10 +76,22 @@ void Absco::fill_pgrid_tgrid_and_bgrid() const
       bgrid[i] = bgridg(i);
     if(bgridg.rows() ==0)
       bgrid[0] = 0;
+    // Some temperature grids use nan to indicate that we don't have a
+    // value, i.e., the temperature is a jagged array. This is the
+    // case for AbscoAer. We just chop off the missing data, but we
+    // need to keep a count of what we chop off so we know how to look
+    // into the cross section data.
     for(int i = 0; i < tg.rows(); ++i) {
-      tgrid[i].resize(tg.cols());
-      for(int j = 0; j < tg.cols(); ++j)
-	tgrid[i][j] = tg(i,j);
+      tgrid[i].clear();
+      bool first_good_data = true;
+      for(int j = 0; j < tg.cols(); ++j) 
+	if(isfinite(tg(i,j))) {
+	  if(first_good_data) {
+	    first_good_data = false;
+	    tstart_offset[i] = j;
+	  }
+	  tgrid[i].push_back(tg(i,j));
+	}
     }
   }
 }
@@ -155,9 +175,10 @@ AbscoInterpolator::AbscoInterpolator
   b_jac.reference(to_c_order(b.jacobian()));
 
   absco->fill_pgrid_tgrid_and_bgrid();
+  p_reversed = (absco->pgrid[0] > absco->pgrid[1]);
   for(int i = 0; i < p.rows(); ++i) {
     double unused;
-    fp(i) = interpol(p(i), absco->pgrid, ip(i), unused);
+    fp(i) = interpol(p(i), p_reversed, absco->pgrid, ip(i), unused);
     // We might not actually need to interpolate over broadener
     if(absco->bgrid.size() ==1) {
       ib(i) = 0;
@@ -165,12 +186,15 @@ AbscoInterpolator::AbscoInterpolator
       dfb_db(i) = 0;
       fb(i) = 1;
     } else {
-      fb(i) = interpol(b.value()(i), absco->bgrid, ib(i), dfb_db(i));
+      fb(i) = interpol(b.value()(i), false, absco->bgrid, ib(i), dfb_db(i));
       ib2(i) = ib(i) + 1;
     }
-    ftp1(i) = interpol(t.value()(i), absco->tgrid[ip(i)], itp1(i), dftp1_dt(i));
-    ftp2(i) = interpol(t.value()(i), absco->tgrid[ip(i) + 1], itp2(i), 
+    ftp1(i) = interpol(t.value()(i), false, absco->tgrid[ip(i)], itp1(i),
+		       dftp1_dt(i));
+    itp1(i) += absco->tstart_offset[ip(i)];
+    ftp2(i) = interpol(t.value()(i), false, absco->tgrid[ip(i) + 1], itp2(i), 
 		       dftp2_dt(i));
+    itp2(i) += absco->tstart_offset[ip(i)+1];
   }
 }
 

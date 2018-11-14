@@ -13,16 +13,18 @@ namespace FullPhysics {
 class AbsorberVmrLevelScaled : public AbsorberVmrScaled {
 public:
   AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
-			 const blitz::Array<double, 1>& Vmr_profile,
-			 double Scale,                         
-			 bool Scale_flag,
-			 const std::string& Gas_name);
+                         const blitz::Array<double, 1>& Vmr_profile,
+                         double Scale,                         
+                         bool Scale_flag,
+                         const std::string& Gas_name);
   virtual ~AbsorberVmrLevelScaled() {}
 
   virtual void print(std::ostream& Os) const;
 
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
+  virtual boost::shared_ptr<AbsorberVmr> clone() const
+  { return clone(press->clone()); }
+
+  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
 
   //-----------------------------------------------------------------------
   /// VMR values passed in from input

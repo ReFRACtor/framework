@@ -7,6 +7,7 @@ using namespace blitz;
 
 REGISTER_LUA_CLASS(SampleGrid)
 .def("sample_grid", &SampleGrid::sample_grid)
+.def("pixel_grid", &SampleGrid::pixel_grid)
 REGISTER_LUA_END()
 
 // typedef to distinguish between copying value or moving value (C++11) push_back prototypes

@@ -62,25 +62,6 @@ public:
   virtual SpectralDomain pixel_spectral_domain(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// Band name for given Spec_index.
-//-----------------------------------------------------------------------
-
-  virtual std::string band_name(int Spec_index) const = 0;
-
-//-----------------------------------------------------------------------
-/// In general, the name used in HDF files for a particular band is
-/// similar but not identical to the more human readable band_name.
-/// For example, with GOSAT we use the HDF field name "weak_co2", but
-/// the band name is "WC-Band". This gives the HDF name to use.
-///
-/// The default implementation just returns the same string as the
-/// band name.
-//-----------------------------------------------------------------------
-
-  virtual std::string hdf_band_name(int Spec_index) const
-  { return band_name(Spec_index); }
-
-//-----------------------------------------------------------------------
 /// This is the half width of the ILS in wavenumber.
 //-----------------------------------------------------------------------
 

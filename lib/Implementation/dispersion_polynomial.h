@@ -1,6 +1,6 @@
 #ifndef DISPERSION_POLYNOMIAL_H
 #define DISPERSION_POLYNOMIAL_H
-#include "dispersion.h"
+#include "sample_grid.h"
 #include "unit.h"
 #include "sub_state_vector_array.h"
 #include "polynomial_eval.h"
@@ -16,7 +16,7 @@ namespace FullPhysics {
   convention, the polynomial is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class DispersionPolynomial: public SubStateVectorArray<Dispersion> {
+class DispersionPolynomial: public SubStateVectorArray<SampleGrid> {
 public:
   DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
 		       const blitz::Array<bool, 1>& Used_flag,
@@ -72,12 +72,13 @@ public:
     return (t < 0 ? 0 : sqrt(t)); 
   }
 
-  virtual boost::shared_ptr<Dispersion> clone() const;
+  virtual boost::shared_ptr<SampleGrid> clone() const;
 
   virtual std::string sub_state_identifier() const { return "dispersion/" + band_name_; } 
 
   virtual std::string state_vector_name_i(int i) const;
   virtual SpectralDomain pixel_grid() const;
+  virtual SpectralDomain sample_grid() const { return this->pixel_grid(); };
   virtual void print(std::ostream& Os) const;
 private:
   void initialize();

@@ -188,8 +188,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(VectorVectorSpectrumEffect);
   REGISTER_LUA_LIST(SpectrumEffectImpBase);
   REGISTER_LUA_LIST(FluorescenceEffect);
-  REGISTER_LUA_LIST(Dispersion);
-  REGISTER_LUA_LIST(VectorDispersion);
+  REGISTER_LUA_LIST(SampleGrid);
+  REGISTER_LUA_LIST(VectorSampleGrid);
   REGISTER_LUA_LIST(IlsTableLinear);
   REGISTER_LUA_LIST(IlsTableLog);
   REGISTER_LUA_LIST(DispersionPolynomial);
@@ -267,6 +267,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(AbsorberVmrLevelScaled);
   REGISTER_LUA_LIST(AbsorberVmrLevelScaledOutput);
   REGISTER_LUA_LIST(AbscoHdf);
+  REGISTER_LUA_LIST(AbscoAer);
   REGISTER_LUA_LIST(AbsorberAbsco);
   REGISTER_LUA_LIST(AbsorberAbscoOutput);
   REGISTER_LUA_LIST(AtmosphereOco);

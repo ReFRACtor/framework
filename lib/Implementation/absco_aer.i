@@ -2,22 +2,22 @@
 // (Not really c++, but closest emacs mode)
 %include "common.i"
 %{
-#include "absco_hdf.h"
+#include "absco_aer.h"
 %}
 %base_import(absco)
 %import "spectral_bound.i"
 
-%fp_shared_ptr(FullPhysics::AbscoHdf);
+%fp_shared_ptr(FullPhysics::AbscoAer);
 namespace FullPhysics {
 
 // Force to be not abstract
-%feature("notabstract") AbscoHdf;
+%feature("notabstract") AbscoAer;
 
-class AbscoHdf : public Absco {
+class AbscoAer : public Absco {
 public:
-  AbscoHdf(const std::string& Fname, double Table_scale = 1.0, 
+  AbscoAer(const std::string& Fname, double Table_scale = 1.0, 
 	   int Cache_nline = 5000);
-  AbscoHdf(const std::string& Fname, 
+  AbscoAer(const std::string& Fname, 
 	   const SpectralBound& Spectral_bound,
 	   const std::vector<double>& Table_scale,
 	   int Cache_nline = 5000);

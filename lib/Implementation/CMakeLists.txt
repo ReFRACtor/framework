@@ -2,6 +2,7 @@
 set(DIR_SOURCES
     absco.cc
     absco_hdf.cc
+    absco_aer.cc
     absorber_absco.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
@@ -50,7 +51,6 @@ set(DIR_SOURCES
     ils_convolution.cc
     ils_gaussian.cc
     ils_instrument.cc
-    ils_sample_grid_convolution.cc
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
@@ -117,6 +117,7 @@ set(DIR_SOURCES
 
 set(TEST_SOURCES
     absco_hdf_test.cc
+    absco_aer_test.cc
     absorber_absco_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc

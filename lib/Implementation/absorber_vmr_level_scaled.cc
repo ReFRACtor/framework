@@ -25,7 +25,7 @@ AbsorberVmrLevelScaled::AbsorberVmrLevelScaled
  double Scale,                         
  bool Scale_flag,
  const std::string& Gas_name)
-: AbsorberVmrScaled(Press, Scale, Scale_flag, Gas_name), vmr_profile_(Vmr_profile)
+: AbsorberVmrScaled(Press, Scale, Scale_flag, Gas_name), vmr_profile_(Vmr_profile.copy())
 {
 }
 

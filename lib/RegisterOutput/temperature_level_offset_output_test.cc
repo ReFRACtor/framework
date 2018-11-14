@@ -15,8 +15,8 @@ BOOST_AUTO_TEST_CASE(basic)
     260.155, 261.747, 261.732, 258.598;
   
   TemperatureLevelOffsetOutput po(boost::shared_ptr<TemperatureLevelOffset>(new TemperatureLevelOffset(pressure, t1, 0, true)));
-  boost::shared_ptr<OutputHdf> out(new OutputHdf("temperature_output.h5", 20, 112, 5, 3));
-  add_file_to_cleanup("temperature_output.h5");
+  boost::shared_ptr<OutputHdf> out(new OutputHdf("temperature_level_offset_output.h5", 20, 112, 5, 3));
+  add_file_to_cleanup("temperature_level_offset_output.h5");
   po.register_output(out);
 
   // Simple test, we just make sure that we can write output. All the
