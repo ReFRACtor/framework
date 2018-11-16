@@ -426,13 +426,15 @@ double TwostreamRtDriver::get_intensity() const
   return twostream_interface_->intensity_toa()(0);
 }
 
-void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const
+void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const
 {
   // Copy out jacobian values
   Range ra(Range::all());
   jac_atm.reference( twostream_interface_->profilewf_toa()(0, ra, ra).copy() );
   jac_atm.transposeSelf(secondDim, firstDim); // swap to same ordering as lidort
     
-  jac_surf.reference( twostream_interface_->surfacewf_toa()(0, ra).copy() );
+  jac_surf_param.reference( twostream_interface_->surfacewf_toa()(0, ra).copy() );
+
+  // jac_surf_temp to be implemented, maybe not available
 }
 

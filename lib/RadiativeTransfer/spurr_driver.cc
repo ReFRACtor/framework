@@ -282,7 +282,8 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
                                                        const ArrayAd<double, 2>& pf,
                                                        double& reflectance,
                                                        Array<double, 2>& jac_atm, 
-                                                       Array<double, 1>& jac_surf,
+                                                       Array<double, 1>& jac_surf_param,
+                                                       double& jac_surf_temp,
                                                        double surface_bb,
                                                        const Array<double, 1>& atmosphere_bb)
 
@@ -306,5 +307,5 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
 
   // Copy values from LIDORT
   reflectance = get_intensity();
-  copy_jacobians(jac_atm, jac_surf);
+  copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp);
 }

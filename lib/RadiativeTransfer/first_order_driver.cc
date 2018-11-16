@@ -295,7 +295,7 @@ double FirstOrderDriver::get_intensity() const
     return fo_interface->intensity_db()(0, 0) + fo_interface->intensity_up()(0, 0);
 }
 
-void FirstOrderDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const
+void FirstOrderDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const
 {
     // Nothing for now
 }

@@ -64,7 +64,6 @@ protected:
   mutable int alt_spec_index_cache, geo_spec_index_cache;
   virtual void update_altitude(int spec_index) const;
   virtual void update_geometry(int spec_index) const;
-  virtual void setup_thermal_inputs(double wn, int spec_index) const;
 
 };
 }

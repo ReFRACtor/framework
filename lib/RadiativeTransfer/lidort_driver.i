@@ -62,7 +62,7 @@ public:
                            bool do_surface_linearization) const;
   void calculate_rt() const;
   double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const;
+  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const;
 };
 
 }

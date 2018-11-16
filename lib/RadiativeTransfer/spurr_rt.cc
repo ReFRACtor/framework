@@ -113,14 +113,6 @@ void SpurrRt::update_geometry(int spec_index) const
               << zen(spec_index) << "\n";
 }
 
-void SpurrRt::setup_thermal_inputs(double wn, int spec_index) const
-{
-  if(!do_thermal_emission)
-    return;
-
-  rt_driver_->setup_thermal_inputs(atm->surface_blackbody(wn, spec_index).value(), atm->atmosphere_blackbody(wn, spec_index).value());
-}
-
 // See base class for description of this
 Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
 {
@@ -148,7 +140,9 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const Array
   update_geometry(Spec_index);
 
   // Updae thermal emission inputs if enabled
-  setup_thermal_inputs(Wn, Spec_index);
+  if(do_thermal_emission) {
+      rt_driver_->setup_thermal_inputs(atm->surface_blackbody(Wn, Spec_index).value(), atm->atmosphere_blackbody(Wn, Spec_index).value());
+  }
 
   // Set up BRDF inputs, here we throw away the jacobian
   // value of the surface parameters
@@ -203,7 +197,11 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   update_geometry(Spec_index);
 
   // Updae thermal emission inputs if enabled
-  setup_thermal_inputs(Wn, Spec_index);
+  AutoDerivative<double> surface_bb;
+  if(do_thermal_emission) {
+      surface_bb = atm->surface_blackbody(Wn, Spec_index);
+      rt_driver_->setup_thermal_inputs(surface_bb.value(), atm->atmosphere_blackbody(Wn, Spec_index).value());
+  }
 
   // Setup surface
   ArrayAd<double, 1> surface_parameters(atm->ground()->surface_parameter(Wn, Spec_index));
@@ -229,8 +227,9 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   double rad = rt_driver_->get_intensity();
 
   Array<double, 2> jac_atm;
-  Array<double, 1> jac_surf;
-  rt_driver_->copy_jacobians(jac_atm, jac_surf);
+  Array<double, 1> jac_surf_param;
+  double jac_surf_temp;
+  rt_driver_->copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp);
 
   //-----------------------------------------------------------------------
   /// To speed up the calculation, the Atmosphere Jacobian was
@@ -244,23 +243,33 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   Array<double, 1> jac(jac_iv.depth());
   for(int i = 0; i < jac.rows(); ++i) {
     double val = 0;
+
     // dimensions swapped on jac_iv and jac_atm
     // jac_atm is njac x nlayer 
     // jac_iv  is nlayer x njac
-    for(int m = 0; m < jac_iv.rows(); ++m)
-      for(int n = 0; n < jac_iv.cols(); ++n)
-        val += jac_atm(n,m) * jac_iv(m, n, i); 
-    if(do_surface_pd)
+    for(int m = 0; m < jac_iv.rows(); ++m) {
+      for(int n = 0; n < jac_iv.cols(); ++n) {
+        val += jac_atm(n,m) * jac_iv(m, n, i);
+      }
+    }
+
+    if(do_surface_pd) {
       // The min() here ensures that we only loop over the number of parameters that
       // either the RT or source parameters both have
-      // LIDORT will have a jac_surf larger insize (hardcoded allocation) than 
+      // LIDORT will have a jac_surf_param larger insize (hardcoded allocation) than 
       // lidort_surface.jacobian()
-      // 2stream has a jac_surf smaller than lidort_surface because due to the way
+      // 2stream has a jac_surf_param smaller than lidort_surface because due to the way
       // it is set up no parameter index is available for shadowing when using
       // coxmunk mode
-      for(int m = 0; m < min(jac_surf.rows(), lidort_surface.jacobian().rows()); ++m) {
-        val += jac_surf(m) * lidort_surface.jacobian()(m, i);
+      for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
+        val += jac_surf_param(m) * lidort_surface.jacobian()(m, i);
       }
+    }
+
+    if(do_thermal_emission and !surface_bb.is_constant()) {
+        val += surface_bb.gradient()(i) * jac_surf_temp;
+    }
+
     jac(i) = val;
   }
 

@@ -115,7 +115,8 @@ public:
                                                   const ArrayAd<double, 2>& pf,
                                                   double& reflectance,
                                                   blitz::Array<double, 2>& jac_atm, 
-                                                  blitz::Array<double, 1>& jac_surf,
+                                                  blitz::Array<double, 1>& jac_surf_param,
+                                                  double &jac_surf_temp,
                                                   double surface_bb = 0,
                                                   const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
@@ -156,7 +157,7 @@ public:
   virtual double get_intensity() const = 0;
 
   /// Copy jacobians out of internal xdata structures
-  virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const = 0;
+  virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp) const = 0;
 
 protected:
 

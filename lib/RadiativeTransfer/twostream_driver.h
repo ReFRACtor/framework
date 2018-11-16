@@ -73,7 +73,7 @@ public:
 
   void calculate_rt() const;
   double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf) const;
+  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const;
 
   boost::shared_ptr<TwostreamBrdfDriver> twostream_brdf_driver() const { 
     return boost::shared_ptr<TwostreamBrdfDriver>(boost::dynamic_pointer_cast<TwostreamBrdfDriver>(brdf_driver_)); 
