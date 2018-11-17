@@ -1,0 +1,72 @@
+language: python
+sudo: required
+dist: trusty
+compiler:
+- clang
+- gcc
+os:
+- linux
+python: 3.6
+
+env:
+    global:
+    - LANG="en_US.UTF-8"
+    - FC=gfortran-4.8
+
+install:
+    - sudo apt-add-repository --yes ppa:ubuntu-toolchain-r/test
+    - sudo apt-get update
+    - sudo apt-get install -y swig3.0 gcc-4.8 gfortran-4.8 libhdf5-dev hdf5-tools zlib1g doxygen graphviz dpkg libicu-dev libbz2-1.0
+    #
+    # Grab and install newer GSL from Artful Aardvark
+    - wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gsl/libgslcblas0_2.4+dfsg-6_amd64.deb
+    - sudo dpkg -i libgslcblas0_2.4+dfsg-6_amd64.deb
+    - wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gsl/libgsl23_2.4+dfsg-6_amd64.deb
+    - sudo dpkg -i libgsl23_2.4+dfsg-6_amd64.deb
+    - wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gsl/libgsl-dev_2.4+dfsg-6_amd64.deb
+    - sudo dpkg -i libgsl-dev_2.4+dfsg-6_amd64.deb
+    - wget http://mirrors.kernel.org/ubuntu/pool/universe/s/swig/swig3.0_3.0.10-1.2_amd64.deb
+    #
+    # Grab and install newer swig from Artful Aardvark
+    - sudo dpkg -i swig3.0_3.0.10-1.2_amd64.deb
+    #
+    # Grab and install newer eigen from Artful Aardvark
+    - wget http://mirrors.kernel.org/ubuntu/pool/universe/e/eigen3/libeigen3-dev_3.3.4-3_all.deb
+    - sudo dpkg -i libeigen3-dev_3.3.4-3_all.deb
+    #
+    # Grab and install newer libicu (used for boost) from Cosmic Cuttlefish
+    - wget http://mirrors.kernel.org/ubuntu/pool/main/i/icu/libicu60_60.2-6ubuntu1_amd64.deb
+    - sudo dpkg -i libicu60_60.2-6ubuntu1_amd64.deb
+    # Grab and install newer boost from source
+    - wget https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.gz
+    - tar -zxf boost_1_67_0.tar.gz
+    - pushd boost_1_67_0
+    - ./bootstrap.sh --with-libraries=date_time,filesystem,iostreams,regex,serialization,system,test >boost_bs_install.log 2>&1
+    - ./b2 toolset=gcc cxxflags="-std=c++11" linkflags="-std=c++11" >boost_build.log 2>&1 
+    - sudo ./b2 install >boost_install.log 2>&1
+    - popd
+    #
+    # Grab test data, concat together, and decompress into place
+    - mkdir /tmp/test_data
+    - pushd /tmp/test_data
+    - wget https://github.com/ReFRACtor/framework_testdata/releases/download/v1.0/absco.tar.gz-partaa &
+    - wget https://github.com/ReFRACtor/framework_testdata/releases/download/v1.0/absco.tar.gz-partab &
+    - wget https://github.com/ReFRACtor/framework_testdata/releases/download/v1.0/absco.tar.gz-partac &
+    - wait 
+    - cat absco.tar.gz-parta* | tar -xz &
+    - wget https://github.com/ReFRACtor/framework_testdata/releases/download/v1.0/merra.tar.gz-partaa &
+    - wget https://github.com/ReFRACtor/framework_testdata/releases/download/v1.0/merra.tar.gz-partab &
+    - wait
+    - cat merra.tar.gz-parta* | tar -xz
+    - popd
+
+script:
+    ############################################################################
+    # Build main and tests
+    ############################################################################
+     - mkdir -p build
+     - cd build
+     - cmake -DPYTHON_LIBRARY=/opt/python/3.6.3/lib/libpython3.6m.so -DABSCO_DIR=/tmp/test_data/absco -DMERRA_DIR=/tmp/test_data/merra ..
+     - make VERBOSE=1
+     - make install
+     - make unit_test
