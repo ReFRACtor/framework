@@ -32,10 +32,12 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   double refl_lid;
 
   blitz::Array<double, 2> jac_atm_ts;
-  blitz::Array<double, 1> jac_surf_ts;
+  blitz::Array<double, 1> jac_surf_param_ts;
+  double jac_surf_temp_ts;
 
   blitz::Array<double, 2> jac_atm_lid;
-  blitz::Array<double, 1> jac_surf_lid;
+  blitz::Array<double, 1> jac_surf_param_lid;
+  double jac_surf_temp_lid;
 
   TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, surface_type, false, do_solar, do_thermal);
 
@@ -110,11 +112,13 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   // Run lidort and 2stream to generate values for comparison
   lidort_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                 surface_type, lid_surface_params,
-                                                od, ssa, pf, refl_lid, jac_atm_lid, jac_surf_lid,
+                                                od, ssa, pf, refl_lid, 
+                                                jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid,
                                                 bb_surface, bb_atm);
   twostream_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, ts_surface_params,
-                                                   od, ssa, pf, refl_ts, jac_atm_ts, jac_surf_ts,
+                                                   od, ssa, pf, refl_ts, 
+                                                   jac_atm_ts, jac_surf_param_ts, jac_surf_temp_ts,
                                                    bb_surface, bb_atm);
 
   if(debug_output) {
@@ -169,8 +173,8 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
 
   if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
-    blitz::Array<double, 1> jac_surf_fd( jac_surf_ts.rows() );
-    jac_surf_fd = 0.0;
+    blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param_ts.rows() );
+    jac_surf_param_fd = 0.0;
 
     for(int p_idx = 0; p_idx < pert_surf.rows(); p_idx++) {
       blitz::Array<double,1> surface_params_pert( surface_params.rows() );
@@ -182,21 +186,21 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-      jac_surf_fd(p_idx) = (refl_fd - refl_ts) / pert_surf(p_idx);
+      jac_surf_param_fd(p_idx) = (refl_fd - refl_ts) / pert_surf(p_idx);
 
       // Adjust analytic jacobians to have same meaning as finite difference one
-      jac_surf_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
-      jac_surf_ts(p_idx) *= ts_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_ts(p_idx) *= ts_surface_params.jacobian()(p_idx, 0);
     }
 
     if(debug_output) {
-      std::cerr << "jac_surf_lid = " << jac_surf_lid(rsurf) << std::endl
-                << "jac_surf_fd = " << jac_surf_fd << std::endl
-                << "jac_surf_ts = " << jac_surf_ts << std::endl;
+      std::cerr << "jac_surf_param_lid = " << jac_surf_param_lid(rsurf) << std::endl
+                << "jac_surf_param_fd = " << jac_surf_param_fd << std::endl
+                << "jac_surf_param_ts = " << jac_surf_param_ts << std::endl;
     }
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_lid(rsurf), jac_surf_ts(rsurf), 1e-7);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_ts, jac_surf_fd, 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf), jac_surf_param_ts(rsurf), 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_ts, jac_surf_param_fd, 1e-7);
   }
 }
 
@@ -385,7 +389,8 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
                       
   double refl;
   Array<double, 2> jac_atm;
-  Array<double, 1> jac_surf;
+  Array<double, 1> jac_surf_param;
+  double jac_surf_temp;
   Array<double, 1> height;
   ArrayAd<double, 1> surface_param, od, ssa;
   ArrayAd<double, 2> pf;
@@ -395,7 +400,7 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   d.reflectance_and_jacobian_calculate(height, sza, azm, zen, 
                                        surface_type, surface_param,
                                        od, ssa, pf, refl,
-                                       jac_atm, jac_surf);
+                                       jac_atm, jac_surf_param, jac_surf_temp);
   // This will trigger an error when we run with valgrind. Note that
   // we *don't* actually see a NaN here, rather this conditional
   // triggers the unitialized value error
@@ -404,8 +409,8 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
       if(std::isnan(jac_atm(j,i)))
         std::cerr << "Nan at jac_atm(" << j << ", " << i << ")\n";
     }
-  for(int i = 0; i < jac_surf.rows(); ++i)
-    if(std::isnan(jac_surf(i)))
-      std::cerr << "Nan at jac_surf(" << i << ")\n";
+  for(int i = 0; i < jac_surf_param.rows(); ++i)
+    if(std::isnan(jac_surf_param(i)))
+      std::cerr << "Nan at jac_surf_param(" << i << ")\n";
 }
 BOOST_AUTO_TEST_SUITE_END()

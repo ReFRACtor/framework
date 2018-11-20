@@ -229,7 +229,9 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_driver->set_plane_parallel();
 
   blitz::Array<double, 2> jac_atm;
-  blitz::Array<double, 1> jac_surf;
+  blitz::Array<double, 1> jac_surf_param;
+  double jac_surf_temp;
+
   ArrayAd<double, 1> lidort_surface(surface_params.shape(), 1);
 
   lidort_surface.value() = surface_params;
@@ -237,13 +239,14 @@ BOOST_AUTO_TEST_CASE(simple)
 
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
-                                                    od, ssa, pf, refl_calc, jac_atm, jac_surf);
+                                                    od, ssa, pf, refl_calc, 
+                                                    jac_atm, jac_surf_param, jac_surf_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
 
   // Value for VLIDORT
   refl_expt = 0.70235315460259928;
@@ -254,10 +257,10 @@ BOOST_AUTO_TEST_CASE(simple)
   blitz::Array<double, 1> pert_values(surface_params.extent(firstDim)-1);
   pert_values = 1e-8, 1e-8, 1e-6;
 
-  blitz::Array<double, 1> jac_surf_fd( jac_surf.extent() );
+  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
   double refl_fd;
 
-  jac_surf_fd = 0.0;
+  jac_surf_param_fd = 0.0;
   refl_fd = 0.0;
 
   // First check PP mode against value just computed
@@ -270,10 +273,10 @@ BOOST_AUTO_TEST_CASE(simple)
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
-    jac_surf_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf, jac_surf_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
 
   // Pseudo-spherical mode FD test
   lidort_driver->set_pseudo_spherical();
@@ -284,13 +287,14 @@ BOOST_AUTO_TEST_CASE(simple)
 
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
-                                                    od, ssa, pf, refl_calc, jac_atm, jac_surf);
+                                                    od, ssa, pf, refl_calc,
+                                                    jac_atm, jac_surf_param, jac_surf_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
 
   for(int p_idx = 0; p_idx < pert_values.extent(firstDim); p_idx++) {
     blitz::Array<double,1> surface_params_pert( surface_params.extent() );
@@ -301,10 +305,10 @@ BOOST_AUTO_TEST_CASE(simple)
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
-    jac_surf_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf, jac_surf_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
 
   // Line-of-site mode FD test
   sza = sza + 1e-3; // or else risk divide by zero
@@ -317,13 +321,14 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_surface.jacobian() = 1.0;
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                  surface_type, lidort_surface,
-                                                 od, ssa, pf, refl_calc, jac_atm, jac_surf);
+                                                 od, ssa, pf, refl_calc,
+                                                 jac_atm, jac_surf_param, jac_surf_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
 
   for(int p_idx = 0; p_idx < pert_values.extent(firstDim); p_idx++) {
     blitz::Array<double,1> surface_params_pert( surface_params.extent() );
@@ -334,10 +339,10 @@ BOOST_AUTO_TEST_CASE(simple)
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
-    jac_surf_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf, jac_surf_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
 
 }
 
@@ -350,7 +355,8 @@ BOOST_AUTO_TEST_CASE(simple)
 
   double refl_calc;
   blitz::Array<double, 2> jac_atm;
-  blitz::Array<double, 1> jac_surf;
+  blitz::Array<double, 1> jac_surf_param;
+  double jac_surf_temp;
 
   ////////////////
   // Surface only
@@ -378,7 +384,8 @@ BOOST_AUTO_TEST_CASE(simple)
 
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
-                                                    od, ssa, pf, refl_calc, jac_atm, jac_surf);
+                                                    od, ssa, pf, refl_calc, 
+                                                    jac_atm, jac_surf_param, jac_surf_temp);
 
   // Compare against an offline calculated value, or could compare against value from l_rad
   double refl_expected = 0.035435854422713485;
@@ -389,10 +396,10 @@ BOOST_AUTO_TEST_CASE(simple)
   blitz::Array<double, 1> pert_values(surface_params.rows());
   pert_values = 1e-8, 1e-8, 1e-6, 1e-6, 1e-6;
 
-  blitz::Array<double, 1> jac_surf_fd( jac_surf.extent() );
+  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
   double refl_fd;
 
-  jac_surf_fd = 0.0;
+  jac_surf_param_fd = 0.0;
   refl_fd = 0.0;
 
   // First check PP mode against value just computed
@@ -405,10 +412,10 @@ BOOST_AUTO_TEST_CASE(simple)
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
-    jac_surf_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf, jac_surf_fd, 2e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 2e-7);
 
 }
 
