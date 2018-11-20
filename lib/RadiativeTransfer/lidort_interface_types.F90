@@ -10,7 +10,7 @@ implicit none
 
 ! Links to module: "lidort_pars" in file: "lidort_pars.f90.in"
 type, bind(c) :: lidort_pars_c
-  character(kind=c_char, len=3) :: lidort_version_number
+  character(kind=c_char) :: lidort_version_number(3)
   integer(c_int) :: lidort_inunit
   integer(c_int) :: lidort_scenunit
   integer(c_int) :: lidort_funit
@@ -1252,8 +1252,11 @@ contains
 
 subroutine set_lidort_pars(pars_struct) bind(C)
   type(lidort_pars_c) :: pars_struct
+  integer :: len_idx
 
-  pars_struct%lidort_version_number = LIDORT_VERSION_NUMBER
+  do len_idx = 1, 3
+    pars_struct%lidort_version_number(len_idx:len_idx) = LIDORT_VERSION_NUMBER(len_idx:len_idx)
+  end do
   pars_struct%lidort_inunit = LIDORT_INUNIT
   pars_struct%lidort_scenunit = LIDORT_SCENUNIT
   pars_struct%lidort_funit = LIDORT_FUNIT
