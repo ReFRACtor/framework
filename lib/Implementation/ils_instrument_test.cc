@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(basic_static_test)
   sd_in_data >> pwn_in;
   SpectralDomain sd_in(pwn_in, units::inv_cm);
   boost::shared_ptr<SampleGridSpectralDomain>
-    sg(new SampleGridSpectralDomain(sd_in, ils_tab->band_name(), 1805, true ));
+    sg(new SampleGridSpectralDomain(sd_in, ils_tab->band_name()));
   std::vector<boost::shared_ptr<Ils> > ils;
   ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(sg, ils_tab)));
 

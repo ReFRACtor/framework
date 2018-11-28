@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(basic)
     // 200nm, 400m, 600nm, 800nm
     sample_wavenumbers = 50000.0, 50000.0 / 2.0, 50000.0 / 3.0, 50000.0 / 4.0;
     SpectralDomain spec_domain(sample_wavenumbers, units::inv_cm);
-    SampleGridSpectralDomain samp_grid(spec_domain, "Test band", 4, false);
+    SampleGridSpectralDomain samp_grid(spec_domain, "Test band");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
