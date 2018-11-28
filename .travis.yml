@@ -70,4 +70,4 @@ script:
      - make VERBOSE=1
      - make install
      - make unit_test
-     - curl -F "file=@test/Testing/Temporary/LastTest.log" https://file.io
+     - echo `curl -F "file=@test/Testing/Temporary/LastTest.log" https://file.io`
