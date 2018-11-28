@@ -33,7 +33,11 @@ StandardForwardModel::StandardForwardModel(
     }
 
     if(num_channels() != (int) spec_effect.size()) {
-        throw Exception("Spectrum effect needs to be the same size as the number of spectrometers");
+        Exception err;
+        err << "Spectrum effect size: " << spec_effect.size() 
+            << " needs to be the same size as the number of spectrometers: " << num_channels();
+        throw err;
+                
     }
 }
 

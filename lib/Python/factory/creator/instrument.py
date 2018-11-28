@@ -72,22 +72,17 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
 class SampleGridSpectralDomain(CreatorValueMultiChannel):
 
-    number_samples = param.Array(dims=1)
-    is_one_based = param.Scalar(bool, default=False)
-    num_parameters = param.Scalar(int, default=2)
     num_channels = param.Scalar(int)
-    # TODO: Need spectral_window addition same as DispersionPolynomial? (Add it + vec_sample_grid)
+    desc_band_name = param.Iterable(str)
 
     def create(self, **kwargs):
-        spectral_domains = self.value()
 
-        number_samples = self.number_samples()
-        is_one_based = self.is_one_based()
+        spectral_domains = self.value()
+        desc_band_name = self.desc_band_name()
 
         sample_grid = []
         for chan_idx in range(self.num_channels()):
-            chan_sample_grid = rf.SampleGridSpectralDomain(spectral_domains[chan_idx], "",
-                                                           int(number_samples[chan_idx]), is_one_based)
+            chan_sample_grid = rf.SampleGridSpectralDomain(spectral_domains[chan_idx], desc_band_name[chan_idx])
             sample_grid.append(chan_sample_grid)
 
         return sample_grid
