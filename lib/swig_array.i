@@ -262,6 +262,34 @@ public:
 }
 
 //--------------------------------------------------------------
+// Handle a vector of arrays coming from Python as an iterable
+//--------------------------------------------------------------
+
+%typemap(in) std::vector<blitz::Array<TYPE, DIM> >&
+{
+  /* Check if is a list */
+  if (PyList_Check($input)) {
+    int size = PyList_Size($input);
+    $1 = new std::vector<blitz::Array<TYPE, DIM> >();
+    for (int i = 0; i < size; i++) {
+      PyObject *elem_obj = PyList_GetItem($input, i);
+      PythonObject numpy;
+      numpy.obj = to_numpy<TYPE>(elem_obj);
+      blitz::Array<TYPE, DIM> array_obj = to_blitz_array<TYPE, DIM>(numpy);
+      $1->push_back(array_obj);
+    }
+  } else {
+    PyErr_SetString(PyExc_TypeError, "Argument not a list");
+    SWIG_fail;
+  }
+}
+
+%typemap(freearg) std::vector<blitz::Array<TYPE, DIM> >&
+{
+    free($1);
+}
+
+//--------------------------------------------------------------
 // Handle conversion in directors
 //--------------------------------------------------------------
 

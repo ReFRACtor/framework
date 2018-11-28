@@ -20,7 +20,6 @@ set(DIR_SOURCES
     forward_model_spectral_grid.cc
     gas_absorption.cc
     ground.cc
-    hres_wrapper.cc
     ils.cc
     ils_function.cc
     initial_guess.cc
@@ -43,9 +42,6 @@ set(DIR_SOURCES
     output.cc
     pressure.cc
     problem_state.cc
-    radiative_transfer.cc
-    radiative_transfer_fixed_stokes_coefficient.cc
-    radiative_transfer_single_wn.cc
     rt_atmosphere.cc
     sample_grid.cc
     solar_absorption_spectrum.cc
@@ -56,8 +52,6 @@ set(DIR_SOURCES
     spectrum_effect.cc
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
-    spurr_driver.cc
-    spurr_rt.cc
     stokes_coefficient.cc
     temperature.cc
     temperature_offset.cc

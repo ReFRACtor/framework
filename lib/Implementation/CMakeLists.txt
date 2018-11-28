@@ -1,19 +1,5 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
-    l_rad_fortran/calc_geom_first_enh.F90
-    l_rad_fortran/calc_geom_first_reg.F90
-    l_rad_fortran/calc_geom_second.F90
-    l_rad_fortran/l_calc_phase_first.F90
-    l_rad_fortran/l_rad_first_enh.F90
-    l_rad_fortran/l_rad_first_reg.F90
-    l_rad_fortran/l_rad_second.F90
-    l_rad_fortran/l_surface.F90
-    l_rad_fortran/l_surface_fourier.F90
-    l_rad_fortran/geometry_pool.F90
-    l_rad_fortran/l_rad_first_pp.F90
-    l_rad_fortran/l_sscorr_nadir.F90
-    l_rad_fortran/l_sscorr_outgoing.F90
-    l_rad_fortran/l_sscorr_pp.F90
     absco.cc
     absco_hdf.cc
     absco_aer.cc
@@ -35,8 +21,6 @@ set(DIR_SOURCES
     bard_nlls_problem.cc
     brdf_functions.F90
     brown_nlls_problem.cc
-    chapman_boa.cc
-    chapman_boa_rt.cc
     chisq_convergence.cc
     composite_perturbation.cc
     connor_convergence.cc
@@ -72,20 +56,10 @@ set(DIR_SOURCES
     instrument_doppler.cc
     jennrich_sampson_nlls_problem.cc
     l2_fp_configuration_lua.cc
-    l_rad_driver.cc
-    l_rad_driver_f.F90
-    l_rad_rt.cc
     level_1b_average.cc
     level_1b_cache.cc
     level_1b_scale_radiance.cc
-    lidort_driver.cc
-    lidort_interface_masters.F90
-    lidort_interface_masters_io.F90
-    lidort_interface_types.F90
-    lidort_interface_types_io.F90
-    lidort_rt.cc
     log_timing.cc
-    lsi_rt.cc
     max_a_posteriori_standard.cc
     merra_aerosol.cc
     meyer_ml_problem.cc
@@ -113,8 +87,6 @@ set(DIR_SOURCES
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
     radiance_scaling_sv_fit.cc
-    radiant2.8_direct.F90
-    radiant_driver.cc
     rayleigh.cc
     rayleigh_f.F90
     reference_vmr_apriori.cc
@@ -140,9 +112,6 @@ set(DIR_SOURCES
     surface_temperature_direct.cc
     temperature_level_offset.cc
     temperature_met.cc
-    twostream_driver.cc
-    twostream_interface.F90
-    twostream_rt.cc
     uniform_spectrum_sampling.cc
 )
 
@@ -161,8 +130,6 @@ set(TEST_SOURCES
     atmosphere_fixture.cc
     atmosphere_oco_test.cc
     bad_sample_noise_model_test.cc
-    chapman_boa_rt_test.cc
-    chapman_boa_test.cc
     chisq_convergence_test.cc
     composite_initial_guess_full_guess_test.cc
     composite_perturbation_test.cc
@@ -190,17 +157,9 @@ set(TEST_SOURCES
     ils_table_test.cc
     initial_guess_value_test.cc
     instrument_doppler_test.cc
-    l_rad_driver_test.cc
-    l_rad_rt_test.cc
     level_1b_average_test.cc
     level_1b_cache_test.cc
     level_1b_scale_radiance_test.cc
-    lidort_driver_test.cc
-    lidort_fixture.cc
-    lidort_interface_masters_test.cc
-    lidort_interface_types_test.cc
-    lidort_rt_test.cc
-    lsi_rt_test.cc
     merra_aerosol_test.cc
     met_data_fixture.cc
     nlls_max_a_posteriori_test.cc
@@ -217,7 +176,6 @@ set(TEST_SOURCES
     nlls_solver_gsl_sm_powell_test.cc
     nlls_solver_gsl_sm_powell_singular_test.cc
     nlls_solver_gsl_sm_rosenbrock2_test.cc
-    nonuniform_lsi_rt_test.cc
     nonuniform_spectrum_sampling_test.cc
     observation_level_1b_test.cc
     output_hdf_iteration_test.cc
@@ -248,9 +206,6 @@ set(TEST_SOURCES
     stokes_coefficient_fraction_test.cc
     temperature_level_offset_test.cc
     temperature_met_test.cc
-    twostream_driver_test.cc
-    twostream_interface_test.cc
-    twostream_rt_test.cc
     uniform_spectrum_sampling_test.cc
 )
 

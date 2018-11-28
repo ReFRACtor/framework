@@ -134,6 +134,10 @@ include(lidort-3.7/lidort.cmake)
 list(APPEND THIRDPARTY_TARGETS lidort)
 list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort${CMAKE_SHARED_LIBRARY_SUFFIX})
 
+include(first_order/first_order.cmake)
+list(APPEND THIRDPARTY_TARGETS first_order)
+list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libfirst_order${CMAKE_SHARED_LIBRARY_SUFFIX})
+
 # Custom target that makes it easier to compile all third party independently
 add_custom_target(thirdparty DEPENDS ${THIRDPARTY_TARGETS})
 

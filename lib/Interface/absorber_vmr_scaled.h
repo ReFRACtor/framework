@@ -13,9 +13,9 @@ namespace FullPhysics {
 class AbsorberVmrScaled : public AbsorberVmrImpBase {
 public:
   AbsorberVmrScaled(const boost::shared_ptr<Pressure>& Press,
-		    double Scale,                         
-		    bool Scale_flag,
-		    const std::string& Gas_name);
+                    double Scale,                         
+                    bool Scale_flag,
+                    const std::string& Gas_name);
 
   virtual ~AbsorberVmrScaled() {}
   virtual void print(std::ostream& Os) const;
@@ -28,8 +28,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone() const
   { return clone(press->clone()); }
 
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const = 0;
 
   //-----------------------------------------------------------------------
   /// Scale factor.
@@ -43,7 +42,7 @@ public:
 
   double scale_uncertainty() const
   { return (sv_cov_sub.rows() > 0 && sv_cov_sub(0,0) > 0 ? 
-	    sqrt(sv_cov_sub(0,0)) : 0); }
+            sqrt(sv_cov_sub(0,0)) : 0); }
 
   //-----------------------------------------------------------------------
   /// VMR profile used with the offset

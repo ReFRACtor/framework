@@ -10,9 +10,7 @@ from refractor.factory import process_config
 from refractor import framework as rf
 
 static_input_file = os.path.join(os.path.dirname(__file__), "../lua/example_static_input.h5")
-static_input = h5py.File(static_input_file)
 ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
-ils_input = h5py.File(ils_file)
 
 solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
 aerosol_prop_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_aerosol_combined.h5")
@@ -26,11 +24,20 @@ observation_id = "2014090915251774"
 
 # Helpers to abstract away getting data out of the static input file
 def static_value(dataset, dtype=None):
-    return np.array(static_input[dataset][:], dtype=dtype)
+    with h5py.File(static_input_file, "r") as static_input:
+        return np.array(static_input[dataset][:], dtype=dtype)
 
 def static_units(dataset):
-    return static_input[dataset].attrs['Units'][0].decode('UTF8') 
+    with h5py.File(static_input_file, "r") as static_input:
+        return static_input[dataset].attrs['Units'][0].decode('UTF8') 
 
+def ils_delta_lambda():
+    with h5py.File(ils_file) as ils_input:
+        return ils_input["/InstrumentData/ils_delta_lambda"][:]
+
+def ils_relative_response():
+    with h5py.File(ils_file) as ils_input:
+        return ils_input["/InstrumentData/ils_relative_response"][:]
 
 config_def = {
     'creator': creator.base.SaveToCommon,
@@ -54,7 +61,7 @@ config_def = {
         'constants': {
             'creator': creator.common.DefaultConstants,
         },
-        'stokes_coefficients': {
+        'stokes_coefficient': {
             'creator': creator.l1b.ValueFromLevel1b,
             'field': "stokes_coefficient",
         },
@@ -90,8 +97,8 @@ config_def = {
         },
         'ils_function': {
             'creator': creator.instrument.IlsTable,
-            'delta_lambda': ils_input["/InstrumentData/ils_delta_lambda"][:],
-            'response': ils_input["/InstrumentData/ils_relative_response"][:],
+            'delta_lambda': ils_delta_lambda(),
+            'response': ils_relative_response(),
         },
         'instrument_correction': {
             'creator': creator.instrument.InstrumentCorrectionList,
@@ -113,7 +120,7 @@ config_def = {
             'creator': creator.atmosphere.TemperatureMet,
             'value': static_value("Temperature/Offset/a_priori")
         },
-        'altitudes': { 
+        'altitude': { 
             'creator': creator.atmosphere.AltitudeHydrostatic,
             'latitude': {
                 'creator': creator.l1b.ValueFromLevel1b,
@@ -290,7 +297,7 @@ config_def = {
                         'creator': creator.l1b.ValueFromLevel1b,
                         'field': "solar_azimuth",
                     },
-                    'altitude': {
+                    'surface_height': {
                         'creator': creator.l1b.ValueFromLevel1b,
                         'field': "altitude",
                     },
