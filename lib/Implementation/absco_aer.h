@@ -16,15 +16,37 @@ namespace FullPhysics {
   default cache is about 50 MB, which is a bit large but not too
   large. This can be adjusted if needed, either up for better
   performance or down for less memory.
+
+  For AbscoHdf we constrain the wave numbers we can retrieve on to
+  match what is in the Absco tables. This is done because
+  interpolation can work very poorly near a peak where the absorption
+  is rapidly changing. Also, the Absco tables are a bit of a bottle
+  neck and avoiding interpolation in the wavenumber direction is
+  desirable. 
+
+  For AbscoAer, the spacing between points is not always
+  constant. We'd like to explore the option of interpolation or
+  simplest using nearest neighbor. Another option would be to base the
+  high resolution grid on what is available in the Absco table (e.g., 
+  some variation of a SpectrumSampling class).
+
+  To allow us to explore these options, we have an "interplation_type"
+  argument that controls the behavior of the class. Default behavior
+  is the original "THROW_ERROR_IF_NOT_ON_WN_GRID", but we can also
+  return the nearest neighbor or do a linear interpolation.
 *******************************************************************/
 class AbscoAer: public Absco {
 public:
+  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID, NEAREST_NEIGHBOR_WN,
+			  INTERPOLATE_WN};
   AbscoAer(const std::string& Fname, double Table_scale = 1.0, 
-	   int Cache_nline = 5000);
+	   int Cache_nline = 5000,
+	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
   AbscoAer(const std::string& Fname, 
 	   const SpectralBound& Spectral_bound,
 	   const std::vector<double>& Table_scale,
-	   int Cache_nline = 5000);
+	   int Cache_nline = 5000,
+	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
   void load_file(const std::string& Fname);
   void load_file(const std::string& Fname, double Table_scale,
 		 int Cache_nline = 5000);
@@ -36,7 +58,23 @@ public:
   virtual std::string broadener_name() const { return bname; }
   virtual blitz::Array<double, 1> broadener_vmr_grid() const
   { return bvmr; }
+
+//-----------------------------------------------------------------------
+/// Return interpolation type for how we handle wave numbers not on
+/// the wave number grid.
+//-----------------------------------------------------------------------
+  
+  InterpolationType interpolation_type() const {return itype_;}
+
+//-----------------------------------------------------------------------
+/// Set interpolation type for how we handle wave numbers not on
+/// the wave number grid.
+//-----------------------------------------------------------------------
+
+  void interpolation_type(InterpolationType Itype) {itype_ = Itype;}
+  
   virtual const std::pair<double*, double*> wn_extent(double Wn_in) const;
+  virtual void wn_extent(double Wn_in, double& X, double& Y) const;
   virtual double table_scale(double wn) const;
   virtual blitz::Array<double, 1> pressure_grid() const {return pgrid;}
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
@@ -51,6 +89,7 @@ protected:
 private:
   bool is_float_;
   int cache_nline;
+  InterpolationType itype_;
   blitz::Array<double, 1> bvmr;
   boost::shared_ptr<HdfFile> hfile;
   mutable int cache_double_lbound;
@@ -63,6 +102,7 @@ private:
   template<class T> blitz::Array<T, 4>& read_cache() const;
   template<class T> void swap(int i) const;
   int wn_index(double Wn_in) const;
+  int wn_index(double Wn_in, double& F) const;
   std::string field_name;
   std::string bname;
   blitz::Array<double, 1> pgrid;

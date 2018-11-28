@@ -34,6 +34,7 @@ public:
   %python_attribute_derived(temperature_grid, blitz::Array<double, 2>)
   %python_attribute(wavenumber_grid, blitz::Array<double, 1>)
   %python_attribute(file_name, std::string)
+  void wn_extent(double Wn_in, double& OUTPUT, double& OUTPUT) const;
   const std::pair<double*, double*> wn_extent(double Wn_in) const;
   bool have_data(double wn) const;
 };

@@ -164,8 +164,26 @@ void AbscoHdf::load_file(const std::string& Fname,
     bvmr.reference(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR"));
 }
 
-// Find the array locations where the wavenumber is contained
-// If no extents are defined, this just returns beginning and end of whole absco array
+
+//-----------------------------------------------------------------------
+/// Find the array locations where the wavenumber is contained If no
+/// extents are defined, this just returns beginning and end of whole
+/// absco array. (version friendlier to swig/python)
+//-----------------------------------------------------------------------
+
+void AbscoHdf::wn_extent(double Wn_in, double& X, double& Y) const
+{
+  std::pair<double*, double*> t = wn_extent(Wn_in);
+  X = *t.first;
+  Y = *t.second;
+}
+
+//-----------------------------------------------------------------------
+/// Find the array locations where the wavenumber is contained If no
+/// extents are defined, this just returns beginning and end of whole
+/// absco array.
+//-----------------------------------------------------------------------
+
 const std::pair<double*, double*> AbscoHdf::wn_extent(double Wn_in) const
 {
     if (extent_range.rows() > 0) {

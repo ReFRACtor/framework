@@ -25,7 +25,8 @@ luabind::class_<AbscoAer,Absco,boost::shared_ptr<GasAbsorption> >
 //-----------------------------------------------------------------------
 
 AbscoAer::AbscoAer(const std::string& Fname, double Table_scale,
-                   int Cache_nline)
+                   int Cache_nline, InterpolationType Itype)
+  : itype_(Itype)
 {
   load_file(Fname, Table_scale, Cache_nline);
 }
@@ -39,7 +40,8 @@ AbscoAer::AbscoAer(const std::string& Fname, double Table_scale,
 AbscoAer::AbscoAer(const std::string& Fname, 
                    const SpectralBound& Spectral_bound,
                    const std::vector<double>& Table_scale,
-                   int Cache_nline)
+                   int Cache_nline, InterpolationType Itype)
+  : itype_(Itype)
 {
   load_file(Fname, Spectral_bound, Table_scale, Cache_nline);
 }
@@ -115,9 +117,9 @@ void AbscoAer::load_file(const std::string& Fname,
   hfile.reset(new HdfFile(Fname));
 
   // Read optional metadata
-  if (hfile->has_object("Extent_Range")) {
-      extent_range.reference(hfile->read_field<double, 2>("Extent_Range"));
-      extent_index.reference(hfile->read_field<int, 2>("Extent_Index"));
+  if (hfile->has_object("Extent_Ranges")) {
+      extent_range.reference(hfile->read_field<double, 2>("Extent_Ranges"));
+      extent_index.reference(hfile->read_field<int, 2>("Extent_Indices"));
   }
 
   // Read data fields
@@ -152,8 +154,25 @@ void AbscoAer::load_file(const std::string& Fname,
   }
 }
 
-// Find the array locations where the wavenumber is contained
-// If no extents are defined, this just returns beginning and end of whole absco array
+//-----------------------------------------------------------------------
+/// Find the array locations where the wavenumber is contained If no
+/// extents are defined, this just returns beginning and end of whole
+/// absco array. (version friendlier to swig/python)
+//-----------------------------------------------------------------------
+
+void AbscoAer::wn_extent(double Wn_in, double& X, double& Y) const
+{
+  std::pair<double*, double*> t = wn_extent(Wn_in);
+  X = *t.first;
+  Y = *t.second;
+}
+
+//-----------------------------------------------------------------------
+/// Find the array locations where the wavenumber is contained If no
+/// extents are defined, this just returns beginning and end of whole
+/// absco array.
+//-----------------------------------------------------------------------
+
 const std::pair<double*, double*> AbscoAer::wn_extent(double Wn_in) const
 {
     if (extent_range.rows() > 0) {
@@ -225,7 +244,7 @@ int AbscoAer::wn_index(double Wn_in) const
 
   double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
   double f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
-  if(f > 0.1 && f < 0.9) {
+  if(itype_ == THROW_ERROR_IF_NOT_ON_WN_GRID && f > 0.1 && f < 0.9) {
     Exception e;
     e << std::setprecision(8)
       << "AbscoAER does not interpolate in wavenumber direction.\n"
@@ -245,32 +264,92 @@ int AbscoAer::wn_index(double Wn_in) const
   return (int) (wnptr - wnfront);
 }
 
+// Calculate the wn index number of the data.
+int AbscoAer::wn_index(double Wn_in, double& F) const
+{
+  // This will throw an exception if it can not find the wavenumber's locations
+  auto extent = wn_extent(Wn_in);
+
+  double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
+  --wnptr;
+  F = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
+  return (int) (wnptr - wnfront);
+}
+
 // See base class for description
 Array<double, 3> AbscoAer::read_double(double Wn_in) const
 {
-  int wi = wn_index(Wn_in);
+  int wi;
+  double f;
+  if(itype_ == INTERPOLATE_WN)
+    wi = wn_index(Wn_in, f);
+  else
+    wi = wn_index(Wn_in);
   if(wi < cache_double_lbound ||
      wi >= cache_double_ubound)
     swap<double>(wi);
   // The Aer data is in temperature x pressure x broadner order. The
   // base class expects this to be pressure x temperature x broadner,
   // so we transpose this.
-  return read_cache<double>()(wi - cache_double_lbound, Range::all(),
+  if(itype_ != INTERPOLATE_WN) 
+    return read_cache<double>()(wi - cache_double_lbound, Range::all(),
       Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
+  Array<double, 3> r1;
+  if(wi+1 < cache_double_lbound ||
+     wi+1 >= cache_double_ubound)
+    r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim));
+  else {
+    r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim,
+					    thirdDim).copy());
+    swap<double>(wi+1);
+  }
+  Array<double, 3> r2 = read_cache<double>()(wi+1 - cache_double_lbound,
+      Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim,
+					    thirdDim);
+  Array<double, 3> res(r2.shape());
+  res = r1 * (1 - f) + r2 * f;
+  return res;
 }
 
 // See base class for description
 Array<float, 3> AbscoAer::read_float(double Wn_in) const
 {
-  int wi = wn_index(Wn_in);
+  int wi;
+  double f;
+  if(itype_ == INTERPOLATE_WN)
+    wi = wn_index(Wn_in, f);
+  else
+    wi = wn_index(Wn_in);
   if(wi < cache_float_lbound ||
      wi >= cache_float_ubound)
     swap<float>(wi);
   // The Aer data is in temperature x pressure x broadner order. The
   // base class expects this to be pressure x temperature x broadner,
   // so we transpose this.
-  return read_cache<float>()(wi - cache_float_lbound, Range::all(),
+  if(itype_ != INTERPOLATE_WN) 
+    return read_cache<float>()(wi - cache_float_lbound, Range::all(),
       Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
+  Array<float, 3> r1;
+  if(wi+1 < cache_float_lbound ||
+     wi+1 >= cache_float_ubound)
+    r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim));
+  else {
+    r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim,
+					    thirdDim).copy());
+    swap<float>(wi+1);
+  }
+  Array<float, 3> r2 = read_cache<float>()(wi+1 - cache_float_lbound,
+      Range::all(),
+      Range::all(), Range::all()).transpose(secondDim, firstDim,
+					    thirdDim);
+  Array<float, 3> res(r2.shape());
+  res = r1 * (1 - (float) f) + r2 * ((float) f);
+  return res;
 }
 
 //-----------------------------------------------------------------------
