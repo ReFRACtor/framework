@@ -87,11 +87,25 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     // Recommended value by manual of 50 in case we use cox-munk
     int n_brdf_stream = 50;
     boost::shared_ptr<LidortBrdfDriver> l_brdf_driver(new LidortBrdfDriver(n_brdf_stream, num_moments_));
-    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_directbounce_only(true);
-    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
-    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_user_streams(true);
-    l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_solar_sources(do_solar_sources);
-    //l_brdf_driver->brdf_interface()->brdf_sup_in().bs_do_surface_emission(do_thermal_emission);
+    Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
+
+    // Only use 1 beam meaning only one set of sza, azm
+    brdf_inputs.bs_nbeams(1);
+    brdf_inputs.bs_n_user_streams(1);
+    brdf_inputs.bs_n_user_relazms(1);
+
+    // This MUST be consistent with streams used for 
+    // LIDORT RT calculation
+    brdf_inputs.bs_nstreams(num_streams_);
+
+    // Number of quadtrature streams for BRDF calculation
+    brdf_inputs.bs_nstreams_brdf(n_brdf_stream);
+
+    brdf_inputs.bs_do_directbounce_only(true);
+    brdf_inputs.bs_do_brdf_surface(true);
+    brdf_inputs.bs_do_user_streams(true);
+    brdf_inputs.bs_do_solar_sources(do_solar_sources);
+    //brdf_inputs.bs_do_surface_emission(do_thermal_emission);
 
     brdf_driver_ = l_brdf_driver;
     brdf_driver_->initialize_brdf_inputs(surface_type);

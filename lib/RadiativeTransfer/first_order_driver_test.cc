@@ -87,7 +87,7 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
               << "refl_fo  = " << refl_fo << std::endl;
   }
 
-  BOOST_CHECK_CLOSE(refl_lid, refl_fo, 7e-5);
+  BOOST_CHECK_CLOSE(refl_lid, refl_fo, 5e-3);
 }
 
 void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
