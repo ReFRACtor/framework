@@ -210,8 +210,13 @@ const double ReferenceVmrApriori::age_of_air(const double altitude) const
   double fl = obs_latitude / 22;
   double aoa = 0.313 - 0.085 * exp(-std::pow((obs_latitude - 49) / 18, 2))
     -0.268 * exp(-1.42 * altitude / (altitude + mod_tropo_alt)) * fl / sqrt(1 + std::pow(fl, 2));
-  if(altitude > mod_tropo_alt) 
-    aoa = aoa + 7.0 * (altitude - mod_tropo_alt) / altitude;
+  if(altitude > mod_tropo_alt) {
+    // Avoid dividing by zero by adding a small value that keeps it from being identically equal to zero
+    double alt_divisor = altitude;
+    if (alt_divisor == 0)
+        alt_divisor += 1e-5;
+    aoa = aoa + 7.0 * (altitude - mod_tropo_alt) / alt_divisor;
+  }
   return aoa;
 }
 

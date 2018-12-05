@@ -1,5 +1,6 @@
 import os
 from glob import glob
+from enum import Enum
 
 import numpy as np
 
@@ -136,17 +137,15 @@ class AbsorberVmrMet(CreatorFlaggedValue):
 class AbscoCreator(Creator):
     "Do not use directly, defines the generic interface that uses a specific Absco class specified in inheriting creators"
 
-    absco_class = None
-
     absco_base_path = param.Scalar(str)
     filename = param.Scalar(str)
     table_scale = param.Choice(param.Iterable(), param.Scalar(float), default=1.0)
     spec_win = param.InstanceOf(rf.SpectralWindow)
 
-    def create(self, gas_name=None, **kwargs):
+    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
+        raise NotImplementedError("Do not use AbscoCreator directly, instead use an inherited creator that defines the type of ABSCO file reader to use")
 
-        if (self.absco_class is None):
-            raise param.ParamError("Do not use AbscoCreator directly, instead of an inherited creator that defines the type of ABSCO file reader to use")
+    def create(self, gas_name=None, **kwargs):
 
         # Use ExtendedFormatter that allows using l and u conversion codes for upper/lower case conversion
         fn_formatter = ExtendedFormatter()
@@ -171,7 +170,7 @@ class AbscoCreator(Creator):
         table_scale = self.table_scale()
 
         if np.isscalar(table_scale):
-            return self.absco_class(absco_filename, table_scale)
+            return self.absco_object(absco_filename, table_scale)
         else:
             spectral_bound = self.spec_win().spectral_bound
 
@@ -180,17 +179,43 @@ class AbscoCreator(Creator):
             for val in table_scale:
                 table_scale_vector.push_back(val)
 
-            return self.absco_class(absco_filename, spectral_bound, table_scale_vector)
+            return self.absco_object(absco_filename, table_scale_vector, spectral_bound)
 
 class AbscoLegacy(AbscoCreator):
     "Legacy HDF format created for OCO"
 
-    absco_class = rf.AbscoHdf
+    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
+
+        if spectral_bound is not None:
+            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale)
+        else:
+            return rf.AbscoHdf(absco_filename, table_scale)
+
+class AbscoInterpolationOption(Enum):
+    error = rf.AbscoAer.THROW_ERROR_IF_NOT_ON_WN_GRID
+    nearest_neighbor = rf.AbscoAer.NEAREST_NEIGHBOR_WN
+    interpolate = rf.AbscoAer.INTERPOLATE_WN
 
 class AbscoAer(AbscoCreator):
     "Newer AER generated ABSCO format"
 
-    absco_class = rf.AbscoAer
+    interp_method = param.Choice(param.Scalar(int), param.InstanceOf(AbscoInterpolationOption), default=0)
+    cache_size = param.Scalar(int, default=5000)
+
+    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
+
+        interp_method = self.interp_method()
+        cache_size = self.cache_size()
+
+        # Convert to integer
+        if isinstance(interp_method, AbscoInterpolationOption):
+            interp_method = interp_method.value
+
+        if spectral_bound is not None:
+            return rf.AbscoAer(absco_filename, spectral_bound, table_scale, cache_size, interp_method)
+        else:
+            return rf.AbscoAer(absco_filename, table_scale, cache_size, interp_method)
+
 
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
