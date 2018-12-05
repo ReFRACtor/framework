@@ -97,9 +97,9 @@ private:
   mutable int cache_float_lbound;
   mutable int cache_float_ubound;
   template<class T> void bound_set(int lbound, int sz) const;
-  mutable blitz::Array<double, 4> read_cache_double;
-  mutable blitz::Array<float, 4> read_cache_float;
-  template<class T> blitz::Array<T, 4>& read_cache() const;
+  mutable blitz::Array<double, 5> read_cache_double;
+  mutable blitz::Array<float, 5> read_cache_float;
+  template<class T> blitz::Array<T, 5>& read_cache() const;
   template<class T> void swap(int i) const;
   int wn_index(double Wn_in) const;
   int wn_index(double Wn_in, double& F) const;
@@ -117,10 +117,10 @@ private:
   double *wnfront;
 };
 
-template<> inline blitz::Array<double, 4>& AbscoAer::read_cache<double>() const
+template<> inline blitz::Array<double, 5>& AbscoAer::read_cache<double>() const
 { return read_cache_double; }
 
-template<> inline blitz::Array<float, 4>& AbscoAer::read_cache<float>() const
+template<> inline blitz::Array<float, 5>& AbscoAer::read_cache<float>() const
 { return read_cache_float; }
 
 template<> inline void AbscoAer::bound_set<double>(int lbound, int sz) const

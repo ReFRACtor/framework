@@ -111,8 +111,8 @@ void AbscoAer::load_file(const std::string& Fname,
   cache_float_ubound = 0;
 
   // Reset caches
-  read_cache_float.resize(0,0,0,0);
-  read_cache_double.resize(0,0,0,0);
+  read_cache_float.resize(0,0,0,0,0);
+  read_cache_double.resize(0,0,0,0,0);
 
   hfile.reset(new HdfFile(Fname));
 
@@ -288,26 +288,28 @@ Array<double, 3> AbscoAer::read_double(double Wn_in) const
   if(wi < cache_double_lbound ||
      wi >= cache_double_ubound)
     swap<double>(wi);
+  // TODO  - Handle second broadner
+  
   // The Aer data is in temperature x pressure x broadner order. The
   // base class expects this to be pressure x temperature x broadner,
   // so we transpose this.
   if(itype_ != INTERPOLATE_WN) 
     return read_cache<double>()(wi - cache_double_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
+	Range::all(), Range::all(), 0).transpose(secondDim, firstDim, thirdDim);
   Array<double, 3> r1;
   if(wi+1 < cache_double_lbound ||
      wi+1 >= cache_double_ubound)
     r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim));
+      Range::all(), Range::all(), 0).transpose(secondDim, firstDim, thirdDim));
   else {
     r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim,
+      Range::all(), Range::all(), 0).transpose(secondDim, firstDim,
 					    thirdDim).copy());
     swap<double>(wi+1);
   }
   Array<double, 3> r2 = read_cache<double>()(wi+1 - cache_double_lbound,
       Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim,
+      Range::all(), Range::all(), 0).transpose(secondDim, firstDim,
 					    thirdDim);
   Array<double, 3> res(r2.shape());
   res = r1 * (1 - f) + r2 * f;
@@ -331,21 +333,21 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
   // so we transpose this.
   if(itype_ != INTERPOLATE_WN) 
     return read_cache<float>()(wi - cache_float_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim);
+       Range::all(), Range::all(), 0).transpose(secondDim, firstDim, thirdDim);
   Array<float, 3> r1;
   if(wi+1 < cache_float_lbound ||
      wi+1 >= cache_float_ubound)
     r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim));
+     Range::all(), Range::all(), 0).transpose(secondDim, firstDim, thirdDim));
   else {
     r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim,
+    Range::all(), Range::all(), 0).transpose(secondDim, firstDim,
 					    thirdDim).copy());
     swap<float>(wi+1);
   }
   Array<float, 3> r2 = read_cache<float>()(wi+1 - cache_float_lbound,
       Range::all(),
-      Range::all(), Range::all()).transpose(secondDim, firstDim,
+      Range::all(), Range::all(), 0).transpose(secondDim, firstDim,
 					    thirdDim);
   Array<float, 3> res(r2.shape());
   res = r1 * (1 - (float) f) + r2 * ((float) f);
@@ -359,31 +361,54 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
 
 template<class T> void AbscoAer::swap(int i) const
 {
+  // TODO Handle multiple broadner. The second broadner isn't
+  // necessarily the same size as the first, we probably want
+  // number_broadener_vmr() to take an index number.
   // First time through, set up space for cache.
  if(read_cache<T>().extent(firstDim) == 0)
    read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
+			  std::max(1, number_broadener_vmr()),
 			  std::max(1, number_broadener_vmr()));
   int nl = read_cache<T>().extent(firstDim);
-  // Either read 3d or 4d data. We tell which kind by whether or not
+  // Either read 3d, 4d or 5d data. We tell which kind by whether or not
   // we have a number_broadener_vmr() > 0 or not.
-  TinyVector<int, 4> start, size;
-  start = (i / nl) * nl, 0, 0, 0;
-  size = std::min(nl, wngrid.rows() - start(0)), tgrid.cols(), tgrid.rows() - 1,
-    std::max(number_broadener_vmr(), 1);
-  bound_set<T>((i / nl) * nl, size(0));
+  int st0 = (i / nl) * nl;
+  int sz0 = std::min(nl, wngrid.rows() - st0);
+  bound_set<T>(st0, sz0);
   if(number_broadener_vmr() > 0) {
-    // 4d case
-    read_cache<T>()(Range(0, size(0) - 1), Range::all(),
-		    Range::all(), Range::all()) =
-      hfile->read_field<T, 4>(field_name, start, size);
+    // TODO Handle 2 broadners correctly
+    if(hfile->has_object("H2O_VMR") && hfile->has_object("O2_VMR")) {
+      TinyVector<int, 5> start, size;
+      start = st0, 0, 0, 0, 0;
+      size = sz0,
+	read_cache<T>().shape()[1],
+	read_cache<T>().shape()[2],
+	read_cache<T>().shape()[3],
+	read_cache<T>().shape()[4];
+      read_cache<T>()(Range(0, size(0) - 1), Range::all(),
+		      Range::all(), Range::all(), Range::all()) =
+	hfile->read_field<T, 5>(field_name, start, size);
+    } else {
+      // 4d case
+      TinyVector<int, 4> start, size;
+      start = st0, 0, 0, 0;
+      size = sz0,
+	read_cache<T>().shape()[1],
+	read_cache<T>().shape()[2],
+	read_cache<T>().shape()[3];
+      read_cache<T>()(Range(0, size(0) - 1), Range::all(),
+		      Range::all(), Range::all(), 0) =
+	hfile->read_field<T, 4>(field_name, start, size);
+    }
   } else {
     // 3d case
-    TinyVector<int, 3> start2, size2;
-    start2 = (i / nl) * nl, 0, 0;
-    size2 = std::min(nl, wngrid.rows() - start2(0)), tgrid.cols(),
-      tgrid.rows() - 1;
-    read_cache<T>()(Range(0, size2(0) - 1), Range::all(), Range::all(), 0) =
-      hfile->read_field<T, 3>(field_name, start2, size2);
+    TinyVector<int, 3> start, size;
+    start = st0, 0, 0;
+    size = sz0,
+      read_cache<T>().shape()[1],
+      read_cache<T>().shape()[2];
+    read_cache<T>()(Range(0, size(0) - 1), Range::all(), Range::all(), 0, 0) =
+      hfile->read_field<T, 3>(field_name, start, size);
   }
 }
 

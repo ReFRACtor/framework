@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	      << "# This is tsub_expect\n"
 	      << f.temperature_grid()(53, Range(0,7)) << "\n"
               << "# This is readsub_expect\n"
-              << f.read<double>(4799.9928)(Range(0,7), 53, 0) << "\n";
+              << f.read<double>(4799.9928)(53, Range(0,7), 0) << "\n";
   }
   
   Array<double, 1> pgrid_expect;
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(basic)
   expected_data >> tsub_expect;
   BOOST_CHECK_MATRIX_CLOSE(tsub, tsub_expect);
   // Same thing with reading the data.
-  Array<double, 1> readsub(f.read<double>(4799.9928)(Range(0,7), 53, 0));
+  Array<double, 1> readsub(f.read<double>(4799.9928)(53, Range(0,7), 0));
   Array<double, 1> readsub_expect;
   expected_data >> readsub_expect;
   // Numbers are very small, so we have a small tolerance.
@@ -127,6 +127,21 @@ BOOST_AUTO_TEST_CASE(interpolation)
   t1 = f.absorption_cross_section(wn_not_on_grid, press, temp,
 				  broadener).value;
   BOOST_CHECK(fabs(t1-t2) > 1e-26);
+}
+
+BOOST_AUTO_TEST_CASE(read_o2)
+{
+  // O2 has 2 broadners. Want to make sure we can read this.
+  AbscoAer f(absco_aer_data_dir() + "//O2_06140-13230_v0.0_init.nc");
+  // For the given table, we determined a wavenumber that is not on
+  // the grid, and the closest point on the grid.
+  double wn = 6200;
+  DoubleWithUnit press(12250, "Pa");
+  DoubleWithUnit temp(190, "K");
+  DoubleWithUnit broadener(0, "dimensionless");
+  double t = f.absorption_cross_section(wn, press, temp,
+					 broadener).value;
+  std::cerr << t << "\n";
 }
 
 BOOST_AUTO_TEST_CASE(full_wn_range)
