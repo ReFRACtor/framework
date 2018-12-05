@@ -56,6 +56,22 @@ BOOST_AUTO_TEST_CASE(load_file)
         BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_file.radiance(spec_idx).data(), radiance_read, 1e2);
         BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_file.radiance(spec_idx).uncertainty(), uncertainty_read, 1e2);
     }
+
+    h_file->close();
 }
+
+BOOST_AUTO_TEST_CASE(obs_list)
+{
+    std::vector<ExampleObservationId<std::string>> observations = ExampleLevel1b::obs_list(test_data_dir() + "in/common/l1b_example_data.h5");
+    for (int i = 0; i < observations.size(); i++) {
+        BOOST_CHECK_EQUAL(observations[i].data_index(), i);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(closest_obs_n)
+{
+    ExampleLevel1b::closest_obs_n(test_data_dir() + "in/common/l1b_example_data.h5", 0.0, 0.0, 1);
+}
+// TODO: properly test closest_obs_n and obs_distance
 
 BOOST_AUTO_TEST_SUITE_END()

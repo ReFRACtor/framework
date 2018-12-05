@@ -5,8 +5,10 @@
 #include "double_with_unit.h"
 #include "spectral_range.h"
 #include "spectral_domain.h"
+#include "observation_id.h"
 #include <blitz/array.h>
 #include <stdint.h>
+#include <vector>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -151,7 +153,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
-   
+
+//-----------------------------------------------------------------------
+/// List of all valid observations
+//-----------------------------------------------------------------------
+
+  static std::vector<ObservationId> obs_list(const std::string& geo_input_filename);
+
 };
 } // End of FullPhysics namespace
 #endif

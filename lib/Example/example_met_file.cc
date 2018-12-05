@@ -1,5 +1,5 @@
 #include "example_met_file.h"
-#include "observation_id.h"
+#include "example_observation_id.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -20,14 +20,14 @@ REGISTER_LUA_END()
 ExampleMetFile::ExampleMetFile(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id)
 : input(input_file)
 {
-    ObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
 ExampleMetFile::ExampleMetFile(const std::string& input_filename, const std::string& observation_id)
 : input(new HdfFile(input_filename))
 {
-    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 

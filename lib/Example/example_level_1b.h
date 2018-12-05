@@ -5,6 +5,7 @@
 #include "hdf_file.h"
 #include "unit.h"
 #include "double_with_unit.h"
+#include "example_observation_id.h"
 
 namespace FullPhysics {
 
@@ -57,6 +58,13 @@ public:
     virtual void print(std::ostream& Os) const { Os << "ExampleL1b"; };
 
     virtual SpectralRange radiance(int Spec_index) const;
+
+    static std::vector<ExampleObservationId<std::string>> obs_list(const std::string& geo_input_filename);
+
+    static std::vector<ExampleObservationId<std::string>> closest_obs_n(const std::string& geo_input_filename, double lat, double lon, int n);
+
+    static double obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon);
+
 
 private:
     DoubleWithUnit read_scalar_with_unit(const std::string& dataset_name, int i, const Unit& default_unit) const;

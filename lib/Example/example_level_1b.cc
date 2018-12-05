@@ -1,8 +1,13 @@
 #include <boost/lexical_cast.hpp>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
+
 
 #include "example_level_1b.h"
 #include "fp_exception.h"
-#include "observation_id.h"
+#include "example_observation_id.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -18,7 +23,7 @@ ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, con
 :input(input_file)
 {
     // All work done in initialization above
-    ObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
@@ -26,7 +31,7 @@ ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::str
 :input(new HdfFile(input_filename))
 {
     // All work done in initialization above
-    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
@@ -110,4 +115,48 @@ Array<double, 1> ExampleLevel1b::read_array(const std::string& dataset_name, int
     size = 1, 1, ds_shape(2);
     Array<double, 3> val_arr = input->read_field<double, 3>(dataset_name, start, size);
     return val_arr(0, 0, Range::all());
+}
+
+std::vector<ExampleObservationId<std::string>> ExampleLevel1b::obs_list(const std::string& geo_input_filename) {
+    std::string dataset_name = "/observation_ids";
+    boost::shared_ptr<HdfFile> input_hdf(new HdfFile(geo_input_filename));
+    TinyVector<int, 1> ds_shape = input_hdf->read_shape<1>(dataset_name);
+    TinyVector<int, 1> start, size;
+    start = 0;
+    size = ds_shape(0);
+    Array<std::string, 1> obs_arr = input_hdf->read_field<std::string, 1>(dataset_name, start, size);
+
+    std::vector<ExampleObservationId<std::string>> observations = std::vector<ExampleObservationId<std::string>>();
+    for (auto obs_str : obs_arr) {
+        ExampleObservationId<std::string> new_obs(input_hdf, "observation_ids",obs_str);
+        observations.push_back(new_obs);
+    }
+
+    return observations;
+
+}
+
+std::vector<ExampleObservationId<std::string>> ExampleLevel1b::closest_obs_n(const std::string& geo_input_filename, double lat, double lon, int n) {
+    std::vector<ExampleObservationId<std::string>> all_observations = ExampleLevel1b::obs_list(geo_input_filename);
+    // sort obs
+    double seperation = ExampleLevel1b::obs_distance(geo_input_filename, all_observations[0], 25.842666, -80.120425);
+    // pop off top items (num items <= n)
+    std::vector<ExampleObservationId<std::string>> closest_observations = std::vector<ExampleObservationId<std::string>>();
+    return closest_observations;
+}
+
+double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon) {
+    // create ExampleLevel1b object
+    ExampleLevel1b curr_level1b (geo_input_filename, "2014090915251774");
+    // extract lat/lon
+    DoubleWithUnit curr_lat = curr_level1b.latitude(0);
+    DoubleWithUnit curr_lon = curr_level1b.longitude(0);
+    // use strategy::distance::haversine to get distance (in km)
+    double const earth_radius = 6378.1;
+    typedef boost::geometry::model::point<double, 2, boost::geometry::cs::spherical_equatorial<boost::geometry::degree>> spherical_point;
+    spherical_point in_point(lon, lat);
+    spherical_point curr_point(curr_lon.value, curr_lat.value);
+    double seperation = boost::geometry::distance(in_point, curr_point) * earth_radius;
+    std::cout << "Distance in km: " << seperation << std::endl;
+    return seperation;
 }
