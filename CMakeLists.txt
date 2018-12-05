@@ -16,6 +16,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")
 
+# When we are using debug mode, turn on the blitz range checking.
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBZ_DEBUG")
+
 # Check that required functions exist and define macros to include their use
 INCLUDE (CheckFunctionExists)
 
