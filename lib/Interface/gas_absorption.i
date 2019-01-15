@@ -11,6 +11,8 @@
 
 %import "double_with_unit.i"
 %import "auto_derivative_with_unit.i"
+%import "array_with_unit.i"
+%import "array_ad_with_unit.i"
 
 %fp_shared_ptr(FullPhysics::GasAbsorption);
 namespace FullPhysics {
@@ -19,16 +21,17 @@ public:
   virtual ~GasAbsorption();
   std::string print_to_string() const;
   virtual bool have_data(double wn) const = 0;
-  %python_attribute(broadener_name, virtual std::string);
+  %python_attribute(number_broadener, int);
+  virtual std::string broadener_name(int Broadner_index) const;
   virtual DoubleWithUnit absorption_cross_section(double Wn, 
      const DoubleWithUnit& Press, 
      const DoubleWithUnit& Temp,
-     const DoubleWithUnit& Broadener_vmr) const = 0;
+     const ArrayWithUnit<double, 1>& Broadener_vmr) const = 0;
   virtual AutoDerivativeWithUnit<double>
   absorption_cross_section(double wn, 
     const DoubleWithUnit& press, 
     const AutoDerivativeWithUnit<double>& temp,
-    const AutoDerivativeWithUnit<double>& broadener_vmr) const = 0;
+    const ArrayAdWithUnit<double, 1>& Broadener_vmr) const = 0;
 };
 }
 

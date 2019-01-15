@@ -65,7 +65,7 @@ void Absco::fill_pgrid_tgrid_and_bgrid() const
   if(pgrid.size() == 0) {
     Array<double, 1> pgridg(pressure_grid());
     Array<double, 2> tg(temperature_grid());
-    Array<double, 1> bgridg(broadener_vmr_grid());
+    Array<double, 1> bgridg(broadener_vmr_grid(0));
     pgrid.resize(pgridg.rows());
     tgrid.resize(tg.rows());
     tstart_offset.resize(tg.rows());
@@ -99,10 +99,12 @@ void Absco::fill_pgrid_tgrid_and_bgrid() const
 // See base class for description.
 DoubleWithUnit Absco::absorption_cross_section
 (double Wn, const DoubleWithUnit& Press, const DoubleWithUnit& Temp,
- const DoubleWithUnit& Broadener_vmr) const
+ const ArrayWithUnit<double, 1>& Broadener_vmr) const
 {
+  blitz::Range ra = blitz::Range::all();
   ArrayWithUnit<double, 1> p;
-  ArrayAdWithUnit<double, 1> t, b;
+  ArrayAdWithUnit<double, 1> t;
+  ArrayAdWithUnit<double, 2> b;
   p.units = Press.units;
   p.value.resize(1);
   p.value(0) = Press.value;
@@ -110,8 +112,8 @@ DoubleWithUnit Absco::absorption_cross_section
   t.value.resize(1, 0);
   t.value(0) = Temp.value;
   b.units = Broadener_vmr.units;
-  b.value.resize(1, 0);
-  b.value(0) = Broadener_vmr.value;
+  b.value.resize(1, Broadener_vmr.rows(), 0);
+  b.value(0, ra) = Broadener_vmr.value;
   boost::shared_ptr<Absco> self_ptr = to_ptr(const_cast<Absco&>(*this));
   AbscoInterpolator aint(self_ptr, p, t, b);
   return DoubleWithUnit(aint.absorption_cross_section_noderiv(Wn)(0),
@@ -122,10 +124,12 @@ DoubleWithUnit Absco::absorption_cross_section
 AutoDerivativeWithUnit<double> Absco::absorption_cross_section
 (double Wn, const DoubleWithUnit& Press, 
  const AutoDerivativeWithUnit<double>& Temp,
- const AutoDerivativeWithUnit<double>& Broadener_vmr) const
+ const ArrayAdWithUnit<double, 1>& Broadener_vmr) const
 {
+  blitz::Range ra = blitz::Range::all();
   ArrayWithUnit<double, 1> p;
-  ArrayAdWithUnit<double, 1> t, b;
+  ArrayAdWithUnit<double, 1> t;
+  ArrayAdWithUnit<double, 2> b;
   p.units = Press.units;
   p.value.resize(1);
   p.value(0) = Press.value;
@@ -133,8 +137,8 @@ AutoDerivativeWithUnit<double> Absco::absorption_cross_section
   t.value.resize(1, Temp.value.number_variable());
   t.value(0) = Temp.value;
   b.units = Broadener_vmr.units;
-  b.value.resize(1, Broadener_vmr.value.number_variable());
-  b.value(0) = Broadener_vmr.value;
+  b.value.resize(1, Broadener_vmr.rows(), Broadener_vmr.number_variable());
+  b.value(0, ra) = Broadener_vmr.value;
   boost::shared_ptr<Absco> self_ptr = to_ptr(const_cast<Absco&>(*this));
   AbscoInterpolator aint(self_ptr, p, t, b);
   return AutoDerivativeWithUnit<double>
@@ -156,7 +160,7 @@ AbscoInterpolator::AbscoInterpolator
 (const boost::shared_ptr<Absco>& A,
  const ArrayWithUnit<double, 1>& Press, 
  const ArrayAdWithUnit<double, 1>& Temp,
- const ArrayAdWithUnit<double, 1>& Broadener_vmr)
+ const ArrayAdWithUnit<double, 2>& Broadener_vmr)
   : absco(A),
     ip(Press.rows()), itp1(Press.rows()), itp2(Press.rows()), ib(Press.rows()),
     ib2(Press.rows()), dftp1_dt(Press.rows()), 
@@ -166,7 +170,7 @@ AbscoInterpolator::AbscoInterpolator
 			       Broadener_vmr.value.number_variable()))
 {
   if(Press.rows() != Temp.rows() ||
-     Press.rows() != Broadener_vmr.rows())
+     Press.rows() != Broadener_vmr.cols())
     throw Exception("Pressure, Temperature, and Broadener_vmr arrays needs to be the same size");
   p.reference(Press.convert(units::Pa).value);
   t.reference(Temp.convert(units::K).value);
@@ -186,7 +190,7 @@ AbscoInterpolator::AbscoInterpolator
       dfb_db(i) = 0;
       fb(i) = 1;
     } else {
-      fb(i) = interpol(b.value()(i), false, absco->bgrid, ib(i), dfb_db(i));
+      fb(i) = interpol(b.value()(0,i), false, absco->bgrid, ib(i), dfb_db(i));
       ib2(i) = ib(i) + 1;
     }
     ftp1(i) = interpol(t.value()(i), false, absco->tgrid[ip(i)], itp1(i),

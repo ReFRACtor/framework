@@ -307,17 +307,17 @@ template<class T> void AbscoHdf::swap(int i) const
   // First time through, set up space for cache.
  if(read_cache<T>().extent(fourthDim) == 0)
       read_cache<T>().resize(tgrid.rows(), tgrid.cols(), 
-                    std::max(1, number_broadener_vmr()),
+                    std::max(1, number_broadener_vmr(0)),
                     cache_nline);
   int nl = read_cache<T>().extent(fourthDim);
   // Either read 3d or 4d data. We tell which kind by whether or not
   // we have a number_broadener_vmr() > 0 or not.
   TinyVector<int, 4> start, size;
   start = 0, 0, 0, (i / nl) * nl;
-  size = tgrid.rows(), tgrid.cols(), std::max(number_broadener_vmr(), 1),
+  size = tgrid.rows(), tgrid.cols(), std::max(number_broadener_vmr(0), 1),
     std::min(nl, wngrid.rows() - start(3));
   bound_set<T>((i / nl) * nl, size(3));
-  if(number_broadener_vmr() > 0) {
+  if(number_broadener_vmr(0) > 0) {
     // 4d case
     read_cache<T>()(Range::all(), Range::all(), Range::all(), Range(0, size(3) - 1)) =
       hfile->read_field<T, 4>(field_name, start, size);

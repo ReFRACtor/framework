@@ -33,9 +33,23 @@ public:
 		 const std::vector<double>& Table_scale,
 		 int Cache_nline = 5000);
   virtual ~AbscoHdf() {}
-  virtual std::string broadener_name() const { return bname; }
-  virtual blitz::Array<double, 1> broadener_vmr_grid() const
-  { return bvmr; }
+  virtual int number_broadener() const
+  {
+    if(number_broadener_vmr(0) > 0)
+      return 1;
+    return 0;
+  }
+  virtual std::string broadener_name(int Broadener_index) const
+  { if(Broadener_index > 0)
+      throw Exception("Only support one broadener");
+    return bname;
+  }
+  virtual blitz::Array<double, 1> broadener_vmr_grid(int Broadener_index) const
+  {
+    if(Broadener_index > 0)
+      throw Exception("Only support one broadener");
+    return bvmr;
+  }
   virtual const std::pair<double*, double*> wn_extent(double Wn_in) const;
   virtual void wn_extent(double Wn_in, double& X, double& Y) const;
   virtual double table_scale(double wn) const;

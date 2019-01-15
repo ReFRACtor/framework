@@ -12,23 +12,22 @@
 namespace FullPhysics {
 class Absco : public GasAbsorption {
 public:
-  %python_attribute(number_broadener_vmr, int)
+  int number_broadener_vmr(int Broadener_index) const;
   %python_attribute(number_layer, int)
   %python_attribute(number_temperature, int)
-  %python_attribute_abstract(broadener_vmr_grid,blitz::Array<double, 1>)
+  blitz::Array<double, 1> broadener_vmr_grid(int Broadner_index) const;
   %python_attribute_abstract(pressure_grid,blitz::Array<double, 1>)
   %python_attribute_abstract(temperature_grid,blitz::Array<double, 2>)
-  %python_attribute(broadener_name, std::string)
   virtual double table_scale(double wn) const;
   virtual DoubleWithUnit absorption_cross_section(double Wn, 
      const DoubleWithUnit& Press, 
      const DoubleWithUnit& Temp,
-     const DoubleWithUnit& Broadener_vmr) const;
+     const ArrayWithUnit<double, 1>& Broadener_vmr) const;
   virtual AutoDerivativeWithUnit<double>
   absorption_cross_section(double wn, 
     const DoubleWithUnit& press, 
     const AutoDerivativeWithUnit<double>& temp,
-    const AutoDerivativeWithUnit<double>& broadener_vmr) const;
+    const ArrayAdWithUnit<double, 1>& Broadener_vmr) const;
   %extend {
     blitz::Array<double, 3> read_double(double wn) const 
     { return $self->read<double>(wn); }

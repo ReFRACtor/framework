@@ -367,15 +367,15 @@ template<class T> void AbscoAer::swap(int i) const
   // First time through, set up space for cache.
  if(read_cache<T>().extent(firstDim) == 0)
    read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
-			  std::max(1, number_broadener_vmr()),
-			  std::max(1, number_broadener_vmr()));
+			  std::max(1, number_broadener_vmr(0)),
+			  std::max(1, number_broadener_vmr(0)));
   int nl = read_cache<T>().extent(firstDim);
   // Either read 3d, 4d or 5d data. We tell which kind by whether or not
   // we have a number_broadener_vmr() > 0 or not.
   int st0 = (i / nl) * nl;
   int sz0 = std::min(nl, wngrid.rows() - st0);
   bound_set<T>(st0, sz0);
-  if(number_broadener_vmr() > 0) {
+  if(number_broadener_vmr(0) > 0) {
     // TODO Handle 2 broadners correctly
     if(hfile->has_object("H2O_VMR") && hfile->has_object("O2_VMR")) {
       TinyVector<int, 5> start, size;

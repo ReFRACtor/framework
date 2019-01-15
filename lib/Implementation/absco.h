@@ -12,7 +12,7 @@ class Absco;
 
 /****************************************************************//**
   This is a helper class that calculates the absorption cross section
-  for a fixed set of Pressure, Temperature, and Broadner VMR (e.g. H2O
+  for a fixed set of Pressure, Temperature, and Broadener VMR (e.g. H2O
   VMR). It turns out this is a bottle neck, which we can speed up if
   we know ahead of time the values to use.
 *******************************************************************/
@@ -22,7 +22,7 @@ public:
   AbscoInterpolator(const boost::shared_ptr<Absco>& A,
 		    const ArrayWithUnit<double, 1>& Press, 
 		    const ArrayAdWithUnit<double, 1>& Temp,
-		    const ArrayAdWithUnit<double, 1>& Broadener_vmr);
+		    const ArrayAdWithUnit<double, 2>& Broadener_vmr);
   virtual ~AbscoInterpolator() {}
   virtual void print(std::ostream& Os) const {Os << "AbscoInterpolator";}
 
@@ -40,9 +40,9 @@ private:
   bool p_reversed;		 // True if p goes from high to low
 				 // rather than low to high
   ArrayAd<double, 1> t;		// This is in K
-  ArrayAd<double, 1> b;		// This is dimensionless
+  ArrayAd<double, 2> b;		// This is dimensionless
   blitz::Array<double, 2> t_jac; // t.jacobian(), in C order and contiguous
-  blitz::Array<double, 2> b_jac; // b.jacobian(), in C order and contiguous
+  blitz::Array<double, 3> b_jac; // b.jacobian(), in C order and contiguous
   // Various indexes used in the interpolation
   blitz::Array<int, 1> ip, itp1, itp2, ib, ib2;
   blitz::Array<double, 1> dftp1_dt, dftp2_dt, dfb_db,
@@ -59,8 +59,6 @@ class Absco: public GasAbsorption {
 public:
   virtual ~Absco() {}
 
-  virtual std::string broadener_name() const = 0;
-
 //-----------------------------------------------------------------------
 /// Scale to apply to underlying ABSCO data to get the 
 /// absorption_cross_section. This allows empirical corrections to be
@@ -76,8 +74,8 @@ public:
 /// we don't have any broadening.
 //-----------------------------------------------------------------------
 
-  virtual int number_broadener_vmr() const 
-  { return broadener_vmr_grid().rows(); }
+  virtual int number_broadener_vmr(int Broadener_index) const 
+  { return broadener_vmr_grid(Broadener_index).rows(); }
 
 //-----------------------------------------------------------------------
 /// Number of pressure layers in absco file.
@@ -95,12 +93,13 @@ public:
 
 //-----------------------------------------------------------------------
 /// Return the broadener VMR grid used for this Absco file. This is
-/// number_broadener_vmr() in size, which may be size 0.
+/// number_broadener_vmr(Broadener_index) in size, which may be size 0.
 ///
 /// This is dimensionless. 
 //-----------------------------------------------------------------------
 
-  virtual blitz::Array<double, 1> broadener_vmr_grid() const = 0;
+  virtual blitz::Array<double, 1>
+  broadener_vmr_grid(int Broadener_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Return the pressure grid used for this Absco file. This is
@@ -123,12 +122,12 @@ public:
 
   virtual DoubleWithUnit absorption_cross_section
   (double Wn, const DoubleWithUnit& Press, const DoubleWithUnit& Temp,
-   const DoubleWithUnit& Broadener_vmr) const;
+    const ArrayWithUnit<double, 1>& Broadener_vmr) const;
   virtual AutoDerivativeWithUnit<double>
   absorption_cross_section(double wn, 
     const DoubleWithUnit& press, 
     const AutoDerivativeWithUnit<double>& temp,
-    const AutoDerivativeWithUnit<double>& broadener_vmr) const;
+    const ArrayAdWithUnit<double, 1>& Broadener_vmr) const;
 
 //-----------------------------------------------------------------------
 /// Note some of the Absco data files used float, and some use

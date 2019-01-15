@@ -63,19 +63,21 @@ double AbsorberAbsco::integrand
   AutoDerivativeWithUnit<double> tder = temp_func(punit);
   DoubleWithUnit t(tder.value.value(), tder.units);
   AutoDerivativeWithUnit<double> bvmrder;
-  if(gas_absorption[Species_index]->broadener_name() == "h2o" ||
-     gas_absorption[Species_index]->broadener_name() == "")
+  if(gas_absorption[Species_index]->broadener_name(0) == "h2o" ||
+     gas_absorption[Species_index]->broadener_name(0) == "")
     bvmrder = h2o_vmr_func(punit);
-  else if(gas_absorption[Species_index]->broadener_name() == "o2")
+  else if(gas_absorption[Species_index]->broadener_name(0) == "o2")
     bvmrder = o2_vmr_func(punit);
   else {
     Exception e;
     e << "Unrecognized broadener. We only recognize 'h2o' and 'o2':\n"
       << "  Species_index: " << Species_index << "\n"
-      << "  Broadener:     " << gas_absorption[Species_index]->broadener_name() << "\n";
+      << "  Broadener:     " << gas_absorption[Species_index]->broadener_name(0) << "\n";
     throw e;
   }
-  DoubleWithUnit bvmr(bvmrder.value.value(), bvmrder.units);
+  blitz::Array<double, 1> bvmval(1);
+  bvmval(0) = bvmrder.value.value();
+  ArrayWithUnit<double, 1> bvmr(bvmval, bvmrder.units);
   if(gas_absorption[Species_index]->have_data(wn)) {
     DoubleWithUnit cross_sec = gas_absorption[Species_index]->absorption_cross_section(wn, punit, t, bvmr);
     return v1 * cross_sec.value;
@@ -416,11 +418,20 @@ void AbsorberAbsco::fill_tau_gas_cache() const
   
   ArrayAdWithUnit<double, 1> 
     tsub_sparse(ArrayAd<double,1>(tsub.value.value(), tsub_sjac), units::K);
-  ArrayAdWithUnit<double, 1> 
-    h2o_vmr_sparse(ArrayAd<double,1>(h2o_vmr.value.value(), h2o_vmr_sjac),
+
+  blitz::Array<double, 2> h2o_vmr_value(1, h2o_vmr.value.value().rows());
+  blitz::Array<double, 3> h2o_vmr_sjac2(1, h2o_vmr_sjac.rows(), h2o_vmr_sjac.cols());
+  h2o_vmr_value(0, ra) = h2o_vmr.value.value();
+  h2o_vmr_sjac2(0, ra, ra) = h2o_vmr_sjac;
+  blitz::Array<double, 2> o2_vmr_value(1, o2_vmr.value.value().rows());
+  blitz::Array<double, 3> o2_vmr_sjac2(1, o2_vmr_sjac.rows(), o2_vmr_sjac.cols());
+  o2_vmr_value(0, ra) = o2_vmr.value.value();
+  o2_vmr_sjac2(0, ra, ra) = o2_vmr_sjac;
+  ArrayAdWithUnit<double, 2> 
+    h2o_vmr_sparse(ArrayAd<double,2>(h2o_vmr_value,h2o_vmr_sjac2),
 		   units::dimensionless);
-  ArrayAdWithUnit<double, 1> 
-    o2_vmr_sparse(ArrayAd<double,1>(o2_vmr.value.value(), o2_vmr_sjac),
+  ArrayAdWithUnit<double, 2> 
+    o2_vmr_sparse(ArrayAd<double,2>(o2_vmr_value,o2_vmr_sjac2),
 		   units::dimensionless);
 
   absco_interp.resize(gas_absorption.size());
@@ -429,11 +440,11 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       boost::dynamic_pointer_cast<Absco>(gas_absorption[i]);
     if(!a)
       throw Exception("AbsorberAbsco requires Absco, not just any GasAbsorption object");
-    if(a->broadener_name() == "h2o" ||
-       a->broadener_name() == "")
+    if(a->broadener_name(0) == "h2o" ||
+       a->broadener_name(0) == "")
       absco_interp[i].reset(new AbscoInterpolator(a, psub, tsub_sparse, 
 						  h2o_vmr_sparse));
-    else if(a->broadener_name() == "o2")
+    else if(a->broadener_name(0) == "o2")
       absco_interp[i].reset(new AbscoInterpolator(a, psub, tsub_sparse, 
 						  o2_vmr_sparse));
     else
@@ -619,13 +630,13 @@ AbsorberAbsco::AbsorberAbsco
   o2_index = gas_index("O2");
   // Right now, we only support H2O, O2 as a broadener.
   BOOST_FOREACH(boost::shared_ptr<GasAbsorption>& ga, gas_absorption)
-    if(ga->broadener_name() != "" &&
-       ga->broadener_name() != "h2o" &&
-       ga->broadener_name() != "o2") {
+    if(ga->broadener_name(0) != "" &&
+       ga->broadener_name(0) != "h2o" &&
+       ga->broadener_name(0) != "o2") {
       Exception e;
       e << "Right now, we only support H2O and O2 as a broadener. "
 	<< "The GasAbsorption has a broadener of \"" 
-	<< ga->broadener_name() << "\"";
+	<< ga->broadener_name(0) << "\"";
       throw e;
     }
 }

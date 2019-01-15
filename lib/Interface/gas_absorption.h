@@ -2,8 +2,10 @@
 #define GAS_ABSORPTION_H
 #include "printable.h"
 #include "double_with_unit.h"
+#include "array_with_unit.h"
 #include "auto_derivative_with_unit.h"
 #include "array_ad.h"
+#include "array_ad_with_unit.h"
 #include <blitz/array.h>
 
 namespace FullPhysics {
@@ -25,10 +27,17 @@ public:
 
 //-----------------------------------------------------------------------
 /// For some tables, we might have a broadener (e.g., "h2o"). This
+/// returns the number of broadeners, if any.
+//-----------------------------------------------------------------------
+
+  virtual int number_broadener() const = 0;
+  
+//-----------------------------------------------------------------------
+/// For some tables, we might have a broadener (e.g., "h2o"). This
 /// returns the name of the broadener, if any.
 //-----------------------------------------------------------------------
   
-  virtual std::string broadener_name() const = 0;
+  virtual std::string broadener_name(int Broadener_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// This interpolates the ABSCO data to give absorption cross section
@@ -45,7 +54,7 @@ public:
   virtual DoubleWithUnit absorption_cross_section(double Wn, 
      const DoubleWithUnit& Press, 
      const DoubleWithUnit& Temp,
-     const DoubleWithUnit& Broadener_vmr) const = 0;
+     const ArrayWithUnit<double, 1>& Broadener_vmr) const = 0;
 
 //-----------------------------------------------------------------------
 /// This interpolates the ABSCO data to give absorption cross section
@@ -63,7 +72,7 @@ public:
   absorption_cross_section(double Wn, 
     const DoubleWithUnit& Press, 
     const AutoDerivativeWithUnit<double>& Temp,
-    const AutoDerivativeWithUnit<double>& Broadener_vmr) const = 0;
+    const ArrayAdWithUnit<double, 1>& Broadener_vmr) const = 0;
 
   virtual void print(std::ostream& Os) const {Os << "GasAbsorption";}
 };

@@ -16,9 +16,9 @@ BOOST_AUTO_TEST_CASE(basic)
   // Note scale here is a nonsense value
   double table_scale = 1.2;
   AbscoHdf fscale(absco_data_dir() + "/o2_v3.3.0-lowres.hdf", table_scale);
-  BOOST_CHECK_EQUAL(f.broadener_name(), "");
-  BOOST_CHECK_EQUAL(f.number_broadener_vmr(), 0);
-  BOOST_CHECK_EQUAL(f.broadener_vmr_grid().rows(), 0);
+  BOOST_CHECK_EQUAL(f.broadener_name(0), "");
+  BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 0);
+  BOOST_CHECK_EQUAL(f.broadener_vmr_grid(0).rows(), 0);
   Array<double, 1> pgrid_expect;
   expected_data >> pgrid_expect;
   BOOST_CHECK_MATRIX_CLOSE(f.pressure_grid(), pgrid_expect);
@@ -37,31 +37,44 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_MATRIX_CLOSE_TOL(readsub, readsub_expect, 1e-35);
   BOOST_CHECK(f.have_data(12929.94));
   BOOST_CHECK(!f.have_data(100));
-  ArrayWithUnit<double, 1> pv, tv, bv;
+  ArrayWithUnit<double, 1> pv, tv;
+  ArrayWithUnit<double, 2> bv;
   pv.value.resize(3);
   pv.value = 11459.857421875, 12250.0 ,13516.7548828125;
   pv.units = units::Pa;
   tv.value.resize(3);
   tv.value = 183.2799987792969, 190.0, 193.2799987792969;
   tv.units = units::K;
-  bv.value.resize(3);
+  bv.value.resize(1, 3);
   bv.value = 0,0,0;
   bv.units = units::dimensionless;
   Array<double, 1> abs_expect(3);
   abs_expect = 3.07519888301e-29, 3.1910021060684716e-29, 3.47198365139e-29;
-  for(int i = 0; i < 3; ++i)
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
     BOOST_CHECK_CLOSE(f.absorption_cross_section
-		      (12929.94, pv(i), tv(i), bv(i)).value,
+		      (12929.94, pv(i), tv(i), bva).value,
 		      abs_expect(i), 1e-4);
-  for(int i = 0; i < 3; ++i)
+  }
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
     BOOST_CHECK_CLOSE(fscale.absorption_cross_section
-		      (12929.94, pv(i), tv(i), bv(i)).value,
+		      (12929.94, pv(i), tv(i), bva).value,
 		      abs_expect(i) * table_scale, 1e-4);
+  }
   DoubleWithUnit pvd(pv.value(1), pv.units);
   AutoDerivativeWithUnit<double>
     tvd(AutoDerivative<double>(tv.value(1), 0, 2), tv.units);
-  AutoDerivativeWithUnit<double>
-    bvd(AutoDerivative<double>(bv.value(1), 1, 2), bv.units);
+  ArrayAdWithUnit<double, 1> bvd;
+  bvd.value.resize(1, 2);
+  bvd.value(0) = AutoDerivative<double>(bv.value(0,1), 1, 2);
+  bvd.units = bv.units;
   AutoDerivative<double> absv = f.absorption_cross_section(12929.94, pvd, tvd, 
 							   bvd).value;
   AutoDerivative<double> absvscale = 
@@ -75,7 +88,7 @@ BOOST_AUTO_TEST_CASE(basic)
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
   tvd.value -= epsilon;
-  bvd.value += epsilon;
+  bvd.value(0) = bvd.value(0) + epsilon;
   double dabs_db = (f.absorption_cross_section(12929.94, pvd, tvd, 
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
@@ -104,24 +117,26 @@ BOOST_AUTO_TEST_CASE(scale_specindex)
   AbscoHdf fscale(absco_data_dir() + "/co2_v3.3.0-lowres.hdf", sb, tscale);
   DoubleWithUnit pv(12250, "Pa");
   DoubleWithUnit tv(190, "K");
-  DoubleWithUnit bv(0, units::dimensionless);
+  blitz::Array<double, 1> bvalue(1);
+  bvalue(0) = 0;
+  ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
   BOOST_CHECK_CLOSE
-    (f.absorption_cross_section(6200, pv, tv, bv).value * 1.1,
-     fscale.absorption_cross_section(6200, pv, tv, bv).value, 1e-4);
+    (f.absorption_cross_section(6200, pv, tv, broadener).value * 1.1,
+     fscale.absorption_cross_section(6200, pv, tv, broadener).value, 1e-4);
   BOOST_CHECK_CLOSE
-    (f.absorption_cross_section(4880, pv, tv, bv).value * 1.2,
-     fscale.absorption_cross_section(4880, pv, tv, bv).value, 1e-4);
+    (f.absorption_cross_section(4880, pv, tv, broadener).value * 1.2,
+     fscale.absorption_cross_section(4880, pv, tv, broadener).value, 1e-4);
 }
 
 BOOST_AUTO_TEST_CASE(absco_4d)
 {
   IfstreamCs expected_data(test_data_dir() + "expected/absco_hdf/4d");
   AbscoHdf f(absco_4d_dir() + "/o2_v4.2.0_drouin.hdf");
-  BOOST_CHECK_EQUAL(f.broadener_name(), "h2o");
-  BOOST_CHECK_EQUAL(f.number_broadener_vmr(), 3);
+  BOOST_CHECK_EQUAL(f.broadener_name(0), "h2o");
+  BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 3);
   Array<double, 1> bgrid_expect;
   expected_data >> bgrid_expect;
-  BOOST_CHECK_MATRIX_CLOSE(f.broadener_vmr_grid(), bgrid_expect);
+  BOOST_CHECK_MATRIX_CLOSE(f.broadener_vmr_grid(0), bgrid_expect);
   Array<double, 1> pgrid_expect;
   expected_data >> pgrid_expect;
   BOOST_CHECK_MATRIX_CLOSE_TOL(f.pressure_grid(), pgrid_expect, 1e-6);
@@ -141,28 +156,40 @@ BOOST_AUTO_TEST_CASE(absco_4d)
   BOOST_CHECK_MATRIX_CLOSE_TOL(readsub, readsub_expect, 1e-35);
   BOOST_CHECK(f.have_data(12929.94));
   BOOST_CHECK(!f.have_data(100));
-  ArrayWithUnit<double, 1> pv, tv, bv;
+  ArrayWithUnit<double, 1> pv, tv;
+  ArrayWithUnit<double, 2> bv;
   pv.value.resize(3);
   pv.value = 11459.857421875, 12250.0 ,13516.7548828125;
   pv.units = units::Pa;
   tv.value.resize(3);
   tv.value = 183.2799987792969, 190.0, 193.2799987792969;
   tv.units = units::K;
-  bv.value.resize(3);
-  bv.value = 0,0.01,0.05;
+  bv.value.resize(1,3);
+  bv.value(0,0) = 0;
+  bv.value(0,1) = 0.01;
+  bv.value(0,2) = 0.05;
   bv.units = units::dimensionless;
   Array<double, 1> abs_expect(3);
   abs_expect = 3.0916568245708728e-29, 3.2076038748663426e-29,
     3.4883278690441853e-29;
-  for(int i = 0; i < 3; ++i)
+  std::cerr << bv << "\n";
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
+    std::cerr << bva << "\n";
     BOOST_CHECK_CLOSE(f.absorption_cross_section
-		      (12929.94, pv(i), tv(i), bv(i)).value,
+		      (12929.94, pv(i), tv(i), bva).value,
 		      abs_expect(i), 1e-4);
+  }
   DoubleWithUnit pvd(pv.value(1), pv.units);
   AutoDerivativeWithUnit<double>
     tvd(AutoDerivative<double>(tv.value(1), 0, 2), tv.units);
-  AutoDerivativeWithUnit<double>
-    bvd(AutoDerivative<double>(bv.value(1), 1, 2), bv.units);
+  ArrayAdWithUnit<double, 1> bvd;
+  bvd.value.resize(1, 2);
+  bvd.value(0) = AutoDerivative<double>(bv.value(0,1), 1, 2);
+  bvd.units = bv.units;
   AutoDerivative<double> absv = f.absorption_cross_section(12929.94, pvd, tvd, 
 							   bvd).value;
   BOOST_CHECK_CLOSE(absv.value(), abs_expect(1), 1e-3);
@@ -172,7 +199,7 @@ BOOST_AUTO_TEST_CASE(absco_4d)
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
   tvd.value -= epsilon;
-  bvd.value += epsilon;
+  bvd.value(0) = bvd.value(0) + epsilon;
   double dabs_db = (f.absorption_cross_section(12929.94, pvd, tvd, 
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;

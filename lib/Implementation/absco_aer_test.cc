@@ -18,12 +18,12 @@ BOOST_AUTO_TEST_CASE(basic)
   AbscoAer fscale(absco_aer_data_dir() + "/CO2_04760-06300_v0.0_init.nc",
 		  table_scale);
   AbscoAer f2(absco_aer_data_dir() + "/CH4_04760-06300_v0.0_init.nc");
-  BOOST_CHECK_EQUAL(f.broadener_name(), "h2o");
-  BOOST_CHECK_EQUAL(f.number_broadener_vmr(), 2);
-  BOOST_CHECK_EQUAL(f.broadener_vmr_grid().rows(), 2);
-  BOOST_CHECK_EQUAL(f2.broadener_name(), "");
-  BOOST_CHECK_EQUAL(f2.number_broadener_vmr(), 0);
-  BOOST_CHECK_EQUAL(f2.broadener_vmr_grid().rows(), 0);
+  BOOST_CHECK_EQUAL(f.broadener_name(0), "h2o");
+  BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 2);
+  BOOST_CHECK_EQUAL(f.broadener_vmr_grid(0).rows(), 2);
+  BOOST_CHECK_EQUAL(f2.broadener_name(0), "");
+  BOOST_CHECK_EQUAL(f2.number_broadener_vmr(0), 0);
+  BOOST_CHECK_EQUAL(f2.broadener_vmr_grid(0).rows(), 0);
   if(false) {
     std::cerr << setprecision(20) << std::scientific
 	      << "# This is the expected pressure grid.\n"
@@ -52,31 +52,44 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_MATRIX_CLOSE_TOL(readsub, readsub_expect, 1e-30);
   BOOST_CHECK(f.have_data(4799.9928));
   BOOST_CHECK(!f.have_data(100));
-  ArrayWithUnit<double, 1> pv, tv, bv;
+  ArrayWithUnit<double, 1> pv, tv;
+  ArrayWithUnit<double, 2> bv;
   pv.value.resize(3);
   pv.value = 76000, 66000, 40000;
   pv.units = units::Pa;
   tv.value.resize(3);
   tv.value = 183.2799987792969, 190.0, 193.2799987792969;
   tv.units = units::K;
-  bv.value.resize(3);
+  bv.value.resize(1, 3);
   bv.value = 0,0,0;
   bv.units = units::dimensionless;
   Array<double, 1> abs_expect(3);
   abs_expect = 1.8513911105644267e-24, 1.7466562917995074e-24, 1.114117854087635e-24;
-  for(int i = 0; i < 3; ++i)
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
     BOOST_CHECK_CLOSE(f.absorption_cross_section
-		      (4799.9928, pv(i), tv(i), bv(i)).value,
+		      (4799.9928, pv(i), tv(i), bva).value,
 		      abs_expect(i), 1e-4);
-  for(int i = 0; i < 3; ++i)
+  }
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
     BOOST_CHECK_CLOSE(fscale.absorption_cross_section
-		      (4799.9928, pv(i), tv(i), bv(i)).value,
+		      (4799.9928, pv(i), tv(i), bva).value,
 		      abs_expect(i) * table_scale, 1e-4);
+  }
   DoubleWithUnit pvd(pv.value(1), pv.units);
   AutoDerivativeWithUnit<double>
     tvd(AutoDerivative<double>(tv.value(1), 0, 2), tv.units);
-  AutoDerivativeWithUnit<double>
-    bvd(AutoDerivative<double>(bv.value(1), 1, 2), bv.units);
+  ArrayAdWithUnit<double, 1> bvd;
+  bvd.value.resize(1, 2);
+  bvd.value(0) = AutoDerivative<double>(bv.value(0,1), 1, 2);
+  bvd.units = bv.units;
   AutoDerivative<double> absv = f.absorption_cross_section(4799.9928, pvd, tvd, 
 							   bvd).value;
   AutoDerivative<double> absvscale = 
@@ -90,7 +103,7 @@ BOOST_AUTO_TEST_CASE(basic)
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
   tvd.value -= epsilon;
-  bvd.value += epsilon;
+  bvd.value(0) = bvd.value(0) + epsilon;
   double dabs_db = (f.absorption_cross_section(4799.9928, pvd, tvd, 
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
@@ -110,7 +123,9 @@ BOOST_AUTO_TEST_CASE(interpolation)
   double wn_closest = 6199.9992;
   DoubleWithUnit press(12250, "Pa");
   DoubleWithUnit temp(190, "K");
-  DoubleWithUnit broadener(0, "dimensionless");
+  blitz::Array<double, 1> bvalue(1);
+  bvalue(0) = 0;
+  ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
   // Default behavior is to throw an error
   BOOST_CHECK_THROW(f.absorption_cross_section(wn_not_on_grid, press, temp,
 					       broadener), Exception);
@@ -138,7 +153,9 @@ BOOST_AUTO_TEST_CASE(read_o2)
   double wn = 6200;
   DoubleWithUnit press(12250, "Pa");
   DoubleWithUnit temp(190, "K");
-  DoubleWithUnit broadener(0, "dimensionless");
+  blitz::Array<double, 1> bvalue(1);
+  bvalue(0) = 0;
+  ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
   double t = f.absorption_cross_section(wn, press, temp,
 					 broadener).value;
   std::cerr << t << "\n";
@@ -150,13 +167,15 @@ BOOST_AUTO_TEST_CASE(full_wn_range)
   AbscoAer a(absco_aer_data_dir() + "/CO2_04760-06300_v0.0_init.nc");
   DoubleWithUnit press(12250, "Pa");
   DoubleWithUnit temp(190, "K");
-  DoubleWithUnit broadner(0, "dimensionless");
+  blitz::Array<double, 1> bvalue(1);
+  bvalue(0) = 0;
+  ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
   int asize = a.wavenumber_grid().shape()[0];
   int aspace = (int) ceil(asize / 1000.0);
   std::vector<double> res;
   for(int i = 0; i < asize; i += aspace)
     res.push_back(a.absorption_cross_section(a.wavenumber_grid()(i), press,
-					     temp, broadner).value);
+					     temp, broadener).value);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
