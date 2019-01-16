@@ -172,13 +172,11 @@ BOOST_AUTO_TEST_CASE(absco_4d)
   Array<double, 1> abs_expect(3);
   abs_expect = 3.0916568245708728e-29, 3.2076038748663426e-29,
     3.4883278690441853e-29;
-  std::cerr << bv << "\n";
   for(int i = 0; i < 3; ++i) {
     ArrayWithUnit<double, 1> bva;
     bva.value.resize(1);
     bva.value(0) = bv.value(0,i);
     bva.units = bv.units;
-    std::cerr << bva << "\n";
     BOOST_CHECK_CLOSE(f.absorption_cross_section
 		      (12929.94, pv(i), tv(i), bva).value,
 		      abs_expect(i), 1e-4);

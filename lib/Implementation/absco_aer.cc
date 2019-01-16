@@ -243,7 +243,11 @@ int AbscoAer::wn_index(double Wn_in) const
   auto extent = wn_extent(Wn_in);
 
   double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
-  double f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
+  double f;
+  if(wnptr == extent.first)
+    f = 1.0;
+  else
+    f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
   if(itype_ == THROW_ERROR_IF_NOT_ON_WN_GRID && f > 0.1 && f < 0.9) {
     Exception e;
     e << std::setprecision(8)
@@ -271,8 +275,12 @@ int AbscoAer::wn_index(double Wn_in, double& F) const
   auto extent = wn_extent(Wn_in);
 
   double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
-  --wnptr;
-  F = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
+  if(wnptr == extent.first) {
+    F = 0.0;
+  } else {
+    F = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
+    --wnptr;
+  }
   return (int) (wnptr - wnfront);
 }
 
