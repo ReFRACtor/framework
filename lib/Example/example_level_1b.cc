@@ -1,8 +1,6 @@
+#include <functional>
 #include <boost/lexical_cast.hpp>
 #include <boost/geometry.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-#include <boost/geometry/strategies/spherical/distance_haversine.hpp>
 
 
 #include "example_level_1b.h"
@@ -22,7 +20,6 @@ REGISTER_LUA_END()
 ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id)
 :input(input_file)
 {
-    // All work done in initialization above
     ExampleObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
@@ -30,9 +27,20 @@ ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, con
 ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::string& observation_id)
 :input(new HdfFile(input_filename))
 {
-    // All work done in initialization above
     ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
+}
+
+ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, ExampleObservationId<std::string> observation_id)
+:input(input_file)
+{
+    data_index = observation_id.data_index();
+}
+
+ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, ExampleObservationId<std::string> observation_id)
+:input(new HdfFile(input_filename))
+{
+    data_index = observation_id.data_index();
 }
 
 int ExampleLevel1b::number_spectrometer() const
@@ -136,18 +144,29 @@ std::vector<ExampleObservationId<std::string>> ExampleLevel1b::obs_list(const st
 
 }
 
+bool ExampleLevel1b::compare_obs(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon)
+{
+    double obs1_dist = ExampleLevel1b::obs_distance(geo_input_filename, obs1, lat, lon);
+    double obs2_dist = ExampleLevel1b::obs_distance(geo_input_filename, obs2, lat, lon);
+    return (obs1_dist < obs2_dist);
+}
+
 std::vector<ExampleObservationId<std::string>> ExampleLevel1b::closest_obs_n(const std::string& geo_input_filename, double lat, double lon, int n) {
     std::vector<ExampleObservationId<std::string>> all_observations = ExampleLevel1b::obs_list(geo_input_filename);
-    // sort obs
-    double seperation = ExampleLevel1b::obs_distance(geo_input_filename, all_observations[0], 25.842666, -80.120425);
-    // pop off top items (num items <= n)
+
+    auto compare_obs_latlon = std::bind(ExampleLevel1b::compare_obs, std::placeholders::_1, std::placeholders::_2, geo_input_filename, lat, lon);
+    std::sort(all_observations.begin(), all_observations.end(), compare_obs_latlon);
+
     std::vector<ExampleObservationId<std::string>> closest_observations = std::vector<ExampleObservationId<std::string>>();
+    for (int obs_num = 0; (obs_num < n) && (obs_num < all_observations.size()); obs_num++) {
+        closest_observations.push_back(all_observations[obs_num]);
+    }
     return closest_observations;
 }
 
 double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon) {
     // create ExampleLevel1b object
-    ExampleLevel1b curr_level1b (geo_input_filename, "2014090915251774");
+    ExampleLevel1b curr_level1b (geo_input_filename, obs_id);
     // extract lat/lon
     DoubleWithUnit curr_lat = curr_level1b.latitude(0);
     DoubleWithUnit curr_lon = curr_level1b.longitude(0);

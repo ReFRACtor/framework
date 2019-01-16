@@ -70,8 +70,15 @@ BOOST_AUTO_TEST_CASE(obs_list)
 
 BOOST_AUTO_TEST_CASE(closest_obs_n)
 {
-    ExampleLevel1b::closest_obs_n(test_data_dir() + "in/common/l1b_example_data.h5", 0.0, 0.0, 1);
+    std::vector<ExampleObservationId<std::string>> closest_5 = ExampleLevel1b::closest_obs_n(test_data_dir() + "in/common/l1b_example_data.h5", 0.0, 0.0, 5);
+    int expected_indexes[5] = { 0, 1, 4, 2, 3 };
+    for (int i = 0; i < closest_5.size(); i++) {
+        BOOST_CHECK_EQUAL(closest_5[i].data_index(), expected_indexes[i]);
+    }
+
+
+
 }
-// TODO: properly test closest_obs_n and obs_distance
+// TODO: properly test obs_distance
 
 BOOST_AUTO_TEST_SUITE_END()

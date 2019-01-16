@@ -18,6 +18,9 @@ class ExampleLevel1b: public Level1bSampleCoefficient {
 public:
     ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
     ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);
+    ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, ExampleObservationId<std::string> observation_id);
+    ExampleLevel1b(const std::string& input_filename, ExampleObservationId<std::string> observation_id);
+
     virtual ~ExampleLevel1b() {}
 
     virtual int number_spectrometer() const;
@@ -72,6 +75,8 @@ private:
 
     ArrayWithUnit<double, 1> read_array_with_unit(const std::string& dataset_name, int i, const Unit& default_unit) const;
     blitz::Array<double, 1> read_array(const std::string& dataset_name, int i) const;
+
+    static bool compare_obs(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon);
 
     boost::shared_ptr<HdfFile> input;
     int data_index;
