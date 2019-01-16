@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 import numpy as np
 
 from .base import Creator
@@ -16,6 +18,36 @@ class SolarAbsorptionAndContinuum(Creator):
         solar = []
         for doppler, absorption, continuum in zip(self.doppler(), self.absorption(), self.continuum()):
             solar.append( rf.SolarAbsorptionAndContinuum(doppler, absorption, continuum) )
+        return solar
+
+class SolarReferenceSpectrumAsciiFile(Creator):
+
+    doppler = param.Iterable(rf.SolarDopplerShift, required=False)
+    solar_data_files = param.Iterable(str)
+    domain_units = param.Scalar(str)
+    range_units = param.Scalar(str)
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        filenames = self.solar_data_files()
+        doppler_shifts = self.doppler()
+
+        if doppler_shifts is None:
+            doppler_shifts = [None] * len(filenames)
+
+        solar = []
+        for doppler, solar_file in zip_longest(doppler_shifts, filenames, fillvalue=filenames[0]):
+            file_data = np.loadtxt(solar_file)
+
+            spec_domain = rf.SpectralDomain(file_data[:, 0], rf.Unit(self.domain_units()))
+            spec_range = rf.SpectralRange(file_data[:, 1], rf.Unit(self.range_units()))
+            solar_spec = rf.Spectrum(spec_domain, spec_range)
+            
+            ref_spec = rf.SolarReferenceSpectrum(solar_spec, doppler)
+
+            solar.append(ref_spec)
+
         return solar
 
 class SolarDopplerShiftPolynomial(Creator):

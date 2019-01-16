@@ -103,6 +103,7 @@ set(DIR_SOURCES
     solar_continuum_table.cc
     solar_doppler_shift_l1b.cc
     solar_doppler_shift_polynomial.cc
+    solar_reference_spectrum.cc
     solver_iteration_log.cc
     spectral_window_range.cc
     spectrum_sampling_fixed_spacing.cc
