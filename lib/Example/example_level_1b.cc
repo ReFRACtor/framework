@@ -144,17 +144,27 @@ std::vector<ExampleObservationId<std::string>> ExampleLevel1b::obs_list(const st
 
 }
 
-bool ExampleLevel1b::compare_obs(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon)
+bool ExampleLevel1b::compare_obs_distance(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon)
 {
-    double obs1_dist = ExampleLevel1b::obs_distance(geo_input_filename, obs1, lat, lon);
-    double obs2_dist = ExampleLevel1b::obs_distance(geo_input_filename, obs2, lat, lon);
+    double obs1_dist = std::abs(ExampleLevel1b::obs_distance(geo_input_filename, obs1, lat, lon));
+    double obs2_dist = std::abs(ExampleLevel1b::obs_distance(geo_input_filename, obs2, lat, lon));
     return (obs1_dist < obs2_dist);
+}
+
+bool ExampleLevel1b::compare_obs_time(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, Time search_time)
+{
+    ExampleLevel1b level1b_1 (geo_input_filename, obs1);
+    ExampleLevel1b level1b_2 (geo_input_filename, obs2);
+    // TODO: Add support for varying instrument index
+    double obs1_timediff = std::abs(level1b_1.time(0) - search_time);
+    double obs2_timediff = std::abs(level1b_2.time(0) - search_time);
+    return (obs1_timediff < obs2_timediff);
 }
 
 std::vector<ExampleObservationId<std::string>> ExampleLevel1b::closest_obs_n(const std::string& geo_input_filename, double lat, double lon, int n) {
     std::vector<ExampleObservationId<std::string>> all_observations = ExampleLevel1b::obs_list(geo_input_filename);
 
-    auto compare_obs_latlon = std::bind(ExampleLevel1b::compare_obs, std::placeholders::_1, std::placeholders::_2, geo_input_filename, lat, lon);
+    auto compare_obs_latlon = std::bind(ExampleLevel1b::compare_obs_distance, std::placeholders::_1, std::placeholders::_2, geo_input_filename, lat, lon);
     std::sort(all_observations.begin(), all_observations.end(), compare_obs_latlon);
 
     std::vector<ExampleObservationId<std::string>> closest_observations = std::vector<ExampleObservationId<std::string>>();
@@ -164,10 +174,36 @@ std::vector<ExampleObservationId<std::string>> ExampleLevel1b::closest_obs_n(con
     return closest_observations;
 }
 
+ExampleObservationId<std::string> ExampleLevel1b::closest_obs(const std::string& geo_input_filename, double lat, double lon) {
+    std::vector<ExampleObservationId<std::string>> closest = closest_obs_n(geo_input_filename, lat, lon, 1);
+    // TODO: What do we return if no obs from above? all_observation.size() == 0
+    return closest.front();
+
+}
+
+std::vector<ExampleObservationId<std::string>> ExampleLevel1b::closest_obs_n(const std::string& geo_input_filename, Time search_time, int n) {
+    std::vector<ExampleObservationId<std::string>> all_observations = ExampleLevel1b::obs_list(geo_input_filename);
+
+    auto compare_obs_timediff = std::bind(ExampleLevel1b::compare_obs_time, std::placeholders::_1, std::placeholders::_2, geo_input_filename, search_time);
+    std::sort(all_observations.begin(), all_observations.end(), compare_obs_timediff);
+
+    std::vector<ExampleObservationId<std::string>> closest_observations = std::vector<ExampleObservationId<std::string>>();
+    for (int obs_num = 0; (obs_num < n) && (obs_num < all_observations.size()); obs_num++) {
+        closest_observations.push_back(all_observations[obs_num]);
+    }
+    return closest_observations;
+}
+
+ExampleObservationId<std::string> ExampleLevel1b::closest_obs(const std::string& geo_input_filename, Time search_time) {
+    std::vector<ExampleObservationId<std::string>> closest = closest_obs_n(geo_input_filename, search_time, 1);
+    // TODO: What do we return if no obs from above? all_observation.size() == 0
+    return closest.front();
+
+}
+
 double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon) {
-    // create ExampleLevel1b object
     ExampleLevel1b curr_level1b (geo_input_filename, obs_id);
-    // extract lat/lon
+    // TODO: Add support for varying instrument index
     DoubleWithUnit curr_lat = curr_level1b.latitude(0);
     DoubleWithUnit curr_lon = curr_level1b.longitude(0);
     // use strategy::distance::haversine to get distance (in km)
@@ -176,6 +212,5 @@ double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, Examp
     spherical_point in_point(lon, lat);
     spherical_point curr_point(curr_lon.value, curr_lat.value);
     double seperation = boost::geometry::distance(in_point, curr_point) * earth_radius;
-    std::cout << "Distance in km: " << seperation << std::endl;
     return seperation;
 }

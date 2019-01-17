@@ -66,6 +66,13 @@ public:
 
     static std::vector<ExampleObservationId<std::string>> closest_obs_n(const std::string& geo_input_filename, double lat, double lon, int n);
 
+    static ExampleObservationId<std::string> closest_obs(const std::string& geo_input_filename, double lat, double lon);
+
+    static std::vector<ExampleObservationId<std::string>> closest_obs_n(const std::string& geo_input_filename, Time search_time, int n);
+
+    static ExampleObservationId<std::string> closest_obs(const std::string& geo_input_filename, Time search_time);
+
+
     static double obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon);
 
 
@@ -76,7 +83,8 @@ private:
     ArrayWithUnit<double, 1> read_array_with_unit(const std::string& dataset_name, int i, const Unit& default_unit) const;
     blitz::Array<double, 1> read_array(const std::string& dataset_name, int i) const;
 
-    static bool compare_obs(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon);
+    static bool compare_obs_distance(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon);
+    static bool compare_obs_time(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, Time search_time);
 
     boost::shared_ptr<HdfFile> input;
     int data_index;
