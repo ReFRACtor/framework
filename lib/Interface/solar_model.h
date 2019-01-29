@@ -26,7 +26,7 @@ public:
 ///
 /// Note that the wavenumber/frequency are in the earth rest
 /// frame. The solar model may need to work in the solar rest frame,
-/// bu the conversion to this is internal. The input and output from
+/// but the conversion to this is internal. The input and output from
 /// this function should be in the earth rest frame.
 //-----------------------------------------------------------------------
 
