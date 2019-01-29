@@ -86,13 +86,21 @@ public:
 
   template<class I, class J>
   ArrayWithUnit<T, D-2> operator()(I i1, J i2, J i3) const 
-  {return ArrayWithUnit<T, D-1>(value(i1, i2, i3), units);}
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
   template<class I, class J>
   ArrayWithUnit<T, D-2> operator()(J i1, I i2, J i3) const 
-  {return ArrayWithUnit<T, D-1>(value(i1, i2, i3), units);}
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
   template<class I, class J>
   ArrayWithUnit<T, D-2> operator()(J i1, J i2, I i3) const 
-  {return ArrayWithUnit<T, D-1>(value(i1, i2, i3), units);}
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
+
+  // Specializations to resolve ambiguous overloads
+  ArrayWithUnit<T, D-2> operator()(blitz::Range i1, int i2, int i3) const 
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
+  ArrayWithUnit<T, D-2> operator()(int i1, blitz::Range i2, int i3) const 
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
+  ArrayWithUnit<T, D-2> operator()(int i1, int i2, blitz::Range i3) const 
+  {return ArrayWithUnit<T, D-2>(value(i1, i2, i3), units);}
 
 //-----------------------------------------------------------------------
 /// Convert to the given units. 
