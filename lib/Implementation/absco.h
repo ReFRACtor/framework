@@ -172,7 +172,7 @@ private:
   mutable std::vector<double> pgrid;
   mutable std::vector<std::vector<double> > tgrid;
   mutable std::vector<int> tstart_offset;
-  mutable std::vector<double> bgrid;
+  mutable std::vector<std::vector<double> > bgrid;
   void fill_pgrid_tgrid_and_bgrid() const;
 };
 

@@ -152,7 +152,7 @@ void AbscoHdf::load_file(const std::string& Fname,
     // HITRAN papers, such as "The HITRAN 2008 molecular spectroscopic
     // database", Journal of Quantitative Spectroscopy and Radiative
     // Transfer, vol. 110, pp. 533-572 (2009)
-    bname = "h2o";
+    bname.push_back("h2o");
   else {
     Exception e;
     e << "Right now we only support H2O as a broadener (HITRAN index \"01\"). "
@@ -160,8 +160,8 @@ void AbscoHdf::load_file(const std::string& Fname,
     throw e;
   }
 
-  if(bname != "")
-    bvmr.reference(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR"));
+  if(bname.size() > 0)
+    bvmr.push_back(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR").copy());
 }
 
 
@@ -310,18 +310,18 @@ template<class T> void AbscoHdf::swap(int i) const
 {
   // First time through, set up space for cache.
  if(read_cache<T>().extent(fourthDim) == 0)
-      read_cache<T>().resize(tgrid.rows(), tgrid.cols(), 
-                    std::max(1, number_broadener_vmr(0)),
-                    cache_nline);
+      read_cache<T>().resize(tgrid.rows(), tgrid.cols(),
+			     (number_broadener() > 0 ? number_broadener_vmr(0) :
+			      1), cache_nline);
   int nl = read_cache<T>().extent(fourthDim);
   // Either read 3d or 4d data. We tell which kind by whether or not
   // we have a number_broadener_vmr() > 0 or not.
   TinyVector<int, 4> start, size;
   start = 0, 0, 0, (i / nl) * nl;
-  size = tgrid.rows(), tgrid.cols(), std::max(number_broadener_vmr(0), 1),
+  size = tgrid.rows(), tgrid.cols(), (number_broadener() > 0 ? number_broadener_vmr(0) : 1),
     std::min(nl, wngrid.rows() - start(3));
   bound_set<T>((i / nl) * nl, size(3));
-  if(number_broadener_vmr(0) > 0) {
+  if(number_broadener() > 0) {
     // 4d case
     read_cache<T>()(Range::all(), Range::all(), Range::all(), Range(0, size(3) - 1)) =
       hfile->read_field<T, 4>(field_name, start, size);

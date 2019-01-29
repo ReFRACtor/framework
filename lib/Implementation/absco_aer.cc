@@ -144,13 +144,12 @@ void AbscoAer::load_file(const std::string& Fname,
     is_float_ = true;
   else
     is_float_ = false;
-  std::string bindex = "";
   if(hfile->has_object("H2O_VMR")) {
-    bname = "h2o";
-    bvmr.reference(hfile->read_field<double, 1>("H2O_VMR"));
-  } else if(hfile->has_object("O2_VMR")) {
-    bname = "o2";
-    bvmr.reference(hfile->read_field<double, 1>("O2_VMR"));
+    bname.push_back("h2o");
+    bvmr.push_back(hfile->read_field<double, 1>("H2O_VMR").copy());
+  } if(hfile->has_object("O2_VMR")) {
+    bname.push_back("o2");
+    bvmr.push_back(hfile->read_field<double, 1>("O2_VMR").copy());
   }
 }
 
@@ -369,46 +368,44 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
 
 template<class T> void AbscoAer::swap(int i) const
 {
-  // TODO Handle multiple broadner. The second broadner isn't
-  // necessarily the same size as the first, we probably want
-  // number_broadener_vmr() to take an index number.
   // First time through, set up space for cache.
  if(read_cache<T>().extent(firstDim) == 0)
    read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
-			  std::max(1, number_broadener_vmr(0)),
-			  std::max(1, number_broadener_vmr(0)));
+			  (number_broadener() >= 1 ? number_broadener_vmr(0) : 1),
+			  (number_broadener() >= 2 ? number_broadener_vmr(1) : 1));
   int nl = read_cache<T>().extent(firstDim);
-  // Either read 3d, 4d or 5d data. We tell which kind by whether or not
-  // we have a number_broadener_vmr() > 0 or not.
+  // Either read 3d, 4d or 5d data. We tell which kind by the number
+  // of broadners.
   int st0 = (i / nl) * nl;
   int sz0 = std::min(nl, wngrid.rows() - st0);
   bound_set<T>(st0, sz0);
-  if(number_broadener_vmr(0) > 0) {
-    // TODO Handle 2 broadners correctly
-    if(hfile->has_object("H2O_VMR") && hfile->has_object("O2_VMR")) {
-      TinyVector<int, 5> start, size;
-      start = st0, 0, 0, 0, 0;
-      size = sz0,
-	read_cache<T>().shape()[1],
-	read_cache<T>().shape()[2],
-	read_cache<T>().shape()[3],
-	read_cache<T>().shape()[4];
-      read_cache<T>()(Range(0, size(0) - 1), Range::all(),
-		      Range::all(), Range::all(), Range::all()) =
-	hfile->read_field<T, 5>(field_name, start, size);
-    } else {
-      // 4d case
-      TinyVector<int, 4> start, size;
-      start = st0, 0, 0, 0;
-      size = sz0,
-	read_cache<T>().shape()[1],
-	read_cache<T>().shape()[2],
-	read_cache<T>().shape()[3];
-      read_cache<T>()(Range(0, size(0) - 1), Range::all(),
-		      Range::all(), Range::all(), 0) =
-	hfile->read_field<T, 4>(field_name, start, size);
-    }
-  } else {
+  if(number_broadener() > 2 || number_broadener() < 0)
+    throw Exception("Out of range number_broadener(). This shouldn't be possible");
+  if(number_broadener() == 2) {
+    TinyVector<int, 5> start, size;
+    start = st0, 0, 0, 0, 0;
+    size = sz0,
+      read_cache<T>().shape()[1],
+      read_cache<T>().shape()[2],
+      read_cache<T>().shape()[3],
+      read_cache<T>().shape()[4];
+    read_cache<T>()(Range(0, size(0) - 1), Range::all(),
+		    Range::all(), Range::all(), Range::all()) =
+      hfile->read_field<T, 5>(field_name, start, size);
+  }
+  if(number_broadener() == 1) {
+    // 4d case
+    TinyVector<int, 4> start, size;
+    start = st0, 0, 0, 0;
+    size = sz0,
+      read_cache<T>().shape()[1],
+      read_cache<T>().shape()[2],
+      read_cache<T>().shape()[3];
+    read_cache<T>()(Range(0, size(0) - 1), Range::all(),
+		    Range::all(), Range::all(), 0) =
+      hfile->read_field<T, 4>(field_name, start, size);
+  }
+  if(number_broadener() == 0) {
     // 3d case
     TinyVector<int, 3> start, size;
     start = st0, 0, 0;

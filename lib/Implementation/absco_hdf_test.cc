@@ -16,9 +16,7 @@ BOOST_AUTO_TEST_CASE(basic)
   // Note scale here is a nonsense value
   double table_scale = 1.2;
   AbscoHdf fscale(absco_data_dir() + "/o2_v3.3.0-lowres.hdf", table_scale);
-  BOOST_CHECK_EQUAL(f.broadener_name(0), "");
-  BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 0);
-  BOOST_CHECK_EQUAL(f.broadener_vmr_grid(0).rows(), 0);
+  BOOST_CHECK_EQUAL(f.number_broadener(), 0);
   Array<double, 1> pgrid_expect;
   expected_data >> pgrid_expect;
   BOOST_CHECK_MATRIX_CLOSE(f.pressure_grid(), pgrid_expect);

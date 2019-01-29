@@ -57,20 +57,17 @@ public:
   virtual ~AbscoAer() {}
   virtual int number_broadener() const
   {
-    if(number_broadener_vmr(0) > 0)
-      return 1;
-    return 0;
+    return (int) bname.size();
   }
   virtual std::string broadener_name(int Broadener_index) const
-  { if(Broadener_index > 0)
-      throw Exception("Only support one broadener");
-    return bname;
+  {
+    range_check(Broadener_index, 0, number_broadener());
+    return bname[Broadener_index];
   }
   virtual blitz::Array<double, 1> broadener_vmr_grid(int Broadener_index) const
   {
-    if(Broadener_index > 0)
-      throw Exception("Only support one broadener");
-    return bvmr;
+    range_check(Broadener_index, 0, number_broadener());
+    return bvmr[Broadener_index];
   }
 
 //-----------------------------------------------------------------------
@@ -104,7 +101,7 @@ private:
   bool is_float_;
   int cache_nline;
   InterpolationType itype_;
-  blitz::Array<double, 1> bvmr;
+  std::vector<blitz::Array<double, 1> > bvmr;
   boost::shared_ptr<HdfFile> hfile;
   mutable int cache_double_lbound;
   mutable int cache_double_ubound;
@@ -118,7 +115,7 @@ private:
   int wn_index(double Wn_in) const;
   int wn_index(double Wn_in, double& F) const;
   std::string field_name;
-  std::string bname;
+  std::vector<std::string> bname;
   blitz::Array<double, 1> pgrid;
   blitz::Array<double, 2> tgrid;
   blitz::Array<double, 1> wngrid;

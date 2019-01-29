@@ -21,9 +21,7 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_EQUAL(f.broadener_name(0), "h2o");
   BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 2);
   BOOST_CHECK_EQUAL(f.broadener_vmr_grid(0).rows(), 2);
-  BOOST_CHECK_EQUAL(f2.broadener_name(0), "");
-  BOOST_CHECK_EQUAL(f2.number_broadener_vmr(0), 0);
-  BOOST_CHECK_EQUAL(f2.broadener_vmr_grid(0).rows(), 0);
+  BOOST_CHECK_EQUAL(f2.number_broadener(), 0);
   if(false) {
     std::cerr << setprecision(20) << std::scientific
 	      << "# This is the expected pressure grid.\n"

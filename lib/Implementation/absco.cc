@@ -65,17 +65,18 @@ void Absco::fill_pgrid_tgrid_and_bgrid() const
   if(pgrid.size() == 0) {
     Array<double, 1> pgridg(pressure_grid());
     Array<double, 2> tg(temperature_grid());
-    Array<double, 1> bgridg(broadener_vmr_grid(0));
     pgrid.resize(pgridg.rows());
     tgrid.resize(tg.rows());
     tstart_offset.resize(tg.rows());
-    bgrid.resize(std::max(bgridg.rows(), 1));
+    bgrid.resize(number_broadener());
     for(int i = 0; i < pgridg.rows(); ++i)
       pgrid[i] = pgridg(i);
-    for(int i = 0; i < bgridg.rows(); ++i)
-      bgrid[i] = bgridg(i);
-    if(bgridg.rows() ==0)
-      bgrid[0] = 0;
+    for(int i = 0; i < number_broadener(); ++i) {
+      Array<double, 1> bgridg(broadener_vmr_grid(i));
+      bgrid[i].resize(bgridg.rows());
+      for(int j = 0; j < bgridg.rows(); ++j)
+	bgrid[i][j] = bgridg(j);
+    }
     // Some temperature grids use nan to indicate that we don't have a
     // value, i.e., the temperature is a jagged array. This is the
     // case for AbscoAer. We just chop off the missing data, but we
@@ -184,13 +185,14 @@ AbscoInterpolator::AbscoInterpolator
     double unused;
     fp(i) = interpol(p(i), p_reversed, absco->pgrid, ip(i), unused);
     // We might not actually need to interpolate over broadener
-    if(absco->bgrid.size() ==1) {
+    if(absco->bgrid.size() ==0) {
       ib(i) = 0;
       ib2(i) = 0;
       dfb_db(i) = 0;
       fb(i) = 1;
     } else {
-      fb(i) = interpol(b.value()(0,i), false, absco->bgrid, ib(i), dfb_db(i));
+      fb(i) = interpol(b.value()(0,i), false, absco->bgrid[0], ib(i),
+		       dfb_db(i));
       ib2(i) = ib(i) + 1;
     }
     ftp1(i) = interpol(t.value()(i), false, absco->tgrid[ip(i)], itp1(i),
