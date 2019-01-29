@@ -360,25 +360,23 @@ void AbsorberAbsco::fill_tau_gas_cache() const
 
   // Set up Absco interpolator for our sublayers
   Array<AutoDerivative<double>, 1> tsub_t(psub.rows());
-  Array<AutoDerivative<double>, 1> h2o_vmr_t(psub.rows());
-  Array<AutoDerivative<double>, 1> o2_vmr_t(psub.rows());
+  // We put both possible broadeners into one array, we separate them
+  // later. The H2O comes first, O2 second.
+  Array<AutoDerivative<double>, 2> broadener_vmr_t(2, psub.rows());
   for(int i = 0; i < psub.rows(); ++i) {
     tsub_t(i) = temp_func(psub(i)).convert(units::K).value;
-    h2o_vmr_t(i) = h2o_vmr_func(psub(i)).value;
-    o2_vmr_t(i) = o2_vmr_func(psub(i)).value;
+    broadener_vmr_t(0, i) = h2o_vmr_func(psub(i)).value;
+    broadener_vmr_t(1, i) = o2_vmr_func(psub(i)).value;
   }
   ArrayAdWithUnit<double, 1> tsub(ArrayAd<double,1>(tsub_t), units::K);
-  ArrayAdWithUnit<double, 1> h2o_vmr(ArrayAd<double,1>(h2o_vmr_t), 
-				     units::dimensionless);
-  ArrayAdWithUnit<double, 1> o2_vmr(ArrayAd<double,1>(o2_vmr_t), 
-				    units::dimensionless);
+  ArrayAdWithUnit<double, 2> broadener_vmr(ArrayAd<double,2>(broadener_vmr_t), 
+					  units::dimensionless);
   // Absco derivatives tend to be fairly sparse. They depend only on
   // tsub and h2o_vmr, so we can go through and see which columns are
   // nonzero.
   absco_nonzero_column.clear();
-  for(int i = 0; i < std::max(std::max(tsub.value.number_variable(),
-				       h2o_vmr.value.number_variable()),
-			      o2_vmr.value.number_variable());
+  for(int i = 0; i < std::max(tsub.value.number_variable(),
+			      broadener_vmr.value.number_variable());
       ++i) {
     double mv1;
     double mv2;
@@ -387,52 +385,32 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       mv1 = 0;
     else
       mv1 = max(abs(tsub.value.jacobian()(ra, i)));
-    if(h2o_vmr.value.is_constant())
+    if(broadener_vmr.value.is_constant())
       mv2 = 0;
     else
-      mv2 = max(abs(h2o_vmr.value.jacobian()(ra, i)));
-    if(o2_vmr.value.is_constant())
-      mv3 = 0;
-    else
-      mv3 = max(abs(o2_vmr.value.jacobian()(ra, i)));
+      mv2 = max(abs(broadener_vmr.value.jacobian()(ra, ra, i)));
     if(mv1 > 1e-20 || mv2 > 1e-20 || mv3 > 1e-20)
       absco_nonzero_column.push_back(i);
   }
   Array<double, 2> tsub_sjac(tsub.value.rows(), 
 			     (int) absco_nonzero_column.size());
-  Array<double, 2> h2o_vmr_sjac(tsub_sjac.shape());
-  Array<double, 2> o2_vmr_sjac(tsub_sjac.shape());
+  Array<double, 3> broadener_vmr_sjac(2, tsub_sjac.rows(), tsub_sjac.cols());
   int k = 0;
   tsub_sjac = 0;
-  h2o_vmr_sjac = 0;
-  o2_vmr_sjac = 0;
+  broadener_vmr_sjac = 0;
   BOOST_FOREACH(int m, absco_nonzero_column) {
     if(!tsub.value.is_constant())
       tsub_sjac(ra, k) = tsub.value.jacobian()(ra, m);
-    if(!h2o_vmr.value.is_constant())
-      h2o_vmr_sjac(ra, k) = h2o_vmr.value.jacobian()(ra, m);
-    if(!o2_vmr.value.is_constant())
-      o2_vmr_sjac(ra, k) = o2_vmr.value.jacobian()(ra, m);
+    if(!broadener_vmr.value.is_constant())
+      broadener_vmr_sjac(ra, ra, k) = broadener_vmr.value.jacobian()(ra, ra, m);
     ++k;
   }
   
   ArrayAdWithUnit<double, 1> 
     tsub_sparse(ArrayAd<double,1>(tsub.value.value(), tsub_sjac), units::K);
 
-  blitz::Array<double, 2> h2o_vmr_value(1, h2o_vmr.value.value().rows());
-  blitz::Array<double, 3> h2o_vmr_sjac2(1, h2o_vmr_sjac.rows(), h2o_vmr_sjac.cols());
-  h2o_vmr_value(0, ra) = h2o_vmr.value.value();
-  h2o_vmr_sjac2(0, ra, ra) = h2o_vmr_sjac;
-  blitz::Array<double, 2> o2_vmr_value(1, o2_vmr.value.value().rows());
-  blitz::Array<double, 3> o2_vmr_sjac2(1, o2_vmr_sjac.rows(), o2_vmr_sjac.cols());
-  o2_vmr_value(0, ra) = o2_vmr.value.value();
-  o2_vmr_sjac2(0, ra, ra) = o2_vmr_sjac;
-  ArrayAdWithUnit<double, 2> 
-    h2o_vmr_sparse(ArrayAd<double,2>(h2o_vmr_value,h2o_vmr_sjac2),
-		   units::dimensionless);
-  ArrayAdWithUnit<double, 2> 
-    o2_vmr_sparse(ArrayAd<double,2>(o2_vmr_value,o2_vmr_sjac2),
-		   units::dimensionless);
+  ArrayAd<double, 2>
+    broadener_vmr_sparse(broadener_vmr.value.value(), broadener_vmr_sjac);
 
   absco_interp.resize(gas_absorption.size());
   for(int i = 0; i < (int) absco_interp.size(); ++i) {
@@ -440,15 +418,8 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       boost::dynamic_pointer_cast<Absco>(gas_absorption[i]);
     if(!a)
       throw Exception("AbsorberAbsco requires Absco, not just any GasAbsorption object");
-    if(a->broadener_name(0) == "h2o" ||
-       a->broadener_name(0) == "")
-      absco_interp[i].reset(new AbscoInterpolator(a, psub, tsub_sparse, 
-						  h2o_vmr_sparse));
-    else if(a->broadener_name(0) == "o2")
-      absco_interp[i].reset(new AbscoInterpolator(a, psub, tsub_sparse, 
-						  o2_vmr_sparse));
-    else
-      throw Exception("Only support broadener 'h2o' and 'o2'");
+    absco_interp[i].reset(new AbscoInterpolator(a, psub, tsub_sparse,
+	subset_broadener(broadener_vmr_sparse, *a)));
   }
 
   taug.resize((int) layer_range.size(), number_species(), 
@@ -456,6 +427,35 @@ void AbsorberAbsco::fill_tau_gas_cache() const
 		       tsub.number_variable()));
   taug.jacobian() = 0;
   cache_tau_gas_stale = false;
+}
+
+//----------------------------------------------------------------
+/// Subset the broadener from the full list to the set used by the
+/// given Absco.
+//----------------------------------------------------------------
+
+ArrayAdWithUnit<double, 2> AbsorberAbsco::subset_broadener
+(const ArrayAd<double, 2> bvmr,
+ const Absco& a) const
+{
+  Range ra(Range::all());
+  if(a.number_broadener() == 0)
+    // Broadener not used, so just return the full set of data.
+    return ArrayAdWithUnit<double, 2>(bvmr, units::dimensionless);
+  blitz::Array<double, 2> bvmr_sub(a.number_broadener(), bvmr.cols());
+  blitz::Array<double, 3> bvmr_jac_sub(a.number_broadener(), bvmr.cols(), bvmr.number_variable());
+  for(int i = 0; i < bvmr_sub.rows(); ++i) {
+    if(a.broadener_name(i) == "h2o") {
+      bvmr_sub(i, ra) = bvmr.value()(0, ra);
+      bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(0,ra,ra);
+    } else if(a.broadener_name(i) == "o2") {
+      bvmr_sub(i, ra) = bvmr.value()(1, ra);
+      bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(1,ra,ra);
+    }  else
+      throw Exception("Only support broadener 'h2o' and 'o2'");
+  }
+  return ArrayAdWithUnit<double, 2>(ArrayAd<double, 2>(bvmr_sub, bvmr_jac_sub),
+				    units::dimensionless);
 }
 
 //----------------------------------------------------------------

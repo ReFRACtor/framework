@@ -243,7 +243,8 @@ private:
   AutoDerivativeWithUnit<double>
   gravity_func(int Spec_index, const DoubleWithUnit& P) const
   { return alt[Spec_index]->gravity(AutoDerivativeWithUnit<double>(P.value, P.units)); }
-
+  ArrayAdWithUnit<double, 2> subset_broadener(const ArrayAd<double, 2> bvmr,
+					      const Absco& a) const;
 };
 }
 #endif
