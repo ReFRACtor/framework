@@ -5,8 +5,6 @@
 #include "hdf_file.h"
 #include "level_1b_info.h"
 #include "example_level_1b.h"
-#include "example_observation_id.h"
-
 
 namespace FullPhysics {
 

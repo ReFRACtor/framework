@@ -5,7 +5,6 @@
 #include "double_with_unit.h"
 #include "spectral_range.h"
 #include "spectral_domain.h"
-#include "observation_id.h"
 #include <blitz/array.h>
 #include <stdint.h>
 #include <vector>
