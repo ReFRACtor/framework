@@ -73,7 +73,7 @@ public:
     static ExampleObservationId<std::string> closest_obs(const std::string& geo_input_filename, Time search_time);
 
 
-    static double obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon);
+    // static double obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon);
 
 
 private:

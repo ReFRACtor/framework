@@ -146,9 +146,11 @@ std::vector<ExampleObservationId<std::string>> ExampleLevel1b::obs_list(const st
 
 bool ExampleLevel1b::compare_obs_distance(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, double lat, double lon)
 {
+    /*
     double obs1_dist = std::abs(ExampleLevel1b::obs_distance(geo_input_filename, obs1, lat, lon));
     double obs2_dist = std::abs(ExampleLevel1b::obs_distance(geo_input_filename, obs2, lat, lon));
     return (obs1_dist < obs2_dist);
+    */
 }
 
 bool ExampleLevel1b::compare_obs_time(ExampleObservationId<std::string> obs1, ExampleObservationId<std::string> obs2, const std::string& geo_input_filename, Time search_time)
@@ -201,7 +203,7 @@ ExampleObservationId<std::string> ExampleLevel1b::closest_obs(const std::string&
 
 }
 
-double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon) {
+/*double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, ExampleObservationId<std::string> obs_id, double lat, double lon) {
     ExampleLevel1b curr_level1b (geo_input_filename, obs_id);
     // TODO: Add support for varying instrument index
     DoubleWithUnit curr_lat = curr_level1b.latitude(0);
@@ -213,4 +215,4 @@ double ExampleLevel1b::obs_distance(const std::string& geo_input_filename, Examp
     spherical_point curr_point(curr_lon.value, curr_lat.value);
     double seperation = boost::geometry::distance(in_point, curr_point) * earth_radius;
     return seperation;
-}
+}*/

@@ -1,12 +1,14 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     example_level_1b.cc
+    example_level_1b_info.cc
     example_met_file.cc
     example_observation_id.cc
 )
 
 set(TEST_SOURCES
     example_level_1b_test.cc
+    example_level_1b_info_test.cc
     example_met_file_test.cc
 )
 

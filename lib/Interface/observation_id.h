@@ -7,7 +7,7 @@ namespace FullPhysics {
   for Observation IDs so the abstract base L1B reader class can
   specify it as the generic return type for some of its functions.
 *******************************************************************/
-class ObservationId {
+template<class T> class ObservationId {
 public:
   // Have a virtual member function, which forces RTTI information to
   // be available.

@@ -102,6 +102,7 @@ BOOST_AUTO_TEST_CASE(closest_obs_time)
     BOOST_CHECK_EQUAL(closest.data_index(), expected_index);
 }
 
+/*
 BOOST_AUTO_TEST_CASE(obs_distance)
 {
     double expected_dist = 4249.55;
@@ -111,6 +112,6 @@ BOOST_AUTO_TEST_CASE(obs_distance)
     h_file->close();
     double dist = ExampleLevel1b::obs_distance(input_filename, obs_id, 0.0, 0.0);
     BOOST_CHECK_CLOSE(dist, expected_dist, 0.01);
-}
+}*/
 
 BOOST_AUTO_TEST_SUITE_END()

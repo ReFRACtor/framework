@@ -154,12 +154,6 @@ public:
 
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
 
-//-----------------------------------------------------------------------
-/// List of all valid observations
-//-----------------------------------------------------------------------
-
-  static std::vector<ObservationId> obs_list(const std::string& geo_input_filename);
-
 };
 } // End of FullPhysics namespace
 #endif
