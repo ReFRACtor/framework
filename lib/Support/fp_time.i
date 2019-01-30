@@ -15,7 +15,7 @@
 #ifdef SWIGRUBY
  %typemap(in) FullPhysics::Time {
   if(rb_obj_is_kind_of($input, rb_const_get(rb_cObject, 
-					    rb_intern("Time"))) != Qtrue) {
+                                            rb_intern("Time"))) != Qtrue) {
     rb_raise(rb_eArgError, "Argument must be of type Time"); SWIG_fail;
   }
   $1 = FullPhysics::Time::time_unix(NUM2DBL(rb_funcall($input, rb_intern("to_f"), 0)));
@@ -23,7 +23,7 @@
 
  %typemap(in) const FullPhysics::Time& (FullPhysics::Time t){
   if(rb_obj_is_kind_of($input, rb_const_get(rb_cObject, 
-					    rb_intern("Time"))) != Qtrue) {
+                                            rb_intern("Time"))) != Qtrue) {
     rb_raise(rb_eArgError, "Argument must be of type Time"); SWIG_fail;
   }
   t = FullPhysics::Time::time_unix(NUM2DBL(rb_funcall($input, rb_intern("to_f"), 0)));
@@ -32,19 +32,19 @@
 
  %typemap(out) FullPhysics::Time {
   $result = rb_funcall(rb_const_get(rb_cObject, rb_intern("Time")), 
-		       rb_intern("at"), 1, 
-		       rb_float_new($1.unix_time()));
+                       rb_intern("at"), 1, 
+                       rb_float_new($1.unix_time()));
  }
 
  %typemap(out) const FullPhysics::Time& {
   $result = rb_funcall(rb_const_get(rb_cObject, rb_intern("Time")), 
-		       rb_intern("at"), 1, 
-		       rb_float_new($1->unix_time()));
+                       rb_intern("at"), 1, 
+                       rb_float_new($1->unix_time()));
  }
 
  %typemap(typecheck,precedence=SWIG_TYPECHECK_INTEGER) FullPhysics::Time, const FullPhysics::Time& {
   $1 = (rb_obj_is_kind_of($input, rb_const_get(rb_cObject, 
-					       rb_intern("Time"))) == Qtrue);
+                                               rb_intern("Time"))) == Qtrue);
  }
 #endif
 
@@ -83,7 +83,7 @@
 //   static PyObject* obj = 0;
 //   if(!obj)
 //     obj = PyDict_GetItemString(PyModule_GetDict(datetime_module()) , 
-// 			       "datetime");
+//                                "datetime");
 //   return obj;
 // }
 
@@ -109,7 +109,7 @@
 //   static PyObject* obj = 0;
 //   if(!obj)
 //     obj = PyDict_GetItemString(PyModule_GetDict(time_module()) , 
-// 			       "mktime");
+//                                "mktime");
 //   return obj;
 // }
 
@@ -122,8 +122,8 @@
 // FullPhysics::Time datetime_to_time(PyObject* datetime)
 // {
 //   PyObject* tm = PyObject_CallMethod(datetime, 
-// 				     const_cast<char*>("timetuple"), 
-// 				     const_cast<char*>(""));
+//                                      const_cast<char*>("timetuple"), 
+//                                      const_cast<char*>(""));
 //   PythonObject res(PyObject_CallFunctionObjArgs(time_dot_mktime(), tm, NULL));
 //   double tval = PyFloat_AsDouble(res);
 //   PythonObject res2(PyObject_GetAttrString(datetime, "microsecond"));
@@ -172,8 +172,8 @@
 
 // %typemap(out) FullPhysics::Time {
 //   $result = PyObject_CallMethod(datetime_dot_datetime(), 
-// 				const_cast<char*>("fromtimestamp"), 
-// 				const_cast<char*>("d"), $1.unix_time());
+//                                 const_cast<char*>("fromtimestamp"), 
+//                                 const_cast<char*>("d"), $1.unix_time());
 // }
 
 // //--------------------------------------------------------------
@@ -183,8 +183,8 @@
 
 // %typemap(out) const FullPhysics::Time& {
 //   $result = PyObject_CallMethod(datetime_dot_datetime(), 
-// 				const_cast<char*>("fromtimestamp"), 
-// 				const_cast<char*>("d"), $1->unix_time());
+//                                 const_cast<char*>("fromtimestamp"), 
+//                                 const_cast<char*>("d"), $1->unix_time());
 // }
 
 // //--------------------------------------------------------------
@@ -198,8 +198,7 @@
 // #endif
 
 %pythoncode {
-import datetime
-import time
+import datetime as dt
 
 def _new_time(pgs):
   return Time.time_pgs(pgs)
@@ -250,6 +249,13 @@ public:
   %pythoncode {
 def __reduce__(self):
   return _new_time, (self.pgs(),)
+
+def as_datetime(self):
+  "Convert to a Python datetime object"
+  return dt.datetime.fromtimestamp(self.unix_time, tz=dt.timezone(dt.timedelta(0)))
+
+def __call__(self):
+  return self.as_datetime()
 
   }
 #endif
