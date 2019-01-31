@@ -1,3 +1,5 @@
+#include <boost/make_shared.hpp>
+
 #include "example_met_file.h"
 #include "example_observation_id.h"
 
@@ -25,7 +27,7 @@ ExampleMetFile::ExampleMetFile(const boost::shared_ptr<HdfFile>& input_file, con
 }
 
 ExampleMetFile::ExampleMetFile(const std::string& input_filename, const std::string& observation_id)
-: input(new HdfFile(input_filename))
+: input(boost::make_shared<HdfFile>(input_filename))
 {
     ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();

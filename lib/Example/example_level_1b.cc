@@ -1,7 +1,5 @@
-#include <functional>
 #include <boost/lexical_cast.hpp>
-#include <boost/geometry.hpp>
-
+#include <boost/make_shared.hpp>
 
 #include "example_level_1b.h"
 #include "fp_exception.h"
@@ -25,7 +23,7 @@ ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, con
 }
 
 ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::string& observation_id)
-:input(new HdfFile(input_filename))
+:input(boost::make_shared<HdfFile>(input_filename))
 {
     ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
@@ -38,7 +36,7 @@ ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, Exa
 }
 
 ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, ExampleObservationId<std::string> observation_id)
-:input(new HdfFile(input_filename))
+:input(boost::make_shared<HdfFile>(input_filename))
 {
     data_index = observation_id.data_index();
 }

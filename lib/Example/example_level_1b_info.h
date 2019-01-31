@@ -18,7 +18,7 @@ public:
     ExampleLevel1bInfo(const boost::shared_ptr<HdfFile>& input_file);
     ExampleLevel1bInfo(const std::string& input_filename);
     
-    std::vector<std::shared_ptr<Level1b>> level1b_list();
+    std::vector<boost::shared_ptr<Level1b>> level1b_list();
     
 private:
     boost::shared_ptr<HdfFile> input;

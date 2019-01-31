@@ -1,3 +1,5 @@
+#include <boost/make_shared.hpp>
+
 #include "unit_test_support.h"
 #include "hdf_file.h"
 #include "example_level_1b.h"
@@ -9,7 +11,7 @@ BOOST_FIXTURE_TEST_SUITE(example_level_1b, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(load_file)
 {
-    boost::shared_ptr<HdfFile> h_file(new HdfFile(test_data_dir() + "in/common/l1b_example_data.h5"));
+    boost::shared_ptr<HdfFile> h_file = boost::make_shared<HdfFile>(test_data_dir() + "in/common/l1b_example_data.h5");
     ExampleLevel1b l1b_file(h_file, "2014090915251774");
 
     BOOST_CHECK_EQUAL(l1b_file.number_spectrometer(), 3);
@@ -56,8 +58,6 @@ BOOST_AUTO_TEST_CASE(load_file)
         BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_file.radiance(spec_idx).data(), radiance_read, 1e2);
         BOOST_CHECK_MATRIX_CLOSE_TOL(l1b_file.radiance(spec_idx).uncertainty(), uncertainty_read, 1e2);
     }
-
-    h_file->close();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

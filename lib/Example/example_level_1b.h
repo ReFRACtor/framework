@@ -1,6 +1,8 @@
 #ifndef EXAMPLE_L1B_H
 #define EXAMPLE_L1B_H
 
+#include <memory>
+
 #include "level_1b_sample_coefficient.h"
 #include "hdf_file.h"
 #include "unit.h"
