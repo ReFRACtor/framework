@@ -1,8 +1,6 @@
 #ifndef LEVEL_1B_INFO_H
 #define LEVEL_1B_INFO_H
 
-#include <memory>
-
 #include "fp_time.h"
 #include "level_1b.h"
 #include "double_with_unit.h"
@@ -22,7 +20,7 @@ public:
     virtual std::vector<boost::shared_ptr<Level1b>> level1b_list() = 0;
 
 //-----------------------------------------------------------------------
-/// Returns level1b observations that are closer than the thershold
+/// Returns level1b observations that are closer than the threshold
 /// to the lat/lon
 /// May be empty
 //-----------------------------------------------------------------------
@@ -43,7 +41,7 @@ public:
     
 
 //-----------------------------------------------------------------------
-/// Returns level1b observations that are closer than the thershold
+/// Returns level1b observations that are closer than the threshold
 /// to the search_time
 /// May be empty
 //-----------------------------------------------------------------------
