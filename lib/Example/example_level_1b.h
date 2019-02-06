@@ -5,7 +5,6 @@
 #include "hdf_file.h"
 #include "unit.h"
 #include "double_with_unit.h"
-#include "example_observation_id.h"
 
 namespace FullPhysics {
 
@@ -58,7 +57,6 @@ public:
     virtual void print(std::ostream& Os) const { Os << "ExampleL1b"; };
 
     virtual SpectralRange radiance(int Spec_index) const;
-
 
 private:
     DoubleWithUnit read_scalar_with_unit(const std::string& dataset_name, int i, const Unit& default_unit) const;
