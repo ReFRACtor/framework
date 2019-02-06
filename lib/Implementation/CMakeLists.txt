@@ -42,6 +42,7 @@ set(DIR_SOURCES
     ground_brdf.cc
     ground_coxmunk.cc
     ground_coxmunk_plus_lambertian.cc
+    ground_emissivity.cc
     ground_lambertian.cc
     gsl_lsp.cc
     gsl_mdm.cc
@@ -150,6 +151,7 @@ set(TEST_SOURCES
     ground_brdf_test.cc
     ground_coxmunk_plus_lambertian_test.cc
     ground_coxmunk_test.cc
+    ground_emissivity_test.cc
     ground_lambertian_test.cc
     hdf_constant_test.cc
     ils_convolution_test.cc
