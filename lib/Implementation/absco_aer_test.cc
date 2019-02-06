@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(basic)
 	      << "# This is tsub_expect\n"
 	      << f.temperature_grid()(53, Range(0,7)) << "\n"
               << "# This is readsub_expect\n"
-              << f.read<double>(4799.9928)(53, Range(0,7), 0) << "\n";
+              << f.read<double, 3>(4799.9928)(53, Range(0,7), 0) << "\n";
   }
   
   Array<double, 1> pgrid_expect;
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE(basic)
   expected_data >> tsub_expect;
   BOOST_CHECK_MATRIX_CLOSE(tsub, tsub_expect);
   // Same thing with reading the data.
-  Array<double, 1> readsub(f.read<double>(4799.9928)(53, Range(0,7), 0));
+  Array<double, 1> readsub(f.read<double, 3>(4799.9928)(53, Range(0,7), 0));
   Array<double, 1> readsub_expect;
   expected_data >> readsub_expect;
   // Numbers are very small, so we have a small tolerance.

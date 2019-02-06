@@ -251,7 +251,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     exactscat = 0;
 
-    Array<double, 1> moment_sum(pf.cols(), geometry->ngeoms());
+    Array<double, 2> moment_sum(pf.cols(), geometry->ngeoms());
     moment_sum = 0;
     for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
         for (int lay_idx = 0; lay_idx < pf.cols(); lay_idx++) {

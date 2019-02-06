@@ -141,7 +141,7 @@ private:
   mutable ArrayAd<double, 2> od_ind_wn;
   mutable int nlay;
   void fill_cache() const;
-  int nvar;
+  mutable int nvar;
 };
 }
 #endif

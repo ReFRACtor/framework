@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(basic)
   expected_data >> tsub_expect;
   BOOST_CHECK_MATRIX_CLOSE(tsub, tsub_expect);
   // Same thing with reading the data.
-  Array<double, 1> readsub(f.read<double>(12929.94)(53, Range::all(), 0));
+  Array<double, 1> readsub(f.read<double, 3>(12929.94)(53, Range::all(), 0));
   Array<double, 1> readsub_expect;
   expected_data >> readsub_expect;
   // Numbers are very small, so we have a small tolerance.
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(absco_4d)
   expected_data >> tsub_expect;
   BOOST_CHECK_MATRIX_CLOSE(tsub, tsub_expect);
   // Same thing with reading the data.
-  Array<double, 2> readsub(f.read<double>(12929.94)
+  Array<double, 2> readsub(f.read<double, 3>(12929.94)
 			   (53, Range::all(), Range::all()));
   Array<double, 2> readsub_expect;
   expected_data >> readsub_expect;
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(timing)
     if(j % 1000 == 0)
       std::cerr << "Reading " << j << "\n"
 		<< "Total time: " << tm.elapsed() << "\n";
-    f.read<float>(i);
+    f.read<float, 3>(i);
   }
   std::cerr << "Done\n"
 	    << "Total time: " << tm.elapsed() << "\n";
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(cache_boundary)
   AbscoHdf f(absco_data_dir() + "/o2_v3.3.0-lowres.hdf");
   // This wn corresponds to the value at line 5000, which is the next
   // cache line.
-  Array<double,3> data(f.read<double>(12795.0));
+  Array<double,3> data(f.read<double, 3>(12795.0));
   // We determined the expected results by direct inspection of the
   // HDF file.
   BOOST_CHECK_CLOSE(data(0,0, 0), 2.5300142872229016e-33, 1e-8);

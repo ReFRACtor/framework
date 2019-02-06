@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(read)
   BOOST_CHECK_EQUAL(st2.rows(), 1);
   BOOST_CHECK_EQUAL(st2.cols(), 3);
   BOOST_CHECK_EQUAL(st2.extent(thirdDim), 4);
-  Array<double, 2> stsub2 = st2(0, Range::all(), 0, Range::all());
+  Array<double, 2> stsub2 = st2(0, Range::all(), Range::all());
   BOOST_CHECK_MATRIX_CLOSE_TOL(stsub2, st_expect, 1e-5);
 
   BOOST_CHECK_EQUAL(h.read_attribute<std::string>("Level1b/altitude/Units"), "Meters");

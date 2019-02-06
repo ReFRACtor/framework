@@ -2552,9 +2552,9 @@ public:
   }
 
   void ts_layer_vary_flag(const blitz::Array<bool, 1>& ts_layer_vary_flag_in) {
-    blitz::Array<int,1> as_int(ts_layer_vary_flag_.shape());
+    blitz::Array<int,1> as_int(ts_layer_vary_flag_in.shape());
     as_int = blitz::where(ts_layer_vary_flag_in == true, FORTRAN_TRUE_INT, 0);
-    ts_layer_vary_flag_ = as_int;
+    ts_layer_vary_flag_(blitz::Range(0,as_int.rows()-1)) = as_int;
   }
 
   

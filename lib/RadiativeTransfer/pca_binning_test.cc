@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE(compare_with_offline)
     for(int bidx = 0; bidx < num_bins; bidx++) {
         int npoints = num_bin_points_expt(bidx);
 
-        BOOST_CHECK_MATRIX_CLOSE(bin_indexes_expt_packed(Range(pack_start, pack_start + npoints)), binning.bin_indexes()[bidx]);
+        BOOST_CHECK_MATRIX_CLOSE(bin_indexes_expt_packed(Range(pack_start, pack_start + npoints-1)), binning.bin_indexes()[bidx]);
         pack_start += npoints;
     }
 }

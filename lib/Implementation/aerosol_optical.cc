@@ -47,8 +47,7 @@ AerosolOptical::AerosolOptical
   rh(Rh),
   reference_wn_(Reference_wn),
   cache_is_stale(true),
-  // Need at least 1 jacobian var such as when not running a retrieval
-  nvar(1)
+  nvar(-1)
 {
   if((int) aprop.size() != number_particle())
     throw Exception("aprop needs to be size of number_particle()");
@@ -87,6 +86,19 @@ void AerosolOptical::fill_cache() const
 {
   if(!cache_is_stale)
     return;
+  // Initial time through, set nvar if we haven't already set this the
+  // state vector update (e.g., we call this before doing a state
+  // vector update)
+  if(nvar < 0) {
+    for(int j = 0; j < number_particle(); ++j) {
+      nvar = std::max(nvar, aprop[j]->extinction_coefficient_each_layer(reference_wn_).number_variable());
+      for(int i = 0; i < press->number_layer(); ++i)
+	nvar = std::max(nvar,
+			aext[j]->extinction_for_layer(i).number_variable());
+    }
+    for(int i = 0; i < press->number_layer(); ++i)
+      nvar = std::max(nvar, press->pressure_grid()(i).value.number_variable());
+  }
   od_ind_wn.resize(press->number_layer(), number_particle(), nvar);
   for(int i = 0; i < od_ind_wn.rows(); ++i) {
     AutoDerivativeWithUnit<double> delta_press = 

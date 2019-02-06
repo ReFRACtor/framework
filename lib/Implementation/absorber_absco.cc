@@ -447,14 +447,17 @@ ArrayAdWithUnit<double, 2> AbsorberAbsco::subset_broadener
   for(int i = 0; i < bvmr_sub.rows(); ++i) {
     if(a.broadener_name(i) == "h2o") {
       bvmr_sub(i, ra) = bvmr.value()(0, ra);
-      bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(0,ra,ra);
+      if(bvmr.number_variable() > 0)
+	bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(0,ra,ra);
     } else if(a.broadener_name(i) == "o2") {
       bvmr_sub(i, ra) = bvmr.value()(1, ra);
-      bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(1,ra,ra);
+      if(bvmr.number_variable() > 0)
+	bvmr_jac_sub(i, ra, ra) = bvmr.jacobian()(1,ra,ra);
     }  else
       throw Exception("Only support broadener 'h2o' and 'o2'");
   }
-  return ArrayAdWithUnit<double, 2>(ArrayAd<double, 2>(bvmr_sub, bvmr_jac_sub),
+  return ArrayAdWithUnit<double, 2>(ArrayAd<double, 2>(bvmr_sub, bvmr_jac_sub,
+						       bvmr.is_constant()),
 				    units::dimensionless);
 }
 

@@ -354,13 +354,19 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
 
   Range all = Range::all();
   BOOST_CHECK_CLOSE(lambertian_albedo, lambertian_albedo_exp(0), 1e-8);
-  BOOST_CHECK_MATRIX_CLOSE(deltau_vert_input, deltau_vert_input_exp(all, 0));
-  BOOST_CHECK_MATRIX_CLOSE(omega_total_input, omega_total_input_exp(all, 0));
-  BOOST_CHECK_MATRIX_CLOSE(phasmoms_total_input, phasmoms_total_input_exp(all, all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(deltau_vert_input(Range(0,deltau_vert_input_exp.rows()-1)) ,
+			   deltau_vert_input_exp(all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(omega_total_input(Range(0, omega_total_input_exp.rows()-1)),
+			   omega_total_input_exp(all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(phasmoms_total_input(Range(0,phasmoms_total_input_exp.rows()-1), Range(0,phasmoms_total_input_exp.cols() - 1)),
+			   phasmoms_total_input_exp(all, all, 0));
 
-  BOOST_CHECK_MATRIX_CLOSE(l_deltau_vert_input, l_deltau_vert_input_exp(all, all, 0));
-  BOOST_CHECK_MATRIX_CLOSE(l_omega_total_input, l_omega_total_input_exp(all, all, 0));
-  BOOST_CHECK_MATRIX_CLOSE(l_phasmoms_total_input, l_phasmoms_total_input_exp(all, all, all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(l_deltau_vert_input(Range(0,l_deltau_vert_input_exp.rows()-1), Range(0,l_deltau_vert_input_exp.cols()-1)),
+			   l_deltau_vert_input_exp(all, all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(l_omega_total_input(Range(0,l_omega_total_input_exp.rows()-1),Range(0,l_omega_total_input_exp.cols()-1)),
+			   l_omega_total_input_exp(all, all, 0));
+  BOOST_CHECK_MATRIX_CLOSE(l_phasmoms_total_input(Range(0,l_phasmoms_total_input.rows()-1),Range(0,l_phasmoms_total_input_exp.cols()-1),Range(0,l_phasmoms_total_input_exp.depth()-1)),
+			   l_phasmoms_total_input_exp(all, all, all, 0));
 
   // Copy to optical property type-structure inputs
   foptical.ts_lambertian_albedo(lambertian_albedo);

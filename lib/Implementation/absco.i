@@ -30,9 +30,9 @@ public:
     const ArrayAdWithUnit<double, 1>& Broadener_vmr) const;
   %extend {
     blitz::Array<double, 3> read_double(double wn) const 
-    { return $self->read<double>(wn); }
+    { return $self->read<double, 3>(wn); }
     blitz::Array<float, 3> read_float(double wn) const 
-    { return $self->read<float>(wn); }
+    { return $self->read<float, 3>(wn); }
   }
 };
 }

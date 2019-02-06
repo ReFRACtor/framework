@@ -44,9 +44,10 @@ private:
   blitz::Array<double, 2> t_jac; // t.jacobian(), in C order and contiguous
   blitz::Array<double, 3> b_jac; // b.jacobian(), in C order and contiguous
   // Various indexes used in the interpolation
-  blitz::Array<int, 1> ip, itp1, itp2, ib, ib2;
-  blitz::Array<double, 1> dftp1_dt, dftp2_dt, dfb_db,
-    fp, fb, ftp1, ftp2;
+  blitz::Array<int, 1> ip, itp1, itp2;
+  blitz::Array<int, 2> ib, ib2;
+  blitz::Array<double, 1> dftp1_dt, dftp2_dt, fp, ftp1, ftp2;
+  blitz::Array<double, 2> dfb_db, fb;
   mutable ArrayAd<double, 1> res; // We return the same results array
 				// each time, so we don't need to keep
 				// creating and destroying this.
@@ -155,7 +156,7 @@ public:
 /// \param wn Wave number to read
 /// \return Absorption cross section in cm^2 / molecule
 //-----------------------------------------------------------------------
-  template <class T> blitz::Array<T, 3> read(double wn) const;
+  template <class T, int D> blitz::Array<T, D> read(double wn) const;
   friend class AbscoInterpolator;
 protected:
 
@@ -166,6 +167,10 @@ protected:
 
   virtual blitz::Array<double, 3> read_double(double wn) const = 0;
   virtual blitz::Array<float, 3> read_float(double wn) const = 0;
+  virtual blitz::Array<double, 4> read_double_2b(double wn) const
+  { throw Exception("Don't support 2 broadners"); }
+  virtual blitz::Array<float, 4> read_float_2b(double wn) const 
+  { throw Exception("Don't support 2 broadners"); }
 private:
   double interpol(double X, const std::vector<double>& Xv, 
 		  int& i, double& df_dx) const;
@@ -176,14 +181,24 @@ private:
   void fill_pgrid_tgrid_and_bgrid() const;
 };
 
-template <> inline blitz::Array<double, 3> Absco::read<double>(double wn) const
+template <> inline blitz::Array<double, 3> Absco::read<double, 3>(double wn) const
 {
   return read_double(wn);
 }
 
-template <> inline blitz::Array<float, 3> Absco::read<float>(double wn) const
+template <> inline blitz::Array<float, 3> Absco::read<float, 3>(double wn) const
 {
   return read_float(wn);
+}
+
+template <> inline blitz::Array<double, 4> Absco::read<double, 4>(double wn) const
+{
+  return read_double_2b(wn);
+}
+
+template <> inline blitz::Array<float, 4> Absco::read<float, 4>(double wn) const
+{
+  return read_float_2b(wn);
 }
 
 }
