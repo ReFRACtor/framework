@@ -18,3 +18,12 @@ bindings/python/.deps/swig_python_wrap.Tpcc
 # Vim swap files
 *.swp
 .tramp_history
+
+# Eclipse directories
+/.settings
+/.project
+/.cproject
+/.pydevproject
+
+# Build directories
+/build*
