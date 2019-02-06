@@ -1,8 +1,6 @@
 #ifndef EXAMPLE_L1B_H
 #define EXAMPLE_L1B_H
 
-#include <memory>
-
 #include "level_1b_sample_coefficient.h"
 #include "hdf_file.h"
 #include "unit.h"
@@ -20,9 +18,6 @@ class ExampleLevel1b: public Level1bSampleCoefficient {
 public:
     ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
     ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);
-    ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, ExampleObservationId<std::string> observation_id);
-    ExampleLevel1b(const std::string& input_filename, ExampleObservationId<std::string> observation_id);
-
     virtual ~ExampleLevel1b() {}
 
     virtual int number_spectrometer() const;
