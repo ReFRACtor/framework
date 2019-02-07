@@ -39,7 +39,6 @@ BOOST_AUTO_TEST_CASE(basic)
     BOOST_CHECK_CLOSE(surf_param.value()(0), 0.969, 1e-6);
   
     // Slope jacobian should just be input_wn - ref_wn
-    std::cerr << "jacobian = " << surf_param.jacobian();
     BOOST_CHECK_CLOSE(surf_param.jacobian()(0, 0), 1, 1e-8);
     BOOST_CHECK_CLOSE(surf_param.jacobian()(0, 1), 1090-900, 1e-6);
 }

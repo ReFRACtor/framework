@@ -67,7 +67,7 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
     surface_type_int = BPDFVEGN;
   } else if(dynamic_cast<GroundBrdfSoil*>(atm->ground().get())) {
     surface_type_int = BPDFSOIL;
-   } else {
+  } else {
     Exception err_msg;
     err_msg << "Spurr RT can not determine surface type integer from ground class: "
             << atm->ground();
