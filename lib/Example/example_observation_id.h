@@ -1,5 +1,5 @@
-#ifndef OBSERVATION_ID_H
-#define OBSERVATION_ID_H
+#ifndef EXAMPLE_OBSERVATION_ID_H
+#define EXAMPLE_OBSERVATION_ID_H
 
 #include <boost/shared_ptr.hpp>
 #include "hdf_file.h"
@@ -10,9 +10,9 @@ namespace FullPhysics {
   HDF file is read along with some sort of identifer to obtain
   an index that should be used for extracting data.
 *******************************************************************/
-template<class T> class ObservationId {
+template<class T> class ExampleObservationId {
 public:
-    ObservationId(const boost::shared_ptr<HdfFile>& input, const std::string& dataset_name, const T& identifier);
+    ExampleObservationId(const boost::shared_ptr<HdfFile>& input, const std::string& dataset_name, const T& identifier);
     int data_index() const {return data_index_;}
 private:
     int data_index_;

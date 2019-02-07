@@ -1,8 +1,9 @@
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 #include "example_level_1b.h"
 #include "fp_exception.h"
-#include "observation_id.h"
+#include "example_observation_id.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -17,16 +18,14 @@ REGISTER_LUA_END()
 ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id)
 :input(input_file)
 {
-    // All work done in initialization above
-    ObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
 ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::string& observation_id)
-:input(new HdfFile(input_filename))
+:input(boost::make_shared<HdfFile>(input_filename))
 {
-    // All work done in initialization above
-    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 

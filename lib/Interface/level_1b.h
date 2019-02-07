@@ -151,7 +151,7 @@ public:
 //-----------------------------------------------------------------------
 
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
-   
+
 };
 } // End of FullPhysics namespace
 #endif
