@@ -131,13 +131,11 @@ ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const Ar
     if (surface_type == EMISSIVITY) {
         // LIDORT can compute emissivity for any BRDF, but if it is the explicitly
         // set up as a surface type then set up lambertian surface as 1.0 - emissivity value
-        ArrayAd<double, 1> emiss_params(rt_surf_params.rows(), rt_surf_params.number_variable());
-        emiss_params(0) = 1.0 - rt_surf_params(0);
+        // Value must be modified in place to make jacobians work correctly
+        rt_surf_params(0) = 1.0 - rt_surf_params(0);
+    } 
 
-        setup_lambertian_inputs(0, emiss_params, parameter_indexes);
-    } else {
-        setup_lambertian_inputs(0, rt_surf_params, parameter_indexes);
-    }
+    setup_lambertian_inputs(0, rt_surf_params, parameter_indexes);
 
     break;
   case COXMUNK:
