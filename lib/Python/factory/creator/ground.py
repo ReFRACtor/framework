@@ -48,3 +48,11 @@ class GroundLambertian(CreatorFlaggedValueMultiChannel):
 
     def create(self, **kwargs):
         return rf.GroundLambertian(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+
+class GroundEmissivity(CreatorFlaggedValueMultiChannel):
+
+    band_reference = param.ArrayWithUnit(dims=1)
+    desc_band_name = param.Iterable()
+
+    def create(self, **kwargs):
+        return rf.GroundEmissivity(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
