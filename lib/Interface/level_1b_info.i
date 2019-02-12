@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-
+%include <std_vector.i>
 %include "common.i"
 
 %{
@@ -31,3 +31,5 @@ private:
     static bool compare_level1b_time(boost::shared_ptr<Level1b>& level1b_1, boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index=0);
 };
 }
+
+%template(vector_level1b) std::vector<boost::shared_ptr<FullPhysics::Level1b>>;
