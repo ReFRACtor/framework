@@ -83,6 +83,15 @@ class DefaultConstant : public Constant {
 	  -1.33287e-10, 3.98445e-13, -3.54239e-16}};
       return sdp;
     }
+
+    //-----------------------------------------------------------------------
+    /// equatorial radius in meters, Clarke 1866 ellipsoid
+    //-----------------------------------------------------------------------
+    virtual DoubleWithUnit equatorial_radius() const
+    {
+      return DoubleWithUnit(6378206.4, "m");
+    }
+
   };
 }
 #endif

@@ -1,10 +1,10 @@
-#include "observation_id.h"
+#include "example_observation_id.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
 template<class T>
-ObservationId<T>::ObservationId(const boost::shared_ptr<HdfFile>& input, const std::string& dataset_name, const T& identifier)
+ExampleObservationId<T>::ExampleObservationId(const boost::shared_ptr<HdfFile>& input, const std::string& dataset_name, const T& identifier)
 {
     Array<T, 1> file_ids = input->read_field<T, 1>(dataset_name);
 
@@ -24,5 +24,5 @@ ObservationId<T>::ObservationId(const boost::shared_ptr<HdfFile>& input, const s
     }
 }
 
-template class FullPhysics::ObservationId<std::string>;
-template class FullPhysics::ObservationId<int>;
+template class FullPhysics::ExampleObservationId<std::string>;
+template class FullPhysics::ExampleObservationId<int>;
