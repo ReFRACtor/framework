@@ -2748,6 +2748,27 @@ function ConfigCommon.open_absco(self, fname, table_scale)
 end
 
 ------------------------------------------------------------
+--- Open a AbscoAer
+------------------------------------------------------------
+
+function ConfigCommon.open_absco_aer(self, fname, table_scale)
+   if(os.getenv("abscodir")) then
+      return AbscoAer(os.getenv("abscodir") .. "/" .. fname, table_scale)
+   end
+   local absco
+   if(self.absco_local_path and
+      pcall(function() absco = 
+               AbscoAer(self.absco_local_path .. "/" .. fname, 
+			table_scale) end)) then
+      return absco
+   end
+   if(self.absco_path) then
+      return AbscoAer(self.absco_path .. "/" .. fname, table_scale)
+   end
+   error({code=-1})
+end
+
+------------------------------------------------------------
 --- Handle when table_scale is an array.
 ------------------------------------------------------------
 
@@ -2769,6 +2790,24 @@ function ConfigCommon.open_absco_byspecindex(self, fname, sb, table_scale)
    error({code=-1})
 end
 
+function ConfigCommon.open_absco_aer_byspecindex(self, fname, sb, table_scale)
+   local tsc = ConfigCommon.to_VectorDouble(table_scale)
+   if(os.getenv("abscodir")) then
+      return AbscoAer(os.getenv("abscodir") .. "/" .. fname, sb, tsc)
+   end
+   local absco
+   if(self.absco_local_path and
+      pcall(function() absco = 
+               AbscoAer(self.absco_local_path .. "/" .. fname, sb, tsc) end)) then
+      return absco
+   end
+   if(self.absco_path) then
+      return AbscoAer(self.absco_path .. "/" .. fname, sb, 
+		      tsc)
+   end
+   error({code=-1})
+end
+
 ------------------------------------------------------------
 --- Common stuff when creating an absorber VMR.
 ------------------------------------------------------------
@@ -2778,15 +2817,32 @@ CreatorVmr = CreatorApriori:new()
 function CreatorVmr:create()
    local res = {}
    if(self.table_scale == nil) then
-      res.absco = self.config:open_absco(self.absco, 1.0)
+      if(self.absco_aer ~= nil) then
+	 res.absco = self.config:open_absco_aer(self.absco_aer, 1.0)
+      else
+	 res.absco = self.config:open_absco(self.absco, 1.0)
+      end
    else
       if(type(self.table_scale) == "number") then
-	 res.absco = self.config:open_absco(self.absco, self.table_scale)
+	 if(self.absco_aer ~= nil) then
+	    res.absco = self.config:open_absco_aer(self.absco_aer, self.table_scale)
+	 else
+	    res.absco = self.config:open_absco(self.absco, self.table_scale)
+	 end
       else
-	 res.absco = self.config:open_absco_byspecindex(self.absco, 
+	 if(self.absco_aer ~= nil) then
+	    res.absco = self.config:open_absco_aer_byspecindex(self.absco_aer, 
 					self.config:spectral_bound(),
 					self.table_scale)
+	 else
+	    res.absco = self.config:open_absco_byspecindex(self.absco, 
+					self.config:spectral_bound(),
+					self.table_scale)
+	 end
       end
+   end
+   if(self.absco_aer_interpolation_type ~= nil) then
+      res.absco:interpolation_type(self.absco_aer_interpolation_type)
    end
    res.vmr = self:create_vmr()
    return res

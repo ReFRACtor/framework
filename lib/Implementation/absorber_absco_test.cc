@@ -118,3 +118,15 @@ BOOST_AUTO_TEST_CASE(jacobian)
 
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_FIXTURE_TEST_SUITE(absorber_absco2, ConfigurationTwoBroadener)
+BOOST_AUTO_TEST_CASE(two_broadener_optical_depth_each_layer)
+{
+  secondIndex i2;
+  IfstreamCs expected_data(test_data_dir() + "expected/absorber_absco/optical_depth_each_layer");
+  Absorber& a = *config_absorber;
+  Array<double, 1> od_calc_1( sum(a.optical_depth_each_layer(12929.94,0).value(),i2) );
+  std::cerr << od_calc_1;
+}
+BOOST_AUTO_TEST_SUITE_END()
+
+

@@ -62,22 +62,22 @@ double AbsorberAbsco::integrand
 			     punit).convert(Unit("cm^-2 / Pa")).value.value();
   AutoDerivativeWithUnit<double> tder = temp_func(punit);
   DoubleWithUnit t(tder.value.value(), tder.units);
-  AutoDerivativeWithUnit<double> bvmrder;
-  if(gas_absorption[Species_index]->broadener_name(0) == "h2o" ||
-     gas_absorption[Species_index]->broadener_name(0) == "")
-    bvmrder = h2o_vmr_func(punit);
-  else if(gas_absorption[Species_index]->broadener_name(0) == "o2")
-    bvmrder = o2_vmr_func(punit);
-  else {
-    Exception e;
-    e << "Unrecognized broadener. We only recognize 'h2o' and 'o2':\n"
-      << "  Species_index: " << Species_index << "\n"
-      << "  Broadener:     " << gas_absorption[Species_index]->broadener_name(0) << "\n";
-    throw e;
-  }
-  blitz::Array<double, 1> bvmval(1);
-  bvmval(0) = bvmrder.value.value();
-  ArrayWithUnit<double, 1> bvmr(bvmval, bvmrder.units);
+  blitz::Array<double, 1> bmval(std::max(1, gas_absorption[Species_index]->number_broadener()));
+  bmval(0) = 0;
+  for(int i = 0; i < gas_absorption[Species_index]->number_broadener(); ++i)
+    if(gas_absorption[Species_index]->broadener_name(i) == "h2o")
+      bmval(i) = h2o_vmr_func(punit).value.value();
+    else if(gas_absorption[Species_index]->broadener_name(i) == "o2")
+      bmval(i) = o2_vmr_func(punit).value.value();
+    else {
+      Exception e;
+      e << "Unrecognized broadener. We only recognize 'h2o' and 'o2':\n"
+	<< "  Species_index:   " << Species_index << "\n"
+	<< "  Broadener index: " << i << "\n"
+	<< "  Broadener:       " << gas_absorption[Species_index]->broadener_name(i) << "\n";
+      throw e;
+    }
+  ArrayWithUnit<double, 1> bvmr(bmval, units::dimensionless);
   if(gas_absorption[Species_index]->have_data(wn)) {
     DoubleWithUnit cross_sec = gas_absorption[Species_index]->absorption_cross_section(wn, punit, t, bvmr);
     return v1 * cross_sec.value;
@@ -632,16 +632,17 @@ AbsorberAbsco::AbsorberAbsco
   h2o_index = gas_index("H2O");
   o2_index = gas_index("O2");
   // Right now, we only support H2O, O2 as a broadener.
-  BOOST_FOREACH(boost::shared_ptr<GasAbsorption>& ga, gas_absorption)
-    if(ga->broadener_name(0) != "" &&
-       ga->broadener_name(0) != "h2o" &&
-       ga->broadener_name(0) != "o2") {
-      Exception e;
-      e << "Right now, we only support H2O and O2 as a broadener. "
-	<< "The GasAbsorption has a broadener of \"" 
-	<< ga->broadener_name(0) << "\"";
+  BOOST_FOREACH(boost::shared_ptr<GasAbsorption>& ga, gas_absorption) {
+    for(int i = 0; i < ga->number_broadener(); ++i)
+      if(ga->broadener_name(i) != "h2o" &&
+	 ga->broadener_name(i) != "o2") {
+	Exception e;
+	e << "Right now, we only support H2O and O2 as a broadener. "
+	  << "The GasAbsorption has a broadener of \"" 
+	  << ga->broadener_name(i) << "\" for index " << i;
       throw e;
     }
+  }
 }
 
 // See base class for description

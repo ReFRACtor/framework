@@ -37,8 +37,9 @@ namespace FullPhysics {
 *******************************************************************/
 class AbscoAer: public Absco {
 public:
-  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID, NEAREST_NEIGHBOR_WN,
-			  INTERPOLATE_WN};
+  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0,
+			  NEAREST_NEIGHBOR_WN=1,
+			  INTERPOLATE_WN=2};
   AbscoAer(const std::string& Fname, double Table_scale = 1.0, 
 	   int Cache_nline = 5000,
 	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);

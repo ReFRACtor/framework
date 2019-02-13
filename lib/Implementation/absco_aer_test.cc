@@ -154,6 +154,7 @@ BOOST_AUTO_TEST_CASE(read_o2)
   blitz::Array<double, 1> bvalue(1);
   bvalue(0) = 0;
   ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
+  std::cerr << "Hi there 1\n";
   double t = f.absorption_cross_section(wn, press, temp,
 					 broadener).value;
   std::cerr << t << "\n";

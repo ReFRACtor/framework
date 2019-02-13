@@ -213,6 +213,11 @@ AbscoInterpolator::AbscoInterpolator
 template<class T> Array<double, 1> 
 AbscoInterpolator::absorption_cross_section_noderiv_calc(double wn) const
 {
+  if(fb.rows() == 2) {
+    std::cerr << "Hi there\n"
+	      << fb << "\n"
+	      << ib << "\n";
+  }
   Array<T, 3> a(absco->read<T, 3>(wn));
   for(int i = 0; i < res.rows(); ++i) {
     double t11 = a(ip(i), itp1(i), ib(0, i)) * (1 - ftp1(i)) + 

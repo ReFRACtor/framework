@@ -5,6 +5,8 @@ using namespace FullPhysics;
 using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
+typedef void (AbscoAer::*a1)(AbscoAer::InterpolationType);
+
 namespace FullPhysics {
 void register_lua_AbscoAer(lua_State *ls) { \
 luabind::module(ls) [ 
@@ -14,6 +16,7 @@ luabind::class_<AbscoAer,Absco,boost::shared_ptr<GasAbsorption> >
 .def(luabind::constructor<const std::string&,double>())
 .def(luabind::constructor<const std::string&,const SpectralBound&, 
      const std::vector<double>&>())
+.def("interpolation_type", ((a1) & AbscoAer::interpolation_type))
 ];}
 }
 #endif
