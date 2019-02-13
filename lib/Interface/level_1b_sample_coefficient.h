@@ -26,6 +26,13 @@ public:
   virtual ~Level1bSampleCoefficient() { };
 
 //-----------------------------------------------------------------------
+/// Number of samples of data corresponding to the sample_grid size for
+//  a given instrument channel
+//-----------------------------------------------------------------------
+
+  virtual int number_sample(int Spec_index) const = 0;
+
+//-----------------------------------------------------------------------
 /// Returns coefficients for an equation describing the special domain
 /// used to translate radiance value indexes to their corresponding 
 /// spectral grid. (ie wavenumber, wavelength, etc)

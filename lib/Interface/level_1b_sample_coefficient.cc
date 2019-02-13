@@ -55,7 +55,7 @@ double Level1bSampleCoefficient::calculate_sample_value_from_coeffs(int Spec_ind
 
 
 SpectralDomain Level1bSampleCoefficient::sample_grid(int Spec_index) const {
-    int num_samples = this->radiance(Spec_index).data().rows();
+    int num_samples = this->number_sample(Spec_index);
     int sample_offset = (this->one_based_) ? 1 : 0;
     Array<double, 1> grid_data = Array<double, 1>(num_samples);
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {

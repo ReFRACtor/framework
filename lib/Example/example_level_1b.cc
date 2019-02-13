@@ -35,6 +35,13 @@ int ExampleLevel1b::number_spectrometer() const
     return lat_shape(1);
 }
 
+int ExampleLevel1b::number_sample(int Spec_index) const
+{
+    std::string rad_ds_name = group_name + "/radiance_" + boost::lexical_cast<std::string>(Spec_index + 1);
+    TinyVector<int, 2> rad_shape = input->read_shape<2>(rad_ds_name);
+    return rad_shape(1);
+}
+
 SpectralRange ExampleLevel1b::radiance(int Spec_index) const
 {
     std::string rad_ds_name = group_name + "/radiance_" + boost::lexical_cast<std::string>(Spec_index + 1);
