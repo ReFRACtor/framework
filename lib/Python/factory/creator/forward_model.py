@@ -40,13 +40,18 @@ class MicroWindowRanges(Creator):
 
     # List of microwindows to be mapped to spectral channels
     # n_microwindows x 2
-    micro_windows = param.ArrayWithUnit(dims=2)
+    micro_windows = param.ArrayWithUnit(dims=2, required=False)
 
     def create(self, **kwargs):
 
         full_ranges = self.full_ranges()
         micro_windows = self.micro_windows()
         num_channels = full_ranges.rows
+
+        # If micro_windows are not supplied use the full_ranges as the
+        # window values.
+        if micro_windows is None:
+            micro_windows = full_ranges
 
         # Convert microwindows to the units
         mw_conv = micro_windows.convert_wave(full_ranges.units)
