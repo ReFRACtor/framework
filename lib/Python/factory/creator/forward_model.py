@@ -30,6 +30,54 @@ class SpectralWindowRange(Creator):
         else:
             return rf.SpectralWindowRange(win_ranges)
 
+class MicroWindowRanges(Creator):
+    """Creates a SpectralWindowRange object from a list of microwindows. The microwindows can 
+    can be in any order, but they need to be contained in the full_ranges."""
+
+    # List of full spectral ranges for each band
+    # n_channels x 2
+    full_ranges = param.ArrayWithUnit(dims=2)
+
+    # List of microwindows to be mapped to spectral channels
+    # n_microwindows x 2
+    micro_windows = param.ArrayWithUnit(dims=2)
+
+    def create(self, **kwargs):
+
+        full_ranges = self.full_ranges()
+        micro_windows = self.micro_windows()
+        num_channels = full_ranges.rows
+
+        # Convert microwindows to the units
+        mw_conv = micro_windows.convert_wave(full_ranges.units)
+
+        # Map microwindows to spectral channels
+        mapping = { chan_idx: [] for chan_idx in range(num_channels) }
+        max_num_mw = 0
+        for mw_range in mw_conv.value:
+            # convert_wave may have reversed order
+            mw_beg, mw_end = sorted(mw_range)
+
+            match_found = False
+            for chan_idx, (full_beg, full_end) in enumerate(full_ranges.value):
+                if mw_beg >= full_beg and mw_end <= full_end:
+                    mapping[chan_idx].append( (mw_beg, mw_end) )
+                    match_found = True
+                    max_num_mw = max(max_num_mw, len(mapping[chan_idx]))
+                    break
+
+            if not match_found:
+                raise Exception('Could not find channel bounding microwindow: ({}, {})'.format(mw_beg, mw_end))
+
+        # Create microwindow ranges
+        win_ranges = np.zeros((num_channels, max_num_mw, 2))
+        for chan_idx in range(num_channels):
+            for mw_idx, mw_range in enumerate(mapping[chan_idx]):
+                win_ranges[chan_idx, mw_idx, :] = mw_range
+
+        # Assign to configuration
+        return rf.SpectralWindowRange(rf.ArrayWithUnit_double_3(win_ranges, full_ranges.units))
+
 class SpectrumSamplingBase(Creator, PerChannelMixin):
 
     high_res_spacing = param.Choice(param.ArrayWithUnit(dims=1), param.DoubleWithUnit())
