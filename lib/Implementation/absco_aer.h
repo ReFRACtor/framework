@@ -98,6 +98,8 @@ public:
 protected:
   virtual blitz::Array<double, 3> read_double(double wn) const;
   virtual blitz::Array<float, 3> read_float(double wn) const;
+  virtual blitz::Array<double, 4> read_double_2b(double wn) const;
+  virtual blitz::Array<float, 4> read_float_2b(double wn) const;
 private:
   bool is_float_;
   int cache_nline;
