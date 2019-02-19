@@ -25,6 +25,7 @@ public:
   void add_observer_and_keep_reference(boost::shared_ptr<Observer<T> >& Obs);
   virtual void add_observer(Observer<T>& Obs) = 0;
   virtual void remove_observer(Observer<T>& Obs) = 0;
+  void clear_observers();
 protected:
   void notify_update_do(const T& Self);
   void add_observer_do(Observer<T>& Obs, T& t);
