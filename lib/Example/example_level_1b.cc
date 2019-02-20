@@ -1,8 +1,9 @@
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 #include "example_level_1b.h"
 #include "fp_exception.h"
-#include "observation_id.h"
+#include "example_observation_id.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -17,16 +18,14 @@ REGISTER_LUA_END()
 ExampleLevel1b::ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id)
 :input(input_file)
 {
-    // All work done in initialization above
-    ObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input_file, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
 ExampleLevel1b::ExampleLevel1b(const std::string& input_filename, const std::string& observation_id)
-:input(new HdfFile(input_filename))
+:input(boost::make_shared<HdfFile>(input_filename))
 {
-    // All work done in initialization above
-    ObservationId<std::string> obs_id(input, "observation_ids", observation_id);
+    ExampleObservationId<std::string> obs_id(input, "observation_ids", observation_id);
     data_index = obs_id.data_index();
 }
 
@@ -34,6 +33,13 @@ int ExampleLevel1b::number_spectrometer() const
 {
     TinyVector<int, 2> lat_shape = input->read_shape<2>(group_name + "/latitude");
     return lat_shape(1);
+}
+
+int ExampleLevel1b::number_sample(int Spec_index) const
+{
+    std::string rad_ds_name = group_name + "/radiance_" + boost::lexical_cast<std::string>(Spec_index + 1);
+    TinyVector<int, 2> rad_shape = input->read_shape<2>(rad_ds_name);
+    return rad_shape(1);
 }
 
 SpectralRange ExampleLevel1b::radiance(int Spec_index) const

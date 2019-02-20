@@ -61,6 +61,9 @@ public:
           { return $self->read_field_with_unit<double, 3>(fname); }
       ArrayWithUnit<double, 4> read_double_with_unit_4d(const std::string& fname) 
           { return $self->read_field_with_unit<double, 4>(fname); }
+
+      std::string read_attribute_string(const std::string& aname)
+          { return $self->read_attribute<std::string>(aname); } 
   
       template<class T, int D> ArrayWithUnit<T, D> read_field_with_unit(const std::string& Dataname) const;
     }

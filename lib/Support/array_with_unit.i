@@ -16,6 +16,7 @@
 %pythoncode %{
     import numpy as np
     from .double_with_unit import DoubleWithUnit
+    from .unit import Unit
 %}
 
 namespace FullPhysics {
@@ -94,3 +95,28 @@ public:
 %template(ArrayWithUnit_double_1) FullPhysics::ArrayWithUnit<double, 1>;
 %template(ArrayWithUnit_double_2) FullPhysics::ArrayWithUnit<double, 2>;
 %template(ArrayWithUnit_double_3) FullPhysics::ArrayWithUnit<double, 3>;
+
+%pythoncode %{
+    class ArrayWithUnit(object):
+        """Factory class that simplifies ArrayWithUnit templated SWIG instance instantiation based on
+        the dimensions of the input array"""
+
+        def __new__(self, value, units):        
+            if not isinstance(value, np.ndarray):
+                raise Exception("value argument must be an numpy array instance")
+
+            if not isinstance(units, str) and not isinstance(units, Unit):
+                raise Exception("units argument must be a string or Unit instance")
+
+            # Cast to a double array to ensure compatibility
+            dbl_value = value.astype(float)
+
+            if len(dbl_value.shape) == 1:
+                return ArrayWithUnit_double_1(dbl_value, units)
+            elif len(dbl_value.shape) == 2:
+                return ArrayWithUnit_double_2(dbl_value, units)
+            elif len(dbl_value.shape) == 3:
+                return ArrayWithUnit_double_3(dbl_value, units)
+            else:
+                raise Exception("no template instance implemented for array with {} dimensions".format(len(dbl_value.shape)))
+%}

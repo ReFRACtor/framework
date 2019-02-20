@@ -17,7 +17,8 @@ namespace FullPhysics {
         BPDFSOIL    = 10,
         BPDFVEGN    = 11,
         BRDFNDVI    = 12,
-        NEWCMGLINT  = 13
+        NEWCMGLINT  = 13,
+        EMISSIVITY  = 100 // Not a real index from LIDORT family, but included to meet interface
     };
  
 }

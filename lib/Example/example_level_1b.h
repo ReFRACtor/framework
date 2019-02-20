@@ -20,6 +20,7 @@ public:
     virtual ~ExampleLevel1b() {}
 
     virtual int number_spectrometer() const;
+    virtual int number_sample(int i) const;
 
     virtual DoubleWithUnit latitude(int i) const
         { return read_scalar_with_unit(group_name + "/latitude", i, units::deg); }

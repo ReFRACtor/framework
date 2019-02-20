@@ -385,6 +385,12 @@ H5::Attribute HdfFile::open_attribute(const std::string& Aname) const
   }
   std::string gname = Aname.substr(0, i);
   std::string aname = Aname.substr(i + 1);
+  
+  // Add slash for root so attributes can be succesfully pulled out of the root file level group
+  if (gname.length() == 0) {
+      gname = "/";
+  }
+
   if(is_group(gname)) {
     Group attr_group = h->openGroup(gname);
     return attr_group.openAttribute(aname);
