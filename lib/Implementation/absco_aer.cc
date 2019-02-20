@@ -126,11 +126,28 @@ void AbscoAer::load_file(const std::string& Fname,
   }
 
   // Read data fields
-  ArrayWithUnit<double, 1> pgrid_unit =
-    hfile->read_field_with_unit<double, 1>("P_level").convert(Unit("Pa"));
-  pgrid.reference(pgrid_unit.value);
+  ArrayWithUnit<double, 2> pgrid_unit =
+    hfile->read_field_with_unit<double, 2>("P_layer").convert(Unit("Pa"));
+  // Note that P_layer only has data where the temperature is also
+  // available. So go through each layer and find the first P_layer
+  // that is finite. We then save that value.
+  pgrid.resize(pgrid_unit.rows());
+  for(int i = 0; i < pgrid_unit.rows(); ++i) {
+    bool have_value = false;
+    for(int j = 0; j < pgrid_unit.cols(); ++j) {
+      if(!have_value && isfinite(pgrid_unit.value(i,j))) {
+	pgrid(i) = pgrid_unit.value(i,j);
+	have_value = true;
+      }
+    }
+    if(!have_value) {
+      Exception e;
+      e << "No pressure values found for layer " << i;
+      throw e;
+    }
+  }
   ArrayWithUnit<double, 2> tgrid_unit =
-    hfile->read_field_with_unit<double, 2>("Temperature").convert(Unit("K"));
+    hfile->read_field_with_unit<double, 2>("T_layer").convert(Unit("K"));
   tgrid.reference(tgrid_unit.value);
   ArrayWithUnit<double, 1> sg =
     hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));

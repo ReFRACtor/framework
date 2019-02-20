@@ -124,8 +124,8 @@ BOOST_AUTO_TEST_CASE(two_broadener_optical_depth_each_layer)
   secondIndex i2;
   IfstreamCs expected_data(test_data_dir() + "expected/absorber_absco/optical_depth_each_layer");
   AbsorberAbsco& a = *(boost::dynamic_pointer_cast<AbsorberAbsco>(config_absorber));
-  Array<double, 1> od_calc_1( sum(a.optical_depth_each_layer(12929.94,0).value(),i2) );
-  Array<double, 1> od_calc_2( sum(a.optical_depth_each_layer_nder(12929.94,0),i2) );
+  Array<double, 1> od_calc_1( sum(a.optical_depth_each_layer(1500.08111,0).value(),i2) );
+  Array<double, 1> od_calc_2( sum(a.optical_depth_each_layer_nder(1500.08111,0),i2) );
   std::cerr << od_calc_1;
   std::cerr << od_calc_2;
 }
