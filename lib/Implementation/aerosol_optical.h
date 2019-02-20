@@ -12,19 +12,20 @@ namespace FullPhysics {
   the aerosol calculation by using the aerosol optical properties.
 *******************************************************************/
 class AerosolOptical: public Aerosol,
-               public Observer<Pressure>,
-	       public Observer<AerosolExtinction>,
-	       public Observer<AerosolProperty> {
+                      public Observer<Pressure>,
+                      public Observer<AerosolExtinction>,
+                      public Observer<AerosolProperty> {
 public:
   AerosolOptical(const std::vector<boost::shared_ptr<AerosolExtinction> >& Aext,
-	  const std::vector<boost::shared_ptr<AerosolProperty> >& Aerosol_prop,
-	  const boost::shared_ptr<Pressure>& Press,
-	  const boost::shared_ptr<RelativeHumidity>& Rh,
-	  double Reference_wn = 1e4/0.755);
+        const std::vector<boost::shared_ptr<AerosolProperty> >& Aerosol_prop,
+        const boost::shared_ptr<Pressure>& Press,
+        const boost::shared_ptr<RelativeHumidity>& Rh,
+        double Reference_wn = 1e4/0.755);
   virtual ~AerosolOptical() {}
   virtual void notify_update(const StateVector& Sv) 
   {
     nvar = Sv.state_with_derivative().number_variable();
+    cache_is_stale = true;
     notify_update_do(*this); 
   }
 
@@ -32,7 +33,7 @@ public:
     const;
   virtual ArrayAd<double, 1> 
   ssa_each_layer(double wn, int particle_index,
-		 const ArrayAd<double, 1>& Od) const;
+             const ArrayAd<double, 1>& Od) const;
   virtual ArrayAd<double, 1> 
   ssa_each_layer(double wn) const;
 
@@ -60,10 +61,10 @@ public:
 
   virtual ArrayAd<double, 3> pf_mom(double wn, int pindex) const;
   virtual blitz::Array<double, 3> pf_mom(double wn, 
-			    const blitz::Array<double, 2>& frac_aer) const;
+                      const blitz::Array<double, 2>& frac_aer) const;
   virtual ArrayAd<double, 3> pf_mom(double wn, 
-				    const ArrayAd<double, 2>& frac_aer,
-				    int nummom = -1, int numscat = -1) const;
+                            const ArrayAd<double, 2>& frac_aer,
+                            int nummom = -1, int numscat = -1) const;
   virtual int number_particle() const { return (int) aext.size(); }
 
   virtual void print(std::ostream& Os) const;
@@ -89,7 +90,7 @@ public:
   { return clone(press->clone(), rh->clone()); }
   virtual boost::shared_ptr<Aerosol> 
   clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const;
+      const boost::shared_ptr<RelativeHumidity>& Rh) const;
   std::vector<std::string> aerosol_name() const;
 
   blitz::Array<std::string, 1> aerosol_name_arr() const;
