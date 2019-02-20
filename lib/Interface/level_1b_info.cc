@@ -24,13 +24,13 @@ DoubleWithUnit Level1bInfo::obs_distance(boost::shared_ptr<Level1b> level1b_ptr,
     return seperation;   
 }
 
-bool Level1bInfo::compare_level1b_distance(boost::shared_ptr<Level1b>& level1b_1, boost::shared_ptr<Level1b>& level1b_2, double lat, double lon, int spec_index) {
+bool Level1bInfo::compare_level1b_distance(const boost::shared_ptr<Level1b>& level1b_1, const boost::shared_ptr<Level1b>& level1b_2, double lat, double lon, int spec_index) {
     DoubleWithUnit obs1_dist = Level1bInfo::obs_distance(level1b_1, lat, lon, spec_index);
     DoubleWithUnit obs2_dist = Level1bInfo::obs_distance(level1b_2, lat, lon, spec_index).convert(obs1_dist.units);
     return (std::abs(obs1_dist.value) < std::abs(obs2_dist.value));
 }
 
-bool Level1bInfo::compare_level1b_time(boost::shared_ptr<Level1b>& level1b_1, boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index) {
+bool Level1bInfo::compare_level1b_time(const boost::shared_ptr<Level1b>& level1b_1, const boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index) {
     double obs1_timediff = std::abs((level1b_1->time(spec_index) - search_time));
     double obs2_timediff = std::abs((level1b_2->time(spec_index) - search_time));
     return (obs1_timediff < obs2_timediff);
@@ -102,5 +102,6 @@ boost::shared_ptr<Level1b> Level1bInfo::closest_obs(Time search_time, int spec_i
     }
     return boost::shared_ptr<Level1b>();
 }
+
 
 

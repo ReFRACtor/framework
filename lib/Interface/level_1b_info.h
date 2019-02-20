@@ -70,12 +70,12 @@ private:
 //-----------------------------------------------------------------------
 /// Internal comparator for use in sorting level1b observations by lat/lon
 //-----------------------------------------------------------------------
-    static bool compare_level1b_distance(boost::shared_ptr<Level1b>& lev1b_1, boost::shared_ptr<Level1b>& lev1b_2, double lat, double lon, int spec_index=0);
+    static bool compare_level1b_distance(const boost::shared_ptr<Level1b>& lev1b_1, const boost::shared_ptr<Level1b>& lev1b_2, double lat, double lon, int spec_index=0);
 
 //-----------------------------------------------------------------------
 /// Internal comparator for use in sorting level1b observations by time
 //-----------------------------------------------------------------------
-    static bool compare_level1b_time(boost::shared_ptr<Level1b>& level1b_1, boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index=0);
+    static bool compare_level1b_time(const boost::shared_ptr<Level1b>& level1b_1, const boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index=0);
 
 };
 
