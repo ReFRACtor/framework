@@ -61,6 +61,14 @@ class SVObserverComponents(Creator):
     include = param.Iterable(default=None, required=False)
     order = param.Iterable(default=[], required=False)
 
+    # Alternative names for state vector components:
+    # alt_name -> sub_state_identifier
+    alt_component_names = {
+        "TSUR": "surface_temperature",
+        "TATM": "^temperature",
+        "EMIS": "emissivity",
+    }
+
     def __init__(self, *vargs, **kwargs):
         super().__init__(*vargs, **kwargs)
 
@@ -73,7 +81,22 @@ class SVObserverComponents(Creator):
         if hasattr(rec_obj, "sub_state_identifier") and rec_obj.coefficient.value.shape[0] > 0:
             ss_iden = rec_obj.sub_state_identifier
             self.retrieval_components[ss_iden] = rec_obj
- 
+
+    def in_component_list(self, iden, comp_list):
+
+        for comp_re in comp_list:
+            if comp_re in self.alt_component_names:
+                # Convert alternative names to one that will match against the sub_state_identifier strings
+                comp_re = self.alt_component_names[comp_re]
+            elif not re.search('/', comp_re) and comp_re in self.sub_comp_names:
+                # If the items does not contain a slash but matches something after a slash in the list of 
+                # possible components, prepend a slash to prevent spurious matches, ie, "O3" matching "HNO3"
+                comp_re = "/" + comp_re
+
+            if re.search(comp_re, iden):
+                return True
+        return False
+
     def is_included(self, iden):
 
         include_list = self.include()
@@ -81,10 +104,7 @@ class SVObserverComponents(Creator):
         if include_list is None:
             return True
         else:
-            for incl_re in include_list:
-                if re.search(incl_re, iden):
-                    return True
-            return False
+            return self.in_component_list(iden, include_list)
 
     def is_excluded(self, iden):
 
@@ -93,12 +113,13 @@ class SVObserverComponents(Creator):
         if exclude_list is None:
             return False
         else:
-            for excl_re in exclude_list:
-                if re.search(excl_re, iden):
-                    return True
-            return False
+            return self.in_component_list(iden, exclude_list)
 
     def create(self, **kwargs):
+        
+        # Names of retrieval components after a slash, for example, "CO2" after "absorber_scaled/CO2"
+        # Used to disambiguate matches
+        self.sub_comp_names = [ c.split("/")[-1] for c in filter(lambda c: re.search('/', c), self.retrieval_components.keys()) ]
         
         filtered_components = []
         for iden, obj in self.retrieval_components.items():
