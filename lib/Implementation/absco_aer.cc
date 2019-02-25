@@ -5,6 +5,8 @@ using namespace FullPhysics;
 using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
+typedef void (AbscoAer::*a1)(AbscoAer::InterpolationType);
+
 namespace FullPhysics {
 void register_lua_AbscoAer(lua_State *ls) { \
 luabind::module(ls) [ 
@@ -14,6 +16,7 @@ luabind::class_<AbscoAer,Absco,boost::shared_ptr<GasAbsorption> >
 .def(luabind::constructor<const std::string&,double>())
 .def(luabind::constructor<const std::string&,const SpectralBound&, 
      const std::vector<double>&>())
+.def("interpolation_type", ((a1) & AbscoAer::interpolation_type))
 ];}
 }
 #endif
@@ -123,11 +126,28 @@ void AbscoAer::load_file(const std::string& Fname,
   }
 
   // Read data fields
-  ArrayWithUnit<double, 1> pgrid_unit =
-    hfile->read_field_with_unit<double, 1>("P_level").convert(Unit("Pa"));
-  pgrid.reference(pgrid_unit.value);
+  ArrayWithUnit<double, 2> pgrid_unit =
+    hfile->read_field_with_unit<double, 2>("P_layer").convert(Unit("Pa"));
+  // Note that P_layer only has data where the temperature is also
+  // available. So go through each layer and find the first P_layer
+  // that is finite. We then save that value.
+  pgrid.resize(pgrid_unit.rows());
+  for(int i = 0; i < pgrid_unit.rows(); ++i) {
+    bool have_value = false;
+    for(int j = 0; j < pgrid_unit.cols(); ++j) {
+      if(!have_value && isfinite(pgrid_unit.value(i,j))) {
+	pgrid(i) = pgrid_unit.value(i,j);
+	have_value = true;
+      }
+    }
+    if(!have_value) {
+      Exception e;
+      e << "No pressure values found for layer " << i;
+      throw e;
+    }
+  }
   ArrayWithUnit<double, 2> tgrid_unit =
-    hfile->read_field_with_unit<double, 2>("Temperature").convert(Unit("K"));
+    hfile->read_field_with_unit<double, 2>("T_layer").convert(Unit("K"));
   tgrid.reference(tgrid_unit.value);
   ArrayWithUnit<double, 1> sg =
     hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));
@@ -151,6 +171,10 @@ void AbscoAer::load_file(const std::string& Fname,
     bname.push_back("o2");
     bvmr.push_back(hfile->read_field<double, 1>("O2_VMR").copy());
   }
+  // The VMR in the AbscoAer file is in ppmv, while we expect just a
+  // straight vmr. So multiple 1e-6 to get to the write units.
+  for(int i = 0; i < (int) bvmr.size(); ++i)
+    bvmr[i] *= 1e-6;
 }
 
 //-----------------------------------------------------------------------
@@ -295,8 +319,6 @@ Array<double, 3> AbscoAer::read_double(double Wn_in) const
   if(wi < cache_double_lbound ||
      wi >= cache_double_ubound)
     swap<double>(wi);
-  // TODO  - Handle second broadner
-  
   // The Aer data is in temperature x pressure x broadner order. The
   // base class expects this to be pressure x temperature x broadner,
   // so we transpose this.
@@ -358,6 +380,82 @@ Array<float, 3> AbscoAer::read_float(double Wn_in) const
 					    thirdDim);
   Array<float, 3> res(r2.shape());
   res = r1 * (1 - (float) f) + r2 * ((float) f);
+  return res;
+}
+
+// See base class for description
+Array<double, 4> AbscoAer::read_double_2b(double Wn_in) const
+{
+  int wi;
+  double f;
+  if(itype_ == INTERPOLATE_WN)
+    wi = wn_index(Wn_in, f);
+  else
+    wi = wn_index(Wn_in);
+  if(wi < cache_double_lbound ||
+     wi >= cache_double_ubound)
+    swap<double>(wi);
+  // The Aer data is in temperature x pressure x broadner order. The
+  // base class expects this to be pressure x temperature x broadner,
+  // so we transpose this.
+  if(itype_ != INTERPOLATE_WN) 
+    return read_cache<double>()(wi - cache_double_lbound, Range::all(),
+	Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim, fourthDim);
+  Array<double, 4> r1;
+  if(wi+1 < cache_double_lbound ||
+     wi+1 >= cache_double_ubound)
+    r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
+       Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim, fourthDim));
+  else {
+    r1.reference(read_cache<double>()(wi - cache_double_lbound, Range::all(),
+	      Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim,
+					  thirdDim, fourthDim).copy());
+    swap<double>(wi+1);
+  }
+  Array<double, 4> r2 = read_cache<double>()(wi+1 - cache_double_lbound,
+      Range::all(),
+      Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim,
+												 thirdDim, fourthDim);
+  Array<double, 4> res(r2.shape());
+  res = r1 * (1 - f) + r2 * f;
+  return res;
+}
+
+// See base class for description
+Array<float, 4> AbscoAer::read_float_2b(double Wn_in) const
+{
+  int wi;
+  double f;
+  if(itype_ == INTERPOLATE_WN)
+    wi = wn_index(Wn_in, f);
+  else
+    wi = wn_index(Wn_in);
+  if(wi < cache_double_lbound ||
+     wi >= cache_double_ubound)
+    swap<float>(wi);
+  // The Aer data is in temperature x pressure x broadner order. The
+  // base class expects this to be pressure x temperature x broadner,
+  // so we transpose this.
+  if(itype_ != INTERPOLATE_WN) 
+    return read_cache<float>()(wi - cache_float_lbound, Range::all(),
+	Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim, fourthDim);
+  Array<float, 4> r1;
+  if(wi+1 < cache_float_lbound ||
+     wi+1 >= cache_float_ubound)
+    r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
+       Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim, thirdDim, fourthDim));
+  else {
+    r1.reference(read_cache<float>()(wi - cache_float_lbound, Range::all(),
+	      Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim,
+					  thirdDim, fourthDim).copy());
+    swap<float>(wi+1);
+  }
+  Array<float, 4> r2 = read_cache<float>()(wi+1 - cache_float_lbound,
+      Range::all(),
+      Range::all(), Range::all(), Range::all()).transpose(secondDim, firstDim,
+												 thirdDim, fourthDim);
+  Array<float, 4> res(r2.shape());
+  res = r1 * (1 - ((float) f)) + r2 * ((float) f);
   return res;
 }
 

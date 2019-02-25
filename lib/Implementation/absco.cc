@@ -113,8 +113,8 @@ DoubleWithUnit Absco::absorption_cross_section
   t.value.resize(1, 0);
   t.value(0) = Temp.value;
   b.units = Broadener_vmr.units;
-  b.value.resize(1, Broadener_vmr.rows(), 0);
-  b.value(0, ra) = Broadener_vmr.value;
+  b.value.resize(Broadener_vmr.rows(), 1, 0);
+  b.value(ra, 0) = Broadener_vmr.value;
   boost::shared_ptr<Absco> self_ptr = to_ptr(const_cast<Absco&>(*this));
   AbscoInterpolator aint(self_ptr, p, t, b);
   return DoubleWithUnit(aint.absorption_cross_section_noderiv(Wn)(0),
@@ -138,8 +138,8 @@ AutoDerivativeWithUnit<double> Absco::absorption_cross_section
   t.value.resize(1, Temp.value.number_variable());
   t.value(0) = Temp.value;
   b.units = Broadener_vmr.units;
-  b.value.resize(1, Broadener_vmr.rows(), Broadener_vmr.number_variable());
-  b.value(0, ra) = Broadener_vmr.value;
+  b.value.resize(Broadener_vmr.rows(), 1, Broadener_vmr.number_variable());
+  b.value(ra, 0) = Broadener_vmr.value;
   boost::shared_ptr<Absco> self_ptr = to_ptr(const_cast<Absco&>(*this));
   AbscoInterpolator aint(self_ptr, p, t, b);
   return AutoDerivativeWithUnit<double>
@@ -213,19 +213,50 @@ AbscoInterpolator::AbscoInterpolator
 template<class T> Array<double, 1> 
 AbscoInterpolator::absorption_cross_section_noderiv_calc(double wn) const
 {
-  Array<T, 3> a(absco->read<T, 3>(wn));
-  for(int i = 0; i < res.rows(); ++i) {
-    double t11 = a(ip(i), itp1(i), ib(0, i)) * (1 - ftp1(i)) + 
-      a(ip(i), itp1(i) + 1, ib(0, i)) * ftp1(i);
-    double t12 = a(ip(i) + 1, itp2(i), ib(0,i)) * (1 - ftp2(i)) + 
-      a(ip(i) + 1, itp2(i) + 1, ib(0,i)) * ftp2(i);
-    double t1 = t11 * (1 - fp(i)) + t12 * fp(i);
-    double t21 = a(ip(i), itp1(i), ib2(0,i)) * (1 - ftp1(i)) + 
-      a(ip(i), itp1(i) + 1, ib2(0,i)) * ftp1(i);
-    double t22 = a(ip(i) + 1, itp2(i), ib2(0,i)) * (1 - ftp2(i)) + 
-      a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) * ftp2(i);
-    double t2 = t21 * (1 - fp(i)) + t22 * fp(i);
-    res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
+  if(fb.rows() < 2) {
+    Array<T, 3> a(absco->read<T, 3>(wn));
+    for(int i = 0; i < res.rows(); ++i) {
+      double t11 = a(ip(i), itp1(i), ib(0, i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0, i)) * ftp1(i);
+      double t12 = a(ip(i) + 1, itp2(i), ib(0,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i)) * ftp2(i);
+      double t1 = t11 * (1 - fp(i)) + t12 * fp(i);
+      double t21 = a(ip(i), itp1(i), ib2(0,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i)) * ftp1(i);
+      double t22 = a(ip(i) + 1, itp2(i), ib2(0,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) * ftp2(i);
+      double t2 = t21 * (1 - fp(i)) + t22 * fp(i);
+      res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
+    }
+  } else if(fb.rows() == 2) {
+    Array<T, 4> a(absco->read<T, 4>(wn));
+    for(int i = 0; i < res.rows(); ++i) {
+      double t111 = a(ip(i), itp1(i), ib(0, i), ib(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0, i), ib(1,i)) * ftp1(i);
+      double t112 = a(ip(i) + 1, itp2(i), ib(0,i), ib(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib(1,i)) * ftp2(i);
+      double t211 = a(ip(i), itp1(i), ib2(0,i), ib(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i), ib(1,i)) * ftp1(i);
+      double t212 = a(ip(i) + 1, itp2(i), ib2(0,i), ib(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) * ftp2(i);
+      double t121 = a(ip(i), itp1(i), ib(0, i), ib2(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0, i), ib2(1,i)) * ftp1(i);
+      double t122 = a(ip(i) + 1, itp2(i), ib(0,i), ib2(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib2(1,i)) * ftp2(i);
+      double t221 = a(ip(i), itp1(i), ib2(0,i), ib2(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i), ib2(1,i)) * ftp1(i);
+      double t222 = a(ip(i) + 1, itp2(i), ib2(0,i), ib2(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) * ftp2(i);
+      double t11 = t111 * (1 - fp(i)) + t112 * fp(i);
+      double t21 = t211 * (1 - fp(i)) + t212 * fp(i);
+      double t12 = t121 * (1 - fp(i)) + t122 * fp(i);
+      double t22 = t221 * (1 - fp(i)) + t222 * fp(i);
+      double t1 = t11 * (1 - fb(1,i)) + t12 * fb(1,i);
+      double t2 = t21 * (1 - fb(1,i)) + t22 * fb(1,i);
+      res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
+    }
+  } else {
+    throw Exception("Only support up to 2 broadeners");
   }
   // Apply scale
   res.value() *= absco->table_scale(wn);
@@ -254,53 +285,149 @@ template<class T> ArrayAd<double, 1>
 AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
 {
   Range ra(Range::all());
-  Array<T, 3> a(absco->read<T, 3>(wn));
-  // Turns out that jacobian calculation is faster if we use pointers. 
-  // This is *not* true for things like itp1(i), the speed is the same 
-  // (for gcc 4.6, -O2), so we leave these with the clearer expression.
-  double *restrict res_jac_p = res.jacobian().data();
-  const double* restrict t_jac_p = t_jac.data();
-  const double* restrict b_jac_p = b_jac.data();
-  for(int i = 0; i < res.rows(); ++i) {
-    double t11 = a(ip(i), itp1(i), ib(0,i)) * (1 - ftp1(i)) + 
-      a(ip(i), itp1(i) + 1, ib(0,i)) * ftp1(i);
-    double dt11_dt = 
-      (a(ip(i), itp1(i) + 1, ib(0,i)) - a(ip(i), itp1(i), ib(0,i))) * dftp1_dt(i);
-    double t12 = a(ip(i) + 1, itp2(i), ib(0,i)) * (1 - ftp2(i)) + 
-      a(ip(i) + 1, itp2(i) + 1, ib(0,i)) * ftp2(i);
-    double dt12_dt =
-      (a(ip(i) + 1, itp2(i) + 1, ib(0,i)) - a(ip(i) + 1, itp2(i), ib(0,i))) * 
-      dftp2_dt(i);
-    double t1 = t11 * (1 - fp(i)) + t12 * fp(i);
-    double dt1_dt =
-      dt11_dt * (1 - fp(i)) + dt12_dt * fp(i);
+  if(fb.rows() < 2) {
+    Array<T, 3> a(absco->read<T, 3>(wn));
+    // Turns out that jacobian calculation is faster if we use pointers. 
+    // This is *not* true for things like itp1(i), the speed is the same 
+    // (for gcc 4.6, -O2), so we leave these with the clearer expression.
+    double *restrict res_jac_p = res.jacobian().data();
+    const double* restrict t_jac_p = t_jac.data();
+    const double* restrict b_jac_p = b_jac.data();
+    for(int i = 0; i < res.rows(); ++i) {
+      double t11 = a(ip(i), itp1(i), ib(0,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0,i)) * ftp1(i);
+      double dt11_dt = 
+	(a(ip(i), itp1(i) + 1, ib(0,i)) - a(ip(i), itp1(i), ib(0,i))) * dftp1_dt(i);
+      double t12 = a(ip(i) + 1, itp2(i), ib(0,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i)) * ftp2(i);
+      double dt12_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib(0,i)) - a(ip(i) + 1, itp2(i), ib(0,i))) * 
+	dftp2_dt(i);
+      double t1 = t11 * (1 - fp(i)) + t12 * fp(i);
+      double dt1_dt =
+	dt11_dt * (1 - fp(i)) + dt12_dt * fp(i);
 
-    double t21 = a(ip(i), itp1(i), ib2(0,i)) * (1 - ftp1(i)) + 
-      a(ip(i), itp1(i) + 1, ib2(0,i)) * ftp1(i);
-    double dt21_dt = 
-      (a(ip(i), itp1(i) + 1, ib2(0,i)) - a(ip(i), itp1(i), ib2(0,i))) * dftp1_dt(i);
-    double t22 = a(ip(i) + 1, itp2(i), ib2(0,i)) * (1 - ftp2(i)) + 
-      a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) * ftp2(i);
-    double dt22_dt =
-      (a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) - a(ip(i) + 1, itp2(i), ib2(0,i))) * 
-      dftp2_dt(i);
-    double t2 = t21 * (1 - fp(i)) + t22 * fp(i);
-    double dt2_dt =
-      dt21_dt * (1 - fp(i)) + dt22_dt * fp(i);
-    res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
-    double dr_db =
-      (t2 - t1) * dfb_db(0, i);
-    double dr_dt =
-      dt1_dt * (1 - fb(0,i)) + dt2_dt * fb(0,i);
-    if(!t.is_constant() && !b.is_constant())
-      for(int k = 0; k < res.jacobian().cols(); ++k)
-	*res_jac_p++ = dr_dt * *t_jac_p++ + dr_db * *b_jac_p++;
-    else if(!t.is_constant())
-      for(int k = 0; k < res.jacobian().cols(); ++k)
-	*res_jac_p++ = dr_dt * *t_jac_p++;
-    else if(!b.is_constant())
-      for(int k = 0; k < res.jacobian().cols(); ++k)
-	*res_jac_p++ = dr_db * *b_jac_p++;
+      double t21 = a(ip(i), itp1(i), ib2(0,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i)) * ftp1(i);
+      double dt21_dt = 
+	(a(ip(i), itp1(i) + 1, ib2(0,i)) - a(ip(i), itp1(i), ib2(0,i))) * dftp1_dt(i);
+      double t22 = a(ip(i) + 1, itp2(i), ib2(0,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) * ftp2(i);
+      double dt22_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i)) - a(ip(i) + 1, itp2(i), ib2(0,i))) * 
+	dftp2_dt(i);
+      double t2 = t21 * (1 - fp(i)) + t22 * fp(i);
+      double dt2_dt =
+	dt21_dt * (1 - fp(i)) + dt22_dt * fp(i);
+      res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
+      double dr_db =
+	(t2 - t1) * dfb_db(0, i);
+      double dr_dt =
+	dt1_dt * (1 - fb(0,i)) + dt2_dt * fb(0,i);
+      if(!t.is_constant() && !b.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_dt * *t_jac_p++ + dr_db * *b_jac_p++;
+      else if(!t.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_dt * *t_jac_p++;
+      else if(!b.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_db * *b_jac_p++;
+    }
+  } else if(fb.rows() == 2) {
+    Array<T, 4> a(absco->read<T, 4>(wn));
+    // Turns out that jacobian calculation is faster if we use pointers. 
+    // This is *not* true for things like itp1(i), the speed is the same 
+    // (for gcc 4.6, -O2), so we leave these with the clearer expression.
+    double *restrict res_jac_p = res.jacobian().data();
+    const double* restrict t_jac_p = t_jac.data();
+    const double* restrict b1_jac_p = &b_jac(0,0,0);
+    const double* restrict b2_jac_p = &b_jac(1,0,0);
+    for(int i = 0; i < res.rows(); ++i) {
+      double t111 = a(ip(i), itp1(i), ib(0,i), ib(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0,i), ib(1,i)) * ftp1(i);
+      double dt111_dt = 
+	(a(ip(i), itp1(i) + 1, ib(0,i), ib(1,i)) - a(ip(i), itp1(i), ib(0,i), ib(1,i))) * dftp1_dt(i);
+      double t112 = a(ip(i) + 1, itp2(i), ib(0,i), ib(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib(1,i)) * ftp2(i);
+      double dt112_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib(1,i)) - a(ip(i) + 1, itp2(i), ib(0,i), ib(1,i))) * 
+	dftp2_dt(i);
+
+      double t211 = a(ip(i), itp1(i), ib2(0,i), ib(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i), ib(1,i)) * ftp1(i);
+      double dt211_dt = 
+	(a(ip(i), itp1(i) + 1, ib2(0,i), ib(1,i)) - a(ip(i), itp1(i), ib2(0,i), ib(1,i))) * dftp1_dt(i);
+      double t212 = a(ip(i) + 1, itp2(i), ib2(0,i), ib(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) * ftp2(i);
+      double dt212_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i)), ib(1,i)) * 
+	dftp2_dt(i);
+
+      double t121 = a(ip(i), itp1(i), ib(0,i), ib2(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib(0,i), ib2(1,i)) * ftp1(i);
+      double dt121_dt = 
+	(a(ip(i), itp1(i) + 1, ib(0,i), ib2(1,i)) - a(ip(i), itp1(i), ib(0,i), ib2(1,i))) * dftp1_dt(i);
+      double t122 = a(ip(i) + 1, itp2(i), ib(0,i), ib2(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib2(1,i)) * ftp2(i);
+      double dt122_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib(0,i), ib2(1,i)) - a(ip(i) + 1, itp2(i), ib(0,i), ib2(1,i))) * 
+	dftp2_dt(i);
+
+      double t221 = a(ip(i), itp1(i), ib2(0,i), ib2(1,i)) * (1 - ftp1(i)) + 
+	a(ip(i), itp1(i) + 1, ib2(0,i), ib2(1,i)) * ftp1(i);
+      double dt221_dt = 
+	(a(ip(i), itp1(i) + 1, ib2(0,i), ib2(1,i)) - a(ip(i), itp1(i), ib2(0,i), ib2(1,i))) * dftp1_dt(i);
+      double t222 = a(ip(i) + 1, itp2(i), ib2(0,i), ib2(1,i)) * (1 - ftp2(i)) + 
+	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) * ftp2(i);
+      double dt222_dt =
+	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i)), ib2(1,i)) * 
+	dftp2_dt(i);
+      
+
+      double t11 = t111 * (1 - fp(i)) + t112 * fp(i);
+      double dt11_dt =
+	dt111_dt * (1 - fp(i)) + dt112_dt * fp(i);
+
+      double t21 = t211 * (1 - fp(i)) + t212 * fp(i);
+      double dt21_dt =
+	dt211_dt * (1 - fp(i)) + dt212_dt * fp(i);
+
+      double t12 = t121 * (1 - fp(i)) + t122 * fp(i);
+      double dt12_dt =
+	dt121_dt * (1 - fp(i)) + dt122_dt * fp(i);
+
+      double t22 = t221 * (1 - fp(i)) + t222 * fp(i);
+      double dt22_dt =
+	dt221_dt * (1 - fp(i)) + dt222_dt * fp(i);
+      double t1 = t11 * (1 - fb(1,i)) + t12 * fb(1,i);
+      double dt1_dt =
+	dt11_dt * (1 -fb(1,i)) + dt12_dt * fb(1,i);
+      double dt1_db2 = (t12-t11)*dfb_db(1,i);
+      double t2 = t21 * (1 - fb(1,i)) + t22 * fb(1,i);
+      double dt2_dt =
+	dt21_dt * (1 -fb(1,i)) + dt22_dt * fb(1,i);
+      double dt2_db2 = (t22-t21)*dfb_db(1,i);
+      res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
+      double dr_db1 =
+	(t2 - t1) * dfb_db(0, i);
+      double dr_dt =
+	dt1_dt * (1 - fb(0,i)) + dt2_dt * fb(0,i);
+      double dr_db2 =
+	dt1_db2 * (1 - fb(0,i)) + dt2_db2 * fb(0,i);
+      if(!t.is_constant() && !b.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_dt * *t_jac_p++ + dr_db1 * *b1_jac_p++ +
+	    dr_db2 * *b2_jac_p++;
+      else if(!t.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_dt * *t_jac_p++;
+      else if(!b.is_constant())
+	for(int k = 0; k < res.jacobian().cols(); ++k)
+	  *res_jac_p++ = dr_db1 * *b1_jac_p++ + dr_db2 * *b2_jac_p++;
+    }
+  } else {
+    throw Exception("Only support up to 2 broadeners");
   }
   // Apply scale
   double s = absco->table_scale(wn);

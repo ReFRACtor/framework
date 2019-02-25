@@ -34,11 +34,18 @@ namespace FullPhysics {
   argument that controls the behavior of the class. Default behavior
   is the original "THROW_ERROR_IF_NOT_ON_WN_GRID", but we can also
   return the nearest neighbor or do a linear interpolation.
+
+  Note that the pressure and temperature is on layers for the absco
+  file rather than levels like the AbscoHdf. Nothing special needs to
+  be done about that, the temperature_grid() is just the temperature
+  values that we have absco data for. But we mention this to avoid
+  confusion.
 *******************************************************************/
 class AbscoAer: public Absco {
 public:
-  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID, NEAREST_NEIGHBOR_WN,
-			  INTERPOLATE_WN};
+  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0,
+			  NEAREST_NEIGHBOR_WN=1,
+			  INTERPOLATE_WN=2};
   AbscoAer(const std::string& Fname, double Table_scale = 1.0, 
 	   int Cache_nline = 5000,
 	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
@@ -88,6 +95,19 @@ public:
   virtual void wn_extent(double Wn_in, double& X, double& Y) const;
   virtual double table_scale(double wn) const;
   virtual blitz::Array<double, 1> pressure_grid() const {return pgrid;}
+
+//-----------------------------------------------------------------------
+/// Return the temperature grid for this Absco file. This is
+/// number_layer() x number_temperature() in size. 
+///
+/// This is in Kelvin.
+///
+/// Note that the temperature is on layers for the absco file rather
+/// than levels like the AbscoHdf. Nothing special needs to be done
+/// about that, the temperature_grid() is just the temperature values
+/// that we have absco data for. But we mention this to avoid confusion.
+//-----------------------------------------------------------------------
+  
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
   blitz::Array<double, 1> wavenumber_grid() const { return wngrid; }
   virtual bool have_data(double wn) const;
@@ -97,6 +117,8 @@ public:
 protected:
   virtual blitz::Array<double, 3> read_double(double wn) const;
   virtual blitz::Array<float, 3> read_float(double wn) const;
+  virtual blitz::Array<double, 4> read_double_2b(double wn) const;
+  virtual blitz::Array<float, 4> read_float_2b(double wn) const;
 private:
   bool is_float_;
   int cache_nline;
