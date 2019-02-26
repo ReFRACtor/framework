@@ -190,10 +190,10 @@ AbscoInterpolator::AbscoInterpolator
     fp(i) = interpol(p(i), p_reversed, absco->pgrid, ip(i), unused);
     // We might not actually need to interpolate over broadener
     if(absco->bgrid.size() ==0) {
-      ib(0, i) = 0;
-      ib2(0, i) = 0;
-      dfb_db(0, i) = 0;
-      fb(0, i) = 1;
+      ib(Range::all(), i) = 0;
+      ib2(Range::all(), i) = 0;
+      dfb_db(Range::all(), i) = 0;
+      fb(Range::all(), i) = 1;
     } else {
       for(int j = 0; j < fb.rows(); ++j) {
 	fb(j, i) = interpol(b.value()(j,i), false, absco->bgrid[j], ib(j, i),
