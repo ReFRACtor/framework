@@ -1,34 +1,99 @@
 import os
 import re
+import struct
 from glob import glob
+from bisect import bisect_right
 import datetime as dt
 
 import numpy as np
 
-def read_muses_file(filename, as_matrix=True, **kwargs):
-    "Reads a MUSES style text file"
 
-    data = None
-    with open(filename, "r") as pf:
-        # Find end of header
-        curr_line = ""
-        while curr_line.find("End_of_Header") < 0:
-            curr_line = pf.readline()
-        
-        # Read column names from first line after end of header
-        col_names = pf.readline().strip().split()
-        
+class MUSES_File(object):
+
+    def __init__(self, filename, as_struct=False):
+
+        self.filename = filename
+        self.as_struct = as_struct
+
+        self.header = {}
+        self.column_names = []
+        self.unit_names = []
+        self.data = None
+
+        with open(self.filename, "rb") as mf:
+            self._read_file(mf)
+
+    def _read_file(self, muses_file):
+
+        self._read_header(muses_file)
+
+        if 'Binary_Endian' in self.header:
+            self._read_binary_data(muses_file)
+        else:
+            self._read_column_names(muses_file)
+            self._read_ascii_data(muses_file)
+
+    def _read_header(self, muses_file):
+
+        # Parse heade contents until finding end of header
+        curr_line = b""
+        while not re.search(b"^\s*End_of_Header", curr_line):
+            curr_line = muses_file.readline()
+            
+            header_value = re.search(b"^([\w-]+)\s*=\s*(.*)$", curr_line)
+            if header_value:
+                key, value = [ s.decode('UTF-8') for s in header_value.groups() ]
+
+                # Scrub any quote marks and extra spaces
+                value = value.strip('"').strip()
+
+                # Parse datasize into an array of numbers
+                data_size_re = "\s+x\s*"
+                if re.search(data_size_re, value):
+                    value = [ int(v) for v in re.split(data_size_re, value) ]
+
+                self.header[key] = value
+
+    def _read_column_names(self, muses_file):
+
+        # Read column names and unit names from lines after end of header
+        self.column_names = [ v.decode('UTF-8') for v in muses_file.readline().strip().split() ]
+        self.unit_names = [ v.decode('UTF-8') for v in muses_file.readline().strip().split() ]
+ 
+    def _read_ascii_data(self, muses_file, skip_lines=0):
+
         # Skip column unit labels, then read data
-        data = np.genfromtxt(pf, names=col_names, skip_header=1, **kwargs)
+        data = np.genfromtxt(muses_file, names=self.column_names, skip_header=skip_lines)
         
-    if as_matrix:
-        # Convert from structured array
-        mat = np.empty((data.shape[0], len(data.dtype.names)), data.dtype[0])
-        for col_idx, name in enumerate(data.dtype.names):
-            mat[:, col_idx] = data[name]
-        return mat
-    else:
-        return data
+        if self.as_struct:
+            self.data = data
+        else:
+            # Convert from structured array
+            mat = np.empty((data.shape[0], len(data.dtype.names)), data.dtype[0])
+            for col_idx, name in enumerate(data.dtype.names):
+                mat[:, col_idx] = data[name]
+
+            self.data = mat
+
+    def _read_binary_data(self, muses_file):
+
+        data_size = self.header['Data_Size']
+
+        # Assuming data is doubles
+        num_doubles = np.prod(data_size)
+        num_bytes = 8 * num_doubles
+
+        raw_bytes = muses_file.read(num_bytes)
+
+        if self.header["Binary_Endian"] == "big":
+            # big endian
+            format_code = ">{}d".format(num_doubles)
+        else:
+            # little endian
+            format_code = "<{}d".format(num_doubles)
+
+        raw_doubles = struct.unpack(format_code, raw_bytes)
+        self.data = np.array(raw_doubles).reshape(data_size)
 
 class OSP(object):
     def __init__(self, base_dir, latitude, longitude, obs_time, cov_dir="Covariance-scaled"):
@@ -42,6 +107,8 @@ class OSP(object):
         self.obs_time = obs_time
 
         self.cov_dir = cov_dir
+
+        self.nh3_version = "MOD"
 
     def _pick_long_dir(self, longitude_dirs):
         if len(longitude_dirs) == 1:
@@ -78,7 +145,14 @@ class OSP(object):
         # Find the file that exists within the latitude range
         use_lat_file = None
         for lat_file in latitude_files:
-            matches = re.search('.*(\d\d[NS])_(\d\d[NS])$', lat_file)
+            if re.search("NH3", lat_file):
+                matches = re.search('.*(\d\d[NS])_(\d\d[NS])_{}$'.format(self.nh3_version), lat_file)
+            else:
+                matches = re.search('.*(\d\d[NS])_(\d\d[NS])$', lat_file)
+
+            if matches is None:
+                continue
+
             beg, end = [ from_ns(lat_str) for lat_str in matches.groups() ]
             
             if self.latitude >= beg and self.latitude <= end:
@@ -89,8 +163,33 @@ class OSP(object):
 
     @property
     def _month_directory_name(self):
-        month_dir = self.obs_time.strftime("%b").upper()
-        return month_dir
+        return self.obs_time.strftime("%b").upper()
+
+    def _time_directory_name(self, species_base_dir):
+
+        all_year_dirs = sorted([ int(y) for y in filter(lambda d: re.match('\d{4}', d), os.listdir(species_base_dir)) ])
+
+        if len(all_year_dirs) > 0:
+            year_idx = max(0, bisect_right(all_year_dirs, self.obs_time.year)-1)
+            year_dir = str(all_year_dirs[year_idx])
+            species_base_dir = os.path.join(species_base_dir, year_dir)
+        else:
+            year_dir = ''
+
+        all_month_dirs = list(filter(lambda d: re.match('[A-Z]{3}', d), os.listdir(species_base_dir)))
+
+        if len(all_month_dirs) == 1:
+            month_dir = all_month_dirs[0]
+        else:
+            best_month_dir = self._month_directory_name
+            if best_month_dir not in all_month_dirs:
+                raise Exception("Month directory for current data {} not available at {}".format(best_month_dir, species_base_dir))
+
+            month_dir = best_month_dir
+
+        time_dir = "0000UT_2400UT"
+
+        return os.path.join(year_dir, month_dir, time_dir)
 
     def pressure_filename(self, species):
         "Filename used for accessing the pressure grid associated with a species"
@@ -111,27 +210,42 @@ class OSP(object):
         press_file = self.pressure_filename(species)
     
         # Reverse to pressure increasing order, convert hPa -> Pa
-        press_data = np.flip(read_muses_file(press_file)[:, 0] * 100)
+        mf = MUSES_File(press_file)
+        press_data = np.flip(mf.data[:, 0] * 100)
 
         return press_data
+
+    def _temporal_clim_filename(self, species_base_dir):
+        time_rel_dir = self._time_directory_name(species_base_dir)
+
+        time_base_dir = os.path.join(species_base_dir, time_rel_dir)
+
+        if not os.path.exists(time_base_dir):
+            raise Exception("No climatology temporal directory found: {}".format(time_base_dir))
+
+        long_dir = self._pick_long_dir(os.listdir(time_base_dir))
+        lat_file = self._pick_lat_file(os.listdir(os.path.join(time_base_dir, long_dir)))
+
+        clim_file = os.path.join(time_base_dir, long_dir, lat_file)
+
+        return clim_file
+
+    def _nh3_clim_filename(self, species_base_dir):
+
+        return glob(os.path.join(species_base_dir, self.nh3_version, "Profile_NH3_{}.asc".format(self.nh3_version)))[0]
 
     def climatology_filename(self, species):
         "Filename with the species climatology values matching the object's time and location"
 
-        month_dir = self._month_directory_name
-        time_dir = "0000UT_2400UT"
-
-        species_base_dir = os.path.join(self.base_dir, "Climatology", species, month_dir, time_dir)
+        species_base_dir = os.path.join(self.base_dir, "Climatology", species)
 
         if not os.path.exists(species_base_dir):
-            raise Exception("No climatology directory found: {}".format(species_base_dir))
+            raise Exception("No climatology species directory found: {}".format(species_base_dir))
 
-        long_dir = self._pick_long_dir(os.listdir(species_base_dir))
-        lat_file = self._pick_lat_file(os.listdir(os.path.join(species_base_dir, long_dir)))
-
-        clim_file = os.path.join(species_base_dir, long_dir, lat_file)
-
-        return clim_file
+        if species == "NH3":
+            return self._nh3_clim_filename(species_base_dir)
+        else:
+            return self._temporal_clim_filename(species_base_dir)
 
     def climatology(self, species):
         "Species climatology data matching the object's time and location converted to the format handled by ReFRACtor"
@@ -139,22 +253,24 @@ class OSP(object):
         clim_file = self.climatology_filename(species)
 
         if species == 'PSUR':
-            clim_data = read_muses_file(clim_file, as_matrix=False)
+            mf = MUSES_File(clim_filename, as_struct=True)
 
             # Extract value and convert to a matrix
-            clim_data = np.array([float(clim_data['PSUR'])])
+            clim_data = np.array([float(mf.data['PSUR'])])
 
             # Convert hPa -> Pa
             clim_data *= 100
         else:
-            clim_data = read_muses_file(clim_file)[:, 0]
+            mf = MUSES_File(clim_filename)
+
+            clim_data = mf.data[:, 0]
 
             # Convert to pressure increasing order
             clim_data = np.flip(clim_data)
 
         return clim_data
 
-    def covariance_filename(self, species):
+    def covariance_filename(self, species, in_log=False):
         cov_base_dir = os.path.join(self.base_dir, "Covariance", self.cov_dir)
 
         if not os.path.exists(cov_base_dir):
@@ -165,14 +281,18 @@ class OSP(object):
         if len(species_files) == 0:
             raise Exception("No covariances files for {} found in directory: {}".format(species, cov_base_dir))
 
-        cov_file = self._pick_lat_file(species_files)
+        if in_log:
+            filt_files = filter(lambda f: re.search("_Log_", f), species_files)
+        else:
+            filt_files = filter(lambda f: re.search("_Linear_", f), species_files)
+
+        cov_file = self._pick_lat_file(list(filt_files))
 
         return cov_file
 
-    def _covariance_read(self, species):
-        cov_file = self.covariance_filename(species)
-
-        cov_data = read_muses_file(cov_file)[:, 2:]
+    def _covariance_read(self, cov_file):
+        mf = MUSES_File(cov_file)
+        cov_data = mf.data[:, 2:]
 
         # Convert to pressure increasing order
         cov_data = np.flip(cov_data)
@@ -189,23 +309,21 @@ class OSP(object):
         clim_glob = re.sub(self._month_directory_name, "*", clim_filename)
 
         # Replace longitude portion
-        #clim_glob = re.sub("\d{3}[EW]_\d{3}[EW]", "*", clim_glob)
+        clim_glob = re.sub("\d{3}[EW]_\d{3}[EW]", "*", clim_glob)
 
         # Replace latitude portion
-        #clim_glob = re.sub("\d{2}[NS]_\d{2}[NS]", "*", clim_glob)
-
-        print(clim_glob)
+        clim_glob = re.sub("\d{2}[NS]_\d{2}[NS]", "*", clim_glob)
 
         cov_inp_filenames = glob(clim_glob)
     
-        inp0 = read_muses_file(cov_inp_filenames[0]) 
+        inp0 = MUSES_File(cov_inp_filenames[0])
 
-        clim_data = np.empty((inp0.shape[0], len(cov_inp_filenames)), dtype=float)
-        clim_data[:, 0] = inp0[:, 0]
+        clim_data = np.empty((inp0.data.shape[0], len(cov_inp_filenames)), dtype=float)
+        clim_data[:, 0] = inp0.data[:, 0]
 
         for idx, inp_file in enumerate(cov_inp_filenames[1:]):
-            inpD = read_muses_file(inp_file)
-            clim_data[:, idx+1] = inpD[:, 0]
+            inpD = MUSES_File(inp_file)
+            clim_data[:, idx+1] = inpD.data[:, 0]
 
         cov_data = np.cov(clim_data)
 
@@ -225,9 +343,9 @@ class OSP(object):
         """Return a covariance matrix for the requested location, returns either a linear or log matrix. 
            If one or the other is not available then a covariance will be created from climatology values"""
 
-        cov_filename = self.covariance_filename(species)
+        cov_filename = self.covariance_filename(species, in_log)
 
-        if (re.search('_Log_', cov_filename) and not in_log) or force_compute:
+        if cov_filename is None or force_compute:
             return self._covariance_compute(species)
         else:
-            return self._covariance_read(species)
+            return self._covariance_read(cov_filename)
