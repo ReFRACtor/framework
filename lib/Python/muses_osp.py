@@ -69,7 +69,12 @@ class MUSES_File(object):
             self.data = data
         else:
             # Convert from structured array
-            mat = np.empty((data.shape[0], len(data.dtype.names)), data.dtype[0])
+            if len(data.shape) == 0:
+                struct_rows = 1
+            else:
+                struct_rows = data.shape[0]
+
+            mat = np.empty((struct_rows, len(data.dtype.names)), data.dtype[0])
             for col_idx, name in enumerate(data.dtype.names):
                 mat[:, col_idx] = data[name]
 
@@ -253,7 +258,7 @@ class OSP(object):
         clim_file = self.climatology_filename(species)
 
         if species == 'PSUR':
-            mf = MUSES_File(clim_filename, as_struct=True)
+            mf = MUSES_File(clim_file, as_struct=True)
 
             # Extract value and convert to a matrix
             clim_data = np.array([float(mf.data['PSUR'])])
