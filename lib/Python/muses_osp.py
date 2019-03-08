@@ -101,7 +101,8 @@ class MUSES_File(object):
         self.data = np.array(raw_doubles).reshape(data_size)
 
 class OSP(object):
-    def __init__(self, base_dir, latitude, longitude, obs_time, cov_dir="Covariance-scaled"):
+    def __init__(self, species, base_dir, latitude, longitude, obs_time, log_cov=True, cov_dir="Covariance-scaled"):
+        self.species = species
         self.base_dir = base_dir
         self.latitude = latitude
         self.longitude = longitude
@@ -111,9 +112,41 @@ class OSP(object):
 
         self.obs_time = obs_time
 
+        self.log_cov = log_cov
         self.cov_dir = cov_dir
 
-        self.nh3_version = "MOD"
+        self.nh3_version = "CLN"
+
+    @property
+    def climatology_base_dir(self):
+        clim_base_dir = os.path.join(self.base_dir, "Climatology", self.species)
+        if not os.path.exists(clim_base_dir):
+            raise Exception("No climatology species directory found: {}".format(clim_base_dir))
+        return clim_base_dir
+ 
+    @property
+    def pressure_filename(self):
+        "Filename used for accessing the pressure grid associated with a species"
+
+        # Find the associated pressure file
+        press_file = os.path.join(self.climatology_base_dir, "Clim_Spec_{}".format(self.species))
+
+        if not os.path.exists(press_file):
+            raise Exception("Could not find pressure file: {}".format(press_file))
+
+        return press_file
+
+    @property
+    def pressure_full_grid(self):
+        "The pressure grid associated with a species converted into the format acceptable for ReFRACtor"
+
+        press_file = self.pressure_filename
+    
+        # Reverse to pressure increasing order, convert hPa -> Pa
+        mf = MUSES_File(press_file)
+        press_data = np.flip(mf.data[:, 0] * 100)
+
+        return press_data
 
     def _pick_long_dir(self, longitude_dirs):
         if len(longitude_dirs) == 1:
@@ -169,8 +202,10 @@ class OSP(object):
     @property
     def _month_directory_name(self):
         return self.obs_time.strftime("%b").upper()
+   
+    def _time_directory_name(self):
 
-    def _time_directory_name(self, species_base_dir):
+        species_base_dir = self.climatology_base_dir
 
         all_year_dirs = sorted([ int(y) for y in filter(lambda d: re.match('\d{4}', d), os.listdir(species_base_dir)) ])
 
@@ -196,32 +231,11 @@ class OSP(object):
 
         return os.path.join(year_dir, month_dir, time_dir)
 
-    def pressure_filename(self, species):
-        "Filename used for accessing the pressure grid associated with a species"
+    def _temporal_clim_filename(self):
+        
+        species_base_dir = self.climatology_base_dir
 
-        species_base_dir = os.path.join(self.base_dir, "Climatology", species)
-
-        # Find the associated pressure file
-        press_file = os.path.join(species_base_dir, "Clim_Spec_{}".format(species))
-
-        if not os.path.exists(press_file):
-            raise Exception("Could not find pressure file: {}".format(press_file))
-
-        return press_file
-
-    def pressure(self, species):
-        "The pressure grid associated with a species converted into the format acceptable for ReFRACtor"
-
-        press_file = self.pressure_filename(species)
-    
-        # Reverse to pressure increasing order, convert hPa -> Pa
-        mf = MUSES_File(press_file)
-        press_data = np.flip(mf.data[:, 0] * 100)
-
-        return press_data
-
-    def _temporal_clim_filename(self, species_base_dir):
-        time_rel_dir = self._time_directory_name(species_base_dir)
+        time_rel_dir = self._time_directory_name()
 
         time_base_dir = os.path.join(species_base_dir, time_rel_dir)
 
@@ -235,29 +249,25 @@ class OSP(object):
 
         return clim_file
 
-    def _nh3_clim_filename(self, species_base_dir):
+    def _nh3_clim_filename(self):
+        return glob(os.path.join(self.climatology_base_dir, self.nh3_version, "Profile_NH3_{}.asc".format(self.nh3_version)))[0]
 
-        return glob(os.path.join(species_base_dir, self.nh3_version, "Profile_NH3_{}.asc".format(self.nh3_version)))[0]
-
-    def climatology_filename(self, species):
+    @property
+    def climatology_filename(self):
         "Filename with the species climatology values matching the object's time and location"
 
-        species_base_dir = os.path.join(self.base_dir, "Climatology", species)
-
-        if not os.path.exists(species_base_dir):
-            raise Exception("No climatology species directory found: {}".format(species_base_dir))
-
-        if species == "NH3":
-            return self._nh3_clim_filename(species_base_dir)
+        if self.species == "NH3":
+            return self._nh3_clim_filename()
         else:
-            return self._temporal_clim_filename(species_base_dir)
+            return self._temporal_clim_filename()
 
-    def climatology(self, species):
+    @property
+    def climatology_full_grid(self):
         "Species climatology data matching the object's time and location converted to the format handled by ReFRACtor"
 
-        clim_file = self.climatology_filename(species)
+        clim_file = self.climatology_filename
 
-        if species == 'PSUR':
+        if self.species == 'PSUR':
             mf = MUSES_File(clim_file, as_struct=True)
 
             # Extract value and convert to a matrix
@@ -266,7 +276,7 @@ class OSP(object):
             # Convert hPa -> Pa
             clim_data *= 100
         else:
-            mf = MUSES_File(clim_filename)
+            mf = MUSES_File(clim_file)
 
             clim_data = mf.data[:, 0]
 
@@ -275,18 +285,19 @@ class OSP(object):
 
         return clim_data
 
-    def covariance_filename(self, species, in_log=False):
+    @property
+    def covariance_filename(self):
         cov_base_dir = os.path.join(self.base_dir, "Covariance", self.cov_dir)
 
         if not os.path.exists(cov_base_dir):
             raise Exception("Covariance base directory does not exist: {}".format(cov_base_dir))
 
-        species_files = glob(os.path.join(cov_base_dir, "Covariance_Matrix_{}_*".format(species)))
+        species_files = glob(os.path.join(cov_base_dir, "Covariance_Matrix_{}_*".format(self.species)))
 
         if len(species_files) == 0:
-            raise Exception("No covariances files for {} found in directory: {}".format(species, cov_base_dir))
+            raise Exception("No covariances files for {} found in directory: {}".format(self.species, cov_base_dir))
 
-        if in_log:
+        if self.log_cov:
             filt_files = filter(lambda f: re.search("_Log_", f), species_files)
         else:
             filt_files = filter(lambda f: re.search("_Linear_", f), species_files)
@@ -297,16 +308,31 @@ class OSP(object):
 
     def _covariance_read(self, cov_file):
         mf = MUSES_File(cov_file)
-        cov_data = mf.data[:, 2:]
+
+        species_col_names = filter(lambda cn: re.search(self.species, cn), mf.column_names)
+        species_col_idx = [ mf.column_names.index(nm) for nm in species_col_names ]
+        cov_data = mf.data[:, np.array(species_col_idx)]
 
         # Convert to pressure increasing order
         cov_data = np.flip(cov_data)
 
         return cov_data
 
-    def _covariance_compute(self, species):
+    @property
+    def covariance_full_grid(self):
+        """Return a covariance matrix for the requested location, error if the covariance type is not available."""
 
-        clim_filename = self.climatology_filename(species)
+        cov_filename = self.covariance_filename
+
+        if cov_filename is None:
+            raise Exception("No {} covariance file found".format(self.log_cov and "log" or "linear"))
+        else:
+            return self._covariance_read(cov_filename)
+
+    def covariance_compute(self):
+        """Create a simple covariance from climatology data"""
+
+        clim_filename = self.climatology_filename
 
         # Replace parts of path with wildcards
 
@@ -343,14 +369,3 @@ class OSP(object):
         cov_data[diag_idx] += fudge
         
         return cov_data
-
-    def covariance(self, species, in_log=False, force_compute=False):
-        """Return a covariance matrix for the requested location, returns either a linear or log matrix. 
-           If one or the other is not available then a covariance will be created from climatology values"""
-
-        cov_filename = self.covariance_filename(species, in_log)
-
-        if cov_filename is None or force_compute:
-            return self._covariance_compute(species)
-        else:
-            return self._covariance_read(cov_filename)
