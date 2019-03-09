@@ -1,6 +1,7 @@
 import os
 import re
 import struct
+from functools import lru_cache
 from glob import glob
 from bisect import bisect_right
 import datetime as dt
@@ -100,6 +101,37 @@ class MUSES_File(object):
         raw_doubles = struct.unpack(format_code, raw_bytes)
         self.data = np.array(raw_doubles).reshape(data_size)
 
+def make_resample_map(fine_grid, coarse_grid):
+    # Based on make_map_ret_fm.pro by John Worden
+    ncoarse = coarse_grid.shape[0]
+    nfine = fine_grid.shape[0]
+
+    # set up the variables
+    resamp_map = np.zeros((nfine, ncoarse), dtype=float)
+ 
+    for i in range(0, ncoarse-2+1):
+        frange = np.where(np.logical_and(
+            fine_grid >= coarse_grid[i],
+            fine_grid < coarse_grid[i+1]))
+        
+        for j in frange[0]:
+            xdelta_p = np.log(coarse_grid[i+1]) -  np.log(coarse_grid[i])
+            xcoeff = 1.0 - (np.log(fine_grid[j]) -  np.log(coarse_grid[i]))/xdelta_p
+            
+            resamp_map[j,i] = xcoeff
+    
+    for i in range(1, ncoarse-1+1):
+        frange = np.where(np.logical_and(
+            fine_grid > coarse_grid[i-1],
+            fine_grid <= coarse_grid[i]))
+        
+        for j in frange[0]:
+            xdelta_p = np.log(coarse_grid[i]) -  np.log(coarse_grid[i-1])
+            xcoeff = 1.0 - (-np.log(fine_grid[j]) +  np.log(coarse_grid[i]))/xdelta_p
+            resamp_map[j,i] = xcoeff
+    
+    return resamp_map
+
 class OSP(object):
     def __init__(self, species, base_dir, latitude, longitude, obs_time, log_cov=True, cov_dir="Covariance-scaled"):
         self.species = species
@@ -147,6 +179,22 @@ class OSP(object):
         press_data = np.flip(mf.data[:, 0] * 100)
 
         return press_data
+
+    @lru_cache()
+    def pressure_resampled(self, num_levels):
+        fine_grid = self.pressure_full_grid
+        num_fine = fine_grid.shape[0]
+        coarse_indexes = np.round(np.linspace(0, num_fine-1, num_levels)).astype(int)
+        return fine_grid[coarse_indexes]
+
+    @lru_cache()
+    def resample_map(self, num_levels):
+        fine_grid = self.pressure_full_grid
+        coarse_grid = self.pressure_resampled(num_levels)
+
+        forward_map = make_resample_map(fine_grid, coarse_grid)
+
+        return np.linalg.pinv(forward_map)
 
     def _pick_long_dir(self, longitude_dirs):
         if len(longitude_dirs) == 1:
@@ -285,6 +333,13 @@ class OSP(object):
 
         return clim_data
 
+    @lru_cache()
+    def climatology_resampled(self, num_levels):
+        full_grid = self.climatology_full_grid
+        inv_map = self.resample_map(num_levels)
+
+        return inv_map @ full_grid
+
     @property
     def covariance_filename(self):
         cov_base_dir = os.path.join(self.base_dir, "Covariance", self.cov_dir)
@@ -306,9 +361,19 @@ class OSP(object):
 
         return cov_file
 
+    @lru_cache()
     def _covariance_read(self, cov_file):
+
+        if cov_file is None:
+            raise Exception("No {} covariance file found".format(self.log_cov and "log" or "linear"))
+
         mf = MUSES_File(cov_file)
 
+        # Find pressures column, convert hPa -> Pa, put in increasing pressure order
+        press_column = mf.column_names.index("Pressures")
+        press_data = np.flip(mf.data[:, press_column] * 100)
+
+        # Extract out actual map
         species_col_names = filter(lambda cn: re.search(self.species, cn), mf.column_names)
         species_col_idx = [ mf.column_names.index(nm) for nm in species_col_names ]
         cov_data = mf.data[:, np.array(species_col_idx)]
@@ -316,18 +381,36 @@ class OSP(object):
         # Convert to pressure increasing order
         cov_data = np.flip(cov_data)
 
-        return cov_data
+        return press_data, cov_data
+
+    @property
+    def covariance_pressure(self):
+
+        cov_filename = self.covariance_filename
+        cov_press, cov_data = self._covariance_read(cov_filename)
+        return cov_press
 
     @property
     def covariance_full_grid(self):
         """Return a covariance matrix for the requested location, error if the covariance type is not available."""
 
         cov_filename = self.covariance_filename
+        cov_press, cov_data = self._covariance_read(cov_filename)
+        return cov_data
 
-        if cov_filename is None:
-            raise Exception("No {} covariance file found".format(self.log_cov and "log" or "linear"))
-        else:
-            return self._covariance_read(cov_filename)
+    @lru_cache()
+    def covariance_resampled(self, num_levels):
+
+        cov_filename = self.covariance_filename
+        cov_press, cov_data = self._covariance_read(cov_filename)
+
+        # Must build resample map specific to covariance since its fine grid might be different than climatology
+        coarse_grid = self.pressure_resampled(num_levels)
+
+        forward_map = make_resample_map(cov_press, coarse_grid)
+        inv_map = np.linalg.pinv(forward_map)
+
+        return inv_map @ cov_data @ inv_map.transpose()
 
     def covariance_compute(self):
         """Create a simple covariance from climatology data"""
