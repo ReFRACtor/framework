@@ -140,7 +140,7 @@ class OSP(object):
         self.longitude = longitude
 
         if not isinstance(obs_time, dt.datetime):
-            raise Exception("obs_time must be a datetime instance")
+            raise Exception("obs_time must be a datetime instance for species: {}".format(self.species))
 
         self.obs_time = obs_time
 
@@ -153,7 +153,7 @@ class OSP(object):
     def climatology_base_dir(self):
         clim_base_dir = os.path.join(self.base_dir, "Climatology", self.species)
         if not os.path.exists(clim_base_dir):
-            raise Exception("No climatology species directory found: {}".format(clim_base_dir))
+            raise Exception("No climatology species directory found: {} for species".format(clim_base_dir, self.species))
         return clim_base_dir
  
     @property
@@ -164,7 +164,7 @@ class OSP(object):
         press_file = os.path.join(self.climatology_base_dir, "Clim_Spec_{}".format(self.species))
 
         if not os.path.exists(press_file):
-            raise Exception("Could not find pressure file: {}".format(press_file))
+            raise Exception("Could not find pressure file: {} for species: {}".format(press_file, self.species))
 
         return press_file
 
@@ -211,7 +211,7 @@ class OSP(object):
                 break
 
         if use_long_dir is None:
-            raise Exception("Could not determine longitude directory")
+            raise Exception("Could not determine longitude directory for species: {}".format(self.species))
 
         return use_long_dir
 
@@ -271,7 +271,7 @@ class OSP(object):
         else:
             best_month_dir = self._month_directory_name
             if best_month_dir not in all_month_dirs:
-                raise Exception("Month directory for current data {} not available at {}".format(best_month_dir, species_base_dir))
+                raise Exception("Month directory for current data {} not available at {} for species".format(best_month_dir, species_base_dir, self.species))
 
             month_dir = best_month_dir
 
@@ -288,7 +288,7 @@ class OSP(object):
         time_base_dir = os.path.join(species_base_dir, time_rel_dir)
 
         if not os.path.exists(time_base_dir):
-            raise Exception("No climatology temporal directory found: {}".format(time_base_dir))
+            raise Exception("No climatology temporal directory found: {} for species: {}".format(time_base_dir, self.species))
 
         long_dir = self._pick_long_dir(os.listdir(time_base_dir))
         lat_file = self._pick_lat_file(os.listdir(os.path.join(time_base_dir, long_dir)))
@@ -345,12 +345,12 @@ class OSP(object):
         cov_base_dir = os.path.join(self.base_dir, "Covariance", self.cov_dir)
 
         if not os.path.exists(cov_base_dir):
-            raise Exception("Covariance base directory does not exist: {}".format(cov_base_dir))
+            raise Exception("Covariance base directory does not exist: {} for species: {}".format(cov_base_dir, self.species))
 
         species_files = glob(os.path.join(cov_base_dir, "Covariance_Matrix_{}_*".format(self.species)))
 
         if len(species_files) == 0:
-            raise Exception("No covariances files for {} found in directory: {}".format(self.species, cov_base_dir))
+            raise Exception("No covariances files for {} found in directory: {} for species: ".format(self.species, cov_base_dir, self.species))
 
         if self.log_cov:
             filt_files = filter(lambda f: re.search("_Log_", f), species_files)
@@ -365,7 +365,7 @@ class OSP(object):
     def _covariance_read(self, cov_file):
 
         if cov_file is None:
-            raise Exception("No {} covariance file found".format(self.log_cov and "log" or "linear"))
+            raise Exception("No {} covariance file found for species: {}".format(self.log_cov and "log" or "linear", self.species))
 
         mf = MUSES_File(cov_file)
 
