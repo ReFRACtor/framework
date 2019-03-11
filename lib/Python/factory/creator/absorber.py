@@ -90,6 +90,7 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
 
     pressure = param.InstanceOf(rf.Pressure)
+    log_retrieval = param.Scalar(bool, default=False)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
     gas_name = param.Scalar(str, required=False)
@@ -101,7 +102,10 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrLevel(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
+        if self.log_retrieval:
+            return rf.AbsorberVmrLevelLog(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
+        else:
+            return rf.AbsorberVmrLevel(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
 
 class AbsorberVmrLevelScaled(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevelScaled that supplies a AbsorberVmr class for use in an creating an Atmosphere"
