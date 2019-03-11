@@ -16,12 +16,11 @@ public:
                         const blitz::Array<double, 1>& Vmr,
                         const blitz::Array<bool, 1>& Vmr_flag,
                         const std::string& Gas_name);
-
-    virtual ~AbsorberVmrLevelLog();
-    virtual void print(std::ostream& Os) const;
-    virtual std::string sub_state_identifier() const;
-    virtual std::string state_vector_name_i(int i) const;
     virtual boost::shared_ptr<AbsorberVmr> clone() const;
     virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
+    %python_attribute(sub_state_identifier, std::string);
+    virtual std::string state_vector_name_i(int i) const;
+protected:
+    virtual void calc_vmr() const;
 };
 }
