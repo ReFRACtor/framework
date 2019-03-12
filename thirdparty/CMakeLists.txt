@@ -75,9 +75,18 @@ list(APPEND THIRDPARTY_INCLUDES ${EIGEN_INCLUDE_DIRS})
 
 ################################################
 # Configure packages we will possibly build here
-include(blitz/blitz.cmake)
-list(APPEND THIRDPARTY_TARGETS blitz)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libblitz${CMAKE_SHARED_LIBRARY_SUFFIX})
+find_package(Blitz)
+if(BLITZ_FOUND AND (NOT BLITZ_LUA))
+    list(APPEND THIRDPARTY_INCLUDES ${BLITZ_INCLUDE_DIR})
+    list(APPEND THIRDPARTY_LIBRARIES ${BLITZ_LIBRARIES})
+else()
+    message(STATUS "Building blitz from source")
+    include(blitz/blitz.cmake)
+    list(APPEND THIRDPARTY_TARGETS blitz)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libblitz${CMAKE_SHARED_LIBRARY_SUFFIX})
+    # Override the value put into the CACHE by find_package
+    set(BLITZ_INCLUDE_DIR ${THIRDPARTY_INCLUDE_DIR} CACHE PATH "Location of blitz includes" FORCE)
+endif()
 
 find_package(Lua 5.2)
 if(LUA_FOUND AND (NOT BUILD_LUA))
