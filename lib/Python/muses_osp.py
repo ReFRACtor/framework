@@ -356,7 +356,7 @@ class OSP(object):
         species_files = glob(os.path.join(cov_base_dir, "Covariance_Matrix_{}_*".format(self.species)))
 
         if len(species_files) == 0:
-            raise Exception("No covariances files for {} found in directory: {} for species: ".format(self.species, cov_base_dir, self.species))
+            return None
 
         if self.log_cov:
             filt_files = filter(lambda f: re.search("_Log_", f), species_files)
