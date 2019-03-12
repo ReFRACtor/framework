@@ -217,7 +217,7 @@ class CovarianceByComponent(Creator):
 
         cov_inputs = self.values()
 
-        # Gather covariance arrays and do input checking
+        # Gather covariance matrices and do input checking
         covariances = []
         total_len = 0
         for rc_name, rc_obj in self.retrieval_components().items():
@@ -242,6 +242,11 @@ class CovarianceByComponent(Creator):
 
             used_indexes = np.nonzero(flag)
             used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
+
+            # Check that the matrix is postive definite to help reduce debugging time by highlighting this fact before
+            # the full Cholesky matrix decomposition within the framework fails
+            if not np.all(np.linalg.eigvals(used_cov) > 0):
+                raise param.ParamError("CovarianceByComponent: covariance for {} is not positive definite".format(rc_name))
 
             total_len += used_cov.shape[0]
             covariances.append(used_cov)
