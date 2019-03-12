@@ -5,6 +5,7 @@ from functools import lru_cache
 from glob import glob
 from bisect import bisect_right
 import datetime as dt
+import warnings
 
 import numpy as np
 
@@ -131,6 +132,7 @@ def make_resample_map(fine_grid, coarse_grid):
             resamp_map[j,i] = xcoeff
     
     return resamp_map
+
 
 class OSP(object):
     def __init__(self, species, base_dir, latitude, longitude, obs_time, log_cov=True, cov_dir="Covariance-scaled"):
@@ -336,7 +338,11 @@ class OSP(object):
     @lru_cache()
     def climatology_resampled(self, num_levels):
         full_grid = self.climatology_full_grid
+
         inv_map = self.resample_map(num_levels)
+
+        if full_grid.shape[0] != inv_map.shape[1]:
+            raise Exception("Can not resample {} climatology data, data does not match full grid size".format(self.species))
 
         return inv_map @ full_grid
 
@@ -396,13 +402,28 @@ class OSP(object):
 
         cov_filename = self.covariance_filename
         cov_press, cov_data = self._covariance_read(cov_filename)
+
+        # "Fix" covariances that are not positive definite
+        if not np.all(np.linalg.eigvals(cov_data) > 0):
+            warnings.warn("Covariance matrix for species {} is not positive definite, modifying eigenvals".format(self.species))
+
+            # Get eigen values and vector from matrix
+            eigval, eigvec = np.linalg.eig(cov_data)
+
+            # Find negative eigen values and set to the media
+            eigval[np.where(eigval < 0)] = np.median(eigval)
+
+            # Reconstruct matrix with modified eigen values
+            cov_data = eigvec @ np.diag(eigval) @ np.linalg.inv(eigvec)
+
         return cov_data
 
     @lru_cache()
     def covariance_resampled(self, num_levels):
 
         cov_filename = self.covariance_filename
-        cov_press, cov_data = self._covariance_read(cov_filename)
+        cov_press = self.covariance_pressure
+        cov_data = self.covariance_full_grid
 
         # Must build resample map specific to covariance since its fine grid might be different than climatology
         coarse_grid = self.pressure_resampled(num_levels)
