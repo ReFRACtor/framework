@@ -40,6 +40,14 @@ public:
     }
 
     virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
+
+    //-----------------------------------------------------------------------
+    /// VMR on the pressure grid. This is just exp(coeff.value), but this is
+    /// useful for introspection.
+    //-----------------------------------------------------------------------
+    blitz::Array<double, 1> vmr_profile() const { return blitz::Array<double, 1>(exp(coeff.value())); }
+
+
 protected:
     virtual void calc_vmr() const;
 };
