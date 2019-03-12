@@ -84,7 +84,12 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
 
         apriori_obj = rf.GasVmrApriori(pressure_levels, temperature_levels, self.latitude().value[0], self.time()[0], \
                 self.altitude()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
-        return apriori_obj.apriori_vmr()
+        vmr_profile = apriori_obj.apriori_vmr()
+
+        if np.any(np.isnan(vmr_profile)):
+            raise param.ParamError("NaN values detected in VMR computed by GasVmrApriori for {}".format(gas_name))
+
+        return vmr_profile
 
 class AbsorberVmrLevel(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
@@ -102,10 +107,18 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
+        vmr_profile = self.value(gas_name=gas_name)
+
+        if np.any(np.isnan(vmr_profile)):
+            raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
+
+        if self.log_retrieval and np.any(vmr_profile < 0):
+            raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
+
         if self.log_retrieval:
-            return rf.AbsorberVmrLevelLog(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
+            return rf.AbsorberVmrLevelLog(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
         else:
-            return rf.AbsorberVmrLevel(self.pressure(), self.value(gas_name=gas_name), self.retrieval_flag(gas_name=gas_name), gas_name)
+            return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
 
 class AbsorberVmrLevelScaled(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevelScaled that supplies a AbsorberVmr class for use in an creating an Atmosphere"
@@ -123,8 +136,11 @@ class AbsorberVmrLevelScaled(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
+        if np.any(np.isnan(vmr_profile)):
+            raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
+
         ret_flag = bool(self.retrieval_flag(gas_name=gas_name)[0])
-        return rf.AbsorberVmrLevelScaled(self.pressure(), self.value(gas_name=gas_name), self.scaling(), ret_flag, gas_name)
+        return rf.AbsorberVmrLevelScaled(self.pressure(), vmr_profile, self.scaling(), ret_flag, gas_name)
 
 class AbsorberVmrMet(CreatorFlaggedValue):
 
