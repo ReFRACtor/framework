@@ -135,7 +135,7 @@ def make_resample_map(fine_grid, coarse_grid):
 
 
 class OSP(object):
-    def __init__(self, species, base_dir, latitude, longitude, obs_time, log_cov=True, cov_dir="Covariance-scaled"):
+    def __init__(self, species, base_dir, latitude, longitude, obs_time, use_log=True, cov_dir="Covariance-scaled", num_constraint_levels=None):
         self.species = species
         self.base_dir = base_dir
         self.latitude = latitude
@@ -146,8 +146,10 @@ class OSP(object):
 
         self.obs_time = obs_time
 
-        self.log_cov = log_cov
+        self.use_log = use_log
         self.cov_dir = cov_dir
+
+        self.num_constraint_levels = num_constraint_levels
 
         self.nh3_version = "CLN"
 
@@ -182,12 +184,17 @@ class OSP(object):
 
         return press_data
 
-    @lru_cache()
-    def pressure_resampled(self, num_levels):
+    def coarse_grid_indexes(self, num_levels):
+        "Pick indexes out of the fine grid for resampling data into"
+
         fine_grid = self.pressure_full_grid
         num_fine = fine_grid.shape[0]
         coarse_indexes = np.round(np.linspace(0, num_fine-1, num_levels)).astype(int)
-        return fine_grid[coarse_indexes]
+        return coarse_indexes
+ 
+    @lru_cache()
+    def pressure_resampled(self, num_levels):
+        return fine_grid[self.coarse_grid_indexes(num_levels)]
 
     @lru_cache()
     def resample_map(self, num_levels):
@@ -346,34 +353,75 @@ class OSP(object):
 
         return inv_map @ full_grid
 
-    @property
-    def covariance_filename(self):
-        cov_base_dir = os.path.join(self.base_dir, "Covariance", self.cov_dir)
+    def _pick_constraint_levels_file(self, filenames):
+
+        if self.num_constraint_levels is not None:
+            # If defined find the file with the defined number of constraint levels
+            for fn in filenames:
+                if re.search("_{}.asc".format(self.num_constraint_levels), fn):
+                    return fn
+            return None
+        else:
+            # Otherwise sort reverse on number of levels and pick the file with the most number of pressure levels
+            def extract_num_levels(fn):
+                match = re.search("_(\d+)(?:_\w+)?.asc", fn)
+                if not match:
+                    raise Exception("Could not parse number of levels from {}".format(fn))
+                return int(match.group(1))
+
+            sorted_filenames = sorted(filenames, key=extract_num_levels, reverse=True)
+
+            return sorted_filenames[0]
+
+    def _co_star_filename(self, co_dir_suffix, constraint=False):
+        "Finds filenames for Covariance and Constraint files which have a similar pattern"
+
+        cov_base_dir = os.path.join(self.base_dir, co_dir_suffix)
 
         if not os.path.exists(cov_base_dir):
-            raise Exception("Covariance base directory does not exist: {} for species: {}".format(cov_base_dir, self.species))
+            raise Exception("{} base directory does not exist: {} for species: {}".format(co_dir_suffix, cov_base_dir, self.species))
 
-        species_files = glob(os.path.join(cov_base_dir, "Covariance_Matrix_{}_*".format(self.species)))
+        if constraint:
+            glob_pattern = "Constraint_Matrix_{species}_*"
+        else:
+            glob_pattern = "Covariance_Matrix_{species}_*"
+
+        species_files = glob(os.path.join(cov_base_dir, glob_pattern.format(species=self.species)))
 
         if len(species_files) == 0:
             return None
 
-        if self.log_cov:
-            filt_files = filter(lambda f: re.search("_Log_", f), species_files)
+        if self.use_log:
+            filt_files = filter(lambda f: re.search("_Log_", f, re.IGNORECASE), species_files)
         else:
-            filt_files = filter(lambda f: re.search("_Linear_", f), species_files)
+            filt_files = filter(lambda f: re.search("_Linear_", f, re.IGNORECASE), species_files)
 
-        cov_file = self._pick_lat_file(list(filt_files))
+        if constraint:
+            co_file = self._pick_constraint_levels_file(list(filt_files))
+        else:
+            co_file = self._pick_lat_file(list(filt_files))
 
-        return cov_file
+        return co_file
+
+ 
+    @property
+    def covariance_filename(self):
+
+        return self._co_star_filename(os.path.join("Covariance", self.cov_dir))
+
+    @property
+    def constraint_filename(self):
+
+        return self._co_star_filename(os.path.join("Constraint"), constraint=True)
+
 
     @lru_cache()
-    def _covariance_read(self, cov_file):
+    def _co_star_read(self, co_file):
 
-        if cov_file is None:
-            raise Exception("No {} covariance file found for species: {}".format(self.log_cov and "log" or "linear", self.species))
+        if co_file is None:
+            raise Exception("No {} constraint/covariance file found for species: {}".format(self.use_log and "log" or "linear", self.species))
 
-        mf = MUSES_File(cov_file)
+        mf = MUSES_File(co_file)
 
         # Find pressures column, convert hPa -> Pa, put in increasing pressure order
         press_column = mf.column_names.index("Pressures")
@@ -382,18 +430,18 @@ class OSP(object):
         # Extract out actual map
         species_col_names = filter(lambda cn: re.search(self.species, cn), mf.column_names)
         species_col_idx = [ mf.column_names.index(nm) for nm in species_col_names ]
-        cov_data = mf.data[:, np.array(species_col_idx)]
+        co_data = mf.data[:, np.array(species_col_idx)]
 
         # Convert to pressure increasing order
-        cov_data = np.flip(cov_data)
+        co_data = np.flip(co_data)
 
-        return press_data, cov_data
+        return press_data, co_data
 
     @property
     def covariance_pressure(self):
 
         cov_filename = self.covariance_filename
-        cov_press, cov_data = self._covariance_read(cov_filename)
+        cov_press, cov_data = self._co_star_read(cov_filename)
         return cov_press
 
     @property
@@ -401,7 +449,7 @@ class OSP(object):
         """Return a covariance matrix for the requested location, error if the covariance type is not available."""
 
         cov_filename = self.covariance_filename
-        cov_press, cov_data = self._covariance_read(cov_filename)
+        cov_press, cov_data = self._co_star_read(cov_filename)
 
         # "Fix" covariances that are not positive definite
         if not np.all(np.linalg.eigvals(cov_data) > 0):
@@ -432,6 +480,35 @@ class OSP(object):
         inv_map = np.linalg.pinv(forward_map)
 
         return inv_map @ cov_data @ inv_map.transpose()
+
+    @property
+    def constraint_pressure(self):
+
+        con_filename = self.constraint_filename
+        con_press, con_data = self._co_star_read(con_filename)
+        return con_press
+
+    @property
+    def constraint_full_grid(self):
+        """Return a constraint matrix for the requested location, error if the covariance type is not available."""
+
+        con_filename = self.constraint_filename
+        con_press, con_data = self._co_star_read(con_filename)
+        return con_data
+
+    @property
+    def constraint_full_indexes(self):
+        "Returns indexes into the full pressure grid where constraint pressues are located"
+
+        press_full = self.pressure_full_grid
+        press_con = self.constraint_pressure
+
+        indexes = []
+        for con_p in press_con:
+            idx = max(bisect_right(press_full, con_p)-1, 0)
+            indexes.append(idx)
+
+        return np.array(indexes)
 
     def covariance_compute(self):
         """Create a simple covariance from climatology data"""
