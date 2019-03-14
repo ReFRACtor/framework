@@ -12,10 +12,11 @@ import numpy as np
 
 class MUSES_File(object):
 
-    def __init__(self, filename, as_struct=False):
+    def __init__(self, filename, as_struct=False, header_only=False):
 
         self.filename = filename
         self.as_struct = as_struct
+        self.header_only = header_only
 
         self.header = {}
         self.column_names = []
@@ -28,6 +29,9 @@ class MUSES_File(object):
     def _read_file(self, muses_file):
 
         self._read_header(muses_file)
+
+        if self.header_only:
+            return
 
         if 'Binary_Endian' in self.header:
             self._read_binary_data(muses_file)
