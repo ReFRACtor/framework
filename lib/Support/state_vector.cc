@@ -137,7 +137,7 @@ void StateVector::update_state(const blitz::Array<double, 1>& X)
 
     // Only set dummy covariance values when it is empty or the state vector size change. Don't
     // overwrite anything that may have been written by the other overloaded update_state method
-    if (cov_.rows() != x_.rows() or cov_.cols() == x_.rows()) {
+    if (cov_.rows() != x_.rows() or cov_.cols() != x_.rows()) {
         cov_.resize(x_.rows(), x_.rows());
         cov_ = 0;
 
