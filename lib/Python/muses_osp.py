@@ -506,9 +506,22 @@ class OSP(object):
         indexes = []
         for con_p in press_con:
             idx = max(bisect_right(press_full, con_p)-1, 0)
-            indexes.append(idx)
+            if idx not in indexes:
+                indexes.append(idx)
 
         return np.array(indexes)
+
+    @property
+    def constraint_full_flags(self):
+        "Flags indicating which indexes in the full pressure grid are valid for the constraint matrix"
+
+        press_full = self.pressure_full_grid
+        con_indexes = self.constraint_full_indexes
+        
+        flags = np.zeros(press_full.shape[0], dtype=bool)
+        flags[con_indexes] = True
+
+        return flags
 
     def covariance_compute(self):
         """Create a simple covariance from climatology data"""
