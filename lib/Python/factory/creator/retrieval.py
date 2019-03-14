@@ -235,13 +235,15 @@ class CovarianceByComponent(Creator):
             if rc_cov.shape[0] != rc_cov.shape[1]:
                 raise param.ParamError("CovarianceByComponent: array for retrieval component must be a square matrix: %s" % rc_name)
 
+            # Subset a larger covariances if it is the same size as the flags
             flag = rc_obj.used_flag_value
+            if flag.shape[0] == rc_cov.shape[0]:
+                used_indexes = np.nonzero(flag)
+                used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
+            else:
+                used_cov = rc_cov
 
-            if flag.shape[0] != rc_cov.shape[0]:
-                raise param.ParamError("CovarianceByComponent: covariance shape %s and and flag shape are mismatched: %s for %s" % (flag.shape, rc_cov.shape, rc_name))
-
-            used_indexes = np.nonzero(flag)
-            used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
+            used_indexes = np.array(np.nonzero(rc_obj.used_flag_value))
 
             # Check that the matrix is postive definite to help reduce debugging time by highlighting this fact before
             # the full Cholesky matrix decomposition within the framework fails

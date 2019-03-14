@@ -11,6 +11,7 @@ class CreatorFlaggedValue(Creator):
 
     value = param.Choice(param.Array(dims=1), param.ArrayWithUnit(dims=1))
     retrieved = param.Scalar(bool, required=False)
+    flags = param.Array(dims=1, required=False)
 
     def retrieval_flag(self, **kwargs):
         val = self.value(**kwargs)
@@ -22,8 +23,12 @@ class CreatorFlaggedValue(Creator):
         else:
             val_shape = val.shape
 
-        if retrieved is None or retrieved:
-            return np.ones(val_shape, dtype=bool)
+        flags = self.flags()
+        if retrieved is None or retrieved or flags is not None:
+            if flags is not None:
+                return flags
+            else:
+                return np.ones(val_shape, dtype=bool)
         else:
             return np.zeros(val_shape, dtype=bool)
 
