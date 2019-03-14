@@ -17,6 +17,7 @@ set(DIR_SOURCES
     linear_algebra.cc
     logger.cc
     logger_f.F90
+    mapping.h
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc
