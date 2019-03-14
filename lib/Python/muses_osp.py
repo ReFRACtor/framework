@@ -173,6 +173,7 @@ class OSP(object):
         return press_file
 
     @property
+    @lru_cache()
     def pressure_full_grid(self):
         "The pressure grid associated with a species converted into the format acceptable for ReFRACtor"
 
@@ -194,6 +195,7 @@ class OSP(object):
  
     @lru_cache()
     def pressure_resampled(self, num_levels):
+        fine_grid = self.pressure_full_grid
         return fine_grid[self.coarse_grid_indexes(num_levels)]
 
     @lru_cache()
