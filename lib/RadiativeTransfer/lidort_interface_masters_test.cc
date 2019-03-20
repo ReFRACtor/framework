@@ -7,6 +7,69 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+// The newer version of blitz (0.10) doesn't support reading 5 d
+// arrays, although the older one did. This is code to add reading of
+// this. I think we only need that for this set of tests, so I'll
+// leave this here. If this ends up being needed elsewhere, we can
+// move this to its own file.
+istream& operator>>(istream& is, blitz::Array<double,5>& x)
+{
+  TinyVector<int,5> lower_bounds, upper_bounds, extent;
+  char sep;
+
+  // Read the extent vector: this is separated by 'x's, e.g.
+  // (1, 10) x (-4, 4) x (-5, 5) 
+
+  for (int i=0; i < 5; ++i) {
+    is >> sep;
+    if(is.bad())
+      throw Exception("Premature end of input while scanning Array");
+    if(sep != '(')
+      throw Exception("Format error while scanning input Array \n -- expected '(' opening Array extents");
+
+    is >> lower_bounds(i); 
+    is >> sep; 
+    if(sep != ',')
+      throw Exception("Format error while scanning input Array \n -- expected ',' between Array extents");
+
+    is >> upper_bounds(i);
+
+    is >> sep; 
+    if(sep != ')')
+      throw Exception("Format error while scanning input Array \n -- expected ')' closing Array extents");
+
+    if (i != 5-1) {
+      is >> sep;
+      if(sep != 'x')
+	throw Exception("Format error while scanning input Array \n -- expected 'x' between Array extents");
+    }
+  }
+
+  is >> sep;
+  if(sep != '[')
+    throw Exception("Format error while scanning input Array \n -- expected '[' before beginning of Array data");
+
+  for (int i=0; i < 5; ++i)
+      extent(i) = upper_bounds(i) - lower_bounds(i) + 1;
+  x.resize(extent);
+  x.reindexSelf(lower_bounds);
+
+  for (int i1=x.lbound(0); i1<=x.ubound(0); i1++) 
+    for (int i2=x.lbound(1); i2<=x.ubound(1); i2++) 
+      for (int i3=x.lbound(2); i3<=x.ubound(2); i3++) 
+	for (int i4=x.lbound(3); i4<=x.ubound(3); i4++) 
+	  for (int i5=x.lbound(4); i5<=x.ubound(4); i5++) {
+	    if(is.bad())
+	      throw Exception("Premature end of input while scanning Array");
+	    is >> x(i1,i2,i3,i4,i5);
+	  }
+
+  is >> sep;
+  if(sep != ']')
+    throw Exception("Format error while scanning input Array \n -- expected ']' after end of Array data");
+  return is;
+}
+
 BOOST_FIXTURE_TEST_SUITE(lidort_interface_masters, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(lidort_brdf_master)
