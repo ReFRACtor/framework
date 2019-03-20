@@ -9,7 +9,7 @@ FIND_LIBRARY(_LIDORT_LIBRARY
 
 IF(_LIDORT_LIBRARY)
     SET(LIDORT_LIBRARIES
-        "${_LIDORT_LIBRARY}" CACHE STRING "Lidort++ Libraries")
+        "${_LIDORT_LIBRARY}" CACHE STRING "Lidort Libraries")
 ENDIF(_LIDORT_LIBRARY)
 
 INCLUDE(FindPackageHandleStandardArgs)

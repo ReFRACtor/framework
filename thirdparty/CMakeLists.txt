@@ -117,9 +117,16 @@ else()
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libluabind${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
-include(2stream/2stream.cmake)
-list(APPEND THIRDPARTY_TARGETS twostream)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream${CMAKE_SHARED_LIBRARY_SUFFIX})
+find_package(Twostream)
+if(TWOSTREAM_FOUND AND (NOT BUILD_TWOSTREAM))
+    list(APPEND THIRDPARTY_LIBRARIES ${TWOSTREAM_LIBRARIES})
+else()
+    message(STATUS "Building 2stream from source")
+    include(2stream/2stream.cmake)
+    list(APPEND THIRDPARTY_TARGETS twostream)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
+
 
 # Duplicates the setting of these properties as done in lidort-*/CMakeCache.txt
 # because that cmake file is treated as an external project and not exposed to
@@ -149,9 +156,15 @@ else()
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
-include(first_order/first_order.cmake)
-list(APPEND THIRDPARTY_TARGETS first_order)
-list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libfirst_order${CMAKE_SHARED_LIBRARY_SUFFIX})
+find_package(First_order)
+if(FIRST_ORDER_FOUND AND (NOT BUILD_FIRST_ORDER))
+    list(APPEND THIRDPARTY_LIBRARIES ${FIRST_ORDER_LIBRARIES})
+else()
+    message(STATUS "Building first_order from source")
+    include(first_order/first_order.cmake)
+    list(APPEND THIRDPARTY_TARGETS first_order)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libfirst_order${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
 
 # Custom target that makes it easier to compile all third party independently
 add_custom_target(thirdparty DEPENDS ${THIRDPARTY_TARGETS})

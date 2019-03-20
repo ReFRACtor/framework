@@ -1,13 +1,10 @@
 set(BLITZ_NAME blitz)
 
 # Location of tar file to build
-set(BLITZ_URL ${CMAKE_CURRENT_SOURCE_DIR}/blitz/blitz-0.9.tar.gz)
+set(BLITZ_URL ${CMAKE_CURRENT_SOURCE_DIR}/blitz/blitz-0.10.tar.gz)
 
-# This patch is described at 
-# http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=455661. This adds some
-# header files that are needed by gcc >= 4.3. These really should have
-# always been there, but the headers in gcc were a bit messy before
-set(BLITZ_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/blitz/blitz++.patch)
+# Patch to fix build problem with gcc 7
+set(BLITZ_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/blitz/blitz-fix-gcc7.patch)
 
 ExternalProject_Add(${BLITZ_NAME}
     URL ${BLITZ_URL}

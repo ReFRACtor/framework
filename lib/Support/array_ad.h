@@ -2,7 +2,6 @@
 #define ARRAY_AD_H
 #include "auto_derivative.h"
 #include "fp_exception.h"
-#include <blitz/tinyvec-et.h>
 
 // Turn on trace messages, useful for debugging problems with this class.
 // #define ARRAY_AD_DIAGNOSTIC
