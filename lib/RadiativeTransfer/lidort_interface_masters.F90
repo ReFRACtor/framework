@@ -416,15 +416,6 @@ subroutine lps_masters_lps_master_wrap (lidort_fixin_in, &
   call c_f_pointer(lidort_linsup_in, lidort_linsup_lcl)
   call c_f_pointer(lidort_linout_in, lidort_linout_lcl)
 
-  call test_master(lidort_fixin_lcl, &
-                         lidort_modin_lcl, &
-                         lidort_sup_lcl, &
-                         lidort_out_lcl, &
-                         lidort_linfixin_lcl, &
-                         lidort_linmodin_lcl, &
-                         lidort_linsup_lcl, &
-                         lidort_linout_lcl)
-
   call lidort_lps_master(lidort_fixin_lcl, &
                          lidort_modin_lcl, &
                          lidort_sup_lcl, &
@@ -435,63 +426,6 @@ subroutine lps_masters_lps_master_wrap (lidort_fixin_in, &
                          lidort_linout_lcl)
 
 end subroutine lps_masters_lps_master_wrap
-
-SUBROUTINE test_master ( &
-        LIDORT_FixIn,    & ! INPUTS
-        LIDORT_ModIn,    & ! INPUTS (possibly modified)
-        LIDORT_Sup,      & ! INPUTS/OUTPUTS
-        LIDORT_Out,      & ! OUTPUTS
-        LIDORT_LinFixIn, & ! INPUTS
-        LIDORT_LinModIn, & ! INPUTS (possibly modified)
-        LIDORT_LinSup,   & ! INPUTS/OUTPUTS
-        LIDORT_LinOut )    ! OUTPUTS
-!  Parameter types
-
-      USE LIDORT_pars
-
-!  Implicit none
-
-      implicit none
-
-!  LIDORT input structures
-
-      TYPE(LIDORT_Fixed_Inputs)   , INTENT (IN)    :: LIDORT_FixIn
-      TYPE(LIDORT_Modified_Inputs), INTENT (INOUT) :: LIDORT_ModIn
-
-!  LIDORT supplements structure
-
-      TYPE(LIDORT_Sup_InOut), INTENT (INOUT)       :: LIDORT_Sup
-
-!  LIDORT output structure
-
-      !TYPE(LIDORT_Outputs), INTENT (INOUT)         :: LIDORT_Out
-      TYPE(LIDORT_Outputs), INTENT (OUT)           :: LIDORT_Out
-
-!  LIDORT linearized input structures
-
-      TYPE(LIDORT_Fixed_LinInputs)   , INTENT (IN)    :: LIDORT_LinFixIn
-      TYPE(LIDORT_Modified_LinInputs), INTENT (INOUT) :: LIDORT_LinModIn
-
-!  LIDORT linearized supplements structure
-
-      TYPE(LIDORT_LinSup_InOut), INTENT (INOUT)       :: LIDORT_LinSup
-
-!  LIDORT linearized output structure
-
-      !TYPE(LIDORT_LinOutputs), INTENT (INOUT)         :: LIDORT_LinOut
-      TYPE(LIDORT_LinOutputs), INTENT (OUT)         :: LIDORT_LinOut
-
-      write(*,*) "hi there"
-      call lidort_lps_master(        LIDORT_FixIn,    &
-           LIDORT_ModIn,    &
-           LIDORT_Sup,      &
-           LIDORT_Out,      &
-           LIDORT_LinFixIn, &
-           LIDORT_LinModIn, &
-           LIDORT_LinSup,   &
-           LIDORT_LinOut)
-      write(*,*) "hi there 2"
-end SUBROUTINE test_master
 
 end module LIDORT_LPS_MASTERS_WRAP
 
