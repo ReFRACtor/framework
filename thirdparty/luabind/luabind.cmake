@@ -22,7 +22,7 @@ endif()
 # Build and install manually to avoid dependence on bjam
 ExternalProject_Add(${LUABIND_NAME}
     URL ${LUABIND_URL}
-    CONFIGURE_COMMAND CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} cmake ${CMAKE_ARGS} . 
+    CONFIGURE_COMMAND export CXXFLAGS=${CMAKE_CXX_FLAGS} COMMAND export CFLAGS=${CMAKE_C_FLAGS} COMMAND export CXX="${CMAKE_CXX_COMPILER}" COMMAND export CC="${CMAKE_C_COMPILER}" COMMAND cmake ${CMAKE_ARGS} . 
     BUILD_COMMAND make luabind
     BUILD_IN_SOURCE 1
 )
