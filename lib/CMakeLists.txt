@@ -32,7 +32,7 @@ foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Regist
             PATTERN "spectrum_doxygen.h" EXCLUDE)
 endforeach(sub_dir)
 
-include_directories(${THIRDPARTY_INCLUDES})
+include_directories(SYSTEM ${THIRDPARTY_INCLUDES})
 include_directories(${FP_INCLUDES})
 
 add_library(refractor SHARED ${FP_SOURCE_FILES})
