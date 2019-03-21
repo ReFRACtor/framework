@@ -2355,6 +2355,11 @@ function ConfigCommon:meas_cont_signal(spec_idx)
     if self.dispersion[spec_idx+1] ~= nil then
         local pixel_grid = self.dispersion[spec_idx+1]:pixel_grid()
         local grid_indexes = self.spec_win:grid_indexes(pixel_grid, spec_idx)
+
+        -- Remove last grid index so that unit tests are consistent with previous bug where
+        -- code was not being inclusive of the last point at the end of the supplied range
+        grid_indexes:pop_back()
+
         signal = self.l1b:signal(spec_idx, grid_indexes) 
     else
         self:diagnostic_message("Not removing bad samples or out of range samples for measurement continuum signal calculation")
