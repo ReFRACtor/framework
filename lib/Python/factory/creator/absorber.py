@@ -136,6 +136,8 @@ class AbsorberVmrLevelScaled(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
+        vmr_profile = self.value(gas_name=gas_name)
+
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
