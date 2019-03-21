@@ -139,7 +139,7 @@ public:
     return scattering_moment_common(wn, nummom, numscat);
   }
   virtual ArrayAd<double, 1> 
-  optical_depth_wrt_iv(double wn, int spec_index,
+  optical_depth_wrt_iv(double wn, int UNUSED(spec_index),
                        const ArrayAd<double, 2>& iv) const
   {
     FunctionTimer ft(timer.function_timer());
@@ -147,7 +147,7 @@ public:
     return tau;
   }
   virtual ArrayAd<double, 1> 
-  single_scattering_albedo_wrt_iv(double wn, int spec_index,
+  single_scattering_albedo_wrt_iv(double wn, int UNUSED(spec_index),
                                   const ArrayAd<double, 2>& iv) const
   {
     FunctionTimer ft(timer.function_timer());
@@ -155,7 +155,7 @@ public:
     return omega;
   }
   virtual ArrayAd<double, 3>
-  scattering_moment_wrt_iv(double wn, int spec_index, 
+  scattering_moment_wrt_iv(double wn, int UNUSED(spec_index), 
                            const ArrayAd<double, 2>& iv,
                            int nummom = -1, 
                            int numscat = -1) const
@@ -187,12 +187,12 @@ public:
   { sv_size = (int) Sv.state().size(); }
   virtual void notify_remove(StateVector& Sv) 
   { sv_size = (int) Sv.state().size(); }
-  virtual void notify_update(const StateVector& Sv) 
+  virtual void notify_update(const StateVector& Sv)
   { notify_update_do(*this); sv_size = (int) Sv.state().size(); }
 
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const Aerosol& A);
-  virtual void notify_update(const Pressure& P)
+  virtual void notify_update(const Pressure& UNUSED(P))
   { nlay = -1; }
 
   virtual void reset_timer();

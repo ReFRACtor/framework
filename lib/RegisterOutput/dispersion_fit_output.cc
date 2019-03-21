@@ -11,7 +11,7 @@ REGISTER_LUA_END()
 
 // See base class for description
 
-void DispersionFitOutput::register_output_apriori(const boost::shared_ptr<Output>& out) const
+void DispersionFitOutput::register_output_apriori(const boost::shared_ptr<Output>& UNUSED(out)) const
 {
 }
 

@@ -58,7 +58,7 @@ void TemperatureOffset::calc_temperature_grid() const
 }
 
 // See base class for description of this function.
-std::string TemperatureOffset::state_vector_name_i(int i) const
+std::string TemperatureOffset::state_vector_name_i(int UNUSED(i)) const
 {
   return "Temperature Offset (Kelvin)";
 }

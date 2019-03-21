@@ -42,9 +42,9 @@ public:
     return ils_[Spec_index]->ils_half_width(half_width);
   }
   virtual void print(std::ostream& Os) const;
-  virtual void notify_update(const Ils& D)
+  virtual void notify_update(const Ils& UNUSED(D))
   { notify_update_do(*this); }
-  virtual void notify_update(const InstrumentCorrection& C)
+  virtual void notify_update(const InstrumentCorrection& UNUSED(C))
   { notify_update_do(*this); }
 
   virtual boost::shared_ptr<Instrument> clone() const;

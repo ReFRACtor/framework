@@ -367,9 +367,6 @@ BOOST_AUTO_TEST_CASE(brdf_sup_outputs)
 
 BOOST_AUTO_TEST_CASE(brdf_input_exception_handling)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Brdf_Input_Exception_Handling tst_obj = Brdf_Input_Exception_Handling();
 
@@ -387,9 +384,6 @@ BOOST_AUTO_TEST_CASE(brdf_input_exception_handling)
 
 BOOST_AUTO_TEST_CASE(brdf_output_exception_handling)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Brdf_Output_Exception_Handling tst_obj = Brdf_Output_Exception_Handling();
 
@@ -549,9 +543,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_linoptical)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_lininputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Lininputs tst_obj = Lidort_Fixed_Lininputs();
 
@@ -567,9 +558,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_lininputs)
 
 BOOST_AUTO_TEST_CASE(lidort_modified_lininputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Modified_Lininputs tst_obj = Lidort_Modified_Lininputs();
 
@@ -714,9 +702,6 @@ BOOST_AUTO_TEST_CASE(lidort_linsurf)
 
 BOOST_AUTO_TEST_CASE(lidort_linoutputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Linoutputs tst_obj = Lidort_Linoutputs();
 
@@ -865,9 +850,6 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_ss_surf)
 
 BOOST_AUTO_TEST_CASE(lidort_linsup_ss)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Linsup_Ss tst_obj = Lidort_Linsup_Ss();
 
@@ -927,9 +909,6 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_sleave)
 
 BOOST_AUTO_TEST_CASE(lidort_linsup_inout)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Linsup_Inout tst_obj = Lidort_Linsup_Inout();
 
@@ -1000,9 +979,6 @@ BOOST_AUTO_TEST_CASE(lidort_main_outputs)
 
 BOOST_AUTO_TEST_CASE(lidort_exception_handling)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Exception_Handling tst_obj = Lidort_Exception_Handling();
 
@@ -1021,9 +997,6 @@ BOOST_AUTO_TEST_CASE(lidort_exception_handling)
 
 BOOST_AUTO_TEST_CASE(lidort_input_exception_handling)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Input_Exception_Handling tst_obj = Lidort_Input_Exception_Handling();
 
@@ -1041,9 +1014,6 @@ BOOST_AUTO_TEST_CASE(lidort_input_exception_handling)
 
 BOOST_AUTO_TEST_CASE(lidort_outputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Outputs tst_obj = Lidort_Outputs();
 
@@ -1184,9 +1154,6 @@ BOOST_AUTO_TEST_CASE(lidort_sup_ss)
 
 BOOST_AUTO_TEST_CASE(lidort_sup_inout)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Sup_Inout tst_obj = Lidort_Sup_Inout();
 
@@ -1202,9 +1169,6 @@ BOOST_AUTO_TEST_CASE(lidort_sup_inout)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_boolean)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Boolean tst_obj = Lidort_Fixed_Boolean();
 
@@ -1232,9 +1196,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_boolean)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_control)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Control tst_obj = Lidort_Fixed_Control();
 
@@ -1257,9 +1218,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_control)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_sunrays)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Sunrays tst_obj = Lidort_Fixed_Sunrays();
 
@@ -1276,9 +1234,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_sunrays)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_uservalues)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Uservalues tst_obj = Lidort_Fixed_Uservalues();
 
@@ -1363,9 +1318,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_optical)
 
 BOOST_AUTO_TEST_CASE(lidort_fixed_inputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Fixed_Inputs tst_obj = Lidort_Fixed_Inputs();
 
@@ -1381,9 +1333,6 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_inputs)
 
 BOOST_AUTO_TEST_CASE(lidort_modified_boolean)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Modified_Boolean tst_obj = Lidort_Modified_Boolean();
 
@@ -1417,9 +1366,6 @@ BOOST_AUTO_TEST_CASE(lidort_modified_boolean)
 
 BOOST_AUTO_TEST_CASE(lidort_modified_control)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Modified_Control tst_obj = Lidort_Modified_Control();
 
@@ -1498,9 +1444,6 @@ BOOST_AUTO_TEST_CASE(lidort_modified_uservalues)
 
 BOOST_AUTO_TEST_CASE(lidort_modified_chapman)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Modified_Chapman tst_obj = Lidort_Modified_Chapman();
 
@@ -1539,9 +1482,6 @@ BOOST_AUTO_TEST_CASE(lidort_modified_optical)
 
 BOOST_AUTO_TEST_CASE(lidort_modified_inputs)
 {
-  // Used for checking dimensions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Test constructor
   Lidort_Modified_Inputs tst_obj = Lidort_Modified_Inputs();
 
@@ -1550,7 +1490,6 @@ BOOST_AUTO_TEST_CASE(lidort_modified_inputs)
 
   // Test variable shapes
   
-
   // Test initialization
   
 }

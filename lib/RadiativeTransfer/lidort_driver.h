@@ -87,7 +87,7 @@ public:
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
   void setup_geometry(double sza, double azm, double zen) const;
 
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const;
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const;
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,

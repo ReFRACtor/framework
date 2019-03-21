@@ -372,7 +372,7 @@ public:
   }
 
   
-  const bool bs_do_bsavalue_wf() const {
+  bool bs_do_bsavalue_wf() const {
     return *transfer_struct_c.bs_do_bsavalue_wf_ != 0;
   }
 
@@ -381,7 +381,7 @@ public:
   }
 
   
-  const bool bs_do_wsavalue_wf() const {
+  bool bs_do_wsavalue_wf() const {
     return *transfer_struct_c.bs_do_wsavalue_wf_ != 0;
   }
 
@@ -390,7 +390,7 @@ public:
   }
 
   
-  const bool bs_do_windspeed_wf() const {
+  bool bs_do_windspeed_wf() const {
     return *transfer_struct_c.bs_do_windspeed_wf_ != 0;
   }
 
@@ -842,7 +842,7 @@ public:
       brdf_sup_inputs_c_destroy(&fortran_type_c);
   }
 
-  const bool bs_do_user_streams() const {
+  bool bs_do_user_streams() const {
     return *transfer_struct_c.bs_do_user_streams_ != 0;
   }
 
@@ -851,7 +851,7 @@ public:
   }
 
   
-  const bool bs_do_brdf_surface() const {
+  bool bs_do_brdf_surface() const {
     return *transfer_struct_c.bs_do_brdf_surface_ != 0;
   }
 
@@ -860,7 +860,7 @@ public:
   }
 
   
-  const bool bs_do_surface_emission() const {
+  bool bs_do_surface_emission() const {
     return *transfer_struct_c.bs_do_surface_emission_ != 0;
   }
 
@@ -869,7 +869,7 @@ public:
   }
 
   
-  const bool bs_do_solar_sources() const {
+  bool bs_do_solar_sources() const {
     return *transfer_struct_c.bs_do_solar_sources_ != 0;
   }
 
@@ -878,7 +878,7 @@ public:
   }
 
   
-  const bool bs_do_user_obsgeoms() const {
+  bool bs_do_user_obsgeoms() const {
     return *transfer_struct_c.bs_do_user_obsgeoms_ != 0;
   }
 
@@ -1045,7 +1045,7 @@ public:
   }
 
   
-  const bool bs_do_shadow_effect() const {
+  bool bs_do_shadow_effect() const {
     return *transfer_struct_c.bs_do_shadow_effect_ != 0;
   }
 
@@ -1054,7 +1054,7 @@ public:
   }
 
   
-  const bool bs_do_directbounce_only() const {
+  bool bs_do_directbounce_only() const {
     return *transfer_struct_c.bs_do_directbounce_only_ != 0;
   }
 
@@ -1063,7 +1063,7 @@ public:
   }
 
   
-  const bool bs_do_wsabsa_output() const {
+  bool bs_do_wsabsa_output() const {
     return *transfer_struct_c.bs_do_wsabsa_output_ != 0;
   }
 
@@ -1072,7 +1072,7 @@ public:
   }
 
   
-  const bool bs_do_wsa_scaling() const {
+  bool bs_do_wsa_scaling() const {
     return *transfer_struct_c.bs_do_wsa_scaling_ != 0;
   }
 
@@ -1081,7 +1081,7 @@ public:
   }
 
   
-  const bool bs_do_bsa_scaling() const {
+  bool bs_do_bsa_scaling() const {
     return *transfer_struct_c.bs_do_bsa_scaling_ != 0;
   }
 
@@ -1108,7 +1108,7 @@ public:
   }
 
   
-  const bool bs_do_newcmglint() const {
+  bool bs_do_newcmglint() const {
     return *transfer_struct_c.bs_do_newcmglint_ != 0;
   }
 
@@ -1153,7 +1153,7 @@ public:
   }
 
   
-  const bool bs_do_glintshadow() const {
+  bool bs_do_glintshadow() const {
     return *transfer_struct_c.bs_do_glintshadow_ != 0;
   }
 
@@ -1162,7 +1162,7 @@ public:
   }
 
   
-  const bool bs_do_foamoption() const {
+  bool bs_do_foamoption() const {
     return *transfer_struct_c.bs_do_foamoption_ != 0;
   }
 
@@ -1171,7 +1171,7 @@ public:
   }
 
   
-  const bool bs_do_facetisotropy() const {
+  bool bs_do_facetisotropy() const {
     return *transfer_struct_c.bs_do_facetisotropy_ != 0;
   }
 
@@ -1180,7 +1180,7 @@ public:
   }
 
   
-  const bool bs_do_glitter_msrcorr() const {
+  bool bs_do_glitter_msrcorr() const {
     return *transfer_struct_c.bs_do_glitter_msrcorr_ != 0;
   }
 
@@ -1189,7 +1189,7 @@ public:
   }
 
   
-  const bool bs_do_glitter_msrcorr_dbonly() const {
+  bool bs_do_glitter_msrcorr_dbonly() const {
     return *transfer_struct_c.bs_do_glitter_msrcorr_dbonly_ != 0;
   }
 
@@ -2030,7 +2030,7 @@ public:
       sleave_sup_inputs_c_destroy(&fortran_type_c);
   }
 
-  const bool sl_do_sleaving() const {
+  bool sl_do_sleaving() const {
     return *transfer_struct_c.sl_do_sleaving_ != 0;
   }
 
@@ -2039,7 +2039,7 @@ public:
   }
 
   
-  const bool sl_do_isotropic() const {
+  bool sl_do_isotropic() const {
     return *transfer_struct_c.sl_do_isotropic_ != 0;
   }
 
@@ -2048,7 +2048,7 @@ public:
   }
 
   
-  const bool sl_do_exact() const {
+  bool sl_do_exact() const {
     return *transfer_struct_c.sl_do_exact_ != 0;
   }
 
@@ -2057,7 +2057,7 @@ public:
   }
 
   
-  const bool sl_do_exactonly() const {
+  bool sl_do_exactonly() const {
     return *transfer_struct_c.sl_do_exactonly_ != 0;
   }
 
@@ -2066,7 +2066,7 @@ public:
   }
 
   
-  const bool sl_do_fluorescence() const {
+  bool sl_do_fluorescence() const {
     return *transfer_struct_c.sl_do_fluorescence_ != 0;
   }
 
@@ -2075,7 +2075,7 @@ public:
   }
 
   
-  const bool sl_do_solar_sources() const {
+  bool sl_do_solar_sources() const {
     return *transfer_struct_c.sl_do_solar_sources_ != 0;
   }
 
@@ -2084,7 +2084,7 @@ public:
   }
 
   
-  const bool sl_do_user_obsgeoms() const {
+  bool sl_do_user_obsgeoms() const {
     return *transfer_struct_c.sl_do_user_obsgeoms_ != 0;
   }
 
@@ -2138,7 +2138,7 @@ public:
   }
 
   
-  const bool sl_do_user_streams() const {
+  bool sl_do_user_streams() const {
     return *transfer_struct_c.sl_do_user_streams_ != 0;
   }
 
@@ -2228,7 +2228,7 @@ public:
   }
 
   
-  const bool sl_do_glintshadow() const {
+  bool sl_do_glintshadow() const {
     return *transfer_struct_c.sl_do_glintshadow_ != 0;
   }
 
@@ -2237,7 +2237,7 @@ public:
   }
 
   
-  const bool sl_do_foamoption() const {
+  bool sl_do_foamoption() const {
     return *transfer_struct_c.sl_do_foamoption_ != 0;
   }
 
@@ -2246,7 +2246,7 @@ public:
   }
 
   
-  const bool sl_do_facetisotropy() const {
+  bool sl_do_facetisotropy() const {
     return *transfer_struct_c.sl_do_facetisotropy_ != 0;
   }
 
@@ -2300,7 +2300,7 @@ public:
   }
 
   
-  const bool sl_fl_do_datagaussian() const {
+  bool sl_fl_do_datagaussian() const {
     return *transfer_struct_c.sl_fl_do_datagaussian_ != 0;
   }
 
@@ -2509,7 +2509,7 @@ public:
       lidort_fixed_lincontrol_c_destroy(&fortran_type_c);
   }
 
-  const bool ts_do_column_linearization() const {
+  bool ts_do_column_linearization() const {
     return *transfer_struct_c.ts_do_column_linearization_ != 0;
   }
 
@@ -2518,7 +2518,7 @@ public:
   }
 
   
-  const bool ts_do_profile_linearization() const {
+  bool ts_do_profile_linearization() const {
     return *transfer_struct_c.ts_do_profile_linearization_ != 0;
   }
 
@@ -2527,7 +2527,7 @@ public:
   }
 
   
-  const bool ts_do_surface_linearization() const {
+  bool ts_do_surface_linearization() const {
     return *transfer_struct_c.ts_do_surface_linearization_ != 0;
   }
 
@@ -2536,7 +2536,7 @@ public:
   }
 
   
-  const bool ts_do_sleave_wfs() const {
+  bool ts_do_sleave_wfs() const {
     return *transfer_struct_c.ts_do_sleave_wfs_ != 0;
   }
 
@@ -2594,7 +2594,7 @@ public:
   }
 
   
-  const bool ts_do_atmos_lbbf() const {
+  bool ts_do_atmos_lbbf() const {
     return *transfer_struct_c.ts_do_atmos_lbbf_ != 0;
   }
 
@@ -2603,7 +2603,7 @@ public:
   }
 
   
-  const bool ts_do_surface_lbbf() const {
+  bool ts_do_surface_lbbf() const {
     return *transfer_struct_c.ts_do_surface_lbbf_ != 0;
   }
 
@@ -5628,7 +5628,7 @@ public:
       lidort_fixed_boolean_c_destroy(&fortran_type_c);
   }
 
-  const bool ts_do_fullrad_mode() const {
+  bool ts_do_fullrad_mode() const {
     return *transfer_struct_c.ts_do_fullrad_mode_ != 0;
   }
 
@@ -5637,7 +5637,7 @@ public:
   }
 
   
-  const bool ts_do_sscorr_truncation() const {
+  bool ts_do_sscorr_truncation() const {
     return *transfer_struct_c.ts_do_sscorr_truncation_ != 0;
   }
 
@@ -5646,7 +5646,7 @@ public:
   }
 
   
-  const bool ts_do_ss_external() const {
+  bool ts_do_ss_external() const {
     return *transfer_struct_c.ts_do_ss_external_ != 0;
   }
 
@@ -5655,7 +5655,7 @@ public:
   }
 
   
-  const bool ts_do_ssfull() const {
+  bool ts_do_ssfull() const {
     return *transfer_struct_c.ts_do_ssfull_ != 0;
   }
 
@@ -5664,7 +5664,7 @@ public:
   }
 
   
-  const bool ts_do_thermal_emission() const {
+  bool ts_do_thermal_emission() const {
     return *transfer_struct_c.ts_do_thermal_emission_ != 0;
   }
 
@@ -5673,7 +5673,7 @@ public:
   }
 
   
-  const bool ts_do_surface_emission() const {
+  bool ts_do_surface_emission() const {
     return *transfer_struct_c.ts_do_surface_emission_ != 0;
   }
 
@@ -5682,7 +5682,7 @@ public:
   }
 
   
-  const bool ts_do_plane_parallel() const {
+  bool ts_do_plane_parallel() const {
     return *transfer_struct_c.ts_do_plane_parallel_ != 0;
   }
 
@@ -5691,7 +5691,7 @@ public:
   }
 
   
-  const bool ts_do_brdf_surface() const {
+  bool ts_do_brdf_surface() const {
     return *transfer_struct_c.ts_do_brdf_surface_ != 0;
   }
 
@@ -5700,7 +5700,7 @@ public:
   }
 
   
-  const bool ts_do_upwelling() const {
+  bool ts_do_upwelling() const {
     return *transfer_struct_c.ts_do_upwelling_ != 0;
   }
 
@@ -5709,7 +5709,7 @@ public:
   }
 
   
-  const bool ts_do_dnwelling() const {
+  bool ts_do_dnwelling() const {
     return *transfer_struct_c.ts_do_dnwelling_ != 0;
   }
 
@@ -5718,7 +5718,7 @@ public:
   }
 
   
-  const bool ts_do_surface_leaving() const {
+  bool ts_do_surface_leaving() const {
     return *transfer_struct_c.ts_do_surface_leaving_ != 0;
   }
 
@@ -5727,7 +5727,7 @@ public:
   }
 
   
-  const bool ts_do_sl_isotropic() const {
+  bool ts_do_sl_isotropic() const {
     return *transfer_struct_c.ts_do_sl_isotropic_ != 0;
   }
 
@@ -6676,7 +6676,7 @@ public:
       lidort_modified_boolean_c_destroy(&fortran_type_c);
   }
 
-  const bool ts_do_sscorr_nadir() const {
+  bool ts_do_sscorr_nadir() const {
     return *transfer_struct_c.ts_do_sscorr_nadir_ != 0;
   }
 
@@ -6685,7 +6685,7 @@ public:
   }
 
   
-  const bool ts_do_sscorr_outgoing() const {
+  bool ts_do_sscorr_outgoing() const {
     return *transfer_struct_c.ts_do_sscorr_outgoing_ != 0;
   }
 
@@ -6694,7 +6694,7 @@ public:
   }
 
   
-  const bool ts_do_double_convtest() const {
+  bool ts_do_double_convtest() const {
     return *transfer_struct_c.ts_do_double_convtest_ != 0;
   }
 
@@ -6703,7 +6703,7 @@ public:
   }
 
   
-  const bool ts_do_solar_sources() const {
+  bool ts_do_solar_sources() const {
     return *transfer_struct_c.ts_do_solar_sources_ != 0;
   }
 
@@ -6712,7 +6712,7 @@ public:
   }
 
   
-  const bool ts_do_refractive_geometry() const {
+  bool ts_do_refractive_geometry() const {
     return *transfer_struct_c.ts_do_refractive_geometry_ != 0;
   }
 
@@ -6721,7 +6721,7 @@ public:
   }
 
   
-  const bool ts_do_chapman_function() const {
+  bool ts_do_chapman_function() const {
     return *transfer_struct_c.ts_do_chapman_function_ != 0;
   }
 
@@ -6730,7 +6730,7 @@ public:
   }
 
   
-  const bool ts_do_rayleigh_only() const {
+  bool ts_do_rayleigh_only() const {
     return *transfer_struct_c.ts_do_rayleigh_only_ != 0;
   }
 
@@ -6739,7 +6739,7 @@ public:
   }
 
   
-  const bool ts_do_isotropic_only() const {
+  bool ts_do_isotropic_only() const {
     return *transfer_struct_c.ts_do_isotropic_only_ != 0;
   }
 
@@ -6748,7 +6748,7 @@ public:
   }
 
   
-  const bool ts_do_no_azimuth() const {
+  bool ts_do_no_azimuth() const {
     return *transfer_struct_c.ts_do_no_azimuth_ != 0;
   }
 
@@ -6757,7 +6757,7 @@ public:
   }
 
   
-  const bool ts_do_all_fourier() const {
+  bool ts_do_all_fourier() const {
     return *transfer_struct_c.ts_do_all_fourier_ != 0;
   }
 
@@ -6766,7 +6766,7 @@ public:
   }
 
   
-  const bool ts_do_deltam_scaling() const {
+  bool ts_do_deltam_scaling() const {
     return *transfer_struct_c.ts_do_deltam_scaling_ != 0;
   }
 
@@ -6775,7 +6775,7 @@ public:
   }
 
   
-  const bool ts_do_solution_saving() const {
+  bool ts_do_solution_saving() const {
     return *transfer_struct_c.ts_do_solution_saving_ != 0;
   }
 
@@ -6784,7 +6784,7 @@ public:
   }
 
   
-  const bool ts_do_bvp_telescoping() const {
+  bool ts_do_bvp_telescoping() const {
     return *transfer_struct_c.ts_do_bvp_telescoping_ != 0;
   }
 
@@ -6793,7 +6793,7 @@ public:
   }
 
   
-  const bool ts_do_user_streams() const {
+  bool ts_do_user_streams() const {
     return *transfer_struct_c.ts_do_user_streams_ != 0;
   }
 
@@ -6802,7 +6802,7 @@ public:
   }
 
   
-  const bool ts_do_additional_mvout() const {
+  bool ts_do_additional_mvout() const {
     return *transfer_struct_c.ts_do_additional_mvout_ != 0;
   }
 
@@ -6811,7 +6811,7 @@ public:
   }
 
   
-  const bool ts_do_mvout_only() const {
+  bool ts_do_mvout_only() const {
     return *transfer_struct_c.ts_do_mvout_only_ != 0;
   }
 
@@ -6820,7 +6820,7 @@ public:
   }
 
   
-  const bool ts_do_thermal_transonly() const {
+  bool ts_do_thermal_transonly() const {
     return *transfer_struct_c.ts_do_thermal_transonly_ != 0;
   }
 
@@ -6829,7 +6829,7 @@ public:
   }
 
   
-  const bool ts_do_observation_geometry() const {
+  bool ts_do_observation_geometry() const {
     return *transfer_struct_c.ts_do_observation_geometry_ != 0;
   }
 

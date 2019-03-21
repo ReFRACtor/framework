@@ -13,7 +13,7 @@ REGISTER_LUA_END()
 /// Read HDF file to get constants.
 //-----------------------------------------------------------------------
 
-HdfConstant::HdfConstant(const boost::shared_ptr<HdfFile>& Hdf_file)
+HdfConstant::HdfConstant(const boost::shared_ptr<HdfFile>& UNUSED(Hdf_file))
 {
   // Fill me in
 }

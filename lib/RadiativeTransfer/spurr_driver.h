@@ -132,7 +132,7 @@ public:
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
 
   /// Set up thermal emission inputs
-  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const = 0;
+  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const = 0;
 
   /// Set up optical depth, single scattering albedo and phase function
   /// Should be called per spectral point

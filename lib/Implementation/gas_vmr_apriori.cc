@@ -52,12 +52,12 @@ GasVmrApriori::GasVmrApriori(const boost::shared_ptr<Meteorology>& Met_file,
                              const std::string& gas_name,
                              const int temp_avg_window)
 {
-    const blitz::Array<double, 1> met_press = Met_file->pressure_levels();
-    const blitz::Array<double, 1> met_temp = Met_file->temperature();
+    blitz::Array<double, 1> met_press = Met_file->pressure_levels();
+    blitz::Array<double, 1> met_temp = Met_file->temperature();
 
     // Get observation values from L1B file
-    const double obs_latitude = L1b_file->latitude(0).value;
-    const Time obs_time = L1b_file->time(0);
+    double obs_latitude = L1b_file->latitude(0).value;
+    Time obs_time = L1b_file->time(0);
 
     initialize(met_press, met_temp, obs_latitude, obs_time, altitude, reference_file, hdf_group, gas_name, temp_avg_window);
 }
@@ -156,7 +156,7 @@ const blitz::Array<double, 1> GasVmrApriori::apriori_vmr(const Pressure& pressur
     return interp_vmr;
 }
 
-const double GasVmrApriori::tropopause_pressure() const
+double GasVmrApriori::tropopause_pressure() const
 {
     // Make a copy and reverse to satisfy array increasing ordering and memory contiguous requirements of linear interpolator
     blitz::Array<double, 1> rev_alt(model_alt.shape());

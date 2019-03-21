@@ -27,7 +27,7 @@ public:
   {}
   const AutoDerivative<double>& x_min() const {return x0_; }
   const AutoDerivative<double>& x_max() const {return x0_; }
-  void interpolate(const AutoDerivative<double>& x,
+  void interpolate(const AutoDerivative<double>& UNUSED(x),
 		   const AutoDerivativeRef<double>& res) const { res = y0_; }
   void print(std::ostream& Os) const { Os << "Return1Point"; }
 private:

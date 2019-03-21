@@ -12,49 +12,51 @@ protected:
   void end_write() { }
   void write_data(const std::string& Dataset_name, int Val)
   { val[Dataset_name] = Val;}
-  void write_data(const std::string& Dataset_name, const std::string& Val)
+  void write_data(const std::string& UNUSED(Dataset_name),
+		  const std::string& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, const char* Val)
+  void write_data(const std::string& UNUSED(Dataset_name),
+		  const char* UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, int64_t Val)
+  void write_data(const std::string& UNUSED(Dataset_name), int64_t UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, double Val)
+  void write_data(const std::string& UNUSED(Dataset_name), double UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<int, 1>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<int, 1>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<std::string, 1>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<std::string, 1>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<const char*, 1>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<const char*, 1>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<double, 1>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<double, 1>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<int, 2>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<int, 2>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<std::string, 2>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<std::string, 2>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<const char*, 2>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<const char*, 2>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<double, 2>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<double, 2>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<int, 3>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<int, 3>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<std::string, 3>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<std::string, 3>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<const char*, 3>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<const char*, 3>& UNUSED(Val))
   { }
-  void write_data(const std::string& Dataset_name, 
-		  const blitz::Array<double, 3>& Val)
+  void write_data(const std::string& UNUSED(Dataset_name), 
+		  const blitz::Array<double, 3>& UNUSED(Val))
   { }
 };
 

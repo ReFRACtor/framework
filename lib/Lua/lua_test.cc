@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(register_class)
 class FuncWrap {
 public:
   FuncWrap() {}
-  void operator()(const luabind::object& F) {  }
+  void operator()(const luabind::object& UNUSED(F)) {  }
 };
 
 BOOST_AUTO_TEST_CASE(set_value)

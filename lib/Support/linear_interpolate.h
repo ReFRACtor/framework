@@ -39,7 +39,7 @@ public:
   {}
   const TX& x_min() const {return x0_; }
   const TX& x_max() const {return x0_; }
-  TY operator()(const TX& x) const { return y0_; }
+  TY operator()(const TX& UNUSED(x)) const { return y0_; }
   void print(std::ostream& Os) const { Os << "Return1Point"; }
 private:
   TX x0_;

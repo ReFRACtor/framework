@@ -13,7 +13,7 @@ using namespace blitz;
 /// Initialize Twostream BRDF interface
 //-----------------------------------------------------------------------
 
-TwostreamBrdfDriver::TwostreamBrdfDriver(int surface_type)
+TwostreamBrdfDriver::TwostreamBrdfDriver(int UNUSED(surface_type))
 {
   int nbeams = 1;
   int n_user_streams = 1;
@@ -34,7 +34,8 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int surface_type)
 
 }
 
-void TwostreamBrdfDriver::setup_geometry(double sza, double azm, double zen) const
+void TwostreamBrdfDriver::setup_geometry
+(double sza, double UNUSED(azm), double zen) const
 {
   // Solar zenith angles (degrees) [0,90]
   Array<double, 1> beam_szas( twostream_brdf_->beam_szas() );
@@ -55,7 +56,7 @@ int TwostreamBrdfDriver::n_brdf_kernels() const
   return twostream_brdf_->n_brdf_kernels();
 }
 
-void TwostreamBrdfDriver::n_brdf_kernels(const int n_kernels)
+void TwostreamBrdfDriver::n_brdf_kernels(int n_kernels)
 {
   twostream_brdf_->n_brdf_kernels(n_kernels);
 }
@@ -65,7 +66,7 @@ int TwostreamBrdfDriver::n_kernel_factor_wfs() const
   return twostream_brdf_->n_kernel_factor_wfs();
 }
 
-void TwostreamBrdfDriver::n_kernel_factor_wfs(const int n_factors) 
+void TwostreamBrdfDriver::n_kernel_factor_wfs(int UNUSED(n_factors))
 {
   // Do not really set this, twostream calculates this internally
   // It adds to the passed in value, so book keeping values
@@ -78,7 +79,7 @@ int TwostreamBrdfDriver::n_kernel_params_wfs() const
   return twostream_brdf_->n_kernel_params_wfs();
 }
 
-void TwostreamBrdfDriver::n_kernel_params_wfs(const int n_params) 
+void TwostreamBrdfDriver::n_kernel_params_wfs(int UNUSED(n_params))
 {
   // Do not really set this, twostream calculates this internally
   // It adds to the passed in value, so book keeping values
@@ -91,7 +92,7 @@ int TwostreamBrdfDriver::n_surface_wfs() const
   return twostream_brdf_->n_surface_wfs();
 }
 
-void TwostreamBrdfDriver::n_surface_wfs(const int n_wfs) 
+void TwostreamBrdfDriver::n_surface_wfs(int UNUSED(n_wfs) )
 {
   // Do not really set this, twostream calculates this internally
   // It adds to the passed in value, so book keeping values
@@ -99,12 +100,12 @@ void TwostreamBrdfDriver::n_surface_wfs(const int n_wfs)
   //twostream_brdf_->n_surface_wfs(n_wfs);
 }
 
-bool TwostreamBrdfDriver::do_kparams_derivs(const int kernel_index) const
+bool TwostreamBrdfDriver::do_kparams_derivs(int kernel_index) const
 {
   return twostream_brdf_->do_kparams_derivs()(kernel_index);
 }
 
-void TwostreamBrdfDriver::do_kparams_derivs(const int kernel_index, const bool do_kparams)
+void TwostreamBrdfDriver::do_kparams_derivs(int UNUSED(kernel_index), bool UNUSED(do_kparams))
 {
   // Do not really set this, twostream calculates this internally
   // It adds to the passed in value, so book keeping values
@@ -118,15 +119,15 @@ bool TwostreamBrdfDriver::do_shadow_effect() const {
   return twostream_brdf_->do_shadow_effect();
 }
 
-void TwostreamBrdfDriver::do_shadow_effect(const bool do_shadow) const {
+void TwostreamBrdfDriver::do_shadow_effect(bool do_shadow) const {
   twostream_brdf_->do_shadow_effect(do_shadow);
 }
 
-void TwostreamBrdfDriver::initialize_kernel_parameters(const int kernel_index,
-                                                       const int which_brdf,
-                                                       const bool lambertian_flag,
-                                                       const int n_brdf_parameters,
-                                                       const bool do_factor_wfs,
+void TwostreamBrdfDriver::initialize_kernel_parameters(int kernel_index,
+                                                       int which_brdf,
+                                                       bool lambertian_flag,
+                                                       int n_brdf_parameters,
+                                                       bool do_factor_wfs,
                                                        const blitz::Array<bool, 1>& do_params_wfs)
 {
   Array<int, 1> ts_which_brdf( twostream_brdf_->which_brdf() );
@@ -157,7 +158,8 @@ void TwostreamBrdfDriver::initialize_kernel_parameters(const int kernel_index,
 
 TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature,
         bool do_solar, bool do_thermal)
-  : surface_type_(surface_type), do_fullquadrature_(do_fullquadrature), SpurrRtDriver(do_solar, do_thermal)
+  : SpurrRtDriver(do_solar, do_thermal),
+    surface_type_(surface_type), do_fullquadrature_(do_fullquadrature)
 {
   brdf_driver_.reset( new TwostreamBrdfDriver(surface_type_) );
 
@@ -282,7 +284,7 @@ void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
   ts_zen(0) = zen;
 }
 
-void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
+void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const
 {
   twostream_interface_->surfbb(surface_bb);
 
@@ -426,7 +428,7 @@ double TwostreamRtDriver::get_intensity() const
   return twostream_interface_->intensity_toa()(0);
 }
 
-void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const
+void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp) ) const
 {
   // Copy out jacobian values
   Range ra(Range::all());

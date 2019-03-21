@@ -21,19 +21,19 @@ extern "C" {
 #ifdef HAVE_LUA
 #include "register_lua.h"
 
-double black_sky_albedo_simple_veg(const blitz::Array<double, 1>& params, const double sza) {
+double black_sky_albedo_simple_veg(const blitz::Array<double, 1>& params, double sza) {
     return black_sky_albedo_veg_f(params.dataFirst(), &sza);
 }
 
-double black_sky_albedo_simple_soil(const blitz::Array<double, 1>& params, const double sza) {
+double black_sky_albedo_simple_soil(const blitz::Array<double, 1>& params, double sza) {
     return black_sky_albedo_soil_f(params.dataFirst(), &sza);
 }
 
-double exact_brdf_value_simple_veg(const blitz::Array<double, 1>& params, const double sza, const double vza, const double azm) {
+double exact_brdf_value_simple_veg(const blitz::Array<double, 1>& params, double sza, double vza, double azm) {
     return exact_brdf_value_veg_f(params.dataFirst(), &sza, &vza, &azm);
 }
 
-double exact_brdf_value_simple_soil(const blitz::Array<double, 1>& params, const double sza, const double vza, const double azm) {
+double exact_brdf_value_simple_soil(const blitz::Array<double, 1>& params, double sza, double vza, double azm) {
     return exact_brdf_value_soil_f(params.dataFirst(), &sza, &vza, &azm);
 }
 
@@ -131,7 +131,7 @@ GroundBrdf::GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
 {
 }
 
-ArrayAd<double, 1> GroundBrdf::surface_parameter(const double wn, const int spec_index) const
+ArrayAd<double, 1> GroundBrdf::surface_parameter(double wn, int spec_index) const
 {
     AutoDerivative<double> w = weight(wn, spec_index);
     ArrayAd<double, 1> spars;
@@ -144,7 +144,7 @@ ArrayAd<double, 1> GroundBrdf::surface_parameter(const double wn, const int spec
     return spars;
 }
 
-const AutoDerivative<double> GroundBrdf::weight(const double wn, const int spec_index) const
+const AutoDerivative<double> GroundBrdf::weight(double wn, int spec_index) const
 {
     double ref_wn = reference_points(spec_index).convert_wave(units::inv_cm).value;
     ArrayAd<double, 1> weight_params(2, weight_intercept(spec_index).number_variable());
@@ -155,49 +155,49 @@ const AutoDerivative<double> GroundBrdf::weight(const double wn, const int spec_
     return weight_poly(wn_ad - ref_wn);
 }
 
-const AutoDerivative<double> GroundBrdf::weight_intercept(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::weight_intercept(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + BRDF_WEIGHT_INTERCEPT_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::weight_slope(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::weight_slope(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + BRDF_WEIGHT_SLOPE_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::rahman_factor(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::rahman_factor(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + RAHMAN_KERNEL_FACTOR_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::hotspot_parameter(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::hotspot_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + RAHMAN_OVERALL_AMPLITUDE_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::asymmetry_parameter(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::asymmetry_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + RAHMAN_ASYMMETRY_FACTOR_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::anisotropy_parameter(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::anisotropy_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
     return coefficient()(NUM_COEFF * spec_index + RAHMAN_GEOMETRIC_FACTOR_INDEX);
 }
 
-const AutoDerivative<double> GroundBrdf::breon_factor(const int spec_index) const
+const AutoDerivative<double> GroundBrdf::breon_factor(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
@@ -206,56 +206,56 @@ const AutoDerivative<double> GroundBrdf::breon_factor(const int spec_index) cons
 
 //----
 
-void GroundBrdf::weight_intercept(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::weight_intercept(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + BRDF_WEIGHT_INTERCEPT_INDEX) = val;
 }
 
-void GroundBrdf::weight_slope(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::weight_slope(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + BRDF_WEIGHT_SLOPE_INDEX) = val;
 }
 
-void GroundBrdf::rahman_factor(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::rahman_factor(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + RAHMAN_KERNEL_FACTOR_INDEX) = val;
 }
 
-void GroundBrdf::hotspot_parameter(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::hotspot_parameter(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + RAHMAN_OVERALL_AMPLITUDE_INDEX) = val;
 }
 
-void GroundBrdf::asymmetry_parameter(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::asymmetry_parameter(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + RAHMAN_ASYMMETRY_FACTOR_INDEX) = val;
 }
 
-void GroundBrdf::anisotropy_parameter(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::anisotropy_parameter(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + RAHMAN_GEOMETRIC_FACTOR_INDEX) = val;
 }
 
-void GroundBrdf::breon_factor(const int spec_index, const AutoDerivative<double>& val)
+void GroundBrdf::breon_factor(int spec_index, const AutoDerivative<double>& val)
 {
     range_check(spec_index, 0, number_spectrometer());
 
     coeff(NUM_COEFF * spec_index + BREON_KERNEL_FACTOR_INDEX) = val;
 }
 
-const blitz::Array<double, 2> GroundBrdf::brdf_covariance(const int spec_index) const
+const blitz::Array<double, 2> GroundBrdf::brdf_covariance(int spec_index) const
 { 
     range_check(spec_index, 0, number_spectrometer());
 
@@ -289,7 +289,7 @@ const blitz::Array<double, 2> GroundBrdf::brdf_covariance(const int spec_index) 
 }
 
 // Helper function 
-blitz::Array<double, 1> GroundBrdf::black_sky_params(const int Spec_index)
+blitz::Array<double, 1> GroundBrdf::black_sky_params(int Spec_index)
 {
     double ref_wn = reference_points(Spec_index).convert_wave(units::inv_cm).value;
     double w = weight(ref_wn, Spec_index).value();
@@ -304,7 +304,7 @@ blitz::Array<double, 1> GroundBrdf::black_sky_params(const int Spec_index)
 }
 
 // Helper function 
-blitz::Array<double, 1> GroundBrdf::kernel_value_params(const int Spec_index)
+blitz::Array<double, 1> GroundBrdf::kernel_value_params(int Spec_index)
 {
     blitz::Array<double, 1> params(NUM_PARAMS, blitz::ColumnMajorArray<1>());
     params(0) = rahman_factor(Spec_index).value();
@@ -315,25 +315,25 @@ blitz::Array<double, 1> GroundBrdf::kernel_value_params(const int Spec_index)
     return params;
 }
 
-const double GroundBrdfVeg::black_sky_albedo(const int Spec_index, const double Sza)
+double GroundBrdfVeg::black_sky_albedo(int Spec_index, double Sza)
 {
     blitz::Array<double, 1> params = black_sky_params(Spec_index);
     return black_sky_albedo_veg_f(params.dataFirst(), &Sza);
 }
 
-const double GroundBrdfSoil::black_sky_albedo(const int Spec_index, const double Sza)
+double GroundBrdfSoil::black_sky_albedo(int Spec_index, double Sza)
 {
     blitz::Array<double, 1> params = black_sky_params(Spec_index);
     return black_sky_albedo_soil_f(params.dataFirst(), &Sza);
 }
 
-const double GroundBrdfVeg::kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm)
+double GroundBrdfVeg::kernel_value(int Spec_index, double Sza, double Vza, double Azm)
 {
     blitz::Array<double, 1> params = kernel_value_params(Spec_index);
     return exact_brdf_value_veg_f(params.dataFirst(), &Sza, &Vza, &Azm);
 }
 
-const double GroundBrdfSoil::kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm)
+double GroundBrdfSoil::kernel_value(int Spec_index, double Sza, double Vza, const double Azm)
 {
     blitz::Array<double, 1> params = kernel_value_params(Spec_index);
     return exact_brdf_value_soil_f(params.dataFirst(), &Sza, &Vza, &Azm);

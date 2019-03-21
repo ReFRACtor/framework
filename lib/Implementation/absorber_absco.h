@@ -39,7 +39,7 @@ public:
   // AbsorberAbsco contains. This means we don't need to do anything with
   // changes to the StateVector in this class, it is already handled
   // by the objects we contain.
-  virtual void notify_update(const StateVector& Sv) 
+  virtual void notify_update(const StateVector& UNUSED(Sv) )
   { notify_update_do(*this); }
   virtual int number_species() const {return (int) vmr.size(); }
   virtual int number_spectrometer() const {return (int) alt.size();}
@@ -55,22 +55,22 @@ public:
 /// and mark the cache when it changes. 
 //-----------------------------------------------------------------------
 
-  virtual void notify_update(const Pressure& P) 
+  virtual void notify_update(const Pressure& UNUSED(P) )
   { 
     cache_tau_gas_stale = true;
     notify_update_do(*this);
   }
-  virtual void notify_update(const Temperature& T)
+  virtual void notify_update(const Temperature& UNUSED(T))
   {
     cache_tau_gas_stale = true;
     notify_update_do(*this);
   }
-  virtual void notify_update(const Altitude& A)
+  virtual void notify_update(const Altitude& UNUSED(A))
   {
     cache_tau_gas_stale = true;
     notify_update_do(*this);
   }
-  virtual void notify_update(const AbsorberVmr& A) 
+  virtual void notify_update(const AbsorberVmr& UNUSED(A) )
   { 
     cache_tau_gas_stale = true;
     notify_update_do(*this);

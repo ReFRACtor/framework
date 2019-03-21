@@ -36,6 +36,7 @@ public:
 //-----------------------------------------------------------------------
 
   CostFuncDiffState(const CostFuncDiffState& s)
+    : ProblemState(s), CostFuncState(s) 
   { set(s); }
 
 

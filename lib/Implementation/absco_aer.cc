@@ -246,17 +246,17 @@ double AbscoAer::table_scale(double wn) const
 // See base class for description
 bool AbscoAer::have_data(double wn) const
 {
-    try {
-        // If wn_extent does not exception, then we know we have
-        // a wavenumber that falls with in a range, no need to check again
-        // now just check that the table scale for a wn is non zero
-        auto extents = wn_extent(wn);
-        return table_scale(wn) > 0.0;
-    } catch (Exception e) {
-        // If there is an exception that means wn_extent did 
-        // not find a valid wavenumber
-        return false;
-    }
+  try {
+    // If wn_extent does not exception, then we know we have
+    // a wavenumber that falls with in a range, no need to check again
+    // now just check that the table scale for a wn is non zero
+    auto UNUSED(extents) = wn_extent(wn);
+    return table_scale(wn) > 0.0;
+  } catch (Exception e) {
+    // If there is an exception that means wn_extent did 
+    // not find a valid wavenumber
+    return false;
+  }
 }
 
 // Calculate the wn index number of the data.

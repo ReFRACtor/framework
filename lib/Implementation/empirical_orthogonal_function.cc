@@ -296,7 +296,7 @@ boost::shared_ptr<InstrumentCorrection> EmpiricalOrthogonalFunction::clone()
 }
 
 void EmpiricalOrthogonalFunction::apply_correction
-(const SpectralDomain& Pixel_grid,
+(const SpectralDomain& UNUSED(Pixel_grid),
  const std::vector<int>& Pixel_list,
  SpectralRange& Radiance) const
 {

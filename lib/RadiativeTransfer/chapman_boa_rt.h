@@ -27,7 +27,7 @@ public:
   //-----------------------------------------------------------------------
   /// Regenerate chapman factors when Atmosphere changes
   //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& updated_atm) { chapman_cache_stale = true; }
+  void notify_update(const RtAtmosphere& UNUSED(updated_atm)) { chapman_cache_stale = true; }
 
   virtual int number_stokes() const { return 1; }
 

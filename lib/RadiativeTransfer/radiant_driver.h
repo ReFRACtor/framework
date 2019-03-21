@@ -27,7 +27,7 @@ public:
   /// and mark the cache when it changes. 
   //-----------------------------------------------------------------------
   
-  void notify_update(const RtAtmosphere& atm) { alt_spec_index_cache = -1; }
+  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
   
   //-----------------------------------------------------------------------
   /// Number of moments for scattering matrix.

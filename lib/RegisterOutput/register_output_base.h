@@ -64,7 +64,7 @@ public:
 /// state. 
 //-----------------------------------------------------------------------
 
-  virtual void register_output_apriori(const boost::shared_ptr<Output>& out) const { }
+  virtual void register_output_apriori(const boost::shared_ptr<Output>& UNUSED(out)) const { }
 
 //-----------------------------------------------------------------------
 /// Print to stream. The default calls the function "desc" that returns

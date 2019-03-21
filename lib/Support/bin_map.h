@@ -80,7 +80,6 @@ public:
   std::vector<T> value() const
   {
     std::vector<T> res;
-    typedef typename std::map<double, T>::value_type vt;
     for(typename std::map<double, T>::const_iterator i = val.begin();
 	i != val.end(); ++i)
       res.push_back(i->second);

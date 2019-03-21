@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(level1b_list)
     int spec_index = 0;
     ExampleLevel1bInfo ex_lev1_info(test_data_dir() + "in/common/l1b_example_data.h5");
     std::vector<boost::shared_ptr<Level1b>> level1b_series = ex_lev1_info.level1b_list();
-    for (int i = 0; i < level1b_series.size(); i++) {
+    for (int i = 0; i < (int) level1b_series.size(); i++) {
         BOOST_CHECK_CLOSE(level1b_series[i].get()->latitude(spec_index).value, expected_lats[i], 1e-3);
     }
 }
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(close_obs_distance)
     std::vector<Time> expected_times = std::vector<Time>();
     expected_times.push_back(Time::time_unix(1410276325.6450486));
 
-    for (int i = 0; i < found_close_obs.size(); i++) {
+    for (int i = 0; i < (int) found_close_obs.size(); i++) {
         BOOST_CHECK_EQUAL(found_close_obs[i].get()->time(spec_index), expected_times[i]);
     }
 }
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(closest_obs_n_distance)
     expected_times.push_back(Time::time_unix(1422843621.2577152));
     expected_times.push_back(Time::time_unix(1422926758.23139));
 
-    for (int i = 0; i < closest_5.size(); i++) {
+    for (int i = 0; i < (int) closest_5.size(); i++) {
         BOOST_CHECK_EQUAL(closest_5[i].get()->time(spec_index), expected_times[i]);
     }
 }
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(close_obs_time)
     std::vector<Time> expected_times = std::vector<Time>();
     expected_times.push_back(Time::time_unix(1410276325.6450486));
 
-    for (int i = 0; i < found_close_obs.size(); i++) {
+    for (int i = 0; i < (int) found_close_obs.size(); i++) {
         BOOST_CHECK_EQUAL(found_close_obs[i].get()->time(spec_index), expected_times[i]);
     }
 }
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(closest_obs_n_time)
     expected_times.push_back(Time::time_unix(1422926758.23139));
     expected_times.push_back(Time::time_unix(1423009851.2847152));
 
-    for (int i = 0; i < closest_5.size(); i++) {
+    for (int i = 0; i < (int) closest_5.size(); i++) {
         BOOST_CHECK_EQUAL(closest_5[i].get()->time(spec_index), expected_times[i]);
     }
 }

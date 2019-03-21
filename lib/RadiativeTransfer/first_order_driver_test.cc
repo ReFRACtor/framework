@@ -93,7 +93,6 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
 void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
 {
   int nlayer = 2;
-  int nparam = 2;
   Array<double, 1> surface_params(1); 
   Array<double, 1> taug(nlayer);
   Array<double, 1> taur(nlayer);

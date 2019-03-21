@@ -167,8 +167,10 @@ void LidortBrdfDriver::initialize_kernel_parameters(const int kernel_index,
 LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, 
         int surface_type, const blitz::Array<double, 1>& zen, bool pure_nadir,
         bool do_solar, bool do_thermal)
-  : nstream_(nstream), nmoment_(nmoment), do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type), pure_nadir_(pure_nadir),
-    SpurrRtDriver(do_solar, do_thermal)
+  : SpurrRtDriver(do_solar, do_thermal),
+    nstream_(nstream), nmoment_(nmoment),
+    do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type),
+    pure_nadir_(pure_nadir)
 {
   brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
@@ -308,7 +310,7 @@ void LidortRtDriver::initialize_rt()
 
 /// Set up/reset sphericity mode which may be affected by
 /// the current zenith viewing angle
-void LidortRtDriver::setup_sphericity(double zen) const
+void LidortRtDriver::setup_sphericity(double UNUSED(zen)) const
 {
 
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
@@ -449,7 +451,7 @@ void LidortRtDriver::setup_geometry(double sza, double azm, double zen) const
   ld_zen(0) = zen;
 }
 
-void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
+void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const
 {
   Lidort_Fixed_Optical& foptical_inputs = lidort_interface_->lidort_fixin().optical();
 

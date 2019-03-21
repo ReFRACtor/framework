@@ -47,7 +47,7 @@ public:
 //-----------------------------------------------------------------------
 
   CostFunc()
-    : c_count(0), mssg(NONE)
+    : mssg(NONE), c_count(0)
   {}
 
 
@@ -146,7 +146,7 @@ public:
 /// \return problem message in string form
 //-----------------------------------------------------------------------
 
-  virtual const char * const message_str() const;
+  virtual const char * message_str() const;
 
 
 //-----------------------------------------------------------------------

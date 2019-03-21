@@ -84,7 +84,7 @@ void ChapmanBoaRT::compute_chapman_factors(const int spec_idx) const {
     }
 
     // Calculate reference wavelengths, if we can..
-    double ref_wavelength;
+    double ref_wavelength = -1;
     if(spec_bound.number_spectrometer() > 0)
       ref_wavelength = spec_bound.center(spec_idx, units::micron).value;
 

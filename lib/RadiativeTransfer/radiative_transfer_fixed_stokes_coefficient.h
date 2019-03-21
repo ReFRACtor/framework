@@ -33,7 +33,7 @@ public:
   virtual Spectrum reflectance
   (const SpectralDomain& Spec_domain, int Spec_index, 
    bool Skip_jacobian = false) const;
-  virtual void print(std::ostream& Os, bool Short_form = false) const 
+  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const 
   {
     Os << *stokes_coef;
   }

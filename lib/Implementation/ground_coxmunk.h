@@ -19,7 +19,7 @@ public:
 
   virtual const AutoDerivative<double> windspeed() const;
 
-  virtual const double refractive_index(const int Spec_idx) const;
+  virtual double refractive_index(const int Spec_idx) const;
   
   virtual boost::shared_ptr<Ground> clone() const;
 

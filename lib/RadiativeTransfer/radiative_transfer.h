@@ -86,7 +86,7 @@ public:
 /// Print to stream.
 //-----------------------------------------------------------------------
 
-  virtual void print(std::ostream& Os, bool Short_form = false) const 
+  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const 
   { Os << "RadiativeTransfer";}
 protected:
   static AccumulatedTimer timer;

@@ -59,7 +59,8 @@ CostMinimizerGSL::CostMinimizerGSL(const boost::shared_ptr<CostFunc>& p,
   : CostMinimizer(p, max_cost_function_calls, vrbs),
     Size_tol(size_tol), Initial_step_size(init_step_size)
 {
-  if( (init_step_size.size() > 0) && (init_step_size.size() != p->expected_parameter_size())) {
+  if( (init_step_size.size() > 0) &&
+      ((int) init_step_size.size() != p->expected_parameter_size())) {
     Exception e;
     e << "If initial-step-size provided, its size must be equal to the expected-parameter-size:\n"
       << " Initial-step-size: " << init_step_size.size() << "\n"

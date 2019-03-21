@@ -36,7 +36,7 @@ public:
 /// and mark the cache when it changes. 
 //-----------------------------------------------------------------------
 
-  virtual void notify_update(const Pressure& P)
+  virtual void notify_update(const Pressure& UNUSED(P))
   {
     cache_is_stale = true;   
   }
@@ -47,7 +47,7 @@ public:
 /// and mark the cache when it changes. 
 //-----------------------------------------------------------------------
 
-  virtual void notify_update(const Temperature& T)
+  virtual void notify_update(const Temperature& UNUSED(T))
   {
     cache_is_stale = true;   
   }

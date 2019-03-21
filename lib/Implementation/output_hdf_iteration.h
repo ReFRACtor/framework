@@ -34,7 +34,7 @@ public:
   virtual ~OutputHdfIteration() { close(); }
   void close();
   virtual void print(std::ostream& Os) const {Os << "OutputHdfIteration";}
-  virtual void notify_update(const ConnorSolver& Solver)
+  virtual void notify_update(const ConnorSolver& UNUSED(Solver))
   { write(); }
 protected:
   virtual void end_because_of_error() { h->abandon(); }

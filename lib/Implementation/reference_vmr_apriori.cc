@@ -79,10 +79,10 @@ ReferenceVmrApriori::ReferenceVmrApriori(const blitz::Array<double, 1>& Model_pr
                                          const blitz::Array<double, 1>& Model_altitude,
                                          const blitz::Array<double, 1>& Model_temperature,
                                          const blitz::Array<double, 1>& Ref_altitude,
-                                         const double Ref_latitude,
+                                         double Ref_latitude,
                                          const Time& Ref_time,
-                                         const double Ref_tropopause_altitude,
-                                         const double Obs_latitude,
+                                         double Ref_tropopause_altitude,
+                                         double Obs_latitude,
                                          const Time& Obs_time)
 : model_pressure(Model_pressure), model_altitude(Model_altitude), model_temperature(Model_temperature), 
   ref_altitude(Ref_altitude), ref_latitude(Ref_latitude), ref_time(Ref_time), ref_tropopause_altitude(Ref_tropopause_altitude),
@@ -203,7 +203,7 @@ const blitz::Array<double, 1> ReferenceVmrApriori::effective_altitude() const
 /// relative to the surface at 50N, where Age=0
 //-----------------------------------------------------------------------
 
-const double ReferenceVmrApriori::age_of_air(const double altitude) const
+double ReferenceVmrApriori::age_of_air(double altitude) const
 {
   double mod_tropo_alt = model_tropopause_altitude().convert(units::km).value;
     

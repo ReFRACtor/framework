@@ -34,7 +34,7 @@ public:
 ///            another CostFuncState
 //-----------------------------------------------------------------------
 
-  CostFuncState(const CostFuncState& s)
+  CostFuncState(const CostFuncState& s) : ProblemState(s)
   { set(s); }
 
 

@@ -25,7 +25,7 @@ std::vector<std::string> hdf_file_read_string_vector(const HdfFile& h, const std
   return result;
 }
 
-std::vector<std::string> hdf_file_read_string_vector_row(const HdfFile& h, const std::string& fname, int row)
+std::vector<std::string> hdf_file_read_string_vector_row(const HdfFile& h, const std::string& fname, int UNUSED(row))
 {
   blitz::Array<std::string, 2> str_arr = h.read_field<std::string, 2>(fname);
   std::vector<std::string> result;

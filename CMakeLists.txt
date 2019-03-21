@@ -21,9 +21,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # because the effect of the exhausting the stack is a segmentation fault,
 # so you don't immediately know the stack is the problem. To avoid this,
 # we explicitely turn of openmp even if the flags initially turn it on.
+
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_definitions("-fno-openmp")
+  # Also suppress warning about comparing reals. This is often a bad thing
+  # to do, but the fortran code we have does this the "right" way, e.g.
+  # checking for identical to zero as a flag value.
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-compare-reals")
 endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")

@@ -10,7 +10,8 @@ using namespace blitz;
 class PassThroughNoiseModel : public NoiseModel {
 public:
     PassThroughNoiseModel(const blitz::Array<double, 1> uncert_in) : uncert(uncert_in) {}
-    blitz::Array<double, 1> uncertainty(int Spec_index, const blitz::Array<double, 1>& Radiance) const
+  blitz::Array<double, 1> uncertainty(int UNUSED(Spec_index),
+	      const blitz::Array<double, 1>& UNUSED(Radiance)) const
         { return uncert; }
 private:
     blitz::Array<double, 1> uncert;

@@ -42,17 +42,17 @@ public:
 /// and when it changes notify other observers that we have changed.
 //-----------------------------------------------------------------------
 
-  virtual void notify_update(const Pressure& P)
+  virtual void notify_update(const Pressure& UNUSED(P))
   {
     cache_is_stale = true;
     notify_update_do(*this);
   }
-  virtual void notify_update(const AerosolExtinction& A)
+  virtual void notify_update(const AerosolExtinction& UNUSED(A))
   {
     cache_is_stale = true;
     notify_update_do(*this);
   }
-  virtual void notify_update(const AerosolProperty& A)
+  virtual void notify_update(const AerosolProperty& UNUSED(A))
   {
     cache_is_stale = true;
     notify_update_do(*this);

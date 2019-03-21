@@ -11,7 +11,7 @@ REGISTER_LUA_END()
 
 
 
-const char * const IterativeSolver::status_str() const
+const char * IterativeSolver::status_str() const
 {
   switch( stat ) {
   case SUCCESS: return "SUCCESS";

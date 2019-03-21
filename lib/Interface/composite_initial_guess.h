@@ -25,7 +25,7 @@ public:
 /// is to do nothing, but derived classes can override this if desired.
 //-----------------------------------------------------------------------
 
-  virtual void attach_notify(CompositeInitialGuess& Comp_ig)
+  virtual void attach_notify(CompositeInitialGuess& UNUSED(Comp_ig))
   { }
 
 //-----------------------------------------------------------------------

@@ -380,7 +380,6 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       ++i) {
     double mv1;
     double mv2;
-    double mv3;
     if(tsub.value.is_constant())
       mv1 = 0;
     else
@@ -389,7 +388,7 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       mv2 = 0;
     else
       mv2 = max(abs(broadener_vmr.value.jacobian()(ra, ra, i)));
-    if(mv1 > 1e-20 || mv2 > 1e-20 || mv3 > 1e-20)
+    if(mv1 > 1e-20 || mv2 > 1e-20)
       absco_nonzero_column.push_back(i);
   }
   Array<double, 2> tsub_sjac(tsub.value.rows(), 

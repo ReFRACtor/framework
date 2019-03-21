@@ -21,7 +21,7 @@ double tropopause_pressure(const boost::shared_ptr<GasVmrApriori>& ga)
   return ga->tropopause_pressure();
 }
 
-void GasVmrAprioriOutput::register_output_apriori(const boost::shared_ptr<Output>& out) const
+void GasVmrAprioriOutput::register_output_apriori(const boost::shared_ptr<Output>& UNUSED(out)) const
 {
 }
 

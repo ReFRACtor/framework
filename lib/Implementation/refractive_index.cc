@@ -172,7 +172,7 @@ AutoDerivative<double> FullPhysics::refr_index_vn(double wl, const AutoDerivativ
   } else if (((wl >= 1.58e0) && (wl <= 1.65e0)) || 
 	     ((wl >= 2.03e0) && (wl <= 2.09e0))) {
 
-    double nw, na;
+    double nw = -1, na = -1;
     if ((wl >= 1.58e0) && (wl <= 1.6e0)) {
 
       //  Refractive index of standard dry air (450 ppm CO2) at 101325 Pa, 293.16 K

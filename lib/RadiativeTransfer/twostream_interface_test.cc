@@ -42,7 +42,6 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
 
   // Linearization flags
   bool do_profile_wfs, do_surface_wfs;
-  bool do_sim_only;
 
   // Linearization control
   Array<bool, 1> layer_vflag( nlayers );
@@ -95,13 +94,10 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   Array<double, 2> brdf_parameters(3,3);
 
   // Thermal variables
-  double surfbb;
+  double surfbb = 0;
   Array<double, 1> thermal_bb_input(nlayers+1); // ( 0:NLAYERS )
   double emissivity;
   Array<double, 1> ls_emissivity(nspars);
-
-  // Input thread
-  int thread;
 
   // Flux factor
   double flux_factor;
@@ -280,7 +276,7 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   //  Control for 3 profile WFs
   do_profile_wfs = true;
   do_surface_wfs = true;
-  do_sim_only    = false;
+  //do_sim_only    = false;
 
   n_surface_wfs = 1;
   for(int n = 0; n < nlayers; n++) {

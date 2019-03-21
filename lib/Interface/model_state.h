@@ -53,7 +53,7 @@ public:
 ///            another ModelState
 //-----------------------------------------------------------------------
 
-  ModelState(const ModelState& s)
+  ModelState(const ModelState& s) : ProblemState(s)
   { set(s); }
 
 

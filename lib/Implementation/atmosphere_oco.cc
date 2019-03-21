@@ -198,7 +198,7 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 	     const std::vector<boost::shared_ptr<Altitude> >& altv,
 	     const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
-    constant(C), rh(rhv), alt(altv), sv_size(0), wn_tau_cache(-1), 
+    rh(rhv), constant(C), alt(altv), sv_size(0), wn_tau_cache(-1), 
     spec_index_tau_cache(-1),
     nlay(-1)
 {
@@ -330,7 +330,7 @@ std::string AtmosphereOco::timer_info() const
 /// and mark the cache when it changes. 
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::notify_update(const Aerosol& A)
+void AtmosphereOco::notify_update(const Aerosol& UNUSED(A))
 {
   wn_tau_cache = -1;
   notify_update_do(*this);
@@ -542,7 +542,7 @@ ArrayAdWithUnit<double, 1> AtmosphereOco::altitude(int spec_index) const
 /// The atmospheric thermal blackbody values per level.
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int spec_index) const
+ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int UNUSED(spec_index)) const
 {
     ArrayAdWithUnit<double, 1> temp_grid = temperature->temperature_grid(*pressure);
 

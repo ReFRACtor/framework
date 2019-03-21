@@ -79,7 +79,7 @@ namespace boost {
             std::ostringstream res;
             res.imbue(std::locale::classic());
             res << ptr<<": ";
-            Dl_info info = {0};
+            Dl_info info = {0,0,0,0};
             if(dladdr(ptr,&info) == 0) {
                 res << "???";
             }

@@ -38,8 +38,8 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
                  const bool do_solar,
                  const bool do_thermal)
 : RadiativeTransferSingleWn(Stokes_coef, Atm),
-  sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
   do_solar_sources(do_solar), do_thermal_emission(do_thermal),
+  sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
   alt_spec_index_cache(-1), geo_spec_index_cache(-1)
 {
   if(sza.rows() != number_spectrometer() ||

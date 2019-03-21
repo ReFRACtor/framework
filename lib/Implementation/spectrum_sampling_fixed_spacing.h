@@ -18,7 +18,7 @@ namespace FullPhysics {
 class SpectrumSamplingFixedSpacing : public SpectrumSampling {
 public:
   SpectrumSamplingFixedSpacing(const ArrayWithUnit<double, 1>& Spec_spacing)
-  : spec_spacing(Spec_spacing), SpectrumSampling(Spec_spacing.rows()) { }
+    : SpectrumSampling(Spec_spacing.rows()), spec_spacing(Spec_spacing) { }
 
   virtual ~SpectrumSamplingFixedSpacing() {}
   virtual SpectralDomain spectral_domain(int spec_index,

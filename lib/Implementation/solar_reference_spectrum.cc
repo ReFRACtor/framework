@@ -10,7 +10,7 @@ using namespace blitz;
 
 SolarReferenceSpectrum::SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& ref_spectrum_in,
                                                const boost::shared_ptr<SolarDopplerShift>& doppler_shift_in) 
-    : doppler_shift_(doppler_shift_in), ref_spec_orig(ref_spectrum_in)
+  : ref_spec_orig(ref_spectrum_in), doppler_shift_(doppler_shift_in)
 {
     Array<double, 1> x = to_c_order(ref_spec_orig->spectral_domain().data());
     Array<double, 1> y = to_c_order(ref_spec_orig->spectral_range().data());

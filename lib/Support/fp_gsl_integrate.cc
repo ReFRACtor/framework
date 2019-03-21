@@ -89,7 +89,7 @@ void GslIntegrate::integrate_err_est
 (const boost::function<double (double)>& F,
  double xmin, double xmax, double &Res, double& Error_est,
  double eps_abs, double eps_rel,
- int key) const
+ int UNUSED(key)) const
 {
   gsl_function gf;
   gf.function = &gsl_integrate_integrand_wrapper;
@@ -114,7 +114,7 @@ void GslIntegrate::integrate_err_est
  double xmin, double xmax, const std::vector<double>& breakpoints,
  double &Res, double& Error_est,
  double eps_abs, double eps_rel,
- int key) const
+ int UNUSED(key)) const
 {
   gsl_function gf;
   gf.function = &gsl_integrate_integrand_wrapper;

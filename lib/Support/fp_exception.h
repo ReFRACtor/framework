@@ -42,6 +42,7 @@ public:
 //-----------------------------------------------------------------------
 
     Exception(const Exception& E)
+      : boost::backtrace(E)
     {
       try {
 	s_ << E.s_.str();

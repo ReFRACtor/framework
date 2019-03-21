@@ -167,9 +167,9 @@ protected:
 
   virtual blitz::Array<double, 3> read_double(double wn) const = 0;
   virtual blitz::Array<float, 3> read_float(double wn) const = 0;
-  virtual blitz::Array<double, 4> read_double_2b(double wn) const
+  virtual blitz::Array<double, 4> read_double_2b(double UNUSED(wn)) const
   { throw Exception("Don't support 2 broadners"); }
-  virtual blitz::Array<float, 4> read_float_2b(double wn) const 
+  virtual blitz::Array<float, 4> read_float_2b(double UNUSED(wn)) const 
   { throw Exception("Don't support 2 broadners"); }
 private:
   double interpol(double X, const std::vector<double>& Xv, 

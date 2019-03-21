@@ -36,7 +36,6 @@ AerosolAodOutput::AerosolAodOutput(const boost::shared_ptr<Aerosol>& A,
 
 void AerosolAodOutput::register_output(const boost::shared_ptr<Output>& out) const
 {
-  typedef boost::function<blitz::Array<double, 1> ()> ftype;
   double minv = std::numeric_limits<double>::min();
   double maxv = std::numeric_limits<double>::max();
 

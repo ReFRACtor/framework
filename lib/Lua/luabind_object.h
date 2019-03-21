@@ -88,7 +88,7 @@ public:
 
 // Nice not to have to treat LuabindObject as a special case, so just
 // copy if T happens to be type LuabindObject
-  LuabindObject(const boost::shared_ptr<LuaState>& Ls, 
+  LuabindObject(const boost::shared_ptr<LuaState>& UNUSED(Ls), 
 		const LuabindObject& V) 
     : ls(V.lua_state()), obj(V.object()) {}
 

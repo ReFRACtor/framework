@@ -7,7 +7,10 @@ boost::shared_ptr<InstrumentCorrection> ApplyInstrumentUnits::clone() const
     return boost::shared_ptr<InstrumentCorrection>(new ApplyInstrumentUnits(spectral_units, scaling));
 }
 
-void ApplyInstrumentUnits::apply_correction(const SpectralDomain& Pixel_grid, const std::vector<int>& Pixel_list, SpectralRange& Radiance) const
+void ApplyInstrumentUnits::apply_correction
+(const SpectralDomain& UNUSED(Pixel_grid),
+ const std::vector<int>& UNUSED(Pixel_list),
+ SpectralRange& Radiance) const
 {
     // Use the copy operator to modify the units
     Radiance = SpectralRange(Radiance.data_ad(), spectral_units, Radiance.uncertainty());

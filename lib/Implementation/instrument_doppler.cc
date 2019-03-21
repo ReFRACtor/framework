@@ -37,7 +37,7 @@ InstrumentDoppler::InstrumentDoppler(const double Relative_velocity_value,
   init(c, f);
 }
 
-void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const
+void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)) const
 {
   // Compute the wavelengths of the object in (2) in the spacecraft frame of reference.
   // Let v_ei be the relative velocity between earth and the instrument (=spacecraft).

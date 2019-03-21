@@ -65,7 +65,7 @@ public:
 ///            another NLLSProblemState
 //-----------------------------------------------------------------------
 
-  NLLSProblemState(const NLLSProblemState& s)
+  NLLSProblemState(const NLLSProblemState& s) : ProblemState(s)
   { set(s); }
 
 

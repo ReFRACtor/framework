@@ -22,11 +22,11 @@ public:
 
     virtual const AutoDerivative<double> emissivity(const DoubleWithUnit wave_point, const int spec_index) const;
 
-    virtual const int number_spectrometer() const
+    virtual int number_spectrometer() const
     {
         return desc_band_names.size();
     }
-    virtual const int number_params() const
+    virtual int number_params() const
     {
         return coefficient().value().rows() / number_spectrometer();
     }

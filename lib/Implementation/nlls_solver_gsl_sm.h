@@ -50,8 +50,8 @@ public:
                    gsl_multifit_nlinear_parameters fdf_params=gsl_multifit_nlinear_default_parameters(),
                    double x_tol=1.0e-6, double g_tol=6.0555e-06, double f_tol=0.0, bool vrbs=false )
     : NLLSSolver(p,max_cost_function_calls,vrbs),
-      FDF_params(fdf_params),
-      X_tol(x_tol), G_tol(g_tol), F_tol(f_tol)
+      X_tol(x_tol), G_tol(g_tol), F_tol(f_tol),
+      FDF_params(fdf_params)
   {}
 
 

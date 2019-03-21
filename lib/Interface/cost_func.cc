@@ -11,7 +11,7 @@ REGISTER_LUA_END()
 
 
 
-const char * const CostFunc::message_str() const
+const char * CostFunc::message_str() const
 {
   switch( mssg ) {
   case SOLVED: return "SOLVED";

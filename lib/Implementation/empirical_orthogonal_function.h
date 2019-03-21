@@ -95,7 +95,7 @@ public:
 
   virtual std::string sub_state_identifier() const { return "eof/" + band_name; }
 
-  virtual std::string state_vector_name_i(int i) const
+  virtual std::string state_vector_name_i(int UNUSED(i)) const
   { return "EOF order " + boost::lexical_cast<std::string>(order_) +
       " scale factor " + band_name; }
 

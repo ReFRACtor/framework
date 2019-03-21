@@ -31,7 +31,7 @@ public:
   /// becomes stale when the Atmosphere is changed, so we observe atm
   /// and mark the cache when it changes. 
   //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& atm) { alt_spec_index_cache = -1; }
+  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
 
   /// Number of stokes in returned stokes values
   /// Note that LIDORT will only ever calculate the first stoke index for I,

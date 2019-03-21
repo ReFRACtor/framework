@@ -68,7 +68,7 @@ public:
     /// becomes stale when the Atmosphere is changed, so we observe atm
     /// and mark the cache when it changes. 
     //-----------------------------------------------------------------------
-    void notify_update(const RtAtmosphere& atm) { alt_spec_index_cache = -1; }
+  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
   
     virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
     virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;

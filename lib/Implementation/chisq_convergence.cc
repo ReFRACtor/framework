@@ -57,8 +57,8 @@ void ChisqConvergence::convergence_check(const FitStatistic& fit_stat_last,
 //-----------------------------------------------------------------------
 
 void ChisqConvergence::evaluate_quality(FitStatistic& fit_stat,
-					const blitz::Array<double, 1>& Residual,
-					const blitz::Array<double, 1>& Residual_cov_diag)
+	const blitz::Array<double, 1>& UNUSED(Residual),
+	const blitz::Array<double, 1>& UNUSED(Residual_cov_diag))
 {
   if (not fit_stat.fit_succeeded)
     throw Exception("Can not evaulate quality when the fit has not succeeded");

@@ -14,7 +14,7 @@ REGISTER_LUA_DERIVED_CLASS(GroundCoxmunk, Ground)
 REGISTER_LUA_END()
 #endif
 
-GroundCoxmunk::GroundCoxmunk(const double Windspeed,
+GroundCoxmunk::GroundCoxmunk(double Windspeed,
                 const bool& Ws_flag, 
                 const blitz::Array<double, 1>& Refr_index)
     : SubStateVectorArray<Ground>(Windspeed, Ws_flag),
@@ -22,7 +22,7 @@ GroundCoxmunk::GroundCoxmunk(const double Windspeed,
 {
 }
 
-ArrayAd<double, 1> GroundCoxmunk::surface_parameter(const double wn, const int spec_index) const
+ArrayAd<double, 1> GroundCoxmunk::surface_parameter(double UNUSED(wn), int spec_index) const
 {
     ArrayAd<double, 1> spars;
     spars.resize(4, windspeed().number_variable());
@@ -39,7 +39,7 @@ const AutoDerivative<double> GroundCoxmunk::windspeed() const
     return coefficient()(0); 
 }
 
-const double GroundCoxmunk::refractive_index(const int Spec_idx) const 
+double GroundCoxmunk::refractive_index(const int Spec_idx) const 
 { 
     return refractive_index_(Spec_idx); 
 }
@@ -48,7 +48,7 @@ boost::shared_ptr<Ground> GroundCoxmunk::clone() const {
   return boost::shared_ptr<GroundCoxmunk>(new GroundCoxmunk(coefficient().value()(0), used_flag_value()(0), refractive_index_));
 }
 
-std::string GroundCoxmunk::state_vector_name_i(int i) const {
+std::string GroundCoxmunk::state_vector_name_i(int UNUSED(i)) const {
   return "Ground Coxmunk Windspeed";
 }
 

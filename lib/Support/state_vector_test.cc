@@ -21,7 +21,7 @@ public:
   virtual ~StateVectorTest() {}
   virtual void update_sub_state
   (const ArrayAd<double, 1>& Sv_sub,
-   const blitz::Array<double, 2>& Cov)
+   const blitz::Array<double, 2>& UNUSED(Cov))
   {
     x.reference(Sv_sub.value());
   }

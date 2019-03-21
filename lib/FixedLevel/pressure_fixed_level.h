@@ -93,7 +93,7 @@ public:
 
   virtual std::string sub_state_identifier() const { return "surface_pressure"; }
 
-  virtual std::string state_vector_name_i(int i) const
+  virtual std::string state_vector_name_i(int UNUSED(i)) const
   { return "Surface Pressure (Pascals)"; }
 protected:
   virtual void calc_pressure_grid() const;

@@ -26,7 +26,7 @@ public:
 
     virtual ~IlsImpBase() = default;
 
-    virtual void notify_update(const SampleGrid& D)
+  virtual void notify_update(const SampleGrid& UNUSED(D))
     {
         notify_update_do(*this);
     }

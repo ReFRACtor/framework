@@ -6,7 +6,7 @@ using namespace FullPhysics;
 class LogImpTest : public LogImp{
 public:
   virtual ~LogImpTest() {}
-  virtual void flush(log_level l)
+  virtual void flush(log_level UNUSED(l))
   {
     res = os.str();
     os.str("");

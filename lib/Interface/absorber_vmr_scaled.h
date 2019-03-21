@@ -22,7 +22,7 @@ public:
 
   virtual std::string sub_state_identifier() const { return "absorber_scaled/" + gas_name(); }
 
-  virtual std::string state_vector_name_i(int i) const
+  virtual std::string state_vector_name_i(int UNUSED(i)) const
   { return gas_name() + " Scaling factor"; }
 
   virtual boost::shared_ptr<AbsorberVmr> clone() const

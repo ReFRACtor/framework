@@ -12,7 +12,7 @@ class LogImp : public Printable<LogImp> {
 public:
   virtual ~LogImp() {}
   enum log_level {DEBUG = 4, INFO=3, WARNING=2, ERROR=1, FATAL=0};
-  template<class T> void write(log_level l, const T& v)
+  template<class T> void write(log_level UNUSED(l), const T& v)
   { os << v; }
   void write(log_level l, const std::string& v);
   void write(log_level l, const char* v)

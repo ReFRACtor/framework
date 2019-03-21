@@ -29,7 +29,7 @@ public:
   virtual void register_output(const boost::shared_ptr<Output>& out) const { 
     output_files.push_back(out);
   }
-  virtual void register_output_apriori(const boost::shared_ptr<Output>& out) const { }
+  virtual void register_output_apriori(const boost::shared_ptr<Output>& UNUSED(out)) const { }
 
   const blitz::Array<double, 1> saved_spectral_domain(const std::string& spectra_name);
   const blitz::Array<double, 1> saved_spectral_range(const std::string& spectra_name);

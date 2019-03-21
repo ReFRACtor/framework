@@ -33,44 +33,44 @@ public:
                const ArrayWithUnit<double, 1>& Ref_points,
                const std::vector<std::string>& Desc_band_names);
 
-    virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
+    virtual ArrayAd<double, 1> surface_parameter(double wn, int spec_index) const;
 
-    virtual const int number_spectrometer() const { return desc_band_names.size(); }
+    virtual int number_spectrometer() const { return desc_band_names.size(); }
 
     // Rahman parameters
-    virtual const AutoDerivative<double> weight(const double wn, const int spec_index) const;
-    virtual const AutoDerivative<double> weight_intercept(const int spec_index) const;
-    virtual const AutoDerivative<double> weight_slope(const int spec_index) const;
-    virtual const AutoDerivative<double> rahman_factor(const int spec_index) const;
-    virtual const AutoDerivative<double> hotspot_parameter(const int spec_index) const;
-    virtual const AutoDerivative<double> asymmetry_parameter(const int spec_index) const;
-    virtual const AutoDerivative<double> anisotropy_parameter(const int spec_index) const;
-    virtual const AutoDerivative<double> breon_factor(const int spec_index) const;
+    virtual const AutoDerivative<double> weight(double wn, int spec_index) const;
+    virtual const AutoDerivative<double> weight_intercept(int spec_index) const;
+    virtual const AutoDerivative<double> weight_slope(int spec_index) const;
+    virtual const AutoDerivative<double> rahman_factor(int spec_index) const;
+    virtual const AutoDerivative<double> hotspot_parameter(int spec_index) const;
+    virtual const AutoDerivative<double> asymmetry_parameter(int spec_index) const;
+    virtual const AutoDerivative<double> anisotropy_parameter(int spec_index) const;
+    virtual const AutoDerivative<double> breon_factor(int spec_index) const;
 
-    virtual void weight_intercept(const int spec_index, const AutoDerivative<double>& val);
-    virtual void weight_slope(const int spec_index, const AutoDerivative<double>& val);
-    virtual void rahman_factor(const int spec_index, const AutoDerivative<double>& val);
-    virtual void hotspot_parameter(const int spec_index, const AutoDerivative<double>& val);
-    virtual void asymmetry_parameter(const int spec_index, const AutoDerivative<double>& val);
-    virtual void anisotropy_parameter(const int spec_index, const AutoDerivative<double>& val);
-    virtual void breon_factor(const int spec_index, const AutoDerivative<double>& val);
+    virtual void weight_intercept(int spec_index, const AutoDerivative<double>& val);
+    virtual void weight_slope(int spec_index, const AutoDerivative<double>& val);
+    virtual void rahman_factor(int spec_index, const AutoDerivative<double>& val);
+    virtual void hotspot_parameter(int spec_index, const AutoDerivative<double>& val);
+    virtual void asymmetry_parameter(int spec_index, const AutoDerivative<double>& val);
+    virtual void anisotropy_parameter(int spec_index, const AutoDerivative<double>& val);
+    virtual void breon_factor(int spec_index, const AutoDerivative<double>& val);
 
-    const blitz::Array<double, 2> brdf_covariance(const int spec_index) const;
+    const blitz::Array<double, 2> brdf_covariance(int spec_index) const;
    
     /// Returns hard coded value of 1.5 since that is the value hardcoded into LIDORT
-    virtual const double refractive_index(const int Spec_idx) const { return 1.5; }
+  virtual double refractive_index(int UNUSED(Spec_idx)) const { return 1.5; }
 
     // Uses LIDORT to compute the black sky albedo from the parameters
-    virtual const double black_sky_albedo(const int Spec_index, const double Sza) = 0;
+    virtual double black_sky_albedo(int Spec_index, double Sza) = 0;
 
     // Computes kernel value using parameters and specified geometry
-    virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm) = 0;
+    virtual double kernel_value(int Spec_index, double Sza, double Vza, double Azm) = 0;
   
     /// String describing which type of Breon surface type, also makes this class abstract
     virtual const std::string breon_type() const = 0;
 
     /// Center wavelength that spectrally dependent parameter is referenced to
-    virtual const DoubleWithUnit reference_point(const int spec_index) const { return reference_points(spec_index); } 
+    virtual DoubleWithUnit reference_point(int spec_index) const { return reference_points(spec_index); } 
 
     virtual boost::shared_ptr<Ground> clone() const = 0;
 
@@ -93,8 +93,8 @@ protected:
     std::vector<std::string> desc_band_names;
 
     // Helper function for routines that call fortran codes
-    blitz::Array<double, 1> black_sky_params(const int Spec_index);
-    blitz::Array<double, 1> kernel_value_params(const int Spec_index);
+    blitz::Array<double, 1> black_sky_params(int Spec_index);
+    blitz::Array<double, 1> kernel_value_params(int Spec_index);
 };
 
 
@@ -106,8 +106,8 @@ public:
                   const std::vector<std::string>& Desc_band_names) :
         GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
 
-    virtual const double black_sky_albedo(const int Spec_index, const double Sza);
-    virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
+    virtual double black_sky_albedo(int Spec_index, double Sza);
+    virtual double kernel_value(int Spec_index, double Sza, double Vza, double Azm);
     virtual const std::string breon_type() const { return "Vegetative"; }
 
     virtual boost::shared_ptr<Ground> clone() const {
@@ -129,8 +129,8 @@ public:
                    const std::vector<std::string>& Desc_band_names) :
         GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
 
-    virtual const double black_sky_albedo(const int Spec_index, const double Sza);
-    virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
+    virtual double black_sky_albedo(int Spec_index, double Sza);
+    virtual double kernel_value(int Spec_index, double Sza, double Vza, double Azm);
     virtual const std::string breon_type() const { return "Soil"; }
 
     virtual boost::shared_ptr<Ground> clone() const {

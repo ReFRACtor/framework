@@ -51,9 +51,9 @@ NLLSSolverLM::NLLSSolverLM(
   const NLLSSolverLM::Options& opt, double dx_tol_abs, double dx_tol_rel,
   double g_tol_abs, double g_tol_rel, bool vrbs )
     : NLLSSolver(p, max_cost_function_calls, vrbs),
-      Opt(opt),
       Dx_tol_abs(dx_tol_abs), Dx_tol_rel(dx_tol_rel),
       G_tol_abs(g_tol_abs), G_tol_rel(g_tol_rel),
+      Opt(opt),
       CR_ratio(0), Lambda(0)
 {
 }

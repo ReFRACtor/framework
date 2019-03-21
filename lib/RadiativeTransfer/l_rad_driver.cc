@@ -467,7 +467,7 @@ Array<double, 2> LRadDriver::surface_jacobian() const
     return jac_surf_f;
 }
 
-void LRadDriver::print(std::ostream& Os, bool Short_form) const
+void LRadDriver::print(std::ostream& Os, bool UNUSED(Short_form)) const
 {
     Os << "LRadDriver:\n";
     Os << "  Number stream: " << nstream << "\n"

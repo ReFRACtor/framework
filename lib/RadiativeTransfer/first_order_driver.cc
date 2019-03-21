@@ -10,7 +10,8 @@ using namespace blitz;
 //-----------------------------------------------------------------------
 
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
-: num_streams_(number_streams), num_moments_(number_moments), SpurrRtDriver(do_solar, do_thermal)
+  : SpurrRtDriver(do_solar, do_thermal),
+    num_moments_(number_moments), num_streams_(number_streams)
 {
     init_interfaces(number_layers, surface_type);
     // Use pseudo spherical correction by default
@@ -219,7 +220,7 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
     }
 }
 
-void FirstOrderDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const
+void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb)) const
 {
     // Nothing for now, in future use DT geometry and DT RT
 }
@@ -289,10 +290,11 @@ void FirstOrderDriver::clear_linear_inputs() const
     // Nothing for now
 }
 
-void FirstOrderDriver::setup_linear_inputs(const ArrayAd<double, 1>& od, 
-                                           const ArrayAd<double, 1>& ssa,
-                                           const ArrayAd<double, 2>& pf,
-                                           bool do_surface_linearization) const
+void FirstOrderDriver::setup_linear_inputs
+(const ArrayAd<double, 1>& UNUSED(od), 
+ const ArrayAd<double, 1>& UNUSED(ssa),
+ const ArrayAd<double, 2>& UNUSED(pf),
+ bool UNUSED(do_surface_linearization)) const
 {
     // Nothing for now
 }
@@ -309,7 +311,10 @@ double FirstOrderDriver::get_intensity() const
     return fo_interface->intensity_db()(0, 0) + fo_interface->intensity_up()(0, 0);
 }
 
-void FirstOrderDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const
+void FirstOrderDriver::copy_jacobians
+(blitz::Array<double, 2>& UNUSED(jac_atm),
+ blitz::Array<double, 1>& UNUSED(jac_surf_param),
+ double& UNUSED(jac_surf_temp)) const
 {
     // Nothing for now
 }

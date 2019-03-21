@@ -19,7 +19,7 @@ namespace FullPhysics {
 class UniformSpectrumSampling : public SpectrumSampling {
 public:
     UniformSpectrumSampling(const ArrayWithUnit<double, 1>& Spec_spacing)
-    	: spec_spacing(Spec_spacing), SpectrumSampling(Spec_spacing.rows()) { }
+      : SpectrumSampling(Spec_spacing.rows()), spec_spacing(Spec_spacing) { }
    
     virtual ~UniformSpectrumSampling() { }
   

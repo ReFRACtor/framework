@@ -166,11 +166,12 @@ AbscoInterpolator::AbscoInterpolator
     ip(Press.rows()), itp1(Press.rows()), itp2(Press.rows()),
     ib(Broadener_vmr.rows(), Press.rows()),
     ib2(Broadener_vmr.rows(), Press.rows()), dftp1_dt(Press.rows()), 
-    dftp2_dt(Press.rows()), dfb_db(Broadener_vmr.rows(), Press.rows()),
+    dftp2_dt(Press.rows()), 
     fp(Press.rows()), 
-    fb(Broadener_vmr.rows(), Press.rows()),
     ftp1(Press.rows()),
     ftp2(Press.rows()),
+    dfb_db(Broadener_vmr.rows(), Press.rows()),    
+    fb(Broadener_vmr.rows(), Press.rows()),
     res(Press.rows(), std::max(Temp.value.number_variable(), 
 			       Broadener_vmr.value.number_variable()))
 {
@@ -361,7 +362,7 @@ AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
       double t212 = a(ip(i) + 1, itp2(i), ib2(0,i), ib(1,i)) * (1 - ftp2(i)) + 
 	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) * ftp2(i);
       double dt212_dt =
-	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i)), ib(1,i)) * 
+	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i), ib(1,i))) * 
 	dftp2_dt(i);
 
       double t121 = a(ip(i), itp1(i), ib(0,i), ib2(1,i)) * (1 - ftp1(i)) + 
@@ -381,7 +382,7 @@ AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
       double t222 = a(ip(i) + 1, itp2(i), ib2(0,i), ib2(1,i)) * (1 - ftp2(i)) + 
 	a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) * ftp2(i);
       double dt222_dt =
-	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i)), ib2(1,i)) * 
+	(a(ip(i) + 1, itp2(i) + 1, ib2(0,i), ib2(1,i)) - a(ip(i) + 1, itp2(i), ib2(0,i), ib2(1,i))) * 
 	dftp2_dt(i);
       
 

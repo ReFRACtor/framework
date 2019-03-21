@@ -11,15 +11,15 @@ public:
   virtual ~LuaCallbackTest() {}
   virtual boost::shared_ptr<LuabindObject> 
   call(const boost::shared_ptr<LuabindObject>& Obj,
-       const boost::shared_ptr<LuabindObject>& Obj2,
-       const boost::shared_ptr<LuabindObject>& Obj3,
-       const boost::shared_ptr<LuabindObject>& Obj4,
-       const boost::shared_ptr<LuabindObject>& Obj5,
-       const boost::shared_ptr<LuabindObject>& Obj6,
-       const boost::shared_ptr<LuabindObject>& Obj7,
-       const boost::shared_ptr<LuabindObject>& Obj8,
-       const boost::shared_ptr<LuabindObject>& Obj9,
-       const boost::shared_ptr<LuabindObject>& Obj10)
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj2),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj3),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj4),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj5),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj6),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj7),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj8),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj9),
+       const boost::shared_ptr<LuabindObject>& UNUSED(Obj10))
   { Obj->set_value("call_back", val); return boost::shared_ptr<LuabindObject>(new LuabindObject(LuabindObject::nil(ls))); }
 private:
   int val;

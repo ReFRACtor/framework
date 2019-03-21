@@ -54,7 +54,7 @@ public:
 /// derived classes can ovveride this.
 //-----------------------------------------------------------------------
 
-  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) 
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& UNUSED(Sv_name)) 
     const {}
   virtual void print(std::ostream& Os) const {Os << "SubStatVectorObserver";}
   virtual void notify_add(StateVector& Sv)
@@ -65,7 +65,7 @@ public:
     Sv.observer_claimed_size(pstart + plen);
   }
 
-  virtual void notify_remove(StateVector& Sv)
+  virtual void notify_remove(StateVector& UNUSED(Sv))
   {
     pstart = -1;
   }

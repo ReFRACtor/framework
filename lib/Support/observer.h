@@ -37,14 +37,14 @@ public:
 /// Called when the Observed object is updated.
 //-----------------------------------------------------------------------
 
-  virtual void notify_update(const T& Observed_object) {};
+  virtual void notify_update(const T& UNUSED(Observed_object)) {};
 
 //-----------------------------------------------------------------------
 /// Called when an object is added to an Observable. Default is to 
 /// do nothing.
 //-----------------------------------------------------------------------
 
-  virtual void notify_add(T& Observed_object) {}
+  virtual void notify_add(T& UNUSED(Observed_object)) {}
   virtual void notify_add() {}
 
 //-----------------------------------------------------------------------
@@ -52,7 +52,7 @@ public:
 /// do nothing.
 //-----------------------------------------------------------------------
 
-  virtual void notify_remove(T& Observed_object) {}
+  virtual void notify_remove(T& UNUSED(Observed_object)) {}
   virtual void notify_remove() {}
 
 private:

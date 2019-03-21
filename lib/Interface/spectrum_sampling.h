@@ -52,7 +52,7 @@ public:
 /// different at all.
 //-----------------------------------------------------------------------
 
-  virtual bool need_interpolation(int Spec_index) const { return false; }
+  virtual bool need_interpolation(int UNUSED(Spec_index)) const { return false; }
 
 //-----------------------------------------------------------------------
 /// Print to stream.

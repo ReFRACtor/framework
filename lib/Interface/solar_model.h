@@ -34,7 +34,7 @@ public:
   virtual void print(std::ostream& Os) const {Os << "SolarModel";}
 
   virtual void apply_effect(Spectrum& Spec, 
-		    const ForwardModelSpectralGrid& Forward_model_grid) const {
+       const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)) const {
     Spec = apply_solar_model(Spec);
   }
 

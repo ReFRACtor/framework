@@ -31,15 +31,15 @@ public:
                         const blitz::Array<double, 1>& Model_altitude,
                         const blitz::Array<double, 1>& Model_temperature,
                         const blitz::Array<double, 1>& Ref_altitude,
-                        const double Ref_latitude,
+                        double Ref_latitude,
                         const Time& Ref_time,
-                        const double Ref_tropopause_altitude,
-                        const double Obs_latitude,
+                        double Ref_tropopause_altitude,
+                        double Obs_latitude,
                         const Time& Obs_time);
 
     DoubleWithUnit model_tropopause_altitude() const;
     const blitz::Array<double, 1> effective_altitude() const;
-    const double age_of_air(const double altitude) const;
+    double age_of_air(double altitude) const;
 
     const blitz::Array<double, 1> resample_to_model_grid(const blitz::Array<double, 1>& vmr) const;
     const blitz::Array<double, 1> apply_latitude_gradient(const blitz::Array<double, 1>& vmr, const std::string& gas_name) const;

@@ -23,16 +23,16 @@ public:
 /// everything is already initialized as false. Default is to do nothing.
 //-----------------------------------------------------------------------
 
-  virtual void mark_used(const StateVector& Sv, 
-			 blitz::Array<bool, 1>& Used) const {}
+  virtual void mark_used(const StateVector& UNUSED(Sv), 
+			 blitz::Array<bool, 1>& UNUSED(Used)) const {}
 			 
 //-----------------------------------------------------------------------
 /// Update any portion of the list of the state vector names that
 /// apply to this object. Default is to do nothing.
 //-----------------------------------------------------------------------
 
-  virtual void state_vector_name(const StateVector& Sv, 
-				 blitz::Array<std::string, 1>& Sv_name) const {}
+  virtual void state_vector_name(const StateVector& UNUSED(Sv), 
+		 blitz::Array<std::string, 1>& UNUSED(Sv_name)) const {}
 			 
   virtual void print(std::ostream& Os) const { Os << "StateVectorObserver";}
 };

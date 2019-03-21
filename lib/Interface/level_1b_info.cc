@@ -55,7 +55,7 @@ std::vector<boost::shared_ptr<Level1b>> Level1bInfo::closest_obs_n(double lat, d
     std::sort(all_level1b.begin(), all_level1b.end(), compare_level1b_latlon);
 
     std::vector<boost::shared_ptr<Level1b>> closest_observations = std::vector<boost::shared_ptr<Level1b>>();
-    for (int obs_num = 0; (obs_num < n) && (obs_num < all_level1b.size()); obs_num++) {
+    for (int obs_num = 0; (obs_num < n) && (obs_num < (int) all_level1b.size()); obs_num++) {
         closest_observations.push_back(all_level1b[obs_num]);
     }
     return closest_observations;
@@ -89,7 +89,7 @@ std::vector<boost::shared_ptr<Level1b>> Level1bInfo::closest_obs_n(Time search_t
     std::sort(all_level1b.begin(), all_level1b.end(), compare_level1b_timediff);
 
     std::vector<boost::shared_ptr<Level1b>> closest_observations = std::vector<boost::shared_ptr<Level1b>>();
-    for (int obs_num = 0; (obs_num < n) && (obs_num < all_level1b.size()); obs_num++) {
+    for (int obs_num = 0; (obs_num < n) && (obs_num < (int) all_level1b.size()); obs_num++) {
         closest_observations.push_back(all_level1b[obs_num]);
     }
     return closest_observations;

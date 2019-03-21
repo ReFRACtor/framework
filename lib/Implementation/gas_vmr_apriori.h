@@ -51,7 +51,7 @@ public:
     const boost::shared_ptr<ReferenceVmrApriori> reference() const { return ref_apriori; }
 
     const DoubleWithUnit tropopause_altitude() const { return ref_apriori->model_tropopause_altitude(); }
-    const double tropopause_pressure() const;
+    double tropopause_pressure() const;
 
     void print(std::ostream& Os) const { Os << "GasVmrApriori"; }
 

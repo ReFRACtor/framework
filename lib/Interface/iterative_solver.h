@@ -213,7 +213,7 @@ public:
 /// \return Solver status in string form
 //-----------------------------------------------------------------------
 
-  virtual const char * const status_str() const;
+  virtual const char * status_str() const;
 
 
 //-----------------------------------------------------------------------
