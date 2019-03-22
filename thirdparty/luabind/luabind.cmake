@@ -3,7 +3,9 @@ set(LUABIND_NAME luabind)
 # Using updated and fixed luabind version from:
 # https://github.com/Oberon00/luabind
 # Commit version used is shown in the filename below
-set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-60e576e.tar.gz)
+if(NOT DEFINED LUABIND_URL)
+  set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-60e576e.tar.gz)
+endif(NOT DEFINED LUABIND_URL)
 
 # Set up arguments to cmake call
 # 1. Tell their cmake that Lua was found and pass the include directory path found by thirdparty cmake
