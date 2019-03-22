@@ -468,7 +468,7 @@ template<class T> void AbscoAer::swap(int i) const
 {
   // First time through, set up space for cache.
  if(read_cache<T>().extent(firstDim) == 0)
-   read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows() - 1,
+   read_cache<T>().resize(cache_nline, tgrid.cols(), tgrid.rows(),
 			  (number_broadener() >= 1 ? number_broadener_vmr(0) : 1),
 			  (number_broadener() >= 2 ? number_broadener_vmr(1) : 1));
   int nl = read_cache<T>().extent(firstDim);
