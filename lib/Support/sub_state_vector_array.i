@@ -61,13 +61,13 @@ protected:
     virtual void remove_observer(Observer<TYPE>& Obs);
     virtual void update_sub_state_hook();
     virtual void print(std::ostream& Os) const;
-    %python_attribute(desc, std::string)
     virtual void mark_used(const StateVector& Sv, blitz::Array<bool, 1>& Used) const;
     virtual void state_vector_name(const StateVector& Sv, blitz::Array<std::string, 1>& Sv_name) const;
     virtual void notify_update(const StateVector& Observed_object);
     virtual void notify_add(StateVector& Observed_object);
     virtual void notify_remove(StateVector& Observed_object);
     virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov_sub);
+    %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;
     virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
 %enddef
