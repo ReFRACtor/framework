@@ -185,7 +185,7 @@ public:
 %typemap(out) std::vector<blitz::Array<TYPE, DIM> > {
     
     $result = PyList_New($1.size());
-    for(int idx = 0; idx < $1.size(); idx++) {
+    for(int idx = 0; idx < (int) $1.size(); idx++) {
         PyObject* element_np_arr;
         %blitz_to_numpy(TYPE, DIM, (&$1.at(idx)), element_np_arr);
         PyList_SetItem($result, idx, element_np_arr);
