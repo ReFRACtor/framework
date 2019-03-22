@@ -12,6 +12,27 @@ set(REFRACTOR_MAJOR_VERSION "8.0.0")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Conda has a separate set of debug flags defined, which is more than just
+# adding a -g. If we are doing a debug rather than release build, use those
+# flags if we find them.
+set(DEBUG_CXXFLAGS "$ENV{DEBUG_CXXFLAGS}" CACHE STRING "Flags to use in Debug")
+set(DEBUG_CFLAGS "$ENV{DEBUG_CFLAGS}" CACHE STRING "Flags to use in Debug")
+set(DEBUG_FFLAGS "$ENV{DEBUG_FFLAGS}" CACHE STRING "Flags to use in Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if(DEBUG_CXXFLAGS)
+    set(CMAKE_CXX_FLAGS "${DEBUG_CXXFLAGS}")
+  endif(DEBUG_CXXFLAGS)
+  if(DEBUG_CFLAGS)
+    set(CMAKE_C_FLAGS "${DEBUG_CFLAGS}")
+  endif(DEBUG_CFLAGS)
+  if(DEBUG_FFLAGS)
+    # Suppress warning about comparing reals. This is often a bad thing
+    # to do, but the fortran code we have does this the "right" way, e.g.
+    # checking for identical to zero as a flag value.
+    set(CMAKE_Fortran_FLAGS "${DEBUG_FFLAGS}  -Wno-compare-reals")
+  endif(DEBUG_FFLAGS)
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+
 # Anaconda enables the -fopenmp flag for fortran with its standard compiler
 # flags. This causes problems with lidort (which was fairly hard to track
 # down). -fopenmp implies -frecursive which makes every function in fortran
@@ -20,14 +41,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # completely exhausts the stack. This is particularly hard to track down
 # because the effect of the exhausting the stack is a segmentation fault,
 # so you don't immediately know the stack is the problem. To avoid this,
-# we explicitely turn of openmp even if the flags initially turn it on.
+# we explicitely turn of openmp even if the flag is initially turn it on.
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_definitions("-fno-openmp")
-  # Also suppress warning about comparing reals. This is often a bad thing
-  # to do, but the fortran code we have does this the "right" way, e.g.
-  # checking for identical to zero as a flag value.
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-compare-reals")
 endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
