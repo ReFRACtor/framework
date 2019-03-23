@@ -99,6 +99,10 @@ configure_file (
 # Place compiled Fortran modules into a common directory
 set_property(GLOBAL PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/modules)
 include_directories(${CMAKE_BINARY_DIR}/modules)
+
+# Create install directory to silence a warning message about having a
+# nonexistent directory on the include line
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/modules)
  
 # Add thirdparty packages to build
 add_subdirectory(thirdparty)

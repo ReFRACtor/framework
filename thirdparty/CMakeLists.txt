@@ -16,6 +16,10 @@ set(THIRDPARTY_LIB_DIR ${THIRDPARTY_INSTALL_PREFIX}/lib)
 set(THIRDPARTY_INCLUDE_DIR ${THIRDPARTY_INSTALL_PREFIX}/include)
 list(APPEND THIRDPARTY_INCLUDES ${THIRDPARTY_INCLUDE_DIR})
 
+# Create install directory to silence a warning message about having a
+# nonexistent directory on the include line
+file(MAKE_DIRECTORY ${THIRDPARTY_INCLUDE_DIR})
+
 # Set up where to put Fortran modules
 get_property(THIRDPARTY_MODULE_DIR GLOBAL PROPERTY Fortran_MODULE_DIRECTORY)
 
