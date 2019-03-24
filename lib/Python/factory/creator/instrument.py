@@ -207,6 +207,29 @@ class InstrumentCorrectionList(Creator):
         return inst_corr
 
 
+class EmpericalOrthogonalFunction(CreatorValueMultiChannel):
+
+    coeff = param.Array(dims=1)
+    used_flag = param.Array(dims=1)
+    dispersion = param.Iterable(rf.SampleGrid)
+    hdf_eof = param.Scalar(str)
+    sounding_number = param.Scalar(int)
+    order = param.Scalar(int)
+    num_channels = param.Scalar(int)
+    desc_band_name = param.Iterable(str)
+    hdf_group = param.Scalar(str)
+
+    def create(self, **kwargs):
+        
+        eof = []
+        for chan_idx in range(self.num_channels()):
+            eof.append(rf.EmpiricalOrthogonalFunction(self.coeff()[chan_idx],
+                       self.used_flag()[chan_idx],self.dispersion()[chan_idx],
+                       rf.HdfFile(self.hdf_eof()),chan_idx,self.sounding_number(),
+                       self.order(),self.desc_band_name()[chan_idx],self.hdf_group()))
+        return eof
+
+
 class RadianceScaling(CreatorFlaggedValueMultiChannel):
 
     band_reference = param.ArrayWithUnit(dims=1)
