@@ -153,6 +153,35 @@ class SpectrumEffectList(Creator):
 
         return spec_eff
 
+class FluorenceEffect(Creator):
+
+      atmosphere = param.InstanceOf(rf.AtmosphereOco)
+      observation_zenith = param.ArrayWithUnit(dims=1)
+      reference_point = param.ArrayWithUnit(dims=1)
+      coeff = param.Array(dims=1)
+      used_flag = param.Array(dims=1)
+      stokes_coefficient = param.Array(dims=2)
+      cov_unit = param.InstanceOf(rf.Unit)
+      num_channels = param.Scalar(int)
+
+      def create(self, **kwargs):
+
+          atm = self.atmosphere()
+          lza = self.observation_zenith()
+          ref_point = self.reference_point()[0]
+          coeff = self.coeff()
+          used_flag = self.used_flag()
+          stokes_coeff = rf.StokesCoefficientConstant(self.stokes_coefficient())
+          cov_unit = self.cov_unit()
+          num_channels = self.num_channels()
+
+          fluoresence = []
+          # Loop over all windows adding fluoresence object for each
+          for i in range(num_channels):
+              fluoresence.append(rf.FluorescenceEffect(coeff,used_flag,atm,stokes_coeff,lza[i],i,ref_point,cov_unit))
+
+          return fluoresence
+
 class ForwardModel(Creator):
 
     instrument = param.InstanceOf(rf.Instrument)
