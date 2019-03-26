@@ -35,6 +35,11 @@ private:
   absorption_cross_section_noderiv_calc(double wn) const;
   template<class T> ArrayAd<double, 1> 
   absorption_cross_section_deriv_calc(double wn) const;
+  inline bool have_no_broadner() const;
+  bool have_one_broadner() const
+  { return !have_no_broadner() && fb.rows() == 1;}
+  bool have_two_broadner() const
+  { return !have_no_broadner() && fb.rows() == 2;}
   boost::shared_ptr<Absco> absco;
   blitz::Array<double, 1> p;     // This is in Pascals
   bool p_reversed;		 // True if p goes from high to low
@@ -201,6 +206,10 @@ template <> inline blitz::Array<float, 4> Absco::read<float, 4>(double wn) const
   return read_float_2b(wn);
 }
 
+// We need to define this down here because the definition of Absco
+// needs to be defined before we can use it.
+inline bool AbscoInterpolator::have_no_broadner() const { return absco->bgrid.size() ==0; }
+  
 }
 
 #endif

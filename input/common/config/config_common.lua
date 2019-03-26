@@ -3500,7 +3500,11 @@ function ConfigCommon.standard_forward_model:register_output(ro)
    -- Add absco filesself.ignore_merra_ig)
    for i,gas_name in ipairs(self.config.fm.atmosphere.absorber.gases) do
       dataset_name:push_back("AbscoFile" .. gas_name)
-      file_name:push_back(self.config.fm.atmosphere.absorber[gas_name].absco)
+      if(self.config.fm.atmosphere.absorber[gas_name].absco_aer ~= nil) then
+	 file_name:push_back(self.config.fm.atmosphere.absorber[gas_name].absco_aer)
+      else
+	 file_name:push_back(self.config.fm.atmosphere.absorber[gas_name].absco)
+      end
    end
    
    ro:push_back(SourceFilesOutput("Metadata", dataset_name, file_name))

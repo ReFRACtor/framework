@@ -190,7 +190,7 @@ AbscoInterpolator::AbscoInterpolator
     double unused;
     fp(i) = interpol(p(i), p_reversed, absco->pgrid, ip(i), unused);
     // We might not actually need to interpolate over broadener
-    if(absco->bgrid.size() ==0) {
+    if(have_no_broadner()) {
       ib(0, i) = 0;
       ib2(0, i) = 0;
       dfb_db(0, i) = 0;
@@ -214,7 +214,7 @@ AbscoInterpolator::AbscoInterpolator
 template<class T> Array<double, 1> 
 AbscoInterpolator::absorption_cross_section_noderiv_calc(double wn) const
 {
-  if(fb.rows() < 2) {
+  if(have_no_broadner() || have_one_broadner()) {
     Array<T, 3> a(absco->read<T, 3>(wn));
     for(int i = 0; i < res.rows(); ++i) {
       double t11 = a(ip(i), itp1(i), ib(0, i)) * (1 - ftp1(i)) + 
@@ -229,7 +229,7 @@ AbscoInterpolator::absorption_cross_section_noderiv_calc(double wn) const
       double t2 = t21 * (1 - fp(i)) + t22 * fp(i);
       res.value()(i) = t1 * (1 - fb(0,i)) + t2 * fb(0,i);
     }
-  } else if(fb.rows() == 2) {
+  } else if(have_two_broadner()) {
     Array<T, 4> a(absco->read<T, 4>(wn));
     for(int i = 0; i < res.rows(); ++i) {
       double t111 = a(ip(i), itp1(i), ib(0, i), ib(1,i)) * (1 - ftp1(i)) + 
@@ -286,7 +286,7 @@ template<class T> ArrayAd<double, 1>
 AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
 {
   Range ra(Range::all());
-  if(fb.rows() < 2) {
+  if(have_no_broadner() || have_one_broadner()) {
     Array<T, 3> a(absco->read<T, 3>(wn));
     // Turns out that jacobian calculation is faster if we use pointers. 
     // This is *not* true for things like itp1(i), the speed is the same 
@@ -335,7 +335,7 @@ AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
 	for(int k = 0; k < res.jacobian().cols(); ++k)
 	  *res_jac_p++ = dr_db * *b_jac_p++;
     }
-  } else if(fb.rows() == 2) {
+  } else if(have_two_broadner()) {
     Array<T, 4> a(absco->read<T, 4>(wn));
     // Turns out that jacobian calculation is faster if we use pointers. 
     // This is *not* true for things like itp1(i), the speed is the same 
