@@ -28,6 +28,16 @@ message(STATUS "Using SWIG directly to build Python bindings")
 ## Save and reset this after SWIG macros operate so that it does not clean up our SWIG generated files
 get_directory_property(orig_addl_make_clean_files ADDITIONAL_MAKE_CLEAN_FILES)
 
+# New policy is to pass SWIG_MODULE_NAME as -module. We don't actually need
+# this, but no reason not to turn it on. Without this, you get a warning
+# message from CMaker version 3.14 and later
+if(POLICY CMP0086)
+  cmake_policy(SET CMP0086 NEW)
+endif()
+if(POLICY CMP0078)
+  cmake_policy(SET CMP0078 OLD)
+endif()
+
 # Include SWIG macros
 include(UseSWIG)
 
