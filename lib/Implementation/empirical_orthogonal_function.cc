@@ -83,7 +83,8 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   order_(Order),
   sounding_number_(Sounding_number),
   eof_scale_uncertainty_(false),
-  scale_to_stddev_(-1)
+  scale_to_stddev_(-1),
+  spec_index_(Spec_index)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
@@ -91,6 +92,13 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
     "_waveform_" 
     + boost::lexical_cast<std::string>(Spec_index + 1);
   ArrayWithUnit<double, 2> table;
+
+  if (!Hdf_static_input.has_object(fldname)) {
+    Exception err_msg;
+    err_msg << "EOF file " << Hdf_static_input.file_name() << " has no dataset named " << fldname;
+    throw err_msg;
+  }
+
   // Determine if we have a sounding number index.
   DataSet d = Hdf_static_input.h5_file().openDataSet(fldname);
   DataSpace ds = d.getSpace();
@@ -174,7 +182,8 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   order_(Order),
   sounding_number_(Sounding_number),
   eof_scale_uncertainty_(false),
-  scale_to_stddev_(-1)
+  scale_to_stddev_(-1),
+  spec_index_(Spec_index)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
@@ -257,7 +266,8 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   order_(Order),
   sounding_number_(Sounding_number),
   eof_scale_uncertainty_(true),
-  scale_to_stddev_(Scale_to_stddev)
+  scale_to_stddev_(Scale_to_stddev),
+  spec_index_(Spec_index)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"

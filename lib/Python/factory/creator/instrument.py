@@ -207,27 +207,54 @@ class InstrumentCorrectionList(Creator):
         return inst_corr
 
 
-class EmpericalOrthogonalFunction(CreatorValueMultiChannel):
+class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
 
-    coeff = param.Array(dims=1)
-    used_flag = param.Array(dims=1)
-    dispersion = param.Iterable(rf.SampleGrid)
-    hdf_eof = param.Scalar(str)
+    eof_file = param.Scalar(str)
+    hdf_group = param.Scalar(str)
     sounding_number = param.Scalar(int)
     order = param.Scalar(int)
+    scale_uncertainty = param.Scalar(bool, default=False)
+    scale_to_stddev = param.Scalar(float, required=False)
+
     num_channels = param.Scalar(int)
     desc_band_name = param.Iterable(str)
-    hdf_group = param.Scalar(str)
+    l1b = param.InstanceOf(rf.Level1b, required=False)
 
     def create(self, **kwargs):
+
+        coeffs = self.value()
+        flags = self.retrieval_flag()
+        sounding_number = self.sounding_number()
+        order = self.order()
+        band_names = self.desc_band_name()
+        hdf_group = self.hdf_group()
+        scale_uncertainty = self.scale_uncertainty()
+        scale_to_stddev = self.scale_to_stddev()
+        l1b = self.l1b()
+
+        if scale_uncertainty and scale_to_stddev is None:
+            raise param.ParamError("scale_to_stddev must be supplied when scale_uncertainty is True")
+
+        if scale_uncertainty and l1b is None:
+            raise param.ParamError("l1b must be supplied when scale_uncertainty is True")
+
+        eof_hdf = rf.HdfFile(self.eof_file())
         
-        eof = []
+        eofs = []
         for chan_idx in range(self.num_channels()):
-            eof.append(rf.EmpiricalOrthogonalFunction(self.coeff()[chan_idx],
-                       self.used_flag()[chan_idx],self.dispersion()[chan_idx],
-                       rf.HdfFile(self.hdf_eof()),chan_idx,self.sounding_number(),
-                       self.order(),self.desc_band_name()[chan_idx],self.hdf_group()))
-        return eof
+            if (scale_uncertainty):
+                chan_rad = l1b.radiance(chan_idx)
+                uncert = rf.ArrayWithUnit_double_1(chan_rad.uncertainty, chan_rad.units)
+
+                eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[chan_idx], bool(flags[chan_idx]), eof_hdf, uncert,
+                        chan_idx, sounding_number, order, band_names[chan_idx], hdf_group, scale_to_stddev)
+            else:
+                eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[chan_idx], bool(flags[chan_idx]),
+                    eof_hdf, chan_idx, sounding_number, order, band_names[chan_idx], hdf_group)
+
+            eofs.append(eof_obj)
+ 
+        return eofs
 
 
 class RadianceScaling(CreatorFlaggedValueMultiChannel):

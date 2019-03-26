@@ -93,7 +93,8 @@ public:
 			      double Scale_to_stddev = 1e19);
   virtual ~EmpiricalOrthogonalFunction() {}
 
-  virtual std::string sub_state_identifier() const { return "eof/" + band_name; }
+  virtual std::string sub_state_identifier() const 
+  { return "eof_" + boost::lexical_cast<std::string>(order_) + "_" + boost::lexical_cast<std::string>(spec_index_+1); }
 
   virtual std::string state_vector_name_i(int i) const
   { return "EOF order " + boost::lexical_cast<std::string>(order_) +
@@ -147,6 +148,7 @@ private:
   std::string hdf_group;
   int order_;
   int sounding_number_;
+  int spec_index_;
   bool eof_depend_on_sounding_number_;
   bool eof_scale_uncertainty_;
   double scale_to_stddev_;
