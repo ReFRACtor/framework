@@ -153,7 +153,7 @@ class SpectrumEffectList(Creator):
 
         return spec_eff
 
-class FluorenceEffect(Creator):
+class FluorescenceEffect(Creator):
 
       atmosphere = param.InstanceOf(rf.AtmosphereOco)
       observation_zenith = param.ArrayWithUnit(dims=1)
