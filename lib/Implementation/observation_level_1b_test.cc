@@ -19,7 +19,13 @@ BOOST_AUTO_TEST_CASE(basic)
 
     Array<double, 1> expected_domain, expected_range;
     expected_input >> expected_domain >> expected_range;
-
+    if(false) {
+      std::cerr.precision(20);
+      std::cerr << "# all - spectral_domain\n"
+		<< radiance_all.spectral_domain().data()
+		<< "# all - spectral_range\n"
+		<< radiance_all.spectral_range().data();
+    }
     BOOST_CHECK_MATRIX_CLOSE_TOL(radiance_all.spectral_domain().data(), expected_domain, 1e-10);
     BOOST_CHECK_MATRIX_CLOSE_TOL(radiance_all.spectral_range().data(), expected_range, 1e-1);
 }

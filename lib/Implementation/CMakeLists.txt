@@ -1,10 +1,11 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     absco.cc
-    absco_hdf.cc
     absco_aer.cc
+    absco_hdf.cc
     absorber_absco.cc
     absorber_vmr_level.cc
+    absorber_vmr_level_log.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
     aerosol_extinction_linear.cc
@@ -118,9 +119,10 @@ set(DIR_SOURCES
 )
 
 set(TEST_SOURCES
-    absco_hdf_test.cc
     absco_aer_test.cc
+    absco_hdf_test.cc
     absorber_absco_test.cc
+    absorber_vmr_level_log_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc
@@ -167,8 +169,6 @@ set(TEST_SOURCES
     met_data_fixture.cc
     nlls_max_a_posteriori_test.cc
     nlls_max_likelihood_test.cc
-    nlls_solver_gsl_test.cc
-    nlls_solver_lm_test.cc
     nlls_solver_gsl_sm_bard_test.cc
     nlls_solver_gsl_sm_brown_test.cc
     nlls_solver_gsl_sm_freudenstein_roth_a_test.cc
@@ -176,9 +176,11 @@ set(TEST_SOURCES
     nlls_solver_gsl_sm_helical_valley_test.cc
     nlls_solver_gsl_sm_jennrich_sampson_test.cc
     nlls_solver_gsl_sm_meyer_test.cc
-    nlls_solver_gsl_sm_powell_test.cc
     nlls_solver_gsl_sm_powell_singular_test.cc
+    nlls_solver_gsl_sm_powell_test.cc
     nlls_solver_gsl_sm_rosenbrock2_test.cc
+    nlls_solver_gsl_test.cc
+    nlls_solver_lm_test.cc
     nonuniform_spectrum_sampling_test.cc
     observation_level_1b_test.cc
     output_hdf_iteration_test.cc

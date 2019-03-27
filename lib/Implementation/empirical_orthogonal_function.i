@@ -16,47 +16,48 @@ class EmpiricalOrthogonalFunction:
   public SubStateVectorArray<InstrumentCorrection> {
 public:
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
-			      const ArrayWithUnit<double, 1>& Eof_waveform,
-			      int Order,
-			      const std::string& Band_name,
-			      const std::string& Hdf_group = "N/A");
+                              bool Used_flag,
+                              const ArrayWithUnit<double, 1>& Eof_waveform,
+                              int Order,
+                              const std::string& Band_name,
+                              const std::string& Hdf_group = "N/A");
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
-			      const SampleGrid& Disp,
-			      const HdfFile& Hdf_static_input,
-			      int Spec_index,
-			      int Sounding_number,
-			      int Order,
-			      const std::string& Band_name,
-			      const std::string& Hdf_group = 
-			      "Instrument/EmpiricalOrthogonalFunction_1");
+                              bool Used_flag,
+                              const SampleGrid& Disp,
+                              const HdfFile& Hdf_static_input,
+                              int Spec_index,
+                              int Sounding_number,
+                              int Order,
+                              const std::string& Band_name,
+                              const std::string& Hdf_group = 
+                              "Instrument/EmpiricalOrthogonalFunction_1");
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
-			      const HdfFile& Hdf_static_input,
-			      int Spec_index,
-			      int Sounding_number,
-			      int Order,
-			      const std::string& Band_name,
-			      const std::string& Hdf_group = 
-			      "Instrument/EmpiricalOrthogonalFunction_1");
+                              bool Used_flag,
+                              const HdfFile& Hdf_static_input,
+                              int Spec_index,
+                              int Sounding_number,
+                              int Order,
+                              const std::string& Band_name,
+                              const std::string& Hdf_group = 
+                              "Instrument/EmpiricalOrthogonalFunction_1");
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
-			      const HdfFile& Hdf_static_input,
-			      const ArrayWithUnit<double, 1>& Uncertainty,
-			      int Spec_index,
-			      int Sounding_number,
-			      int Order,
-			      const std::string& Band_name,
-			      const std::string& Hdf_group = 
-			      "Instrument/EmpiricalOrthogonalFunction",
-			      double Scale_to_stddev = 1e19);
-  virtual std::string state_vector_name_i(int i) const;
+                              bool Used_flag,
+                              const HdfFile& Hdf_static_input,
+                              const ArrayWithUnit<double, 1>& Uncertainty,
+                              int Spec_index,
+                              int Sounding_number,
+                              int Order,
+                              const std::string& Band_name,
+                              const std::string& Hdf_group = 
+                              "Instrument/EmpiricalOrthogonalFunction",
+                              double Scale_to_stddev = 1e19);
+  virtual boost::shared_ptr<InstrumentCorrection> clone() const;
   virtual void apply_correction
   (const SpectralDomain& Pixel_grid,
    const std::vector<int>& Pixel_list,
    SpectralRange& Radiance) const;
   %python_attribute(eof, ArrayWithUnit<double, 1>)
   %python_attribute(order, int)
+  %sub_state_virtual_func(InstrumentCorrection);
 };
 }

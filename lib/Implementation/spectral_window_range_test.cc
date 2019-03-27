@@ -13,21 +13,21 @@ BOOST_AUTO_TEST_CASE(grid_indexes)
 {
     std::vector<int> pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(0), 0);
-    BOOST_CHECK_EQUAL((int) pix.size(), 835);
+    BOOST_CHECK_EQUAL((int) pix.size(), 836);
     BOOST_CHECK_EQUAL(pix.front(), 89);
-    BOOST_CHECK_EQUAL(pix.back(), 923);
+    BOOST_CHECK_EQUAL(pix.back(), 924);
 
     pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(1), 1);
-    BOOST_CHECK_EQUAL((int) pix.size(), 652);
+    BOOST_CHECK_EQUAL((int) pix.size(), 653);
     BOOST_CHECK_EQUAL(pix.front(), 210);
-    BOOST_CHECK_EQUAL(pix.back(), 861);
+    BOOST_CHECK_EQUAL(pix.back(), 862);
 
     pix =
         config_spectral_window->grid_indexes(config_instrument->pixel_spectral_domain(2), 2);
-    BOOST_CHECK_EQUAL((int) pix.size(), 811);
+    BOOST_CHECK_EQUAL((int) pix.size(), 812);
     BOOST_CHECK_EQUAL(pix.front(), 99);
-    BOOST_CHECK_EQUAL(pix.back(), 909);
+    BOOST_CHECK_EQUAL(pix.back(), 910);
 }
 
 BOOST_AUTO_TEST_CASE(apply)
@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(apply)
     SpectralDomain sdall = config_instrument->pixel_spectral_domain(0);
     SpectralDomain sd = config_spectral_window->apply(sdall, 0);
     BOOST_CHECK_CLOSE(FullPhysics::conversion(sdall.units(), sd.units()), 1.0, 1e-8);
-    BOOST_CHECK_MATRIX_CLOSE(sd.data(), sdall.data()(Range(89, 923)));
+    BOOST_CHECK_MATRIX_CLOSE(sd.data(), sdall.data()(Range(89, 924)));
 }
 
 BOOST_AUTO_TEST_CASE(apply_multi)

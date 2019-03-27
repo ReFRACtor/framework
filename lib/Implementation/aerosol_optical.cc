@@ -93,8 +93,8 @@ void AerosolOptical::fill_cache() const
     for(int j = 0; j < number_particle(); ++j) {
       nvar = std::max(nvar, aprop[j]->extinction_coefficient_each_layer(reference_wn_).number_variable());
       for(int i = 0; i < press->number_layer(); ++i)
-	nvar = std::max(nvar,
-			aext[j]->extinction_for_layer(i).number_variable());
+      nvar = std::max(nvar,
+                  aext[j]->extinction_for_layer(i).number_variable());
     }
     for(int i = 0; i < press->number_layer(); ++i)
       nvar = std::max(nvar, press->pressure_grid()(i).value.number_variable());
@@ -119,9 +119,9 @@ void AerosolOptical::fill_cache() const
   }
   /*
   std::cout << "# Optical depths for each layer value: " << std::endl
-	    << od_ind_wn.value() << std::endl
-	    << "# Optical depths for each layer jacobian: " << std::endl
-	    << od_ind_wn.jacobian() << std::endl;
+          << od_ind_wn.value() << std::endl
+          << "# Optical depths for each layer jacobian: " << std::endl
+          << od_ind_wn.jacobian() << std::endl;
   */
   nlay = press->number_layer();
   cache_is_stale = false;
@@ -265,7 +265,7 @@ ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, int pindex) const
 //-----------------------------------------------------------------------
 
 blitz::Array<double, 3> AerosolOptical::pf_mom(double wn, 
-		const blitz::Array<double, 2>& frac_aer) const
+            const blitz::Array<double, 2>& frac_aer) const
 {
   FunctionTimer ft(timer.function_timer());
   firstIndex i1; secondIndex i2; thirdIndex i3;
@@ -274,10 +274,10 @@ blitz::Array<double, 3> AerosolOptical::pf_mom(double wn,
      frac_aer.cols() != number_particle()) {
     std::stringstream err_msg;
     err_msg << "frac_aer needs to be number_active_layer = "
-	    << nlay
-	    << " x number_particle = "
-	    << number_particle() << ", but is currently "
-	    << frac_aer.rows() << " x " << frac_aer.cols();
+          << nlay
+          << " x number_particle = "
+          << number_particle() << ", but is currently "
+          << frac_aer.rows() << " x " << frac_aer.cols();
     throw Exception(err_msg.str());
   }
   std::vector<Array<double, 3> > pf;
@@ -299,8 +299,8 @@ blitz::Array<double, 3> AerosolOptical::pf_mom(double wn,
 }
 
 ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, 
-				   const ArrayAd<double, 2>& frac_aer,
-				   int nummom, int numscat) const
+                           const ArrayAd<double, 2>& frac_aer,
+                           int nummom, int numscat) const
 {
   FunctionTimer ft(timer.function_timer());
   firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
@@ -309,10 +309,10 @@ ArrayAd<double, 3> AerosolOptical::pf_mom(double wn,
      frac_aer.cols() != number_particle()) {
     std::stringstream err_msg;
     err_msg << "frac_aer needs to be number_active_layer = "
-	    << nlay
-	    << " x number_particle = "
-	    << number_particle() << ", but is currently "
-	    << frac_aer.rows() << " x " << frac_aer.cols();
+          << nlay
+          << " x number_particle = "
+          << number_particle() << ", but is currently "
+          << frac_aer.rows() << " x " << frac_aer.cols();
     throw Exception(err_msg.str());
   }
 
@@ -343,12 +343,12 @@ ArrayAd<double, 3> AerosolOptical::pf_mom(double wn,
     rv += fv(i2) * pv(i1, i2, i3);
     if(pf[j].is_constant()) {
       if(!frac_aer.is_constant())
-	rjac += fjac(i2,i4) * pv(i1, i2, i3);
+      rjac += fjac(i2,i4) * pv(i1, i2, i3);
     } else {
       if(frac_aer.is_constant())
-	rjac += fv(i2) * pjac(i1, i2, i3, i4);
+      rjac += fv(i2) * pjac(i1, i2, i3, i4);
       else
-	rjac += fjac(i2,i4) * pv(i1, i2, i3) + fv(i2) * pjac(i1, i2, i3, i4);
+      rjac += fjac(i2,i4) * pv(i1, i2, i3) + fv(i2) * pjac(i1, i2, i3, i4);
     }
   }
   return res;
@@ -363,7 +363,7 @@ ArrayAd<double, 3> AerosolOptical::pf_mom(double wn,
 
 boost::shared_ptr<Aerosol> 
 AerosolOptical::clone(const boost::shared_ptr<Pressure>& Press,
-		      const boost::shared_ptr<RelativeHumidity>& Rh) const
+                  const boost::shared_ptr<RelativeHumidity>& Rh) const
 {
   std::vector<boost::shared_ptr<AerosolExtinction> > aext_clone;
   BOOST_FOREACH(const boost::shared_ptr<AerosolExtinction>& i, aext)
@@ -384,8 +384,8 @@ AerosolOptical::clone(const boost::shared_ptr<Pressure>& Press,
 //-----------------------------------------------------------------------
 
 double AerosolOptical::aerosol_optical_depth(int aer_idx,
-				      double pmin, 
-				      double pmax) const
+                              double pmin, 
+                              double pmax) const
 {
   double res = 0.0;
   Array<double, 1> pgrid(press->pressure_grid().convert(units::Pa).value.value());
@@ -393,7 +393,7 @@ double AerosolOptical::aerosol_optical_depth(int aer_idx,
     // Three cases. First, everything is in the pmin to pmax range
     if(pmin <= pgrid(i) && pgrid(i + 1) <= pmax)
       res += (pgrid(i + 1) - pgrid(i)) * 
-	aext[aer_idx]->extinction_for_layer(i).value();
+      aext[aer_idx]->extinction_for_layer(i).value();
 
     // second case is that pmin cuts between pgrid(i) and pgrid(i + 1)
     else if(pmin > pgrid(i) && pmin < pgrid(i + 1) && pgrid(i + 1) <=pmax)

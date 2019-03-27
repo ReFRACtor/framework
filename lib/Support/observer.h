@@ -112,6 +112,28 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void remove_observer(Observer<T>& Obs) = 0;
+
+//-----------------------------------------------------------------------
+/// Remove all observers through calls to the remove_observer routine
+//-----------------------------------------------------------------------
+  void clear_observers()
+  {
+    // Copy out shared_ptrs into a seperate list since olist will be
+    // acted upon and have items removed as we iterate
+    std::vector<boost::shared_ptr<Observer<T> > > obs_pointers;
+    BOOST_FOREACH(boost::weak_ptr<Observer<T> >& obs_ref, olist) {
+      boost::shared_ptr<Observer<T> > obs_ptr = obs_ref.lock();
+      if(obs_ptr)
+        obs_pointers.push_back(obs_ptr);
+    }
+
+    // Remove each observer with copied list of pointers, olist will
+    // be updated on each call to remove_observer
+    BOOST_FOREACH(boost::shared_ptr<Observer<T> >& obs_ptr, obs_pointers) {
+      remove_observer(*obs_ptr);
+    }
+  }
+
 protected:
 //-----------------------------------------------------------------------
 /// Function to call to notify Observers of a state change. The object

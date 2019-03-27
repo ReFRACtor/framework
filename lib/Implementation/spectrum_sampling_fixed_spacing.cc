@@ -83,7 +83,7 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
 
       int fmin = (int) floor(preval / sp).value;
       int fmax = (int) ceil(postval / sp).value;
-      for(int f = std::max(fmin, smax + 1); f < fmax; ++f) {
+      for(int f = std::max(fmin, smax + 1); f <= fmax; ++f) {
         // Convert back to original units
         DoubleWithUnit fval(f * sp.value, u_comp);
         hres.push_back(fval.convert_wave(u_orig).value);
