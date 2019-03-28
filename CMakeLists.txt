@@ -54,6 +54,26 @@ add_definitions("-Wno-deprecated-declarations")
 # When we are using debug mode, turn on the blitz range checking.
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBZ_DEBUG")
 
+if(POLICY CMP0068)
+  cmake_policy(SET CMP0068 NEW)
+endif()
+
+# use, i.e. don't skip the full RPATH for the build tree
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+# For some reason on the Mac we don't automatically figure out that CONDA
+# should be on the rpath. So add that. This seems like a bug, the reading of
+# CMAKE_INSTALL_RPATH_USE_LINK_PATH seems to indicate it should do this 
+# automatically. But it doesn't, so go ahead and set this
+if(DEFINED ENV{CONDA_PREFIX})
+  list(APPEND CMAKE_INSTALL_RPATH "$ENV{CONDA_PREFIX}/lib")
+endif(DEFINED ENV{CONDA_PREFIX})
+
+# add the automatically determined parts of the RPATH
+# which point to directories outside the build tree to the install RPATH
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Check that required functions exist and define macros to include their use
 INCLUDE (CheckFunctionExists)
 
@@ -190,3 +210,6 @@ install(FILES
   DESTINATION "${INSTALL_CMAKE_DIR}")
 # Install the export set for use with the install-tree
 install(EXPORT RefractorTargets DESTINATION  "${INSTALL_CMAKE_DIR}")
+
+
+
