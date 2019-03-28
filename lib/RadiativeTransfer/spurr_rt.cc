@@ -201,9 +201,11 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
 
   // Updae thermal emission inputs if enabled
   AutoDerivative<double> surface_bb;
+  ArrayAd<double, 1> atmos_bb;
   if(do_thermal_emission) {
       surface_bb = atm->surface_blackbody(Wn, Spec_index);
-      rt_driver_->setup_thermal_inputs(surface_bb.value(), atm->atmosphere_blackbody(Wn, Spec_index).value());
+      atmos_bb = atm->atmosphere_blackbody(Wn, Spec_index);
+      rt_driver_->setup_thermal_inputs(surface_bb.value(), atmos_bb.value());
   }
 
   // Setup surface
@@ -232,7 +234,8 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf_param;
   double jac_surf_temp;
-  rt_driver_->copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp);
+  Array<double, 1> jac_atm_temp;
+  rt_driver_->copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   //-----------------------------------------------------------------------
   /// To speed up the calculation, the Atmosphere Jacobian was
@@ -244,15 +247,19 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   /// Jacobian to the reflectance with respect to the state vector.
   //-----------------------------------------------------------------------
   Array<double, 1> jac(jac_iv.depth());
-  for(int i = 0; i < jac.rows(); ++i) {
+  for(int st_idx = 0; st_idx < jac.rows(); ++st_idx) {
     double val = 0;
 
     // dimensions swapped on jac_iv and jac_atm
     // jac_atm is njac x nlayer 
     // jac_iv  is nlayer x njac
-    for(int m = 0; m < jac_iv.rows(); ++m) {
-      for(int n = 0; n < jac_iv.cols(); ++n) {
-        val += jac_atm(n,m) * jac_iv(m, n, i);
+    for(int lay_idx = 0; lay_idx < jac_iv.rows(); ++lay_idx) {
+      for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
+        val += jac_atm(var_idx, lay_idx) * jac_iv(lay_idx, var_idx, st_idx);
+      }
+
+      if(do_thermal_emission and !atmos_bb.is_constant()) {
+        val += jac_atm_temp(lay_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
       }
     }
 
@@ -265,15 +272,15 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
       // it is set up no parameter index is available for shadowing when using
       // coxmunk mode
       for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
-        val += jac_surf_param(m) * lidort_surface.jacobian()(m, i);
+        val += jac_surf_param(m) * lidort_surface.jacobian()(m, st_idx);
       }
     }
 
     if(do_thermal_emission and !surface_bb.is_constant()) {
-        val += surface_bb.gradient()(i) * jac_surf_temp;
+      val += surface_bb.gradient()(st_idx) * jac_surf_temp;
     }
 
-    jac(i) = val;
+    jac(st_idx) = val;
   }
 
   ArrayAd<double, 1> rad_jac(number_stokes(), jac.rows());
