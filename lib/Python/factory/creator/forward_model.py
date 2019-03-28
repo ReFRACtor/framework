@@ -1,6 +1,7 @@
 import numpy as np
 
 from .base import Creator
+from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -152,6 +153,33 @@ class SpectrumEffectList(Creator):
             spec_eff.push_back(per_channel_eff)
 
         return spec_eff
+
+class FluorescenceEffect(CreatorFlaggedValue):
+
+      atmosphere = param.InstanceOf(rf.AtmosphereOco)
+      observation_zenith = param.ArrayWithUnit(dims=1)
+      reference_point = param.ArrayWithUnit(dims=1)
+      stokes_coefficient = param.Array(dims=2)
+      cov_unit = param.InstanceOf(rf.Unit)
+      num_channels = param.Scalar(int)
+
+      def create(self, **kwargs):
+
+          atm = self.atmosphere()
+          lza = self.observation_zenith()
+          ref_point = self.reference_point()[0]
+          coeff = self.value()
+          used_flag = self.retrieval_flag()
+          stokes_coeff = rf.StokesCoefficientConstant(self.stokes_coefficient())
+          cov_unit = self.cov_unit()
+          num_channels = self.num_channels()
+
+          fluoresence = []
+          # Loop over all windows adding fluoresence object for each
+          for i in range(num_channels):
+              fluoresence.append(rf.FluorescenceEffect(coeff, used_flag, atm, stokes_coeff, lza[i], i, ref_point, cov_unit))
+
+          return fluoresence
 
 class ForwardModel(Creator):
 

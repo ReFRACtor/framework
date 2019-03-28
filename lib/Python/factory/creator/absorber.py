@@ -112,10 +112,10 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
-        if self.log_retrieval and np.any(vmr_profile < 0):
+        if self.log_retrieval() and np.any(vmr_profile < 0):
             raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
 
-        if self.log_retrieval:
+        if self.log_retrieval():
             return rf.AbsorberVmrLevelLog(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
         else:
             return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
