@@ -1,6 +1,9 @@
-# Find Python
-find_package(PythonLibs 3.0 REQUIRED)
+# Find Python. Note for conda on the Mac you need to find the interpreter
+# before the libs (i.e., the order is important). Otherwise this finds
+# the system python for libraries but uses conda for the interpreter, which
+# of course causes problems. This goes away if you do this in the other order.
 find_package(PythonInterp 3.0 REQUIRED)
+find_package(PythonLibs 3.0 REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH})
 
 # Find NumPy
@@ -83,8 +86,18 @@ else()
 endif()
 
 # Link with main library, which is also called refractor!
-swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} refractor)
 
+if(APPLE)
+  # Compiling with python causes a problem on the Mac using conda.
+  # See https://github.com/pytorch/pytorch/commit/73f6715f4725a0723d8171d3131e09ac7abf0666
+  # The symbols get resolved when loaded into python, so this doesn't cause
+  # a problem.
+  swig_link_libraries(swig_wrap refractor)
+  set_target_properties(_swig_wrap PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+else()
+  swig_link_libraries(swig_wrap ${PYTHON_LIBRARIES} refractor)
+endif(APPLE)
+  
 # Ensure that only this module has access to the SWIG type information
 target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
 
