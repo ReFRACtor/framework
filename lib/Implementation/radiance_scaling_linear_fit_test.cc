@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE(basic)
   // Convert converted radiance back so we can do a diff comparison
   SpectralRange convert_back( meas_rad_test.convert(spec_meas.units()) );
   Array<double, 1> rad_diff( spec_meas.data() - convert_back.data() );
-  BOOST_CHECK(max(abs(rad_diff)) < 1e5);
+  BOOST_CHECK(max(abs(rad_diff)) < 1.2e5);
 
 }
 

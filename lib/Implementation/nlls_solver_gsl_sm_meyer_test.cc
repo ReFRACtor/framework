@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(meyer_gsl_sm__lm_more_svd)
   BOOST_CHECK(fabs(sum(abs(nlls->gradient()-solver.gradient_at_accepted_points()[iLast]))) < 1e-8);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)NLLSSolverGSLSM::SUCCESS);
-  BOOST_CHECK(n_f_calls < 145);
+  BOOST_CHECK(n_f_calls < 160);
   BOOST_CHECK(n_j_calls <= n_f_calls);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
