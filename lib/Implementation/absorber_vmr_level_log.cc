@@ -1,7 +1,10 @@
 #include <boost/bind.hpp>
+#include <boost/make_shared.hpp>
 #include "absorber_vmr_level_log.h"
 #include "ostream_pad.h"
 #include "linear_interpolate.h"
+#include "mapping_log.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -13,13 +16,13 @@ AbsorberVmrLevelLog::AbsorberVmrLevelLog(const boost::shared_ptr<Pressure>& Pres
                                          const blitz::Array<double, 1>& Vmr,
                                          const blitz::Array<bool, 1>& Vmr_flag,
                                          const std::string& Gas_name)
-: AbsorberVmrImpBase(Gas_name, Array<double, 1> (log(Vmr)), Vmr_flag, Press, false)
+: AbsorberVmrImpBase(Gas_name, Vmr, Vmr_flag, Press, false, 0, boost::make_shared<MappingLog>())
 {
 }
 
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelLog::clone(const boost::shared_ptr<Pressure>& Press) const
 {
-    return boost::shared_ptr<AbsorberVmr>(new AbsorberVmrLevelLog(Press, Array<double, 1>(exp(coeff.value())), used_flag, gas_name()));
+    return boost::shared_ptr<AbsorberVmr>(new AbsorberVmrLevelLog(Press, coefficient().value(), used_flag, gas_name()));
 }
 
 void AbsorberVmrLevelLog::calc_vmr() const
@@ -28,7 +31,7 @@ void AbsorberVmrLevelLog::calc_vmr() const
     std::vector<AutoDerivative<double> > vmrlist;
 
     for(int i = 0; i < press->pressure_grid().rows(); ++i) {
-        vmrlist.push_back(exp(coeff(i)));
+        vmrlist.push_back(mapping->apply_element(coeff(i)));
         plist.push_back(press->pressure_grid()(i).value);
     }
 

@@ -45,7 +45,7 @@ public:
     /// VMR on the pressure grid. This is just exp(coeff.value), but this is
     /// useful for introspection.
     //-----------------------------------------------------------------------
-    blitz::Array<double, 1> vmr_profile() const { return blitz::Array<double, 1>(exp(coeff.value())); }
+    blitz::Array<double, 1> vmr_profile() const { return coefficient().value(); }
 
 
 protected:

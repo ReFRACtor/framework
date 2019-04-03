@@ -31,13 +31,38 @@ public:
     /// Application of mapping (1-to-1 mapping by default)
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1>& apply(ArrayAd<double, 1> const& coeff) const { return coeff; }
+    virtual const ArrayAd<double, 1> apply(ArrayAd<double, 1> const& coeff) const { return coeff; };
+
+    //-----------------------------------------------------------------------
+    /// Application of mapping (1-to-1 mapping by default)
+    //-----------------------------------------------------------------------
+
+    virtual const blitz::Array<double, 1> apply(blitz::Array<double, 1> const& coeff) const { return coeff; }
+
+    //-----------------------------------------------------------------------
+    /// Application of mapping (1-to-1 mapping by default)
+    //-----------------------------------------------------------------------
+
+    virtual AutoDerivative<double> apply_element(AutoDerivative<double> coeff_i) const { return coeff_i; }
+
 
     //-----------------------------------------------------------------------
     /// Inversion of mapping (1-to-1 inversion by default)
     //-----------------------------------------------------------------------
 
-    virtual AutoDerivative<double> invert(AutoDerivative<double> coeff_i) const { return coeff_i; }
+    virtual const ArrayAd<double, 1> invert(ArrayAd<double, 1> const& coeff) const { return coeff; }
+
+    //-----------------------------------------------------------------------
+    /// Inversion of mapping (1-to-1 inversion by default)
+    //-----------------------------------------------------------------------
+
+    virtual const blitz::Array<double, 1> invert(blitz::Array<double, 1> const& coeff) const { return coeff; }
+
+    //-----------------------------------------------------------------------
+    /// Inversion of mapping (1-to-1 inversion by default) for single element
+    //-----------------------------------------------------------------------
+
+    virtual AutoDerivative<double> invert_element(AutoDerivative<double> coeff_i) const { return coeff_i; }
 
 
     virtual ~Mapping() {};

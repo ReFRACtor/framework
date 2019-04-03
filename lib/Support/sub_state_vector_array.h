@@ -37,13 +37,14 @@ public:
     /// before B2.10)
     //-----------------------------------------------------------------------
 
+    // TODO: Need coeff.copy() here? Returning by value from in_map which may copy anyway.
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
                         const blitz::Array<bool, 1>& Used_flag,
                         const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                         bool Mark_according_to_press = true,
                         int Pdep_start = 0,
                         boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
-        : coeff(Coeff.copy()), press(Press), used_flag(Used_flag.copy()),
+        : coeff(in_map->invert(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
           mark_according_to_press(Mark_according_to_press),
           pdep_start(Pdep_start),
           mapping(in_map)
@@ -69,7 +70,7 @@ public:
     {
         mark_according_to_press = Mark_according_to_press;
         pdep_start = Pdep_start;
-        coeff.reference(Coeff.copy());
+        coeff.reference(in_map->invert(Coeff.copy()));
         press = Press;
         used_flag.reference(Used_flag.copy());
         mapping = in_map;
@@ -87,8 +88,9 @@ public:
 
     SubStateVectorArray(double Coeff, bool Used_flag,
                         boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
-        : coeff(1, 0), used_flag(1), mapping(in_map)
+        : coeff(1, 0), used_flag(1), mapping(in_map), mark_according_to_press(true), pdep_start(0)
     {
+        // TODO: Add inversion for Coeff in this constructor
         coeff.value()(0) = Coeff;
         used_flag(0) = Used_flag;
         state_vector_observer_initialize(count(used_flag));
@@ -158,7 +160,7 @@ public:
 
             for(int i = 0; i < coeff.rows(); ++i)
                 if(used_flag(i)) {
-                    coeff(i) = mapping->invert(Sv_sub(si));
+                    coeff(i) = mapping->invert_element(Sv_sub(si));
                     ++si;
                 }
         }
@@ -175,7 +177,7 @@ public:
     {
     }
 
-    const ArrayAd<double, 1>& coefficient() const
+    const ArrayAd<double, 1> coefficient() const
     {
         return mapping->apply(coeff);
     }
