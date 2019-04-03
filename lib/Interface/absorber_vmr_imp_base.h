@@ -102,9 +102,10 @@ protected:
 		     const blitz::Array<bool, 1>& Used_flag,
 		     const boost::shared_ptr<Pressure>& Press,
 		     bool Mark_according_to_press = true,
-		      int Pdep_start = 0)
+		     int Pdep_start = 0,
+		     boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
     : SubStateVectorArray<AbsorberVmr>(Coeff, Used_flag, Press,
-				       Mark_according_to_press, Pdep_start),
+				       Mark_according_to_press, Pdep_start, in_map),
       cache_stale(true), gas_name_(Gas_name) { }
 private:
   void fill_cache() const
