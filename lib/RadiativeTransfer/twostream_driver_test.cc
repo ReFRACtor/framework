@@ -34,10 +34,12 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   blitz::Array<double, 2> jac_atm_ts;
   blitz::Array<double, 1> jac_surf_param_ts;
   double jac_surf_temp_ts;
+  blitz::Array<double, 1> jac_atm_temp_ts;
 
   blitz::Array<double, 2> jac_atm_lid;
   blitz::Array<double, 1> jac_surf_param_lid;
   double jac_surf_temp_lid;
+  blitz::Array<double, 1> jac_atm_temp_lid;
 
   TwostreamRtDriver twostream_driver = TwostreamRtDriver(nlayer, surface_type, false, do_solar, do_thermal);
 
@@ -113,12 +115,12 @@ void test_twostream(int surface_type, ArrayAd<double, 1>& surface_params, ArrayA
   lidort_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                 surface_type, lid_surface_params,
                                                 od, ssa, pf, refl_lid, 
-                                                jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid,
+                                                jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid, jac_atm_temp_lid,
                                                 bb_surface, bb_atm);
   twostream_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, ts_surface_params,
                                                    od, ssa, pf, refl_ts, 
-                                                   jac_atm_ts, jac_surf_param_ts, jac_surf_temp_ts,
+                                                   jac_atm_ts, jac_surf_param_ts, jac_surf_temp_ts, jac_atm_temp_ts,
                                                    bb_surface, bb_atm);
 
   if(debug_output) {
@@ -391,6 +393,7 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf_param;
   double jac_surf_temp;
+  blitz::Array<double, 1> jac_atm_temp;
   Array<double, 1> height;
   ArrayAd<double, 1> surface_param, od, ssa;
   ArrayAd<double, 2> pf;
@@ -400,7 +403,7 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   d.reflectance_and_jacobian_calculate(height, sza, azm, zen, 
                                        surface_type, surface_param,
                                        od, ssa, pf, refl,
-                                       jac_atm, jac_surf_param, jac_surf_temp);
+                                       jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
   // This will trigger an error when we run with valgrind. Note that
   // we *don't* actually see a NaN here, rather this conditional
   // triggers the unitialized value error

@@ -231,6 +231,7 @@ BOOST_AUTO_TEST_CASE(simple)
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf_param;
   double jac_surf_temp;
+  blitz::Array<double, 1> jac_atm_temp;
 
   ArrayAd<double, 1> lidort_surface(surface_params.shape(), 1);
 
@@ -240,7 +241,7 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc, 
-                                                    jac_atm, jac_surf_param, jac_surf_temp);
+                                                    jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
@@ -288,7 +289,7 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc,
-                                                    jac_atm, jac_surf_param, jac_surf_temp);
+                                                    jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
@@ -322,7 +323,7 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                  surface_type, lidort_surface,
                                                  od, ssa, pf, refl_calc,
-                                                 jac_atm, jac_surf_param, jac_surf_temp);
+                                                 jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
@@ -357,6 +358,7 @@ BOOST_AUTO_TEST_CASE(simple)
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf_param;
   double jac_surf_temp;
+  blitz::Array<double, 1> jac_atm_temp;
 
   ////////////////
   // Surface only
@@ -385,7 +387,7 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc, 
-                                                    jac_atm, jac_surf_param, jac_surf_temp);
+                                                    jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   // Compare against an offline calculated value, or could compare against value from l_rad
   double refl_expected = 0.035435854422713485;
