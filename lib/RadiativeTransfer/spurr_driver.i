@@ -49,6 +49,7 @@ public:
                                                   blitz::Array<double, 2>& jac_atm, 
                                                   blitz::Array<double, 1>& jac_surf_param,
                                                   double &jac_surf_temp,
+                                                  blitz::Array<double, 1>& jac_atm_temp,
                                                   double surface_bb = 0,
                                                   const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
@@ -66,7 +67,7 @@ public:
                                    bool do_surface_linearization) const = 0;
   virtual void calculate_rt() const = 0;
   virtual double get_intensity() const = 0;
-  virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp) const = 0;
+  virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
 };
 }
 

@@ -428,7 +428,7 @@ double TwostreamRtDriver::get_intensity() const
   return twostream_interface_->intensity_toa()(0);
 }
 
-void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp) ) const
+void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp), blitz::Array<double, 1>& UNUSED(jac_atm_temp) ) const
 {
   // Copy out jacobian values
   Range ra(Range::all());
@@ -437,6 +437,6 @@ void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::
     
   jac_surf_param.reference( twostream_interface_->surfacewf_toa()(0, ra).copy() );
 
-  // jac_surf_temp to be implemented, maybe not available
+  // jac_surf_temp, jac_atm_temp not available yet
 }
 

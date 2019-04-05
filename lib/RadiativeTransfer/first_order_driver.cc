@@ -314,7 +314,8 @@ double FirstOrderDriver::get_intensity() const
 void FirstOrderDriver::copy_jacobians
 (blitz::Array<double, 2>& UNUSED(jac_atm),
  blitz::Array<double, 1>& UNUSED(jac_surf_param),
- double& UNUSED(jac_surf_temp)) const
+ double& UNUSED(jac_surf_temp),
+ blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
 {
     // Nothing for now
 }

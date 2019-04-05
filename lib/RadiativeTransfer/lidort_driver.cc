@@ -545,6 +545,9 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
   // Enable surface black body jacobian when thermal emission is enabled
   lincontrol.ts_do_surface_lbbf(do_thermal_emission);
 
+  // Enable atmosphere black body jacobian when thermal emission is enabled
+  lincontrol.ts_do_atmos_lbbf(do_thermal_emission);
+
   // Check that we fit within the LIDORT configuration
   if(linoptical.ts_l_deltau_vert_input().cols() < od.rows()) {
     Exception e;
@@ -656,7 +659,7 @@ double LidortRtDriver::get_intensity() const
   return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx-1);
 }
 
-void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const
+void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const
 {
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
@@ -677,5 +680,7 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
   // Get surface temp jacobian if thermal emission is enabled
   if(do_thermal_emission) {
       jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, lid_pars.upidx-1);
+
+      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, lid_pars.upidx-1).copy() );
   }
 }

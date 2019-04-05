@@ -45,7 +45,7 @@ public:
 
   void calculate_rt() const;
   double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp) const;
+  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
   %python_attribute(twostream_brdf_driver, boost::shared_ptr<TwostreamBrdfDriver>)
   %python_attribute(brdf_interface, boost::shared_ptr<Twostream_Ls_Brdf_Supplement>)
