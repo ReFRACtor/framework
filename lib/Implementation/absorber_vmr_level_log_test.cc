@@ -20,7 +20,8 @@ BOOST_AUTO_TEST_CASE(basic)
     }
 
     for(int j = 0; j < vmr.rows(); j++) {
-        BOOST_CHECK_CLOSE(avmr.coefficient().value()(j), log(vmr(j)), 1e-8);
+        BOOST_CHECK_CLOSE(avmr.coefficient_unmapped().value()(j), log(vmr(j)), 1e-8);
+        BOOST_CHECK_CLOSE(log(avmr.coefficient().value()(j)), log(vmr(j)), 1e-8);
     }
 }
 

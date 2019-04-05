@@ -182,6 +182,12 @@ public:
         return mapping->apply(coeff);
     }
 
+    const ArrayAd<double, 1> coefficient_unmapped() const
+    {
+        return coeff;
+    }
+
+
     const blitz::Array<bool, 1>& used_flag_value() const
     {
         return used_flag;
