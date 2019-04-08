@@ -17,7 +17,8 @@ public:
   AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
 		   const blitz::Array<double, 1>& Vmr, 
 		   const blitz::Array<bool, 1>& Vmr_flag,
-		   const std::string& Gas_name);
+		   const std::string& Gas_name,
+		   boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
   virtual ~AbsorberVmrLevel() {}
   virtual void print(std::ostream& Os) const;
   virtual std::string sub_state_identifier() const { return "absorber_levels/" + gas_name(); }
@@ -30,16 +31,16 @@ public:
   clone(const boost::shared_ptr<Pressure>& Press) const;
 
 //-----------------------------------------------------------------------
-/// VMR on the pressure grid. This is just coeff.value, but this is
-/// useful for generating output.
+/// VMR on the pressure grid. This is just coefficient().value, but this
+/// is useful for generating output.
 //-----------------------------------------------------------------------
   blitz::Array<double, 1> vmr_profile() const 
-  { return coeff.value(); }
+  { return coefficient().value(); }
 
 //-----------------------------------------------------------------------
 /// Covariance of vmr profile
 //-----------------------------------------------------------------------
-
+// TODO: Does Log version need this? Should log version use coeff/coefficient_unmapped() or coefficient()?
   blitz::Array<double, 2> vmr_covariance() const
   {
     using namespace blitz;

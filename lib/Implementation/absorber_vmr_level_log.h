@@ -1,7 +1,7 @@
 #ifndef ABSORBER_VMR_LEVEL_LOG_H
 #define ABSORBER_VMR_LEVEL_LOG_H
 
-#include "absorber_vmr_imp_base.h"
+#include "absorber_vmr_level.h"
 #include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
@@ -12,7 +12,7 @@ namespace FullPhysics {
   This particular implementation represents VMR values in log space
   in the state vector.
 *******************************************************************/
-class AbsorberVmrLevelLog : public AbsorberVmrImpBase {
+class AbsorberVmrLevelLog : public AbsorberVmrLevel {
 public:
     AbsorberVmrLevelLog(const boost::shared_ptr<Pressure>& Press,
                         const blitz::Array<double, 1>& Vmr,
@@ -34,22 +34,6 @@ public:
                boost::lexical_cast<std::string>(i + 1);
     }
 
-    virtual boost::shared_ptr<AbsorberVmr> clone() const
-    {
-        return clone(boost::shared_ptr<Pressure>());
-    }
-
-    virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
-
-    //-----------------------------------------------------------------------
-    /// VMR on the pressure grid. This is just exp(coeff.value), but this is
-    /// useful for introspection.
-    //-----------------------------------------------------------------------
-    blitz::Array<double, 1> vmr_profile() const { return coefficient().value(); }
-
-
-protected:
-    virtual void calc_vmr() const;
 };
 }
 #endif
