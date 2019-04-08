@@ -23,11 +23,12 @@ public:
 
     //-----------------------------------------------------------------------
     /// Application of log mapping
-    /// TODO: Currently, is_const = true. Call number_variable() & diff constr.
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> apply(ArrayAd<double, 1> const& coeff) const {
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(coeff.value())), true );
+        blitz::Array<double, 1> mapped_coeff(exp(coeff.value()));
+        int nvar = coeff.number_variable();
+        return ArrayAd<double, 1>(mapped_coeff, nvar, true);
     }
 
     //-----------------------------------------------------------------------
