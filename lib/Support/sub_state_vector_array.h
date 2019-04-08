@@ -37,7 +37,6 @@ public:
     /// before B2.10)
     //-----------------------------------------------------------------------
 
-    // TODO: Need coeff.copy() here? Returning by value from in_map which may copy anyway.
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
                         const blitz::Array<bool, 1>& Used_flag,
                         const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
@@ -186,7 +185,6 @@ public:
     {
         return coeff;
     }
-
 
     const blitz::Array<bool, 1>& used_flag_value() const
     {
