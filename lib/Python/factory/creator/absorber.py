@@ -182,6 +182,8 @@ class AbscoCreator(Creator):
 
             if len(filename_matches) > 1:
                 raise param.ParamError("ABSCO filename expanded to multiple files: %s" % absco_filename)
+            elif len(filename_matches) == 0:
+                raise param.ParamError("No ABSCO filename found using glob: %s" % absco_filename)
             else:
                 absco_filename = filename_matches[0]
 
