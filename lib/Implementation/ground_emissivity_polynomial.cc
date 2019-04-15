@@ -1,4 +1,4 @@
-#include "ground_emissivity.h"
+#include "ground_emissivity_polynomial.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
@@ -8,7 +8,7 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(GroundEmissivity, Ground)
+REGISTER_LUA_DERIVED_CLASS(GroundEmissivityPolynomial, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&,
      const blitz::Array<bool, 2>&,
      const ArrayWithUnit<double, 1>&,
@@ -16,7 +16,7 @@ REGISTER_LUA_DERIVED_CLASS(GroundEmissivity, Ground)
 REGISTER_LUA_END()
 #endif
 
-GroundEmissivity::GroundEmissivity(const blitz::Array<double, 2>& Spec_coeffs,
+GroundEmissivityPolynomial::GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
                                    const blitz::Array<bool, 2>& Flag,
                                    const ArrayWithUnit<double, 1>& Ref_points,
                                    const std::vector<std::string>& Desc_band_names)
@@ -56,7 +56,7 @@ GroundEmissivity::GroundEmissivity(const blitz::Array<double, 2>& Spec_coeffs,
 }
 
 // Protected constructor that matches the dimensionality of coeff and flag arrays
-GroundEmissivity::GroundEmissivity(const blitz::Array<double, 1>& Spec_coeffs,
+GroundEmissivityPolynomial::GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,
                                    const blitz::Array<bool, 1>& Flag,
                                    const ArrayWithUnit<double, 1>& Ref_points,
                                    const std::vector<std::string>& Desc_band_names)
@@ -65,7 +65,7 @@ GroundEmissivity::GroundEmissivity(const blitz::Array<double, 1>& Spec_coeffs,
 {
 }
 
-ArrayAd<double, 1> GroundEmissivity::surface_parameter(const double wn, const int spec_index) const
+ArrayAd<double, 1> GroundEmissivityPolynomial::surface_parameter(const double wn, const int spec_index) const
 {
     AutoDerivative<double> wn_emiss = emissivity(DoubleWithUnit(wn, units::inv_cm), spec_index);
     ArrayAd<double, 1> spars(1, wn_emiss.number_variable());
@@ -73,7 +73,7 @@ ArrayAd<double, 1> GroundEmissivity::surface_parameter(const double wn, const in
     return spars;
 }
 
-const AutoDerivative<double> GroundEmissivity::emissivity(const DoubleWithUnit Wave_point, const int spec_index) const
+const AutoDerivative<double> GroundEmissivityPolynomial::emissivity(const DoubleWithUnit Wave_point, const int spec_index) const
 {
     // Evaluate in terms of wavenumber
     AutoDerivative<double> wn(Wave_point.convert_wave(units::inv_cm).value);
@@ -83,7 +83,7 @@ const AutoDerivative<double> GroundEmissivity::emissivity(const DoubleWithUnit W
     return surface_poly(wn - ref_wn);
 }
 
-const ArrayAd<double, 1> GroundEmissivity::emiss_coefficients(const int spec_index) const
+const ArrayAd<double, 1> GroundEmissivityPolynomial::emiss_coefficients(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
@@ -91,7 +91,7 @@ const ArrayAd<double, 1> GroundEmissivity::emiss_coefficients(const int spec_ind
     return coefficient()(Range(offset, offset + number_params() - 1));
 }
 
-const blitz::Array<double, 2> GroundEmissivity::emiss_covariance(const int spec_index) const
+const blitz::Array<double, 2> GroundEmissivityPolynomial::emiss_covariance(const int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
@@ -114,22 +114,22 @@ const blitz::Array<double, 2> GroundEmissivity::emiss_covariance(const int spec_
     return cov;
 }
 
-boost::shared_ptr<Ground> GroundEmissivity::clone() const
+boost::shared_ptr<Ground> GroundEmissivityPolynomial::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundEmissivity(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundEmissivityPolynomial(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
 }
 
-std::string GroundEmissivity::state_vector_name_i(int i) const
+std::string GroundEmissivityPolynomial::state_vector_name_i(int i) const
 {
     int b_idx = int(i / number_params());
     int c_idx = i - number_params() * b_idx;
     return "Ground Emissivity " + desc_band_names[b_idx] + " Parm " + boost::lexical_cast<std::string>(c_idx + 1);
 }
 
-void GroundEmissivity::print(std::ostream& Os) const
+void GroundEmissivityPolynomial::print(std::ostream& Os) const
 {
     OstreamPad opad(Os, "    ");
-    Os << "GroundEmissivity:" << std::endl;
+    Os << "GroundEmissivityPolynomial:" << std::endl;
 
     for(int b_idx = 0; b_idx < number_spectrometer(); b_idx++) {
         opad << "Band: " << desc_band_names[b_idx] << std::endl

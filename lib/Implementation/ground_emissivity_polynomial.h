@@ -1,5 +1,5 @@
-#ifndef GROUND_EMISSIVITY_H
-#define GROUND_EMISSIVITY_H
+#ifndef GROUND_EMISSIVITY_POLYNOMIAL_H
+#define GROUND_EMISSIVITY_POLYNOMIAL_H
 
 #include "ground.h"
 #include "array_with_unit.h"
@@ -9,11 +9,11 @@ namespace FullPhysics {
 /****************************************************************//**
   This class implements a emissivity as a ground type.
 *******************************************************************/
-class GroundEmissivity: public SubStateVectorArray<Ground> {
+class GroundEmissivityPolynomial: public SubStateVectorArray<Ground> {
 
 public:
 
-    GroundEmissivity(const blitz::Array<double, 2>& Spec_coeffs,
+    GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
                      const blitz::Array<bool, 2>& Flag,
                      const ArrayWithUnit<double, 1>& Ref_points,
                      const std::vector<std::string>& Desc_band_names);
@@ -53,12 +53,12 @@ public:
 
     virtual std::string desc() const
     {
-        return "GroundEmissivity";
+        return "GroundEmissivityPolynomial";
     }
 
 protected:
 
-    GroundEmissivity(const blitz::Array<double, 1>& Spec_coeffs,
+    GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,
                      const blitz::Array<bool, 1>& Flag,
                      const ArrayWithUnit<double, 1>& Ref_points,
                      const std::vector<std::string>& Desc_band_names);

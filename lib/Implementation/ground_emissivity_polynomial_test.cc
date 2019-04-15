@@ -1,10 +1,10 @@
-#include "ground_emissivity.h"
+#include "ground_emissivity_polynomial.h"
 #include "unit_test_support.h"
 #include "state_vector.h"
 
 using namespace FullPhysics;
 using namespace blitz;
-BOOST_FIXTURE_TEST_SUITE(ground_emissivity, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_emissivity_polynomial, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
     std::vector<std::string> band_names = { "Channel_1" };
 
-    auto emiss = GroundEmissivity(spec_coeffs, flag, ref_points, band_names);
+    auto emiss = GroundEmissivityPolynomial(spec_coeffs, flag, ref_points, band_names);
 
     BOOST_CHECK_CLOSE(emiss.emissivity(DoubleWithUnit(655, units::inv_cm), 0).value(), 0.9255, 1e-8);
     BOOST_CHECK_CLOSE(emiss.emissivity(DoubleWithUnit(900, units::inv_cm), 0).value(), 0.95, 1e-8);

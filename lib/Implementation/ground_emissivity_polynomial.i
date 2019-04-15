@@ -1,7 +1,7 @@
 %include "common.i"
 
 %{
-#include "ground_emissivity.h"
+#include "ground_emissivity_polynomial.h"
 #include "sub_state_vector_array.h"
 %}
 
@@ -10,11 +10,11 @@
 %import "double_with_unit.i"
 %import "array_with_unit.i"
 
-%fp_shared_ptr(FullPhysics::GroundEmissivity);
+%fp_shared_ptr(FullPhysics::GroundEmissivityPolynomial);
 namespace FullPhysics {
-    class GroundEmissivity: public SubStateVectorArray<Ground> {
+    class GroundEmissivityPolynomial: public SubStateVectorArray<Ground> {
     public:
-        GroundEmissivity(const blitz::Array<double, 2>& Spec_coeffs,
+        GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
                          const blitz::Array<bool, 2>& Flag,
                          const ArrayWithUnit<double, 1>& Ref_points,
                          const std::vector<std::string>& Desc_band_names);
