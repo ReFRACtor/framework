@@ -7,16 +7,18 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  This class implements a emissivity as a ground type.
+  This class implements a emissivity as a ground type using
+  a polynomial per band to model the change in emissivity
+  over the channels.
 *******************************************************************/
 class GroundEmissivityPolynomial: public SubStateVectorArray<Ground> {
 
 public:
 
     GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
-                     const blitz::Array<bool, 2>& Flag,
-                     const ArrayWithUnit<double, 1>& Ref_points,
-                     const std::vector<std::string>& Desc_band_names);
+                               const blitz::Array<bool, 2>& Flag,
+                               const ArrayWithUnit<double, 1>& Ref_points,
+                               const std::vector<std::string>& Desc_band_names);
 
     virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
@@ -44,7 +46,7 @@ public:
 
     virtual std::string sub_state_identifier() const
     {
-        return "ground/emissivity";
+        return "ground/emissivity_polynomial";
     }
 
     virtual std::string state_vector_name_i(int i) const;
@@ -59,9 +61,9 @@ public:
 protected:
 
     GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,
-                     const blitz::Array<bool, 1>& Flag,
-                     const ArrayWithUnit<double, 1>& Ref_points,
-                     const std::vector<std::string>& Desc_band_names);
+                               const blitz::Array<bool, 1>& Flag,
+                               const ArrayWithUnit<double, 1>& Ref_points,
+                               const std::vector<std::string>& Desc_band_names);
 
 private:
 

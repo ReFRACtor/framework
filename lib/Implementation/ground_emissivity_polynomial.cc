@@ -123,7 +123,7 @@ std::string GroundEmissivityPolynomial::state_vector_name_i(int i) const
 {
     int b_idx = int(i / number_params());
     int c_idx = i - number_params() * b_idx;
-    return "Ground Emissivity " + desc_band_names[b_idx] + " Parm " + boost::lexical_cast<std::string>(c_idx + 1);
+    return "Ground Emissivity Polynomial " + desc_band_names[b_idx] + " Parm " + boost::lexical_cast<std::string>(c_idx + 1);
 }
 
 void GroundEmissivityPolynomial::print(std::ostream& Os) const
