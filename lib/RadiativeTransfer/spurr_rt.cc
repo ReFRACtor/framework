@@ -58,7 +58,7 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
 
   // Looks at the type of the Ground class to determine the surface
   // type integer for use in the Spurr RT Fortran code
-  // Do this in the consturctor since dynamic casting is an expensive operation
+  // Do this in the constructor since dynamic casting is an expensive operation
   if(dynamic_cast<GroundLambertian*>(atm->ground().get())) {
     surface_type_int = LAMBERTIAN;
   } else if(dynamic_cast<GroundEmissivityPolynomial*>(atm->ground().get())) {
