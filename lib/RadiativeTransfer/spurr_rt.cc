@@ -5,6 +5,7 @@
 #include "spurr_brdf_types.h"
 #include "ground_lambertian.h"
 #include "ground_emissivity_polynomial.h"
+#include "ground_emissivity_piecewise.h"
 #include "ground_coxmunk.h"
 #include "ground_coxmunk_plus_lambertian.h"
 #include "ground_brdf.h"
@@ -62,7 +63,9 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
     surface_type_int = LAMBERTIAN;
   } else if(dynamic_cast<GroundEmissivityPolynomial*>(atm->ground().get())) {
     surface_type_int = EMISSIVITY;
-  } else if(dynamic_cast<GroundCoxmunk*>(atm->ground().get())) {
+  } else if(dynamic_cast<GroundEmissivityPiecewise*>(atm->ground().get())) {
+    surface_type_int = EMISSIVITY;
+   } else if(dynamic_cast<GroundCoxmunk*>(atm->ground().get())) {
     surface_type_int = COXMUNK;
   } else if(dynamic_cast<GroundCoxmunkPlusLambertian*>(atm->ground().get())) {
     surface_type_int = COXMUNK;

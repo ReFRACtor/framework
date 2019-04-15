@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValueMultiChannel
+from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
 from .. import param
 from .util import as_vector_string
 
@@ -49,10 +49,49 @@ class GroundLambertian(CreatorFlaggedValueMultiChannel):
     def create(self, **kwargs):
         return rf.GroundLambertian(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
 
-class GroundEmissivity(CreatorFlaggedValueMultiChannel):
+class GroundEmissivityPolynomial(CreatorFlaggedValueMultiChannel):
 
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
 
     def create(self, **kwargs):
-        return rf.GroundEmissivity(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        return rf.GroundEmissivityPolynomial(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+
+class GroundEmissivityPiecewise(CreatorFlaggedValue):
+
+    grid = param.ArrayWithUnit(dims=1)
+    spec_win = param.InstanceOf(rf.SpectralWindowRange)
+
+    def create(self, **kwargs):
+
+        grid = self.grid()
+        emiss_values = self.value()
+        spec_win = self.spec_win()
+
+        # Go through each grid value and only flag if the parameter falls within
+        # the configured spectral ranges.
+
+        ret_flag_compute = np.zeros(emiss_values.shape[0], dtype=bool)
+        grid_conv = grid.convert_wave(spec_win.range_array.units)
+
+        for grid_idx, grid_value in enumerate(grid_conv.value):
+            for win_indexes in np.ndindex(spec_win.range_array.value.shape[:2]):
+                # Make sure we compare values in order
+                win_range = spec_win.range_array.value[win_indexes[0], win_indexes[1], :]
+                win_beg = min(win_range)
+                win_end = max(win_range)
+
+                if grid_value >= win_beg and grid_value <= win_end:
+                    ret_flag_compute[grid_idx] = True
+                    break
+
+        # Combine flags if the original retrieval flag was not all True, meaning it was the default one
+        ret_flag_user = self.retrieval_flag()
+        if not np.all(ret_flag_user):
+            ret_flag = ret_flag_compute and ret_flag_user
+        else:
+            ret_flag = ret_flag_compute
+
+        return rf.GroundEmissivityPiecewise(grid, emiss_values, ret_flag)
+
+
