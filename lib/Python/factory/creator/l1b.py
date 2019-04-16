@@ -36,7 +36,7 @@ class ValueFromLevel1b(Creator):
     ]
 
     def _as_list(self, accessor):
-        num_channels = self.l1b().number_spectrometer
+        num_channels = self.l1b().number_spectrometer()
         
         vals = []
         for chan_idx in range(num_channels):
@@ -48,7 +48,7 @@ class ValueFromLevel1b(Creator):
  
     def _as_array_with_unit(self, accessor):
 
-        num_channels = self.l1b().number_spectrometer
+        num_channels = self.l1b().number_spectrometer()
 
         vals = []
         units = None
@@ -116,7 +116,7 @@ class RelativeAzimuthFromLevel1b(Creator):
 
         rel_azm_vals = []
         deg_units = rf.Unit("deg")
-        for chan_idx in range(l1b.number_spectrometer):
+        for chan_idx in range(l1b.number_spectrometer()):
             val = (180 + l1b.sounding_azimuth(chan_idx).convert(deg_units).value) - \
                 l1b.solar_azimuth(chan_idx).convert(deg_units).value
 
@@ -138,7 +138,7 @@ class SolarDistanceFromL1b(Creator):
     def create(self, **kwargs):
 
         l1b = self.l1b()
-        num_channels = l1b.number_spectrometer
+        num_channels = l1b.number_spectrometer()
 
         solar_dist_vals = np.empty(num_channels)
         solar_dist_units = None

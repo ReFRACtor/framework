@@ -13,6 +13,9 @@
 %fp_shared_ptr(FullPhysics::Level1bSampleCoefficient);
 
 namespace FullPhysics {
+
+%feature("director") Level1bSampleCoefficient;
+
 class Level1bSampleCoefficient : public Level1b {
 public:
   Level1bSampleCoefficient(const bool One_based = true);

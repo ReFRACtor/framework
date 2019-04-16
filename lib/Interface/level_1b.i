@@ -16,11 +16,14 @@
 %fp_shared_ptr(FullPhysics::Level1b);
 
 namespace FullPhysics {
+
+%feature("director") Level1b;
+
 class Level1b : public GenericObject {
 public:
   virtual ~Level1b();
   std::string print_to_string() const;
-  %python_attribute(number_spectrometer, virtual int);
+  virtual int number_spectrometer() const = 0;
   virtual DoubleWithUnit latitude(int i) const = 0;
   virtual DoubleWithUnit longitude(int i) const = 0;
   virtual DoubleWithUnit sounding_zenith(int i) const = 0;
@@ -28,12 +31,12 @@ public:
   virtual blitz::Array<double, 1> stokes_coefficient(int i) const = 0;
   virtual DoubleWithUnit solar_zenith(int i) const = 0;
   virtual DoubleWithUnit solar_azimuth(int i) const = 0;
-  virtual DoubleWithUnit relative_azimuth(int i) const = 0;
   virtual DoubleWithUnit altitude(int i) const = 0;
   virtual DoubleWithUnit relative_velocity(int i) const = 0;
   virtual SpectralDomain sample_grid(int Spec_index) const = 0;  
   virtual Time time(int Spec_index) const = 0;
   virtual SpectralRange radiance(int Spec_index) const = 0;
+  virtual DoubleWithUnit relative_azimuth(int i) const;
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
 };
 }
