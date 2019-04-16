@@ -28,7 +28,7 @@ public:
 
     virtual boost::shared_ptr<Ground> clone() const;
 
-    virtual std::string sub_state_identifier() const;
+    %python_attribute(sub_state_identifier, std::string);
 
     virtual std::string state_vector_name_i(int i) const;
 
