@@ -19,7 +19,7 @@ public:
     /// Default Constructor.
     //-----------------------------------------------------------------------
 
-    MappingLog() {};
+    MappingLog() : map_name("Log") {};
 
     //-----------------------------------------------------------------------
     /// Application of log mapping
@@ -73,6 +73,11 @@ public:
 
 
     virtual ~MappingLog() {};
+
+private:
+    std::string map_name;
+
 };
 }
+
 #endif
