@@ -25,7 +25,7 @@ public:
     /// Default Constructor.
     //-----------------------------------------------------------------------
 
-    Mapping() {};
+    Mapping() : map_name("OneToOne") {};
 
     //-----------------------------------------------------------------------
     /// Application of mapping (1-to-1 mapping by default)
@@ -64,8 +64,17 @@ public:
 
     virtual AutoDerivative<double> invert_element(AutoDerivative<double> coeff_i) const { return coeff_i; }
 
+    //-----------------------------------------------------------------------
+    /// Assigned mapping name
+    //-----------------------------------------------------------------------
+
+    virtual std::string name() const { return map_name; }
 
     virtual ~Mapping() {};
+
+private:
+    std::string map_name;
 };
 }
+
 #endif

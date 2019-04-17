@@ -7,12 +7,12 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
+// TODO: Add mapping to luabind constructor
 REGISTER_LUA_DERIVED_CLASS(AbsorberVmrLevel, AbsorberVmr)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
 			  const blitz::Array<double, 1>&,
 			  const blitz::Array<bool, 1>&,
-			  const std::string&>(),
-			  boost::shared_ptr<Mapping>)
+			  const std::string&>())
 REGISTER_LUA_END()
 #endif
 
@@ -56,7 +56,7 @@ void AbsorberVmrLevel::calc_vmr() const
 void AbsorberVmrLevel::print(std::ostream& Os) const
 { 
   OstreamPad opad(Os, "    ");
-  Os << "AbsorberVmrLevel:\n"
+  Os << "AbsorberVmrLevel" + mapping->name() + ":\n"
      << "  Gas name:       " << gas_name() << "\n"
      << "  Coefficient:\n";
   opad << coefficient_unmapped().value() << "\n";

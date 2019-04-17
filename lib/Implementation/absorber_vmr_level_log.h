@@ -20,20 +20,6 @@ public:
                         const std::string& Gas_name);
 
     virtual ~AbsorberVmrLevelLog() = default;
-
-    virtual void print(std::ostream& Os) const;
-    
-    virtual std::string sub_state_identifier() const
-    {
-        return "absorber_log_levels/" + gas_name();
-    }
-
-    virtual std::string state_vector_name_i(int i) const
-    {
-        return gas_name() + " Log VMR for Press Lvl " +
-               boost::lexical_cast<std::string>(i + 1);
-    }
-
 };
 }
 #endif

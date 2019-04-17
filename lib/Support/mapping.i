@@ -18,5 +18,6 @@ public:
     const ArrayAd<double, 1> invert(ArrayAd<double, 1> const& coeff) const;
     const blitz::Array<double, 1> invert(blitz::Array<double, 1> const& coeff) const;
     AutoDerivative<double> invert_element(AutoDerivative<double> coeff_i) const;
+    std::string name() const;
 };
 }

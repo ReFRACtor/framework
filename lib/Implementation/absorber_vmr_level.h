@@ -21,9 +21,10 @@ public:
 		   boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
   virtual ~AbsorberVmrLevel() {}
   virtual void print(std::ostream& Os) const;
-  virtual std::string sub_state_identifier() const { return "absorber_levels/" + gas_name(); }
+  virtual std::string sub_state_identifier() const
+  { return "absorber_levels/" + mapping->name() + "/" + gas_name(); }
   virtual std::string state_vector_name_i(int i) const
-  { return gas_name() + " VMR for Press Lvl " + 
+  { return gas_name() + " " + mapping->name() + " VMR for Press Lvl " +
       boost::lexical_cast<std::string>(i + 1); }
   virtual boost::shared_ptr<AbsorberVmr> clone() const
   { return clone(boost::shared_ptr<Pressure>()); }
@@ -40,12 +41,11 @@ public:
 //-----------------------------------------------------------------------
 /// Covariance of vmr profile
 //-----------------------------------------------------------------------
-// TODO: Does Log version need this? Should log version use coeff/coefficient_unmapped() or coefficient()?
   blitz::Array<double, 2> vmr_covariance() const
   {
     using namespace blitz;
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
-    ArrayAd<double, 1> vmrv(coeff);
+    ArrayAd<double, 1> vmrv(coefficient());
     Array<double, 2> res(vmrv.rows(), vmrv.rows());
     if(vmrv.is_constant())
       res = 0;			// Normal only encounter this in
