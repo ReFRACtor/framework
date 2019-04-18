@@ -56,6 +56,19 @@ class AerosolShapeGaussian(CreatorFlaggedValue):
 
         return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_space())
 
+class AerosolProfileExtinction(CreatorFlaggedValue):
+
+    pressure = param.InstanceOf(rf.Pressure)
+    log_space = param.Scalar(bool, default=True)
+
+    def create(self, aerosol_name=None, **kwargs):
+
+        if self.log_space():
+            return rf.AerosolExtinctionLog(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name)
+        else:
+            return rf.AerosolExtinctionLinear(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name)
+        
+
 class AerosolPropertyHdf(Creator):
 
     pressure = param.InstanceOf(rf.Pressure)
