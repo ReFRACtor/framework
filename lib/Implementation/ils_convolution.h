@@ -43,16 +43,6 @@ public:
      const ArrayAd<double, 1>& High_resolution_radiance,
      const std::vector<int>& Pixel_list) const;
 
-    virtual const DoubleWithUnit ils_half_width() const
-    {
-        return ils_half_width_;
-    }
-
-    virtual void ils_half_width(const DoubleWithUnit& half_width)
-    {
-        ils_half_width_ = half_width;
-    }
-
     virtual void print(std::ostream& Os) const;
     virtual boost::shared_ptr<Ils> clone() const;
 
@@ -65,7 +55,6 @@ public:
     }
 
 private:
-    DoubleWithUnit ils_half_width_;
     boost::shared_ptr<IlsFunction> ils_func;
     double integrate(const blitz::Array<double, 1>& x,
                      const blitz::Array<double, 1>& y) const;

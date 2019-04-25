@@ -27,8 +27,6 @@ public:
     (const blitz::Array<double, 1>& High_resolution_wave_number,
      const ArrayAd<double, 1>& High_resolution_radiance,
      const std::vector<int>& Pixel_list) const;
-    virtual const DoubleWithUnit ils_half_width() const;
-    virtual void ils_half_width(const DoubleWithUnit& half_width);
     virtual boost::shared_ptr<Ils> clone() const;
     %python_attribute(ils_function, boost::shared_ptr<IlsFunction>);
 };

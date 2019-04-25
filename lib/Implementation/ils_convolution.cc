@@ -16,7 +16,7 @@ REGISTER_LUA_END()
 IlsConvolution::IlsConvolution(const boost::shared_ptr<SampleGrid>& Sample_grid,
                                const boost::shared_ptr<IlsFunction>& Ils_func,
                                const DoubleWithUnit& Ils_half_width)
-: IlsImpBase(Sample_grid), ils_func(Ils_func), ils_half_width_(Ils_half_width)
+: IlsImpBase(Sample_grid, Ils_half_width), ils_func(Ils_func)
 {
 }
 

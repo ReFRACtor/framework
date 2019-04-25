@@ -18,15 +18,15 @@ public:
     //-----------------------------------------------------------------------
     /// Constructor.
     //-----------------------------------------------------------------------
-    IlsImpBase(const boost::shared_ptr<SampleGrid>& Sample_grid)
-    : sample_grid_(Sample_grid)
+    IlsImpBase(const boost::shared_ptr<SampleGrid>& Sample_grid, const DoubleWithUnit& Ils_half_width)
+    : sample_grid_(Sample_grid), ils_half_width_(Ils_half_width)
     {
         sample_grid_->add_observer(*this);
     }
 
     virtual ~IlsImpBase() = default;
 
-    virtual void notify_update(const SampleGrid& UNUSED(D))
+  virtual void notify_update(const SampleGrid& UNUSED(D))
     {
         notify_update_do(*this);
     }
@@ -46,9 +46,25 @@ public:
         Os << "IlsImpBase";
     }
 
+    virtual const std::string band_name() const
+    {
+        return desc_band_name_;
+    }
+    virtual const std::string hdf_band_name() const
+    {
+        return hdf_band_name_;
+    }
     virtual const SpectralDomain pixel_grid() const
     {
         return sample_grid_->pixel_grid();
+    }
+    virtual const DoubleWithUnit ils_half_width() const
+    {
+        return ils_half_width_;
+    }
+    virtual void ils_half_width(const DoubleWithUnit& half_width)
+    {
+        ils_half_width_ = half_width;
     }
 
     //-----------------------------------------------------------------------
@@ -60,6 +76,8 @@ public:
 
 private:
     boost::shared_ptr<SampleGrid> sample_grid_;
+    DoubleWithUnit ils_half_width_;
+    std::string desc_band_name_, hdf_band_name_;
 };
 }
 #endif
