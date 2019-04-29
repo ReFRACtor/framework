@@ -5,13 +5,12 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  Individual SubStateVectorArray components of a State Vector
-  may want to store their coefficients in one way, but expose
-  them to the retrieval class in another (e.g. to add a scaling
+  Individual components of the State Vector may have different
+  representations when being retrieved/perturbed rather than being
+  used in forward model calculations (e.g. to add a scaling
   factor or log encode the values).
 
-  This class captures those mappings from stored coefficients to
-  coefficients provided to retrieval processes.
+  This class and its subclasses capture those different representations.
 
   This class implements 1-to-1 mapping and just provides the
   SubStateVectorArray's coefficients as-is.
@@ -28,41 +27,16 @@ public:
     Mapping() : map_name("OneToOne") {};
 
     //-----------------------------------------------------------------------
-    /// Application of mapping (1-to-1 mapping by default)
+    /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> apply(ArrayAd<double, 1> const& coeff) const { return coeff; };
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const { return coeff; };
 
     //-----------------------------------------------------------------------
-    /// Application of mapping (1-to-1 mapping by default)
+    /// Calculation of retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const blitz::Array<double, 1> apply(blitz::Array<double, 1> const& coeff) const { return coeff; }
-
-    //-----------------------------------------------------------------------
-    /// Application of mapping (1-to-1 mapping by default)
-    //-----------------------------------------------------------------------
-
-    virtual AutoDerivative<double> apply_element(AutoDerivative<double> coeff_i) const { return coeff_i; }
-
-
-    //-----------------------------------------------------------------------
-    /// Inversion of mapping (1-to-1 inversion by default)
-    //-----------------------------------------------------------------------
-
-    virtual const ArrayAd<double, 1> invert(ArrayAd<double, 1> const& coeff) const { return coeff; }
-
-    //-----------------------------------------------------------------------
-    /// Inversion of mapping (1-to-1 inversion by default)
-    //-----------------------------------------------------------------------
-
-    virtual const blitz::Array<double, 1> invert(blitz::Array<double, 1> const& coeff) const { return coeff; }
-
-    //-----------------------------------------------------------------------
-    /// Inversion of mapping (1-to-1 inversion by default) for single element
-    //-----------------------------------------------------------------------
-
-    virtual AutoDerivative<double> invert_element(AutoDerivative<double> coeff_i) const { return coeff_i; }
+    virtual const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const { return coeff; };
 
     //-----------------------------------------------------------------------
     /// Assigned mapping name

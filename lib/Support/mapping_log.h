@@ -8,8 +8,8 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  This class implements log mapping for SubStateVectorArray
-  coefficients.
+  This class implements log encoding of coeffs for the retrieval view
+  while using the real (linear) values for the forward model view.
 
   For additional information see docs for Mapping class.
 *******************************************************************/
@@ -22,55 +22,22 @@ public:
     MappingLog() : map_name("Log") {};
 
     //-----------------------------------------------------------------------
-    /// Application of log mapping
+    /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> apply(ArrayAd<double, 1> const& coeff) const {
-        blitz::Array<double, 1> mapped_coeff(exp(coeff.value()));
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const {
         int nvar = coeff.number_variable();
-        return ArrayAd<double, 1>(mapped_coeff, nvar, true);
-    }
+        return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(coeff.value())), nvar, true);
+    };
 
     //-----------------------------------------------------------------------
-    /// Application of log mapping
+    /// Calculation of retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const blitz::Array<double, 1> apply(blitz::Array<double, 1> const& coeff) const {
-        return blitz::Array<double, 1>(exp(coeff));
-    }
-
-    //-----------------------------------------------------------------------
-    /// Application of log mapping for a single element
-    //-----------------------------------------------------------------------
-
-    virtual AutoDerivative<double> apply_element(AutoDerivative<double> coeff_i) const {
-        return exp(coeff_i.value());
-    }
-
-    //-----------------------------------------------------------------------
-    /// Inversion of log mapping
-    //-----------------------------------------------------------------------
-
-    virtual const ArrayAd<double, 1> invert(ArrayAd<double, 1> const& coeff) const {
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(log(coeff.value())), true);
-    }
-
-    //-----------------------------------------------------------------------
-    /// Inversion of log mapping
-    //-----------------------------------------------------------------------
-
-    virtual const blitz::Array<double, 1> invert(blitz::Array<double, 1> const& coeff) const {
-        return blitz::Array<double, 1>(log(coeff));
-    }
-
-    //-----------------------------------------------------------------------
-    /// Inversion of log mapping for a single element
-    //-----------------------------------------------------------------------
-
-    virtual AutoDerivative<double> invert_element(AutoDerivative<double> coeff_i) const {
-        return log(coeff_i.value());
-    }
-
+    virtual const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const {
+        int nvar = coeff.number_variable();
+        return ArrayAd<double, 1>( blitz::Array<double, 1>(log(coeff.value())), nvar, true);
+    };
 
     virtual ~MappingLog() {};
 

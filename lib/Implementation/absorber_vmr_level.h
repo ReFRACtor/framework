@@ -32,11 +32,11 @@ public:
   clone(const boost::shared_ptr<Pressure>& Press) const;
 
 //-----------------------------------------------------------------------
-/// VMR on the pressure grid. This is just coefficient().value, but this
-/// is useful for generating output.
+/// VMR on the pressure grid. This is just the forward model view of
+/// coeff.value, but this is useful for generating output.
 //-----------------------------------------------------------------------
   blitz::Array<double, 1> vmr_profile() const 
-  { return coefficient().value(); }
+  { return mapping->fm_view(coeff).value(); }
 
 //-----------------------------------------------------------------------
 /// Covariance of vmr profile
@@ -45,13 +45,13 @@ public:
   {
     using namespace blitz;
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
-    ArrayAd<double, 1> vmrv(coefficient());
+    ArrayAd<double, 1> vmrv(coeff);
     Array<double, 2> res(vmrv.rows(), vmrv.rows());
-    if(vmrv.is_constant())
+    if(vmrv.is_constant()) {
       res = 0;			// Normal only encounter this in
   				// testing, when we haven't yet set up
   				// a covariance matrix and state vector.
-    else {
+    } else {
       
       Array<double, 2> dvmr_dstate(vmrv.jacobian());
       Array<double, 2> t(dvmr_dstate.rows(), sv_cov_full.cols()) ;

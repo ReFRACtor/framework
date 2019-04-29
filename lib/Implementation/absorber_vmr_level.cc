@@ -34,7 +34,7 @@ boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone
 (const boost::shared_ptr<Pressure>& Press) const
 {
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevel(Press, coefficient().value(),used_flag,
+    (new AbsorberVmrLevel(Press, coeff.value(),used_flag,
 			  gas_name()));
 }
 
@@ -42,8 +42,9 @@ void AbsorberVmrLevel::calc_vmr() const
 {
   std::vector<AutoDerivative<double> > plist;
   std::vector<AutoDerivative<double> > vmrlist;
+  ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
   for(int i = 0; i < press->pressure_grid().rows(); ++i) {
-    vmrlist.push_back(mapping->apply_element(coefficient_unmapped()(i)));
+    vmrlist.push_back(fm_view_coeff(i));
     plist.push_back(press->pressure_grid()(i).value);
   }
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
@@ -59,7 +60,7 @@ void AbsorberVmrLevel::print(std::ostream& Os) const
   Os << "AbsorberVmrLevel" + mapping->name() + ":\n"
      << "  Gas name:       " << gas_name() << "\n"
      << "  Coefficient:\n";
-  opad << coefficient_unmapped().value() << "\n";
+  opad << coeff.value() << "\n";
   opad.strict_sync();
   Os << "  Retrieval Flag:\n";
   opad << used_flag << "\n";
