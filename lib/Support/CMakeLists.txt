@@ -19,6 +19,7 @@ set(DIR_SOURCES
     logger_f.F90
     mapping.h
     mapping_log.h
+    mapping_scale.h
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc
