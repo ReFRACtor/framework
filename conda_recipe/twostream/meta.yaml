@@ -1,0 +1,35 @@
+{% set name = "twostream" %}
+{% set version = "1.0" %}
+{% set file_ext = "tar.bz2" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  # This doesn't work because we have LFS files, and conda doesn't handle
+  # this. As a work around, just create a locate src tar. The files aren't
+  # large
+  #git_url: git@github.jpl.nasa.gov:refractor/framework.git
+  #git_rev: c233c2a8627856545a0e90cf81fed86269778fa2
+  url: ../src/{{ name }}-{{version}}.{{ file_ext }}  
+
+build:
+  # Have slightly updated cmake files. Not really a new version, but
+  # consider a new build
+  number: 1
+    
+requirements:
+  build:
+    - {{ compiler('c') }}  
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
+    - cmake
+    # https://github.com/ContinuumIO/anaconda-issues/issues/8812,
+    # can't find -lgomp or -lquadmath without this. Will probably get
+    # fixed at some point and we can remove this
+    - libgcc-ng  # [linux]
+
+about:
+  summary: This twostream library
+

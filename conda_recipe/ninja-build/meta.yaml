@@ -1,0 +1,37 @@
+{% set version = "1.9.0" %}
+
+# There is a ninja conda package, but this is off the main branch. Call this ninja-build
+# to give a separate name
+package:
+  name: ninja-build
+  version: {{ version }}
+
+# This is the branch with fortran support added. Should make it into the main branch at
+# some point, but not yet
+source:
+  fn: v1.9.0.g99df1.kitware.dyndep-1.jobserver-1.tar.gz
+  url: https://github.com/Kitware/ninja/archive/v1.9.0.g99df1.kitware.dyndep-1.jobserver-1.tar.gz
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler("cxx") }}
+  host:
+    - python
+  run:
+    - libstdcxx-ng # [linux]
+    - libgcc-ng    # [linux]
+
+test:
+  commands:
+    - ninja-build --version
+
+about:
+  home: https://ninja-build.org/
+  license: Apache 2.0
+  license_family: Apache
+  license_file: COPYING
+  summary: A small build system with a focus on speed
+

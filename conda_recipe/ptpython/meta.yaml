@@ -1,0 +1,59 @@
+{% set name = "ptpython" %}
+{% set version = "2.0.4" %}
+{% set file_ext = "tar.gz" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  fn: {{ name }} -{{ version }}.{{ file_ext }}
+  url: https://pypi.python.org/packages/source/p/{{ name }}/{{ name }}-{{ version }}.{{ file_ext }}
+
+build:
+  number: 0
+  entry_points:
+    - ptpython = ptpython.entry_points.run_ptpython:run
+    - ptipython = ptpython.entry_points.run_ptipython:run
+    - ptpython3 = ptpython.entry_points.run_ptpython:run
+    - ptipython3 = ptpython.entry_points.run_ptipython:run
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  host:
+    - python
+    - setuptools
+    - docopt
+    - jedi >=0.9.0
+    - prompt_toolkit >=1.0.14,<2.1.0
+    - pygments
+  run:
+    - python
+    - docopt
+    - jedi >=0.9.0
+    - prompt_toolkit >=1.0.14,<2.1.0
+    - pygments
+
+test:
+  imports:
+    - ptpython
+    - ptpython.contrib
+    - ptpython.entry_points
+  commands:
+    - ptpython --help
+    - ptipython --help
+    - ptpython3 --help
+    - ptipython3 --help
+
+about:
+  home: https://github.com/jonathanslenders/ptpython
+  license: UNKNOWN
+  license_family: OTHER
+  license_file: ''
+  summary: Python REPL build on top of prompt_toolkit
+  description: UNKNOWN
+  doc_url: ''
+  dev_url: ''
+
+extra:
+  recipe-maintainers: ''
