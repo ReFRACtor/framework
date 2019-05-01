@@ -24,11 +24,3 @@ BOOST_AUTO_TEST_CASE(basic)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-/*
- AbsorberVmrLevelScaled2::AbsorberVmrLevelScaled2(const boost::shared_ptr<Pressure>& Press,
-                                                 const blitz::Array<double, 1>& Vmr_profile,
-                                                 double Scale,
-                                                 const blitz::Array<bool, 1>& Scale_flag,
-                                                 const std::string& Gas_name)
- */
