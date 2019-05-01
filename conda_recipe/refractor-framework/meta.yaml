@@ -1,0 +1,78 @@
+{% set name = "framework" %}
+{% set version = "1.01" %}
+{% set file_ext = "tar.bz2" %}
+
+package:
+  name: 'refractor-{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  # The URL from github doesn't work, presumably because of security. Probably
+  # some way to get directly, but easier to just download and place in src
+  # directory. You can also create from a git repository clone with:
+  # git archive --format=tar --prefix=framework-1.00/ master | bzip2 > framework-1.00.tar.bz2
+  # Because of its size, we don't check the framework tar file into this
+  # repository, but you can always get it from the framework repository.
+  # url: https://github.jpl.nasa.gov/refractor/framework/archive/dev1.tar.gz
+  url: ../src/{{ name }}-{{ version }}.{{ file_ext }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}  
+    - {{ compiler('c') }}  
+    - {{ compiler('fortran') }}
+    - cmake
+    - pkg-config
+    - swig
+    - doxygen
+    # For right now, pin the fortran version to the one in pkgs/main
+    # conda-forge has a newer one on the mac, but hold off switching
+    - gfortran_osx-64 <=4.85 # [osx]
+  host:
+    # https://github.com/ContinuumIO/anaconda-issues/issues/8812,
+    # can't find -lgomp or -lquadmath without this. Will probably get
+    # fixed at some point and we can remove this
+    - libgcc-ng # [linux]
+    - python {{ python }}
+    - numpy
+    - libboost
+    - gsl
+    - eigen
+    - lua
+    - luabind
+    - libblitz
+    - lidort
+    - twostream
+    - first_order
+    - hdf5
+    - netcdf4
+  run:
+    - python
+    - {{ pin_compatible('numpy', max_pin='x.x') }}
+    - {{ pin_compatible('libboost', max_pin='x.x.x') }}
+    - gsl
+    - eigen
+    - lua
+    - luabind
+    - libblitz
+    - lidort
+    - twostream
+    - first_order
+    - hdf5
+    - netcdf4
+    - ipython
+    - jupyter
+    - matplotlib
+    - attrdict
+    - ptpython  # This is optional, but include for now
+    - libgcc-ng # [linux]
+    # For right now, pin the fortran version to the one in pkgs/main
+    # conda-forge has a newer one on the mac, but hold off switching
+    - gfortran_osx-64 <=4.85 # [osx]
+
+about:
+  summary: This is the RT Retrieval Framework
+    

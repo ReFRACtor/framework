@@ -1,0 +1,40 @@
+{% set name = "luabind" %}
+# This is actually a fork of luabind 0.9. We'll call this 0.92, but really
+# This is just a git tag
+{% set version = "0.92" %}
+{% set file_ext = "tar.bz2" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  # This doesn't work because we have LFS files, and conda doesn't handle
+  # this. As a work around, just create a locate src tar. The files aren't
+  # large
+  #git_url: git@github.jpl.nasa.gov:refractor/framework.git
+  #git_rev: c233c2a8627856545a0e90cf81fed86269778fa2
+  url: ../src/{{ name }}-{{version}}.{{ file_ext }}
+
+build:
+  # First attempt at building this was mangled. We've recreated the tar file,
+  # so go ahead an consider this a new build.
+  number: 1
+    
+requirements:
+  build:
+    - {{ compiler('c') }}  
+    - {{ compiler('cxx') }}
+    - cmake
+  host:
+    - lua
+    - libboost
+  run:
+    - {{ pin_compatible('lua', max_pin='x.x') }}
+    - {{ pin_compatible('libboost', max_pin='x.x.x') }}
+
+about:
+  home: https://github.com/Oberon00/luabind
+  license: See LICENSE.txt
+  summary: This is a fork of luabind
+

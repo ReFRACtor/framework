@@ -1,0 +1,4 @@
+# Versions to build. Right now, just one python version. Can expand as
+# it is useful
+python:
+  - 3.6

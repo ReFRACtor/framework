@@ -1,0 +1,7 @@
+# If you are using Conda (e.g., doing "conda activate <env>") you do
+# *not* need to run this setup file. This is here for software that
+# lives outside of conda which may want to use the framework. The
+# automatically run Conda script
+# $CONDA_PREFIX/etc/conda/activate.d/framework-activate.sh already
+# handles the setup.
+

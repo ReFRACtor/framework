@@ -1,0 +1,29 @@
+# The conda version of blitz doesn't actually work with gcc 7. This
+# contains a patch to fix this
+{% set name = "libblitz" %}
+{% set version = "0.10" %}
+{% set file_ext = "tar.gz" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  url: ../src/blitz-{{ version }}.{{ file_ext }}
+  patches:
+     - blitz-fix-gcc7.patch
+     
+build:
+  number: 1
+
+requirements:
+  build:
+    - {{ compiler('c') }}  
+    - {{ compiler('cxx') }}  
+  host:
+  run:
+
+about:
+  license: LGPL
+  summary: This is the Blitz library
+

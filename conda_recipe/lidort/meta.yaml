@@ -1,0 +1,49 @@
+{% set name = "lidort" %}
+{% set version = "3.7" %}
+{% set file_ext = "tar.bz2" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  # This doesn't work because we have LFS files, and conda doesn't handle
+  # this. As a work around, just create a locate src tar. The files aren't
+  # large
+  #git_url: git@github.jpl.nasa.gov:refractor/framework.git
+  #git_rev: c233c2a8627856545a0e90cf81fed86269778fa2
+  url: ../src/{{ name }}-{{version}}.{{ file_ext }}
+
+build:
+  # Important fix, the -fopenmp flag causes LIDORT to fail, because it forces
+  # all variables to the stack which causes a stack overflow/segmentation
+  # fault. Not really a new version, just updatest to cmake files. But
+  # consider a new build
+  #number: 1
+  # Add constraint on fortran version for OSx
+  number: 2
+    
+requirements:
+  build:
+    - {{ compiler('c') }}  
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
+    - cmake
+  host:
+    # https://github.com/ContinuumIO/anaconda-issues/issues/8812,
+    # can't find -lgomp or -lquadmath without this. Will probably get
+    # fixed at some point and we can remove this
+    - libgcc-ng # [linux]
+    # For right now, pin the fortran version to the one in pkgs/main
+    # conda-forge has a newer one on the mac, but hold off switching
+    - gfortran_osx-64 <=4.85 # [osx]
+  run:
+    # https://github.com/ContinuumIO/anaconda-issues/issues/8812,
+    # can't find -lgomp or -lquadmath without this. Will probably get
+    # fixed at some point and we can remove this
+    - libgcc-ng # [linux]
+    - {{ pin_compatible('gfortran_osx-64', max_pin='x.x') }} # [osx]
+
+about:
+  summary: This LIDORT
+
