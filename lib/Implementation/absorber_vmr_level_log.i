@@ -10,7 +10,7 @@
 %fp_shared_ptr(FullPhysics::AbsorberVmrLevelLog)
 
 namespace FullPhysics {
-class AbsorberVmrLevelLog : public AbsorberVmrImpBase {
+class AbsorberVmrLevelLog : public AbsorberVmrLevel {
 public:
     AbsorberVmrLevelLog(const boost::shared_ptr<Pressure>& Press,
                         const blitz::Array<double, 1>& Vmr,
