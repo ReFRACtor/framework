@@ -16,6 +16,8 @@ template<class T, int D> class ArrayAd;
 %pythoncode %{
 import numpy as np
 
+from .auto_derivative import vector_auto_derivative
+
 def np_to_array_ad(a):
     '''Convert a numpy array of AutoDerivatives to a ArrayAd'''
     nvar = 0
@@ -131,6 +133,18 @@ def __setitem__(self, index, val):
     t = list(index)
     t.append(val)
     self.write(*t)
+
+def to_vector(self):
+
+    if DIM != 1:
+        raise Exception("to_vector only defined for 1 dimensional ArrayAd objects")
+
+    vec = vector_auto_derivative()
+    for idx in range(self.rows):
+        vec.push_back(self.read(idx))
+
+    return vec
+
 %}
   %extend {
     AutoDerivative<TYPE> read(int i1) const { return (*$self)(i1); }
@@ -157,9 +171,7 @@ def __setitem__(self, index, val):
 
 %template(NAME) FullPhysics::ArrayAd<TYPE, DIM>;
 %enddef
+
 %array_ad_template(ArrayAd_double_1, double, 1, 2);
 %array_ad_template(ArrayAd_double_2, double, 2, 3);
 %array_ad_template(ArrayAd_double_3, double, 3, 4);
-%array_ad_template(ArrayAd_double_4, double, 4, 5);
-
-

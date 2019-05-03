@@ -312,6 +312,7 @@ public:
   blitz::Array<T, D>& value() {return val;}
   blitz::Array<T, D+1>& jacobian() 
   { return jac;}
+
   blitz::Array<AutoDerivative<T>, D> to_array() const
   { if(!is_const)
       return auto_derivative(val, jac); 
@@ -319,6 +320,7 @@ public:
     res = auto_derivative(val);
     return res;
   }
+  
   ArrayAd& operator=(const blitz::Array<T, D>& V)
   {  ARRAY_AD_DIAGNOSTIC_MSG; val = V; jac = 0; return *this; }
   ArrayAd& operator=(const T& V)
