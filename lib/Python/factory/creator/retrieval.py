@@ -355,7 +355,13 @@ class MaxAPosterioriBase(Creator):
         iter_log = rf.SolverIterationLog(self.state_vector())
         solver.add_observer(iter_log)
 
+
+
 class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
+    """GSLLM<with S>DER solver
+
+    J. J. More's version of the Levenberg-Marquardt NLLS solver with a diagonal weighting matrix"""
+ 
 
     dx_tol_abs = param.Scalar(float)
     dx_tol_rel = param.Scalar(float)
@@ -364,6 +370,28 @@ class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
     def create(self, **kwargs):
 
         solver = rf.NLLSSolverGSLLMSDER(self.opt_problem(),
+                self.max_cost_function_calls(), self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
+                True)
+
+        self.init_state_vector()
+        self.attach_logging(solver)
+
+        return solver
+
+class NLLSSolverGSLLMDER(MaxAPosterioriBase):
+    """GSLLM<no S>DER solver.
+
+    J. J. More's version of the Levenberg-Marquardt NLLS solver with one difference.  
+    The diagonal weighing matrix is replaced with the identity matrix.
+    """
+
+    dx_tol_abs = param.Scalar(float)
+    dx_tol_rel = param.Scalar(float)
+    g_tol_abs = param.Scalar(float)
+
+    def create(self, **kwargs):
+
+        solver = rf.NLLSSolverGSLLMDER(self.opt_problem(),
                 self.max_cost_function_calls(), self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(),
                 True)
 
@@ -392,7 +420,6 @@ class ConnorSolverMAP(MaxAPosterioriBase):
         self.attach_logging(solver)
 
         return solver
-
  
 class NLLSSolverLM(MaxAPosterioriBase):
 
