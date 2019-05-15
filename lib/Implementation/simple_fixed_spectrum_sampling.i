@@ -17,6 +17,6 @@ public:
 			  double wn_start3, double wn_end3, double wn_step3);
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const;
+		 const DoubleWithUnit& Edge_extension) const;
 };
 }

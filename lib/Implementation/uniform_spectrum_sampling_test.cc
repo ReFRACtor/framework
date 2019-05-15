@@ -17,13 +17,13 @@ BOOST_AUTO_TEST_CASE(basic)
     low_res = 1, 2, 3, 4, 5;
     SpectralDomain low_res_sd(low_res, Unit("cm^-1"));
 
-    DoubleWithUnit ils_half_width(0.5, Unit("cm^-1"));
+    DoubleWithUnit high_res_extension(0.5, Unit("cm^-1"));
 
     Array<double, 1> expect(10);
     expect = 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5;
  
     BOOST_CHECK_EQUAL(uniform_samp.number_spectrometer(), 1);
-    BOOST_CHECK_MATRIX_CLOSE(uniform_samp.spectral_domain(0, low_res_sd, ils_half_width).wavenumber(), expect);
+    BOOST_CHECK_MATRIX_CLOSE(uniform_samp.spectral_domain(0, low_res_sd, high_res_extension).wavenumber(), expect);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

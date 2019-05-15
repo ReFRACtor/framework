@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(small_range)
                                  12930.15, 12931.14, 0.01) );
   ForwardModelSpectralGrid fg(config_instrument, config_spectral_window, spec_samp);
   int num_jac = 2;
-  SpectralDomain sd = spec_samp->spectral_domain(0, lowres_grid(0), ils_half_width(0));
+  SpectralDomain sd = spec_samp->spectral_domain(0, lowres_grid(0), high_res_extension(0));
   ArrayAd<double, 1> spec_range(sd.data().rows(), num_jac);
   spec_range.value() = 0.0;
   spec_range.jacobian() = 0.0;
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(timing)
   ForwardModelSpectralGrid fg(config_instrument, config_spectral_window, config_spectrum_sampling);
   RtAtmosphere& atm = *config_atmosphere;
   SpectralDomain sd = config_spectrum_sampling->
-    spectral_domain(0, lowres_grid(0), ils_half_width(0));
+    spectral_domain(0, lowres_grid(0), high_res_extension(0));
   blitz::Array<double, 1> wn_arr(sd.data());
 
   for(int i = 0; i < wn_arr.rows(); i++) {

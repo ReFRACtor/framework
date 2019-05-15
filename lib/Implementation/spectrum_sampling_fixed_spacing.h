@@ -23,7 +23,7 @@ public:
   virtual ~SpectrumSamplingFixedSpacing() {}
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const;
+		 const DoubleWithUnit& Edge_extension) const;
   virtual void print(std::ostream& Os) const 
   { Os << "SpectrumSamplingFixedSpacing\n"
        << "  Spacing: " << spec_spacing << "\n";}

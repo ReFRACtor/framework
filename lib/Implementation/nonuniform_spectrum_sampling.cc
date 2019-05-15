@@ -84,11 +84,11 @@ void NonuniformSpectrumSampling::print(std::ostream& Os) const
 SpectralDomain NonuniformSpectrumSampling::spectral_domain
 (int spec_index,
  const SpectralDomain& Lowres_grid, 
- const DoubleWithUnit& Ils_half_width) const
+ const DoubleWithUnit& Edge_extension) const
 {
   range_check(spec_index, 0, number_spectrometer());
   SpectralDomain ispec = interpolated_sampling->
-    spectral_domain(spec_index, Lowres_grid, Ils_half_width);
+    spectral_domain(spec_index, Lowres_grid, Edge_extension);
   // If we aren't actually doing nonuniform sampling, just return the
   // spectral domain we want to sample to.
   if(spec_domain[spec_index].data().rows() == 0)

@@ -41,12 +41,12 @@ public:
 
   virtual SpectralDomain spectral_domain_interpolated(int Spec_index, 
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const
+		 const DoubleWithUnit& Edge_extension) const
   { return interpolated_sampling->
-      spectral_domain(Spec_index, Lowres_grid, Ils_half_width); }
+      spectral_domain(Spec_index, Lowres_grid, Edge_extension); }
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const;
+		 const DoubleWithUnit& Edge_extension) const;
 
   virtual bool need_interpolation(int Spec_index) const
   { return (spec_domain[Spec_index].data().rows() > 0); }

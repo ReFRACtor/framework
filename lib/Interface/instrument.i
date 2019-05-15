@@ -38,7 +38,7 @@ public:
     int Spec_index) const = 0;
   %python_attribute(number_spectrometer, virtual int);
   virtual SpectralDomain pixel_spectral_domain(int Spec_index) const = 0;
-  virtual DoubleWithUnit ils_half_width(int Spec_index) const;
-  virtual void ils_half_width(int Spec_index, DoubleWithUnit& half_width);
+  virtual DoubleWithUnit high_res_extension(int Spec_index) const;
+  virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension);
 };
 }

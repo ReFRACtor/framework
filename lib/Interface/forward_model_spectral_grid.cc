@@ -36,7 +36,7 @@ REGISTER_LUA_END()
 
     std::vector<int> plist = pixel_list(Spec_index);
     if (plist.size() > 0) {
-        return spectrum_sampling->spectral_domain(Spec_index, low_resolution_grid(Spec_index), inst->ils_half_width(Spec_index));
+        return spectrum_sampling->spectral_domain(Spec_index, low_resolution_grid(Spec_index), inst->high_res_extension(Spec_index));
     } else {
         return SpectralDomain(blitz::Array<double, 1>(0));
     }
@@ -52,7 +52,7 @@ REGISTER_LUA_END()
 
     std::vector<int> plist = pixel_list(Spec_index);
     if (plist.size() > 0) {
-        return spectrum_sampling->spectral_domain_interpolated(Spec_index, low_resolution_grid(Spec_index), inst->ils_half_width(Spec_index));
+        return spectrum_sampling->spectral_domain_interpolated(Spec_index, low_resolution_grid(Spec_index), inst->high_res_extension(Spec_index));
     } else {
         return SpectralDomain(blitz::Array<double, 1>(0));
     }

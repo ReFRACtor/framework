@@ -7,7 +7,7 @@ using namespace blitz;
 
 SpectralDomain UniformSpectrumSampling::spectral_domain(int spec_index,
                                                         const SpectralDomain& Lowres_grid, 
-                                                        const DoubleWithUnit& Ils_half_width) const
+                                                        const DoubleWithUnit& Edge_extension) const
 {
     range_check(spec_index, 0, spec_spacing.rows());
 
@@ -25,7 +25,7 @@ SpectralDomain UniformSpectrumSampling::spectral_domain(int spec_index,
     std::sort(lowres_conv.begin(), lowres_conv.end());
 
     // Determine an integral amount of spacing units to add to the beginning and end of the grid
-    DoubleWithUnit offset = round(Ils_half_width.convert_wave(u_grid) / spacing) * spacing; 
+    DoubleWithUnit offset = round(Edge_extension.convert_wave(u_grid) / spacing) * spacing; 
 
     // Determine the bounds of the high resolution grid, account for fact the
     // low res grid points might be in a different order before conversion
@@ -38,9 +38,9 @@ SpectralDomain UniformSpectrumSampling::spectral_domain(int spec_index,
     for(int i = 0; i < nsamples; ++i) {
         DoubleWithUnit hr_point(highres_beg + i * spacing.value, u_grid);
 
-        // Only use points that are within a ils_half_width of a low resolution point
+        // Only use points that are within a edge extension amount of a low resolution point
         auto lr_closest = std::lower_bound(lowres_conv.begin(), lowres_conv.end(), hr_point.value);
-        if (abs(hr_point.value - *lr_closest) <= Ils_half_width.convert_wave(u_grid).value) {
+        if (abs(hr_point.value - *lr_closest) <= Edge_extension.convert_wave(u_grid).value) {
             highres_points.push_back(hr_point.convert_wave(u_out).value);
         }
     }

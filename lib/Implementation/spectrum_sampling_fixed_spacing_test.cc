@@ -23,18 +23,18 @@ BOOST_AUTO_TEST_CASE(basic)
   // For debugging //config_spectral_window, 
   if(false) {
     for(int i = 0; i < 3; i++) {
-      Array<double,1> wn(ssamp.spectral_domain(i, lowres_grid(i), ils_half_width(i)).wavenumber());
+      Array<double,1> wn(ssamp.spectral_domain(i, lowres_grid(i), high_res_extension(i)).wavenumber());
       std::cerr << std::setprecision(8) 
         << wn(wn.rows()-1) << ", " << wn(0) << std::endl;
     }
   }
   for(int i = 0; i < 3; ++i) {
     Array<double,1> expect_wl;
-    expect_wl.reference(sexpect.spectral_domain(i, lowres_grid(i), ils_half_width(i)).wavelength());
+    expect_wl.reference(sexpect.spectral_domain(i, lowres_grid(i), high_res_extension(i)).wavelength());
     expect_wl.reverseSelf(firstDim);
 
     BOOST_CHECK_MATRIX_CLOSE_TOL
-      (ssamp.spectral_domain(i, lowres_grid(i), ils_half_width(i)).wavelength(),
+      (ssamp.spectral_domain(i, lowres_grid(i), high_res_extension(i)).wavelength(),
        expect_wl, 1e-6);
   }
 }

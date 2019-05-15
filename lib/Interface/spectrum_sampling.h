@@ -8,8 +8,8 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  This determines the sampling of the spectrum that should be used for
-  each of the spectrum indexes.
+  This determines the sampling of the monochromatic spectrum
+  that should be used for each of the spectrum indexes.
 
   Note that there are a few closely related classes, with similar 
   sounding names. See \ref spectrum_doxygen for a description of each
@@ -28,13 +28,13 @@ public:
 //-----------------------------------------------------------------------
 /// Wavenumbers/Wavelengths to use for the given spectrometer. We pass
 /// in the low resolution grid that we are going to generate after the
-/// ILS convolution, along with the ILS half width so we can generate
+/// ILS convolution, along with the edge extension amount so we can generate
 /// the high resolution points needed to supply the ILS.
 //-----------------------------------------------------------------------
 
   virtual SpectralDomain spectral_domain(int spec_index, 
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const = 0;
+		 const DoubleWithUnit& Edge_extension) const = 0;
 
 //-----------------------------------------------------------------------
 /// The interpolated spectral domain. The default is that this is just
@@ -44,8 +44,8 @@ public:
 
   virtual SpectralDomain spectral_domain_interpolated(int Spec_index, 
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const
-  { return spectral_domain(Spec_index, Lowres_grid, Ils_half_width); }
+		 const DoubleWithUnit& Edge_extension) const
+  { return spectral_domain(Spec_index, Lowres_grid, Edge_extension); }
 
 //-----------------------------------------------------------------------
 /// Indicate if spectral_domain and spectral_domain_interpolated are

@@ -34,8 +34,8 @@ public:
   // Needed for directors, can not use %python_attribute here or else there will
   // be missing symbol problems in the director
   virtual const SpectralDomain pixel_grid() const = 0;
-  virtual const DoubleWithUnit ils_half_width() const = 0;
-  virtual void ils_half_width(const DoubleWithUnit& half_width) = 0;
+  virtual const DoubleWithUnit high_res_extension() const = 0;
+  virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
 };
 }
 

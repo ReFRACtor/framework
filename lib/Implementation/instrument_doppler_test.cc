@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(wavenumber)
   InstrumentDoppler inst_dopp(rel_vel);
 
   SimpleFixedSpectrumSampling grid(12930.15, 13209.94, 0.01);
-  SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), ils_half_width(0)));
+  SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), high_res_extension(0)));
   Array<double, 1> range_vals(sd.data().rows());
   range_vals = 0;
   Spectrum spec(sd, SpectralRange(range_vals, units::dimensionless));
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(wavelength)
   InstrumentDoppler inst_dopp(rel_vel);
 
   SimpleFixedSpectrumSampling grid(12930.15, 13209.94, 0.01);
-  SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), ils_half_width(0)));
+  SpectralDomain sd(grid.spectral_domain(0, lowres_grid(0), high_res_extension(0)));
   Array<double, 1> range_vals(sd.data().rows());
   range_vals = 0;
   Spectrum spec(SpectralDomain(sd.wavelength(), units::micron), 

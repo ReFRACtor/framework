@@ -62,12 +62,12 @@ public:
   virtual SpectralDomain pixel_spectral_domain(int Spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// This is the half width of the ILS in wavenumber.
+/// This is the amount of spectral points added on each edge of the
+/// monochromatic grid to allow for enough points for ILS convolution
 //-----------------------------------------------------------------------
 
-  virtual DoubleWithUnit
-  ils_half_width(int Spec_index) const = 0;
-  virtual void ils_half_width(int Spec_index, DoubleWithUnit& half_width) = 0;
+  virtual DoubleWithUnit high_res_extension(int Spec_index) const = 0;
+  virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension) = 0;
   virtual void print(std::ostream& Os) const {Os << "Instrument";}
 };
 }

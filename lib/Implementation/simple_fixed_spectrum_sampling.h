@@ -29,7 +29,7 @@ public:
 
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& UNUSED(Lowres_grid), 
-		 const DoubleWithUnit& UNUSED(Ils_half_width)) const
+		 const DoubleWithUnit& UNUSED(Edge_extension)) const
   { range_check(spec_index, 0, number_spectrometer()); 
     return spec_domain[spec_index];}
   virtual void print(std::ostream& Os) const;

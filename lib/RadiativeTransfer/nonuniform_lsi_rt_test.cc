@@ -96,9 +96,9 @@ BOOST_AUTO_TEST_CASE(stokes)
 
   for(int i = 0 ; i < 3; ++i) {
     SpectralDomain sd1 = unif_rt_grid->spectral_domain(i, lowres_grid(i), 
-                                                       ils_half_width(i));
+                                                       high_res_extension(i));
     SpectralDomain sd2 = nonunif_rt_grid.spectral_domain(i, lowres_grid(i), 
-                                                         ils_half_width(i));
+                                                         high_res_extension(i));
     Array<double, 1> refl_unif_1 = 
       rt.reflectance(sd1, i, true).spectral_range().data();
     Array<double, 1> refl_nonunif_1 = 
@@ -144,9 +144,9 @@ BOOST_AUTO_TEST_CASE(stokes_and_jacobian)
 
   for(int i = 0 ; i < 3; ++i) {
     SpectralDomain sd1 = unif_rt_grid->spectral_domain(i, lowres_grid(i), 
-                                                       ils_half_width(i));
+                                                       high_res_extension(i));
     SpectralDomain sd2 = nonunif_rt_grid.spectral_domain(i, lowres_grid(i), 
-                                                         ils_half_width(i));
+                                                         high_res_extension(i));
     ArrayAd<double, 1> refl_unif_1 = 
       rt.reflectance(sd1, i).spectral_range().data_ad();
     ArrayAd<double, 1> refl_nonunif_1 = 

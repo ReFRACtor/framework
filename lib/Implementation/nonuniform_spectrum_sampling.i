@@ -21,6 +21,6 @@ public:
      const boost::shared_ptr<SpectrumSampling>& Interpolated_sampling);
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const;
+		 const DoubleWithUnit& Edge_extension) const;
 };
 }

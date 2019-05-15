@@ -21,10 +21,10 @@ public:
   %python_attribute(number_spectrometer, int);
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
-		 const DoubleWithUnit& Ils_half_width) const = 0;
+		 const DoubleWithUnit& Edge_extension) const = 0;
   virtual SpectralDomain spectral_domain_interpolated(int Spec_index, 
 		 const SpectralDomain& Lowres_grid, 
-	         const DoubleWithUnit& Ils_half_width) const;
+	         const DoubleWithUnit& Edge_extension) const;
   virtual bool need_interpolation(int Spec_index) const;
 };
 }
