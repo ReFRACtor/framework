@@ -1,5 +1,5 @@
 #include "ils_instrument.h"
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
 #include "sample_grid_spectral_domain.h"
@@ -25,19 +25,19 @@ BOOST_AUTO_TEST_CASE(basic)
     d(new DispersionPolynomial(coeff, flag, units::inv_cm, ils_tab->band_name(),
                                1805, true));
   std::vector<boost::shared_ptr<Ils> > ils;
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
   
   coeff = 5.74982835e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 1, "WC-Band", "weak_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
                                    ils_tab->band_name(), 3508, true));
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   coeff = 4.74980283e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 2, "SC-Band", "strong_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
                                    ils_tab->band_name(), 2005, true));
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   IlsInstrument inst(ils);
   StateVector sv;
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE(basic)
   for(int i = 407; i <= 414; ++i)
     plist.push_back(i);
 
-  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  IfstreamCs expected(test_data_dir() + "expected/ils_grating/basic");
   Array<double, 1> wn_in, rad_hres_in, rad_out_expect;
   expected >> wn_in >> rad_hres_in >> rad_out_expect;
   SpectralDomain sd(wn_in, units::inv_cm);
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(basic_static_test)
   boost::shared_ptr<SampleGridSpectralDomain>
     sg(new SampleGridSpectralDomain(sd_in, ils_tab->band_name()));
   std::vector<boost::shared_ptr<Ils> > ils;
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(sg, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(sg, ils_tab)));
 
   IlsInstrument inst(ils);
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(basic_static_test)
   for(int i = 407; i <= 414; ++i)
     plist.push_back(i);
 
-  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  IfstreamCs expected(test_data_dir() + "expected/ils_grating/basic");
   Array<double, 1> wn_in, rad_hres_in, rad_out_expect;
   expected >> wn_in >> rad_hres_in >> rad_out_expect;
   SpectralDomain sd(wn_in, units::inv_cm);
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE(timing)
 {
   is_timing_test();
   const Instrument& inst = *config_instrument;
-  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  IfstreamCs expected(test_data_dir() + "expected/ils_grating/basic");
   Array<double, 1> wn_in, rad_hres_val;
   expected >> wn_in >> rad_hres_val;
   Array<double, 2> rad_hres_jac(rad_hres_val.rows(), 

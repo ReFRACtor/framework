@@ -1202,8 +1202,8 @@ function ConfigCommon.ils_instrument:create_parent_object(sub_object)
    local ils = VectorIls()
    local i, ilf
    for i, ilf in ipairs(self.config.ils_func) do
-      ils:push_back(IlsConvolution(self.config.dispersion[i], ilf, 
-                                   self.ils_half_width[i]))
+      ils:push_back(IlsGrating(self.config.dispersion[i], ilf, 
+                               self.ils_half_width[i]))
    end
    return IlsInstrument(ils, self.config.instrument_correction)
 end

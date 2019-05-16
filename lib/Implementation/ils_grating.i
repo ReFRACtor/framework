@@ -1,22 +1,22 @@
 %include "common.i"
 
 %{
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "sub_state_vector_array.h"
 %}
 
 %base_import(ils_imp_base)
 %import "ils_function.i"
 
-%fp_shared_ptr(FullPhysics::IlsConvolution);
+%fp_shared_ptr(FullPhysics::IlsGrating);
 
 namespace FullPhysics {
-class IlsConvolution : public IlsImpBase {
+class IlsGrating : public IlsImpBase {
 public:
-    IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
+    IlsGrating(const boost::shared_ptr<SampleGrid>& Disp,
                    const boost::shared_ptr<IlsFunction>& Ils_func,
                    const DoubleWithUnit& Ils_half_width = DoubleWithUnit(20, units::inv_cm));
-    IlsConvolution(const boost::shared_ptr<SampleGrid>& Disp,
+    IlsGrating(const boost::shared_ptr<SampleGrid>& Disp,
                    const boost::shared_ptr<IlsFunction>& Ils_func,
                    double Ils_half_width);
     virtual blitz::Array<double, 1> apply_ils

@@ -196,7 +196,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(IlsTableLinear);
   REGISTER_LUA_LIST(IlsTableLog);
   REGISTER_LUA_LIST(DispersionPolynomial);
-  REGISTER_LUA_LIST(IlsConvolution);
+  REGISTER_LUA_LIST(IlsGrating);
   REGISTER_LUA_LIST(IlsInstrument);
   REGISTER_LUA_LIST(SpectrumSampling);
   REGISTER_LUA_LIST(ForwardModel);

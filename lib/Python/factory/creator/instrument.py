@@ -7,7 +7,7 @@ from .. import param
 from refractor import framework as rf
 
 
-class IlsInstrument(Creator):
+class IlsGratingInstrument(Creator):
 
     ils_half_width = param.ArrayWithUnit(dims=1)
     dispersion = param.Iterable(rf.SampleGrid)
@@ -21,7 +21,7 @@ class IlsInstrument(Creator):
 
         ils_vec = rf.vector_ils()
         for disp, ils_func, half_width in zip(dispersion, self.ils_function(), self.ils_half_width()):
-            ils_vec.push_back(rf.IlsConvolution(disp, ils_func, half_width))
+            ils_vec.push_back(rf.IlsGrating(disp, ils_func, half_width))
         return rf.IlsInstrument(ils_vec, self.instrument_correction())
 
 

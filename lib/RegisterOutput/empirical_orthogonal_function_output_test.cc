@@ -1,7 +1,7 @@
 #include "unit_test_support.h"
 #include "empirical_orthogonal_function_output.h"
 #include "ils_instrument.h"
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
 #include "ils_table.h"
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(basic)
     d(new DispersionPolynomial(coeff, flag, units::inv_cm, 
 			       ils_tab->band_name(), 1805, true));
   std::vector<boost::shared_ptr<Ils> > ils;
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
   boost::shared_ptr<EmpiricalOrthogonalFunction> 
     zoff(new EmpiricalOrthogonalFunction(1.0, true, *d, hf_eof, 0, 0, 1, ils_tab->band_name()));
 

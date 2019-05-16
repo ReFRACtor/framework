@@ -51,7 +51,7 @@ set(DIR_SOURCES
     gsl_sm_lsp.cc
     hdf_constant.cc
     helical_valley_nlls_problem.cc
-    ils_convolution.cc
+    ils_grating.cc
     ils_gaussian.cc
     ils_instrument.cc
     ils_table.cc
@@ -158,7 +158,7 @@ set(TEST_SOURCES
     ground_emissivity_piecewise_test.cc
     ground_lambertian_test.cc
     hdf_constant_test.cc
-    ils_convolution_test.cc
+    ils_grating_test.cc
     ils_gaussian_test.cc
     ils_instrument_test.cc
     ils_table_test.cc

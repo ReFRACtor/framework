@@ -1,6 +1,6 @@
 #include "empirical_orthogonal_function.h"
 #include "ils_instrument.h"
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
 #include "ils_table.h"
@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(basic)
     d(new DispersionPolynomial(coeff, flag, units::inv_cm, 
                                ils_tab->band_name(), 1805, true));
   std::vector<boost::shared_ptr<Ils> > ils;
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
   boost::shared_ptr<EmpiricalOrthogonalFunction> 
     eof(new EmpiricalOrthogonalFunction(1.0, true, *d, hf_eof, 0, 0, 1, ils_tab->band_name()));
   corr[0].push_back(eof);
@@ -37,13 +37,13 @@ BOOST_AUTO_TEST_CASE(basic)
   ils_tab.reset(new IlsTableLinear(hf_ils, 1, "WC-Band", "weak_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
                                    ils_tab->band_name(), 3508, true));
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   coeff = 4.74980283e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf_ils, 2, "SC-Band", "strong_co2"));
   d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
                                    ils_tab->band_name(), 2005, true));
-  ils.push_back(boost::shared_ptr<Ils>(new IlsConvolution(d, ils_tab)));
+  ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   IlsInstrument inst(ils, corr);
   StateVector sv;
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(basic)
   for(int i = 407; i <= 414; ++i)
     plist.push_back(i);
 
-  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  IfstreamCs expected(test_data_dir() + "expected/ils_grating/basic");
   Array<double, 1> wn_in, rad_hres_in, rad_out_expect;
   expected >> wn_in >> rad_hres_in >> rad_out_expect;
   for(int i = 0; i < (int) plist.size(); ++i)
