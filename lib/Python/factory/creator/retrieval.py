@@ -314,8 +314,10 @@ class LegacyConnorSolver(Creator):
         solver = rf.ConnorSolver(cost_func, conv, self.gamma_initial())
         solver.solve = create_solve_wrapper(solver, self)
 
+        # Use add_observer_and_keep_reference to keep observer from going away as soon
+        # as this function ends, since observers are normally kept by a weak reference
         iter_log = rf.ConnorIterationLog(sv)
-        solver.add_observer(iter_log)
+        solver.add_observer_and_keep_reference(iter_log)
 
         return solver
 
@@ -352,8 +354,10 @@ class MaxAPosterioriBase(Creator):
         return opt_problem
 
     def attach_logging(self, solver):
+        # Use add_observer_and_keep_reference to keep observer from going away as soon
+        # as this function ends, since observers are normally kept by a weak reference
         iter_log = rf.SolverIterationLog(self.state_vector())
-        solver.add_observer(iter_log)
+        solver.add_observer_and_keep_reference(iter_log)
 
 
 
