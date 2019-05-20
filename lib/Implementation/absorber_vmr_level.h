@@ -19,6 +19,11 @@ public:
 		   const blitz::Array<bool, 1>& Vmr_flag,
 		   const std::string& Gas_name,
 		   boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
+  AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
+             const blitz::Array<double, 1>& Vmr,
+             const bool Vmr_flag,
+             const std::string& Gas_name,
+             boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
   virtual ~AbsorberVmrLevel() {}
   virtual void print(std::ostream& Os) const;
   virtual std::string sub_state_identifier() const
@@ -30,6 +35,11 @@ public:
   { return clone(boost::shared_ptr<Pressure>()); }
   virtual boost::shared_ptr<AbsorberVmr> 
   clone(const boost::shared_ptr<Pressure>& Press) const;
+
+//-----------------------------------------------------------------------
+/// Pressure levels that vmr is on
+//-----------------------------------------------------------------------
+  blitz::Array<double, 1> pressure_profile() const;
 
 //-----------------------------------------------------------------------
 /// VMR on the pressure grid. This is just the forward model view of
