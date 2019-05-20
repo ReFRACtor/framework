@@ -16,7 +16,7 @@ public:
                             const blitz::Array<double, 1>& Vmr_profile,
                             double Scale,
                             const blitz::Array<bool, 1>& Scale_flag,
-                            const std::string& Gas_name)
+                            const std::string& Gas_name);
     virtual boost::shared_ptr<AbsorberVmr> clone() const;
     virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
     %python_attribute(sub_state_identifier, std::string);
