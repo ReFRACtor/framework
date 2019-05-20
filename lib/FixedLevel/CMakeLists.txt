@@ -1,23 +1,17 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     absorber_vmr_fixed_level.cc
-    absorber_vmr_fixed_level_output.cc
     absorber_vmr_fixed_level_scaled.cc
-    absorber_vmr_fixed_level_scaled_output.cc
     pressure_fixed_level.cc
-    pressure_fixed_level_output.cc
     pressure_level_input.cc
     temperature_fixed_level.cc
-    temperature_fixed_level_output.cc
 )
 
 set(TEST_SOURCES
     absorber_vmr_fixed_level_scaled_test.cc
     absorber_vmr_fixed_level_test.cc
-    pressure_fixed_level_output_test.cc
     pressure_fixed_level_test.cc
     pressure_level_input_test.cc
-    temperature_fixed_level_output_test.cc
     temperature_fixed_level_test.cc
 )
 

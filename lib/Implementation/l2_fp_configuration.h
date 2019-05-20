@@ -14,8 +14,7 @@
 namespace FullPhysics {
 /****************************************************************//**
    Before running L2 full physics, we need to create the solver that
-   we will be using, along with registering whatever output we will
-   be generating.
+   we will be using.
 
    This class gives the minimum interface needed for the
    configuration, so we can use different methods of actually doing
@@ -64,9 +63,7 @@ public:
 
 //-----------------------------------------------------------------------
 /// Create output, for both a normal run and for an error run (either
-/// or both can be null if we don't want output). This should have all
-/// the RegisterOutputBase applied to it that the configuration says
-/// should be.
+/// or both can be null if we don't want output).
 //-----------------------------------------------------------------------
 
   virtual void output(boost::shared_ptr<Output>& Regular_output,

@@ -2,7 +2,6 @@
 #include "hdf_file_generating.h"
 #include "output_hdf.h"
 #include "output_hdf_iteration.h"
-#include "register_output_base.h"
 #include "state_vector.h"
 using namespace FullPhysics;
 
@@ -31,15 +30,6 @@ void L2FpConfigurationLua::output(boost::shared_ptr<Output>& Regular_output,
     (new OutputHdf(output_name_ + ".error", npres, 
 		   sv_claimed_size, 
 		   num_aer_part + 1, nband));
-  std::vector<boost::shared_ptr<RegisterOutputBase> > out_reg
-    = ls->globals()["register_output"].value<std::vector<boost::shared_ptr<RegisterOutputBase> > >();
-  BOOST_FOREACH(const boost::shared_ptr<RegisterOutputBase>& r, out_reg) {
-    r->register_output(Regular_output);
-    r->register_output(Error_output);
-    if(out_iteration)
-      r->register_output(out_iteration);
-    r->register_output_apriori(Regular_output);
-    r->register_output_apriori(Error_output);
-  }
-  
+
+  /* Removed output, previously done via RegisterOutput family here */
 }

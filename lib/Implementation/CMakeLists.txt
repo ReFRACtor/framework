@@ -150,7 +150,6 @@ set(TEST_SOURCES
     error_analysis_test.cc
     fluorescence_effect_test.cc
     fp_logger_test.cc
-    full_output_test.cc
     gas_vmr_apriori_test.cc
     ground_brdf_test.cc
     ground_coxmunk_plus_lambertian_test.cc
