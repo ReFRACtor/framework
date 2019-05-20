@@ -9,7 +9,6 @@
 #include "spectrum_sampling.h"
 #include "level_1b_sample_coefficient.h"
 #include "initial_guess.h"
-#include "register_output_base.h"
 #include "instrument.h"
 #include "sample_grid.h"
 #include "rt_atmosphere.h"
@@ -47,7 +46,6 @@ public:
   boost::shared_ptr<ConnorSolver> config_solver;
   boost::shared_ptr<SpectralWindow> config_spectral_window;
   boost::shared_ptr<InitialGuess> config_initial_guess;
-  std::vector<boost::shared_ptr<RegisterOutputBase> > config_register_output;
   boost::shared_ptr<Instrument> config_instrument;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;

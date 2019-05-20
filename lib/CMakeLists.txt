@@ -13,7 +13,7 @@ set(SWIG_INTERFACE_FILES "")
 file(GLOB LIB_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
 install(FILES ${LIB_INCLUDE_FILES} DESTINATION include/refractor)
 
-foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua RegisterOutput Support Example)
+foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Support Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
     add_subdirectory(${sub_dir})
 

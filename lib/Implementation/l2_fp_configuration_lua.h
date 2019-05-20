@@ -35,11 +35,6 @@ namespace FullPhysics {
        Can be 0. This is used to size the output file.
    \li iteration_output - Boolean. True if we should write out iteration
        output
-   \li register_output - A
-       std::vector<boost::shared_ptr<RegisterOutputBase> > giving the
-       list of output that should be generated. This list can empty if
-       no output is desired. The Lua type for this is called 
-       VectorRegisterOutput (since Lua doesn't have templates).
 *******************************************************************/
 
 class L2FpConfigurationLua : public L2FpConfiguration {
