@@ -155,12 +155,14 @@ class SpectrumEffectList(Creator):
         return spec_eff
 
 class FluorescenceEffect(CreatorFlaggedValue):
+    
+      reference_point = param.ArrayWithUnit(dims=1)
+      cov_unit = param.InstanceOf(rf.Unit)
+      which_channels = param.Iterable()
 
       atmosphere = param.InstanceOf(rf.AtmosphereOco)
       observation_zenith = param.ArrayWithUnit(dims=1)
-      reference_point = param.ArrayWithUnit(dims=1)
       stokes_coefficient = param.Array(dims=2)
-      cov_unit = param.InstanceOf(rf.Unit)
       num_channels = param.Scalar(int)
 
       def create(self, **kwargs):
@@ -174,10 +176,16 @@ class FluorescenceEffect(CreatorFlaggedValue):
           cov_unit = self.cov_unit()
           num_channels = self.num_channels()
 
-          fluoresence = []
-          # Loop over all windows adding fluoresence object for each
-          for i in range(num_channels):
-              fluoresence.append(rf.FluorescenceEffect(coeff, used_flag, atm, stokes_coeff, lza[i], i, ref_point, cov_unit))
+          # Create array for all channels, but filled with null objects (None)
+          fluoresence = [None] * num_channels
+
+          for chan_idx in self.which_channels():
+              chan_idx = int(chan_idx)
+
+              if chan_idx >= num_channels:
+                  raise ParamError("Channel index {} exceeds number of channels {}".format(chan_idx, num_channels))
+
+              fluoresence[chan_idx] = rf.FluorescenceEffect(coeff, used_flag, atm, stokes_coeff, lza[chan_idx], chan_idx, ref_point, cov_unit)
 
           return fluoresence
 
