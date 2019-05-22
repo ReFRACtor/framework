@@ -58,6 +58,13 @@ class StrategyExecutor(object):
 
         return config_def
 
+    def config_instance(self, **strategy_keywords):
+
+        config_def = self.config_definition(**step_keywords)
+        config_inst = process_config(config_def)
+
+        return config_inst
+
     def strategy_list(self):
 
         if self.strategy_module is not None:
@@ -96,8 +103,7 @@ class StrategyExecutor(object):
             logger.debug("Strategy step options:")
             logger.debug(pprint.pformat(step_keywords, indent=2))
 
-            config_def = self.config_definition(**step_keywords)
-            config_inst = process_config(config_def)
+            config_inst = self.config_instance(**step_keywords)
 
             self.run_solver(config_inst)
 
@@ -114,8 +120,7 @@ class StrategyExecutor(object):
 
         step_keywords = strategy[step_index]
         
-        config_def = self.config_definition(**step_keywords)
-        config_inst = process_config(config_def)
+        config_inst = self.config_instance(**step_keywords)
 
         self.run_forward_model(config_inst)
 
