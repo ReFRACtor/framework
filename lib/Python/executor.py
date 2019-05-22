@@ -27,9 +27,9 @@ def ObjectCapture(capture_class):
 
     return ObjectCaptureCreator
 
-class RetrievalStrategyExecutor(object):
+class StrategyExecutor(object):
     
-    def __init__(self, config_filename, strategy_filename=None):
+    def __init__(self, config_filename, output_filename=None, strategy_filename=None):
 
         logger.debug("Loading configuration from {}".format(config_filename))
         self.config_module = load_config_module(config_filename)
@@ -71,18 +71,52 @@ class RetrievalStrategyExecutor(object):
         config_inst['solver'].solve()
         config_inst['state_vector'].clear_observers()
 
-    def execute_retrieval(self):
+    def run_forward_model(self, config_inst):
+
+        config_inst['forward_model'].radiance_all()
+
+    def execute_retrieval(self, step_indexes=None):
 
         strategy = self.strategy_list()
         logger.debug("{} strategy steps loaded".format(len(strategy)))
 
-        for step_index, step_keywords in enumerate(strategy):
-            logger.info("Executing step #{}".format(step_index+1))
+        if step_indexes is None or len(step_indexes) == 0:
+            step_indexes = range(len(strategy))
+        else:
+            logger.debug("Using {} steps".format(len(step_indexes)))
+
+        for step_index in step_indexes:
+            if step_index < 0 or step_index >= len(strategy):
+                raise Exception("Invalid step index: {}".format(step_index))
+
+            logger.info("Executing retrieval step {}".format(step_index))
+
+            step_keywords = strategy[step_index]
 
             logger.debug("Strategy step options:")
             logger.debug(pprint.pformat(step_keywords, indent=2))
 
             config_def = self.config_definition(**step_keywords)
             config_inst = process_config(config_def)
+
             self.run_solver(config_inst)
+
             del config_inst
+
+    def execute_simulation(self, step_index=0):
+
+        strategy = self.strategy_list()
+
+        if step_index < 0 or step_index >= len(strategy):
+            raise Exception("Invalid step index: {}".format(step_index))
+
+        logger.info("Executing simulation for step {}".format(step_index))
+
+        step_keywords = strategy[step_index]
+        
+        config_def = self.config_definition(**step_keywords)
+        config_inst = process_config(config_def)
+
+        self.run_forward_model(config_inst)
+
+        del config_inst
