@@ -111,6 +111,14 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; pri
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
     FILES_MATCHING PATTERN "*.py")
 
+# Create version.py file by evaluating cmake variables
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/version.py.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/version.py"
+)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor)
+
 # Install SWIG Python code into refractor_swig/
 install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig

@@ -41,7 +41,8 @@ class MicroWindowRanges(Creator):
 
     # List of microwindows to be mapped to spectral channels
     # n_microwindows x 2
-    micro_windows = param.ArrayWithUnit(dims=2, required=False)
+    # Defaults to full_ranges if not supplied or equal to None
+    micro_windows = param.Choice(param.ArrayWithUnit(dims=2), param.NoneValue(), required=False)
 
     def create(self, **kwargs):
 
