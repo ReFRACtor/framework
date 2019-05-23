@@ -7,10 +7,6 @@ namespace FullPhysics {
 /****************************************************************//**
  Adds name and spec index fields to a Spectrum. Useful for sending
  Spectrum files to output files.
-
-  Note that there are a few closely related classes, with similar 
-  sounding names. See \ref spectrum_doxygen for a description of each
-  of these.
 *******************************************************************/
 class NamedSpectrum: public Spectrum {
 public:
