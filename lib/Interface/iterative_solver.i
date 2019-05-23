@@ -9,10 +9,11 @@
 
 %fp_shared_ptr(FullPhysics::IterativeSolver);
 
-%fp_shared_ptr(FullPhysics::Observer<FullPhysics::IterativeSolver>);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::IterativeSolver>);
-%template(ObserverIterativeSolver) FullPhysics::Observer<FullPhysics::IterativeSolver>;
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::IterativeSolver>);
 %template(ObservableIterativeSolver) FullPhysics::Observable<FullPhysics::IterativeSolver>;
+%template(ObserverIterativeSolver) FullPhysics::Observer<FullPhysics::IterativeSolver>;
+%feature("director") FullPhysics::Observer<FullPhysics::IterativeSolver>;
 
 namespace FullPhysics {
 class IterativeSolver : public Observable<IterativeSolver> {
