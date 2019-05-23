@@ -55,7 +55,11 @@ Spectrum StandardForwardModel::radiance
                         Skip_jacobian);
     notify_spectrum_update(highres_spec, "high_res_rt", channel_index);
 
-    return apply_spectrum_corrections(highres_spec, channel_index);
+    Spectrum convolved_spec = apply_spectrum_corrections(highres_spec, channel_index);
+
+    notify_spectrum_update(convolved_spec, "convolved", channel_index);
+
+    return convolved_spec;
 }
 
 //-----------------------------------------------------------------------
