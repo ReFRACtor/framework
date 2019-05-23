@@ -3,9 +3,13 @@ import sys
 import logging
 import pprint
 
-from refractor.config import load_config_module, find_config_function, find_strategy_function
-from refractor.factory import process_config, creator
-from refractor import framework as rf
+from netCDF4 import Dataset
+
+from .config import load_config_module, find_config_function, find_strategy_function
+from .factory import process_config, creator
+from . import framework as rf
+
+from .output.radiance import ForwardModelRadianceOutput
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +44,11 @@ class StrategyExecutor(object):
         else:
             self.strategy_module = None
 
+        if output_filename is not None:
+            self.output = Dataset(output_filename, "w")
+        else:
+            self.output = None
+
     def config_definition(self, **strategy_keywords):
 
         config_func = find_config_function(self.config_module)
@@ -60,7 +69,7 @@ class StrategyExecutor(object):
 
     def config_instance(self, **strategy_keywords):
 
-        config_def = self.config_definition(**step_keywords)
+        config_def = self.config_definition(**strategy_keywords)
         config_inst = process_config(config_def)
 
         return config_inst
@@ -73,12 +82,34 @@ class StrategyExecutor(object):
             # A single empty strategy
             return [ {} ]
 
-    def run_solver(self, config_inst):
-        
+    def attach_logging(self, config_inst):
+
+        iter_log = rf.SolverIterationLog(config_inst['state_vector'])
+        config_inst['solver'].add_observer_and_keep_reference(iter_log)
+
+    def attach_output(self, config_inst, step_index=None):
+
+        if self.output is None:
+            return
+
+        rad_out = ForwardModelRadianceOutput(self.output, step_index, config_inst['solver'])
+        config_inst['forward_model'].add_observer_and_keep_reference(rad_out)
+
+    def run_solver(self, config_inst, step_index=None):
+
+        self.attach_logging(config_inst)
+        self.attach_output(config_inst, step_index)
+
+        if config_inst['solver'] is None:
+            raise Exception("Solver object was not defined in configuration")
+            return
+
         config_inst['solver'].solve()
         config_inst['state_vector'].clear_observers()
 
     def run_forward_model(self, config_inst):
+
+        self.attach_output(config_inst )
 
         config_inst['forward_model'].radiance_all()
 
@@ -105,7 +136,7 @@ class StrategyExecutor(object):
 
             config_inst = self.config_instance(**step_keywords)
 
-            self.run_solver(config_inst)
+            self.run_solver(config_inst, step_index)
 
             del config_inst
 
