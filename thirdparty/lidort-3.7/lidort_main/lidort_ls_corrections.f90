@@ -193,10 +193,11 @@ SUBROUTINE LIDORT_LS_DBCORRECTION                                       &
 !  Initialize
 
       DO V = 1, N_GEOMETRIES
-        DO UTA = 1, N_USER_LEVELS
-          DO K = 1, N_SURFACE_WFS
+        DO K = 1, N_SURFACE_WFS
+          DO UTA = 1, N_USER_LEVELS
             SURFACEWF_DB(K,UTA,V)  = ZERO
           ENDDO
+          LS_DB_CUMSOURCE(K,V) = ZERO
         ENDDO
       ENDDO
 

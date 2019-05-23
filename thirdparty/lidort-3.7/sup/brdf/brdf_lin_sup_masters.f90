@@ -2338,6 +2338,8 @@
           DO P = 1, MAX_BRDF_PARAMETERS
             LOCAL_BRDF_DERIVS(P) = DO_KERNEL_PARAMS_WFS(K,P)
           ENDDO
+        ELSE
+          LOCAL_BRDF_DERIVS(:) = .FALSE.
         ENDIF
 
 !  Coxmunk shadow flag
