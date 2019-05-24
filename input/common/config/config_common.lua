@@ -309,7 +309,6 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:do_config()
-   -- RegRemove self.register_output = VectorRegisterOutput()
    local t = self.fm
    local c = t.creator:new(t, self, "forward_model")
 
@@ -331,7 +330,6 @@ function ConfigCommon:do_config()
       self:create_error_analysis()
    end
 
-   -- RegRemove c:register_output(self.register_output)
 
    -- To have the minimum requirements, L2FpConfigurationLua
    -- just requires a few global variables to be set. Copy
@@ -349,7 +347,6 @@ function ConfigCommon:do_config()
    number_aerosol = self.number_aerosol
    number_band = self.spec_win:number_spectrometer()
    iteration_output = self.iteration_output
-   -- RegRemove register_output = self.register_output
 end
 
 ------------------------------------------------------------
@@ -1539,7 +1536,6 @@ function ConfigCommon.level1b_scale_radiance:create()
     if (self.unscaled_l1b == nil) then
         error("unscaled_l1b block undefined for level1b_scale_radiance")
     end
-    -- RegRemove self.unscaled_l1b.creator.register_output = nil
     return CompositeCreator.create(self)
 end
 
