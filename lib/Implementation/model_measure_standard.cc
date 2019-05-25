@@ -16,21 +16,21 @@ ModelMeasureStandard::ModelMeasureStandard(const boost::shared_ptr<ForwardModel>
 void ModelMeasureStandard::model_eval()
 {
   if(M.size() <= 0)
-    radiance_from_fm(true);
+    radiance_from_fm();
 }
 
 
 void ModelMeasureStandard::jacobian_eval()
 {
   if(K.size() <= 0)
-    radiance_from_fm(false);
+    radiance_from_fm();
 }
 
 
 void ModelMeasureStandard::model_jacobian_eval()
 {
   if((K.size() <= 0) or (M.size() <= 0))
-    radiance_from_fm(false);
+    radiance_from_fm();
 }
 
 int ModelMeasureStandard::expected_parameter_size() const
@@ -39,10 +39,9 @@ int ModelMeasureStandard::expected_parameter_size() const
 }
 
 
-void ModelMeasureStandard::radiance_from_fm(bool Skip_jacobian)
+void ModelMeasureStandard::radiance_from_fm()
 {
   assert_parameter_set_correctly();
-  sv->update_state(X);
 
   //  TEMPORARY
   //
@@ -59,23 +58,23 @@ void ModelMeasureStandard::radiance_from_fm(bool Skip_jacobian)
   if( sum(abs(temp_msrmnt-msrmnt))/msrmnt_L1_norm > 0.0000001 )
     throw Exception("Measurement has changed during the retrieval. :( ");
 
-  Spectrum rad_spec = fm->radiance_all(Skip_jacobian);
+  Spectrum rad_spec = fm->radiance_all(false);
   SpectralRange rad_mod = rad_spec.spectral_range().convert(meas_units);
   M.reference(rad_mod.data_ad().value());
   assert_model_correct(M);
   M.makeUnique();
-  if(!Skip_jacobian) {
-    K.reference(rad_mod.data_ad().jacobian());
-    assert_jacobian_correct(K);
 
-    //  TEMPORARY
-    //
-    // Should go away after we end support for 
-    // fixed pressure level grid.
-    vanishing_params_update();
+  K.reference(rad_mod.data_ad().jacobian());
+  assert_jacobian_correct(K);
 
-    K.makeUnique();
-  }
+  //  TEMPORARY
+  //
+  // Should go away after we end support for 
+  // fixed pressure level grid.
+  vanishing_params_update();
+
+  K.makeUnique();
+
 }
 
 

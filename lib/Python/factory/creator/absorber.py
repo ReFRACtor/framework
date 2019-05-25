@@ -283,7 +283,7 @@ class AbsorberAbsco(Creator):
             absorptions.push_back(gas_def['absorption'])
 
         if self.num_sub_layers() is not None:
-            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants(), self.number_sub_layers())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants(), self.num_sub_layers())
         else:
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
 

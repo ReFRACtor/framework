@@ -8,7 +8,7 @@ namespace FullPhysics {
 /****************************************************************//**
   This class models an Instrument Line Shape (ILS) function. This
   returns the response around a given wave number, for a given set of
-  wavenumbers. This class is use by IlsConvolution.
+  wavenumbers. 
 
   It is not guaranteed that the function is normalized, the calling
   class should normalize this if needed. 

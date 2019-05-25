@@ -1,4 +1,4 @@
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "hdf_file.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
@@ -7,13 +7,13 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(IlsConvolution, Ils)
+REGISTER_LUA_DERIVED_CLASS(IlsGrating, Ils)
 .def(luabind::constructor<const boost::shared_ptr<SampleGrid>&, const boost::shared_ptr<IlsFunction>&>())
 .def(luabind::constructor<const boost::shared_ptr<SampleGrid>&, const boost::shared_ptr<IlsFunction>&, DoubleWithUnit&>())
 REGISTER_LUA_END()
 #endif
 
-IlsConvolution::IlsConvolution(const boost::shared_ptr<SampleGrid>& Sample_grid,
+IlsGrating::IlsGrating(const boost::shared_ptr<SampleGrid>& Sample_grid,
                                const boost::shared_ptr<IlsFunction>& Ils_func,
                                const DoubleWithUnit& Ils_half_width)
 : IlsImpBase(Sample_grid, Ils_half_width), ils_func(Ils_func)
@@ -21,7 +21,7 @@ IlsConvolution::IlsConvolution(const boost::shared_ptr<SampleGrid>& Sample_grid,
 }
 
 // See base class for description.
-blitz::Array<double, 1> IlsConvolution::apply_ils
+blitz::Array<double, 1> IlsGrating::apply_ils
 (const blitz::Array<double, 1>& Hres_wn,
  const blitz::Array<double, 1>& Hres_rad,
  const std::vector<int>& Pixel_list) const
@@ -36,15 +36,15 @@ blitz::Array<double, 1> IlsConvolution::apply_ils
 
     for(int i = 0; i < res.rows(); ++i) {
         // Find the range of Hres_wn that lie within
-        // wn_center +- ils_half_width
+        // wn_center +- high_res_extension
 
         double wn_center = disp_wn(Pixel_list[i]);
         Array<double, 1>::const_iterator itmin =
             std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center - ils_half_width().value);
+                             wn_center - high_res_extension().value);
         Array<double, 1>::const_iterator itmax =
             std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center + ils_half_width().value);
+                             wn_center + high_res_extension().value);
         int jmin = (itmin == Hres_wn.end() ? Hres_wn.rows() - 1 : itmin.position()(0));
         int jmax = (itmax == Hres_wn.end() ? Hres_wn.rows() - 1 : itmax.position()(0));
         Range r(jmin, jmax);
@@ -67,7 +67,7 @@ blitz::Array<double, 1> IlsConvolution::apply_ils
 /// Simple trapezoid rule for integration.
 //-----------------------------------------------------------------------
 
-double IlsConvolution::integrate(const blitz::Array<double, 1>& x,
+double IlsGrating::integrate(const blitz::Array<double, 1>& x,
                                  const blitz::Array<double, 1>& y) const
 {
     double res = 0;
@@ -83,7 +83,7 @@ double IlsConvolution::integrate(const blitz::Array<double, 1>& x,
 /// Simple trapezoid rule for integration.
 //-----------------------------------------------------------------------
 
-AutoDerivative<double> IlsConvolution::integrate(const blitz::Array<double, 1>& x,
+AutoDerivative<double> IlsGrating::integrate(const blitz::Array<double, 1>& x,
         const ArrayAd<double, 1>& y) const
 {
     double resv = 0;
@@ -104,7 +104,7 @@ AutoDerivative<double> IlsConvolution::integrate(const blitz::Array<double, 1>& 
 
 
 // See base class for description.
-ArrayAd<double, 1> IlsConvolution::apply_ils
+ArrayAd<double, 1> IlsGrating::apply_ils
 (const blitz::Array<double, 1>& Hres_wn,
  const ArrayAd<double, 1>& Hres_rad,
  const std::vector<int>& Pixel_list) const
@@ -130,15 +130,15 @@ ArrayAd<double, 1> IlsConvolution::apply_ils
 
     for(int i = 0; i < res.rows(); ++i) {
         // Find the range of Hres_wn that lie within
-        // wn_center +- ils_half_width
+        // wn_center +- high_res_extension
 
         AutoDerivative<double> wn_center = disp_wn(Pixel_list[i]);
         Array<double, 1>::const_iterator itmin =
             std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center.value() - ils_half_width().value);
+                             wn_center.value() - high_res_extension().value);
         Array<double, 1>::const_iterator itmax =
             std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center.value() + ils_half_width().value);
+                             wn_center.value() + high_res_extension().value);
         int jmin = (itmin == Hres_wn.end() ? Hres_wn.rows() - 1 : itmin.position()(0));
         int jmax = (itmax == Hres_wn.end() ? Hres_wn.rows() - 1 : itmax.position()(0));
         Range r(jmin, jmax);
@@ -178,17 +178,17 @@ ArrayAd<double, 1> IlsConvolution::apply_ils
     return res;
 }
 
-boost::shared_ptr<Ils> IlsConvolution::clone() const
+boost::shared_ptr<Ils> IlsGrating::clone() const
 {
-    return boost::shared_ptr<Ils>(new IlsConvolution(sample_grid()->clone(),
-                                  ils_func, ils_half_width()));
+    return boost::shared_ptr<Ils>(new IlsGrating(sample_grid()->clone(),
+                                  ils_func, high_res_extension()));
 }
 
-void IlsConvolution::print(std::ostream& Os) const
+void IlsGrating::print(std::ostream& Os) const
 {
-    Os << "IlsConvolution:\n";
+    Os << "IlsGrating:\n";
     OstreamPad opad(Os, "  ");
     opad << *sample_grid() << "\n" << *ils_func << "\n"
-         << "Half Width: " << ils_half_width() << "\n";
+         << "Half Width: " << high_res_extension() << "\n";
     opad.strict_sync();
 }

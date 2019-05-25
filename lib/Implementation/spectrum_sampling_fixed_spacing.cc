@@ -14,7 +14,7 @@ REGISTER_LUA_END()
 SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
 (int spec_index,
  const SpectralDomain& Lowres_grid, 
- const DoubleWithUnit& Ils_half_width) const
+ const DoubleWithUnit& Edge_extension) const
 {
   range_check(spec_index, 0, spec_spacing.rows());
 
@@ -27,12 +27,12 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
   DoubleWithUnit sp = spec_spacing(spec_index);
 
   // Make sure low res grid and ils half width have commensurate units
-  if (!u_orig.is_commensurate(Ils_half_width.units)) {
+  if (!u_orig.is_commensurate(Edge_extension.units)) {
     std::stringstream err_msg;
     err_msg << "Low res grid units:" << std::endl
           << u_orig << std::endl
           << "are not commensurate with ils half width units:" << std::endl
-          << Ils_half_width.units;
+          << Edge_extension.units;
     throw Exception(err_msg.str());
   }
 
@@ -43,7 +43,7 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
     lres_conv.push_back(DoubleWithUnit(v, u_orig).convert_wave(u_comp));
   std::sort(lres_conv.begin(), lres_conv.end());
 
-  // Fill in points so that we cover +=Ils_half_width for each value listed in
+  // Fill in points so that we cover +=Edge_extension for each value listed in
   // low resolution spectral domain. By convention, we have the points
   // be an exact multiple of sp. This isn't strictly necessary, but it
   // could be used to reduce interpolation between spectral points
@@ -59,9 +59,9 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
     // to the original units and units not being commensurate
     // one or the other could be the larger value
     DoubleWithUnit begval = 
-      min( (lres_conv[0].convert_wave(u_orig) - Ils_half_width).
+      min( (lres_conv[0].convert_wave(u_orig) - Edge_extension).
          convert_wave(u_comp), 
-         (lres_conv[0].convert_wave(u_orig) + Ils_half_width).
+         (lres_conv[0].convert_wave(u_orig) + Edge_extension).
          convert_wave(u_comp) );
 
     DoubleWithUnit fpoint = floor(begval / sp) * sp;   
@@ -71,9 +71,9 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
     int smax = (int) round(fpoint.value / sp).value;
 
     BOOST_FOREACH(DoubleWithUnit v, lres_conv) {
-      DoubleWithUnit minusval = (v.convert_wave(u_orig) - Ils_half_width).
+      DoubleWithUnit minusval = (v.convert_wave(u_orig) - Edge_extension).
       convert_wave(u_comp);
-      DoubleWithUnit plusval  = (v.convert_wave(u_orig) + Ils_half_width).
+      DoubleWithUnit plusval  = (v.convert_wave(u_orig) + Edge_extension).
       convert_wave(u_comp);
 
       // Pick values appropriately accounting for ordering change

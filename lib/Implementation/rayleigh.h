@@ -18,9 +18,9 @@ public:
 	   const Constant& C);
   
   virtual void notify_update(const Pressure& UNUSED(P))
-  { cache_is_stale = true;}
+  { cache_is_stale = true; }
   virtual void notify_update(const Altitude& UNUSED(A))
-  {cache_is_stale = true;}
+  { cache_is_stale = true; }
 
   ArrayAd<double, 1> optical_depth_each_layer(double wn, int spec_index) const;
   static DoubleWithUnit cross_section(const DoubleWithUnit& W,

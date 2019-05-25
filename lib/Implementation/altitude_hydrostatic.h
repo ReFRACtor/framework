@@ -39,6 +39,7 @@ public:
   virtual void notify_update(const Pressure& UNUSED(P))
   {
     cache_is_stale = true;   
+    notify_update_do(*this);
   }
 
 //-----------------------------------------------------------------------
@@ -50,19 +51,23 @@ public:
   virtual void notify_update(const Temperature& UNUSED(T))
   {
     cache_is_stale = true;   
+    notify_update_do(*this);
   }
 
-  virtual AutoDerivativeWithUnit<double> 
-  altitude(const AutoDerivativeWithUnit<double>& P) const
-  { calc_alt_and_grav(); 
+  virtual AutoDerivativeWithUnit<double> altitude(const AutoDerivativeWithUnit<double>& P) const
+  {
+    calc_alt_and_grav(); 
     AutoDerivativeWithUnit<double> p_pas = P.convert(units::Pa);
-    return AutoDerivativeWithUnit<double>((*alt)(p_pas.value), units::km); }
-  virtual AutoDerivativeWithUnit<double> 
-  gravity(const AutoDerivativeWithUnit<double>& P) const
-  { calc_alt_and_grav(); 
+    return AutoDerivativeWithUnit<double>((*alt)(p_pas.value), units::km); 
+  }
+
+  virtual AutoDerivativeWithUnit<double> gravity(const AutoDerivativeWithUnit<double>& P) const
+  {
+    calc_alt_and_grav(); 
     AutoDerivativeWithUnit<double> p_pas = P.convert(units::Pa);
     return AutoDerivativeWithUnit<double>((*grav)(p_pas.value), "m/s^2"); 
   }
+
   virtual void print(std::ostream& Os) const { Os << "AltitudeHydrostatic"; }
   virtual boost::shared_ptr<Altitude> clone() const
   { boost::shared_ptr<Pressure> pnew = p->clone();

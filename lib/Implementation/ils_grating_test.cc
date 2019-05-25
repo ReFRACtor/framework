@@ -1,4 +1,4 @@
-#include "ils_convolution.h"
+#include "ils_grating.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
 #include "ils_table.h"
@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(ils_convolution, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_grating, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(basic)
     d(new DispersionPolynomial(coeff, flag, units::inv_cm, "Test band", 1805, true));
   HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
   boost::shared_ptr<IlsTableLinear> ils_func(new IlsTableLinear(hf, 0, "A-Band", "o2"));
-  IlsConvolution ils(d, ils_func);
+  IlsGrating ils(d, ils_func);
 
   StateVector sv;
   sv.add_observer(ils);
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(basic)
   for(int i = 407; i <= 414; ++i)
     plist.push_back(i);
 
-  IfstreamCs expected(test_data_dir() + "expected/ils_convolution/basic");
+  IfstreamCs expected(test_data_dir() + "expected/ils_grating/basic");
   Array<double, 1> wn_in, rad_hres_in, rad_out_expect;
   expected >> wn_in >> rad_hres_in >> rad_out_expect;
 

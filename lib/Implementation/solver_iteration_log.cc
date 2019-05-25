@@ -29,6 +29,7 @@ void SolverIterationLog::notify_update(const IterativeSolver& solver)
     } else {
         header_log << "Initial retrieval state" << std::endl;
     }
+    header_log << "Solver status: " << solver.status_str() << std::endl;
     header_log << "Cost function value: " << solver.cost_at_accepted_points().at(iter_index) << std::endl;
     Logger::info() << header_log.str();
 

@@ -79,16 +79,17 @@ public:
   virtual const SpectralDomain pixel_grid() const = 0;
 
 //-----------------------------------------------------------------------
-/// This is the half width of the ILS.
+/// This is the amount of grid points that need to be additionally
+/// calculated in the high resolution spectrum for ILS convolution
 //-----------------------------------------------------------------------
 
-  virtual const DoubleWithUnit ils_half_width() const = 0;
+  virtual const DoubleWithUnit high_res_extension() const = 0;
 
 //-----------------------------------------------------------------------
-/// Set the half width of the ILS.
+/// Set the high resolution extension amount
 //-----------------------------------------------------------------------
 
-  virtual void ils_half_width(const DoubleWithUnit& half_width) = 0;
+  virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
 
 };
 }

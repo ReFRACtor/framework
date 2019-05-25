@@ -69,7 +69,7 @@ protected:
 
   ModelMeasureStandard() {}
 
-  void radiance_from_fm(bool Skip_jacobian=false);
+  void radiance_from_fm();
 
   //  TEMPORARY
   //

@@ -6,10 +6,10 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  This class models an Instrument correction. This is used by
-  IlsConvolution, and it applies zero or more corrections that allow
-  the radiance results to be modified. Examples are a zero level
-  offset correction, and a continuum correction.
+  This class models an Instrument correction. It applies zero or 
+  more corrections that allow the radiance results to be modified. 
+  Examples are a zero level offset correction, and a continuum 
+  correction.
 *******************************************************************/
 
 class InstrumentCorrection : virtual public StateVectorObserver,

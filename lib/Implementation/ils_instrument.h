@@ -31,15 +31,15 @@ public:
     return ils_[Spec_index]->pixel_grid();
   }
   virtual DoubleWithUnit
-  ils_half_width(int Spec_index) const 
+  high_res_extension(int Spec_index) const 
   {
     range_check(Spec_index, 0, number_spectrometer());
-    return ils_[Spec_index]->ils_half_width();
+    return ils_[Spec_index]->high_res_extension();
   }
-  virtual void ils_half_width(int Spec_index, DoubleWithUnit& half_width)
+  virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension)
   {
     range_check(Spec_index, 0, number_spectrometer());
-    return ils_[Spec_index]->ils_half_width(half_width);
+    return ils_[Spec_index]->high_res_extension(extension);
   }
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const Ils& UNUSED(D))

@@ -57,14 +57,14 @@ public:
   boost::shared_ptr<RadiativeTransfer> config_rt;
 
   /// Useful function that appears in a few tests, so collect here
-  DoubleWithUnit ils_half_width(int Spec_index) const
-  { return config_instrument->ils_half_width(Spec_index); }
+  DoubleWithUnit high_res_extension(int Spec_index) const
+  { return config_instrument->high_res_extension(Spec_index); }
   SpectralDomain lowres_grid(int Spec_index) const
   { return config_spectral_window->apply
       (config_instrument->pixel_spectral_domain(Spec_index), Spec_index); }
   SpectralDomain highres_grid(int Spec_index) const
   { return config_spectrum_sampling->spectral_domain
-      (Spec_index, lowres_grid(Spec_index), ils_half_width(Spec_index)); }
+      (Spec_index, lowres_grid(Spec_index), high_res_extension(Spec_index)); }
     
   /// This is an epsilon that can be used to generate finite
   /// difference Jacobians for unit tests.
