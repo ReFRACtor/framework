@@ -104,13 +104,6 @@ function Creator:add_to_statevector(sv)
 end
 
 ------------------------------------------------------------
--- Register any output.
-------------------------------------------------------------
-
-function Creator:register_output(ro)
-end
-
-------------------------------------------------------------
 --- It is a common pattern to have the particular choice
 --- of a Creator depend on some dynamic property (e.g.,
 --- land water fraction selecting ground type). This class
@@ -138,10 +131,6 @@ end
 
 function DispatchCreator:add_to_statevector(sv)
    return self:table():add_to_statevector(sv)
-end
-
-function DispatchCreator:register_output(ro)
-   return self:table():register_output(ro)
 end
 
 ------------------------------------------------------------
@@ -210,18 +199,6 @@ function CompositeCreator:add_to_statevector(sv)
       local t = self[k]
       local c = t.creator:new(t, self.config, k)
       c:add_to_statevector(sv)
-   end
-end
-
-function CompositeCreator:register_output(ro)
-   local sub_object = {}, i, k
-   for i,k in ipairs(self:sub_object_key()) do
-      self.config:diagnostic_message("Register output " .. k)
-      local t = self[k]
-      if t ~= nil then
-         local c = t.creator:new(t, self.config, k)
-         c:register_output(ro)
-      end
    end
 end
 
@@ -332,7 +309,6 @@ end
 ------------------------------------------------------------
 
 function ConfigCommon:do_config()
-   self.register_output = VectorRegisterOutput()
    local t = self.fm
    local c = t.creator:new(t, self, "forward_model")
 
@@ -354,7 +330,6 @@ function ConfigCommon:do_config()
       self:create_error_analysis()
    end
 
-   c:register_output(self.register_output)
 
    -- To have the minimum requirements, L2FpConfigurationLua
    -- just requires a few global variables to be set. Copy
@@ -372,7 +347,6 @@ function ConfigCommon:do_config()
    number_aerosol = self.number_aerosol
    number_band = self.spec_win:number_spectrometer()
    iteration_output = self.iteration_output
-   register_output = self.register_output
 end
 
 ------------------------------------------------------------
@@ -1024,14 +998,6 @@ function ConfigCommon.dispersion_polynomial:initial_guess()
    return res
 end
 
-function ConfigCommon.dispersion_polynomial:register_output(ro)
-   for i=1,self.config.number_pixel:rows() do
-      local hdf_band_name = self.config.common.hdf_band_name:value(i-1)
-      ro:push_back(DispersionPolynomialOutput.create(self.config.dispersion[i], 
-                                                     hdf_band_name))
-   end
-end
-
 function ConfigCommon.dispersion_polynomial:coefficients(i)
    return self:apriori(i - 1).value
 end
@@ -1091,11 +1057,6 @@ function ConfigCommon.dispersion_polynomial_fitted:coefficients(i)
       end
    end
    return self.fitted_apriori(i - 1, Range.all())
-end
-
-function ConfigCommon.dispersion_polynomial_fitted:register_output(ro)
-   ConfigCommon.dispersion_polynomial.register_output(self, ro)
-   ro:push_back(DispersionFitOutput(self.disp_fit))
 end
 
 ------------------------------------------------------------
@@ -1238,13 +1199,6 @@ function ConfigCommon.zero_offset_waveform:create()
    return res
 end
 
-function ConfigCommon.zero_offset_waveform:register_output(ro)
-   for i=1,self.config.number_pixel:rows() do
-      ro:push_back(ZeroOffsetWaveformOutput.create(self.zero_offset_waveform[i], 
-                           self.config.common.hdf_band_name:value(i-1)))
-   end
-end
-
 ------------------------------------------------------------
 --- Create a EmpiricalOrthogonalFunction correction
 ------------------------------------------------------------
@@ -1319,15 +1273,6 @@ function ConfigCommon.empirical_orthogonal_function:create()
    return res
 end
 
-function ConfigCommon.empirical_orthogonal_function:register_output(ro)
-   for i=1,self.config.number_pixel:rows() do
-      if(self.eof[i] ~= nil) then
-	 ro:push_back(EmpiricalOrthogonalFunctionOutput.create(self.eof[i], 
-	              self.config.common.hdf_band_name:value(i-1)))
-      end
-   end
-end
-
 function ConfigCommon.empirical_orthogonal_function:retrieval_flag(i)
    --- Use CreatorMultiSpec
    local flag
@@ -1359,14 +1304,6 @@ function ConfigCommon.radiance_scaling_sv_fit:create()
    return res
 end
 
-function ConfigCommon.radiance_scaling_sv_fit:register_output(ro)
-    if (self.radiance_scaling) then
-       for i=1,self.config.number_pixel:rows() do
-          ro:push_back(RadianceScalingOutput.create(self.radiance_scaling[i], 
-                       self.config.common.hdf_band_name:value(i-1)))
-       end
-    end
-end
 
 ------------------------------------------------------------
 --- Use radiance scaling sv fit but only if the ground type
@@ -1406,15 +1343,6 @@ function ConfigCommon.radiance_scaling_linear_fit:create()
    end
    self.radiance_scaling = res
    return res
-end
-
-function ConfigCommon.radiance_scaling_linear_fit:register_output(ro)
-    if (self.radiance_scaling) then
-       for i=1,self.config.number_pixel:rows() do
-          ro:push_back(RadianceScalingOutput.create(self.radiance_scaling[i], 
-                       self.config.common.hdf_band_name:value(i-1)))
-       end
-    end
 end
 
 function ConfigCommon.radiance_scaling_linear_fit:initial_guess(i)
@@ -1473,12 +1401,6 @@ function ConfigCommon.fluorescence_effect:initial_guess(i)
    ig:apriori_covariance_subset(rflag, self:covariance())
    ig.initial_guess = self:iguess_v()
    return ig
-end
-
-function ConfigCommon.fluorescence_effect:register_output(ro)
-    if(self.fluorescence_effect) then
-        ro:push_back(FluorescenceEffectOutput.create(self.fluorescence_effect))
-    end
 end
 
 ------------------------------------------------------------
@@ -1588,10 +1510,6 @@ function CreatorL1b:sub_object_key()
    return {"noise"}
 end
 
-function CreatorL1b:register_output(ro)
-   ro:push_back(Level1bOutput(self.config.l1b))
-end
-
 ------------------------------------------------------------
 --- Create a level 1b file were we read it from a ASCII file.
 --- Real data comes from HDF, but we have old test data that
@@ -1618,7 +1536,6 @@ function ConfigCommon.level1b_scale_radiance:create()
     if (self.unscaled_l1b == nil) then
         error("unscaled_l1b block undefined for level1b_scale_radiance")
     end
-    self.unscaled_l1b.creator.register_output = nil
     return CompositeCreator.create(self)
 end
 
@@ -1872,11 +1789,6 @@ function ConfigCommon.pressure_fixed_level:create()
                              self:apriori()(0))
 end
 
-function ConfigCommon.pressure_fixed_level:register_output(ro)
-   ro:push_back(PressureFixedLevelOutput.create(self.config.pressure,
-                                                self.config.state_vector))
-end
-
 ------------------------------------------------------------
 --- Create pressure with the sigma levels, retrieving surface
 --- pressure and initial guess.
@@ -1887,11 +1799,6 @@ ConfigCommon.pressure_sigma = CreatorApriori:new {}
 function ConfigCommon.pressure_sigma:create()
    return PressureSigma(self:a(), self:b(), self:apriori()(0),
                         self:retrieval_flag()(0))
-end
-
-function ConfigCommon.pressure_sigma:register_output(ro)
-   ro:push_back(PressureOutput(self.config.pressure,
-                               self.config.state_vector))
 end
 
 ------------------------------------------------------------
@@ -1905,11 +1812,6 @@ ConfigCommon.pressure_sigma_profile = CreatorApriori:new {}
 function ConfigCommon.pressure_sigma_profile:create()
    return PressureSigma(self:pressure_levels(), self:apriori()(0),
                         self:retrieval_flag()(0))
-end
-
-function ConfigCommon.pressure_sigma_profile:register_output(ro)
-   ro:push_back(PressureOutput(self.config.pressure,
-                            self.config.state_vector))
 end
 
 ------------------------------------------------------------
@@ -1952,10 +1854,6 @@ function ConfigCommon.temperature_fixed_level:initial_guess()
    return ig
 end
 
-function ConfigCommon.temperature_fixed_level:register_output(ro)
-   ro:push_back(TemperatureFixedLevelOutput.create(self.config.temperature))
-end
-
 ------------------------------------------------------------
 --- Temperature using ECMWF, where we just fit for the
 --- offset.
@@ -1968,10 +1866,6 @@ function ConfigCommon.temperature_met:create()
                          self:apriori()(0), self:retrieval_flag()(0))
 end
 
-function ConfigCommon.temperature_met:register_output(ro)
-   ro:push_back(TemperatureMetOutput.create(self.config.temperature))
-end
-
 ------------------------------------------------------------
 --- Temperature using specificed level values
 --- where we just fit for the offset.
@@ -1982,10 +1876,6 @@ ConfigCommon.temperature_level_offset = CreatorApriori:new {}
 function ConfigCommon.temperature_level_offset:create()
    return TemperatureLevelOffset(self.config.pressure, self:temperature_levels(),
                                  self:apriori()(0), self:retrieval_flag()(0))
-end
-
-function ConfigCommon.temperature_level_offset:register_output(ro)
-   ro:push_back(TemperatureLevelOffsetOutput.create(self.config.temperature))
 end
 
 ------------------------------------------------------------
@@ -2054,10 +1944,6 @@ function ConfigCommon.ground_lambertian:create_parent_object(sub_object)
    return self.config.lambertian
 end
 
-function ConfigCommon.ground_lambertian:register_output(ro)
-   ro:push_back(GroundLambertianOutput.create(self.config.lambertian, self.config.common.hdf_band_name))
-end
-
 ------------------------------------------------------------
 --- Coxmunk ground state vector component and initial guess
 ------------------------------------------------------------
@@ -2083,10 +1969,6 @@ function ConfigCommon.ground_coxmunk:create_parent_object(sub_object)
    return self.config.coxmunk
 end
 
-function ConfigCommon.ground_coxmunk:register_output(ro)
-   ro:push_back(GroundCoxmunkOutput.create(self.config.coxmunk))
-end
-
 ------------------------------------------------------------
 --- Creates a Ground using both Lambertioan and Coxmunk 
 --- retrieval
@@ -2101,10 +1983,6 @@ end
 
 function ConfigCommon.ground_coxmunk_plus_lamb:create_parent_object(sub_object)
    return GroundCoxmunkPlusLambertian.create(self.config.coxmunk, self.config.coxmunk_lambertian)
-end
-
-function ConfigCommon.ground_coxmunk_plus_lamb:register_output(ro)
-   ro:push_back(GroundCoxmunkPlusLambertianOutput.create(self.config.coxmunk, self.config.coxmunk_lambertian, self.config.common.hdf_band_name))
 end
 
 ------------------------------------------------------------
@@ -2203,10 +2081,6 @@ function ConfigCommon.ground_brdf_veg:create_parent_object(sub_object)
    return self.config.brdf_veg
 end
 
-function ConfigCommon.ground_brdf_veg:register_output(ro)
-   ro:push_back(GroundBrdfOutput.create(self.config.brdf_veg, self.config.l1b, self.config.common.hdf_band_name))
-end
-
 ------------------------------------------------------------
 --- Breon soil ground state vector component and initial guess
 ------------------------------------------------------------
@@ -2239,10 +2113,6 @@ end
 
 function ConfigCommon.ground_brdf_soil:create_parent_object(sub_object)
    return self.config.brdf_soil
-end
-
-function ConfigCommon.ground_brdf_soil:register_output(ro)
-   ro:push_back(GroundBrdfOutput.create(self.config.brdf_soil, self.config.l1b, self.config.common.hdf_band_name))
 end
 
 ------------------------------------------------------------
@@ -2527,14 +2397,6 @@ function ConfigCommon.aerosol_creator:create_parent_object(sub_object)
 			 self.config.relative_humidity)
 end
 
-function ConfigCommon.aerosol_creator:register_output(ro)
-   ro:push_back(AerosolAodOutput(self.config.aerosol))
-
-   for i=0, self.vex:size() - 1 do
-      ro:push_back(AerosolParamOutput.create(self.vex:value(i)))
-   end
-end
-
 function ConfigCommon.aerosol_creator:add_to_statevector(sv)
    self.config:diagnostic_message("Adding AerosolExtinction and AerosolProperty objects to state vector")
    aerosol = config.aerosol
@@ -2655,15 +2517,6 @@ function ConfigCommon.merra_aerosol_creator:initial_guess()
    return cig
 end
 
-function ConfigCommon.merra_aerosol_creator:register_output(ro)
-   local all_aer_names = self.config:merra_file():read_string_vector("/COMPOSITE_NAME")
-   for i, aer_name in ipairs(self.aerosols) do
-       all_aer_names:push_back(aer_name)
-   end
- 
-   ro:push_back(AerosolConsolidatedOutput(self.config.aerosol, all_aer_names))
-end
-
 ------------------------------------------------------------
 --- Rayleigh only, we have a nil Aerosol class.
 ------------------------------------------------------------
@@ -2690,10 +2543,6 @@ function ConfigCommon.hydrostatic_altitude:create()
       res:push_back(alts)
    end
    return res
-end
-
-function ConfigCommon.hydrostatic_altitude:register_output(ro)
-   ro:push_back(AltitudeOutput(self.config.altitude:value(0), self.config.pressure))
 end
 
 ------------------------------------------------------------
@@ -2867,23 +2716,6 @@ function ConfigCommon.vmr_fixed_level:create_vmr()
    return self.vmr
 end
 
-function ConfigCommon.vmr_fixed_level:register_output(ro)
--- Don't write out output if we aren't fitting anything
-   local i
-   local r
-   r = self:retrieval_flag()
-   local any_true = false
-   for i=1,r:rows() do
-      if(r(i - 1)) then
-         any_true = true
-      end
-   end
-   if(any_true) then
-      ro:push_back(AbsorberVmrFixedLevelOutput.create(self.vmr, 
-                                                      self.config.state_vector))
-   end
-end
-
 ------------------------------------------------------------
 --- Create an absorber level, where we fit for all the
 --- VMR levels
@@ -2895,22 +2727,6 @@ function ConfigCommon.vmr_level:create_vmr()
    self.vmr = AbsorberVmrLevel(self.config.pressure, self:apriori_v(), 
                                self:retrieval_flag(), self.name)
    return self.vmr
-end
-
-function ConfigCommon.vmr_level:register_output(ro)
--- Don't write out output if we aren't fitting anything
-   local i
-   local r
-   r = self:retrieval_flag()
-   local any_true = false
-   for i=1,r:rows() do
-      if(r(i - 1)) then
-         any_true = true
-      end
-   end
-   if(any_true) then
-      ro:push_back(AbsorberVmrLevelOutput.create(self.vmr))
-   end
 end
 
 ------------------------------------------------------------
@@ -2941,10 +2757,6 @@ function ConfigCommon.vmr_fixed_level_scaled:create_vmr()
    return self.vmr
 end
 
-function ConfigCommon.vmr_fixed_level_scaled:register_output(ro)
-   ro:push_back(AbsorberVmrFixedLevelScaledOutput.create(self.vmr))
-end
-
 ------------------------------------------------------------
 --- Create an absorber ECMWF, where we fit for a scale.
 ------------------------------------------------------------
@@ -2972,10 +2784,6 @@ function ConfigCommon.vmr_met:create_vmr()
    return self.vmr
 end
 
-function ConfigCommon.vmr_met:register_output(ro)
-   ro:push_back(AbsorberVmrMetOutput.create(self.vmr))
-end
-
 ------------------------------------------------------------
 --- Create an absorber level, where we fit for a scale.
 ------------------------------------------------------------
@@ -3001,10 +2809,6 @@ function ConfigCommon.vmr_level_scaled:create_vmr()
                                      self:retrieval_flag()(0),
                                      self.name)
    return self.vmr
-end
-
-function ConfigCommon.vmr_level_scaled:register_output(ro)
-   ro:push_back(AbsorberVmrLevelScaledOutput.create(self.vmr))
 end
 
 ------------------------------------------------------------
@@ -3105,16 +2909,6 @@ function ConfigCommon.absorber_creator:create_parent_object(sub_object)
    end
 end
 
-function ConfigCommon.absorber_creator:register_output(ro)
-   CompositeCreator.register_output(self, ro)
-   ro:push_back(AbsorberAbscoOutput.create(self.config.absorber, self.config:spectral_bound()))
-
-   -- Create output for GasVmrApriori object it it was created
-   -- not really any better places to put this
-   if (self.config.ref_co2_ap_obj) then
-       ro:push_back(GasVmrAprioriOutput(self.config.ref_co2_ap_obj))
-   end
-end
 
 function ConfigCommon.absorber_creator:add_to_statevector(sv)
     self.config:diagnostic_message("Adding AbsorberVmr objects to state vector")
@@ -3258,14 +3052,6 @@ end
 function ConfigCommon.stokes_coefficient_fraction:add_to_statevector(sv)
    sv:add_observer(self.config.stokes_coefficient)
 end
-
-function ConfigCommon.stokes_coefficient_fraction:register_output(ro)
-   for i=1,self.config.number_pixel:rows() do
-      local hdf_band_name = self.config.common.hdf_band_name:value(i-1)
-      ro:push_back(StokesCoefficientFractionOutput.create(self.config.stokes_coefficient, i -1, hdf_band_name))
-   end
-end
-
 
 ------------------------------------------------------------
 -- Get stokes coefficients using l1b_stokes_coef. 
@@ -3422,12 +3208,6 @@ function ConfigCommon.state_vector_creator:create()
    return StateVector();
 end
 
-function ConfigCommon.state_vector_creator:register_output(ro)
-   if (self.config.do_retrieval) then
-      ro:push_back(StateVectorOutput(self.config.state_vector))
-   end
-end
-
 ------------------------------------------------------------
 --- Create forward model.
 ------------------------------------------------------------
@@ -3459,62 +3239,6 @@ function ConfigCommon.standard_forward_model:create_parent_object(sub_object)
                                self.config.spectrum_effect)
 end
 
-function ConfigCommon.standard_forward_model:register_output(ro)
-   -- Store typical ForwardModel output
-   CompositeCreator.register_output(self, ro)
-   ro:push_back(SpectralParametersOutput(self.config.forward_model, self.config.observation))
-   ro:push_back(StandardForwardModelOutput.create(self.config.forward_model))
-
-   -- Optionally save high resolution spectra
-   if(self.config.write_high_res_spectra) then
-      hr_spec_out = HighResSpectrumOutput()
-      hr_spec_out:add_as_observer(self.config.forward_model)
-      hr_spec_out:add_as_observer(self.config.rt)
-      ro:push_back(hr_spec_out:as_register_output_base())
-   end
-
-   -- Store source filenames in output, probably a better place
-   -- to put this, but its probably also fine here
-   local dataset_name = VectorString()
-   local file_name = VectorString()
-
-   -- Add source data files
-   for i,var_ds in ipairs({ { "L1BFile", "spectrum_file"},
-                            { "ResampledMetFile", "met_file" },
-			    { "StaticInput", "static_file"},
-			    { "SolarFile", "static_solar_file"},
-			    { "AerosolFile", "static_aerosol_file"},
-			    { "MerraFile", "merra_file_name"},
-			    { "IMAPFile", "imap_file"},
-			    { "EOFFile", "static_eof_file"},
-			    { "AtmosphereFile", "atmosphere_file"},
-			    { "RunLog", "runlog_file"},
-			 }) do
-      ds_name = var_ds[1]
-      var_name = var_ds[2]
-      f_name = self.config[var_name]
-
-      if f_name then
-         dataset_name:push_back(ds_name)
-         file_name:push_back(f_name)
-      else
-         self.config.diagnostic_message("Filename for " .. var_name .. " is not defined") 
-      end
-   end
-
-   -- Add absco filesself.ignore_merra_ig)
-   for i,gas_name in ipairs(self.config.fm.atmosphere.absorber.gases) do
-      dataset_name:push_back("AbscoFile" .. gas_name)
-      if(self.config.fm.atmosphere.absorber[gas_name].absco_aer ~= nil) then
-	 file_name:push_back(self.config.fm.atmosphere.absorber[gas_name].absco_aer)
-      else
-	 file_name:push_back(self.config.fm.atmosphere.absorber[gas_name].absco)
-      end
-   end
-   
-   ro:push_back(SourceFilesOutput("Metadata", dataset_name, file_name))
-end
-
 ------------------------------------------------------------
 -- Create the connor solver we normally use.
 --
@@ -3530,14 +3254,10 @@ function ConfigCommon:connor_solver(config)
                                   self.max_iteration, 
                                   self.max_divergence, 
                                   self.max_chisq)
-   local out = ConnorConvergenceOutput.create(conv)
-   config.register_output:push_back(out)
    config.conn_solver = ConnorSolver(cost_func, conv, 
 				     self.gamma_initial)
    local iter_log = ConnorIterationLog(config.state_vector)
    iter_log:add_as_observer(config.conn_solver)
-   out = ConnorSolverOutput(config.conn_solver, config.write_jacobian)
-   config.register_output:push_back(out)
 end
 
 ------------------------------------------------------------
@@ -3559,8 +3279,6 @@ function ConfigCommon:create_error_analysis()
 					  self.forward_model)
    end
    have_co2 = self.absorber:gas_index("CO2") ~= -1
-   local out = ErrorAnalysisOutput(self.error_analysis, self:spec_flag(), self.common.hdf_band_name, have_co2)
-   self.register_output:push_back(out)
 end
 
 function ConfigCommon:nlls_max_likelihood(config)
@@ -3577,8 +3295,6 @@ function ConfigCommon:nlls_max_a_posteriori(config)
    config.opt_problem = NLLSMaxAPosteriori(config.stat_method_map, true)
    config.opt_problem:parameters(config.initial_guess:initial_guess())
 
-   local out = MaxAPosterioriOutput(config.stat_method_map, config.write_jacobian)
-   config.register_output:push_back(out)
 end
 
 
