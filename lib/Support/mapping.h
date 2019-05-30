@@ -1,24 +1,17 @@
 #ifndef MAPPING_H
 #define MAPPING_H
 
+#include "mapping_imp_base.h"
 #include "array_ad.h"
 
 namespace FullPhysics {
 /****************************************************************//**
-  Individual components of the State Vector may have different
-  representations when being retrieved/perturbed rather than being
-  used in forward model calculations (e.g. to add a scaling
-  factor or log encode the values).
-
-  This class and its subclasses capture those different representations.
-
   This class implements 1-to-1 mapping and just provides the
   SubStateVectorArray's coefficients as-is.
 
-  Derived classes can be implemented to extend the mapping concept
-  to other mapping types (e.g. scaled, log, etc)
+  For additional information see docs for MappingImpBase class.
 *******************************************************************/
-class Mapping {
+class Mapping : public MappingImpBase {
 public:
     //-----------------------------------------------------------------------
     /// Default Constructor.

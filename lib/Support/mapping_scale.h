@@ -4,16 +4,16 @@
 #include <blitz/array.h>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "mapping_imp_base.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a scale factor for the retrieval view
   while applying that scale factor to get the forward model view.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for MappingImpBase class.
 *******************************************************************/
-class MappingScale : public Mapping {
+class MappingScale : public MappingImpBase  {
 public:
     //-----------------------------------------------------------------------
     /// Default Constructor.
@@ -40,6 +40,12 @@ public:
         val(0) = initial_scale_factor;
         return ArrayAd<double, 1>(val, true);
     };
+
+    //-----------------------------------------------------------------------
+    /// Assigned mapping name
+    //-----------------------------------------------------------------------
+
+    virtual std::string name() const { return map_name; }
 
     virtual ~MappingScale() {};
 

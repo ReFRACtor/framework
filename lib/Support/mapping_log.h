@@ -4,16 +4,16 @@
 #include <blitz/array.h>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "mapping_imp_base.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements log encoding of coeffs for the retrieval view
   while using the real (linear) values for the forward model view.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for MappingImpBase class.
 *******************************************************************/
-class MappingLog : public Mapping {
+class MappingLog : public MappingImpBase  {
 public:
     //-----------------------------------------------------------------------
     /// Default Constructor.
@@ -38,6 +38,12 @@ public:
         int nvar = coeff.number_variable();
         return ArrayAd<double, 1>( blitz::Array<double, 1>(log(coeff.value())), nvar, true);
     };
+
+    //-----------------------------------------------------------------------
+    /// Assigned mapping name
+    //-----------------------------------------------------------------------
+
+    virtual std::string name() const { return map_name; }
 
     virtual ~MappingLog() {};
 

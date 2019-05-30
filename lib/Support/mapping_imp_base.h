@@ -40,7 +40,7 @@ public:
     /// Assigned mapping name
     //-----------------------------------------------------------------------
 
-    virtual std::string name() = 0;
+    virtual std::string name() const = 0;
 
     virtual ~MappingImpBase() {};
 

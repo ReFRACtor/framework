@@ -4,13 +4,13 @@
 #include "mapping_log.h"
 %}
 
-%base_import(mapping)
+%base_import(mapping_imp_base)
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::MappingLog);
 
 
 namespace FullPhysics {
-class MappingLog : public Mapping {
+class MappingLog : public MappingImpBase {
 public:
     const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const;
     const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const;

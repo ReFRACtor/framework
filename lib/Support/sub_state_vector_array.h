@@ -1,6 +1,7 @@
 #ifndef SUB_STATE_VECTOR_ARRAY_H
 #define SUB_STATE_VECTOR_ARRAY_H
 #include "sub_state_vector_observer.h"
+#include "mapping_imp_base.h"
 #include "mapping.h"
 #include "pressure.h"
 #include <boost/lexical_cast.hpp>
@@ -42,7 +43,7 @@ public:
                         const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                         bool Mark_according_to_press = true,
                         int Pdep_start = 0,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
+                        boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
         : coeff(in_map->retrieval_view(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
           mark_according_to_press(Mark_according_to_press),
           pdep_start(Pdep_start),
@@ -65,7 +66,7 @@ public:
               const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
               bool Mark_according_to_press = true,
               int Pdep_start = 0,
-              boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
+              boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
     {
         mark_according_to_press = Mark_according_to_press;
         pdep_start = Pdep_start;
@@ -86,7 +87,7 @@ public:
     //-----------------------------------------------------------------------
 
     SubStateVectorArray(double Coeff, bool Used_flag,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
+                        boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
         : coeff(1, 0), used_flag(1), mapping(in_map), mark_according_to_press(true), pdep_start(0)
     {
         // TODO: Add mapping's retrieval_view of Coeff in this constructor
@@ -243,7 +244,7 @@ protected:
     //-----------------------------------------------------------------------
     /// Mapping from internal coefficients to coefficients exposed to retrieval
     //-----------------------------------------------------------------------
-    boost::shared_ptr<Mapping> mapping;
+    boost::shared_ptr<MappingImpBase> mapping;
 
 };
 }
