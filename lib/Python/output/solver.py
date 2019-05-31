@@ -80,9 +80,3 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
         else:
             num_accepted = solver_group.createVariable("iteration_index", int)
         num_accepted[...] = solver.num_accepted_steps
-
-        #if "num_cost" in solver_group.variables:
-        #    num_cost = solver_group["num_cost"]
-        #else:
-        #    num_cost = solver_group.createVariable("num_cost_evaluations", int)
-        #num_cost[...] = solver.problem.num_cost_evaluations

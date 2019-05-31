@@ -106,8 +106,10 @@ class StrategyExecutor(object):
 
         if config_inst['solver'] is None:
             raise Exception("Solver object was not defined in configuration")
-            return
 
+        if config_inst['state_vector'] is None:
+            raise Exception("StateVector object was not defined in configuration")
+ 
         config_inst['solver'].solve()
         config_inst['state_vector'].clear_observers()
 
