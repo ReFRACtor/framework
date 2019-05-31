@@ -63,8 +63,14 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum):
 
         group = self.output.createGroup(group_name)
 
-        grid = group.createVariable("grid", float, (self.spectrum_type_dimension_names[named_spectrum.name],))
+        if "grid" in group.variables:
+            grid = group['grid']
+        else:
+            grid = group.createVariable("grid", float, (self.spectrum_type_dimension_names[named_spectrum.name],))
         grid[:] = named_spectrum.spectral_domain.data
 
-        radiance = group.createVariable("radiance", float, (self.spectrum_type_dimension_names[named_spectrum.name],))
+        if "radiance" in group.variables:
+            radiance = group['radiance']
+        else:
+            radiance = group.createVariable("radiance", float, (self.spectrum_type_dimension_names[named_spectrum.name],))
         radiance[:] = named_spectrum.spectral_range.data
