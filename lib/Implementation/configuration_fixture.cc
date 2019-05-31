@@ -40,9 +40,6 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
     config_pressure_level_input = 
       lua_config["pinp"].value_ptr<PressureLevelInput>();
   config_pressure = lua_config["pressure"].value_ptr<Pressure>();
-  config_register_output = 
-    lua_config["register_output"].
-    value<std::vector<boost::shared_ptr<RegisterOutputBase> > >();
   config_instrument = lua_config["instrument"].value_ptr<Instrument>();
   config_spectral_window = lua_config["spec_win"].value_ptr<SpectralWindow>();
   config_initial_guess = 
