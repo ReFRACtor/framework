@@ -10,6 +10,7 @@ from .factory import process_config, creator
 from . import framework as rf
 
 from .output.radiance import ForwardModelRadianceOutput
+from .output.solver import SolverIterationOutput
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +95,9 @@ class StrategyExecutor(object):
 
         rad_out = ForwardModelRadianceOutput(self.output, step_index, config_inst['solver'])
         config_inst['forward_model'].add_observer_and_keep_reference(rad_out)
+
+        solver_out = SolverIterationOutput(self.output, step_index, config_inst['state_vector'])
+        config_inst['solver'].add_observer_and_keep_reference(solver_out)
 
     def run_solver(self, config_inst, step_index=None):
 
