@@ -1,0 +1,133 @@
+# You can include this automake file to add the swig rules stuff. Should
+# define the variables:
+#
+# swigincdir for where these should be installed to
+#       (e.g., ${prefix}/share/geocal/swig)
+# swigrules for where the source is located
+#       (e.g., ${geocal_topdir}/swig_rules)
+# swigsrc where we are putting the swig files we generate
+#       (e.g., ${geocal_topdir}/bindings/python/swig)
+# pkgpythonswigdir for where we are installing swig
+#       (e.g., $(prefix)/@pythondir@/geocal_swig)
+# FULL_SWIG_SRC list of all swig source files, including some we
+#       might not compile (e.g., require HDF5 library without this being
+#       present)
+# COMPILE_SWIG_SRC list of all swig source files that we are compiling,
+#       so subset of FULL_SWIG_SRC
+# CONDITIONAL_SWIG_SRC list of swig source files, with conditionals included
+#       so for example $(SWIG_SRC) HAVE_HDF5 $(SWIG_SRC_HDF5). If you
+#       don't have any conditional code, this can just be set to FULL_SWIG_SRC
+# SWIG_CPPFLAGS the flags we should use when compiling swig code,
+#       so a list of -I options.
+# PYTHON_CPPFLAGS flags needed to compile against python
+# PYTHON_NUMPY_CPPFLAGS flags needs to compile against numpy
+# SWIG_TYPE_TABLE_NAME the swig table name (e.g., geocal)
+# SWIG_MODULE_NAME the swig model name (e.g., geocal)
+# SWIG_LIBADD the libraries to link swig against (e.g., libgeocal.la)
+# DOXYGEN the program doxygen
+
+swiginc_HEADERS = 
+swiginc_HEADERS += @swigrules@/include/swig_python_attribute.i
+swiginc_HEADERS += @swigrules@/include/my_shared_ptr.i
+swiginc_HEADERS += @swigrules@/include/shared_ptr_type_mapper.i
+swiginc_HEADERS += @swigrules@/include/swig_array.i
+swiginc_HEADERS += @swigrules@/include/swig_array_inc.i
+swiginc_HEADERS += @swigrules@/include/swig_boost_array.i
+swiginc_HEADERS += @swigrules@/include/swig_boost_array_inc.i
+
+ADDITONAL_SWIG_SRC = @swigsrc@/swig_array_wrap.cc
+ADDITONAL_SWIG_SRC += @swigsrc@/swig_boost_array_wrap.cc
+EXTRA_DIST+= @swigrules@/doxy2swig.py
+EXTRA_DIST+= @swigrules@/doxygen_single.cfg
+EXTRA_DIST+= @swigrules@/README.md
+EXTRA_DIST+= @swigrules@/swig_wrap.tmpl
+
+# Allow files to be include in other directories
+AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/include
+AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/lib
+
+# Allow searchs for .i in this directory
+vpath %.i $(srcdir)/@swigrules@/include
+
+SWIG_FLAG += -O
+
+pkgpythonswig_PYTHON = @swigrules@/__init__.py
+
+EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(FULL_SWIG_SRC))
+EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(ADDITONAL_SWIG_SRC))
+pkgpythonswig_PYTHON += $(patsubst %_wrap.cc, %.py, $(COMPILE_SWIG_SRC))
+pkgpythonswig_PYTHON += $(patsubst %_wrap.cc, %.py, $(ADDITONAL_SWIG_SRC))
+pkgpythonswig_LTLIBRARIES = _swig_wrap.la
+
+_swig_wrap_la_CPPFLAGS = $(PYTHON_CPPFLAGS) $(PYTHON_NUMPY_CPPFLAGS) 
+_swig_wrap_la_CPPFLAGS+= $(SWIG_CPPFLAGS)
+_swig_wrap_la_CPPFLAGS+= -DSWIG_TYPE_TABLE=$(SWIG_TYPE_TABLE_NAME)
+_swig_wrap_la_CXXFLAGS = $(AM_CXXFLAGS)
+_swig_wrap_la_LDFLAGS = -module -avoid-version
+_swig_wrap_la_LIBADD = $(SWIG_LIBADD)
+_swig_wrap_la_SOURCES = $(COMPILE_SWIG_SRC)
+_swig_wrap_la_SOURCES+= $(ADDITONAL_SWIG_SRC)
+_swig_wrap_la_SOURCES+= @swigsrc@/swig_wrap.cc
+
+EXTRA_DIST+= $(FULL_SWIG_SRC)
+EXTRA_DIST+= $(ADDITONAL_SWIG_SRC)
+EXTRA_DIST+= $(srcdir)/$(swigsrc)/*_wrap.h
+
+# Only generate these files in maintainer mode, otherwise consider them
+# as input.
+if MAINTAINER_MODE
+if HAVE_SWIG
+
+$(swigsrc)/%_wrap.Pcc : %.i %.cc %.h $(SWIG_TARGET)
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -MM -MF $(builddir)/$@.tmp -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $<
+	sed 's,\($*_wrap\)\.cc[ :]*,\1.cc $@ : ,g' < $@.tmp > $@
+	rm $@.tmp
+	echo "$(swigsrc)/$*_wrap.cc: $(<D)/$*.cc" >> $@
+	echo "$(swigsrc)/$*_wrap.cc: $(<D)/$*.h" >> $@
+
+$(swigsrc)/%_wrap.Pcc : %.i %.h $(SWIG_TARGET)
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -MM -MF $(builddir)/$@.tmp -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $<
+	sed 's,\($*_wrap\)\.cc[ :]*,\1.cc $@ : ,g' < $@.tmp > $@
+	rm $@.tmp
+	echo "$(swigsrc)/$*_wrap.cc: $(<D)/$*.h" >> $@
+
+$(swigsrc)/%_wrap.Pcc : %.i $(SWIG_TARGET)
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -MM -MF $(builddir)/$@.tmp -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $<
+	sed 's,\($*_wrap\)\.cc[ :]*,\1.cc $@ : ,g' < $@.tmp > $@
+	rm $@.tmp
+
+$(srcdir)/$(swigsrc)/swig_wrap.cc: @swigrules@/swig_wrap.tmpl @swigrules@/create_python_init.py Makefile $(PYTHON_TARGET)
+	export LD_LIBRARY_PATH="${PYTHON_LDPATH}${LD_LIBRARY_PATH}" && \
+        $(PYTHON) $(srcdir)/$(swigrules)/create_python_init.py $< $@ swig $(SWIG_MODULE_NAME) $(patsubst %_wrap.cc,%,$(notdir $(ADDITONAL_SWIG_SRC) $(CONDITIONAL_SWIG_SRC)))
+
+$(srcdir)/$(swigsrc)/%_wrap.cc: %.i %.h %.cc $(DOXYGEN_TARGET) $(SWIG_TARGET)
+	mkdir -p $*_doc
+	OUTDIR=$*_doc INPUT="$(<D)/$*.h $(<D)/$*.cc" $(DOXYGEN) $(srcdir)/$(swigrules)/doxygen_single.cfg
+	export LD_LIBRARY_PATH="${PYTHON_LDPATH}${LD_LIBRARY_PATH}" && \
+        $(PYTHON) $(srcdir)/$(swigrules)/doxy2swig.py $*_doc/xml/index.xml $*_doc.i
+	rm -r $*_doc
+	echo "%include \"$*.i\"" >> $*_doc.i
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $*_doc.i 
+	rm $*_doc.i
+
+$(srcdir)/$(swigsrc)/%_wrap.cc: %.i %.h $(DOXYGEN_TARGET) $(SWIG_TARGET)
+	mkdir -p $*_doc
+	OUTDIR=$*_doc INPUT="$(<D)/$*.h" $(DOXYGEN) $(srcdir)/$(swigrules)/doxygen_single.cfg
+	export LD_LIBRARY_PATH="${PYTHON_LDPATH}${LD_LIBRARY_PATH}" && \
+        $(PYTHON) $(srcdir)/$(swigrules)/doxy2swig.py $*_doc/xml/index.xml $*_doc.i
+	rm -r $*_doc
+	echo "%include \"$*.i\"" >> $*_doc.i
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $*_doc.i 
+	rm $*_doc.i
+
+$(srcdir)/$(swigsrc)/%_wrap.cc: %.i $(SWIG_TARGET)
+	$(SWIG) $(SWIG_PYTHON_OPT) $(SWIG_FLAG) $(AM_CPPFLAGS) -module $* -o $(srcdir)/$(swigsrc)/$*_wrap.cc $<
+
+BUILT_SOURCES+= $(addprefix $(srcdir)/, $(COMPILE_SWIG_SRC))
+BUILT_SOURCES+= $(addprefix $(srcdir)/, $(ADDITONAL_SWIG_SRC))
+BUILT_SOURCES+= $(srcdir)/$(swigsrc)/swig_wrap.cc
+
+-include $(patsubst %.cc, %.Pcc, $(COMPILE_SWIG_SRC))
+-include $(patsubst %.cc, %.Pcc, $(ADDITONAL_SWIG_SRC))
+endif HAVE_SWIG
+endif MAINTAINER_MODE

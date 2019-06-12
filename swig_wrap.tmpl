@@ -1,0 +1,14 @@
+#define PYTHON_MODULE_NAME _swig_wrap
+#include "python_lib_init.h"
+#include "geocal_config.h"
+
+extern "C" {{
+{prototypes}
+}}
+
+static void module_init(PyObject* module)
+{{
+{initcmd}
+}}
+
+
