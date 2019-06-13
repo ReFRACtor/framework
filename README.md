@@ -47,6 +47,22 @@ available as generic_object.h. All the class should be derived from
 this base class in order to be able to be cast automatically to the 
 right type.
 
+There is a sample lib/generic_object.h.sample and closely related
+lib/printable.h.sample that reposistories can use as a example. This
+specific code is *not* required, just some base class called 
+"GenericObject". 
+
+The Printable template is often useful, it maps the C++ friendly
+overloaded operator<< to a more python friendly print_to_string. There this
+then code in swig_print.i that maps this to the python name __str__, to
+print(Foo) calls the C++ operator<<. Again, this is optional but the
+convention used in GeoCal is to have almost all classes derive from Printable
+which derives from GenericObject.
+
 The code swig_type_mapper_base.cc should be compiled and included in
 the parent library. This should have -DSWIG_MAPPER_NAMESPACE=GeoCal
 or similar defined when compiled.
+
+It is not required, but it is very useful to be able to serialize the 
+swig python classes. There is sample code lib/serialize_support.h.sample
+that can be used to give serialization support.

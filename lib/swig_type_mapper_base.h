@@ -2,6 +2,7 @@
 #define SWIG_TYPE_MAPPER_BASE_H
 #include <map>
 #include <exception>
+#include <stdexcept>
 #include <cstring>
 #include <typeinfo>
 #include <boost/shared_ptr.hpp>

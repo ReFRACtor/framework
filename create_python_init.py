@@ -27,6 +27,9 @@ modname = sys.argv[4]
 prototypes = []
 initcmd = []
 end_count = 0
+# Think we always want to include <module>_config.h. We can put more
+# complicated logic here in the future if needed.
+prototypes.append("#include \"%s_config.h\"" % modname)
 for i in sys.argv[5:]:
     # Handle stuff we are including conditionally
     if(re.search('\AHAVE', i)):

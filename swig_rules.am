@@ -41,6 +41,12 @@ EXTRA_DIST+= @swigrules@/doxy2swig.py
 EXTRA_DIST+= @swigrules@/doxygen_single.cfg
 EXTRA_DIST+= @swigrules@/README.md
 EXTRA_DIST+= @swigrules@/swig_wrap.tmpl
+EXTRA_DIST+= @swigrules@/lib/generic_object.h.sample
+EXTRA_DIST+= @swigrules@/lib/printable.h.sample
+EXTRA_DIST+= @swigrules@/lib/serialize_support.h.sample
+EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.h.sample
+EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.cc.sample
+
 
 # Allow files to be include in other directories
 AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/include
