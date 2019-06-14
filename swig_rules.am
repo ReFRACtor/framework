@@ -41,11 +41,13 @@ swiginc_HEADERS += @swigrules@/include/swig_std.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_optional.i
 swiginc_HEADERS += @swigrules@/include/swig_iostream_inc.i
 swiginc_HEADERS += @swigrules@/include/swig_iostream.i
+swiginc_HEADERS += @swigrules@/lib/serialize_function.i
 
 
 ADDITONAL_SWIG_SRC = @swigsrc@/swig_array_wrap.cc
 ADDITONAL_SWIG_SRC += @swigsrc@/swig_boost_array_wrap.cc
 EXTRA_DIST+= @swigrules@/doxy2swig.py
+EXTRA_DIST+= @swigrules@/create_python_init.py
 EXTRA_DIST+= @swigrules@/doxygen_single.cfg
 EXTRA_DIST+= @swigrules@/README.md
 EXTRA_DIST+= @swigrules@/swig_wrap.tmpl
