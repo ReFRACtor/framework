@@ -34,6 +34,14 @@ swiginc_HEADERS += @swigrules@/include/swig_array.i
 swiginc_HEADERS += @swigrules@/include/swig_array_inc.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_array.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_array_inc.i
+swiginc_HEADERS += @swigrules@/include/swig_exception.i
+swiginc_HEADERS += @swigrules@/include/swig_print.i
+swiginc_HEADERS += @swigrules@/include/swig_pickle.i
+swiginc_HEADERS += @swigrules@/include/swig_std.i
+swiginc_HEADERS += @swigrules@/include/swig_boost_optional.i
+swiginc_HEADERS += @swigrules@/include/swig_iostream_inc.i
+swiginc_HEADERS += @swigrules@/include/swig_iostream.i
+
 
 ADDITONAL_SWIG_SRC = @swigsrc@/swig_array_wrap.cc
 ADDITONAL_SWIG_SRC += @swigsrc@/swig_boost_array_wrap.cc
@@ -42,6 +50,8 @@ EXTRA_DIST+= @swigrules@/doxygen_single.cfg
 EXTRA_DIST+= @swigrules@/README.md
 EXTRA_DIST+= @swigrules@/swig_wrap.tmpl
 EXTRA_DIST+= @swigrules@/lib/generic_object.h.sample
+EXTRA_DIST+= @swigrules@/lib/generic_object.i.sample
+EXTRA_DIST+= @swigrules@/lib/common.i.sample
 EXTRA_DIST+= @swigrules@/lib/printable.h.sample
 EXTRA_DIST+= @swigrules@/lib/serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.h.sample
