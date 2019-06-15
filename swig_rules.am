@@ -41,11 +41,11 @@ swiginc_HEADERS += @swigrules@/include/swig_std.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_optional.i
 swiginc_HEADERS += @swigrules@/include/swig_iostream_inc.i
 swiginc_HEADERS += @swigrules@/include/swig_iostream.i
-swiginc_HEADERS += @swigrules@/lib/serialize_function.i
 
 
 ADDITONAL_SWIG_SRC = @swigsrc@/swig_array_wrap.cc
 ADDITONAL_SWIG_SRC += @swigsrc@/swig_boost_array_wrap.cc
+ADDITONAL_SWIG_SRC += @swigsrc@/swig_std_wrap.cc
 EXTRA_DIST+= @swigrules@/doxy2swig.py
 EXTRA_DIST+= @swigrules@/create_python_init.py
 EXTRA_DIST+= @swigrules@/doxygen_single.cfg
@@ -58,7 +58,7 @@ EXTRA_DIST+= @swigrules@/lib/printable.h.sample
 EXTRA_DIST+= @swigrules@/lib/serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.cc.sample
-
+EXTRA_DIST+= @swigrules@/lib/serialize_function.i.sample
 
 # Allow files to be include in other directories
 AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/include
@@ -66,6 +66,7 @@ AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/lib
 
 # Allow searchs for .i in this directory
 vpath %.i $(srcdir)/@swigrules@/include
+vpath %.i $(srcdir)/@swigrules@/lib
 
 SWIG_FLAG += -O
 

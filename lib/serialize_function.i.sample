@@ -1,14 +1,13 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
-%include "my_shared_ptr.i"
-
+%include "geocal_common.i"
 %{
 #include "serialize_function.h"
 %}
 %import "generic_object.i"
 
-namespace SWIG_MAPPER_NAMESPACE {
+namespace GeoCal {
 bool have_serialize_supported();
 void serialize_write(const std::string& Fname, 
 		     const boost::shared_ptr<GenericObject>& Obj);
@@ -38,7 +37,7 @@ serialize_read_generic_string(const std::string& Data);
   delete $1;
 }
 
-namespace SWIG_MAPPER_NAMESPACE {
+namespace GeoCal {
 std::string serialize_write_binary(const boost::shared_ptr<GenericObject>& Obj);
 
 boost::shared_ptr<GenericObject> 

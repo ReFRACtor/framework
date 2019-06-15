@@ -1,5 +1,5 @@
 #include "serialize_function.h"
-#include "skeleton_serialize_support.h"
+#include <boost/serialization/shared_ptr.hpp>
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
