@@ -63,7 +63,7 @@ foreach(input_swig_file ${SWIG_INTERFACE_FILES})
             DEPENDS ${input_swig_file})
     else()
         # No Doxygen so use the input_swig_file as the one used in the build
-        set(build_swig_file $input_swig_file)
+        set(build_swig_file ${input_swig_file})
     endif()
 
     list(APPEND BUILD_USED_SWIG_FILES ${build_swig_file})
