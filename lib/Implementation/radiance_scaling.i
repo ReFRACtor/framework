@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "radiance_scaling.h"
 #include "sub_state_vector_array.h"

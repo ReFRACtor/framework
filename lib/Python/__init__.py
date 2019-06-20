@@ -23,7 +23,7 @@ from . import safe_matplotlib_import
 
 # Don't automatically import these modules, they may use C interface
 # stuff and should not be available unless directly imported
-NO_AUTO_IMPORT = []
+NO_AUTO_IMPORT = ["__init__",]
 
 for i in glob.glob(os.path.dirname(__file__) + "/*.py"):
     mname = os.path.basename(i).split('.')[0]

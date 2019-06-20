@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "bad_sample_noise_model.h"

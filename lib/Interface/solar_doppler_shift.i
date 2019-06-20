@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "solar_doppler_shift.h"

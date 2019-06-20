@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "radiative_transfer_single_wn.h"
 #include "rt_atmosphere.h"

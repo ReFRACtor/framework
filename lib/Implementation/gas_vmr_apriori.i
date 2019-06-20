@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "gas_vmr_apriori.h"
 #include "temperature.h"

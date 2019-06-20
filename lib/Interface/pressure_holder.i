@@ -3,7 +3,7 @@
 
 // This is a simple test class used to test the SWIG interface.
 
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "pressure.h"
 %}

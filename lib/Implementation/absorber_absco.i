@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "absorber_absco.h"
 #include "absco_hdf.h"

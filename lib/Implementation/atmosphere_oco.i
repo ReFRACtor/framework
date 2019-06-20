@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "atmosphere_oco.h"
 #include "sub_state_vector_array.h"

@@ -15,19 +15,6 @@
 %{
 #include <boost/shared_ptr.hpp>
 #include <boost/rational.hpp>
-
-//--------------------------------------------------------------
-// Helper class for python that holds an object and when deleted
-// decrements the reference to it.
-//--------------------------------------------------------------
-
-class PythonObject {
-public:
-  PythonObject(PyObject* Obj = 0) : obj(Obj) {}
-  ~PythonObject() { Py_XDECREF(obj); }
-  PyObject* obj;
-  operator PyObject*() {return obj;}
-};
 %}
 
 // Short cut for ingesting a base class
@@ -38,6 +25,8 @@ public:
 // Map std::string to and from the native string type
 %naturalvar std::string;
 
+%include <std_vector.i>
+
 // Include our own rules and common imports here.
 %include "fp_shared_ptr.i"
 %include "swig_exception.i"
@@ -47,4 +36,10 @@ public:
 %import "swig_std.i"
 %include "swig_array_inc.i"
 %import "swig_array.i"
+%include "swig_boost_array_inc.i"
+%import "swig_boost_array.i"
+%import "swig_boost_optional.i"
+%include "swig_iostream_inc.i"
+%import "swig_iostream.i"
 %import "swig_rational.i"
+%include "swig_vector_shared_ptr.i"

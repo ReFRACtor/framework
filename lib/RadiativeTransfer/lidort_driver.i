@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %include "spurr_driver.i"
 %{
 #include "lidort_driver.h"

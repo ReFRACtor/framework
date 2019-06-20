@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOXY_CONFIG="$(dirname $0)/doxygen_xml.cfg"
+DOXY_CONFIG="$(dirname $0)/doxygen_single.cfg"
 DOXY2SWIG="$(dirname $0)/doxy2swig.py"
 
 doxygen_bin=$1

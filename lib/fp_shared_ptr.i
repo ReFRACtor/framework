@@ -15,7 +15,7 @@
 
 %include "shared_ptr_type_mapper.i"
 
-%define %geocal_shared_ptr(TYPE...)
+%define %fp_shared_ptr(TYPE...)
 %shared_ptr_type_mapper(FullPhysics, TYPE)
 %enddef
 
