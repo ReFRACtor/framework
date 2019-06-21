@@ -60,6 +60,8 @@ EXTRA_DIST+= @swigrules@/lib/serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.cc.sample
 EXTRA_DIST+= @swigrules@/lib/serialize_function.i.sample
+EXTRA_DIST+= @swigrules@/python/swig_shelve.py.sample
+EXTRA_DIST+= @swigrules@/python/swig_shelve_test.py.sample
 
 # Allow files to be include in other directories
 AM_CPPFLAGS+= -I$(srcdir)/@swigrules@/include
