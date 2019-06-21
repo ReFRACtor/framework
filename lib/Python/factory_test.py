@@ -4,7 +4,7 @@ import refractor.factory.creator as creator
 import refractor.factory.param as param
 from refractor.factory import process_config
 
-from test_support import *
+from .test_support import *
 
 def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):

@@ -10,7 +10,7 @@ import subprocess
 import pytest
     
 # Location of test data that is part of source
-unit_test_data = os.path.abspath(os.path.dirname(__file__) + "/../../../../test/unit/data/") + "/"
+unit_test_data = os.path.abspath(os.path.dirname(__file__) + "/../../../test/unit/data/") + "/"
 
 # Marker that skips a test if we have a build without boost serialization
 # support

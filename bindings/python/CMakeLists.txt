@@ -112,7 +112,11 @@ execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; pri
 
 # Install non SWIG Python code into refractor/
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
-    FILES_MATCHING PATTERN "*.py")
+  FILES_MATCHING
+  PATTERN "*_test.py" EXCLUDE
+  PATTERN "test_support/*" EXCLUDE
+  PATTERN "test_support" EXCLUDE
+  PATTERN "*.py")
 
 # Install SWIG Python code into refractor_swig/
 install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)

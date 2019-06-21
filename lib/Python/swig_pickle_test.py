@@ -1,4 +1,4 @@
-from test_support import *
+from .test_support import *
 import pickle
 
 def test_psigma_pickle():

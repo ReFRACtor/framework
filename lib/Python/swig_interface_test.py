@@ -5,7 +5,7 @@
 # However we have these tests in place to check the underlying functionality
 # of SWIG (so for example, test that directors are handled correctly.
 
-from test_support import *
+from .test_support import *
 import os
 
 # Start some tests using HeritageFile. This is a particularly simple class,

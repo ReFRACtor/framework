@@ -4,7 +4,7 @@ from builtins import object
 # (e.g., a function returning a boost::shared_ptr<Pressure>, which is actually
 # a PressureSigma, will return the PressureSigma type to python.
 
-from test_support import *
+from .test_support import *
 
 # A simple python based class, to 
 class PythonPressureSigma(rf.PressureImpBase):
