@@ -1,11 +1,10 @@
-import numpy as np
 from functools import partial
 
 import refractor.factory.creator as creator
 import refractor.factory.param as param
 from refractor.factory import process_config
 
-from refractor import framework as rf
+from test_support import *
 
 def ParamReturnCreator(param_type, **kwargs):
     class ReturnCreatorHelper(creator.base.Creator):

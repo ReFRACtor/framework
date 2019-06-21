@@ -1,20 +1,10 @@
-from future import standard_library
-standard_library.install_aliases()
-# Test that we set up pickling correctly in the SWIG code.
-
-from nose.tools import *
-from full_physics import *
-from nose.plugins.skip import Skip, SkipTest
-import os
+from test_support import *
 import pickle
 
-test_data = os.path.dirname(__file__) + "/../../test/unit/data/"
-
-def test_hdf_file_pickle():
-    '''Test pickling of HdfFile class.'''
-    if(not have_full_physics_swig):
-        raise SkipTest
-    f = HdfFile(test_data + "l1b.h5")
-    t = pickle.dumps(f, pickle.HIGHEST_PROTOCOL)
-    f2 = pickle.loads(t)
-    assert f.file_name == f2.file_name
+def test_psigma_pickle():
+    '''Test pickling of PressureSigma class.'''
+    psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10, True)
+    t = pickle.dumps(psigma)
+    psigma2 = pickle.loads(t)
+    assert_array_almost_equal(psigma.a, psigma2.a)
+    assert_array_almost_equal(psigma.b, psigma2.b)

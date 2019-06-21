@@ -1,21 +1,16 @@
-from __future__ import print_function
-from __future__ import division
-from past.utils import old_div
-from nose.tools import *
-from full_physics import *
+from test_support import *
 import math
 try:
     import nlopt
 except ImportError:
     pass                        # Ignore, these tests are just examples
-from nose.plugins.skip import Skip, SkipTest
 
-def nlopt_constrained_test():
+@skip
+def test_nlopt_constrained():
     '''This test is an example of using the nlopt package. We ended up
     *not* using this, the solvers didn't work well with our problems. But
     leave this test in place as an example of how to set this up in case
     we want to return to this at some point.'''
-    raise SkipTest
     config_file = "/home/smyth/Local/Level2PythonBuild/build/oco2_sounding_1_test/oco_oco2_sounding_1_test.config"
     lua_config = "/home/smyth/Local/Level2PythonBuild/build/oco2_sounding_1_test/config_diff_solv.lua"
     l2run = L2Run.create_from_existing_run(config_file, lua_config=lua_config)
@@ -78,13 +73,13 @@ def nlopt_constrained_test():
    1.80000000e-03]
     opt.optimize(opt_problem.parameters)
 
-def nlopt_test():
+@skip    
+def test_nlopt():
     '''This is from the tutorial'''
-    raise SkipTest
     def myfunc(x, grad):
         if grad.size > 0:
             grad[0] = 0.0
-            grad[1] = old_div(0.5, math.sqrt(x[1]))
+            grad[1] = 0.5 / math.sqrt(x[1])
         return math.sqrt(x[1])
 
     def myconstraint(x, grad, a, b):

@@ -1,10 +1,6 @@
-from nose.tools import *
-from full_physics import *
-from nose.plugins.skip import Skip, SkipTest
+from test_support import *
 
 def test_exception():
-    if(not have_full_physics_swig):
-        raise SkipTest
-    t = FpException("test")
+    t = rf.FpException("test")
     assert t.what() == "test"
         

@@ -1,10 +1,11 @@
-from __future__ import print_function
-from nose.tools import *
-from full_physics import *
-import scipy.optimize
-from nose.plugins.skip import Skip, SkipTest
+from test_support import *
+try:
+    import scipy.optimize
+except ImportError:
+    pass                        # Ignore, these tests are just examples
 
-def scipy_constrained_test():
+@skip
+def test_scipy_constrained():
     '''This test is an example of using the scipy.optimize package. We
     don't regularly run this, and it depends on a hardcoded run. But
     leave this in place as an example of how to set this up.'''
