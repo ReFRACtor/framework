@@ -183,6 +183,7 @@ install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTA
 # Set up cmake project config file install and include locations 
 set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
 set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(INSTALL_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/share")
 
 # Add refractor (and python if building) targets to the build-tree export set
 if(BUILD_PYTHON_BINDING) 
@@ -194,11 +195,13 @@ export(PACKAGE Refractor)
 
 # Create the RefractorConfig.cmake and RefractorConfigVersion.cmake files
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
+file(RELATIVE_PATH REL_SHARE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_SHARE_DIR}")
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
 configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}/RefractorConfig.cmake" @ONLY)
 # ... for the install tree
-set(CONF_INCLUDE_DIRS "\${REFRACTOR_CMAKE_DIR}/${REL_INCLUDE_DIR}/refractor")
+set(CONF_INCLUDE_DIRS "\${REFRACTOR_CMAKE_DIR}/${REL_INCLUDE_DIR}/refractor"
+  "\${REFRACTOR_CMAKE_DIR}/${REL_SHARE_DIR}/refractor/swig")
 configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/RefractorConfig.cmake" @ONLY)
 # ... for both
 configure_file(cmake/Config/RefractorConfigVersion.cmake.in  "${PROJECT_BINARY_DIR}/RefractorConfigVersion.cmake" @ONLY)

@@ -12,9 +12,9 @@ set(SWIG_INCLUDE_DIR "")
 #
 # The top level lib folder has some header and interface files we need to install
 file(GLOB LIB_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-file(GLOB SWIG_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
+file(GLOB SWIG_INCLUDE_FILES_ADD ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
+list(APPEND SWIG_INCLUDE_FILES ${SWIG_INCLUDE_FILES_ADD})
 install(FILES ${LIB_INCLUDE_FILES} DESTINATION include/refractor)
-install(FILES ${SWIG_INCLUDE_FILES} DESTINATION share/refractor/swig)
 
 foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Support Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
@@ -55,6 +55,9 @@ set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
 set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
 set(SWIG_INCLUDE_DIR ${SWIG_INCLUDE_DIR} PARENT_SCOPE)
 set(SWIG_INCLUDE_FILES ${SWIG_INCLUDE_FILES} PARENT_SCOPE)
+
+# Install SWIG files
+install(FILES ${SWIG_INCLUDE_FILES} DESTINATION share/refractor/swig)
 
 # Create installation rules
 install(TARGETS refractor
