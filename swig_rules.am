@@ -51,6 +51,7 @@ EXTRA_DIST+= @swigrules@/create_python_init.py
 EXTRA_DIST+= @swigrules@/doxygen_single.cfg
 EXTRA_DIST+= @swigrules@/README.md
 EXTRA_DIST+= @swigrules@/swig_wrap.tmpl
+EXTRA_DIST+= @swigrules@/lib/generic_object.cc.sample
 EXTRA_DIST+= @swigrules@/lib/generic_object.h.sample
 EXTRA_DIST+= @swigrules@/lib/generic_object.i.sample
 EXTRA_DIST+= @swigrules@/lib/common.i.sample
