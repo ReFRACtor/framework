@@ -11,7 +11,7 @@
 // directors=1 and allprotected=1 set.
 
 %module(directors="1", allprotected="1") refractor
-
+#define SWIG_MODULE refractor_swig
 %{
 #include <boost/shared_ptr.hpp>
 #include <boost/rational.hpp>

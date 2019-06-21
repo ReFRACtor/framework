@@ -75,7 +75,7 @@ list(APPEND THIRDPARTY_LIBRARIES ${HDF5_LIBRARIES})
 if(NOT BOOST_ROOT AND DEFINED ENV{CONDA_PREFIX})
   set(BOOST_ROOT $ENV{CONDA_PREFIX})
 endif(NOT BOOST_ROOT AND DEFINED ENV{CONDA_PREFIX})
-find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system)
+find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization)
 list(APPEND THIRDPARTY_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 

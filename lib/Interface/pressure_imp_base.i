@@ -43,6 +43,7 @@ public:
   virtual boost::shared_ptr<Pressure> clone() const = 0;
   %python_attribute_derived(pressure_grid, ArrayAdWithUnit<double, 1>);
   %sub_state_virtual_func(Pressure);
+  %pickle_serialization();
 protected:
   mutable bool cache_stale;
   mutable ArrayAdWithUnit<double, 1> pgrid;

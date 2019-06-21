@@ -66,13 +66,13 @@ def _new_from_init(cls, version, *args):
     return inst
  
 def _new_from_serialization(data):
-    return geocal_swig.serialize_read_binary(data)
+    return SWIG_MODULE.serialize_read_binary(data)
 
 def _new_from_serialization_dir(dir, data):
     curdir = os.getcwd()
     try:
       os.chdir(dir)
-      return geocal_swig.serialize_read_binary(data)
+      return SWIG_MODULE.serialize_read_binary(data)
     finally:
       os.chdir(curdir)
 	
@@ -112,14 +112,14 @@ def __reduce__(self):
 %define %pickle_serialization()
   %pythoncode {
 def __reduce__(self):
-  return _new_from_serialization, (geocal_swig.serialize_write_binary(self),)
+  return _new_from_serialization, (SWIG_MODULE.serialize_write_binary(self),)
 }
 %enddef
 
 %define %pickle_serialization_dir()
   %pythoncode {
 def __reduce__(self):
-  return _new_from_serialization_dir, (os.getcwd(), geocal_swig.serialize_write_binary(self),)
+  return _new_from_serialization_dir, (os.getcwd(), SWIG_MODULE.serialize_write_binary(self),)
 }
 %enddef
 

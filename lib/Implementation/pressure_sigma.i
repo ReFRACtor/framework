@@ -25,6 +25,7 @@ public:
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(a, blitz::Array<double, 1>)
   %python_attribute(b, blitz::Array<double, 1>)
+  %pickle_serialization();
 protected:
   virtual void calc_pressure_grid() const;
 };

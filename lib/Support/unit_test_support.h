@@ -1,9 +1,12 @@
 #ifndef UNIT_TEST_SUPPORT_H
 #define UNIT_TEST_SUPPORT_H
 #include "global_fixture.h"
+#define SWIG_MAPPER_NAMESPACE FullPhysics
+#include "serialize_function.h"
 #include "ifstream_cs.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
+#include <boost/make_shared.hpp>
 #include <blitz/array.h>
 #include <string>
 

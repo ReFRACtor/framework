@@ -1,7 +1,10 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
+    array_ad.cc
     array_with_unit.cc
     boost/backtrace.cpp
+    blitz_array_serialize_support.cc
+    generic_object.cc
     constant.cc
     constants.F90
     default_constant.cc
@@ -28,6 +31,7 @@ set(DIR_SOURCES
     spectrum.cc
     stacked_radiance_mixin.cc
     state_vector.cc
+    state_vector_observer.cc
     sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc

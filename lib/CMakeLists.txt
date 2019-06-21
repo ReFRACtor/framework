@@ -47,6 +47,7 @@ install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
 add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
 target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
 target_compile_definitions(refractor PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
+target_compile_definitions(refractor PRIVATE SWIG_HAVE_BOOST_SERIALIZATION)
 
 # Expose to the parent scope
 set(FP_INCLUDES ${FP_INCLUDES} PARENT_SCOPE)

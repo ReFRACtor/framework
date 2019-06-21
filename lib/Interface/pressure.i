@@ -39,6 +39,7 @@ public:
   %python_attribute(number_layer, int)
   %python_attribute(number_level, int)
   %python_attribute(max_number_level, virtual int)
+  %pickle_serialization();
   virtual boost::shared_ptr<Pressure> clone() const = 0;
   std::string print_to_string() const;
 };

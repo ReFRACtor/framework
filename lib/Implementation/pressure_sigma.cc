@@ -1,8 +1,20 @@
 #include "pressure_sigma.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void PressureSigma::serialize(Archive & ar, const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PressureImpBase)
+    & FP_NVP_(a) & FP_NVP_(b);
+}
+
+FP_IMPLEMENT(PressureSigma);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

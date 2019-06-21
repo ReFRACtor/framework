@@ -27,6 +27,24 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_MATRIX_CLOSE(p.pressure_grid().value.value(), press_grid_expect);
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Array<double, 1> a(3), b(3);
+  a = 0; b = 0.3, 0.6, 1.0;
+  double psurf = 10;
+  boost::shared_ptr<PressureSigma> p = boost::make_shared<PressureSigma>(a,b, psurf, true);
+  std::string d = serialize_write_string(p);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<PressureSigma> pr = serialize_read_string<PressureSigma>(d);
+  Array<double, 1> press_grid_expect(3);
+  press_grid_expect = 3, 6, 10;
+  BOOST_CHECK_CLOSE(pr->surface_pressure().value.value(), psurf, 1e-4);
+  BOOST_CHECK_MATRIX_CLOSE(pr->pressure_grid().value.value(), press_grid_expect);
+}
+
 // BOOST_AUTO_TEST_CASE(jacobian)
 // {
 //   Pressure& p = *config_pressure;

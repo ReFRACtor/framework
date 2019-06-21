@@ -42,6 +42,7 @@ set(DIR_SOURCES
     noise_model.cc
     output.cc
     pressure.cc
+    pressure_imp_base.cc
     problem_state.cc
     rt_atmosphere.cc
     sample_grid.cc

@@ -1,7 +1,21 @@
 #include "sub_state_vector_observer.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SubStateVectorObserver::serialize(Archive & ar, const unsigned int version)
+{
+  FP_GENERIC_BASE(StateVectorObserver);
+  FP_BASE(SubStateVectorObserver, StateVectorObserver);
+  ar & FP_NVP(sv_full) & FP_NVP(sv_cov_full) & FP_NVP(sv_sub)
+    & FP_NVP(sv_cov_sub) & FP_NVP(pstart) & FP_NVP(plen);
+}
+
+FP_IMPLEMENT(SubStateVectorObserver);
+#endif
 
 void SubStateVectorObserver::notify_update(const StateVector& Sv)
 {
