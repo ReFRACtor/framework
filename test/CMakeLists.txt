@@ -54,6 +54,9 @@ endforeach()
 # Target to run only unit tests
 add_custom_target(unit_test COMMAND ${CTEST_WRAP} -R ^unit/ DEPENDS test_all)
 
+# Target to run all tests
+add_custom_target(all_test COMMAND ${CTEST_WRAP} DEPENDS test_all python_install)
+
 #####
 # Set up full tests
 set(FULL_TEST_RUN_DIR ${CMAKE_CURRENT_BINARY_DIR}/full)
