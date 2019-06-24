@@ -22,7 +22,7 @@ namespace FullPhysics {
 *******************************************************************/
 template<class Base> class SubStateVectorArray:
     virtual public Base,
-    public SubStateVectorObserver {
+    virtual public SubStateVectorObserver {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -239,6 +239,7 @@ protected:
 };
 }
 
+// TODO: Add mapping to serialization
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
