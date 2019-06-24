@@ -23,7 +23,7 @@ namespace FullPhysics {
   PressureImpBase sets things up. But most of the time, you'll want
   to derive from this class.
 *******************************************************************/
-class PressureImpBase: public SubStateVectorArray<Pressure> {
+class PressureImpBase: virtual public SubStateVectorArray<Pressure> {
 public:
   virtual ~PressureImpBase() {}
   virtual ArrayAdWithUnit<double, 1> pressure_grid() const
@@ -45,6 +45,10 @@ public:
 /// interface for deriving from python.
 //-----------------------------------------------------------------------
   virtual std::string desc() const { return "PressureImpBase"; }
+
+  using SubStateVectorArray<Pressure>::update_sub_state;
+  using SubStateVectorArray<Pressure>::mark_used_sub;
+  using SubStateVectorArray<Pressure>::state_vector_name_sub;
 protected:
 //-----------------------------------------------------------------------
 /// If this is true, the recalculate the pressure_grid the next time we
@@ -88,8 +92,13 @@ private:
     }
     cache_stale = false;
   }
-  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
-
+typedef SubStateVectorArray<Pressure> SubStateVectorArrayPressure;
 }
+
+FP_EXPORT_KEY(PressureImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayPressure);
 #endif

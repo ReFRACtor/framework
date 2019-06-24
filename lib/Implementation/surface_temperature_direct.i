@@ -1,5 +1,5 @@
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "surface_temperature_direct.h"

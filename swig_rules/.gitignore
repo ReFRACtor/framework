@@ -1,0 +1,11 @@
+autom4te.cache
+create_delta.bundle
+*~
+\#*#
+.#*
+.DS_Store
+*.pyc
+*.o
+*.lo
+.cache
+.tramp_history

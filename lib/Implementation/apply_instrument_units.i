@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "apply_instrument_units.h"
 #include "sub_state_vector_array.h"

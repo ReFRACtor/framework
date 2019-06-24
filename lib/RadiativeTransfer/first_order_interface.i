@@ -1,6 +1,6 @@
 // This file was auto-generated
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "first_order_interface.h"

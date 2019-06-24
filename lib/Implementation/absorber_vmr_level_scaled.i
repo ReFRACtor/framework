@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "absorber_vmr_level_scaled.h"
 %}

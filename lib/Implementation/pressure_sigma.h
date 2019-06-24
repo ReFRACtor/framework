@@ -11,7 +11,7 @@ namespace FullPhysics {
   particular implementation use pressure sigma levels to determine 
   the pressure levels as the surface pressure changes.
 *******************************************************************/
-class PressureSigma : public PressureImpBase {
+class PressureSigma : virtual public PressureImpBase {
 public:
   PressureSigma(const blitz::Array<double, 1>& A,
 		const blitz::Array<double, 1>& B,
@@ -54,6 +54,12 @@ protected:
   virtual void calc_pressure_grid() const;
 private:
   blitz::Array<double, 1> a_, b_;
+  PressureSigma() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(PressureSigma);
 #endif

@@ -1,5 +1,4 @@
-%include "common.i"
-%include "swig_optional.i"
+%include "fp_common.i"
 
 %{
 #include "forward_model.h"

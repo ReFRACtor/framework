@@ -1,6 +1,20 @@
 #include "pressure.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Pressure::serialize(Archive & ar, const unsigned int version)
+{
+  FP_GENERIC_BASE(Pressure);
+  // Leave out the StateVectorObserver part, I'm not sure if we
+  // want to serialize that or not
+}
+
+FP_IMPLEMENT(Pressure);
+#endif
+
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_CLASS(Pressure)

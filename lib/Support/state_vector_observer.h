@@ -13,7 +13,7 @@ namespace FullPhysics {
   based on the state vector update.
 *******************************************************************/
 class StateVectorObserver : public Printable<StateVectorObserver>,
-  public Observer<StateVector> {
+  virtual public Observer<StateVector> {
 public:
   virtual ~StateVectorObserver() {}
 
@@ -35,7 +35,13 @@ public:
 		 blitz::Array<std::string, 1>& UNUSED(Sv_name)) const {}
 			 
   virtual void print(std::ostream& Os) const { Os << "StateVectorObserver";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(StateVectorObserver);
 
 #endif

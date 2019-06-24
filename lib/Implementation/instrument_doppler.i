@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "instrument_doppler.h"
 #include "instrument.h"

@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "array_ad.h"
@@ -162,9 +162,7 @@ def to_vector(self):
     void write(int i1, int i2, int i3, int i4, const AutoDerivative<TYPE>& V)
     { (*$self)(i1, i2, i3, i4) = V; }
   }
-  // 1 here is the pickle format version, so we can tell if we try to
-  // read data with a different format version than the code here.
-  %pickle_init(1, self.value, self.jacobian, self.is_constant)
+  %pickle_serialization();
  };
  
 }
@@ -175,3 +173,4 @@ def to_vector(self):
 %array_ad_template(ArrayAd_double_1, double, 1, 2);
 %array_ad_template(ArrayAd_double_2, double, 2, 3);
 %array_ad_template(ArrayAd_double_3, double, 3, 4);
+%array_ad_template(ArrayAd_double_4, double, 4, 5);

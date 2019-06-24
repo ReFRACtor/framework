@@ -1,6 +1,6 @@
 // This file was auto-generated
 
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "twostream_interface.h"

@@ -88,7 +88,7 @@ public:
   void from_stream(std::istream& is);
 
   boost::shared_ptr<ConnorSolverState> state() const;
-  void state(const ConnorSolverState& S);
+  void state(const boost::shared_ptr<ConnorSolverState>& S);
 
   void test_do_inversion(const std::string& Fname, 
 			 blitz::Array<double, 1>& Dx, 
