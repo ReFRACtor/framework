@@ -47,6 +47,23 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_definitions("-fno-openmp")
 endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
+# Another annoying thing Anaconda does on the mac is add
+# -Wl,-dead_strip_dylibs. Not really clear why this would be imposed on all
+# environments, but it is at least currently done. This causes
+# "lazy symbol bindings failed" errors, in particular libgsl does lazy
+# bindings iwht libgslcblas. It is common to include libraries on the link
+# line for reasons other than directly providing symbols, so we really want
+# the CMake rule to determine what libraries to include rather than having
+# the linker toss libraries out it "thinks" it doesn't need. We strip
+# the option out if it gets set by the passed in LDFLAGS from the Anaconda
+# environment.
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS
+       ${CMAKE_EXE_LINKER_FLAGS})
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS
+       ${CMAKE_MODULE_LINKER_FLAGS})
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS
+       ${CMAKE_SHARED_LINKER_FLAGS})
+
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")
