@@ -12,8 +12,8 @@
 namespace FullPhysics {
 class Mapping : public MappingImpBase  {
 public:
-    const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const;
-    const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const;
+    const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
+    const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
     std::string name() const;
 };
 }

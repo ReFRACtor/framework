@@ -23,13 +23,13 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const { return coeff; };
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const { return updated_coeff; };
 
     //-----------------------------------------------------------------------
-    /// Calculation of retrieval view  of coeffs with mapping applied
+    /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const { return coeff; };
+    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const { return initial_coeff; };
 
     //-----------------------------------------------------------------------
     /// Assigned mapping name

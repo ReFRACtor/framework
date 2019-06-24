@@ -16,8 +16,8 @@ namespace FullPhysics {
 class MappingImpBase : public virtual GenericObject {
 public:
   virtual ~MappingImpBase() {};
-  virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const = 0;
-  virtual const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const = 0;
+  virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const = 0;
+  virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const = 0;
   virtual std::string name() = 0;
 };
 }

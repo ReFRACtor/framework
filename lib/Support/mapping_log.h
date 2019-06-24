@@ -25,18 +25,18 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& coeff) const {
-        int nvar = coeff.number_variable();
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(coeff.value())), nvar, true);
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
+        int nvar = updated_coeff.number_variable();
+        return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(updated_coeff.value())), nvar, true);
     };
 
     //-----------------------------------------------------------------------
-    /// Calculation of retrieval view  of coeffs with mapping applied
+    /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> retrieval_view(ArrayAd<double, 1> const& coeff) const {
-        int nvar = coeff.number_variable();
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(log(coeff.value())), nvar, true);
+    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const {
+        int nvar = initial_coeff.number_variable();
+        return ArrayAd<double, 1>( blitz::Array<double, 1>(log(initial_coeff.value())), nvar, true);
     };
 
     //-----------------------------------------------------------------------

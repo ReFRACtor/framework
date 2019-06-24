@@ -1,16 +1,16 @@
 %include "common.i"
 
 %{
-#include "mapping_log.h"
+#include "mapping_offset.h"
 %}
 
 %base_import(mapping_imp_base)
 %import "array_ad.i"
-%fp_shared_ptr(FullPhysics::MappingLog);
+%fp_shared_ptr(FullPhysics::MappingOffset);
 
 
 namespace FullPhysics {
-class MappingLog : public MappingImpBase {
+class MappingOffset : public MappingImpBase {
 public:
     const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
     const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;

@@ -44,7 +44,7 @@ public:
                         bool Mark_according_to_press = true,
                         int Pdep_start = 0,
                         boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
-        : coeff(in_map->retrieval_view(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
+        : coeff(in_map->retrieval_init(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
           mark_according_to_press(Mark_according_to_press),
           pdep_start(Pdep_start),
           mapping(in_map)
@@ -70,7 +70,7 @@ public:
     {
         mark_according_to_press = Mark_according_to_press;
         pdep_start = Pdep_start;
-        coeff.reference(in_map->retrieval_view(Coeff.copy()));
+        coeff.reference(in_map->retrieval_init(Coeff.copy()));
         press = Press;
         used_flag.reference(Used_flag.copy());
         mapping = in_map;
@@ -90,7 +90,7 @@ public:
                         boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
         : coeff(1, 0), used_flag(1), mapping(in_map), mark_according_to_press(true), pdep_start(0)
     {
-        // TODO: Add mapping's retrieval_view of Coeff in this constructor
+        // TODO: Add mapping's retrieval_init of Coeff in this constructor
         coeff.value()(0) = Coeff;
         used_flag(0) = Used_flag;
         state_vector_observer_initialize(count(used_flag));
