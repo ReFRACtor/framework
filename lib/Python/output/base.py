@@ -8,17 +8,22 @@ class OutputBase(object):
         # "internal_name" : "output_name"
     }
 
-    def create_dimensions(self):
+    def create_dimensions(self, step_index=None):
 
         if not hasattr(self, "dimension_names"):
             raise Exception("Output class {} does not have dimension names defined".format(self.__class__.__name__))
 
         self.dimensions = {}
         for spec_type, dim_name in self.dimension_names.items():
-            if dim_name in self.output.dimensions:
-                self.dimensions[spec_type] = self.output.dimensions[dim_name]
+            if step_index is not None:
+                out_name = "{}_{}".format(dim_name, step_index+1)
             else:
-                self.dimensions[spec_type] = self.output.createDimension(dim_name, 0)
+                out_name = dim_name
+
+            if out_name in self.output.dimensions:
+                self.dimensions[spec_type] = self.output.dimensions[out_name]
+            else:
+                self.dimensions[spec_type] = self.output.createDimension(out_name, 0)
 
     def iter_step_group_name(self, step_index=None, iter_index=None, prefix=""):
         # Determine where to store values

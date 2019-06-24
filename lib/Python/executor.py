@@ -9,7 +9,7 @@ from .config import load_config_module, find_config_function, find_strategy_func
 from .factory import process_config, creator
 from . import framework as rf
 
-from .output.radiance import ForwardModelRadianceOutput
+from .output.radiance import ForwardModelRadianceOutput, ObservationRadianceOutput
 from .output.solver import SolverIterationOutput
 
 logger = logging.getLogger(__name__)
@@ -57,13 +57,14 @@ class StrategyExecutor(object):
         # Augment loaded configuration to help capture objects required for ouput
         config_def = {
             'creator': creator.base.ParamPassThru, 
-            'order': ['file_config', 'forward_model', 'solver', 'state_vector'],
+            'order': ['file_config', 'forward_model', 'solver', 'state_vector', 'l1b'],
             'file_config': config_func(**strategy_keywords),
 
             # Capture certain objects without depending on the structure of the configuration
-            'forward_model': { 'creator': ObjectCapture(rf.ForwardModel) },   
-            'solver': { 'creator': ObjectCapture(rf.IterativeSolver) },   
-            'state_vector': { 'creator': ObjectCapture(rf.StateVector) },   
+            'forward_model': { 'creator': ObjectCapture(rf.ForwardModel) },
+            'solver': { 'creator': ObjectCapture(rf.IterativeSolver) },
+            'state_vector': { 'creator': ObjectCapture(rf.StateVector) },
+            'l1b': { 'creator': ObjectCapture(rf.Level1b) },
         }
 
         return config_def
@@ -95,6 +96,9 @@ class StrategyExecutor(object):
 
         rad_out = ForwardModelRadianceOutput(self.output, step_index, config_inst['solver'])
         config_inst['forward_model'].add_observer_and_keep_reference(rad_out)
+
+        obs_out = ObservationRadianceOutput(self.output, step_index, config_inst['l1b'], config_inst['forward_model'])
+        config_inst['solver'].add_observer_and_keep_reference(obs_out)
 
         solver_out = SolverIterationOutput(self.output, step_index, config_inst['state_vector'])
         config_inst['solver'].add_observer_and_keep_reference(solver_out)

@@ -26,12 +26,16 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
 
         self.state_vector = state_vector
 
-        self.create_dimensions()
+        self.create_dimensions(self.step_index)
 
     def notify_update(self, solver):
 
         iter_index = solver.num_accepted_steps
         base_group_name = self.iter_step_group_name(self.step_index, iter_index)
+
+        sv_dim = self.dimensions["state_vector"].name
+        str_dim = self.dimensions["sv_string"].name
+        status_dim = self.dimensions["status_string"].name
 
         # StateVector output
         sv_group_name = base_group_name + "StateVector"
@@ -42,13 +46,13 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
         if "names" in sv_group.variables:
             sv_names = sv_group["names"]
         else:
-            sv_names = sv_group.createVariable("names", "S1", (self.dimension_names["state_vector"], self.dimension_names["sv_string"]))
+            sv_names = sv_group.createVariable("names", "S1", (sv_dim, str_dim))
         sv_names[:] = stringtochar(np.array(self.state_vector.state_vector_name, dtype="S3"))
 
         if "values" in sv_group.variables:
             sv_values = sv_group["values"]
         else:
-            sv_values = sv_group.createVariable("values", float, (self.dimension_names["state_vector"]))
+            sv_values = sv_group.createVariable("values", float, (sv_dim))
         sv_values[:] = self.state_vector.state
 
         # Solver output
@@ -60,7 +64,7 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
         if "accepted_points" in solver_group.variables:
             accepted_points = solver_group["accepted_points"]
         else:
-            accepted_points = solver_group.createVariable("accepted_points", float, (self.dimension_names["state_vector"]))
+            accepted_points = solver_group.createVariable("accepted_points", float, (sv_dim))
         accepted_points[...] = solver.accepted_points[iter_index]
 
         if "cost_function" in solver_group.variables:
@@ -72,7 +76,7 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
         if "status" in solver_group.variables:
             status = solver_group["status"]
         else:
-            status = solver_group.createVariable("status", "S1", (self.dimension_names["status_string"]))
+            status = solver_group.createVariable("status", "S1", (status_dim))
         status[:] = stringtochar(np.array(solver.status_str, "S3"))
 
         if "num_accepted" in solver_group.variables:
