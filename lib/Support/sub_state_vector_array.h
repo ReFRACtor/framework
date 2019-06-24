@@ -39,11 +39,11 @@ public:
 //-----------------------------------------------------------------------
 
   SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
-		      const blitz::Array<bool, 1>& Used_flag,
-		      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-		      bool Mark_according_to_press = true,
-		      int Pdep_start = 0,
-              boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>()))
+                      const blitz::Array<bool, 1>& Used_flag,
+                      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+                      bool Mark_according_to_press = true,
+                      int Pdep_start = 0,
+                      boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
     : coeff(Coeff.copy()), press(Press), used_flag(Used_flag.copy()),
       mark_according_to_press(Mark_according_to_press),
       pdep_start(Pdep_start),
@@ -62,11 +62,11 @@ public:
   SubStateVectorArray() {}
 
   void init(const blitz::Array<double, 1>& Coeff,
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0,
-        boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
+            const blitz::Array<bool, 1>& Used_flag,
+            const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+            bool Mark_according_to_press = true,
+            int Pdep_start = 0,
+            boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
@@ -97,18 +97,17 @@ public:
   }
 
   virtual ~SubStateVectorArray() {}
+
   void mark_used_sub(blitz::Array<bool, 1>& Used) const
   {
     int si = 0;
     
     for(int i = 0; i < used_flag.rows(); ++i) {
       if(used_flag(i)) {
-	if(!press || !mark_according_to_press ||
-	   i < press->number_level() + pdep_start) {
-	  Used(si) = true;
-	}
-	
-	++si;
+        if(!press || !mark_according_to_press || i < press->number_level() + pdep_start) {
+          Used(si) = true;
+        }
+        ++si;
       }
     }
   }
@@ -143,12 +142,13 @@ public:
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
     int si = 0;
-	
-    for(int i = 0; i < used_flag.rows(); ++i)
+
+    for(int i = 0; i < used_flag.rows(); ++i) {
       if(used_flag(i)) {
                 Sv_name(si) = state_vector_name_i(i);
                 ++si;
       }
+    }
   }
   
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov)
@@ -157,12 +157,12 @@ public:
       cov.reference(Cov.copy());
       int si = 0;
       coeff.resize_number_variable(Sv_sub.number_variable());
-      
+
       for(int i = 0; i < coeff.rows(); ++i) {
-	    if(used_flag(i)) {
-	      coeff(i) = Sv_sub(si);
-	      ++si;
-	    }
+        if(used_flag(i)) {
+          coeff(i) = Sv_sub(si);
+          ++si;
+        }
       }
     }
     
@@ -174,29 +174,15 @@ public:
   /// Hook for anything a derived class needs to do after coefficient is
   /// updated and before notify_update. Default is nothing.
   //-----------------------------------------------------------------------
-  virtual void update_sub_state_hook()
-  {
-  }
+  virtual void update_sub_state_hook() { }
   
-  const ArrayAd<double, 1>& coefficient() const
-  {
-    return coeff;
-  }
+  const ArrayAd<double, 1>& coefficient() const { return coeff; }
   
-  const blitz::Array<bool, 1>& used_flag_value() const
-  {
-    return used_flag;
-  }
+  const blitz::Array<bool, 1>& used_flag_value() const { return used_flag; }
   
-  const blitz::Array<double, 2>& statevector_covariance() const
-  {
-    return cov;
-  }
+  const blitz::Array<double, 2>& statevector_covariance() const { return cov; }
   
-  const boost::shared_ptr<Pressure>& pressure() const
-  {
-    return press;
-  }
+  const boost::shared_ptr<Pressure>& pressure() const { return press; }
 protected:
   
   //-----------------------------------------------------------------------
@@ -256,7 +242,7 @@ protected:
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
-					  const unsigned int version) \
+                                         const unsigned int version) \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & FP_NVP(coeff) & FP_NVP(press) & FP_NVP(used_flag) & FP_NVP(cov) \
