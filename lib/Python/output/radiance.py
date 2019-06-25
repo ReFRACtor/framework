@@ -59,6 +59,7 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
         else:
             grid = group.createVariable("grid", float, (dim_name,))
         grid[:] = named_spectrum.spectral_domain.data
+        grid.units = named_spectrum.spectral_domain.units.name
 
         if "radiance" in group.variables:
             radiance = group['radiance']
@@ -99,12 +100,14 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
         channel_rad = []
         channel_unc = []
 
+        grid_units = None
         rad_units = None
         for channel_idx in range(self.l1b.number_spectrometer()):
             channel_grid.append(self.l1b.sample_grid(channel_idx).data)
             channel_rad.append(self.l1b.radiance(channel_idx).data)
             channel_unc.append(self.l1b.radiance(channel_idx).uncertainty)
 
+            grid_units = self.l1b.sample_grid(channel_idx).units.name
             rad_units = self.l1b.radiance(channel_idx).units.name
 
         group = self.output.createGroup("Observation")
@@ -113,6 +116,7 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
 
         obs_grid = group.createVariable("grid", float, (obs_dim,))
         obs_grid[:] = np.concatenate(channel_grid)
+        obs_grid.units = grid_units
 
         obs_rad = group.createVariable("radiance", float, (obs_dim,))
         obs_rad[:] = np.concatenate(channel_rad)
