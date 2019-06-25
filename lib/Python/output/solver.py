@@ -47,7 +47,8 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
             sv_names = sv_group["names"]
         else:
             sv_names = sv_group.createVariable("names", "S1", (sv_dim, str_dim))
-        sv_names[:] = stringtochar(np.array(self.state_vector.state_vector_name, dtype="S3"))
+        names_len = np.max([ len(n) for n in self.state_vector.state_vector_name ])
+        sv_names[:] = stringtochar(np.array(self.state_vector.state_vector_name, dtype="S{}".format(names_len)))
 
         if "values" in sv_group.variables:
             sv_values = sv_group["values"]
