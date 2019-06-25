@@ -53,22 +53,22 @@ boost::shared_ptr<ConnorSolverState> ConnorSolver::state() const
 /// Python. 
 //-----------------------------------------------------------------------
 
-void ConnorSolver::state(const ConnorSolverState& S)
+void ConnorSolver::state(const boost::shared_ptr<ConnorSolverState>& S)
 {
-  x_i.reference(S.x_i().copy());
-  x_a.reference(S.x_a().copy());
-  apriori_cov_scaled.reference(S.apriori_cov_scaled().copy());
-  sa_m1_scaled.reference(S.sa_m1_scaled().copy());
-  sigma_ap.reference(S.sigma_ap().copy());
-  gamma = S.gamma();
-  gamma_last_step_ = S.gamma_last_step();
-  gamma_initial = S.gamma_initial();
-  residual_.reference(S.residual().copy());
-  se.reference(S.se().copy());
-  k.reference(S.k().copy());
-  kt_se_m1_k.reference(S.kt_se_m1_k().copy());
-  dx.reference(S.dx().copy());
-  fstat = S.fstat();
+  x_i.reference(S->x_i().copy());
+  x_a.reference(S->x_a().copy());
+  apriori_cov_scaled.reference(S->apriori_cov_scaled().copy());
+  sa_m1_scaled.reference(S->sa_m1_scaled().copy());
+  sigma_ap.reference(S->sigma_ap().copy());
+  gamma = S->gamma();
+  gamma_last_step_ = S->gamma_last_step();
+  gamma_initial = S->gamma_initial();
+  residual_.reference(S->residual().copy());
+  se.reference(S->se().copy());
+  k.reference(S->k().copy());
+  kt_se_m1_k.reference(S->kt_se_m1_k().copy());
+  dx.reference(S->dx().copy());
+  fstat = S->fstat();
 }
 
 //-----------------------------------------------------------------------

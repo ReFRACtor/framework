@@ -1,7 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
-%include <std_vector.i>
+%include "fp_common.i"
 %{
 #include "spectrum_effect.h"
 #include "sub_state_vector_array.h"
@@ -9,7 +9,6 @@
 #include "spectrum_sampling.h"
 #include "forward_model_spectral_grid.h"
 %}
-%include "common.i"
 %import "observer.i"
 
 %base_import(state_vector_observer)

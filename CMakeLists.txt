@@ -47,6 +47,23 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_definitions("-fno-openmp")
 endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
+# Another annoying thing Anaconda does on the mac is add
+# -Wl,-dead_strip_dylibs. Not really clear why this would be imposed on all
+# environments, but it is at least currently done. This causes
+# "lazy symbol bindings failed" errors, in particular libgsl does lazy
+# bindings iwht libgslcblas. It is common to include libraries on the link
+# line for reasons other than directly providing symbols, so we really want
+# the CMake rule to determine what libraries to include rather than having
+# the linker toss libraries out it "thinks" it doesn't need. We strip
+# the option out if it gets set by the passed in LDFLAGS from the Anaconda
+# environment.
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS
+       ${CMAKE_EXE_LINKER_FLAGS})
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS
+       ${CMAKE_MODULE_LINKER_FLAGS})
+string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS
+       ${CMAKE_SHARED_LINKER_FLAGS})
+
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")
@@ -168,6 +185,7 @@ install(FILES "${PROJECT_BINARY_DIR}/setup_fp_env.sh" DESTINATION "${CMAKE_INSTA
 # Set up cmake project config file install and include locations 
 set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/cmake")
 set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
+set(INSTALL_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/share")
 
 # Add refractor (and python if building) targets to the build-tree export set
 if(BUILD_PYTHON_BINDING) 
@@ -179,11 +197,13 @@ export(PACKAGE Refractor)
 
 # Create the RefractorConfig.cmake and RefractorConfigVersion.cmake files
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
+file(RELATIVE_PATH REL_SHARE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_SHARE_DIR}")
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
 configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}/RefractorConfig.cmake" @ONLY)
 # ... for the install tree
-set(CONF_INCLUDE_DIRS "\${REFRACTOR_CMAKE_DIR}/${REL_INCLUDE_DIR}/refractor")
+set(CONF_INCLUDE_DIRS "\${REFRACTOR_CMAKE_DIR}/${REL_INCLUDE_DIR}/refractor"
+  "\${REFRACTOR_CMAKE_DIR}/${REL_SHARE_DIR}/refractor/swig")
 configure_file(cmake/Config/RefractorConfig.cmake.in "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/RefractorConfig.cmake" @ONLY)
 # ... for both
 configure_file(cmake/Config/RefractorConfigVersion.cmake.in  "${PROJECT_BINARY_DIR}/RefractorConfigVersion.cmake" @ONLY)

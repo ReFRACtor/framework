@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "sub_state_vector_observer.h"
@@ -29,6 +29,7 @@ public:
   virtual void print(std::ostream& Os) const;
   virtual void notify_add(StateVector& Sv);
   virtual void notify_remove(StateVector& Sv);
+  %pickle_serialization();
 protected:
   SubStateVectorObserver(int Plen);
   SubStateVectorObserver();

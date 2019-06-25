@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "standard_forward_model.h"
 #include "ils_instrument.h"

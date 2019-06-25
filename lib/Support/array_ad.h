@@ -36,7 +36,7 @@ namespace FullPhysics {
   
 *******************************************************************/
 
-template<class T, int D> class ArrayAd 
+template<class T, int D> class ArrayAd : public GenericObject
 {
 public:
   ArrayAd(const blitz::Array<AutoDerivative<T>, D>& V)
@@ -161,6 +161,7 @@ public:
     if(is_const)
       jac = 0;
   }
+  virtual ~ArrayAd() {}
   void resize_number_variable(int nvar)
   {
     if(nvar == number_variable())
@@ -407,7 +408,21 @@ private:
   blitz::Array<T, D> val;
   blitz::Array<T, D + 1> jac;
   bool is_const;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef ArrayAd<double, 1>  ArrayAd_double_1;
+typedef ArrayAd<double, 2>  ArrayAd_double_2;
+typedef ArrayAd<double, 3>  ArrayAd_double_3;
+typedef ArrayAd<double, 4>  ArrayAd_double_4;
 }
+
+FP_EXPORT_KEY(ArrayAd_double_1);
+FP_EXPORT_KEY(ArrayAd_double_2);
+FP_EXPORT_KEY(ArrayAd_double_3);
+FP_EXPORT_KEY(ArrayAd_double_4);
+
 #endif
 

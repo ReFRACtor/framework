@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "state_vector_observer.h"
@@ -29,6 +29,7 @@ public:
 			 blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
 			  blitz::Array<std::string, 1>& Sv_name) const;
+  %pickle_serialization();
 };
 
 }

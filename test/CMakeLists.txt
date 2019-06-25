@@ -30,6 +30,7 @@ add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDO
 # Create unit test binary, do not include it in the make all target
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
 target_link_libraries(test_all refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
+target_include_directories(test_all PRIVATE ${SWIG_INCLUDE_DIR})
 set_target_properties(test_all PROPERTIES INSTALL_RPATH "${PROJECT_BINARY_DIR}/lib;${CMAKE_INSTALL_PREFIX}/lib")
 if(DEFINED ENV{CONDA_PREFIX})
   set_property(TARGET test_all APPEND PROPERTY INSTALL_RPATH "$ENV{CONDA_PREFIX}/lib")
@@ -52,6 +53,9 @@ endforeach()
 
 # Target to run only unit tests
 add_custom_target(unit_test COMMAND ${CTEST_WRAP} -R ^unit/ DEPENDS test_all)
+
+# Target to run all tests
+add_custom_target(all_test COMMAND ${CTEST_WRAP} DEPENDS test_all python_install)
 
 #####
 # Set up full tests

@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %include "swig_python_attribute.i"
 %{
 #include "example_met_file.h"

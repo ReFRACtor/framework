@@ -1,5 +1,5 @@
 %include <std_vector.i>
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "ils.h"

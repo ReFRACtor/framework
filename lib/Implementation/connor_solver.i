@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "connor_solver.h"
 #include "ifstream_cs.h"
@@ -38,7 +38,7 @@ public:
   virtual bool solve(const blitz::Array<double, 1>& Initial_guess, 
 		     const blitz::Array<double, 1>& Apriori, 
 		     const blitz::Array<double, 2>& Apriori_cov);
-  %python_attribute_with_set_ptr(state, ConnorSolverState);
+  %python_attribute_with_set(state, boost::shared_ptr<ConnorSolverState>);
   %python_attribute(aposteriori_covariance_scaled, blitz::Array<double, 2>)
   %python_attribute(aposteriori_covariance, blitz::Array<double, 2>)
   %python_attribute(x_solution_uncertainty, blitz::Array<double, 1>)

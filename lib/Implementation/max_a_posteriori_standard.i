@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "max_a_posteriori_standard.h"

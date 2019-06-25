@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "sample_grid_spectral_domain.h"

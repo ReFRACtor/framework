@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 
 %{
 #include "solar_reference_spectrum.h"

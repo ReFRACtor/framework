@@ -6,11 +6,14 @@ add_definitions(-DHAVE_LUA)
 set(FP_SOURCE_FILES "")
 set(FP_TEST_FILES "")
 set(SWIG_INTERFACE_FILES "")
+set(SWIG_INCLUDE_DIR "")
 
 # Install all common include files
 #
 # The top level lib folder has some header and interface files we need to install
-file(GLOB LIB_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
+file(GLOB LIB_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+file(GLOB SWIG_INCLUDE_FILES_ADD ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
+list(APPEND SWIG_INCLUDE_FILES ${SWIG_INCLUDE_FILES_ADD})
 install(FILES ${LIB_INCLUDE_FILES} DESTINATION include/refractor)
 
 foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Support Example)
@@ -24,30 +27,37 @@ foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Suppor
     install(DIRECTORY ${sub_dir}/ DESTINATION include/refractor
         FILES_MATCHING 
             PATTERN "*.h" 
-            PATTERN "*.i" 
             PATTERN "*.hpp" 
             PATTERN "*_fixture.h" EXCLUDE
             PATTERN "unit_test*.h" EXCLUDE
             PATTERN "l_rad_fortran" EXCLUDE
             PATTERN "spectrum_doxygen.h" EXCLUDE)
+    install(DIRECTORY ${sub_dir}/ DESTINATION share/refractor/swig
+        FILES_MATCHING 
+            PATTERN "*.i")
 endforeach(sub_dir)
 
 include_directories(SYSTEM ${THIRDPARTY_INCLUDES})
 include_directories(${FP_INCLUDES})
 
-add_library(refractor SHARED ${FP_SOURCE_FILES})
-target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
+# Set up the swig_rules
+add_subdirectory(swig_rules)
 
-# Add SWIG files included in lib directory
-list(APPEND SWIG_INTERFACE_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/swig_std.i
-    ${CMAKE_CURRENT_SOURCE_DIR}/swig_array.i
-    ${CMAKE_CURRENT_SOURCE_DIR}/swig_rational.i)
+install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
+add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
+target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
+target_compile_definitions(refractor PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
+target_compile_definitions(refractor PRIVATE SWIG_HAVE_BOOST_SERIALIZATION)
 
 # Expose to the parent scope
 set(FP_INCLUDES ${FP_INCLUDES} PARENT_SCOPE)
 set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)
 set(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} PARENT_SCOPE)
+set(SWIG_INCLUDE_DIR ${SWIG_INCLUDE_DIR} PARENT_SCOPE)
+set(SWIG_INCLUDE_FILES ${SWIG_INCLUDE_FILES} PARENT_SCOPE)
+
+# Install SWIG files
+install(FILES ${SWIG_INCLUDE_FILES} DESTINATION share/refractor/swig)
 
 # Create installation rules
 install(TARGETS refractor

@@ -1,4 +1,4 @@
-%include "common.i"
+%include "fp_common.i"
 %{
 #include "iterative_solver.h"
 %}
