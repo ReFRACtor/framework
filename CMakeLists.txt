@@ -57,12 +57,20 @@ endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 # the linker toss libraries out it "thinks" it doesn't need. We strip
 # the option out if it gets set by the passed in LDFLAGS from the Anaconda
 # environment.
-string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS
-       ${CMAKE_EXE_LINKER_FLAGS})
-string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS
-       ${CMAKE_MODULE_LINKER_FLAGS})
-string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS
-       ${CMAKE_SHARED_LINKER_FLAGS})
+if(CMAKE_EXE_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS
+           ${CMAKE_EXE_LINKER_FLAGS})
+endif()
+
+if(CMAKE_MODULE_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS
+           ${CMAKE_MODULE_LINKER_FLAGS})
+endif()
+
+if(CMAKE_SHARED_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS
+           ${CMAKE_SHARED_LINKER_FLAGS})
+endif()
 
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
 # causes the warning to be output
