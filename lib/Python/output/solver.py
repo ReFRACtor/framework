@@ -56,6 +56,12 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
             sv_values = sv_group.createVariable("values", float, (sv_dim))
         sv_values[:] = self.state_vector.state
 
+        if "covariance" in sv_group.variables:
+            sv_cov = sv_group["covariance"]
+        else:
+            sv_cov = sv_group.createVariable("covariance", float, (sv_dim, sv_dim))
+        sv_cov[:] = self.state_vector.state_covariance
+
         # Solver output
         solver_group_name = base_group_name + "Solver"
         solver_group = self.output.createGroup(solver_group_name)
