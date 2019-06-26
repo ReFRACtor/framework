@@ -11,4 +11,7 @@ def test_gsl_bard():
     # This illustrated a memory leak message from SWIG that we will want
     # to fix.
     print(solver.accepted_points)
-    
+
+def test_fm(config_forward_model):
+    '''This illustrated our lack of support of boost::optional<blitz::Range>'''
+    print(config_forward_model.stacked_pixel_range(0))

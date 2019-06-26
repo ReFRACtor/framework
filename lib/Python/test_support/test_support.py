@@ -47,4 +47,4 @@ def isolated_dir(tmpdir):
 def lua_state():
     '''Supply a lua_state'''
     return rf.LuaState(unit_test_data)
-        
+
