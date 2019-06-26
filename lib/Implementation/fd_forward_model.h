@@ -27,7 +27,7 @@ public:
     virtual Spectrum radiance(int Spec_index, bool Skip_jacobian = false) const;
     virtual int num_channels() const 
     {return real_fm->num_channels();}
-    virtual const SpectralDomain spectral_domain(int Spec_index) const
+    virtual SpectralDomain spectral_domain(int Spec_index) const
     {return real_fm->spectral_domain(Spec_index);}
 private:
     boost::shared_ptr<ForwardModel> real_fm;

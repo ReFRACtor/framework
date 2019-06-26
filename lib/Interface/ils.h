@@ -76,14 +76,14 @@ public:
 /// This is the pixel grid for each pixel.
 //-----------------------------------------------------------------------
 
-  virtual const SpectralDomain pixel_grid() const = 0;
+  virtual SpectralDomain pixel_grid() const = 0;
 
 //-----------------------------------------------------------------------
 /// This is the amount of grid points that need to be additionally
 /// calculated in the high resolution spectrum for ILS convolution
 //-----------------------------------------------------------------------
 
-  virtual const DoubleWithUnit high_res_extension() const = 0;
+  virtual DoubleWithUnit high_res_extension() const = 0;
 
 //-----------------------------------------------------------------------
 /// Set the high resolution extension amount

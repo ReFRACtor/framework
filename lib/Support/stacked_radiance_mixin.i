@@ -17,7 +17,7 @@ public:
     virtual int num_channels() const = 0;
 
     /// The spectral grid of the radiance values, implemented by inheriting class
-    virtual const SpectralDomain spectral_domain(int channel_index) const = 0;
+    virtual SpectralDomain spectral_domain(int channel_index) const = 0;
 
     /// The range of indicies that corresponds to a particular
     /// band in the stacked radiances.
@@ -26,7 +26,7 @@ public:
     /// This is a useful edge case, but unfortunately blitz::Range does not
     /// support empty ranges. As a simple work around, we use the
     /// boost::optional class to return a value only if the range is not empty.
-    const boost::optional<blitz::Range> stacked_pixel_range(int Spec_index) const;
+    boost::optional<blitz::Range> stacked_pixel_range(int Spec_index) const;
 
     /// Per channel radiance data, implemented by inheriting class
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;

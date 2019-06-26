@@ -12,7 +12,7 @@ public:
     virtual int num_channels() const = 0;
 
     /// The spectral grid of the radiance values, implemented by inheriting class
-    virtual const SpectralDomain spectral_domain(int channel_index) const = 0;
+    virtual SpectralDomain spectral_domain(int channel_index) const = 0;
 
     /// Measured spectrum for the given spectral channel. Note that this may be empty.
     ///

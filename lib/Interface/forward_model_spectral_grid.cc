@@ -14,7 +14,7 @@ REGISTER_LUA_END()
 /// The low resolution grid.
 //-----------------------------------------------------------------------
 
-  const SpectralDomain ForwardModelSpectralGrid::low_resolution_grid(int Spec_index) const
+  SpectralDomain ForwardModelSpectralGrid::low_resolution_grid(int Spec_index) const
   { 
     range_check(Spec_index, 0, number_spectrometer());
 
@@ -30,7 +30,7 @@ REGISTER_LUA_END()
 /// The high resolution grid, possibly nonuniform
 //-----------------------------------------------------------------------
 
-  const SpectralDomain ForwardModelSpectralGrid::high_resolution_grid(int Spec_index) const
+  SpectralDomain ForwardModelSpectralGrid::high_resolution_grid(int Spec_index) const
   { 
     range_check(Spec_index, 0, number_spectrometer());
 
@@ -46,7 +46,7 @@ REGISTER_LUA_END()
 /// The high resolution grid, interpolated to be uniform.
 //-----------------------------------------------------------------------
 
-  const SpectralDomain ForwardModelSpectralGrid::high_resolution_interpolated_grid(int Spec_index) const
+  SpectralDomain ForwardModelSpectralGrid::high_resolution_interpolated_grid(int Spec_index) const
   { 
     range_check(Spec_index, 0, number_spectrometer());
 
@@ -61,7 +61,7 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 /// Pixel indexes to use for low resolution grid.
 //-----------------------------------------------------------------------
-  const std::vector<int> ForwardModelSpectralGrid::pixel_list(int Spec_index) const
+  std::vector<int> ForwardModelSpectralGrid::pixel_list(int Spec_index) const
   {
     range_check(Spec_index, 0, number_spectrometer());
     return spectral_window->grid_indexes(inst->pixel_spectral_domain(Spec_index), Spec_index);

@@ -24,7 +24,7 @@ int ObservationLevel1b::num_channels() const
     return grids->number_spectrometer();
 }
 
-const SpectralDomain ObservationLevel1b::spectral_domain(int channel_index) const
+SpectralDomain ObservationLevel1b::spectral_domain(int channel_index) const
 {
     return grids->low_resolution_grid(channel_index);
 }

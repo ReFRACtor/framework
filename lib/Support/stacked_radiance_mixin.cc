@@ -3,7 +3,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-const boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int channel_index) const
+boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int channel_index) const
 {
     range_check(channel_index, 0, num_channels());
     int sind = 0;

@@ -42,7 +42,7 @@ public:
         return swin->number_spectrometer();
     }
 
-    virtual const SpectralDomain spectral_domain(int channel_index) const
+    virtual SpectralDomain spectral_domain(int channel_index) const
     {
         if(!g) {
             throw Exception ("setup_grid needs to be called before calling spectral_domain");

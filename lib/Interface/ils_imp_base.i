@@ -33,10 +33,10 @@ public:
     (const blitz::Array<double, 1>& High_resolution_wave_number,
      const ArrayAd<double, 1>& High_resolution_radiance,
      const std::vector<int>& Pixel_list) const = 0;
-  virtual const std::string band_name() const;
-  virtual const std::string hdf_band_name() const;
-  virtual const SpectralDomain pixel_grid() const;
-  virtual const DoubleWithUnit high_res_extension() const;
+  virtual std::string band_name() const;
+  virtual std::string hdf_band_name() const;
+  virtual SpectralDomain pixel_grid() const;
+  virtual DoubleWithUnit high_res_extension() const;
   virtual void high_res_extension(const DoubleWithUnit& extension);
   boost::shared_ptr<SampleGrid> sample_grid() const {return sample_grid_; }
     virtual boost::shared_ptr<Ils> clone() const = 0;
