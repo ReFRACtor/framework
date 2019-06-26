@@ -335,8 +335,6 @@ class MaxAPosterioriBase(Creator):
 
     max_cost_function_calls = param.Scalar(int)
 
-    verbose = param.Scalar(bool, default=False)
-
     def init_state_vector(self):
 
         self.state_vector().update_state(self.a_priori(), self.covariance())
@@ -355,13 +353,6 @@ class MaxAPosterioriBase(Creator):
 
         return opt_problem
 
-    def attach_logging(self, solver):
-        if self.verbose():
-            # Use add_observer_and_keep_reference to keep observer from going away as soon
-            # as this function ends, since observers are normally kept by a weak reference
-            iter_log = rf.SolverIterationLog(self.state_vector())
-            solver.add_observer_and_keep_reference(iter_log)
-
 class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
     """GSLLM<with S>DER solver
 
@@ -379,7 +370,6 @@ class NLLSSolverGSLLMSDER(MaxAPosterioriBase):
                 False)
 
         self.init_state_vector()
-        self.attach_logging(solver)
 
         return solver
 
@@ -401,7 +391,6 @@ class NLLSSolverGSLLMDER(MaxAPosterioriBase):
                 False)
 
         self.init_state_vector()
-        self.attach_logging(solver)
 
         return solver
 
@@ -422,7 +411,6 @@ class ConnorSolverMAP(MaxAPosterioriBase):
                 self.gamma_initial())
 
         self.init_state_vector()
-        self.attach_logging(solver)
 
         return solver
  
@@ -460,6 +448,5 @@ class NLLSSolverLM(MaxAPosterioriBase):
         solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel())
 
         self.init_state_vector()
-        self.attach_logging(solver)
 
         return solver
