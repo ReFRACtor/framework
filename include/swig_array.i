@@ -4,6 +4,7 @@
 #define DO_IMPORT_ARRAY
 %}
 %include "swig_array_inc.i"
+%include <std_vector.i>
 
 //--------------------------------------------------------------
 // Before using numpy, we need to call the numpy supplied 
@@ -170,6 +171,40 @@ public:
 
 }
 
+//--------------------------------------------------------------
+// Convert to numpy. Note that there is a complication in the 
+// lifetime of the pointed to array. numpy can't take ownership
+// of the memory in the blitz::Array, since it wasn't allocated
+// by python. Instead, numpy just points to the memory. To ensure
+// that the blitz::Array memory isn't freeded, we also stash a
+// python object wrapping around the blitz::Array that holds onto
+// the object. This gets placed in a special area set up by numpy
+// exactly for this purpose called "BASE". When the numpy array 
+// get deleted, it also deletes the numpy. If this is the only
+// reference to the blitz::Array memory, then the memory gets
+// cleaned up then.
+//--------------------------------------------------------------
+
+%define %blitz_to_numpy(TYPE, DIM, from_obj, to_obj)
+    // Copy out dimensions and stride from blitz array
+  npy_intp dims[DIM], stride[DIM];
+  for(int i = 0; i < DIM; ++i) {
+    dims[i] = from_obj->extent(i);
+    // Note numpy stride is in terms of bytes, while blitz in in terms
+    // of type T.
+    stride[i] = from_obj->stride(i) * sizeof(TYPE);
+  }
+
+  // Create new numpy object using Numpy C API
+  to_obj = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
+			stride, from_obj->data(), 0, 0, 0);
+  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>(*from_obj);
+  // Stash pointer to original blitz array as detailed above
+  PyArray_SetBaseObject((PyArrayObject*) to_obj, 
+			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
+				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+%enddef
+
 //************************************************************
 // Type map to use python type numpy as input and output
 //************************************************************
@@ -188,33 +223,12 @@ public:
 %define %array_template(NMTYPE, TYPE,DIM, PRECEDENCE)
 
 //--------------------------------------------------------------
-// Convert to numpy. Note that there is a complication in the 
-// lifetime of the pointed to array. numpy can't take ownership
-// of the memory in the blitz::Array, since it wasn't allocated
-// by python. Instead, numpy just points to the memory. To ensure
-// that the blitz::Array memory isn't freeded, we also stash a
-// python object wrapping around the blitz::Array that holds onto
-// the object. This gets placed in a special area set up by numpy
-// exactly for this purpose called "BASE". When the numpy array 
-// get deleted, it also deletes the numpy. If this is the only
-// reference to the blitz::Array memory, then the memory gets
-// cleaned up then.
+// Convert to numpy. See description above for lifetime issues.
 //--------------------------------------------------------------
 
 %typemap(out) blitz::Array<TYPE, DIM> {
-  npy_intp dims[DIM], stride[DIM];
-  for(int i = 0; i < DIM; ++i) {
-    dims[i] = $1.extent(i);
-    // Note numpy stride is in terms of bytes, while blitz in in terms
-    // of type T.
-    stride[i] = $1.stride(i) * sizeof(TYPE);
-  }
-  $result = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
-			stride, $1.data(), 0, 0, 0);
-  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>($1);
-  PyArray_SetBaseObject((PyArrayObject*)$result, 
-			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
-				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+  // Treat as pointer for the purposes of the macro
+  %blitz_to_numpy(TYPE, DIM, (&$1), $result);
 }
 
 //--------------------------------------------------------------
@@ -222,19 +236,7 @@ public:
 //--------------------------------------------------------------
 
 %typemap(out) const blitz::Array<TYPE, DIM>& {
-  npy_intp dims[DIM], stride[DIM];
-  for(int i = 0; i < DIM; ++i) {
-    dims[i] = $1->extent(i);
-    // Note numpy stride is in terms of bytes, while blitz in in terms
-    // of type T.
-    stride[i] = $1->stride(i) * sizeof(TYPE);
-  }
-  $result = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
-			stride, $1->data(), 0, 0, 0);
-  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>(*$1);
-  PyArray_SetBaseObject((PyArrayObject*)$result, 
-			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
-				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+  %blitz_to_numpy(TYPE, DIM, $1, $result);
 }
 
 %typemap(out) blitz::Array<TYPE, DIM>& {
@@ -252,6 +254,16 @@ public:
   PyArray_SetBaseObject((PyArrayObject*)$result, 
 			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
 				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+}
+
+%typemap(out) std::vector<blitz::Array<TYPE, DIM> > {
+    
+    $result = PyList_New($1.size());
+    for(int idx = 0; idx < (int) $1.size(); idx++) {
+        PyObject* element_np_arr;
+        %blitz_to_numpy(TYPE, DIM, (&$1.at(idx)), element_np_arr);
+        PyList_SetItem($result, idx, element_np_arr);
+    }
 }
 
 //--------------------------------------------------------------
@@ -272,53 +284,20 @@ public:
 
 
 %typemap(argout) blitz::Array<TYPE, DIM>& OUTPUT {
-  npy_intp dims[DIM], stride[DIM];
-  for(int i = 0; i < DIM; ++i) {
-    dims[i] = $1->extent(i);
-    // Note numpy stride is in terms of bytes, while blitz in in terms
-    // of type T.
-    stride[i] = $1->stride(i) * sizeof(TYPE);
-  }
-  PyObject *res = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
-			stride, $1->data(), 0, 0, 0);
-  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>(*$1);
-  PyArray_SetBaseObject((PyArrayObject*)res, 
-			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
-				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
-  $result = SWIG_AppendOutput($result, res);
+   PyObject *res;
+   %blitz_to_numpy(TYPE, DIM, $1, res);
+   $result = SWIG_AppendOutput($result, res);
 }
 
 %typemap(argout) blitz::Array<TYPE, DIM>& OUTPUT1 {
-  npy_intp dims[DIM], stride[DIM];
-  for(int i = 0; i < DIM; ++i) {
-    dims[i] = $1->extent(i);
-    // Note numpy stride is in terms of bytes, while blitz in in terms
-    // of type T.
-    stride[i] = $1->stride(i) * sizeof(TYPE);
-  }
-  PyObject *res = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
-			stride, $1->data(), 0, 0, 0);
-  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>(*$1);
-  PyArray_SetBaseObject((PyArrayObject*)res, 
-			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
-				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+  PyObject *res;
+  %blitz_to_numpy(TYPE, DIM, $1, res);
   $result = SWIG_AppendOutput($result, res);
 }
 
 %typemap(argout) blitz::Array<TYPE, DIM>& OUTPUT2 {
-  npy_intp dims[DIM], stride[DIM];
-  for(int i = 0; i < DIM; ++i) {
-    dims[i] = $1->extent(i);
-    // Note numpy stride is in terms of bytes, while blitz in in terms
-    // of type T.
-    stride[i] = $1->stride(i) * sizeof(TYPE);
-  }
-  PyObject *res = PyArray_New(&PyArray_Type, DIM, dims, type_to_npy<TYPE >(), 
-			stride, $1->data(), 0, 0, 0);
-  blitz::Array<TYPE, DIM>* t = new blitz::Array<TYPE, DIM>(*$1);
-  PyArray_SetBaseObject((PyArrayObject*)res, 
-			SWIG_NewPointerObj(SWIG_as_voidptr(t), 
-				   $descriptor(blitz::Array<TYPE, DIM>*), 					   SWIG_POINTER_NEW | SWIG_POINTER_OWN ));
+  PyObject *res;
+  %blitz_to_numpy(TYPE, DIM, $1, res);
   $result = SWIG_AppendOutput($result, res);
 }
 
