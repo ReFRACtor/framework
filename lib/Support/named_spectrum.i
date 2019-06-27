@@ -13,13 +13,33 @@
 
 %fp_shared_ptr(FullPhysics::NamedSpectrum)
 
+// Observers of NamedSpectrum
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::NamedSpectrum>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::NamedSpectrum>)
-%fp_shared_ptr(FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
-%fp_shared_ptr(FullPhysics::Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> >)
+
 %template(ObservableNamedSpectrum) FullPhysics::Observable<FullPhysics::NamedSpectrum>;
+
+%feature("director") FullPhysics::Observer<FullPhysics::NamedSpectrum>;
+%template(ObserverNamedSpectrum) FullPhysics::Observer<FullPhysics::NamedSpectrum>; 
+
+// Observers of shared pointers of NamedSpectrum
+%fp_shared_ptr(FullPhysics::Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> >)
+%fp_shared_ptr(FullPhysics::Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >)
+
 %template(ObservablePtrNamedSpectrum) FullPhysics::Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
-%template(ObserverNamedSpectrum) FullPhysics::Observer<FullPhysics::NamedSpectrum>;
+
+%feature("director") FullPhysics::Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
+%template(ObserverPtrNamedSpectrum) FullPhysics::Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
+
+// Observers of vectors of NamedSpectrum
+%fp_shared_ptr(FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
+%fp_shared_ptr(FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
+
+%template(vector_named_spectrum) std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
+%template(ObservableNamedSpectrumVector) FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
+
+%feature("director") FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
+%template(ObserverNamedSpectrumVector) FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
 
 namespace FullPhysics {
 class NamedSpectrum: public Spectrum {
@@ -34,11 +54,3 @@ public:
   std::string print_to_string() const;
 };
 }
-%template(vector_named_spectrum) std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
-%fp_shared_ptr(FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
-%fp_shared_ptr(FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
-%template(ObservableStokesUpdate) FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
-// We make this a director, so we can have Python code that is an
-// observer of a stokes upate
-%feature("director") FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
-%template(ObserverStokesUpdate) FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;

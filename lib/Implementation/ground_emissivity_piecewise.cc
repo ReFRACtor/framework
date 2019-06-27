@@ -38,7 +38,6 @@ const AutoDerivative<double> GroundEmissivityPiecewise::emissivity(const double 
 
 void GroundEmissivityPiecewise::update_sub_state_hook()
 {
-    std::cerr << "Updating interpolation" << std::endl;
     typedef LinearInterpolate<double, AutoDerivative<double> > interp_type;
 
     std::vector<AutoDerivative<double> > emiss_coeff_list;

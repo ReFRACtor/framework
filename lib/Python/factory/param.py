@@ -41,6 +41,13 @@ class AnyValue(ConfigParam):
     def check_type(self, value):
         pass
 
+class NoneValue(ConfigParam):
+    "Configuration parameter that is equal to None, only useful when combined with the Choice parameter type"
+
+    def check_type(self, value):
+        if value is not None:
+            raise ParamError("Parameter was expected to be None")
+
 class Choice(ConfigParam):
     "Allows the choice of multiple parameter types"
 
