@@ -36,8 +36,15 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                                    const std::string& Gas_name,
                                    boost::shared_ptr<MappingImpBase> in_map)
 {
-  Array<bool, 1> flag(1);
+  // TODO: Allow mapping to set the appropriate used_flag / Vmr_flag
+  // For scale mapping only
+  blitz::Array<bool, 1> flag(1);
   flag(0) = Vmr_flag;
+  // In the case of a bool Vmr_flag for non-scale mapping, use it for all entries of Vmr
+  /*
+  blitz::Array<bool, 1> flag(Vmr.rows());
+  flag(blitz::Range::all()) = Vmr_flag;
+  */
   init(Gas_name, Vmr, flag, Press, false, 0, in_map);
 }
 
