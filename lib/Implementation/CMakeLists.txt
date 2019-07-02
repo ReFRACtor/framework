@@ -125,7 +125,6 @@ set(TEST_SOURCES
     absorber_absco_test.cc
     absorber_vmr_level_log_test.cc
     absorber_vmr_level_scaled_test.cc
-    absorber_vmr_level_scaled2_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc
     aerosol_optical_test.cc
