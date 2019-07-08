@@ -253,7 +253,7 @@ class AbsorberAbsco(Creator):
     gases = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
-    altitude = param.ObjectVector("altitude")
+    altitude = param.Iterable()
     num_sub_layers = param.Scalar(int, required=False)
     constants = param.InstanceOf(rf.Constant)
     default_gas_definition = param.Dict(required=False)
@@ -262,6 +262,11 @@ class AbsorberAbsco(Creator):
 
         vmrs = rf.vector_absorber_vmr()
         absorptions = rf.vector_gas_absorption()
+
+        # Convert altitude values from a Python iterable to a C++ vector
+        alt_vector = rf.vector_altitude()
+        for alt in self.altitude():
+            alt_vector.push_back(alt)
 
         for gas_name in self.gases():
             if gas_name in self.config_def:
@@ -283,7 +288,7 @@ class AbsorberAbsco(Creator):
             absorptions.push_back(gas_def['absorption'])
 
         if self.num_sub_layers() is not None:
-            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants(), self.num_sub_layers())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), alt_vector, absorptions, self.constants(), self.num_sub_layers())
         else:
-            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
+            return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), alt_vector, absorptions, self.constants())
 

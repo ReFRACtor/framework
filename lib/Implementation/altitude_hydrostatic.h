@@ -5,6 +5,7 @@
 #include "temperature.h"
 #include "double_with_unit.h"
 #include "linear_interpolate.h"
+#include "jacobian_size_mixin.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -18,6 +19,7 @@ namespace FullPhysics {
 *******************************************************************/
 class AltitudeHydrostatic : public Observer<Temperature>,
                  public Observer<Pressure>,
+                 public JacobianSizeMixin,
                  public Altitude
 {
 public:
@@ -26,7 +28,7 @@ public:
                       const DoubleWithUnit& Latitude, 
                       const DoubleWithUnit& Surface_height,
                       const int Num_sublayer = 10);
-  virtual ~AltitudeHydrostatic() {};
+  virtual ~AltitudeHydrostatic() = default;
   using Observer<Temperature>::notify_update;
   using Observer<Pressure>::notify_update;
 
@@ -38,8 +40,7 @@ public:
 
   virtual void notify_update(const Pressure& UNUSED(P))
   {
-    cache_is_stale = true;   
-    notify_update_do(*this);
+    cache_is_stale = true;
   }
 
 //-----------------------------------------------------------------------
@@ -50,8 +51,7 @@ public:
 
   virtual void notify_update(const Temperature& UNUSED(T))
   {
-    cache_is_stale = true;   
-    notify_update_do(*this);
+    cache_is_stale = true;
   }
 
   virtual AutoDerivativeWithUnit<double> altitude(const AutoDerivativeWithUnit<double>& P) const
@@ -76,8 +76,8 @@ public:
   clone(const boost::shared_ptr<Pressure>& Press,
         const boost::shared_ptr<Temperature>& Temp) const;
 private:
-  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
-    lin_type;
+  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > lin_type;
+  mutable int nvar;
   mutable bool cache_is_stale;
   mutable boost::shared_ptr<lin_type> alt;
   mutable boost::shared_ptr<lin_type> grav;

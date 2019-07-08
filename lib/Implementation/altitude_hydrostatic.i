@@ -4,14 +4,19 @@
 %{
 #include "altitude_hydrostatic.h"
 %}
+
 %base_import(altitude)
+%base_import(jacobian_size_mixin)
+
 %import "double_with_unit.i"
 %import "auto_derivative_with_unit.i"
 %import "pressure.i"
 %import "temperature.i"
+
 %fp_shared_ptr(FullPhysics::AltitudeHydrostatic)
+
 namespace FullPhysics {
-class AltitudeHydrostatic : public Altitude {
+class AltitudeHydrostatic : public Altitude, public JacobianSizeMixin {
 public:
   AltitudeHydrostatic(const boost::shared_ptr<Pressure>& P,
 		      const boost::shared_ptr<Temperature>& T,

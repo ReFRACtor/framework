@@ -154,13 +154,18 @@ class StateVector(Creator):
         super().__init__(*vargs, **kwargs)
 
         self.register_to_receive(rf.StateVectorObserver)
+        self.register_to_receive(rf.JacobianSizeMixin)
 
         self.sv_observers = []
+        self.jacobian_size_targets = []
 
     def receive(self, rec_obj):
 
-        if not hasattr(rec_obj, "sub_state_identifier") and rec_obj not in self.sv_observers:
+        if isinstance(rec_obj, rf.StateVectorObserver) and not hasattr(rec_obj, "sub_state_identifier") and rec_obj not in self.sv_observers:
             self.sv_observers.append(rec_obj)
+
+        if isinstance(rec_obj, rf.JacobianSizeMixin) and rec_obj not in self.jacobian_size_targets:
+            self.jacobian_size_targets.append(rec_obj)
 
     def create(self, **kwargs):
         sv = rf.StateVector()
@@ -172,6 +177,12 @@ class StateVector(Creator):
         # Add remaining non retrieval components as observers
         for observer in self.sv_observers:
             sv.add_observer(observer)
+
+        jac_size_update = rf.JacobianSizeUpdate()
+        sv.add_observer_and_keep_reference(jac_size_update)
+
+        for jac_target in self.jacobian_size_targets:
+            jac_size_update.add_update_target(jac_target)
 
         return sv
 
