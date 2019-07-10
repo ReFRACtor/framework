@@ -16,8 +16,8 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
     }
 
     dimension_names = {
-        "high_res_rt": "monochromatic_grid",
-        "convolved": "instrument_grid",
+        "high_res_rt": "monochromatic_grid_s{}c{}",
+        "convolved": "instrument_grid_s{}c{}",
     }
 
     def __init__(self, output, step_index, solver=None):
@@ -29,10 +29,7 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
 
         self.solver = solver
 
-        self.create_dimensions(self.step_index)
-
     def notify_update(self, named_spectrum):
-
         if named_spectrum.name not in self.spectrum_type_group_names:
             logger.debug("Ignoring non saved spectrum type: {}".format(named_spectrum.name))
             return
@@ -46,35 +43,34 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
 
         group_name = self.iter_step_group_name(self.step_index, iter_index)
         group_name += "Spectrum"
+        group_name += "/" + "Channel_{}".format(named_spectrum.index + 1)
         group_name += "/" + self.spectrum_type_group_names[named_spectrum.name]
 
         logger.debug("Storing spectrum of type {} into output file at {}".format(named_spectrum.name, group_name))
 
         group = self.output.createGroup(group_name)
 
-        dim_name = self.dimensions[named_spectrum.name].name
+        dim_name = self.dimension_names[named_spectrum.name].format(self.step_index+1, named_spectrum.index+1)
+        if not dim_name in self.output.dimensions:
+            self.output.createDimension(dim_name, named_spectrum.spectral_domain.data.shape[0])
 
-        if "grid" in group.variables:
-            grid = group['grid']
+        grid_name = "grid"
+        if grid_name in group.variables:
+            grid_data = group[grid_name]
         else:
-            grid = group.createVariable("grid", float, (dim_name,))
-        grid[:] = named_spectrum.spectral_domain.data
-        grid.units = named_spectrum.spectral_domain.units.name
+            grid_data = group.createVariable(grid_name, float, (dim_name,))
+        grid_data[:] = named_spectrum.spectral_domain.data
 
-        if "radiance" in group.variables:
-            radiance = group['radiance']
+        radiance_name = "radiance"
+        if radiance_name in group.variables:
+            radiance_data = group[radiance_name]
         else:
-            radiance = group.createVariable("radiance", float, (dim_name,))
-        radiance[:] = named_spectrum.spectral_range.data
-        radiance.units = named_spectrum.spectral_range.units.name
+            radiance_data = group.createVariable(radiance_name, float, (dim_name,))
+        radiance_data[:] = named_spectrum.spectral_range.data
+        radiance_data.units = named_spectrum.spectral_range.units.name
 
 class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
     "Outputs Level1B related values into the output file"
-
-    dimension_names = {
-        "observation_grid": "observation_grid",
-        "instrument_grid": "instrument_grid",
-    }
 
     def __init__(self, output, step_index, l1b, forward_model):
         # Required to initialize director
@@ -86,8 +82,6 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
         self.l1b = l1b
         self.forward_model = forward_model
 
-        self.create_dimensions(self.step_index)
-
         self.write_observation()
 
     def write_observation(self):
@@ -96,52 +90,57 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
         if "Observation" in self.output.groups:
             return
 
-        channel_grid = []
-        channel_rad = []
-        channel_unc = []
+        obs_group = self.output.createGroup("Observation")
 
-        grid_units = None
-        rad_units = None
         for channel_idx in range(self.l1b.number_spectrometer()):
-            channel_grid.append(self.l1b.sample_grid(channel_idx).data)
-            channel_rad.append(self.l1b.radiance(channel_idx).data)
-            channel_unc.append(self.l1b.radiance(channel_idx).uncertainty)
+            channel_group = obs_group.createGroup("Channel_{}".format(channel_idx+1))
+
+            channel_grid = self.l1b.sample_grid(channel_idx).data
+            channel_rad  = self.l1b.radiance(channel_idx).data
+            channel_unc  = self.l1b.radiance(channel_idx).uncertainty
+
+            obs_dim = "observation_grid_s{}c{}".format(self.step_index+1, channel_idx+1)
+            if not obs_dim in self.output.dimensions:
+                self.output.createDimension(obs_dim, channel_grid.shape[0])
 
             grid_units = self.l1b.sample_grid(channel_idx).units.name
             rad_units = self.l1b.radiance(channel_idx).units.name
 
-        group = self.output.createGroup("Observation")
+            grid_name = "grid"
+            obs_grid = channel_group.createVariable(grid_name, float, (obs_dim,))
+            obs_grid[:] = channel_grid
+            obs_grid.units = grid_units
 
-        obs_dim = self.dimensions["observation_grid"].name
+            rad_name = "radiance"
+            obs_rad = channel_group.createVariable(rad_name, float, (obs_dim,))
+            obs_rad[:] = channel_rad
+            obs_rad.units = rad_units
 
-        obs_grid = group.createVariable("grid", float, (obs_dim,))
-        obs_grid[:] = np.concatenate(channel_grid)
-        obs_grid.units = grid_units
+            unc_name = "uncertainty"
+            obs_unc = channel_group.createVariable(unc_name, float, (obs_dim,))
+            obs_unc[:] = channel_unc
 
-        obs_rad = group.createVariable("radiance", float, (obs_dim,))
-        obs_rad[:] = np.concatenate(channel_rad)
-        obs_rad.units = rad_units
-
-        obs_unc = group.createVariable("uncertainty", float, (obs_dim,))
-        obs_unc[:] = np.concatenate(channel_unc)
-
-    def write_sample_list(self, group):
+    def write_sample_list(self, spectrum_group):
         "Update sample list for each iteration/step"
 
-        channel_samples = []
         for channel_idx in range(self.l1b.number_spectrometer()):
-            channel_samples.append(np.array(self.forward_model.spectral_grid.pixel_list(channel_idx)))
+            channel_group = spectrum_group.createGroup("Channel_{}".format(channel_idx+1))
 
-        if "observation_sample_indexes" in group.variables:
-            obs_indexes = group["observation_sample_indexes"]
-        else:
-            inst_dim = self.dimensions["instrument_grid"].name
-            obs_indexes = group.createVariable("observation_sample_indexes", int, (inst_dim,))
+            channel_samples = np.array(self.forward_model.spectral_grid.pixel_list(channel_idx))
 
-        obs_indexes[:] = np.concatenate(channel_samples)
+            if channel_samples.shape[0] > 0:
+                inst_dim = "instrument_grid_s{}c{}".format(self.step_index+1, channel_idx+1)
+                if not inst_dim in self.output.dimensions:
+                    self.output.createDimension(inst_dim, channel_samples.shape[0])
+
+                if "observation_sample_indexes" in channel_group.variables:
+                    obs_indexes = channel_group["observation_sample_indexes"]
+                else:
+                    obs_indexes = channel_group.createVariable("observation_sample_indexes", int, (inst_dim,))
+
+                obs_indexes[:] = channel_samples
 
     def notify_update(self, solver):
-
         iter_index = solver.num_accepted_steps
         base_group_name = self.iter_step_group_name(self.step_index, iter_index)
         
@@ -150,4 +149,3 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
         group = self.output.createGroup(group_name)
 
         self.write_sample_list(group)
-
