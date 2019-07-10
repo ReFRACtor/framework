@@ -36,10 +36,10 @@ public:
 //-----------------------------------------------------------------------
 
   SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
-		      const blitz::Array<bool, 1>& Used_flag,
-		      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-		      bool Mark_according_to_press = true,
-		      int Pdep_start = 0)
+                      const blitz::Array<bool, 1>& Used_flag,
+                      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+                      bool Mark_according_to_press = true,
+                      int Pdep_start = 0)
     : coeff(Coeff.copy()), press(Press), used_flag(Used_flag.copy()),
       mark_according_to_press(Mark_according_to_press),
       pdep_start(Pdep_start)
@@ -57,10 +57,10 @@ public:
   SubStateVectorArray() {}
 
   void init(const blitz::Array<double, 1>& Coeff,
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0)
+            const blitz::Array<bool, 1>& Used_flag,
+            const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+            bool Mark_according_to_press = true,
+            int Pdep_start = 0)
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
@@ -94,12 +94,12 @@ public:
     
     for(int i = 0; i < used_flag.rows(); ++i) {
       if(used_flag(i)) {
-	if(!press || !mark_according_to_press ||
-	   i < press->number_level() + pdep_start) {
-	  Used(si) = true;
-	}
-	
-	++si;
+        if(!press || !mark_according_to_press ||
+           i < press->number_level() + pdep_start) {
+          Used(si) = true;
+        }
+        
+        ++si;
       }
     }
   }
@@ -134,7 +134,7 @@ public:
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
     int si = 0;
-	
+        
     for(int i = 0; i < used_flag.rows(); ++i)
       if(used_flag(i)) {
                 Sv_name(si) = state_vector_name_i(i);
@@ -150,10 +150,13 @@ public:
       coeff.resize_number_variable(Sv_sub.number_variable());
       
       for(int i = 0; i < coeff.rows(); ++i)
-	if(used_flag(i)) {
-	  coeff(i) = Sv_sub(si);
-	  ++si;
-	}
+        if(used_flag(i)) {
+          coeff(i) = Sv_sub(si);
+          ++si;
+        }
+    } else {
+      cov.resize(0,0);
+      coeff.resize_number_variable(0);
     }
     
     update_sub_state_hook();
@@ -240,7 +243,7 @@ protected:
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
-					  const unsigned int version) \
+                                          const unsigned int version) \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & FP_NVP(coeff) & FP_NVP(press) & FP_NVP(used_flag) & FP_NVP(cov) \
