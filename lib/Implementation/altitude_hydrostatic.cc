@@ -105,18 +105,9 @@ void AltitudeHydrostatic::altitude_calc
   Array<AutoDerivative<double>, 1> pg(press_grid.convert(units::Pa).value.to_array());
   ArrayAd<double, 1> tg(temp_grid.convert(units::K).value);
 
-  // Determine jacobian size from explicitly set value or from temperature grid should it have a value other than 1
-  // defaulting to the value of the pressure grid
-  nvar;
-  if(is_jacobian_size_set()) {
-    nvar = jacobian_size();
-  } else if (temp_grid.number_variable() > 1) {
-    nvar = temp_grid.number_variable();
-  } else {
-    nvar = press_grid.number_variable();
-  }
-
-  ArrayAd<double, 1> altv(press_grid.value.rows(), nvar);
+  ArrayAd<double, 1> altv(press_grid.value.rows(), 
+                          std::max(press_grid.number_variable(),
+                                   temp_grid.number_variable()));
 
   ArrayAd<double, 1> psublayer((press_grid.rows()-1)*num_sublayer, press_grid.number_variable());
   ArrayAd<double, 1> gravv((altv.rows()-1)*num_sublayer, altv.number_variable());
@@ -176,8 +167,7 @@ AltitudeHydrostatic::AltitudeHydrostatic
   surface_height(Surface_height),
   p(P),
   t(T),
-  num_sublayer(Num_sublayer),
-  nvar(0)
+  num_sublayer(Num_sublayer)
 {
   p->add_observer(*this);
   t->add_observer(*this);
@@ -194,7 +184,7 @@ AltitudeHydrostatic::AltitudeHydrostatic
 
 void AltitudeHydrostatic::calc_alt_and_grav() const
 {
-  if(!cache_is_stale || is_jacobian_size_set() && jacobian_size() == nvar)
+  if(!cache_is_stale)
     return;
 
   ArrayAdWithUnit<double, 1> pgrid(p->pressure_grid());
@@ -204,9 +194,6 @@ void AltitudeHydrostatic::calc_alt_and_grav() const
   altitude_calc(pgrid, ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(tgrid),
                                                   units::K));
   cache_is_stale = false;
-
-  // Notify Observers when this value has been updated, work around const issues
-  const_cast<AltitudeHydrostatic *>(this)->notify_update_do(*this);
 }
 
 // See base class for description.
