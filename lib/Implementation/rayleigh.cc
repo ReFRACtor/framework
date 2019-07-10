@@ -79,8 +79,15 @@ Rayleigh::optical_depth_each_layer(double wn, int spec_index) const
 //-----------------------------------------------------------------------
 void Rayleigh::fill_cache() const
 {
-  if(!cache_is_stale)
+  int local_nvar = part_independent_wn.number_variable();
+
+  int alt_nvar = 0;
+  for(int i = 0; i < (int) alt.size(); ++i)
+    alt_nvar = std::max(alt_nvar, alt[i]->gravity(pres->pressure_grid()(0)).value.number_variable());
+
+  if(!cache_is_stale && local_nvar == alt_nvar) {
     return;
+  }
 
   // A comment in the old fortran code indicates this is Avogadro's
   // number. However, this actually is not (Avogadro's number is
@@ -90,9 +97,7 @@ void Rayleigh::fill_cache() const
   // original code and comment
   const double a0 = 6.02297e26;
 
-  int nvar = pres->pressure_grid().value.number_variable();
-  for(int i = 0; i < (int) alt.size(); ++i)
-    nvar = std::max(nvar, alt[i]->gravity(pres->pressure_grid()(0)).value.number_variable());
+  int nvar = std::max(pres->pressure_grid().value.number_variable(), alt_nvar);
   part_independent_wn.resize((int) alt.size(), pres->number_layer(), nvar);
   for(int i = 0; i < part_independent_wn.cols(); ++i)
     for(int j = 0; j < part_independent_wn.rows(); ++j) {
