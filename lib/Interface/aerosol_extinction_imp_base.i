@@ -8,6 +8,8 @@
 
 %base_import(aerosol_extinction)
 %base_import(sub_state_vector_array)
+%base_import(mapping_imp_base)
+%base_import(mapping)
 
 %fp_shared_ptr(FullPhysics::AerosolExtinctionImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AerosolExtinction>);
@@ -54,11 +56,12 @@ protected:
   virtual void calc_aerosol_extinction() const = 0;
   %python_attribute(total_aod, AutoDerivative<double>);
   AerosolExtinctionImpBase(const std::string& Aerosol_name,
-		     const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-	             int Pdep_start = 0);
+                    const blitz::Array<double, 1>& Coeff,
+                    const blitz::Array<bool, 1>& Used_flag,
+                    const boost::shared_ptr<Pressure>& Press,
+                    bool Mark_according_to_press = true,
+                    int Pdep_start = 0,
+                    boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
 };
 }
 

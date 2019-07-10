@@ -15,7 +15,13 @@ public:
     AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                      const blitz::Array<double, 1>& Vmr,
                      const blitz::Array<bool, 1>& Vmr_flag,
-                     const std::string& Gas_name);
+                     const std::string& Gas_name,
+                     boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
+    AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
+                     const blitz::Array<double, 1>& Vmr,
+                     const bool Vmr_flag,
+                     const std::string& Gas_name,
+                     boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
     virtual boost::shared_ptr<AbsorberVmr> clone() const;
     virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
     %python_attribute(sub_state_identifier, std::string);
