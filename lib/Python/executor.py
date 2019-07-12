@@ -71,8 +71,12 @@ class StrategyExecutor(object):
 
     def config_instance(self, **strategy_keywords):
 
+        logger.debug("Loading configration")
+
         config_def = self.config_definition(**strategy_keywords)
         config_inst = process_config(config_def)
+
+        logger.debug("Configuration processing complete")
 
         return config_inst
 
