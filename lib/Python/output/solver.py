@@ -11,12 +11,6 @@ logger = logging.getLogger(__name__)
 class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
     "Notifies output classes the current retrieval iteration number when it changes"
 
-    dimension_names = {
-        "state_vector": "state_vector",
-        "sv_string": "sv_string",
-        "status_string": "status_string",
-    }
-
     def __init__(self, output, step_index, state_vector):
         # Required to initialize director
         rf.ObserverIterativeSolver.__init__(self)
@@ -26,16 +20,21 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
 
         self.state_vector = state_vector
 
-        self.create_dimensions(self.step_index)
-
     def notify_update(self, solver):
-
         iter_index = solver.num_accepted_steps
         base_group_name = self.iter_step_group_name(self.step_index, iter_index)
 
-        sv_dim = self.dimensions["state_vector"].name
-        str_dim = self.dimensions["sv_string"].name
-        status_dim = self.dimensions["status_string"].name
+        sv_dim = "state_vector_s{}".format(self.step_index+1)
+        if sv_dim not in self.output.dimensions:
+            self.output.createDimension(sv_dim, self.state_vector.state.shape[0])
+
+        str_dim = "sv_string_s{}".format(self.step_index+1)
+        if str_dim not in self.output.dimensions:
+            self.output.createDimension(str_dim)
+
+        status_dim = "status_string_s{}".format(self.step_index+1)
+        if status_dim not in self.output.dimensions:
+            self.output.createDimension(status_dim)
 
         # StateVector output
         sv_group_name = base_group_name + "StateVector"

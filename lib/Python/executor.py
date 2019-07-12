@@ -137,7 +137,7 @@ class StrategyExecutor(object):
             if step_index < 0 or step_index >= len(strategy):
                 raise Exception("Invalid step index: {}".format(step_index))
 
-            logger.info("Executing retrieval step {}".format(step_index))
+            logger.info("Executing retrieval step #{}".format(step_index+1))
 
             step_keywords = strategy[step_index]
 
@@ -150,6 +150,8 @@ class StrategyExecutor(object):
 
             del config_inst
 
+        logger.info("Retrieval execution finished")
+
     def execute_simulation(self, step_index=0):
 
         strategy = self.strategy_list()
@@ -157,7 +159,7 @@ class StrategyExecutor(object):
         if step_index < 0 or step_index >= len(strategy):
             raise Exception("Invalid step index: {}".format(step_index))
 
-        logger.info("Executing simulation for step {}".format(step_index))
+        logger.info("Executing simulation for step #{}".format(step_index+1))
 
         step_keywords = strategy[step_index]
         
@@ -166,3 +168,5 @@ class StrategyExecutor(object):
         self.run_forward_model(config_inst)
 
         del config_inst
+
+        logger.info("Simulation execution finished")
