@@ -113,7 +113,7 @@ protected:
 	    const boost::shared_ptr<Pressure>& Press,
 	    bool Mark_according_to_press = true,
 	    int Pdep_start = 0,
-	    boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
+	    boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
   { SubStateVectorArray<AerosolExtinction>::init(Coeff, Used_flag, Press,
 					   Mark_according_to_press,
 					   Pdep_start,
@@ -139,7 +139,7 @@ protected:
 		     const boost::shared_ptr<Pressure>& Press,
 		     bool Mark_according_to_press = true,
 		     int Pdep_start = 0,
-		     boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>())
+		     boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
     : SubStateVectorArray<AerosolExtinction>(Coeff, Used_flag, Press,
 					     Mark_according_to_press, Pdep_start, in_map),
       cache_stale(true), aerosol_name_(Aerosol_name) { }

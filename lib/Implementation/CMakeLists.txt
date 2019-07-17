@@ -8,6 +8,7 @@ set(DIR_SOURCES
     absorber_vmr_level_log.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
+    aerosol_extinction_level.cc
     aerosol_extinction_linear.cc
     aerosol_extinction_log.cc
     aerosol_optical.cc

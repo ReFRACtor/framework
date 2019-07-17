@@ -61,7 +61,7 @@ protected:
                     const boost::shared_ptr<Pressure>& Press,
                     bool Mark_according_to_press = true,
                     int Pdep_start = 0,
-                    boost::shared_ptr<Mapping> in_map = boost::make_shared<Mapping>());
+                    boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
 };
 }
 

@@ -16,30 +16,8 @@ REGISTER_LUA_DERIVED_CLASS(AerosolExtinctionLinear, AerosolExtinction)
 REGISTER_LUA_END()
 #endif
 
-// See base class for description
-boost::shared_ptr<AerosolExtinction> AerosolExtinctionLinear::clone
-(const boost::shared_ptr<Pressure>& Pres) const
-{
-  return boost::shared_ptr<AerosolExtinction>
-    (new AerosolExtinctionLinear(Pres, used_flag, coeff.value(), 
-				 aerosol_name()));
-}
-
-void AerosolExtinctionLinear::calc_aerosol_extinction() const
-{
-  aext.resize(coeff.rows(), coeff.number_variable());
-  for(int i = 0; i < coeff.rows(); ++i)
-    aext(i) = coeff(i);
-}
-
-void AerosolExtinctionLinear::print(std::ostream& Os) const
-{
-  OstreamPad opad(Os, "    ");
-  Os << "AerosolExtinctionLinear:\n"
-     << "  Coefficient:\n";
-  opad << coeff.value() << "\n";
-  opad.strict_sync();
-  Os << "  Retrieval flag:\n";
-  opad << used_flag << "\n";
-  opad.strict_sync();
-}
+AerosolExtinctionLinear::AerosolExtinctionLinear(const boost::shared_ptr<Pressure>& Press,
+              const blitz::Array<bool, 1>& Flag,
+              const blitz::Array<double, 1>& Aext,
+              const std::string& Aerosol_name)
+    : AerosolExtinctionLevel(Press, Flag, Aext, Aerosol_name, boost::make_shared<Mapping>()) {}
