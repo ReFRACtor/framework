@@ -10,7 +10,7 @@ using namespace blitz;
 REGISTER_LUA_DERIVED_CLASS(IlsInstrument, Instrument)
 .def(luabind::constructor<const std::vector<boost::shared_ptr<Ils> >&>())
 .def(luabind::constructor<const std::vector<boost::shared_ptr<Ils> >&,
-			  const std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >& >())
+                          const std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >& >())
 REGISTER_LUA_END()
 #endif
 
@@ -19,8 +19,8 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 IlsInstrument::IlsInstrument(const std::vector<boost::shared_ptr<Ils> >& Ils_list,
-			     const std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >&
-			     Instrument_correction)
+                             const std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >&
+                             Instrument_correction)
 : ils_(Ils_list), inst_corr(Instrument_correction)
 {
   if(inst_corr.size() == 0)
@@ -30,7 +30,7 @@ IlsInstrument::IlsInstrument(const std::vector<boost::shared_ptr<Ils> >& Ils_lis
   BOOST_FOREACH(boost::shared_ptr<Ils> i, ils_)
     i->add_observer(*this);
   BOOST_FOREACH(std::vector<boost::shared_ptr<InstrumentCorrection> >& i, 
-		inst_corr) {
+                inst_corr) {
     BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection>& j, i)
       j->add_observer(*this);
   }
@@ -44,7 +44,7 @@ boost::shared_ptr<Instrument> IlsInstrument::clone() const
   std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > > 
     inst_corr_vec;
   BOOST_FOREACH(const std::vector<boost::shared_ptr<InstrumentCorrection> >& i, 
-		inst_corr) {
+                inst_corr) {
     std::vector<boost::shared_ptr<InstrumentCorrection> > t;
     BOOST_FOREACH(const boost::shared_ptr<InstrumentCorrection>& j, i)
       t.push_back(j->clone());
@@ -78,7 +78,7 @@ Spectrum IlsInstrument::apply_instrument_model(
        High_resolution_spectrum.spectral_range().data_ad(),
        Pixel_list);
     res_sr = SpectralRange(rad_ad, 
-			   High_resolution_spectrum.spectral_range().units());
+                           High_resolution_spectrum.spectral_range().units());
   } else {
     Array<double, 1> rad =
       ils_[Spec_index]->apply_ils
@@ -86,11 +86,13 @@ Spectrum IlsInstrument::apply_instrument_model(
        High_resolution_spectrum.spectral_range().data(),
        Pixel_list);
     res_sr = SpectralRange(rad, 
-			   High_resolution_spectrum.spectral_range().units());
+                           High_resolution_spectrum.spectral_range().units());
   }
-  BOOST_FOREACH(const boost::shared_ptr<InstrumentCorrection>& i, 
-		inst_corr[Spec_index])
-    i->apply_correction(ils_[Spec_index]->pixel_grid(), Pixel_list, res_sr);
+  BOOST_FOREACH(const boost::shared_ptr<InstrumentCorrection>& i, inst_corr[Spec_index]) {
+    if(i) {
+        i->apply_correction(ils_[Spec_index]->pixel_grid(), Pixel_list, res_sr);
+    }
+  }
 
   return Spectrum(res_dom, res_sr);
 }
