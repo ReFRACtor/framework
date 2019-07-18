@@ -25,7 +25,8 @@ luabind::class_<AbscoHdf,Absco,boost::shared_ptr<GasAbsorption> >
 //-----------------------------------------------------------------------
 
 AbscoHdf::AbscoHdf(const std::string& Fname, double Table_scale,
-                   int Cache_nline)
+                   int Cache_nline, InterpolationType Itype)
+  : itype_(Itype)
 {
   load_file(Fname, Table_scale, Cache_nline);
 }
@@ -39,7 +40,8 @@ AbscoHdf::AbscoHdf(const std::string& Fname, double Table_scale,
 AbscoHdf::AbscoHdf(const std::string& Fname, 
                    const SpectralBound& Spectral_bound,
                    const std::vector<double>& Table_scale,
-                   int Cache_nline)
+                   int Cache_nline, InterpolationType Itype)
+  : itype_(Itype)
 {
   load_file(Fname, Spectral_bound, Table_scale, Cache_nline);
 }
@@ -259,7 +261,7 @@ int AbscoHdf::wn_index(double Wn_in) const
     f = 1.0;
   else
     f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
-  if(f > 0.1 && f < 0.9) {
+  if(itype_ == THROW_ERROR_IF_NOT_ON_WN_GRID && f > 0.1 && f < 0.9) {
     Exception e;
     e << std::setprecision(8)
       << "AbscoHDF does not interpolate in wavenumber direction.\n"
