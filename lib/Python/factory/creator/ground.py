@@ -57,21 +57,20 @@ class GroundEmissivityPolynomial(CreatorFlaggedValueMultiChannel):
     def create(self, **kwargs):
         return rf.GroundEmissivityPolynomial(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
 
-class GroundEmissivityPiecewise(CreatorFlaggedValue):
+class GroundPiecewise(CreatorFlaggedValue):
 
     grid = param.ArrayWithUnit(dims=1)
     spec_win = param.InstanceOf(rf.SpectralWindowRange)
 
-    def create(self, **kwargs):
-
+    def retrieval_flag(self):
         grid = self.grid()
-        emiss_values = self.value()
+        point_values = self.value()
         spec_win = self.spec_win()
 
         # Go through each grid value and only flag if the parameter falls within
         # the configured spectral ranges.
 
-        ret_flag_compute = np.zeros(emiss_values.shape[0], dtype=bool)
+        ret_flag_compute = np.zeros(point_values.shape[0], dtype=bool)
         grid_conv = grid.convert_wave(spec_win.range_array.units)
 
         for grid_idx, grid_value in enumerate(grid_conv.value):
@@ -86,12 +85,20 @@ class GroundEmissivityPiecewise(CreatorFlaggedValue):
                     break
 
         # Combine flags if the original retrieval flag was not all True, meaning it was the default one
-        ret_flag_user = self.retrieval_flag()
+        ret_flag_user = super().retrieval_flag()
         if not np.all(ret_flag_user):
             ret_flag = ret_flag_compute and ret_flag_user
         else:
             ret_flag = ret_flag_compute
 
-        return rf.GroundEmissivityPiecewise(grid, emiss_values, ret_flag)
+        return ret_flag
 
+class GroundEmissivityPiecewise(GroundPiecewise):
 
+    def create(self, **kwargs):
+        return rf.GroundEmissivityPiecewise(self.grid(), self.value(), self.retrieval_flag())
+
+class GroundLambertianPiecewise(GroundPiecewise):
+
+    def create(self, **kwargs):
+        return rf.GroundLambertianPiecewise(self.grid(), self.value(), self.retrieval_flag())
