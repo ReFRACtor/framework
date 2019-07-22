@@ -47,6 +47,31 @@ if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   add_definitions("-fno-openmp")
 endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
+# Another annoying thing Anaconda does on the mac is add
+# -Wl,-dead_strip_dylibs. Not really clear why this would be imposed on all
+# environments, but it is at least currently done. This causes
+# "lazy symbol bindings failed" errors, in particular libgsl does lazy
+# bindings iwht libgslcblas. It is common to include libraries on the link
+# line for reasons other than directly providing symbols, so we really want
+# the CMake rule to determine what libraries to include rather than having
+# the linker toss libraries out it "thinks" it doesn't need. We strip
+# the option out if it gets set by the passed in LDFLAGS from the Anaconda
+# environment.
+if(CMAKE_EXE_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_EXE_LINKER_FLAGS
+           ${CMAKE_EXE_LINKER_FLAGS})
+endif()
+
+if(CMAKE_MODULE_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_MODULE_LINKER_FLAGS
+           ${CMAKE_MODULE_LINKER_FLAGS})
+endif()
+
+if(CMAKE_SHARED_LINKER_FLAGS)
+    string(REPLACE "-Wl,-dead_strip_dylibs" "" CMAKE_SHARED_LINKER_FLAGS
+           ${CMAKE_SHARED_LINKER_FLAGS})
+endif()
+
 # Disable deprecation warning because luabind uses auto_ptr, enabling C++11 
 # causes the warning to be output
 add_definitions("-Wno-deprecated-declarations")
@@ -110,12 +135,6 @@ execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/support/refractor/version_u
     OUTPUT_VARIABLE REFRACTOR_CM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# Create version.h file by evaluating cmake variables
-configure_file (
-    "${PROJECT_SOURCE_DIR}/bin/version.h.in"
-    "${PROJECT_BINARY_DIR}/version.h"
-)
-
 # Place compiled Fortran modules into a common directory
 set_property(GLOBAL PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_BINARY_DIR}/modules)
 include_directories(${CMAKE_BINARY_DIR}/modules)
@@ -138,10 +157,6 @@ add_dependencies(refractor thirdparty)
 include_directories(${PROJECT_BINARY_DIR} ${FP_INCLUDES})
 include_directories(SYSTEM ${THIRDPARTY_INCLUDES})
 
-# Create main executable 
-add_executable(l2_fp bin/l2_fp.cc)
-target_link_libraries(l2_fp refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
-
 # Include Lua configs and input rules
 add_subdirectory(input)
 
@@ -150,11 +165,6 @@ option(BUILD_PYTHON_BINDING "Build Python SWIG bindings" ON)
 if(BUILD_PYTHON_BINDING) 
     add_subdirectory(bindings/python)
 endif()
-
-# Create installation rule for binary
-install(TARGETS l2_fp
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
 
 # Install support utils
 install(DIRECTORY "support/utils/" DESTINATION bin
@@ -214,5 +224,7 @@ install(FILES
 # Install the export set for use with the install-tree
 install(EXPORT RefractorTargets DESTINATION  "${INSTALL_CMAKE_DIR}")
 
-
-
+# Install "binaries" from bin/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/bin/ DESTINATION bin
+    USE_SOURCE_PERMISSIONS
+    FILES_MATCHING PATTERN "*.py")

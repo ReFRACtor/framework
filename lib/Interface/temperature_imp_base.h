@@ -21,11 +21,10 @@ public:
   temperature(const AutoDerivativeWithUnit<double>& Press) const
   { fill_cache(); 
     return AutoDerivativeWithUnit<double>(tgrid(Press.convert(units::Pa).value),
-					  units::K); 
+                                          units::K); 
   }
   virtual boost::shared_ptr<Temperature> clone() const = 0;
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+  virtual boost::shared_ptr<Temperature> clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   
   virtual void update_sub_state_hook() 
   { cache_stale = true; }
@@ -68,13 +67,13 @@ protected:
 //-----------------------------------------------------------------------
 
   void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press,
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0)
+            const blitz::Array<bool, 1>& Used_flag,
+            const boost::shared_ptr<Pressure>& Press,
+            bool Mark_according_to_press = true,
+            int Pdep_start = 0)
   { SubStateVectorArray<Temperature>::init(Coeff, Used_flag, Press,
-					   Mark_according_to_press,
-					   Pdep_start);
+                                           Mark_according_to_press,
+                                           Pdep_start);
   }
 
 //-----------------------------------------------------------------------
@@ -90,12 +89,12 @@ protected:
 /// Pdep_start.
 //-----------------------------------------------------------------------
   TemperatureImpBase(const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-		     int Pdep_start = 0)
+                     const blitz::Array<bool, 1>& Used_flag,
+                     const boost::shared_ptr<Pressure>& Press,
+                     bool Mark_according_to_press = true,
+                     int Pdep_start = 0)
     : SubStateVectorArray<Temperature>(Coeff, Used_flag, Press,
-				       Mark_according_to_press, Pdep_start),
+                                       Mark_according_to_press, Pdep_start),
       cache_stale(true) { }
 private:
   void fill_cache() const

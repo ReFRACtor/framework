@@ -240,9 +240,6 @@ void LidortRtDriver::initialize_rt()
   // Fourier azimuth series is examined twice for convergence
   mboolean_inputs.ts_do_double_convtest(true);
 
-  // Do internal calculation of slanth path optical depths
-  mboolean_inputs.ts_do_chapman_function(true);
-
   // In most instances this flag for delta-m scaling should be set
   mboolean_inputs.ts_do_deltam_scaling(true);
 
@@ -263,7 +260,11 @@ void LidortRtDriver::initialize_rt()
   if (do_solar_sources) {
       // Needed for atmospheric scattering of sunlight
       mboolean_inputs.ts_do_solar_sources(true);
-      
+
+      // Do internal calculation of slanth path optical depths
+      // Only needed for solar sources
+      mboolean_inputs.ts_do_chapman_function(true);
+
       // Enable solar sources in the BRDF driver
       brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
   }
@@ -280,6 +281,10 @@ void LidortRtDriver::initialize_rt()
 
       // Enable solar sources in the BRDF driver
       brdf_interface()->brdf_sup_in().bs_do_surface_emission(true);
+
+      if(!do_solar_sources) {
+        mboolean_inputs.ts_do_thermal_transonly(true);
+      }
   }
 
   // Number of solar beams
@@ -338,7 +343,13 @@ void LidortRtDriver::setup_sphericity(double UNUSED(zen)) const
 
     // Pseudo-spherical + Line of Sight correction
     mboolean_inputs.ts_do_sscorr_nadir(false);
-    mboolean_inputs.ts_do_sscorr_outgoing(true);
+
+    if (do_solar_sources) {
+        mboolean_inputs.ts_do_sscorr_outgoing(true);
+    } else {
+        // This must be disabled for thermal only mode
+        mboolean_inputs.ts_do_sscorr_outgoing(false);
+    }
 
     // Number of fine layers subdividing coarse layering
     // Only used during LOS correction

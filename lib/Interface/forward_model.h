@@ -32,7 +32,7 @@ public:
     /// empty.
     //-----------------------------------------------------------------------
 
-    virtual const SpectralDomain spectral_domain(int channel_index) const = 0;
+    virtual SpectralDomain spectral_domain(int channel_index) const = 0;
 
     //-----------------------------------------------------------------------
     /// Type preference for spectral domain. This may seem an odd thing to

@@ -9,10 +9,13 @@
 
 %fp_shared_ptr(FullPhysics::IterativeSolver);
 
-%fp_shared_ptr(FullPhysics::Observer<FullPhysics::IterativeSolver>);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::IterativeSolver>);
-%template(ObserverIterativeSolver) FullPhysics::Observer<FullPhysics::IterativeSolver>;
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::IterativeSolver>);
 %template(ObservableIterativeSolver) FullPhysics::Observable<FullPhysics::IterativeSolver>;
+
+// It is very important that the dirctor come before the template or else the director won't work properly 
+%feature("director") FullPhysics::Observer<FullPhysics::IterativeSolver>;
+%template(ObserverIterativeSolver) FullPhysics::Observer<FullPhysics::IterativeSolver>;
 
 namespace FullPhysics {
 class IterativeSolver : public Observable<IterativeSolver> {
@@ -29,19 +32,5 @@ public:
   %python_attribute(status, status_t)
   %python_attribute(status_str, std::string)
   std::string print_to_string() const;
-
-  %extend {
-
-        // Support shared pointers from other languages for add/remove observer
-        void add_observer(const boost::shared_ptr<Observer<IterativeSolver> >& Obs) {
-            $self->add_observer(*Obs);
-        }
-
-        void remove_observer(const boost::shared_ptr<Observer<IterativeSolver> >& Obs) {
-            $self->remove_observer(*Obs);
-        }
-
-    }
-
 };
 }

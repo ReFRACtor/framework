@@ -156,6 +156,11 @@ class AbsorberVmrMet(CreatorFlaggedValue):
 
         return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
 
+class AbscoInterpolationOption(Enum):
+    error = rf.AbscoAer.THROW_ERROR_IF_NOT_ON_WN_GRID
+    nearest_neighbor = rf.AbscoAer.NEAREST_NEIGHBOR_WN
+    interpolate = rf.AbscoAer.INTERPOLATE_WN
+
 class AbscoCreator(Creator):
     "Do not use directly, defines the generic interface that uses a specific Absco class specified in inheriting creators"
 
@@ -163,6 +168,9 @@ class AbscoCreator(Creator):
     filename = param.Scalar(str)
     table_scale = param.Choice(param.Iterable(), param.Scalar(float), default=1.0)
     spec_win = param.InstanceOf(rf.SpectralWindow)
+
+    interp_method = param.Choice(param.Scalar(int), param.InstanceOf(AbscoInterpolationOption), default=0)
+    cache_size = param.Scalar(int, default=5000)
 
     def absco_object(self, absco_filename, table_scale, spectral_bound=None):
         raise NotImplementedError("Do not use AbscoCreator directly, instead use an inherited creator that defines the type of ABSCO file reader to use")
@@ -193,8 +201,15 @@ class AbscoCreator(Creator):
 
         table_scale = self.table_scale()
 
+        interp_method = self.interp_method()
+        cache_size = self.cache_size()
+
+        # Convert to integer
+        if isinstance(interp_method, AbscoInterpolationOption):
+            interp_method = interp_method.value
+
         if np.isscalar(table_scale):
-            return self.absco_object(absco_filename, table_scale)
+            return self.absco_object(absco_filename, table_scale, cache_size=cache_size, interp_method=interp_method)
         else:
             spectral_bound = self.spec_win().spectral_bound
 
@@ -203,43 +218,35 @@ class AbscoCreator(Creator):
             for val in table_scale:
                 table_scale_vector.push_back(val)
 
-            return self.absco_object(absco_filename, table_scale_vector, spectral_bound)
+            return self.absco_object(absco_filename, table_scale_vector, spectral_bound, cache_size=cache_size, interp_method=interp_method)
 
 class AbscoLegacy(AbscoCreator):
     "Legacy HDF format created for OCO"
 
-    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
+    def absco_object(self, absco_filename, table_scale, spectral_bound=None, cache_size=5000, interp_method=0):
+
+        # Legacy ABSCO does not support INTERPOLATE_WN option
+        if interp_method < 0 or interp_method > 1:
+            raise param.ParamError("Invalid interpolation method value: {}".format(interp_method))
 
         if spectral_bound is not None:
-            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale)
+            return rf.AbscoHdf(absco_filename, spectral_bound, table_scale, cache_size, interp_method)
         else:
-            return rf.AbscoHdf(absco_filename, table_scale)
-
-class AbscoInterpolationOption(Enum):
-    error = rf.AbscoAer.THROW_ERROR_IF_NOT_ON_WN_GRID
-    nearest_neighbor = rf.AbscoAer.NEAREST_NEIGHBOR_WN
-    interpolate = rf.AbscoAer.INTERPOLATE_WN
+            return rf.AbscoHdf(absco_filename, table_scale, cache_size, interp_method)
 
 class AbscoAer(AbscoCreator):
     "Newer AER generated ABSCO format"
 
-    interp_method = param.Choice(param.Scalar(int), param.InstanceOf(AbscoInterpolationOption), default=0)
-    cache_size = param.Scalar(int, default=5000)
+    def absco_object(self, absco_filename, table_scale, spectral_bound=None, cache_size=5000, interp_method=0):
 
-    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
-
-        interp_method = self.interp_method()
-        cache_size = self.cache_size()
-
-        # Convert to integer
-        if isinstance(interp_method, AbscoInterpolationOption):
-            interp_method = interp_method.value
+        # Ensure only valid values are used
+        if interp_method < 0 or interp_method > 2:
+            raise param.ParamError("Invalid interpolation method value: {}".format(interp_method))
 
         if spectral_bound is not None:
             return rf.AbscoAer(absco_filename, spectral_bound, table_scale, cache_size, interp_method)
         else:
             return rf.AbscoAer(absco_filename, table_scale, cache_size, interp_method)
-
 
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"

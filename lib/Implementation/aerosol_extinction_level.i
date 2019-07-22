@@ -22,8 +22,6 @@ public:
 			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name,
-              bool Mark_according_to_press = true,
-              int Pdep_start = 0,
 			  boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual boost::shared_ptr<AerosolExtinction> clone

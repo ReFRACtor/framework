@@ -46,19 +46,19 @@ public:
         Os << "IlsImpBase";
     }
 
-    virtual const std::string band_name() const
+    virtual std::string band_name() const
     {
         return desc_band_name_;
     }
-    virtual const std::string hdf_band_name() const
+    virtual std::string hdf_band_name() const
     {
         return hdf_band_name_;
     }
-    virtual const SpectralDomain pixel_grid() const
+    virtual SpectralDomain pixel_grid() const
     {
         return sample_grid_->pixel_grid();
     }
-    virtual const DoubleWithUnit high_res_extension() const
+    virtual DoubleWithUnit high_res_extension() const
     {
         return high_res_extension_;
     }

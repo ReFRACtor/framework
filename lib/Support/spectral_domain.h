@@ -85,13 +85,13 @@ public:
 /// Units that go with data()
 //-----------------------------------------------------------------------
 
-  const Unit units() const {return units_;}
+  Unit units() const {return units_;}
 
 //-----------------------------------------------------------------------
 /// Clones object into a new copy
 //-----------------------------------------------------------------------
 
-  const SpectralDomain clone() const;
+  SpectralDomain clone() const;
 
 //-----------------------------------------------------------------------
 /// Indicate if this class prefers wavelength or wavenumber. This is

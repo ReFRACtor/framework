@@ -48,26 +48,26 @@ public:
   /// The low resolution grid.
   //-----------------------------------------------------------------------
 
-  const SpectralDomain low_resolution_grid(int Spec_index) const;
+  SpectralDomain low_resolution_grid(int Spec_index) const;
 
   //-----------------------------------------------------------------------
   /// The high resolution grid, possibly nonuniform
   //-----------------------------------------------------------------------
 
-  const SpectralDomain high_resolution_grid(int Spec_index) const;
+  SpectralDomain high_resolution_grid(int Spec_index) const;
 
   //-----------------------------------------------------------------------
   /// The high resolution grid, interpolated to be uniform.
   //-----------------------------------------------------------------------
 
-  const SpectralDomain high_resolution_interpolated_grid(int Spec_index) const;
+  SpectralDomain high_resolution_interpolated_grid(int Spec_index) const;
 
   Spectrum interpolate_spectrum(const Spectrum& Spec_in, int Spec_index) const;
 
   //-----------------------------------------------------------------------
   /// Pixel indexes to use for low resolution grid.
   //-----------------------------------------------------------------------
-  const std::vector<int> pixel_list(int Spec_index) const;
+  std::vector<int> pixel_list(int Spec_index) const;
 
 private:
   boost::shared_ptr<Instrument> inst;

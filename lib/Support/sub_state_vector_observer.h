@@ -68,6 +68,12 @@ public:
   virtual void notify_remove(StateVector& UNUSED(Sv))
   {
     pstart = -1;
+
+    // Object is no longer part of the state vector there for the sub state arrays
+    // are now empty.
+    ArrayAd<double, 1> sv_sub(0, 0);
+    blitz::Array<double, 2> cov_sub(0, 0);
+    update_sub_state(sv_sub, cov_sub);
   }
 protected:
 //-----------------------------------------------------------------------

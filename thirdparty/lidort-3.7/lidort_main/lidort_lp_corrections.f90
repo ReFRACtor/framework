@@ -4170,6 +4170,7 @@ SUBROUTINE LIDORT_LAP_DBCORRECTION                                          &
             DO UTA = 1, N_USER_LEVELS
               PROFILEWF_DB(Q,K,UTA,V) = ZERO
             ENDDO
+            L_DB_CUMSOURCE(V) = ZERO
           ENDDO
 
 !  New Code  R. Spurr, 6 August 2007. RT Solutions Inc.

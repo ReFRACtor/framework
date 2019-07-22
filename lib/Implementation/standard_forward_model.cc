@@ -55,7 +55,11 @@ Spectrum StandardForwardModel::radiance
                         Skip_jacobian);
     notify_spectrum_update(highres_spec, "high_res_rt", channel_index);
 
-    return apply_spectrum_corrections(highres_spec, channel_index);
+    Spectrum convolved_spec = apply_spectrum_corrections(highres_spec, channel_index);
+
+    notify_spectrum_update(convolved_spec, "convolved", channel_index);
+
+    return convolved_spec;
 }
 
 //-----------------------------------------------------------------------
@@ -76,8 +80,10 @@ Spectrum StandardForwardModel::apply_spectrum_corrections(const Spectrum& highre
     notify_spectrum_update(highres_spec_intepolated, "high_res_interpolated", channel_index);
 
     BOOST_FOREACH(const boost::shared_ptr<SpectrumEffect>& i, spec_effect[channel_index]) {
-        i->apply_effect(highres_spec_intepolated, *g);
-        notify_spectrum_update(highres_spec_intepolated, "high_res_spec_effect_" + i->name(), channel_index);
+        if (i) {
+            i->apply_effect(highres_spec_intepolated, *g);
+            notify_spectrum_update(highres_spec_intepolated, "high_res_spec_effect_" + i->name(), channel_index);
+        }
     }
 
     return inst->apply_instrument_model(highres_spec_intepolated,
