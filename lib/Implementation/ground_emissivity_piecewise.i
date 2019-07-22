@@ -21,7 +21,7 @@ public:
     virtual const AutoDerivative<double> value_at_wavenumber(const double wn) const;
 
     virtual boost::shared_ptr<Ground> clone() const;
-    virtual std::string sub_state_identifier() const;
+    %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;
     virtual void print(std::ostream& Os) const;
     virtual std::string desc() const;
