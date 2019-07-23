@@ -166,11 +166,11 @@ void LidortBrdfDriver::initialize_kernel_parameters(const int kernel_index,
 
 LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, 
         int surface_type, const blitz::Array<double, 1>& zen, bool pure_nadir,
-        bool do_solar, bool do_thermal)
-  : SpurrRtDriver(do_solar, do_thermal),
+        bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering)
+  : SpurrRtDriver(do_solar_sources, do_thermal_emission),
     nstream_(nstream), nmoment_(nmoment),
     do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type),
-    pure_nadir_(pure_nadir)
+    pure_nadir_(pure_nadir), do_thermal_scattering_(do_thermal_scattering)
 {
   brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
@@ -282,7 +282,7 @@ void LidortRtDriver::initialize_rt()
       // Enable solar sources in the BRDF driver
       brdf_interface()->brdf_sup_in().bs_do_surface_emission(true);
 
-      if(!do_solar_sources) {
+      if(!do_thermal_scattering_) {
         mboolean_inputs.ts_do_thermal_transonly(true);
       }
   }

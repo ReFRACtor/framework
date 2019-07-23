@@ -20,6 +20,7 @@ set(DIR_SOURCES
     forward_model_spectral_grid.cc
     gas_absorption.cc
     ground.cc
+    ground_piecewise.cc
     ils.cc
     ils_function.cc
     initial_guess.cc

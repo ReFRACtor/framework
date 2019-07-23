@@ -1,4 +1,5 @@
 import math
+import bisect
 import numpy as np
 
 from .base import Creator
@@ -57,41 +58,65 @@ class GroundEmissivityPolynomial(CreatorFlaggedValueMultiChannel):
     def create(self, **kwargs):
         return rf.GroundEmissivityPolynomial(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
 
-class GroundEmissivityPiecewise(CreatorFlaggedValue):
+class GroundPiecewise(CreatorFlaggedValue):
 
     grid = param.ArrayWithUnit(dims=1)
     spec_win = param.InstanceOf(rf.SpectralWindowRange)
 
-    def create(self, **kwargs):
-
+    def retrieval_flag(self):
         grid = self.grid()
-        emiss_values = self.value()
+        point_values = self.value()
         spec_win = self.spec_win()
 
-        # Go through each grid value and only flag if the parameter falls within
-        # the configured spectral ranges.
+        ret_flag_compute = np.zeros(point_values.shape[0], dtype=bool)
 
-        ret_flag_compute = np.zeros(emiss_values.shape[0], dtype=bool)
-        grid_conv = grid.convert_wave(spec_win.range_array.units)
+        for channel_idx in range(spec_win.range_array.value.shape[0]):
+            for mw_idx in range(spec_win.range_array.value.shape[1]):
+                win_range = spec_win.range_array[channel_idx, mw_idx, :]
 
-        for grid_idx, grid_value in enumerate(grid_conv.value):
-            for win_indexes in np.ndindex(spec_win.range_array.value.shape[:2]):
-                # Make sure we compare values in order
-                win_range = spec_win.range_array.value[win_indexes[0], win_indexes[1], :]
-                win_beg = min(win_range)
-                win_end = max(win_range)
+                # Convert microwindows to same units as grid so we can keep the grid in sorted order
+                win_val_1 = win_range[0].convert_wave(grid.units).value
+                win_val_2 = win_range[1].convert_wave(grid.units).value
 
-                if grid_value >= win_beg and grid_value <= win_end:
-                    ret_flag_compute[grid_idx] = True
-                    break
+                if win_val_1 == win_val_2:
+                    # Empty window, for instance where 0 = 0
+                    continue
 
+                # Make sure we compare values in order so the indexes are inte correct order after
+                # the unit conversion above
+                if win_val_1 < win_val_2:
+                    index_beg = bisect.bisect_left(grid.value, win_val_1)
+                    index_end = bisect.bisect_right(grid.value, win_val_2)
+                else:
+                    index_beg = bisect.bisect_left(grid.value, win_val_2)
+                    index_end = bisect.bisect_right(grid.value, win_val_1)
+
+                # If index beg and end equal zero then there are no grid points found for the window
+                # This means the input grid is insufficient
+                if(index_beg == 0 and index_end == 0):
+                    raise param.ParamError("Input piecewise grid is insufficient to cover the microwindow range of {} to {} {}".format(win_val_1, win_val_2, grid.units))
+
+                # Extend out matches one below the bisected indexes to ensure coverage
+                index_beg = max(index_beg-1, 0)
+
+                for idx in range(index_beg, index_end+1):
+                    ret_flag_compute[idx] = True
+ 
         # Combine flags if the original retrieval flag was not all True, meaning it was the default one
-        ret_flag_user = self.retrieval_flag()
+        ret_flag_user = super().retrieval_flag()
         if not np.all(ret_flag_user):
             ret_flag = ret_flag_compute and ret_flag_user
         else:
             ret_flag = ret_flag_compute
 
-        return rf.GroundEmissivityPiecewise(grid, emiss_values, ret_flag)
+        return ret_flag
 
+class GroundEmissivityPiecewise(GroundPiecewise):
 
+    def create(self, **kwargs):
+        return rf.GroundEmissivityPiecewise(self.grid(), self.value(), self.retrieval_flag())
+
+class GroundLambertianPiecewise(GroundPiecewise):
+
+    def create(self, **kwargs):
+        return rf.GroundLambertianPiecewise(self.grid(), self.value(), self.retrieval_flag())

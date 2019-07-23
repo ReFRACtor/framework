@@ -1,20 +1,20 @@
-#ifndef GROUND_EMISSIVITY_PIECEWISE_H
-#define GROUND_EMISSIVITY_PIECEWISE_H
+#ifndef GROUND_LAMBERTIAN_PIECEWISE_H
+#define GROUND_LAMBERTIAN_PIECEWISE_H
 
 #include "ground_piecewise.h"
 
 namespace FullPhysics {
 
 /****************************************************************//**
-  This class implements an emissivity implemented as a piecewise
+  This class implements an lambertian implemented as a piecewise
   linear interpolation. This would be a single value that is different
   for each spectral point. 
 *******************************************************************/
-class GroundEmissivityPiecewise: public GroundPiecewise {
+class GroundLambertianPiecewise: public GroundPiecewise {
 
 public:
 
-    GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
+    GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                               const blitz::Array<double, 1>& point_values,
                               const blitz::Array<bool, 1>& retrieval_flag);
 
