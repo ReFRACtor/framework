@@ -71,8 +71,12 @@ class StrategyExecutor(object):
 
     def config_instance(self, **strategy_keywords):
 
+        logger.debug("Loading configration")
+
         config_def = self.config_definition(**strategy_keywords)
         config_inst = process_config(config_def)
+
+        logger.debug("Configuration processing complete")
 
         return config_inst
 
@@ -89,7 +93,7 @@ class StrategyExecutor(object):
         iter_log = rf.SolverIterationLog(config_inst['state_vector'])
         config_inst['solver'].add_observer_and_keep_reference(iter_log)
 
-    def attach_output(self, config_inst, step_index=None):
+    def attach_output(self, config_inst, step_index=0):
 
         if self.output is None:
             return
@@ -97,11 +101,13 @@ class StrategyExecutor(object):
         rad_out = ForwardModelRadianceOutput(self.output, step_index, config_inst['solver'])
         config_inst['forward_model'].add_observer_and_keep_reference(rad_out)
 
-        obs_out = ObservationRadianceOutput(self.output, step_index, config_inst['l1b'], config_inst['forward_model'])
-        config_inst['solver'].add_observer_and_keep_reference(obs_out)
+        if config_inst['l1b'] is not None and config_inst['solver'] is not None:
+            obs_out = ObservationRadianceOutput(self.output, step_index, config_inst['l1b'], config_inst['forward_model'])
+            config_inst['solver'].add_observer_and_keep_reference(obs_out)
 
-        solver_out = SolverIterationOutput(self.output, step_index, config_inst['state_vector'])
-        config_inst['solver'].add_observer_and_keep_reference(solver_out)
+        if config_inst['state_vector'] is not None and config_inst['solver'] is not None:
+            solver_out = SolverIterationOutput(self.output, step_index, config_inst['state_vector'])
+            config_inst['solver'].add_observer_and_keep_reference(solver_out)
 
     def run_solver(self, config_inst, step_index=None):
 
@@ -119,7 +125,7 @@ class StrategyExecutor(object):
 
     def run_forward_model(self, config_inst):
 
-        self.attach_output(config_inst )
+        self.attach_output(config_inst)
 
         config_inst['forward_model'].radiance_all()
 
@@ -137,7 +143,7 @@ class StrategyExecutor(object):
             if step_index < 0 or step_index >= len(strategy):
                 raise Exception("Invalid step index: {}".format(step_index))
 
-            logger.info("Executing retrieval step {}".format(step_index))
+            logger.info("Executing retrieval step #{}".format(step_index+1))
 
             step_keywords = strategy[step_index]
 
@@ -150,6 +156,8 @@ class StrategyExecutor(object):
 
             del config_inst
 
+        logger.info("Retrieval execution finished")
+
     def execute_simulation(self, step_index=0):
 
         strategy = self.strategy_list()
@@ -157,7 +165,7 @@ class StrategyExecutor(object):
         if step_index < 0 or step_index >= len(strategy):
             raise Exception("Invalid step index: {}".format(step_index))
 
-        logger.info("Executing simulation for step {}".format(step_index))
+        logger.info("Executing simulation for step #{}".format(step_index+1))
 
         step_keywords = strategy[step_index]
         
@@ -166,3 +174,5 @@ class StrategyExecutor(object):
         self.run_forward_model(config_inst)
 
         del config_inst
+
+        logger.info("Simulation execution finished")

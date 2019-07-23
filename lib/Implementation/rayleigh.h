@@ -1,10 +1,12 @@
 #ifndef RAYLEIGH_H
 #define RAYLEIGH_H
+
+#include <vector>
+
 #include "pressure.h"
 #include "altitude.h"
 #include "constant.h"
 #include "default_constant.h"
-#include <vector>
 
 namespace FullPhysics {
 /****************************************************************//**

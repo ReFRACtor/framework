@@ -19,12 +19,15 @@ namespace FullPhysics {
 *******************************************************************/
 class AbscoHdf: public Absco {
 public:
+  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0, NEAREST_NEIGHBOR_WN=1};
   AbscoHdf(const std::string& Fname, double Table_scale = 1.0, 
-	   int Cache_nline = 5000);
+	   int Cache_nline = 5000,
+	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
   AbscoHdf(const std::string& Fname, 
 	   const SpectralBound& Spectral_bound,
 	   const std::vector<double>& Table_scale,
-	   int Cache_nline = 5000);
+	   int Cache_nline = 5000,
+	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
   void load_file(const std::string& Fname);
   void load_file(const std::string& Fname, double Table_scale,
 		 int Cache_nline = 5000);
@@ -63,6 +66,7 @@ protected:
 private:
   bool is_float_;
   int cache_nline;
+  InterpolationType itype_;
   std::vector<blitz::Array<double, 1> > bvmr;
   boost::shared_ptr<HdfFile> hfile;
   mutable int cache_double_lbound;

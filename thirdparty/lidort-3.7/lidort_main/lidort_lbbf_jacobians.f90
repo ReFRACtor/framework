@@ -184,7 +184,7 @@ subroutine lidort_lbbf_jacobians_whole &
 
       REAL(fpk), INTENT(IN)   :: SURFACE_FACTOR, ALBEDO
       REAL(fpk), intent(in)   :: BRDF_F  ( 0:MAXMOMENTS, MAXSTREAMS, MAXSTREAMS )
-      REAL(fpk), INTENT(IN)   :: UBRDF_F ( 0:MAXMOMENTS, MAXSTREAMS, MAX_USER_STREAMS )
+      REAL(fpk), INTENT(IN)   :: UBRDF_F ( 0:MAXMOMENTS, MAX_USER_STREAMS, MAXSTREAMS )
 
       REAL(fpk), intent(in)   :: EMISSIVITY      ( MAXSTREAMS )
       REAL(fpk), intent(in)   :: USER_EMISSIVITY ( MAX_USER_STREAMS )
@@ -1607,7 +1607,7 @@ subroutine lidort_lbbf_jacobians_wpartials &
 
       REAL(fpk), INTENT(IN)   :: SURFACE_FACTOR, ALBEDO
       REAL(fpk), intent(in)   :: BRDF_F  ( 0:MAXMOMENTS, MAXSTREAMS, MAXSTREAMS )
-      REAL(fpk), INTENT(IN)   :: UBRDF_F ( 0:MAXMOMENTS, MAXSTREAMS, MAX_USER_STREAMS )
+      REAL(fpk), INTENT(IN)   :: UBRDF_F ( 0:MAXMOMENTS, MAX_USER_STREAMS, MAXSTREAMS )
 
       REAL(fpk), intent(in)   :: EMISSIVITY      ( MAXSTREAMS )
       REAL(fpk), intent(in)   :: USER_EMISSIVITY ( MAX_USER_STREAMS )
