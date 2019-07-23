@@ -57,6 +57,7 @@ public:
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
   blitz::Array<double, 1> wavenumber_grid() const { return wngrid; }
   virtual bool have_data(double wn) const;
+  int wn_index(double Wn_in) const;
   virtual bool is_float() const { return is_float_;}
   virtual std::string file_name() const { return hfile->file_name(); } 
   virtual void print(std::ostream& Os) const;
@@ -78,7 +79,6 @@ private:
   mutable blitz::Array<float, 4> read_cache_float;
   template<class T> blitz::Array<T, 4>& read_cache() const;
   template<class T> void swap(int i) const;
-  int wn_index(double Wn_in) const;
   std::string field_name;
   std::vector<std::string> bname;
   blitz::Array<double, 1> pgrid;

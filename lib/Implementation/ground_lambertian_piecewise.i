@@ -1,17 +1,17 @@
 %include "fp_common.i"
 
 %{
-#include "ground_emissivity_piecewise.h"
+#include "ground_lambertian_piecewise.h"
 %}
 
 %base_import(ground_piecewise)
 
-%fp_shared_ptr(FullPhysics::GroundEmissivityPiecewise);
+%fp_shared_ptr(FullPhysics::GroundLambertianPiecewise);
 
 namespace FullPhysics {
-class GroundEmissivityPiecewise: public GroundPiecewise {
+class GroundLambertianPiecewise: public GroundPiecewise {
 public:
-    GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
+    GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                               const blitz::Array<double, 1>& point_values,
                               const blitz::Array<bool, 1>& retrieval_flag);
 

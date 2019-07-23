@@ -21,8 +21,9 @@ public:
            int Number_streams, 
            int Number_moments, 
            bool Do_multi_scatt_only,
-           bool do_solar = true,
-           bool do_thermal = false);
+           bool do_solar_sources = true, 
+           bool do_thermal_emission = false,
+           bool do_thermal_scattering = true);
 
   /// Number of quadtature streams in the cosine half space
   virtual int number_stream() const { return rt_driver()->number_stream(); }
