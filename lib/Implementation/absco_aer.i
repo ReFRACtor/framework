@@ -40,6 +40,8 @@ public:
   %python_attribute_with_set(interpolation_type, InterpolationType);
   void wn_extent(double Wn_in, double& OUTPUT, double& OUTPUT) const;
   bool have_data(double wn) const;
+  int wn_index(double Wn_in) const;
+  int wn_index(double Wn_in, double& F) const;
 };
 }
 

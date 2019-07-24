@@ -32,7 +32,7 @@ class LidortRtDriver : public SpurrRtDriver {
 public:
   LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type, 
           const blitz::Array<double, 1>& zen, bool pure_nadir, 
-          bool do_solar = true, bool do_thermal = false);
+          bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
 
   %python_attribute(number_moment, int)
   %python_attribute(number_stream, int)

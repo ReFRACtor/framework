@@ -26,8 +26,9 @@ public:
            int Number_streams, 
            int Number_moments, 
            bool Do_multi_scatt_only,
-           bool do_solar = true,
-           bool do_thermal = false);
+           bool do_solar_sources = true, 
+           bool do_thermal_emission = false,
+           bool do_thermal_scattering = true);
 
   %python_attribute(number_stream, virtual int)
   %python_attribute(number_moment, int)
