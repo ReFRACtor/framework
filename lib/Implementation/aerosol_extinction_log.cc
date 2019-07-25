@@ -21,7 +21,7 @@ boost::shared_ptr<AerosolExtinction> AerosolExtinctionLog::clone
 (const boost::shared_ptr<Pressure>& Pres) const
 {
   return boost::shared_ptr<AerosolExtinction>
-    (new AerosolExtinctionLog(Pres, used_flag, coeff.value(), aerosol_name()));
+    (new AerosolExtinctionLog(Pres, used_flag, blitz::Array<double, 1>(exp(coeff.value())), aerosol_name()));
 }
 
 void AerosolExtinctionLog::calc_aerosol_extinction() const

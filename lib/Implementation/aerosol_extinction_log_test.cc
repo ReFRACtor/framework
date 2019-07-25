@@ -10,33 +10,20 @@ BOOST_FIXTURE_TEST_SUITE(aerosol_extinction_log, MetDataFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   // Arrays defining coeffs
-  blitz::Array<bool, 1> ret_flag(3);
+  blitz::Array<bool, 1> ret_flag(20);
   ret_flag = true;
-  blitz::Array<double, 1> coeffs(3);
+  blitz::Array<double, 1> aext(20);
 
-  // Kahn
-  Array<double, 1> kahn_log(3);
-  coeffs = 0.0, 1.0, 0.2;
-  kahn_log = exp(coeffs);
+  aext = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20;
 
-  AerosolExtinctionLog aer_kahn_log = AerosolExtinctionLog(pressure, ret_flag, coeffs, "Kahn");
-  BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_log, aer_kahn_log.aerosol_extinction().value(), 1e-14);
+  // Check that the fm_view of aext matches what we put in
+  AerosolExtinctionLog aer_water_log = AerosolExtinctionLog(pressure, ret_flag, aext, "Water");
+  BOOST_CHECK_MATRIX_CLOSE_TOL(aer_water_log.aerosol_extinction().value(), aext, 1e-14);
 
-  // Water
-  Array<double, 1> water_expt(3);
-  coeffs = 10.0, 0.75, 0.1;
-  water_expt = exp(coeffs);
-
-  AerosolExtinctionLog aer_water_log = AerosolExtinctionLog(pressure, ret_flag, coeffs, "Water");
-  BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt, aer_water_log.aerosol_extinction().value(), 1e-14);
-
-  // Ice
-  Array<double, 1> ice_expt(3);
-  coeffs = 8.0, 0.3, 0.04;
-  ice_expt = exp(coeffs);
-
-  AerosolExtinctionLog aer_ice_log = AerosolExtinctionLog(pressure, ret_flag, coeffs, "Ice");
-  BOOST_CHECK_MATRIX_CLOSE_TOL(ice_expt, aer_ice_log.aerosol_extinction().value(), 1e-14);
+  // Check that coefficients are stored in log within SubStateVectorArray
+  for(int j = 0; j < aext.rows(); j++) {
+      BOOST_CHECK_CLOSE(aer_water_log.coefficient().value()(j), log(aext(j)), 1e-8);
+  }
   
 }
 
