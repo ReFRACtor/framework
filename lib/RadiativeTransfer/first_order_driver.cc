@@ -1,6 +1,11 @@
 #include "first_order_driver.h"
 #include "wgs84_constant.h"
+
+// Include BRDF driver interface from LIDORT driver
 #include "lidort_driver.h"
+
+// Include to use consistent jacobian sizes
+#include "lidort_interface_types.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -73,13 +78,18 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     ///////
     // Initialize radiance interface
 
-    // Top of atmosphere only
-    fo_interface.reset(new Fo_Scalarss_Rtcalcs_I(ngeoms, nlayers, nfine, ngeoms, nlayers));
+    // Use LIDORT parameters to have consistent sizes for maximum weighting functions
+    Lidort_Pars lid_pars = Lidort_Pars::instance();
+    int natmoswfs = lid_pars.max_atmoswfs;
+    int nsurfacewfs = lid_pars.max_surfacewfs; 
+
+    // Initialize solar mode interface
+    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
     
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
     float lidort_flux_factor = 1.0;
-    fo_interface->flux(0.25 * lidort_flux_factor / geometry->pie());
+    solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
 
     // Recommended value by manual of 50 in case we use cox-munk
     int n_brdf_stream = 50;
@@ -130,9 +140,9 @@ void FirstOrderDriver::set_pseudo_spherical() const
 void FirstOrderDriver::copy_geometry_flags() const
 {
     // Flags copied from geometry object
-    fo_interface->do_planpar(geometry->do_planpar());
-    fo_interface->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
-    fo_interface->do_enhanced_ps(geometry->do_enhanced_ps());
+    solar_interface_->do_planpar(geometry->do_planpar());
+    solar_interface_->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
+    solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
 void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid) const
@@ -176,27 +186,27 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
 
     // Copy dynamic geometry outputs into FO interface object
     // Consider .reference to avoid copying?
-    Array<int, 2> nfinedivs(fo_interface->nfinedivs());
+    Array<int, 2> nfinedivs(solar_interface_->nfinedivs());
     nfinedivs = geometry->nfinedivs();
 
-    fo_interface->donadir(geometry->donadir());
-    fo_interface->ncrit(geometry->ncrit());
-    fo_interface->xfine(geometry->xfine());
-    fo_interface->wfine(geometry->wfine());
-    fo_interface->csqfine(geometry->csqfine());
-    fo_interface->cotfine(geometry->cotfine());
-    fo_interface->raycon(geometry->raycon());
-    fo_interface->cota(geometry->cota());
-    fo_interface->sunpaths(geometry->sunpaths());
-    fo_interface->ntraverse(geometry->ntraverse());
-    fo_interface->sunpathsfine(geometry->sunpathsfine());
-    fo_interface->ntraversefine(geometry->ntraversefine());
+    solar_interface_->donadir(geometry->donadir());
+    solar_interface_->ncrit(geometry->ncrit());
+    solar_interface_->xfine(geometry->xfine());
+    solar_interface_->wfine(geometry->wfine());
+    solar_interface_->csqfine(geometry->csqfine());
+    solar_interface_->cotfine(geometry->cotfine());
+    solar_interface_->raycon(geometry->raycon());
+    solar_interface_->cota(geometry->cota());
+    solar_interface_->sunpaths(geometry->sunpaths());
+    solar_interface_->ntraverse(geometry->ntraverse());
+    solar_interface_->sunpaths_fine(geometry->sunpathsfine());
+    solar_interface_->ntraverse_fine(geometry->ntraversefine());
     
     if (geometry->do_planpar()) {
         // Account for a bug in the plane parallel version of the geometry routine
         // where these values are not computed 
-        Array<double, 1> mu0(fo_interface->mu0());
-        Array<double, 1> mu1(fo_interface->mu1());
+        Array<double, 1> mu0(solar_interface_->mu0());
+        Array<double, 1> mu1(solar_interface_->mu1());
 
         for (int ns = 0; ns < geometry->nszas(); ns++) {
             int nv_offset = geometry->nvzas() * geometry->nazms() * ns;
@@ -211,8 +221,8 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
             }
         }
     } else {
-        fo_interface->mu0(geometry->mu0());
-        fo_interface->mu1(geometry->mu1());
+        solar_interface_->mu0(geometry->mu0());
+        solar_interface_->mu1(geometry->mu1());
     }
 }
 
@@ -236,15 +246,15 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     }
 
     // Total per layer optical depth
-    Array<double, 1> optical_depth(fo_interface->deltaus());
+    Array<double, 1> optical_depth(solar_interface_->deltaus());
     optical_depth = od;
 
     // Extinction profile
-    Array<double, 1> extinction(fo_interface->extinction());
+    Array<double, 1> extinction(solar_interface_->extinction());
     extinction = optical_depth / height_diffs;
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
-    Array<double, 2> exactscat(fo_interface->exactscat_up());
+    Array<double, 2> exactscat(solar_interface_->exactscat_up());
 
     exactscat = 0;
 
@@ -275,7 +285,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     }
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
-    Array<double, 1> reflectance(fo_interface->reflec());
+    Array<double, 1> reflectance(solar_interface_->reflec());
     boost::shared_ptr<LidortBrdfDriver> l_brdf_driver = boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver());
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
@@ -298,12 +308,12 @@ void FirstOrderDriver::setup_linear_inputs
 void FirstOrderDriver::calculate_rt() const
 {
     // Run RT calculation
-    fo_interface->ss_integral_i_up();
+    solar_interface_->ss_integral_ilps_up();
 }
 
 double FirstOrderDriver::get_intensity() const
 {
-    return fo_interface->intensity_db()(0, 0) + fo_interface->intensity_up()(0, 0);
+    return solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
 }
 
 void FirstOrderDriver::copy_jacobians
