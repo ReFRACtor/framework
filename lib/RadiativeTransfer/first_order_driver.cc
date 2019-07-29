@@ -74,12 +74,8 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     // Initialize radiance interface
 
     // Top of atmosphere only
-    int n_user_levels = 1;
-    fo_interface.reset(new Fo_Scalarss_Rtcalcs_I(ngeoms, nlayers, nfine, n_user_levels, ngeoms, nlayers, n_user_levels));
+    fo_interface.reset(new Fo_Scalarss_Rtcalcs_I(ngeoms, nlayers, nfine, ngeoms, nlayers));
     
-    // Same setting as LIDORT would have
-    fo_interface->do_deltam_scaling(true);
-
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
     float lidort_flux_factor = 1.0;
@@ -269,12 +265,11 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
             exactscat(lay_idx, geom_idx) = moment_sum(lay_idx, geom_idx);
             double omw = ssa(lay_idx);
             double tms;
-            if (fo_interface->do_deltam_scaling()) {
-                double truncfac =  pf(2 * num_streams_ -1, lay_idx) / dnm1;
-                tms = omw / (1.0 - truncfac * omw);
-            } else {
-                tms = omw;
-            }
+            // if delta_m scaling were available we would use this:
+            //    double truncfac =  pf(2 * num_streams_ -1, lay_idx) / dnm1;
+            //    tms = omw / (1.0 - truncfac * omw);
+            // But since it is not available in the version of FO we are using, the setup simplifies to:
+            tms = omw;
             exactscat(lay_idx, geom_idx) *= tms;
         }
     }

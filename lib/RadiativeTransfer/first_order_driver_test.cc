@@ -31,9 +31,8 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
 
   FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms);
 
-  // Use plane parallel and turn off delta-m scaling since it has to be off from LIDORT
+  // Use plane parallel since it has to be off from LIDORT
   fo_driver.set_plane_parallel();
-  fo_driver.rt_interface()->do_deltam_scaling(false);
 
   // Use LIDORT for comparison
   bool do_multiple_scattering_only = false;

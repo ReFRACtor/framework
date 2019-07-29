@@ -223,7 +223,6 @@ subroutine DTE_Integral_I_UP &
          tcom1(n,1) = thermcoeffs(1) * tms
          tcom1(n,2) = thermcoeffs(2) * tms
       ENDDO
-!      do_Thermset = .false.
    endif
 
 !  Start Geometry loop
