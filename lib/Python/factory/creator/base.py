@@ -1,4 +1,5 @@
 import logging
+import inspect
 from collections import OrderedDict
 
 # Try and use AttrDict as the dictionary class used to store config instantiation
@@ -85,8 +86,13 @@ class Creator(object):
 
         for config_name, config_val in in_config_def.items():
             if isinstance(config_val, dict) and "creator" in config_val:
+                # Creator in a dictionary block
                 logger.debug("Initializing nested creator %s for %s" % (config_name, self.__class__.__name__))
                 out_config_def[config_name] = config_val["creator"](config_val, common_store=self.common_store)
+            elif inspect.isclass(config_val) and issubclass(config_val, Creator):
+                # Creator by itself with no arguments from a dictionary block, all arguments from common store
+                logger.debug("Initializing nested creator %s for %s" % (config_name, self.__class__.__name__))
+                out_config_def[config_name] = config_val({}, common_store=self.common_store)
             else:
                 out_config_def[config_name] = config_val
 
