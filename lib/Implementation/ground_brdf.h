@@ -58,7 +58,7 @@ public:
     const blitz::Array<double, 2> brdf_covariance(int spec_index) const;
    
     /// Returns hard coded value of 1.5 since that is the value hardcoded into LIDORT
-  virtual double refractive_index(int UNUSED(Spec_idx)) const { return 1.5; }
+    virtual double refractive_index(int UNUSED(Spec_idx)) const { return 1.5; }
 
     // Uses LIDORT to compute the black sky albedo from the parameters
     virtual double black_sky_albedo(int Spec_index, double Sza) = 0;
@@ -107,7 +107,10 @@ public:
         GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
 
     virtual double black_sky_albedo(int Spec_index, double Sza);
+
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual double kernel_value(int Spec_index, double Sza, double Vza, double Azm);
+
     virtual const std::string breon_type() const { return "Vegetative"; }
 
     virtual boost::shared_ptr<Ground> clone() const {
@@ -130,7 +133,10 @@ public:
         GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
 
     virtual double black_sky_albedo(int Spec_index, double Sza);
+
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual double kernel_value(int Spec_index, double Sza, double Vza, double Azm);
+
     virtual const std::string breon_type() const { return "Soil"; }
 
     virtual boost::shared_ptr<Ground> clone() const {
