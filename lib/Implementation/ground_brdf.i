@@ -46,6 +46,7 @@ public:
     const blitz::Array<double, 2> brdf_covariance(const int spec_index) const;
     virtual const double refractive_index(const int Spec_idx) const;
     virtual const double black_sky_albedo(const int Spec_index, const double Sza);
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
     virtual const std::string breon_type() const;
     virtual const DoubleWithUnit reference_point(const int spec_index) const;
@@ -81,6 +82,7 @@ public:
     const blitz::Array<double, 2> brdf_covariance(const int spec_index) const;
     virtual const double refractive_index(const int Spec_idx) const;
     virtual const double black_sky_albedo(const int Spec_index, const double Sza);
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
     virtual const std::string breon_type() const;
     virtual const DoubleWithUnit reference_point(const int spec_index) const;
