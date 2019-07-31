@@ -30,8 +30,13 @@ class ScenarioFromL1b(Creator):
         l1b_file = self.l1b()
 
         # Set up scenario values that have the same name as they are named in the L1B
-        l1b_value_names = ['time', 'latitude', 'longitude', 'altitude', 'solar_zenith', 'solar_azimuth',
-            "relative_velocity", "stokes_coefficient", "sample_grid"]
+        # The following are not always present because they are only available in ancestors of Level1b:
+        # spectral_coefficient <- Level1bSampleCoefficient
+        l1b_value_names = [
+            'time', 'latitude', 'longitude', 'altitude', 'solar_zenith', 'solar_azimuth',
+            "relative_velocity", "stokes_coefficient", "sample_grid", 
+            "spectral_coefficient", # Only in Level1bSampleCoefficient
+        ]
         values_from_l1b = { n:n for n in l1b_value_names }
 
         # Set up scenario values with different names
@@ -44,8 +49,10 @@ class ScenarioFromL1b(Creator):
 
         # Use ValueFromLevel1b logic to extract values
         for config_name, l1b_name in values_from_l1b.items():
-            value_creator = ValueFromLevel1b({'l1b': l1b_file, 'field': l1b_name})
-            scenario_values[config_name] = value_creator.create()
+            # Some attributes may not be availabile in ancestor classes so check if available
+            if hasattr(l1b_file, l1b_name):
+                value_creator = ValueFromLevel1b({'l1b': l1b_file, 'field': l1b_name})
+                scenario_values[config_name] = value_creator.create()
 
         scenario_values['observation_azimuth'] = RelativeAzimuthFromLevel1b({'l1b': l1b_file}).create()
 
