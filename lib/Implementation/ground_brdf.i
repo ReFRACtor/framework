@@ -20,7 +20,7 @@
 
 namespace FullPhysics {
 
-class GroundBrdfVeg: public Ground {
+class GroundBrdfVeg: public SubStateVectorArray<Ground> {
 public:
     GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
@@ -56,7 +56,7 @@ public:
     virtual std::string desc() const;
 };
 
-class GroundBrdfSoil: public Ground {
+class GroundBrdfSoil: public SubStateVectorArray<Ground> {
 public:
     GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
