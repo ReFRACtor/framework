@@ -254,35 +254,10 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     extinction = optical_depth / height_diffs;
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
+    // Sum over moment index
+    firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
     Array<double, 2> exactscat(solar_interface_->exactscat_up());
-
-    exactscat = 0;
-
-    Array<double, 2> moment_sum(pf.cols(), geometry->ngeoms());
-    moment_sum = 0;
-    for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
-        for (int lay_idx = 0; lay_idx < pf.cols(); lay_idx++) {
-            for(int mom_idx = 0; mom_idx < pf.rows(); mom_idx++) {
-                moment_sum(lay_idx, geom_idx) += legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx);
-            }
-        }
-    }
-
-    // For TMS truncation correction
-    double dnm1 = 4 * num_streams_ + 1;
-    for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
-        for (int lay_idx = 0; lay_idx < geometry->nlayers(); lay_idx++) {
-            exactscat(lay_idx, geom_idx) = moment_sum(lay_idx, geom_idx);
-            double omw = ssa(lay_idx);
-            double tms;
-            // if delta_m scaling were available we would use this:
-            //    double truncfac =  pf(2 * num_streams_ -1, lay_idx) / dnm1;
-            //    tms = omw / (1.0 - truncfac * omw);
-            // But since it is not available in the version of FO we are using, the setup simplifies to:
-            tms = omw;
-            exactscat(lay_idx, geom_idx) *= tms;
-        }
-    }
+    exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx), mom_idx) * ssa(lay_idx);
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
@@ -292,16 +267,45 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
 void FirstOrderDriver::clear_linear_inputs() const
 {
-    // Nothing for now
+    solar_interface_->do_profilewfs(false);
 }
 
 void FirstOrderDriver::setup_linear_inputs
-(const ArrayAd<double, 1>& UNUSED(od), 
- const ArrayAd<double, 1>& UNUSED(ssa),
- const ArrayAd<double, 2>& UNUSED(pf),
+(const ArrayAd<double, 1>& od, 
+ const ArrayAd<double, 1>& ssa,
+ const ArrayAd<double, 2>& pf,
  bool UNUSED(do_surface_linearization)) const
 {
-    // Nothing for now
+    firstIndex i1; secondIndex i2;
+
+    // Enable weighting functions
+    solar_interface_->do_profilewfs(true);
+
+    // Set which profile layer jacobians are computed
+    int natm_jac = od.number_variable();
+
+    Array<bool, 1> layer_jac_flag( solar_interface_->lvaryflags() );
+    layer_jac_flag = true;
+
+    Array<int, 1> layer_jac_number( solar_interface_->lvarynums() );
+    layer_jac_number = natm_jac;
+
+    // Set up OD related inputs
+    Array<double, 2> l_deltau(solar_interface_->l_deltaus());
+    Array<double, 2> l_extinction(solar_interface_->l_extinction());
+
+    l_deltau = where(od.value()(i1) != 0, od.jacobian() / od.value()(i1), 0.0);
+    //l_extinction = l_deltau / height_diffs(i1);
+
+    // Compute phase function from fourier moments by summing over moments times general spherical function
+    // Sum over moment index
+    firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
+    Array<double, 2> exactscat(solar_interface_->exactscat_up());
+    Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
+
+    l_exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf.jacobian()(mom_idx, lay_idx), mom_idx) * ssa.jacobian()(lay_idx);
+    l_exactscat = l_exactscat / exactscat(lay_idx, geom_idx);
+ 
 }
 
 
@@ -317,10 +321,14 @@ double FirstOrderDriver::get_intensity() const
 }
 
 void FirstOrderDriver::copy_jacobians
-(blitz::Array<double, 2>& UNUSED(jac_atm),
+(blitz::Array<double, 2>& jac_atm,
  blitz::Array<double, 1>& UNUSED(jac_surf_param),
  double& UNUSED(jac_surf_temp),
  blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
 {
-    // Nothing for now
+    Range ra(Range::all());
+
+    jac_atm.resize(solar_interface_->maxlayers(), solar_interface_->max_atmoswfs());
+    jac_atm = solar_interface_->lp_jacobians_up()(0, ra, ra) + solar_interface_->lp_jacobians_db()(0, ra, ra);
+
 }
