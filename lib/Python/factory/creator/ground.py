@@ -1,6 +1,7 @@
 import math
 import bisect
 import numpy as np
+from enum import Enum
 
 from .base import Creator
 from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
@@ -120,3 +121,81 @@ class GroundLambertianPiecewise(GroundPiecewise):
 
     def create(self, **kwargs):
         return rf.GroundLambertianPiecewise(self.grid(), self.value(), self.retrieval_flag())
+
+class BrdfTypeOption(Enum):
+    soil = 0
+    vegetation = 1
+
+class GroundBrdf(CreatorFlaggedValueMultiChannel):
+
+    band_reference = param.ArrayWithUnit(dims=1)
+    desc_band_name = param.Iterable()
+    brdf_type = param.Choice(param.Scalar(int), param.InstanceOf(BrdfTypeOption), default=0)
+
+    retrieve_kernel_params = param.Scalar(bool, default=False)
+
+    def retrieval_flag(self):
+        ret_flag = super().retrieval_flag()
+
+        # Turn off all but weight offset and slope
+        if not self.retrieve_kernel_params():
+            ret_flag[:, 2:] = False
+
+        return ret_flag
+
+    def create(self, **kwargs):
+
+        brdf_type = self.brdf_type()
+        if isinstance(brdf_type, BrdfTypeOption):
+            brdf_type = brdf_type.value
+
+        if brdf_type == BrdfTypeOption.soil.value:
+            return rf.GroundBrdfSoil(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        elif brdf_type == BrdfTypeOption.vegetation.value:
+            return rf.GroundBrdfVeg(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        else:
+            raise param.ParamError("Unknown BRDF type option: {}".format(brdf_type))
+
+class BrdfWeightFromContinuum(Creator):
+
+    solar_zenith = param.ArrayWithUnit(dims=1)
+    observation_zenith = param.ArrayWithUnit(dims=1)
+    relative_azimuth = param.ArrayWithUnit(dims=1)
+    continuum_albedo = param.Array(dims=2)
+    brdf_parameters = param.Array(dims=2)
+
+    # No default to ensure this value does not get de-synced from what is used by GroundBrdf
+    brdf_type = param.Choice(param.Scalar(int), param.InstanceOf(BrdfTypeOption))
+
+    num_channels = param.Scalar(int)
+ 
+    def create(self, **kwargs):
+        sza = self.solar_zenith()
+        vza = self.observation_zenith()
+        azm = self.relative_azimuth()
+        alb_cont = self.continuum_albedo()
+        params = self.brdf_parameters()
+        brdf_type = self.brdf_type()
+        num_channels = self.num_channels()
+
+        if isinstance(brdf_type, BrdfTypeOption):
+            brdf_type = brdf_type.value
+
+        if brdf_type == BrdfTypeOption.soil.value:
+            brdf_class = rf.GroundBrdfSoil
+        elif brdf_type == BrdfTypeOption.vegetation.value:
+            brdf_class = rf.GroundBrdfVeg
+        else:
+            raise param.ParamError("Unknown BRDF type option: {}".format(brdf_type))
+
+        # Remove offset and slope parameters when calling kernel_value
+        for chan_idx in range(num_channels):
+            kernel_params = params[chan_idx, 2:]
+
+            alb_calc = brdf_class.kernel_value_at_params(kernel_params, sza[chan_idx].value, vza[chan_idx].value, azm[chan_idx].value)
+            weight = alb_cont[chan_idx, 0] / alb_calc
+            
+            # Replace first parameter with new weight
+            params[chan_idx, 0] = weight
+
+        return params

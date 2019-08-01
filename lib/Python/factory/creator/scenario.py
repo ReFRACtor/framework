@@ -34,7 +34,7 @@ class ScenarioFromL1b(Creator):
         # spectral_coefficient <- Level1bSampleCoefficient
         l1b_value_names = [
             'time', 'latitude', 'longitude', 'altitude', 'solar_zenith', 'solar_azimuth',
-            "relative_velocity", "stokes_coefficient", "sample_grid", 
+            "relative_velocity", "stokes_coefficient", "sample_grid", 'relative_azimuth',
             "spectral_coefficient", # Only in Level1bSampleCoefficient
         ]
         values_from_l1b = { n:n for n in l1b_value_names }

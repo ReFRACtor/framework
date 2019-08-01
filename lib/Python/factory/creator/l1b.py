@@ -92,6 +92,7 @@ class ValueFromLevel1b(Creator):
         else:
             return field_val
 
+### This is deprecated and should be removed
 class RelativeAzimuthFromLevel1b(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
