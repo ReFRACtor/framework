@@ -13,6 +13,9 @@ namespace FullPhysics {
   retrieval view  while using the calculated values for the forward
   model view.
 
+  Note that due to the scaling by total optical depth performed in
+  this class, it is only suitable for Absorbers.
+
   For additional information see docs for MappingImpBase class.
 *******************************************************************/
 class MappingGaussian : public MappingImpBase  {
@@ -21,7 +24,7 @@ public:
     /// Default Constructor.
     //-----------------------------------------------------------------------
 
-    MappingGaussian(boost::shared_ptr<Pressure>& in_press) : press(in_press), map_name("Gaussian") {};
+    MappingGaussian(const boost::shared_ptr<Pressure>& in_press) : press(in_press), map_name("Gaussian") {};
 
     const boost::shared_ptr<Pressure>& pressure() const
     {
@@ -32,9 +35,8 @@ public:
     //-----------------------------------------------------------------------
     /// Total aerosol optical depth of the extinction values in aext.
     //-----------------------------------------------------------------------
-      virtual AutoDerivative<double> total_component() const
+      virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
       {
-        mutable ArrayAd<double, 1> component;
         ArrayAd<double, 1> pressure_grid = pressure()->pressure_grid().value;
         AutoDerivative<double> tot_component = 0.0;
         for(int layer_idx = 0; layer_idx < pressure()->number_layer(); layer_idx++) {
@@ -48,10 +50,14 @@ public:
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        mutable ArrayAd<double, 1> component;
+        ArrayAd<double, 1> component(pressure()->number_level(), updated_coeff.number_variable());
+
         AutoDerivative<double> desired_val;
 
         desired_val = updated_coeff(0);
+
+        //TODO: When !linear_aod: desired_aod = exp(coefficient()(0));
+
 
         // Don't let component value go lower than a minimum value. Not clear if this
         // is actually what we want to do, see ticket #2252 for this
@@ -66,6 +72,8 @@ public:
         AutoDerivative<double> surface_press = pressure()->surface_pressure().value;
 
         component.resize(pressure()->number_level(), updated_coeff.number_variable());
+        component.resize_number_variable(updated_coeff.number_variable());
+        component.jacobian() = 0;
 
         for(int g_idx = 0; g_idx < ngaussians; g_idx++) {
             AutoDerivative<double> p0 = updated_coeff(g_idx * 2 + 1);
@@ -87,8 +95,8 @@ public:
         AutoDerivative<double> scaling_N;
 
         // Protect against a divide by zero
-        if (total_component().value() != 0.0) {
-            scaling_N = desired_val / total_component();
+        if (total_optical_depth(component).value() != 0.0) {
+            scaling_N = desired_val / total_optical_depth(component);
         } else {
             scaling_N = 0.0;
         }

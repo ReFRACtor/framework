@@ -1,4 +1,6 @@
 #include "aerosol_shape_gaussian.h"
+#include "mapping_log.h"
+#include "mapping_gaussian.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -17,81 +19,20 @@ REGISTER_LUA_END()
 
 const double AerosolShapeGaussian::min_aod = 1e-9;
 // See base class for description
-boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone
-(const boost::shared_ptr<Pressure>& Pres) const
-{
-    return boost::shared_ptr<AerosolExtinction>
-           (new AerosolShapeGaussian(Pres, used_flag, coeff.value(),
-                                     aerosol_name(), linear_aod));
-}
 
-void AerosolShapeGaussian::calc_aerosol_extinction() const
-{
-    // Input parameters
-    AutoDerivative<double> desired_aod;
+// TODO: Add tests for clone methods to verify things can be cloned without changes
+//boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone
+//(const boost::shared_ptr<Pressure>& Pres) const
+//{
+//    return boost::shared_ptr<AerosolExtinction>
+//           (new AerosolShapeGaussian(Pres, used_flag, coeff.value(),
+//                                     aerosol_name(), linear_aod));
+//}
 
-    if (linear_aod) {
-        desired_aod = coefficient()(0);
-
-        // Don't let aod go lower than a minimum value. Not clear if this
-        // is actually what we want to do, see ticket #2252 for this
-        // suggestion. We might instead want to use a constrained solver.
-        if(desired_aod < min_aod) {
-            desired_aod = min_aod;
-        }
-    } else {
-        desired_aod = exp(coefficient()(0));
-    }
-
-    int ngaussians = int((coefficient().rows() - 1) / 2);
-
-    ArrayAd<double, 1> pressure_grid = pressure()->pressure_grid().value;
-    AutoDerivative<double> surface_press = pressure()->surface_pressure().value;
-
-    aext.resize(pressure()->number_level(),
-                coeff.number_variable());
-
-    for(int g_idx = 0; g_idx < ngaussians; g_idx++) {
-        AutoDerivative<double> p0 = coefficient()(g_idx * 2 + 1);
-        AutoDerivative<double> sigma = coefficient()(g_idx * 2 + 2);
-
-        for(int lev = 0; lev < aext.rows(); lev++) {
-            AutoDerivative<double> p = pressure_grid(lev) / surface_press;
-            AutoDerivative<double> g_eval = exp( -1 * (p - p0) * (p - p0) / (2 * sigma * sigma) );
-
-            // Because its not that easy to init ArrayAd from python to 0.0
-            if (g_idx == 0) {
-                aext(lev) = g_eval;
-            } else {
-                aext(lev) = aext(lev) + g_eval;
-            }
-        }
-    }
-
-    AutoDerivative<double> scaling_N;
-
-    // Protect against a divide by zero
-    if (total_aod().value() != 0.0) {
-        scaling_N = desired_aod / total_aod();
-    } else {
-        scaling_N = 0.0;
-    }
-
-    for(int lev = 0; lev < aext.rows(); lev++) {
-        aext(lev) = aext(lev) * scaling_N;
-    }
-}
-
-void AerosolShapeGaussian::print(std::ostream& Os) const
-{
-    OstreamPad opad(Os, "    ");
-    Os << "AerosolShapeGaussian: ("
-       << (linear_aod ? "Linear" : "Logarithmic")
-       << ")\n"
-       << "  Coefficient:\n";
-    opad << coeff.value() << "\n";
-    opad.strict_sync();
-    Os << "  Retrieval flag:\n";
-    opad << used_flag << "\n";
-    opad.strict_sync();
-}
+AerosolShapeGaussian::AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
+             const blitz::Array<bool, 1>& Flag,
+             const blitz::Array<double, 1>& Coeffs,
+             const std::string& Aerosol_name,
+             const bool Linear_AOD)
+  : AerosolExtinctionLevel(Press, Flag, Coeffs, Aerosol_name, boost::make_shared<MappingGaussian>(Press)),
+                           linear_aod(Linear_AOD) {}

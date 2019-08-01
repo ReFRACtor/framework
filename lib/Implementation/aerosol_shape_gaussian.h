@@ -1,7 +1,8 @@
 #ifndef AEROSOL_SHAPE_GAUSSIAN_H
 #define AEROSOL_SHAPE_GAUSSIAN_H
 
-#include "aerosol_extinction_imp_base.h"
+#include "aerosol_extinction_level.h"
+#include "pressure.h"
 #include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
@@ -9,7 +10,7 @@ namespace FullPhysics {
   This class maps the state vector to aerosol extinction defined
   by a Gaussian parameterization.
 *******************************************************************/
-class AerosolShapeGaussian : public AerosolExtinctionImpBase {
+class AerosolShapeGaussian : public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -32,21 +33,8 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
 		     const blitz::Array<bool, 1>& Flag, 
 		     const blitz::Array<double, 1>& Coeffs,
 		     const std::string& Aerosol_name,
-		     const bool Linear_AOD)
-  : AerosolExtinctionImpBase(Aerosol_name, Coeffs, Flag, Press, false), linear_aod(Linear_AOD) {}
+		     const bool Linear_AOD);
   virtual ~AerosolShapeGaussian() {}
-  virtual boost::shared_ptr<AerosolExtinction> clone() const
-  { return clone(press->clone()); }
-  virtual boost::shared_ptr<AerosolExtinction> clone
-  (const boost::shared_ptr<Pressure>& P) const;
-  virtual std::string sub_state_identifier() const { return "aerosol_shape/" + aerosol_name() + "/" + (linear_aod ? "linear" : "log"); }
-  virtual std::string state_vector_name_i(int i) const
-  { return "Aerosol Shape " + aerosol_name() + " " + (linear_aod ? "Linear" : "Logarithmic") + " Gaussian for Coefficient " +
-      boost::lexical_cast<std::string>(i + 1); } 
-  virtual std::string model_short_name() const { return linear_aod ? "gaussian_linear" : "gaussian_log"; }
-  virtual void print(std::ostream& Os) const;
-protected:
-  virtual void calc_aerosol_extinction() const;
 private:
   bool linear_aod;
   static const double min_aod;
