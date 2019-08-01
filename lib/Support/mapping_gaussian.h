@@ -21,43 +21,65 @@ namespace FullPhysics {
 class MappingGaussian : public MappingImpBase  {
 public:
     //-----------------------------------------------------------------------
-    /// Default Constructor.
+    /// Default constructor, should call init.
     //-----------------------------------------------------------------------
+    MappingGaussian() {};
 
-    MappingGaussian(const boost::shared_ptr<Pressure>& in_press) : press(in_press), map_name("Gaussian") {};
-
-    const boost::shared_ptr<Pressure>& pressure() const
+    void init(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD)
     {
-      return press;
+        press = in_press;
+        linear_total = Linear_AOD;
+        if (linear_total) {
+            map_name = "GaussianLinear";
+        } else {
+            map_name = "GaussianLog";
+        }
     }
 
+    //-----------------------------------------------------------------------
+    /// Constructor.
+    /// \param Press Pressure object used for defining pressure levels
+    /// \param Linear_AOD Specifies whether the first gaussian parameter
+    ///   that represents the desired total is in linear space if true,
+    ///   logarithmic space if false.
+    //-----------------------------------------------------------------------
+    MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD)
+        : press(in_press), linear_total(Linear_AOD)
+    {
+        if (linear_total) {
+            map_name = "GaussianLinear";
+        } else {
+            map_name = "GaussianLog";
+        }
+    };
 
     //-----------------------------------------------------------------------
     /// Total aerosol optical depth of the extinction values in aext.
     //-----------------------------------------------------------------------
-      virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
-      {
-        ArrayAd<double, 1> pressure_grid = pressure()->pressure_grid().value;
+    virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
+    {
+        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
         AutoDerivative<double> tot_component = 0.0;
-        for(int layer_idx = 0; layer_idx < pressure()->number_layer(); layer_idx++) {
+        for(int layer_idx = 0; layer_idx < press->number_layer(); layer_idx++) {
           AutoDerivative<double> delta_press = (pressure_grid(layer_idx + 1) - pressure_grid(layer_idx)) / 2.0;
           tot_component += (delta_press * (component(layer_idx) + component(layer_idx + 1) ));
         }
         return tot_component;
-      }
+    }
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
-
     virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        ArrayAd<double, 1> component(pressure()->number_level(), updated_coeff.number_variable());
+        ArrayAd<double, 1> component(press->number_level(), updated_coeff.number_variable());
 
         AutoDerivative<double> desired_val;
 
+        if (linear_total) {
         desired_val = updated_coeff(0);
+        } else {
+            desired_val = std::exp(updated_coeff(0));
 
-        //TODO: When !linear_aod: desired_aod = exp(coefficient()(0));
-
+        }
 
         // Don't let component value go lower than a minimum value. Not clear if this
         // is actually what we want to do, see ticket #2252 for this
@@ -68,10 +90,10 @@ public:
 
         int ngaussians = int((updated_coeff.rows() - 1) / 2);
 
-        ArrayAd<double, 1> pressure_grid = pressure()->pressure_grid().value;
-        AutoDerivative<double> surface_press = pressure()->surface_pressure().value;
+        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
+        AutoDerivative<double> surface_press = press->surface_pressure().value;
 
-        component.resize(pressure()->number_level(), updated_coeff.number_variable());
+        component.resize(press->number_level(), updated_coeff.number_variable());
         component.resize_number_variable(updated_coeff.number_variable());
         component.jacobian() = 0;
 
@@ -117,7 +139,6 @@ public:
     //-----------------------------------------------------------------------
     /// Assigned mapping name
     //-----------------------------------------------------------------------
-
     virtual std::string name() const { return map_name; }
 
     //-----------------------------------------------------------------------
@@ -134,6 +155,7 @@ public:
 private:
     std::string map_name;
     static const double min_desired;
+    bool linear_total;
 
 };
 const double MappingGaussian::min_desired = 1e-9;
