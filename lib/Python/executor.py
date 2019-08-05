@@ -91,7 +91,7 @@ class StrategyExecutor(object):
         iter_log = rf.SolverIterationLog(config_inst['state_vector'])
         config_inst['solver'].add_observer_and_keep_reference(iter_log)
 
-    def attach_output(self, config_inst, step_index=0):
+    def attach_output(self, config_inst, step_index):
 
         if self.output is None:
             return
