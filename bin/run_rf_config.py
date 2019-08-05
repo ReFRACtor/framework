@@ -44,11 +44,7 @@ def main():
     exc = StrategyExecutor(args.config_filename, output_filename=args.output_filename, strategy_filename=args.strategy_filename)
 
     if args.simulation:
-        if args.step_index is not None:
-            sim_step_index = args.step_index[0]
-        else:
-            sim_step_index = 0
-        exc.execute_simulation(sim_step_index)
+        exc.execute_simulation(args.step_index)
     else:
         exc.execute_retrieval(args.step_index)
 
