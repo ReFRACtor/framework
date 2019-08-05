@@ -69,6 +69,21 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
         radiance_data[:] = named_spectrum.spectral_range.data
         radiance_data.units = named_spectrum.spectral_range.units.name
 
+        rad_ad = named_spectrum.spectral_range.data_ad
+        if not rad_ad.is_constant:
+
+            jac_dim = "jacobian_s{}".format(self.step_index+1)
+            if jac_dim not in self.output.dimensions:
+                self.output.createDimension(jac_dim, rad_ad.jacobian.shape[1])
+
+            jacobian_name = "jacobian"
+            if jacobian_name in group.variables:
+                jacobian_data = group[jacobian_name]
+            else:
+                jacobian_data = group.createVariable(jacobian_name, float, (dim_name, jac_dim))
+
+            jacobian_data[:] = rad_ad.jacobian[:]
+
 class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
     "Outputs Level1B related values into the output file"
 
