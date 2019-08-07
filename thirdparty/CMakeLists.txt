@@ -85,6 +85,11 @@ list(APPEND THIRDPARTY_INCLUDES ${EIGEN_INCLUDE_DIRS})
 
 ################################################
 # Configure packages we will possibly build here
+# We want to use the Conda version if it is available, and the user hasn't
+# otherwise specified a different version
+if(NOT BLITZ_DIR AND DEFINED ENV{CONDA_PREFIX})
+  set(BLITZ_DIR $ENV{CONDA_PREFIX})
+endif(NOT BLITZ_DIR AND DEFINED ENV{CONDA_PREFIX})
 find_package(Blitz)
 if(BLITZ_FOUND AND (NOT BUILD_BLITZ))
     list(APPEND THIRDPARTY_INCLUDES ${BLITZ_INCLUDE_DIR})
