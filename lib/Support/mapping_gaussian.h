@@ -54,6 +54,14 @@ public:
     };
 
     //-----------------------------------------------------------------------
+    /// Whether this mapping uses a linear total parameter (alternative is log)
+    //-----------------------------------------------------------------------
+    virtual bool is_linear_total() const
+    {
+        return linear_total;
+    }
+
+    //-----------------------------------------------------------------------
     /// Total aerosol optical depth of the extinction values in aext.
     //-----------------------------------------------------------------------
     virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
