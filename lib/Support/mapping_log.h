@@ -2,9 +2,11 @@
 #define MAPPING_LOG_H
 
 #include <blitz/array.h>
+#include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
 #include "mapping_imp_base.h"
+
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -44,6 +46,11 @@ public:
     //-----------------------------------------------------------------------
 
     virtual std::string name() const { return map_name; }
+
+    virtual boost::shared_ptr<MappingImpBase> clone() const
+    {
+      return boost::shared_ptr<MappingImpBase>(new MappingLog());
+    }
 
     virtual ~MappingLog() {};
 

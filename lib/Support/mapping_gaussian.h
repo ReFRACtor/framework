@@ -53,6 +53,11 @@ public:
         }
     };
 
+    virtual boost::shared_ptr<MappingImpBase> clone() const
+    {
+      return boost::shared_ptr<MappingImpBase>(new MappingGaussian(press, linear_total));
+    }
+
     //-----------------------------------------------------------------------
     /// Whether this mapping uses a linear total parameter (alternative is log)
     //-----------------------------------------------------------------------
@@ -62,7 +67,7 @@ public:
     }
 
     //-----------------------------------------------------------------------
-    /// Total aerosol optical depth of the extinction values in aext.
+    /// Total aerosol optical depth of the extinction values in component.
     //-----------------------------------------------------------------------
     virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
     {

@@ -20,8 +20,6 @@ REGISTER_LUA_END()
 boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone
 (const boost::shared_ptr<Pressure>& Pres) const
 {
-  bool Mark_according_to_press = false;
-  int Pdep_start = 0;
   return boost::shared_ptr<AerosolExtinction>
     (new AerosolExtinctionLevel(Pres, used_flag, coeff.value(),
 				 aerosol_name(), mapping));

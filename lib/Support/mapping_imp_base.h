@@ -42,6 +42,8 @@ public:
 
     virtual std::string name() const = 0;
 
+    virtual boost::shared_ptr<MappingImpBase> clone() const = 0;
+
     virtual ~MappingImpBase() {};
 
 };

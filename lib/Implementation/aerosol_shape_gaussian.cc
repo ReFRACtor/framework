@@ -16,17 +16,22 @@ REGISTER_LUA_DERIVED_CLASS(AerosolShapeGaussian, AerosolExtinction)
 REGISTER_LUA_END()
 #endif
 
-const double AerosolShapeGaussian::min_aod = 1e-9;
 // See base class for description
 
 // TODO: Add tests for clone methods to verify things can be cloned without changes
 boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone
 (const boost::shared_ptr<Pressure>& Pres) const
 {
-    boost::shared_ptr<MappingGaussian> mapping_gaussian = boost::static_pointer_cast<MappingGaussian>(mapping);
+//    This works.
+//    boost::shared_ptr<MappingGaussian> mapping_gaussian = boost::static_pointer_cast<MappingGaussian>(mapping);
+//    return boost::shared_ptr<AerosolExtinction>
+//           (new AerosolShapeGaussian(Pres, used_flag, coeff.value(),
+//                                     aerosol_name(), mapping_gaussian->is_linear_total() ));
+//
+
+//  TODO: This does not work -- default implementation from AerosolExtinctionLevel
     return boost::shared_ptr<AerosolExtinction>
-           (new AerosolShapeGaussian(Pres, used_flag, coeff.value(),
-                                     aerosol_name(), mapping_gaussian->is_linear_total() ));
+      (new AerosolExtinctionLevel(Pres, used_flag, coeff.value(), aerosol_name(), mapping));
 }
 
 AerosolShapeGaussian::AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,

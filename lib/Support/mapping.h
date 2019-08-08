@@ -37,6 +37,12 @@ public:
 
     virtual std::string name() const { return map_name; }
 
+    virtual boost::shared_ptr<MappingImpBase> clone() const
+    {
+      return boost::shared_ptr<MappingImpBase>(new Mapping());
+    }
+
+
     virtual ~Mapping() {};
 
 private:
