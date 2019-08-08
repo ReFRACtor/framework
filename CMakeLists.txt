@@ -86,6 +86,15 @@ endif()
 # use, i.e. don't skip the full RPATH for the build tree
 SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
+# By default install into the build directory
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "..." FORCE)
+    message(STATUS "Setting install prefix to: " ${CMAKE_INSTALL_PREFIX})
+    message(STATUS "Specify -DCMAKE_INSTALL_PREFIX to cmake to change")
+else()
+    message(STATUS "Using install prefix: " ${CMAKE_INSTALL_PREFIX})
+endif()
+
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 # For some reason on the Mac we don't automatically figure out that CONDA
 # should be on the rpath. So add that. This seems like a bug, the reading of
@@ -110,15 +119,6 @@ endif()
 
 # For modules not available in standard cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-
-# By default install into the build directory
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "..." FORCE)
-    message(STATUS "Setting install prefix to: " ${CMAKE_INSTALL_PREFIX})
-    message(STATUS "Specify -DCMAKE_INSTALL_PREFIX to cmake to change")
-else()
-    message(STATUS "Using install prefix: " ${CMAKE_INSTALL_PREFIX})
-endif()
 
 # Expose options that user should supply
 set(ABSCO_DIR $ENV{abscodir} CACHE PATH "Base path of Absoprtion Coefficient tables are located")
