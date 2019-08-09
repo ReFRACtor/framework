@@ -179,8 +179,11 @@ class Creator(object):
         elif isinstance(result, dict):
             for result_item in result.items():
                 self._dispatch(result_item)
-        else:
-            self._dispatch(result)
+
+        # For iterable types (list, dict), also dispatch the list and dict itself
+        # in case these are subclasses that indicate a grouping of data that needs
+        # to be captured
+        self._dispatch(result)
 
         # Remove this class from the subscribed observers once its create routine has run
         self.deregister_to_receive()
