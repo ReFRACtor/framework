@@ -49,3 +49,17 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
         else:
             num_accepted = solver_group.createVariable("iteration_index", int)
         num_accepted[...] = solver.num_accepted_steps
+
+        if hasattr(solver, "problem") and hasattr(solver.problem, "max_a_posteriori"):
+            apost_cov = solver.problem.max_a_posteriori.a_posteriori_covariance
+
+            # This should be the same as in StateVectorOutput, since they are sized the same
+            sv_dim = "state_vector_s{}".format(self.step_index+1)
+            if sv_dim not in self.output.dimensions:
+                self.output.createDimension(sv_dim, apost_cov.shape[0])
+
+            if "covariance_a_posteriori" in solver_group.variables:
+                cov = solver_group["covariance_a_posteriori"]
+            else:
+                cov = solver_group.createVariable("covariance_a_posteriori", float, (sv_dim, sv_dim))
+            cov[:, :] = apost_cov
