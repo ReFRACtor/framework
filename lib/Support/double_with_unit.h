@@ -106,12 +106,12 @@ namespace std {
 
   inline FullPhysics::DoubleWithUnit min(const FullPhysics::DoubleWithUnit& x, const FullPhysics::DoubleWithUnit& y) 
   {
-    return FullPhysics::DoubleWithUnit(std::min(x.value, y.value), x.units);
+    return FullPhysics::DoubleWithUnit(std::min(x.value, y.value * FullPhysics::conversion(y.units, x.units)), x.units);
   }
 
   inline FullPhysics::DoubleWithUnit max(const FullPhysics::DoubleWithUnit& x, const FullPhysics::DoubleWithUnit& y) 
   {
-    return FullPhysics::DoubleWithUnit(std::max(x.value, y.value), x.units);
+    return FullPhysics::DoubleWithUnit(std::max(x.value, y.value * FullPhysics::conversion(y.units, x.units)), x.units);
   }
 
 }
