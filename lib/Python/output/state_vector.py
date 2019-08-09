@@ -47,10 +47,10 @@ class StateVectorOutputBase(OutputBase):
             sv_values = sv_group.createVariable("values", float, (sv_dim))
         sv_values[:] = self.state_vector.state
 
-        if "covariance" in sv_group.variables:
-            sv_cov = sv_group["covariance"]
+        if "covariance_a_priori" in sv_group.variables:
+            sv_cov = sv_group["covariance_a_priori"]
         else:
-            sv_cov = sv_group.createVariable("covariance", float, (sv_dim, sv_dim))
+            sv_cov = sv_group.createVariable("covariance_a_priori", float, (sv_dim, sv_dim))
         sv_cov[:] = self.state_vector.state_covariance
 
 class StateVectorOutputRetrieval(rf.ObserverIterativeSolver, StateVectorOutputBase):
