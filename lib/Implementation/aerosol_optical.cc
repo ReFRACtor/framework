@@ -173,7 +173,7 @@ AerosolOptical::optical_depth_each_layer(double wn) const
 /// We take in the optical depth of each layer. This is just what is
 /// returned by optical_depth_each_layer(), we take this in because
 /// we can change what the derivative of optical_depth_each_layer is
-/// respect to, e.g. in AtmosphereOco we use taua_i.
+/// respect to, e.g. in AtmosphereStandard we use taua_i.
 ///
 /// This calculates the derivative with respect to whatever variables
 /// Od is relative to.

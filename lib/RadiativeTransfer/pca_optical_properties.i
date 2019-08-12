@@ -4,7 +4,7 @@
 #include "sub_state_vector_array.h"
 %}
 
-%import "atmosphere_oco.i"
+%import "atmosphere_standard.i"
 %import "spectral_domain.i"
 %import "hdf_file.i"
 

@@ -23,7 +23,7 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
-			     const boost::shared_ptr<AtmosphereOco>& Atm,
+			     const boost::shared_ptr<AtmosphereStandard>& Atm,
 			     const boost::shared_ptr<ForwardModel>& Fm,
                  const boost::shared_ptr<Observation>& inst_meas)
   : solver(Solver), atm(Atm), fm(Fm), meas(inst_meas)
@@ -35,7 +35,7 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 //-----------------------------------------------------------------------
 
 ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
-			     const boost::shared_ptr<AtmosphereOco>& Atm,
+			     const boost::shared_ptr<AtmosphereStandard>& Atm,
 			     const boost::shared_ptr<ForwardModel>& Fm,
                  const boost::shared_ptr<Observation>& inst_meas)
   : max_a_posteriori(Max_a_posteriori), atm(Atm), fm(Fm), meas(inst_meas)
@@ -45,7 +45,7 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_post
 //-----------------------------------------------------------------------
 /// This is variation of ErrorAnalysis that takes a general
 /// RtAtmosphere. This will *fail* for anything other than a
-/// AtmosphereOco, however it is convenient to have this for use with
+/// AtmosphereStandard, however it is convenient to have this for use with
 /// Lua (which has much more limited knowledge of the class structure).
 //-----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 			     const boost::shared_ptr<RtAtmosphere>& Atm,
 			     const boost::shared_ptr<ForwardModel>& Fm,
                  const boost::shared_ptr<Observation>& inst_meas)
-: solver(Solver), atm(boost::dynamic_pointer_cast<AtmosphereOco>(Atm)), 
+: solver(Solver), atm(boost::dynamic_pointer_cast<AtmosphereStandard>(Atm)), 
   fm(Fm), meas(inst_meas)
 {
 }
@@ -61,7 +61,7 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
 //-----------------------------------------------------------------------
 /// This is variation of ErrorAnalysis that takes a general
 /// RtAtmosphere. This will *fail* for anything other than a
-/// AtmosphereOco, however it is convenient to have this for use with
+/// AtmosphereStandard, however it is convenient to have this for use with
 /// Lua (which has much more limited knowledge of the class structure).
 //-----------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ ErrorAnalysis::ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_post
 			     const boost::shared_ptr<ForwardModel>& Fm,
                  const boost::shared_ptr<Observation>& inst_meas)
 : max_a_posteriori(Max_a_posteriori), 
-  atm(boost::dynamic_pointer_cast<AtmosphereOco>(Atm)), 
+  atm(boost::dynamic_pointer_cast<AtmosphereStandard>(Atm)), 
   fm(Fm), meas(inst_meas)
 {
 }

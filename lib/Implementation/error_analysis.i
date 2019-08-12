@@ -8,7 +8,7 @@
 %base_import(generic_object)
 %import "connor_solver.i"
 %import "max_a_posteriori.i"
-%import "atmosphere_oco.i"
+%import "atmosphere_standard.i"
 %import "forward_model.i"
 %import "observation.i"
 %fp_shared_ptr(FullPhysics::ErrorAnalysis);
@@ -17,11 +17,11 @@ namespace FullPhysics {
 class ErrorAnalysis : public GenericObject {
 public:
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
-		const boost::shared_ptr<AtmosphereOco>& Atm,
+		const boost::shared_ptr<AtmosphereStandard>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
         const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
-		const boost::shared_ptr<AtmosphereOco>& Atm,
+		const boost::shared_ptr<AtmosphereStandard>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
         const boost::shared_ptr<Observation>& inst_meas);
   double residual_sum_sq(int Band) const;

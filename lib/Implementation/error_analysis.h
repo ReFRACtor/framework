@@ -2,7 +2,7 @@
 #define ERROR_ANALYSIS_H
 #include "connor_solver.h"
 #include "max_a_posteriori.h"
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "forward_model.h"
 #include "observation.h"
 #include "fe_disable_exception.h"
@@ -35,11 +35,11 @@ namespace FullPhysics {
 class ErrorAnalysis : public Printable<ErrorAnalysis> {
 public:
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
-		const boost::shared_ptr<AtmosphereOco>& Atm,
+		const boost::shared_ptr<AtmosphereStandard>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
         const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<MaxAPosteriori>& Max_a_posteriori,
-		const boost::shared_ptr<AtmosphereOco>& Atm,
+		const boost::shared_ptr<AtmosphereStandard>& Atm,
 		const boost::shared_ptr<ForwardModel>& Fm,
         const boost::shared_ptr<Observation>& inst_meas);
   ErrorAnalysis(const boost::shared_ptr<ConnorSolver>& Solver,
@@ -264,7 +264,7 @@ private:
   // Only one of solver or max_a_posteriori will be nonnull.
   boost::shared_ptr<ConnorSolver> solver;
   boost::shared_ptr<MaxAPosteriori> max_a_posteriori;
-  boost::shared_ptr<AtmosphereOco> atm;
+  boost::shared_ptr<AtmosphereStandard> atm;
   boost::shared_ptr<ForwardModel> fm;
   boost::shared_ptr<Observation> meas;
   blitz::Array<double, 2> hmat() const;

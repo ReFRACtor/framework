@@ -486,7 +486,7 @@ AbsorberAbsco::tau_gas_nder(double wn, int spec_index) const
   // clear, but faster.
   // 
   // You can time this by using the unit test
-  // atmosphere_oco/optical_depth_timing (or of course by just
+  // atmosphere_standard/optical_depth_timing (or of course by just
   // profiling a l2_fp run).
   //----------------------------------------------------------------
 
@@ -533,7 +533,7 @@ AbsorberAbsco::tau_gas_der(double wn, int spec_index) const
   // clear, but faster.
   // 
   // You can time this by using the unit test
-  // atmosphere_oco/optical_depth_timing (or of course by just
+  // atmosphere_standard/optical_depth_timing (or of course by just
   // profiling a l2_fp run).
   //----------------------------------------------------------------
 
