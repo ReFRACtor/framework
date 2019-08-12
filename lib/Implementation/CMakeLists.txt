@@ -16,7 +16,7 @@ set(DIR_SOURCES
     aerosol_shape_gaussian.cc
     altitude_hydrostatic.cc
     apply_instrument_units.cc
-    atmosphere_oco.cc
+    atmosphere_standard.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
@@ -134,7 +134,7 @@ set(TEST_SOURCES
     aerosol_shape_gaussian_test.cc
     altitude_hydrostatic_test.cc
     atmosphere_fixture.cc
-    atmosphere_oco_test.cc
+    atmosphere_standard_test.cc
     bad_sample_noise_model_test.cc
     chisq_convergence_test.cc
     composite_initial_guess_full_guess_test.cc

@@ -3,11 +3,11 @@
 
 using namespace FullPhysics;
 using namespace blitz;
-BOOST_FIXTURE_TEST_SUITE(atmosphere_oco, AtmosphereFixture)
+BOOST_FIXTURE_TEST_SUITE(atmosphere_standard, AtmosphereFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  IfstreamCs expected_data(test_data_dir() + "expected/atmosphere_oco/rt_parameters_each_layer");
+  IfstreamCs expected_data(test_data_dir() + "expected/atmosphere_standard/rt_parameters_each_layer");
   // Expected values were gotten by running the old Fortran code and
   // extracting out the answer from that.
   Array<double, 1> od_expect, ssa_expect;
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
 {
   // We check that leaving out the aerosol gives the same results as
   // simply having the aerosol extinction set to 0.
-  boost::shared_ptr<AtmosphereOco> atm_zeroext = atm->clone();
+  boost::shared_ptr<AtmosphereStandard> atm_zeroext = atm->clone();
 
   // Set state vector so that the extinction coefficient of
   // atm_zeroext is 0. The extiction object must be attached
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   boost::shared_ptr<RelativeHumidity> rh_clone =
     atm->relative_humidity_ptr()->clone(absorber_clone, temperature_clone, pressure_clone);
   boost::shared_ptr<AerosolOptical> aerosol_null;
-  boost::shared_ptr<AtmosphereOco> 
-    atm_rayleigh(new AtmosphereOco(absorber_clone,
+  boost::shared_ptr<AtmosphereStandard> 
+    atm_rayleigh(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
                                    aerosol_null,
@@ -135,8 +135,8 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
   boost::shared_ptr<RelativeHumidity> rh_clone =
     atm->relative_humidity_ptr()->clone(absorber_clone, temperature_clone, pressure_clone);
   boost::shared_ptr<Ground> ground_null;
-  boost::shared_ptr<AtmosphereOco> 
-    atm_uplooking(new AtmosphereOco(absorber_clone,
+  boost::shared_ptr<AtmosphereStandard> 
+    atm_uplooking(new AtmosphereStandard(absorber_clone,
                                     pressure_clone,
                                     temperature_clone,
                                     aerosol_clone,
@@ -178,14 +178,14 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(atmosphere_oco_jac, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(atmosphere_standard_jac, ConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_jac)
 {
   is_long_test();
   RtAtmosphere& atm = *config_atmosphere;
   IfstreamCs expected_data(test_data_dir() + 
-                           "expected/atmosphere_oco/rt_parameters_each_layer");
+                           "expected/atmosphere_standard/rt_parameters_each_layer");
   Array<double, 1> od_expect, ssa_expect;
   Array<double, 2> scat_momsub_expect;
   expected_data >> scat_momsub_expect;
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE(ssa_jac)
   is_long_test();
   RtAtmosphere& atm = *config_atmosphere;
   IfstreamCs expected_data(test_data_dir() + 
-                           "expected/atmosphere_oco/rt_parameters_each_layer");
+                           "expected/atmosphere_standard/rt_parameters_each_layer");
   Array<double, 1> od_expect, ssa_expect;
   Array<double, 2> scat_momsub_expect;
   expected_data >> scat_momsub_expect;

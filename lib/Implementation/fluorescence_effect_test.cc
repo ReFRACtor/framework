@@ -73,9 +73,9 @@ BOOST_AUTO_TEST_CASE(small_range)
   // atmosphere in the same state, but not attached to a state
   // vector. Since we are going to create our own state vector
   // shortly, this is what we want.
-  boost::shared_ptr<AtmosphereOco> config_atm_oco =
-    boost::dynamic_pointer_cast<AtmosphereOco>(config_atmosphere);
-  boost::shared_ptr<AtmosphereOco> atm = config_atm_oco->clone();
+  boost::shared_ptr<AtmosphereStandard> config_atm_oco =
+    boost::dynamic_pointer_cast<AtmosphereStandard>(config_atmosphere);
+  boost::shared_ptr<AtmosphereStandard> atm = config_atm_oco->clone();
   FluorescenceEffect fluor_created(coeff, used_flag,
                                    atm, stokes_coeff, lza,
                                    spec_index, reference_wn, conv_unit);

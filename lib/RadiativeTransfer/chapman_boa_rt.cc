@@ -10,7 +10,7 @@ boost::shared_ptr<RadiativeTransfer> chapman_boa_rt_create
  const blitz::Array<double, 1>& Sza, 
  const SpectralBound& Spec_bound)
 {
-  const boost::shared_ptr<AtmosphereOco> atm_oco(boost::dynamic_pointer_cast<AtmosphereOco>(Atm));
+  const boost::shared_ptr<AtmosphereStandard> atm_oco(boost::dynamic_pointer_cast<AtmosphereStandard>(Atm));
   return boost::shared_ptr<RadiativeTransfer>(new ChapmanBoaRT(atm_oco, Sza, Spec_bound));
 }
 
@@ -24,7 +24,7 @@ REGISTER_LUA_DERIVED_CLASS(ChapmanBoaRT, RadiativeTransfer)
 REGISTER_LUA_END()
 #endif
 
-ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereOco>& Atm,
+ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 			   const blitz::Array<double, 1>& Sza) 
   : atm(Atm), sza(Sza)
 {
@@ -38,7 +38,7 @@ ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereOco>& Atm,
   chapman_boa.resize(Sza.rows());
 }
 
-ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereOco>& Atm,
+ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 			   const blitz::Array<double, 1>& Sza, 
 			   const SpectralBound& Spec_bound) 
   : spec_bound(Spec_bound), atm(Atm), sza(Sza)

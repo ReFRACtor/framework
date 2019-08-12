@@ -33,8 +33,8 @@ FluorescenceEffect::FluorescenceEffect
   lza(Lza), reference(Reference), retrieval_unit(Retrieval_unit), 
   spec_index(Spec_index), stokes_coef(Stokes_coef)
 {
-  // We need to use the AtmosphereOco specific interfaces
-  atm_oco = boost::dynamic_pointer_cast<AtmosphereOco>(Atm);
+  // We need to use the AtmosphereStandard specific interfaces
+  atm_oco = boost::dynamic_pointer_cast<AtmosphereStandard>(Atm);
 
   // Use a map cache, because due to LSI and non-uniform sampling we can
   // not count on all values being cached that we need in the right order

@@ -1,6 +1,6 @@
 #ifndef RADIANT_DRIVER_H
 #define RADIANT_DRIVER_H
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "radiative_transfer_single_wn.h"
 #include "rt_atmosphere.h"
 #include <boost/noncopyable.hpp>

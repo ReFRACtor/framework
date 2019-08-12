@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE(lambertian_first_order)
     }
 
     // Rayleigh part of phase function
-    // From atmosphere_oco.cc
+    // From atmosphere_standard.cc
     Range r3(0, coefsr.rows() - 1);
     phase_func.value()(r3, ra, ra) += frac_ray(i2) * coefsr(i1, i3);
 
