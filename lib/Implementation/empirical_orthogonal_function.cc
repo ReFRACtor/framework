@@ -105,6 +105,14 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   if(ds.getSimpleExtentNdims() == 3) {
     ArrayWithUnit<double, 3> full_table =
       Hdf_static_input.read_field_with_unit<double, 3>(fldname);
+
+    if (Sounding_number < 0 || Sounding_number >= full_table.rows()) {
+      Exception err_msg;
+      err_msg  << "Sounding number: " << Sounding_number
+        << " out of range of number of EOF sounding data: " << full_table.rows();
+      throw err_msg;
+    }
+
     table.units = full_table.units;
     table.value.reference(full_table.value(Sounding_number, Range::all(),
 					   Range::all()));
@@ -196,6 +204,14 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   if(ds.getSimpleExtentNdims() == 2) {
     ArrayWithUnit<double, 2> full_table =
       Hdf_static_input.read_field_with_unit<double, 2>(fldname);
+
+    if (Sounding_number < 0 || Sounding_number >= full_table.rows()) {
+      Exception err_msg;
+      err_msg  << "Sounding number: " << Sounding_number
+        << " out of range of number of EOF sounding data: " << full_table.rows();
+      throw err_msg;
+    }
+
     eof_.units = full_table.units;
     eof_.value.reference(full_table.value(Sounding_number, Range::all()));
     eof_depend_on_sounding_number_ = true;
@@ -280,6 +296,14 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   if(ds.getSimpleExtentNdims() == 2) {
     Array<double, 2> full_table =
       Hdf_static_input.read_field<double, 2>(fldname);
+
+    if (Sounding_number < 0 || Sounding_number >= full_table.rows()) {
+      Exception err_msg;
+      err_msg  << "Sounding number: " << Sounding_number
+        << " out of range of number of EOF sounding data: " << full_table.rows();
+      throw err_msg;
+    }
+
     eof_.units = Uncertainty.units;
     eof_.value.reference(full_table(Sounding_number, Range::all()));
     eof_depend_on_sounding_number_ = true;
@@ -288,6 +312,14 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
     eof_.value.reference(Hdf_static_input.read_field<double, 1>(fldname));
     eof_depend_on_sounding_number_ = false;
   }
+
+  if (eof_.value.rows() != Uncertainty.value.rows()) {
+    Exception err_msg;
+    err_msg << "Number of EOF values: " << eof_.value.rows()
+      << " does not match number of uncertainty values: " << Uncertainty.value.rows();
+    throw err_msg;
+  }
+
   eof_.value = eof_.value * Uncertainty.value;
   // Scale eof so stddev is the given value
   double s = scale_to_stddev_ / sqrt(sum(sqr(eof_.value - mean(eof_.value))) /
