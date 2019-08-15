@@ -6,16 +6,6 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-#ifdef HAVE_LUA
-#include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(AerosolExtinctionLevel, AerosolExtinction)
-.def(luabind::constructor<const boost::shared_ptr<Pressure>&,
-			  const blitz::Array<bool, 1>&, 
-			  const blitz::Array<double, 1>&,
-			  const std::string&>())
-REGISTER_LUA_END()
-#endif
-
 // See base class for description
 boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone
 (const boost::shared_ptr<Pressure>& Pres) const
