@@ -37,8 +37,6 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
 
   virtual boost::shared_ptr<AerosolExtinction> clone(const boost::shared_ptr<Pressure>& P) const;
   virtual ~AerosolShapeGaussian() {}
-private:
-  static const double min_aod;
 };
 }
 #endif
