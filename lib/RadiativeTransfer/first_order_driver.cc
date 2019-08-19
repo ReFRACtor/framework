@@ -268,21 +268,27 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 void FirstOrderDriver::clear_linear_inputs() const
 {
     solar_interface_->do_profilewfs(false);
+    solar_interface_->do_reflecwfs(false); 
+    solar_interface_->n_reflecwfs(0);
 }
 
 void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
  const ArrayAd<double, 2>& pf,
- bool UNUSED(do_surface_linearization)) const
+ bool do_surface_linearization) const
 {
-    firstIndex i1; secondIndex i2;
+    // Set which profile layer jacobians are computed
+    int natm_jac = od.number_variable();
+    int nlay = od.rows();
+    int ngeom = geometry->ngeoms();
+
+    Range r_all = Range::all();
+    Range r_jac = Range(0, natm_jac-1);
+    Range r_lay = Range(0, nlay-1);
 
     // Enable weighting functions
     solar_interface_->do_profilewfs(true);
-
-    // Set which profile layer jacobians are computed
-    int natm_jac = od.number_variable();
 
     Array<bool, 1> layer_jac_flag( solar_interface_->lvaryflags() );
     layer_jac_flag = true;
@@ -294,17 +300,31 @@ void FirstOrderDriver::setup_linear_inputs
     Array<double, 2> l_deltau(solar_interface_->l_deltaus());
     Array<double, 2> l_extinction(solar_interface_->l_extinction());
 
-    l_deltau = where(od.value()(i1) != 0, od.jacobian() / od.value()(i1), 0.0);
-    //l_extinction = l_deltau / height_diffs(i1);
+    l_deltau(r_lay, r_jac) = od.jacobian();
 
-    // Compute phase function from fourier moments by summing over moments times general spherical function
-    // Sum over moment index
-    firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
-    Array<double, 2> exactscat(solar_interface_->exactscat_up());
+    firstIndex i1; secondIndex i2;
+    l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
+
+    // l_exactscat takes into account ssa jacobian contributions
+    // Compute legendre * pf function first seperately so that separate placeholder
+    // variables can be used when computing l_exactscat to ensure correct ordering of values
     Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
 
-    l_exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf.jacobian()(mom_idx, lay_idx), mom_idx) * ssa.jacobian()(lay_idx);
-    l_exactscat = l_exactscat / exactscat(lay_idx, geom_idx);
+    Array<double, 2> legpf(nlay, ngeom);
+    firstIndex j1; secondIndex j2; thirdIndex j3;
+    legpf = sum(legendre->ss_pleg()(j3, j2) * pf.value()(j3, j1), j3);
+
+    firstIndex k1; secondIndex k2; thirdIndex k3;
+    l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * ssa.jacobian()(k1, k3);
+
+    // Set up solar linear inputs
+    if (do_surface_linearization) {
+        solar_interface_->do_reflecwfs(true); 
+        solar_interface_->n_reflecwfs(brdf_driver()->n_surface_wfs());
+
+        Array<double, 2> ls_reflec( solar_interface_->ls_reflec() );
+        ls_reflec(r_all, r_all) = 1.0;
+    }
  
 }
 
@@ -322,13 +342,17 @@ double FirstOrderDriver::get_intensity() const
 
 void FirstOrderDriver::copy_jacobians
 (blitz::Array<double, 2>& jac_atm,
- blitz::Array<double, 1>& UNUSED(jac_surf_param),
+ blitz::Array<double, 1>& jac_surf_param,
  double& UNUSED(jac_surf_temp),
  blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
 {
     Range ra(Range::all());
 
-    jac_atm.resize(solar_interface_->maxlayers(), solar_interface_->max_atmoswfs());
-    jac_atm = solar_interface_->lp_jacobians_up()(0, ra, ra) + solar_interface_->lp_jacobians_db()(0, ra, ra);
+    // Need to transpose output to be in the expected order of njac, nlay
+    Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, ra, ra) + solar_interface_->lp_jacobians_db()(0, ra, ra));
+    jac_total.transposeSelf(secondDim, firstDim);
+    jac_atm.reference(jac_total);
 
+    jac_surf_param.resize(solar_interface_->max_surfacewfs());
+    jac_surf_param = solar_interface_->ls_jacobians_db()(0, ra);
 }

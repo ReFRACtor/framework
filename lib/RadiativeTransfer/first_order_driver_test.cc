@@ -84,7 +84,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
     od(lay_idx) = taur(lay_idx) + taug(lay_idx);
     ssa(lay_idx) = taur(lay_idx) / od(lay_idx);
   }
-  
+
   // No aerosols, and depolization factor = 0 
   // so simplified phase function moments:
   ArrayAd<double, 2> pf(3, nlayer, nparam);
@@ -171,6 +171,41 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
               << "jac_atm_lid = " << jac_atm_lid(rjac,rlay).transpose(1,0)
               << "jac_atm_fd = " << jac_atm_fd(rjac, rlay).transpose(1,0)
               << "jac_atm_fo = " << jac_atm_fo(rjac,rlay).transpose(1,0) << std::endl;
+  }
+
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_fo(rjac,rlay), 1e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
+
+  if(blitz::any(surface_params.value() > 0.0)) {
+    // Check surface jacobians against finite difference
+    blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param_fo.rows() );
+    jac_surf_param_fd = 0.0;
+
+    for(int p_idx = 0; p_idx < pert_surf.rows(); p_idx++) {
+      blitz::Array<double,1> surface_params_pert( surface_params.rows() );
+      surface_params_pert = surface_params.value();
+      surface_params_pert(p_idx) += pert_surf(p_idx);
+
+      refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                surface_type, surface_params_pert,
+                                                od.value(), ssa.value(), pf.value(),
+                                                bb_surface, bb_atm);
+
+      jac_surf_param_fd(p_idx) = (refl_fd - refl_fo) / pert_surf(p_idx);
+
+      // Adjust analytic jacobians to have same meaning as finite difference one
+      jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_fo(p_idx) *= fo_surface_params.jacobian()(p_idx, 0);
+    }
+
+    if(debug_output) {
+      std::cerr << "jac_surf_param_lid = " << jac_surf_param_lid(rsurf) << std::endl
+                << "jac_surf_param_fd = " << jac_surf_param_fd << std::endl
+                << "jac_surf_param_fo = " << jac_surf_param_fo << std::endl;
+    } 
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf), jac_surf_param_fo(rsurf), 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo, jac_surf_param_fd, 1e-7);
   }
 
 }
