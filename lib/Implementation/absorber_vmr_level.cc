@@ -70,7 +70,7 @@ void AbsorberVmrLevel::calc_vmr() const
 {
   std::vector<AutoDerivative<double> > plist;
   std::vector<AutoDerivative<double> > vmrlist;
-  ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
+  ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff, press);
   for(int i = 0; i < press->pressure_grid().rows(); ++i) {
     vmrlist.push_back(fm_view_coeff(i));
     plist.push_back(press->pressure_grid()(i).value);

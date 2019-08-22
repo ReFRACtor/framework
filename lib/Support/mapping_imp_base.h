@@ -2,8 +2,10 @@
 #define MAPPING_IMP_BASE_H
 
 #include <string>
+
 #include "array_ad.h"
 #include "generic_object.h"
+#include "pressure.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -28,7 +30,8 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const = 0;
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff,
+            const boost::shared_ptr<Pressure>& updated_press) const = 0;
 
     //-----------------------------------------------------------------------
     /// Calculation of initial retrieval view  of coeffs with mapping applied

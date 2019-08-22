@@ -18,9 +18,6 @@ public:
 		       const blitz::Array<double, 1>& Coeffs,
 		       const std::string& Aerosol_name,
 		       const bool Linear_AOD);
-  virtual boost::shared_ptr<AerosolExtinction> clone() const;
-  virtual boost::shared_ptr<AerosolExtinction> clone
-  (const boost::shared_ptr<Pressure>& P) const;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
 protected:

@@ -25,9 +25,8 @@ public:
     //-----------------------------------------------------------------------
     MappingGaussian() {};
 
-    void init(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD)
+    void init(bool Linear_AOD)
     {
-        press = in_press;
         linear_total = Linear_AOD;
         if (linear_total) {
             map_name = "GaussianLinear";
@@ -43,8 +42,8 @@ public:
     ///   that represents the desired total is in linear space if true,
     ///   logarithmic space if false.
     //-----------------------------------------------------------------------
-    MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD)
-        : press(in_press), linear_total(Linear_AOD)
+    MappingGaussian(bool Linear_AOD)
+        : linear_total(Linear_AOD)
     {
         if (linear_total) {
             map_name = "GaussianLinear";
@@ -55,7 +54,7 @@ public:
 
     virtual boost::shared_ptr<MappingImpBase> clone() const
     {
-      return boost::shared_ptr<MappingImpBase>(new MappingGaussian(press, linear_total));
+      return boost::shared_ptr<MappingImpBase>(new MappingGaussian(linear_total));
     }
 
     //-----------------------------------------------------------------------
@@ -69,11 +68,12 @@ public:
     //-----------------------------------------------------------------------
     /// Total aerosol optical depth of the extinction values in component.
     //-----------------------------------------------------------------------
-    virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
+    virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component,
+            const boost::shared_ptr<Pressure>& updated_press) const
     {
-        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
+        ArrayAd<double, 1> pressure_grid = updated_press->pressure_grid().value;
         AutoDerivative<double> tot_component = 0.0;
-        for(int layer_idx = 0; layer_idx < press->number_layer(); layer_idx++) {
+        for(int layer_idx = 0; layer_idx < updated_press->number_layer(); layer_idx++) {
           AutoDerivative<double> delta_press = (pressure_grid(layer_idx + 1) - pressure_grid(layer_idx)) / 2.0;
           tot_component += (delta_press * (component(layer_idx) + component(layer_idx + 1) ));
         }
@@ -82,8 +82,9 @@ public:
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        ArrayAd<double, 1> component(press->number_level(), updated_coeff.number_variable());
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff,
+            const boost::shared_ptr<Pressure>& updated_press) const {
+        ArrayAd<double, 1> component(updated_press->number_level(), updated_coeff.number_variable());
 
         AutoDerivative<double> desired_val;
 
@@ -103,10 +104,10 @@ public:
 
         int ngaussians = int((updated_coeff.rows() - 1) / 2);
 
-        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
-        AutoDerivative<double> surface_press = press->surface_pressure().value;
+        ArrayAd<double, 1> pressure_grid = updated_press->pressure_grid().value;
+        AutoDerivative<double> surface_press = updated_press->surface_pressure().value;
 
-        component.resize(press->number_level(), updated_coeff.number_variable());
+        component.resize(updated_press->number_level(), updated_coeff.number_variable());
         component.resize_number_variable(updated_coeff.number_variable());
         component.jacobian() = 0;
 
@@ -130,8 +131,8 @@ public:
         AutoDerivative<double> scaling_N;
 
         // Protect against a divide by zero
-        if (total_optical_depth(component).value() != 0.0) {
-            scaling_N = desired_val / total_optical_depth(component);
+        if (total_optical_depth(component, updated_press).value() != 0.0) {
+            scaling_N = desired_val / total_optical_depth(component, updated_press);
         } else {
             scaling_N = 0.0;
         }
@@ -153,15 +154,6 @@ public:
     /// Assigned mapping name
     //-----------------------------------------------------------------------
     virtual std::string name() const { return map_name; }
-
-    //-----------------------------------------------------------------------
-    /// Pressure portion of the state
-    /// Note that levels that define the layers used in the Radiative Transfer
-    /// calculation may vary as we do a retrieval.
-    //-----------------------------------------------------------------------
-    boost::shared_ptr<Pressure> press;
-
-
 
     virtual ~MappingGaussian() {};
 

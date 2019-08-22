@@ -46,7 +46,7 @@ public:
 /// coeff.value, but this is useful for generating output.
 //-----------------------------------------------------------------------
   blitz::Array<double, 1> vmr_profile() const 
-  { return mapping->fm_view(coeff).value(); }
+  { return mapping->fm_view(coeff, press).value(); }
 
 //-----------------------------------------------------------------------
 /// Covariance of vmr profile
