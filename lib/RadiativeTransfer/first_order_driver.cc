@@ -1,9 +1,6 @@
 #include "first_order_driver.h"
 #include "wgs84_constant.h"
 
-// Include BRDF driver interface from LIDORT driver
-#include "lidort_driver.h"
-
 // Include to use consistent jacobian sizes
 #include "lidort_interface_types.h"
 
@@ -11,7 +8,7 @@ using namespace FullPhysics;
 using namespace blitz;
 
 //-----------------------------------------------------------------------
-///
+/// Construct FirstOrderDriver
 //-----------------------------------------------------------------------
 
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
@@ -93,7 +90,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
     // Recommended value by manual of 50 in case we use cox-munk
     int n_brdf_stream = 50;
-    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver(new LidortBrdfDriver(n_brdf_stream, num_moments_));
+    l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
     Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
 
     // Only use 1 beam meaning only one set of sza, azm
@@ -112,8 +109,9 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     brdf_inputs.bs_do_brdf_surface(true);
     brdf_inputs.bs_do_user_streams(true);
     brdf_inputs.bs_do_solar_sources(do_solar_sources);
-    //brdf_inputs.bs_do_surface_emission(do_thermal_emission);
+    brdf_inputs.bs_do_surface_emission(do_thermal_emission);
 
+    // Copy LidortBrdfDriver pointer into SpurrDriver variable
     brdf_driver_ = l_brdf_driver;
     brdf_driver_->initialize_brdf_inputs(surface_type);
 }
@@ -261,7 +259,6 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
-    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver = boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver());
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
@@ -319,11 +316,17 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
-        solar_interface_->do_reflecwfs(true); 
-        solar_interface_->n_reflecwfs(brdf_driver()->n_surface_wfs());
+        int n_surf_wfs = brdf_driver()->n_surface_wfs();
+        Range r_surf_wfs = Range(0, n_surf_wfs-1);
 
+        solar_interface_->do_reflecwfs(true); 
+        solar_interface_->n_reflecwfs(n_surf_wfs);
+        
+        // Set up reflection linearization from BRDF supplement
+        Array<double, 1> reflectance(solar_interface_->reflec());
         Array<double, 2> ls_reflec( solar_interface_->ls_reflec() );
-        ls_reflec(r_all, r_all) = 1.0;
+
+        ls_reflec(0, r_surf_wfs) = l_brdf_driver->brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
     }
  
 }
