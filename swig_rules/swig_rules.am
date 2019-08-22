@@ -27,21 +27,22 @@
 # DOXYGEN the program doxygen
 
 swiginc_HEADERS = 
-swiginc_HEADERS += @swigrules@/include/swig_python_attribute.i
 swiginc_HEADERS += @swigrules@/include/my_shared_ptr.i
 swiginc_HEADERS += @swigrules@/include/shared_ptr_type_mapper.i
 swiginc_HEADERS += @swigrules@/include/swig_array.i
 swiginc_HEADERS += @swigrules@/include/swig_array_inc.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_array.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_array_inc.i
-swiginc_HEADERS += @swigrules@/include/swig_exception.i
-swiginc_HEADERS += @swigrules@/include/swig_print.i
-swiginc_HEADERS += @swigrules@/include/swig_pickle.i
-swiginc_HEADERS += @swigrules@/include/swig_std.i
 swiginc_HEADERS += @swigrules@/include/swig_boost_optional.i
-swiginc_HEADERS += @swigrules@/include/swig_iostream_inc.i
+swiginc_HEADERS += @swigrules@/include/swig_exception.i
 swiginc_HEADERS += @swigrules@/include/swig_iostream.i
+swiginc_HEADERS += @swigrules@/include/swig_iostream_inc.i
+swiginc_HEADERS += @swigrules@/include/swig_pickle.i
+swiginc_HEADERS += @swigrules@/include/swig_print.i
+swiginc_HEADERS += @swigrules@/include/swig_python_attribute.i
 swiginc_HEADERS += @swigrules@/include/swig_rational.i
+swiginc_HEADERS += @swigrules@/include/swig_std.i
+swiginc_HEADERS += @swigrules@/include/swig_vector_shared_ptr.i
 
 ADDITONAL_SWIG_SRC = @swigsrc@/swig_array_wrap.cc
 ADDITONAL_SWIG_SRC += @swigsrc@/swig_boost_array_wrap.cc
