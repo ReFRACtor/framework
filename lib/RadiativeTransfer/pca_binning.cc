@@ -4,7 +4,7 @@ using namespace FullPhysics;
 using namespace blitz;
 
 extern "C" {
-    void create_bin_uvvswir_v3(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *absflag, int *ncnt, int *index, int *bin);
+    void create_bin_uvvswir_v3(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *binlims, double *gasdat, double *taudp, double *omega, int *absflag, int *ncnt, int *index, int *bin);
 }
 
 PCABinning::PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins)
@@ -29,6 +29,7 @@ void PCABinning::compute_bins()
     
     // Unused value but required to complete interface
     Array<int, 1> bins(ndat, ColumnMajorArray<1>());
+    Array<double, 1> binlims(ndat, ColumnMajorArray<1>());
 
     // Ensure that inputs are all column major arrays by copying values from the optical properties
     Array<double, 2> taug(nlayer, ndat, ColumnMajorArray<2>());
@@ -42,6 +43,7 @@ void PCABinning::compute_bins()
     // Call fortran binning routine
     create_bin_uvvswir_v3(
         &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
+        binlims.dataFirst(),
         taug.dataFirst(), 
         tau_tot.dataFirst(), 
         omega.dataFirst(), 
