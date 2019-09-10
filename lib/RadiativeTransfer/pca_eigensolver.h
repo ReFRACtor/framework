@@ -30,6 +30,13 @@ public:
     /// Dimensions are NUM_EOF * NUM_POINTS
     virtual blitz::Array<double, 2> principal_components() const = 0;
 
+    /// Compute the radiance correction factor given outsputs from the various RT and using the prinicpal compontents computed
+    /// by this class
+    virtual blitz::Array<double, 2> correction(
+        const blitz::Array<double, 1>& lidort_mean, const blitz::Array<double, 1>& twostream_mean, const blitz::Array<double, 1>& first_order_man,
+        const blitz::Array<double, 2>& lidort_plus, const blitz::Array<double, 2>& twostream_plus, const blitz::Array<double, 2>& first_order_plus,
+        const blitz::Array<double, 2>& lidort_minus, const blitz::Array<double, 2>& twostream_minus, const blitz::Array<double, 2>& first_order_minus);
+
 };
 
 class PCAEigenSolverGeneric : public PCAEigenSolver {

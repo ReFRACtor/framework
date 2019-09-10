@@ -40,6 +40,79 @@ std::vector<blitz::Array<double, 3> > PCAEigenSolver::data_perturbations() const
     return result;
 }
 
+blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>& lidort_mean, 
+                                                   const blitz::Array<double, 1>& twostream_mean, 
+                                                   const blitz::Array<double, 1>& first_order_man,
+                                                   const blitz::Array<double, 2>& lidort_plus,
+                                                   const blitz::Array<double, 2>& twostream_plus,
+                                                   const blitz::Array<double, 2>& first_order_plus,
+                                                   const blitz::Array<double, 2>& lidort_minus,
+                                                   const blitz::Array<double, 2>& twostream_minus,
+                                                   const blitz::Array<double, 2>& first_order_minus)
+{
+    Range all = Range::all();
+    int num_eofs = principal_components().rows();
+    int num_points = principal_components().cols();
+    int num_stokes = lidort_mean.rows();
+
+    // Check that plus/minus have appropriate shape
+    if(lidort_plus.rows() != num_eofs || lidort_minus.rows() != num_eofs) {
+        raise Exception("LIDORT radiances values for EOF correction do not match number of EOFs");
+    }
+
+    if(two_stream_plus.rows() != num_eofs || two_stream_minus.rows() != num_eofs) {
+        raise Exception("2stream radiances values for EOF correction do not match number of EOFs");
+    }
+
+    if(first_order_plus.rows() != num_eofs || first_order_minus.rows() != num_eofs) {
+        raise Exception("First Order radiances values for EOF correction do not match number of EOFs");
+    }
+
+    if(lidort_mean.rows() != num_stokes || lidort_plus.cols() != num_stokes || lidort_minus.cols() != num_stokes) {
+        raise Exception("LIDORT number of stokes is inconsistent");
+    }
+
+    if(two_stream_mean.rows() != num_stokes || two_stream_plus.cols() != num_stokes || two_stream_minus.cols() != num_stokes) {
+        raise Exception("2stream number of stokes is inconsistent");
+    }
+
+    if(first_order_mean.rows() != num_stokes || first_order_plus.cols() != num_stokes || first_order_minus.cols() != num_stokes) {
+        raise Exception("First Order number of stokes is inconsistent");
+    }
+
+    Array<double, 1> hi_ss( lidort_mean + first_order_mean );
+    Array<double, 1> lo_ss( twostream_man + first_order_mean );
+    Array<double, 1> id_mean = log( hi_ss / lo_ss );
+
+    Array<double, 2> term_1(num_eofs, num_stokes);
+    Array<double, 2> term_2(num_eofs, num_stokes);
+
+    for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+        Array<double, 1> hi_ss_plus( lidort_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
+        Array<double, 1> lo_ss_plus( twostream_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
+        Array<double, 1> id_plus = log(hi_ss_plus / lo_ss_plus);
+
+        Array<double, 1> hi_ss_minus( lidort_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
+        Array<double, 1> lo_ss_minus( twostream_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
+        Array<double, 1> id_minus = log(hi_ss_minus / lo_ss_minus);
+  
+        term_1(eof_idx, all) = (id_plus - id_minus) / 2;
+        term_2(eof_idx, all) = (id_plus + id_minus - 2*id_mean) / 2;
+    }
+
+    Array<double, 2> correction(num_points, num_stokes);
+    for(int point_idx = 0; point_idx < num_points; point_idx++) {
+        Array<double, 1> ieof(num_stokes);
+        ieof = id_mean;
+
+        for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+            double x = principal_components()(eof_idx, point_idx);
+            ieof = ieof + term_1(eof_idx, all) * x + term_2(eof_idx, all) * x * x;
+        }
+        correction(point_idx, all) = exp(ieof);
+    }
+}
+
 // ----------
 
 PCAEigenSolverGeneric::PCAEigenSolverGeneric(const std::vector<Array<double, 2> >& gridded_data, int num_eofs)
