@@ -3,6 +3,8 @@
 
 #include "radiative_transfer_fixed_stokes_coefficient.h"
 
+#include "atmosphere_standard.h"
+
 #include "lidort_rt.h"
 #include "twostream_rt.h"
 #include "first_order_rt.h"
@@ -12,9 +14,11 @@ namespace FullPhysics {
 /****************************************************************//**
 *******************************************************************/
 
-class PcaRt : public RadiativeTransferFixedStokesCoefficient {
+class PCARt : public RadiativeTransferFixedStokesCoefficient {
 public:
-    PcaRt(const boost::shared_ptr<RtAtmosphere>& Atm,
+    PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
+          const std::string Primary_absorber,
+          const int Num_eofs,
           const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
           const blitz::Array<double, 1>& Sza, 
           const blitz::Array<double, 1>& Zen, 
@@ -24,7 +28,7 @@ public:
           bool do_solar_sources = true, 
           bool do_thermal_emission = false);
 
-    virtual ~PcaRt() = default;
+    virtual ~PCARt() = default;
 
     virtual int number_stream() const = 0;
 
@@ -33,13 +37,16 @@ public:
     virtual blitz::Array<double, 2> stokes(const SpectralDomain& Spec_domain, int Spec_index) const;
     virtual ArrayAd<double, 2> stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const;
 
-    const boost::shared_ptr<RtAtmosphere>& atmosphere() const { return atm; }
+    const boost::shared_ptr<AtmosphereStandard>& atmosphere() const { return atm; }
   
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 
 private:
 
-  boost::shared_ptr<RtAtmosphere> atm;
+  boost::shared_ptr<AtmosphereStandard> atm;
+
+  std::string primary_absorber;
+  int num_eofs;
 
   boost::shared_ptr<LidortRt> lidort_rt;
   boost::shared_ptr<TwostreamRt> twostream_rt;

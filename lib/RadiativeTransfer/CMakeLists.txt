@@ -17,6 +17,7 @@ set(DIR_SOURCES
     pca_fortran/pca_auxiliaries.f90
     pca_fortran/pca_eigensolvers.f90
     pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
+    pca_rt.cc
     chapman_boa.cc
     chapman_boa_rt.cc
     first_order_interface.F90
