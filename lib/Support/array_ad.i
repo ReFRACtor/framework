@@ -16,8 +16,6 @@ template<class T, int D> class ArrayAd;
 %pythoncode %{
 import numpy as np
 
-from .auto_derivative import vector_auto_derivative
-
 def np_to_array_ad(a):
     '''Convert a numpy array of AutoDerivatives to a ArrayAd'''
     nvar = 0
@@ -134,16 +132,16 @@ def __setitem__(self, index, val):
     t.append(val)
     self.write(*t)
 
-def to_vector(self):
+def to_list(self):
 
     if DIM != 1:
         raise Exception("to_vector only defined for 1 dimensional ArrayAd objects")
 
-    vec = vector_auto_derivative()
+    ret = []
     for idx in range(self.rows):
-        vec.push_back(self.read(idx))
+        ret.append(self.read(idx))
 
-    return vec
+    return ret
 
 %}
   %extend {

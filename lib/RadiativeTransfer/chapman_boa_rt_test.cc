@@ -26,7 +26,7 @@ public:
     Array<double, 1> sza(1);
     sza = 85.573;
 
-    boost::shared_ptr<AtmosphereOco> atmosphere(boost::dynamic_pointer_cast<AtmosphereOco>(config_atmosphere));
+    boost::shared_ptr<AtmosphereStandard> atmosphere(boost::dynamic_pointer_cast<AtmosphereStandard>(config_atmosphere));
     boa_rt.reset(new ChapmanBoaRT(atmosphere, sza, sb));
   }
 

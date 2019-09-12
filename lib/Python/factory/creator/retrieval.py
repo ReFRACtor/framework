@@ -8,6 +8,10 @@ from .. import param
 
 from refractor import framework as rf
 
+# Class allow capturing the list of retrieval components from the configuration system elsewhere
+class RetrievalComponents(OrderedDict):
+    pass
+
 class RetrievalBaseCreator(Creator):
 
     retrieval_components = param.Dict()
@@ -144,7 +148,7 @@ class SVObserverComponents(Creator):
                 dflt_order = len(order) + filtered_components.index(comp_tuple)
                 return dflt_order
 
-        return OrderedDict(sorted(filtered_components, key=sort_key))
+        return RetrievalComponents(sorted(filtered_components, key=sort_key))
 
 class StateVector(Creator):
 
@@ -212,10 +216,17 @@ class CovarianceByComponent(Creator):
 
     retrieval_components = param.Dict()
     values = param.Dict() 
+    interstep_storage = param.Dict(required=False)
 
     def create(self, **kwargs):
 
-        cov_inputs = self.values()
+        storage = self.interstep_storage()
+        if storage is not None:
+            if len(storage) == 0:
+                storage.update(self.values())
+            cov_inputs = storage
+        else:
+            cov_inputs = self.values()
 
         # Gather covariance matrices and do input checking
         covariances = []
@@ -242,8 +253,6 @@ class CovarianceByComponent(Creator):
                 used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
             else:
                 used_cov = rc_cov
-
-            used_indexes = np.array(np.nonzero(rc_obj.used_flag_value))
 
             # Check that the matrix is postive definite to help reduce debugging time by highlighting this fact before
             # the full Cholesky matrix decomposition within the framework fails

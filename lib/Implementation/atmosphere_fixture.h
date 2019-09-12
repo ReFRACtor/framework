@@ -1,7 +1,7 @@
 #ifndef ATMOSPHERE_FIXTURE_H
 #define ATMOSPHERE_FIXTURE_H
 #include "configuration_fixture.h"
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "pressure_level_input.h"
 #include "state_vector.h"
 
@@ -25,7 +25,7 @@ public:
   virtual ~AtmosphereFixture() {statev->remove_observer(*atm);}
 
   /// Atmosphere read from ConfigurationFixture
-  boost::shared_ptr<AtmosphereOco> atm;
+  boost::shared_ptr<AtmosphereStandard> atm;
 
   /// Pressure levels we have input data on.
   boost::shared_ptr<PressureLevelInput> press_level;

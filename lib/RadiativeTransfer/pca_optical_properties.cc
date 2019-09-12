@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-PCAOpticalPropertiesAtmosphere::PCAOpticalPropertiesAtmosphere(const boost::shared_ptr<AtmosphereOco>& atm, const SpectralDomain& spec_domain, int channel_index, std::string primary_absorber, bool show_progress)
+PCAOpticalPropertiesAtmosphere::PCAOpticalPropertiesAtmosphere(const boost::shared_ptr<AtmosphereStandard>& atm, const SpectralDomain& spec_domain, int channel_index, std::string primary_absorber, bool show_progress)
 : atmosphere(atm), show_progress_(show_progress), channel_index_(channel_index)
 {
     wavenumber_.reference(spec_domain.wavenumber());

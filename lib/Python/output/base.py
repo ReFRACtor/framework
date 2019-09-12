@@ -18,7 +18,7 @@ class OutputBase(object):
             group_name += "Simulation/"
 
         if step_index is not None:
-            group_name += "Step_{}/".format(self.step_index + 1)
+            group_name += "Step_{}/".format(step_index + 1)
 
         # See if we can determine and iteration index for retrievals
         if iter_index is not None:

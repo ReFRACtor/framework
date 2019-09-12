@@ -327,16 +327,26 @@ double GroundBrdfSoil::black_sky_albedo(int Spec_index, double Sza)
     return black_sky_albedo_soil_f(params.dataFirst(), &Sza);
 }
 
+double GroundBrdfVeg::kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm)
+{
+    return exact_brdf_value_veg_f(params.dataFirst(), &Sza, &Vza, &Azm);
+}
+
 double GroundBrdfVeg::kernel_value(int Spec_index, double Sza, double Vza, double Azm)
 {
     blitz::Array<double, 1> params = kernel_value_params(Spec_index);
-    return exact_brdf_value_veg_f(params.dataFirst(), &Sza, &Vza, &Azm);
+    return kernel_value_at_params(params, Sza, Vza, Azm);
+}
+
+double GroundBrdfSoil::kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm)
+{
+    return exact_brdf_value_soil_f(params.dataFirst(), &Sza, &Vza, &Azm);
 }
 
 double GroundBrdfSoil::kernel_value(int Spec_index, double Sza, double Vza, const double Azm)
 {
     blitz::Array<double, 1> params = kernel_value_params(Spec_index);
-    return exact_brdf_value_soil_f(params.dataFirst(), &Sza, &Vza, &Azm);
+    return kernel_value_at_params(params, Sza, Vza, Azm);
 }
 
 std::string GroundBrdf::state_vector_name_i(int i) const {

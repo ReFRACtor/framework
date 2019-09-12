@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "spectrum_effect_imp_base.h"
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "stokes_coefficient.h"
 
 namespace FullPhysics {
@@ -84,8 +84,8 @@ private:
   // Fluorescence contribution
   mutable ArrayAd<double, 1> f_contrib_ad;
   
-  // We need to use AtmosphereOco specific methods
-  boost::shared_ptr<AtmosphereOco> atm_oco;
+  // We need to use AtmosphereStandard specific methods
+  boost::shared_ptr<AtmosphereStandard> atm_oco;
 
   // The fluorescence contribution needs to be
   // scaled by the stokes value

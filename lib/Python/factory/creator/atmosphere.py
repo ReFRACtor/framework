@@ -36,17 +36,17 @@ class AtmosphereCreator(Creator):
             raise CreatorError("Surface temperature can not be defined without ground being defined for atmosphere setup")
 
         if aerosol and ground and surf_temp:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitude, self.constants())
         if ground and surf_temp:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitude, self.constants())
         elif aerosol and ground:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitude, self.constants())
         elif aerosol:
-            return rf.AtmosphereOco(absorber, pressure, temperature, aerosol, relative_humidity, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, altitude, self.constants())
         elif ground:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, ground, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, ground, altitude, self.constants())
         else:
-            return rf.AtmosphereOco(absorber, pressure, temperature, relative_humidity, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, altitude, self.constants())
 
 
 class PressureSigma(CreatorFlaggedValue):

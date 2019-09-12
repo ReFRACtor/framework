@@ -19,27 +19,29 @@ def test_fm(config_forward_model):
     assert config_forward_model.stacked_pixel_range(0).first() == 0
     assert config_forward_model.stacked_pixel_range(0).last() == 835
 
-def test_to_vector():
-    '''This illustrates a problem with to_vector.'''
+def test_to_list():
+    '''This ensures there are no problems with ArrayAd::to_list'''
     a = rf.ArrayAd_double_1(2,3)
     a[0] = rf.AutoDerivativeDouble(1)
     a[1] = rf.AutoDerivativeDouble(2)
-    # This gives an error, because the vector in a.to_vector() gets freeded
+    # If a vector was used instead of a list then the following would
+    # result in an error, because the vector gets freeded
     # while we still have the [0] in python - leading to a pointer to free
     # memory. Not a general problem, most of our vectors are native types
     # (e.g., double) or boost::shared_ptr which doesn't have the same issue.
     # A std::vector<AutoDerivative<double> > is a special case that causes
-    # problems.
+    # problems. Therefore, its best to create a list on the Python side
+    # iteratively instead of letting SWIG convert a vector to a list.
     #
     # Run with "valgrind --log-file=temp.log --malloc-fill=0xff
     # --free-fill=0xff `which python` `which pytest`" to force freeded data
-    # to NaN so we can fully illustrate this problem
+    # to NaN so we can fully illustrate this problem.
+    # This passes now, but failed when a vector was used previously.
  
-    if(False):
-        assert a.to_vector()[0].value == a[0].value
+    assert a.to_list()[0].value == a[0].value
 
-    # This succeeds, because the vector is still around in "t" while the
-    # value is being used.
-    t = a.to_vector()
+    # Even with a vector, this would succeeds, because the vector is still
+    # around in "t" while the value is being used.
+    t = a.to_list()
     assert t[0].value == a[0].value
     
