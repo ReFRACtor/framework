@@ -4,6 +4,8 @@
 #include "pca_binning.h"
 #include "pca_eigensolver.h"
 
+#include "ostream_pad.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -165,3 +167,26 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
 {
 } 
+
+void PCARt::print(std::ostream& Os, bool Short_form) const 
+{
+    OstreamPad opad(Os, "    ");
+    Os << "PCARt\n";
+    Os << "  ";
+    RadiativeTransferFixedStokesCoefficient::print(opad, Short_form);
+    opad.strict_sync();
+    Os << "\nPrimary absorber: " << primary_absorber << "\n"
+       << "Number EOFs: " << num_eofs << "\n";
+
+    Os << "\n  LIDORT RT:\n";
+    lidort_rt->print(opad, Short_form);
+    opad.strict_sync();
+
+    Os << "\n  2stream RT:\n";
+    twostream_rt->print(opad, Short_form);
+    opad.strict_sync();
+
+    Os << "\n  First Order RT:\n";
+    first_order_rt->print(opad, Short_form);
+    opad.strict_sync();
+}

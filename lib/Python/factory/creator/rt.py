@@ -147,3 +147,32 @@ class LsiRt(Creator):
 
         lsi_config = rf.HdfFile(self.lsi_config_file())
         return rf.LsiRt(rt_low, rt_high, lsi_config, "LSI")
+
+class PCARt(Creator):
+
+    atmosphere = param.InstanceOf(rf.RtAtmosphere)
+    stokes_coefficient = param.Array(dims=2)
+    solar_zenith = param.ArrayWithUnit(dims=1)
+    observation_zenith = param.ArrayWithUnit(dims=1)
+    observation_azimuth = param.ArrayWithUnit(dims=1)
+
+    num_eofs = param.Scalar(int)
+    primary_absorber = param.Scalar(str)
+    num_streams = param.Scalar(int)
+    num_mom = param.Scalar(int)
+
+    use_solar_sources = param.Scalar(bool, default=True)
+    use_thermal_emission = param.Scalar(bool, default=False)
+
+    def create(self, **kwargs):
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficient())
+
+        return rf.PCARt(self.atmosphere(), 
+                self.primary_absorber(),
+                self.num_eofs(),
+                stokes_object, 
+                self.solar_zenith().convert("deg").value, 
+                self.observation_zenith().convert("deg").value, 
+                self.observation_azimuth().convert("deg").value, 
+                self.num_streams(), self.num_mom(), 
+                self.use_solar_sources(), self.use_thermal_emission())
