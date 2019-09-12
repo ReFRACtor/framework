@@ -67,6 +67,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+        std::cerr << "Processing bin: " << bin_idx << std::endl;
         // Solve PCA solution for intermediate variable optical properties for the bin
 
         // Copy out the intermediate variable values for the spectral domain values in the current bin
@@ -94,14 +95,18 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         // Compute mean IV values
         Array<double, 2> bin_mean_iv(num_levels, num_iv_var);
         for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
-            bin_mean_iv(Range::all(), var_idx) = pca_solver.data_mean()[var_idx];
+            bin_mean_iv(Range::all(), var_idx) = exp(pca_solver.data_mean()[var_idx]);
         }
         
         // Compute bin mean intensity from each RT 
         ArrayAd<double, 2> bin_mean_iv_ad(bin_mean_iv);
+        std::cerr << "bin mean iv: " << std::endl << bin_mean_iv << std::endl;
 
+        std::cerr << "LIDORT mean" << std::endl;
         Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
+        std::cerr << "2stream mean" << std::endl;
         Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
+        std::cerr << "FO mean" << std::endl;
         Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
 
         // Compute bin mean plus eof and mean minus eof intensity from each RT
@@ -118,22 +123,29 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             Array<double, 2> bin_minus_iv(num_levels, num_iv_var);
 
             for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
-                bin_plus_iv(eof_idx, Range::all(), var_idx) = 
-                    pca_solver.data_mean()[var_idx] + pca_solver.eof_properties()[var_idx](Range::all(), eof_idx);
+                std::cerr << "eof properties " << var_idx << ": " << std::endl << pca_solver.eof_properties()[var_idx] << std::endl;
 
-                bin_plus_iv(eof_idx, Range::all(), var_idx) = 
-                    pca_solver.data_mean()[var_idx] - pca_solver.eof_properties()[var_idx](Range::all(), eof_idx);
+                bin_plus_iv(Range::all(), var_idx) = 
+                    exp(pca_solver.data_mean()[var_idx] + pca_solver.eof_properties()[var_idx](Range::all(), eof_idx));
+
+                bin_plus_iv(Range::all(), var_idx) = 
+                    exp(pca_solver.data_mean()[var_idx] - pca_solver.eof_properties()[var_idx](Range::all(), eof_idx));
             }
 
             ArrayAd<double, 2> bin_plus_iv_ad(bin_plus_iv);
             ArrayAd<double, 2> bin_minus_iv_ad(bin_minus_iv);
 
+            std::cerr << "bin plus iv: " << std::endl << bin_plus_iv << std::endl;
+
+            std::cerr << "LIDORT +/-" << std::endl;
             lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
             lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
 
+            std::cerr << "2stream +/-" << std::endl;
             twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
             twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
 
+            std::cerr << "FO +/-" << std::endl;
             first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
             first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
 
@@ -146,6 +158,8 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
                 lidort_plus, twostream_plus, first_order_plus,
                 lidort_minus, twostream_minus, first_order_minus);
 
+        std::cerr << "corrections: " << bin_corrections << std::endl;
+
         // Compute 2stream and first order for all points in the bin and use correction to get final values
         for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
             int grid_idx = bins[bin_idx](dom_idx);
@@ -154,8 +168,12 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             Array<double, 2> dom_iv( bin_inp_iv[bin_idx](Range::all(), Range::all(), dom_idx) );
             ArrayAd<double, 2> dom_iv_ad(dom_iv);
 
+            std::cerr << "All bin grid points RT: " << dom_idx << std::endl;
+
             Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, Spec_index, dom_iv_ad));
             Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, dom_iv_ad));
+
+            std::cerr << "Compute final RT: " << dom_idx << std::endl;
 
             stokes_output(grid_idx, Range::all()) = 
                 bin_corrections(dom_idx, Range::all()) * twostream_full(Range::all()) + first_order_full(Range::all());

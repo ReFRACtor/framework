@@ -172,7 +172,7 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
         int num_data = gridded_data[ivar].rows();
 
         Array<double, 1> var_mean(num_data);
-        var_mean = exp(mean(log(gridded_data[ivar]), i2));
+        var_mean = mean(log(gridded_data[ivar]), i2);
         atmos_mean_.push_back(var_mean);
     }
 
@@ -314,7 +314,7 @@ std::vector<blitz::Array<double, 1> > PCAEigenSolverFortran::data_mean() const
 {
     std::vector<blitz::Array<double, 1> > result;
     for (int ivar = 0; ivar < atmos_mean_.cols(); ivar++) {
-        result.push_back( Array<double, 1>(exp(atmos_mean_(Range::all(), ivar))) );
+        result.push_back( Array<double, 1>(atmos_mean_(Range::all(), ivar)) );
     }
     return result;
 }
