@@ -97,10 +97,6 @@ public:
 
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<Absorber> clone() const;
-  virtual boost::shared_ptr<Absorber> clone
-   (const boost::shared_ptr<Pressure>& Press,
-    const boost::shared_ptr<Temperature>& Temp,
-    const std::vector<boost::shared_ptr<Altitude> >& Alt) const;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& Gas_name) const;
   const Pressure& pressure() const {return *press;}
 

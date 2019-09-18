@@ -95,20 +95,6 @@ public:
 
   virtual boost::shared_ptr<Absorber> clone() const = 0;
 
-//-----------------------------------------------------------------------
-/// This version of clone takes a Pressure, Altitude and Temperature
-/// to use. The intent is that the Pressure, Altitude and Temperature
-/// has been cloned from the original Pressure, Altitude and
-/// Temperature (although this class has no way to verify this). This
-/// allows sets of objects to be cloned using a common Pressure,
-/// Altitude and Temperature clones, e.g. Atmosphere.
-//-----------------------------------------------------------------------
-
-  virtual boost::shared_ptr<Absorber> clone
-    (const boost::shared_ptr<Pressure>& Press,
-     const boost::shared_ptr<Temperature>& Temp,
-     const std::vector<boost::shared_ptr<Altitude> >& Alt) const = 0;
-
 };
 }
 #endif

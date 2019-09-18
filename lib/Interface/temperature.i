@@ -35,8 +35,6 @@ public:
   temperature(const AutoDerivativeWithUnit<double>& Press) const = 0;
   virtual ArrayAdWithUnit<double, 1> temperature_grid(const Pressure& P) const;
   virtual boost::shared_ptr<Temperature> clone() const = 0;
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   std::string print_to_string() const;
 };
 } 

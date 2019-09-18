@@ -63,10 +63,6 @@ public:
   virtual AutoDerivative<double> xgas(const std::string& Gas_name) const;
   AutoDerivative<double> average_vmr(const std::string& Gas_name) const;
   virtual boost::shared_ptr<Absorber> clone() const;
-  virtual boost::shared_ptr<Absorber> clone
-   (const boost::shared_ptr<Pressure>& Press,
-    const boost::shared_ptr<Temperature>& Temp,
-    const std::vector<boost::shared_ptr<Altitude> >& Alt) const;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const;
   virtual boost::shared_ptr<GasAbsorption> gas_absorption_ptr(const std::string& Gas_name) const;
   %python_attribute(pressure_sublayer, ArrayWithUnit<double, 1>)

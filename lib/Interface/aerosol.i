@@ -42,8 +42,5 @@ public:
 
   %python_attribute(number_particle, int)
   boost::shared_ptr<Aerosol> clone() const;
-  boost::shared_ptr<Aerosol> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const;
 };
 }

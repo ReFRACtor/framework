@@ -15,9 +15,7 @@ public:
   TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
 		    double Temp_offset,
 		    bool Temp_flag);
-  virtual boost::shared_ptr<Temperature> clone() const;
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const ;
+  virtual boost::shared_ptr<Temperature> clone() const = 0;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(temperature_offset, double);
