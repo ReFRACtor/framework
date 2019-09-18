@@ -29,9 +29,6 @@ public:
 		       const boost::shared_ptr<RelativeHumidity>& Rh);
   virtual ~AerosolPropertyRhHdf() {}
   virtual boost::shared_ptr<AerosolProperty> clone() const;
-  virtual boost::shared_ptr<AerosolProperty> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const;
   virtual ArrayAd<double, 1> extinction_coefficient_each_layer(double wn) 
     const;
   virtual ArrayAd<double, 1> extinction_coefficient_each_layer_not_used(double wn) 
