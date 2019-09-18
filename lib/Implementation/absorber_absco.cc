@@ -667,7 +667,7 @@ boost::shared_ptr<Absorber> AbsorberAbsco::clone() const
     temp->clone(pressure_clone);
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    alt_clone.push_back(a->clone(pressure_clone, temperature_clone));
+    alt_clone.push_back(a->clone());
   return clone(pressure_clone, temperature_clone, alt_clone);
 }
 

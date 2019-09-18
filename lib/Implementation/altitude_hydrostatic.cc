@@ -198,10 +198,8 @@ void AltitudeHydrostatic::calc_alt_and_grav() const
 
 // See base class for description.
 
-boost::shared_ptr<Altitude> AltitudeHydrostatic::clone(
-    const boost::shared_ptr<Pressure>& Press,
-    const boost::shared_ptr<Temperature>& Temp) const
+boost::shared_ptr<Altitude> AltitudeHydrostatic::clone() const
 {
   return boost::shared_ptr<Altitude>(
-     new AltitudeHydrostatic(Press, Temp, latitude, surface_height));
+     new AltitudeHydrostatic(p->clone(), t->clone(), latitude, surface_height));
 }
