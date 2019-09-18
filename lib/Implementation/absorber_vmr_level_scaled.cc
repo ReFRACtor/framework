@@ -39,11 +39,10 @@ blitz::Array<double, 1> AbsorberVmrLevelScaled::pressure_profile() const
   return press->pressure_grid().value.value();
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone
-(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
 {
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevelScaled(Press, vmr_profile_, coeff(0).value(),used_flag(0),
+    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile_, coeff(0).value(),used_flag(0),
 				gas_name()));
 }
 

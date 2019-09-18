@@ -30,8 +30,6 @@ public:
   { return gas_name() + " VMR for Press Lvl " + 
       boost::lexical_cast<std::string>(i + 1); }
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
 
 //-----------------------------------------------------------------------
 /// Volume mixing ratio on the fixed pressure levels.

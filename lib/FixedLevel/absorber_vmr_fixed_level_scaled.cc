@@ -36,15 +36,8 @@ AbsorberVmrFixedLevelScaled:: AbsorberVmrFixedLevelScaled
 
 boost::shared_ptr<AbsorberVmr> AbsorberVmrFixedLevelScaled::clone() const
 {
-  boost::shared_ptr<Pressure> pressure_clone = press->clone();
-  return clone(pressure_clone);
-}
-
-boost::shared_ptr<AbsorberVmr> AbsorberVmrFixedLevelScaled::clone
-(const boost::shared_ptr<Pressure>& Press) const
-{
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrFixedLevelScaled(Press, press_level, vmr0, 
+    (new AbsorberVmrFixedLevelScaled(press->clone(), press_level, vmr0,
 				     used_flag(0), scale_factor(), gas_name()));
 }
 
