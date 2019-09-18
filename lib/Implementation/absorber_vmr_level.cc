@@ -28,11 +28,12 @@ AbsorberVmrLevel::AbsorberVmrLevel
 {
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone
-(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
+  //TODO: Unlike other classes, rather than pres->clone(), call with no args originally created new empty pointer to Pressure object.
+  //
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevel(Press, coeff.value(),used_flag,
+    (new AbsorberVmrLevel(press->clone(), coeff.value(),used_flag,
 			  gas_name()));
 }
 
