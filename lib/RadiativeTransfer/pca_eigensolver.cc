@@ -80,9 +80,10 @@ blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>
         throw Exception("First Order number of stokes is inconsistent");
     }
 
+    firstIndex i1;
     Array<double, 1> hi_ss( lidort_mean + first_order_mean );
     Array<double, 1> lo_ss( twostream_mean + first_order_mean );
-    Array<double, 1> id_mean( log( hi_ss / lo_ss ) );
+    Array<double, 1> id_mean( where(lo_ss(i1) > 0, log( hi_ss / lo_ss ), 0.0) );
 
     Array<double, 2> term_1(num_eofs, num_stokes);
     Array<double, 2> term_2(num_eofs, num_stokes);
@@ -90,11 +91,11 @@ blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
         Array<double, 1> hi_ss_plus( lidort_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
         Array<double, 1> lo_ss_plus( twostream_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
-        Array<double, 1> id_plus( log(hi_ss_plus / lo_ss_plus) );
+        Array<double, 1> id_plus( where(lo_ss_plus(i1) > 0, log(hi_ss_plus / lo_ss_plus), 0.0) );
 
         Array<double, 1> hi_ss_minus( lidort_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
         Array<double, 1> lo_ss_minus( twostream_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
-        Array<double, 1> id_minus( log(hi_ss_minus / lo_ss_minus) );
+        Array<double, 1> id_minus( where(lo_ss_minus(i1) > 0, log(hi_ss_minus / lo_ss_minus), 0.0) );
   
         term_1(eof_idx, all) = (id_plus - id_minus) / 2;
         term_2(eof_idx, all) = (id_plus + id_minus - 2*id_mean) / 2;
@@ -111,6 +112,8 @@ blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>
         }
         correction(point_idx, all) = exp(ieof);
     }
+
+    return correction;
 }
 
 // ----------
