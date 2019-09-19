@@ -22,10 +22,12 @@ void PCABinning::compute_bins()
     int nlayer = opt_props_->gas_optical_depth().rows();
     int ndat = opt_props_->primary_gas_dominates().rows();
     
-    num_bin_points_.reference(Array<int, 1>(num_bins_, ColumnMajorArray<1>()));
+    // NCNT in the fortran binning code is allocated as 0:NBIN, so allocated as 1+ number of bins to avoid
+    // invalid memory writes
+    Array<int, 1> num_points(num_bins_+1, ColumnMajorArray<1>());
 
     // Binning routine packs all indexes one after another
-    Array<int, 1> indexes_packed(Array<int, 1>(ndat, ColumnMajorArray<1>()));
+    Array<int, 1> indexes_packed(ndat, ColumnMajorArray<1>());
     
     // Unused value but required to complete interface
     Array<int, 1> bins(ndat, ColumnMajorArray<1>());
@@ -51,7 +53,7 @@ void PCABinning::compute_bins()
                 &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
                 binlims.dataFirst(),
                 taug.dataFirst(), 
-                num_bin_points_.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
+                num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
             break;
         case UVVSWIR_V4:
             create_bin_uvvswir_v4(
@@ -60,7 +62,7 @@ void PCABinning::compute_bins()
                 tau_tot.dataFirst(), 
                 omega.dataFirst(), 
                 opt_props_->primary_gas_dominates().dataFirst(), 
-                num_bin_points_.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
+                num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
             break;
         default:
             Exception err;
@@ -72,12 +74,16 @@ void PCABinning::compute_bins()
     // Unpack indexes
     int pack_start = 0;
     for(int bidx = 0; bidx < num_bins_; bidx++) {
-        int npoints = num_bin_points_(bidx);
+        int npoints = num_points(bidx);
         Array<int, 1> curr_indexes(npoints);
         // Remove 1 to make zero based indexes
         curr_indexes = indexes_packed(Range(pack_start, pack_start + npoints-1)) - 1;;
         pack_start += npoints;
         bin_indexes_.push_back(curr_indexes);
     }
+
+    // Copy over bin number of points to a correctly sized object
+    num_bin_points_.reference(Array<int, 1>(num_bins_, ColumnMajorArray<1>()));
+    num_bin_points_ = num_points(Range(0, num_bins_-1));
 
 }

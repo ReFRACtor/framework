@@ -103,7 +103,9 @@ subroutine create_bin_UVVSWIR_V4 &
 
 !  Initialize
 
-     NCNT = 0 ; NCNT_G = 0; INDEX = 0
+     NCNT = 0 
+     NCNT_G = 0
+     INDEX = 0
 
       !write(*,*)'gasdat',SUM(GASDAT(:,1))
       !maxim= DLOG(SUM(GASDAT(:,1)))     !initialize minimum and maximum values to first total OD
