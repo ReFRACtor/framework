@@ -1,3 +1,5 @@
+from enum import Enum
+
 import numpy as np
 
 from .base import Creator
@@ -156,7 +158,10 @@ class PCARt(Creator):
     observation_zenith = param.ArrayWithUnit(dims=1)
     observation_azimuth = param.ArrayWithUnit(dims=1)
 
+    bin_method = param.Scalar(int)
+    num_bins = param.Scalar(int)
     num_eofs = param.Scalar(int)
+
     primary_absorber = param.Scalar(str)
     num_streams = param.Scalar(int)
     num_mom = param.Scalar(int)
@@ -169,6 +174,7 @@ class PCARt(Creator):
 
         return rf.PCARt(self.atmosphere(), 
                 self.primary_absorber(),
+                self.bin_method(), self.num_bins(),
                 self.num_eofs(),
                 stokes_object, 
                 self.solar_zenith().convert("deg").value, 

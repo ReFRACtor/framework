@@ -11,7 +11,13 @@ namespace FullPhysics {
 
 class PCABinning {
 public:
-    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, int num_bins);
+    // Defined here so it doesn't end up in the global namespace for SWIG
+    enum Method {
+        UVVSWIR_V3 = 3,
+        UVVSWIR_V4 = 4,
+    };
+
+    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, const Method bin_method, const int num_bins);
     virtual ~PCABinning() = default;
 
     /// Number of spectral points in each bin
@@ -24,6 +30,8 @@ private:
     void compute_bins();
 
     boost::shared_ptr<PCAOpticalProperties> opt_props_;
+
+    Method bin_method_;
     int num_bins_;
 
     blitz::Array<int, 1> num_bin_points_;

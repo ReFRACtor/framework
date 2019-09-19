@@ -59,7 +59,7 @@ contains
 subroutine create_bin_UVVSWIR_V4 &
             ( E_nlayers, E_ndat, E_maxbins,           &
               ndat, nlay, nbin, gasdat, taudp, omega, abs_flag, &
-              ncnt,index,bin )
+              ncnt, index, bin ) bind(C)
 
    IMPLICIT NONE
 
@@ -73,30 +73,31 @@ subroutine create_bin_UVVSWIR_V4 &
 
 !  Dimensions (only for I/O)
 
-   integer, intent(in) :: E_nlayers, E_ndat, E_maxbins
+   integer(c_int), intent(in) :: E_nlayers, E_ndat, E_maxbins
 
 !  Numbers
 
-   integer, intent(in) :: NLAY, NBIN, NDAT
+   integer(c_int), intent(in) :: NLAY, NBIN, NDAT
 
 !  Optical data
 
-   real(kind=dp), intent(in) :: taudp  (E_nlayers,E_ndat)
-   real(kind=dp), intent(in) :: gasdat (E_nlayers,E_ndat)
-   real(kind=dp), intent(in) :: omega  (E_nlayers,E_ndat)
-   integer, intent(in)       :: abs_flag(E_ndat)
+   real(kind=c_double), intent(in) :: taudp  (E_nlayers,E_ndat)
+   real(kind=c_double), intent(in) :: gasdat (E_nlayers,E_ndat)
+   real(kind=c_double), intent(in) :: omega  (E_nlayers,E_ndat)
+   integer(c_int), intent(in)       :: abs_flag(E_ndat)
 
 !  outputs
 !  -------
 
-   INTEGER, intent(out) ::  NCNT(0:E_Maxbins), INDEX(E_ndat)
+   INTEGER(c_int), intent(out) ::  NCNT(0:E_Maxbins), INDEX(E_ndat)
+   INTEGER(c_int), intent(out) ::  BIN(NDAT)
 
 !  local variables (Dynamic memory here!!)
 !  ---------------
 
    INTEGER K, KC, IGBIN, NGBIN
    INTEGER W, COUNT, TEMPINDEX
-   INTEGER BIN(NDAT), BINDEX(NDAT), BIN_G(NDAT), NCNT_G(0:NBIN)
+   INTEGER BINDEX(NDAT), BIN_G(NDAT), NCNT_G(0:NBIN)
    DOUBLE PRECISION TAUTOT, STAUTOT(NDAT), MINIM, MAXIM, INCREMENT,TEMPARRAY(NDAT)
    DOUBLE PRECISION GASBINLIMS(0:NBIN), HALFVALUE, MID_STAU(0:NBIN), LIST_BINS(0:(NBIN-1))
 
@@ -1044,7 +1045,7 @@ end subroutine create_bin_UVVSWIR_Rob_8bin_V3
 
 subroutine create_bin_UVVSWIR_V3 &
             ( E_nlayers, E_ndat, E_maxbins,      &
-              ndat, nlay, nbin, binlims, gasdat, taudp, omega, abs_flag, &
+              ndat, nlay, nbin, binlims, gasdat, &
               ncnt_new, index_new, bin_new ) bind(C)
 
    IMPLICIT NONE
@@ -1069,10 +1070,7 @@ subroutine create_bin_UVVSWIR_V3 &
 
 !  Optical data
 
-   real(kind=c_double), intent(in) :: taudp  (E_nlayers,E_ndat)
    real(kind=c_double), intent(in) :: gasdat (E_nlayers,E_ndat)
-   real(kind=c_double), intent(in) :: omega  (E_nlayers,E_ndat)
-   integer(c_int), intent(in)      :: abs_flag(E_ndat)
 
 !  outputs
 !  -------

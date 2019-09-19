@@ -9,15 +9,29 @@
 #include "twostream_rt.h"
 #include "first_order_rt.h"
 
+#include "pca_binning.h"
+
 namespace FullPhysics {
 
 /****************************************************************//**
+ Implements a radiative transfer using the PCA method where
+ the requested spectral domain is broken up into bins based on
+ their optical properties.
+ 
+ Each bin has higher accuracy computations done for the mean value 
+ and a certain number of EOF perturbations of the mean. A 
+ correction  factor is determined how to combine the binned 
+ computations with low accuracy RT computation.
+
+ This class uses LIDORT, 2steam and First Order together to 
+ speed up multiple scattering RT computations.
 *******************************************************************/
 
 class PCARt : public RadiativeTransferFixedStokesCoefficient {
 public:
     PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
           const std::string Primary_absorber,
+          const PCABinning::Method Bin_method, const int Num_bins,
           const int Num_eofs,
           const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
           const blitz::Array<double, 1>& Sza, 
@@ -46,6 +60,9 @@ private:
   boost::shared_ptr<AtmosphereStandard> atm;
 
   std::string primary_absorber;
+
+  PCABinning::Method bin_method;
+  int num_bins;
   int num_eofs;
 
   boost::shared_ptr<LidortRt> lidort_rt;

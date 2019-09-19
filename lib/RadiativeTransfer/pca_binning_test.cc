@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE(compare_with_offline)
     // Matches 
     auto num_bin_points_shape = test_data->read_shape<1>("num_bin_points");
     int num_bins = num_bin_points_shape(0);
-    auto binning = PCABinning(opt_props, num_bins);
+    auto binning = PCABinning(opt_props, PCABinningMethod::UVVSWIR_V4, num_bins);
 
     // Get expected values
     auto num_bin_points_expt = test_data->read_field<int, 1>("num_bin_points");

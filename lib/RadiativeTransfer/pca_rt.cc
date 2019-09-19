@@ -1,7 +1,6 @@
 #include "pca_rt.h"
 
 #include "pca_optical_properties.h"
-#include "pca_binning.h"
 #include "pca_eigensolver.h"
 
 #include "ostream_pad.h"
@@ -11,6 +10,7 @@ using namespace blitz;
 
 PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
              const std::string Primary_absorber,
+             const PCABinning::Method Bin_method, const int Num_bins,
              const int Num_eofs,
              const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
              const blitz::Array<double, 1>& Sza, 
@@ -20,7 +20,8 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
              int Number_moments, 
              bool do_solar_sources, 
              bool do_thermal_emission) 
-: RadiativeTransferFixedStokesCoefficient(Stokes_coef), atm(Atm), primary_absorber(Primary_absorber), num_eofs(Num_eofs)
+: RadiativeTransferFixedStokesCoefficient(Stokes_coef), atm(Atm), primary_absorber(Primary_absorber), 
+  bin_method(Bin_method), num_bins(Num_bins), num_eofs(Num_eofs)
 {
     lidort_rt.reset(new LidortRt(Atm, Stokes_coef, Sza, Zen, Azm, false, Number_streams, Number_moments, true, do_solar_sources, do_thermal_emission, do_thermal_emission));
 
@@ -43,7 +44,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     boost::shared_ptr<PCAOpticalPropertiesAtmosphere> pca_opt(new PCAOpticalPropertiesAtmosphere(atm, Spec_domain, Spec_index, primary_absorber));
 
     // Compute bins
-    PCABinning pca_bin(pca_opt, 9); // Only implemented binning method requires 9 bins always
+    PCABinning pca_bin(pca_opt, bin_method, num_bins);
     auto bins = pca_bin.bin_indexes();
     Array<int, 1> num_bin_points = pca_bin.num_bin_points();
 
