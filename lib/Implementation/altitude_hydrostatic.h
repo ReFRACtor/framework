@@ -69,12 +69,7 @@ public:
   }
 
   virtual void print(std::ostream& Os) const { Os << "AltitudeHydrostatic"; }
-  virtual boost::shared_ptr<Altitude> clone() const
-  { boost::shared_ptr<Pressure> pnew = p->clone();
-    return clone(pnew, t->clone(pnew)); }
-  virtual boost::shared_ptr<Altitude> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-        const boost::shared_ptr<Temperature>& Temp) const;
+  virtual boost::shared_ptr<Altitude> clone() const;
 private:
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
     lin_type;

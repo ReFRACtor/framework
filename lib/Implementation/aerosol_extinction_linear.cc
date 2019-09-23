@@ -17,11 +17,10 @@ REGISTER_LUA_END()
 #endif
 
 // See base class for description
-boost::shared_ptr<AerosolExtinction> AerosolExtinctionLinear::clone
-(const boost::shared_ptr<Pressure>& Pres) const
+boost::shared_ptr<AerosolExtinction> AerosolExtinctionLinear::clone() const
 {
   return boost::shared_ptr<AerosolExtinction>
-    (new AerosolExtinctionLinear(Pres, used_flag, coeff.value(), 
+    (new AerosolExtinctionLinear(press->clone(), used_flag, coeff.value(),
 				 aerosol_name()));
 }
 

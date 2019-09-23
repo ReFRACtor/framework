@@ -29,10 +29,10 @@ TemperatureMet::TemperatureMet
 
 // See base class for description of this function
 boost::shared_ptr<Temperature> 
-TemperatureMet::clone(const boost::shared_ptr<Pressure>& Press) const
+TemperatureMet::clone() const
 {
   boost::shared_ptr<Temperature> res
-    (new TemperatureMet(met, Press, coefficient()(0).value(),
+    (new TemperatureMet(met, press->clone(), coefficient()(0).value(),
 			  used_flag_value()(0)));
   return res;
 }

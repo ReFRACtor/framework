@@ -17,9 +17,6 @@ public:
   AerosolPropertyHdf(const HdfFile& F, const std::string& Group_name,
 		     const boost::shared_ptr<Pressure>& Press);
   virtual boost::shared_ptr<AerosolProperty> clone() const;
-  virtual boost::shared_ptr<AerosolProperty> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const;
   virtual ArrayAd<double, 1> extinction_coefficient_each_layer(double wn) const;
   virtual ArrayAd<double, 1> scattering_coefficient_each_layer(double wn) const;
   virtual ArrayAd<double, 3> 

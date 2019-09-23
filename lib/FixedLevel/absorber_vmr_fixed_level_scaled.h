@@ -25,8 +25,6 @@ public:
   virtual std::string state_vector_name_i(int UNUSED(i)) const
   { return gas_name() + " Scaling factor"; }
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
 
 //-----------------------------------------------------------------------
 /// Scale factor.

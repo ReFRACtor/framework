@@ -39,8 +39,6 @@ public:
   // From PressureImpBase
   virtual ~TemperatureImpBase();
   virtual boost::shared_ptr<Temperature> clone() const = 0;
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   virtual AutoDerivativeWithUnit<double> 
   temperature(const AutoDerivativeWithUnit<double>& Press) const;
 

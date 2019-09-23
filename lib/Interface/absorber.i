@@ -61,10 +61,6 @@ public:
   virtual AutoDerivative<double> xgas(const std::string& Gas_name) const = 0;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const = 0;
   virtual boost::shared_ptr<Absorber> clone() const = 0;
-  virtual boost::shared_ptr<Absorber> clone
-    (const boost::shared_ptr<Pressure>& Press,
-     const boost::shared_ptr<Temperature>& Temp,
-     const std::vector<boost::shared_ptr<Altitude> >& Alt) const = 0;
   virtual void print(std::ostream& Os) const;
 
   // Functions so StateVectorObserver base class, see note above
@@ -116,10 +112,6 @@ public:
   virtual void add_observer(Observer<Absorber>& Obs); 
   virtual void remove_observer(Observer<Absorber>& Obs);
   virtual boost::shared_ptr<Absorber> clone() const = 0;
-  virtual boost::shared_ptr<Absorber> clone
-    (const boost::shared_ptr<Pressure>& Press,
-     const boost::shared_ptr<Temperature>& Temp,
-     const std::vector<boost::shared_ptr<Altitude> >& Alt) const = 0;
   virtual void notify_update(const StateVector& Sv);
   virtual void mark_used(const StateVector& Sv, 
 			 blitz::Array<bool, 1>& Used) const;

@@ -22,8 +22,7 @@ public:
 
   virtual void print(std::ostream& Os) const;
 
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
+  virtual boost::shared_ptr<AbsorberVmr> clone() const;
 
   //-----------------------------------------------------------------------
   /// Humidity from MET, used to write to output file

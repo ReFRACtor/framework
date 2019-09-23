@@ -17,7 +17,6 @@ public:
                          const std::string& Gas_name);
 
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
-  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
 
   %python_attribute(scale_factor, double)
   %python_attribute(scale_uncertainty, double)

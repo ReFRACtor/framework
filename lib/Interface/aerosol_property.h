@@ -44,17 +44,6 @@ public:
   virtual boost::shared_ptr<AerosolProperty> clone() const = 0;
 
 //-----------------------------------------------------------------------
-/// This version of clone takes a pressure to use. The intent is that
-/// the pressure has been cloned from the original pressure (although
-/// this class has no way to verify this). This allows sets of objects
-/// to be cloned using a common Pressure clone, e.g. Atmosphere.
-//-----------------------------------------------------------------------
-
-  virtual boost::shared_ptr<AerosolProperty> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const = 0;
-
-//-----------------------------------------------------------------------
 /// Return extinction coefficient for the given wave number, for each
 /// layer. 
 /// \param wn - Wavenumber

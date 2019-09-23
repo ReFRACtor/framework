@@ -86,11 +86,8 @@ public:
 /// can of course attach them after receiving the cloned object.
 //-----------------------------------------------------------------------
 
-  virtual boost::shared_ptr<Aerosol> clone() const 
-  { return clone(press->clone(), rh->clone()); }
-  virtual boost::shared_ptr<Aerosol> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-      const boost::shared_ptr<RelativeHumidity>& Rh) const;
+  virtual boost::shared_ptr<Aerosol> clone() const;
+
   std::vector<std::string> aerosol_name() const;
 
   blitz::Array<std::string, 1> aerosol_name_arr() const;

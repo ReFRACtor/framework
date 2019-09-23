@@ -34,9 +34,6 @@ public:
   { remove_observer_do(Obs, *this);}
 
   virtual boost::shared_ptr<Aerosol> clone() const = 0;
-  virtual boost::shared_ptr<Aerosol> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<RelativeHumidity>& Rh) const = 0;
 
 //-----------------------------------------------------------------------
 /// This calculates the portion of the phase function moments that

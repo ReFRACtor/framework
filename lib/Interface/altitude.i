@@ -53,9 +53,6 @@ public:
   gravity(const AutoDerivativeWithUnit<double>& P) 
     const = 0;
   virtual boost::shared_ptr<Altitude> clone() const = 0;
-  virtual boost::shared_ptr<Altitude> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<Temperature>& Temp) const = 0;
 };
 }
 %template(vector_altitude) std::vector<boost::shared_ptr<FullPhysics::Altitude> >;

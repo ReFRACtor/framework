@@ -17,9 +17,9 @@ AbsorberVmrLevelLog::AbsorberVmrLevelLog(const boost::shared_ptr<Pressure>& Pres
 {
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelLog::clone(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelLog::clone() const
 {
-    return boost::shared_ptr<AbsorberVmr>(new AbsorberVmrLevelLog(Press, Array<double, 1>(exp(coeff.value())), used_flag, gas_name()));
+    return boost::shared_ptr<AbsorberVmr>(new AbsorberVmrLevelLog(press->clone(), Array<double, 1>(exp(coeff.value())), used_flag, gas_name()));
 }
 
 void AbsorberVmrLevelLog::calc_vmr() const

@@ -16,11 +16,7 @@ public:
   virtual ~TemperatureOffset() {}
   virtual void print(std::ostream& Os) const;
 
-  virtual boost::shared_ptr<Temperature> clone() const
-  { return clone(press->clone()); }
-
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
+  virtual boost::shared_ptr<Temperature> clone() const = 0;
 
   virtual std::string sub_state_identifier() const { return "temperature_offset"; }
   virtual std::string state_vector_name_i(int i) const;
