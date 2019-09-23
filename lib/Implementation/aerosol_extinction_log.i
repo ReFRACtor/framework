@@ -19,7 +19,8 @@ public:
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name);
 
-virtual ~AerosolExtinctionLog() = default;
+  virtual ~AerosolExtinctionLog() = default;
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
 };
 }
 

@@ -23,8 +23,6 @@ public:
   { fill_cache(); range_check(i, 0, aext.rows() - 1); 
     return (aext(i) + aext(i + 1)) / 2; }
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
-  virtual boost::shared_ptr<AerosolExtinction> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   virtual void update_sub_state_hook() 
   { cache_stale = true; }
 

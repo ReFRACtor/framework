@@ -595,20 +595,20 @@ boost::shared_ptr<AtmosphereOco> AtmosphereOco::clone() const
 {
   boost::shared_ptr<Pressure> pressure_clone = pressure->clone();
   boost::shared_ptr<Temperature> temperature_clone = 
-    temperature->clone(pressure_clone);
+    temperature->clone();
   boost::shared_ptr<Ground> ground_clone;
   if(ground_ptr)
     ground_clone = ground_ptr->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    alt_clone.push_back(a->clone(pressure_clone, temperature_clone));
+    alt_clone.push_back(a->clone());
   boost::shared_ptr<Absorber> absorber_clone =
-    absorber->clone(pressure_clone, temperature_clone, alt_clone);
+    absorber->clone();
   boost::shared_ptr<RelativeHumidity> rh_clone =
-    rh->clone(absorber_clone, temperature_clone, pressure_clone);
+    rh->clone();
   boost::shared_ptr<Aerosol> aerosol_clone;
   if(aerosol)
-    aerosol_clone = aerosol->clone(pressure_clone, rh_clone);
+    aerosol_clone = aerosol->clone();
 
   boost::shared_ptr<AtmosphereOco> res
     (new AtmosphereOco(absorber_clone, pressure_clone, temperature_clone,

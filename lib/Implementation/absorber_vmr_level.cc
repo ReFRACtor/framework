@@ -52,19 +52,13 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
   init(Gas_name, Vmr, flag, Press, Mark_according_to_press, Pdep_start, in_map);
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone
-(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
+  //TODO: clone for mapping?
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevel(Press, coeff.value(),used_flag,
+    (new AbsorberVmrLevel(press->clone(), coeff.value(),used_flag,
 			  gas_name(), mapping));
 }
-
-blitz::Array<double, 1> AbsorberVmrLevel::pressure_profile() const
-{
-  return press->pressure_grid().value.value();
-}
-
 
 void AbsorberVmrLevel::calc_vmr() const
 {

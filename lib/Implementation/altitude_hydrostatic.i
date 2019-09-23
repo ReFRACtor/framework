@@ -24,8 +24,6 @@ public:
   virtual void notify_update(const Pressure& P);
   virtual void notify_update(const Temperature& T);
   boost::shared_ptr<Altitude> clone() const;
-  boost::shared_ptr<Altitude> clone(const boost::shared_ptr<Pressure>& Press,
-	    const boost::shared_ptr<Temperature>& Temp) const;
 };
 
 }

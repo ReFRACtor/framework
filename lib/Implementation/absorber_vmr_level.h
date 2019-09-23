@@ -31,10 +31,7 @@ public:
   virtual std::string state_vector_name_i(int i) const
   { return gas_name() + " " + mapping->name() + " VMR for Press Lvl " +
       boost::lexical_cast<std::string>(i + 1); }
-  virtual boost::shared_ptr<AbsorberVmr> clone() const
-  { return clone(boost::shared_ptr<Pressure>()); }
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
+  virtual boost::shared_ptr<AbsorberVmr> clone() const;
 
 //-----------------------------------------------------------------------
 /// Pressure levels that vmr is on

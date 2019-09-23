@@ -20,6 +20,8 @@ public:
                         const std::string& Gas_name);
 
     virtual ~AbsorberVmrLevelLog() = default;
+    
+    virtual boost::shared_ptr<AbsorberVmr> clone() const;
 };
 }
 #endif

@@ -21,12 +21,17 @@ REGISTER_LUA_END()
 /// Constructor.
 //-----------------------------------------------------------------------
 AbsorberVmrLevelScaled::AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
-                                                 const blitz::Array<double, 1>& Vmr_profile,
-                                                 double Scale,
-                                                 bool Scale_flag,
-                                                 const std::string& Gas_name)
+ const blitz::Array<double, 1>& Vmr_profile,
+ double Scale,                         
+ bool Scale_flag,
+ const std::string& Gas_name)
 : AbsorberVmrLevel(Press, Vmr_profile, Scale_flag, Gas_name, boost::make_shared<MappingScale>(Scale, Vmr_profile.copy()))
-{
+{ 
 }
 
-// TODO: Old print() also output vmr_profile do we want to add a call to a mapping->print() in these users of mapping classes?
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
+{
+    return boost::shared_ptr<AbsorberVmr>
+    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile_, coeff(0).value(),used_flag(0),
+                                gas_name()));
+}

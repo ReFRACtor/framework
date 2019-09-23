@@ -29,11 +29,10 @@ TemperatureLevelOffset::TemperatureLevelOffset
 
 // See base class for description of this function
 
-boost::shared_ptr<Temperature> 
-TemperatureLevelOffset::clone(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<Temperature> TemperatureLevelOffset::clone() const
 {
   boost::shared_ptr<Temperature> res
-    (new TemperatureLevelOffset(Press, temp_levels, coefficient()(0).value(),
+    (new TemperatureLevelOffset(press->clone(), temp_levels, coefficient()(0).value(),
 			  used_flag_value()(0)));
   return res;
 }

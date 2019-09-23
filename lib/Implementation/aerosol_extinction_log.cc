@@ -23,3 +23,11 @@ AerosolExtinctionLog::AerosolExtinctionLog(const boost::shared_ptr<Pressure>& Pr
               const blitz::Array<double, 1>& Aext,
               const std::string& Aerosol_name)
     : AerosolExtinctionLevel(Press, Flag, Aext, Aerosol_name, boost::make_shared<MappingLog>()) {}
+
+// See base class for description
+boost::shared_ptr<AerosolExtinction> AerosolExtinctionLog::clone() const
+{
+    return boost::shared_ptr<AerosolExtinction>
+    (new AerosolExtinctionLog(press->clone(), used_flag, blitz::Array<double, 1>(exp(coeff.value())), aerosol_name()));
+}
+

@@ -56,11 +56,10 @@ blitz::Array<double, 1> AbsorberVmrMet::pressure_profile() const
   return met->pressure_levels();
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrMet::clone
-(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrMet::clone() const
 {
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrMet(met, Press, coeff(0).value(),used_flag(0),
+    (new AbsorberVmrMet(met, press->clone(), coeff(0).value(),used_flag(0),
 			  gas_name()));
 }
 

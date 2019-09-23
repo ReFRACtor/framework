@@ -17,7 +17,6 @@ public:
                          const std::string& Gas_name);
 
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
-  virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
 
   // TODO: Re-add support for existing interface
   // %python_attribute(scale_factor, double)

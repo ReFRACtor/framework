@@ -52,17 +52,6 @@ public:
 
   virtual boost::shared_ptr<Altitude> clone() const = 0;
 
-//-----------------------------------------------------------------------
-/// This version of clone takes a pressure and temperature to use. The
-/// intent is that the pressure and temperature has been cloned from
-/// the original pressure and temperature (although this class has no
-/// way to verify this). This allows sets of objects to be cloned
-/// using a common Pressure and Temperature clone, e.g. Atmosphere.
-//-----------------------------------------------------------------------
-
-  virtual boost::shared_ptr<Altitude> 
-  clone(const boost::shared_ptr<Pressure>& Press,
-	const boost::shared_ptr<Temperature>& Temp) const = 0;
 };
 }
 #endif

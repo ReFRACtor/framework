@@ -24,3 +24,12 @@ AerosolShapeGaussian::AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Pr
              const std::string& Aerosol_name,
              const bool Linear_AOD)
   : AerosolExtinctionLevel(Press, Flag, Coeffs, Aerosol_name, boost::make_shared<MappingGaussian>(Linear_AOD)) {}
+
+// See base class for description
+boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone() const
+{
+    return boost::shared_ptr<AerosolExtinction>
+    (new AerosolShapeGaussian(press->clone(), used_flag, coeff.value(),
+                              aerosol_name(), linear_aod));
+}
+

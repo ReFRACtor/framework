@@ -18,6 +18,8 @@ public:
                          bool Scale_flag,
                          const std::string& Gas_name);
   virtual ~AbsorberVmrLevelScaled() {}
+
+  virtual boost::shared_ptr<AbsorberVmr> clone() const;
 };
 }
 #endif

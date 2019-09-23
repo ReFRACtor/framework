@@ -31,15 +31,6 @@ boost::shared_ptr<RelativeHumidity> RelativeHumidity::clone() const
   return boost::shared_ptr<RelativeHumidity>(new RelativeHumidity(absorber, temp, press));
 }
 
-
-boost::shared_ptr<RelativeHumidity> 
-RelativeHumidity::clone(const boost::shared_ptr<Absorber>& Abs, 
-			const boost::shared_ptr<Temperature>& Temp,
-			const boost::shared_ptr<Pressure>& Press) const
-{
-  return boost::shared_ptr<RelativeHumidity>(new RelativeHumidity(Abs, Temp, Press));
-}
-
 //-----------------------------------------------------------------------
 /// Print to a string.
 //-----------------------------------------------------------------------

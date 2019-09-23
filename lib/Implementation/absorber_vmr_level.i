@@ -23,7 +23,6 @@ public:
                      const std::string& Gas_name,
                      boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
     virtual boost::shared_ptr<AbsorberVmr> clone() const;
-    virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
     %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;
     %python_attribute(vmr_profile, blitz::Array<double, 1>);

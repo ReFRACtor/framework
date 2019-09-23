@@ -41,8 +41,6 @@ public:
   // From AerosolExtinctionImpBase
   virtual ~AerosolExtinctionImpBase();
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
-  virtual boost::shared_ptr<AerosolExtinction> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   virtual AutoDerivative<double> extinction_for_layer(int i) const;
   %python_attribute(aerosol_name, virtual std::string);
   %python_attribute(aerosol_extinction, virtual ArrayAd<double, 1>);

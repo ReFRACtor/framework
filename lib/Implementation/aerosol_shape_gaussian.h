@@ -36,6 +36,8 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
 		     const bool Linear_AOD);
 
   virtual ~AerosolShapeGaussian() {}
+
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
 };
 }
 #endif

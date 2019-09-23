@@ -17,10 +17,7 @@ public:
   virtual ~TemperatureLevelOffset() {}
   virtual void print(std::ostream& Os) const;
 
-  virtual boost::shared_ptr<Temperature> clone() const
-  { return clone(press->clone()); }
-  virtual boost::shared_ptr<Temperature> 
-  clone(const boost::shared_ptr<Pressure>& Press) const;
+  virtual boost::shared_ptr<Temperature> clone() const;
 
   //-----------------------------------------------------------------------
   /// Temperature from profile, used to write to output file

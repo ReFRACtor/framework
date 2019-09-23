@@ -33,6 +33,8 @@ public:
 			  const std::string& Aerosol_name);
 
   virtual ~AerosolExtinctionLinear() = default;
+    
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
 };
 }
 #endif
