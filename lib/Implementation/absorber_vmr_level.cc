@@ -60,6 +60,11 @@ boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 			  gas_name(), mapping));
 }
 
+blitz::Array<double, 1> AbsorberVmrLevel::pressure_profile() const
+{
+  return press->pressure_grid().value.value();
+}
+
 void AbsorberVmrLevel::calc_vmr() const
 {
   std::vector<AutoDerivative<double> > plist;
