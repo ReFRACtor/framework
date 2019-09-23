@@ -28,8 +28,9 @@ AerosolShapeGaussian::AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Pr
 // See base class for description
 boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone() const
 {
+    boost::shared_ptr<MappingGaussian> gaussian_map = boost::static_pointer_cast<MappingGaussian>(mapping);
     return boost::shared_ptr<AerosolExtinction>
     (new AerosolShapeGaussian(press->clone(), used_flag, coeff.value(),
-                              aerosol_name(), linear_aod));
+                              aerosol_name(), gaussian_map->is_linear_total()));
 }
 

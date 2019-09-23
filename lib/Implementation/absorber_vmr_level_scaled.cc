@@ -32,6 +32,6 @@ AbsorberVmrLevelScaled::AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
 {
     return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile_, coeff(0).value(),used_flag(0),
+    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile(), coeff(0).value(),used_flag(0),
                                 gas_name()));
 }
