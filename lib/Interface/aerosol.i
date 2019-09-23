@@ -41,6 +41,6 @@ public:
 		 const ArrayAd<double, 1>& Od) const = 0;
 
   %python_attribute(number_particle, int)
-  boost::shared_ptr<Aerosol> clone() const;
+  boost::shared_ptr<Aerosol> clone() const = 0;
 };
 }
