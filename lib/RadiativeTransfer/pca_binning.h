@@ -1,6 +1,7 @@
 #ifndef PCA_BINNING_H
 #define PCA_BINNING_H
 
+#include "generic_object.h"
 #include "pca_optical_properties.h"
 
 namespace FullPhysics {
@@ -9,7 +10,7 @@ namespace FullPhysics {
   Compute PCA binned optical properties.
  *******************************************************************/
 
-class PCABinning {
+class PCABinning : public virtual GenericObject {
 public:
     // Defined here so it doesn't end up in the global namespace for SWIG
     enum Method {

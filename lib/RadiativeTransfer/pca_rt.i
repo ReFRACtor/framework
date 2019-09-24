@@ -6,8 +6,10 @@
 
 %base_import(radiative_transfer_fixed_stokes_coefficient)
 
-%import "atmosphere_standard.i"
+%import "pca_optical_properties.i"
 %import "pca_binning.i"
+%import "pca_eigensolver.i"
+%import "atmosphere_standard.i"
 
 %fp_shared_ptr(FullPhysics::PCARt);
 
@@ -39,6 +41,10 @@ public:
     virtual ArrayAd<double, 2> stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const;
 
     const boost::shared_ptr<AtmosphereStandard>& atmosphere() const;
+
+    const boost::shared_ptr<PCAOpticalPropertiesAtmosphere> optical_properties() const;
+    const boost::shared_ptr<PCABinning> binning() const;
+    const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index);
   
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 };

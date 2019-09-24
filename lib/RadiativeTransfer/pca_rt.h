@@ -10,6 +10,8 @@
 #include "first_order_rt.h"
 
 #include "pca_binning.h"
+#include "pca_optical_properties.h"
+#include "pca_eigensolver.h"
 
 namespace FullPhysics {
 
@@ -53,21 +55,40 @@ public:
 
     const boost::shared_ptr<AtmosphereStandard>& atmosphere() const { return atm; }
   
+    const boost::shared_ptr<PCAOpticalPropertiesAtmosphere> optical_properties() const { return pca_opt; }
+    const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
+    const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
+        if (bin_index < 0 || bin_index >= pca_bin_solvers.size()) {
+            Exception err;
+            err << "Index for binned eigen solver: " << bin_index << " exceeds size of solvers saved: " << pca_bin_solvers.size();
+            throw err;
+        }
+        return pca_bin_solvers[bin_index];
+    }
+
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 
 private:
 
-  boost::shared_ptr<AtmosphereStandard> atm;
+    boost::shared_ptr<AtmosphereStandard> atm;
 
-  std::string primary_absorber;
+    std::string primary_absorber;
 
-  PCABinning::Method bin_method;
-  int num_bins;
-  int num_eofs;
+    PCABinning::Method bin_method;
+    int num_bins;
+    int num_eofs;
 
-  boost::shared_ptr<LidortRt> lidort_rt;
-  boost::shared_ptr<TwostreamRt> twostream_rt;
-  boost::shared_ptr<FirstOrderRt> first_order_rt;
+    boost::shared_ptr<LidortRt> lidort_rt;
+    boost::shared_ptr<TwostreamRt> twostream_rt;
+    boost::shared_ptr<FirstOrderRt> first_order_rt;
+
+    // These are stored for the current stokes call for debugging purposes
+    // They are empty until stokes or stokes_and_jacobian are called.
+    // They are reset for each call
+    mutable boost::shared_ptr<PCAOpticalPropertiesAtmosphere> pca_opt;
+    mutable boost::shared_ptr<PCABinning> pca_bin;
+    mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_bin_solvers;
+    
 };
 }
 #endif

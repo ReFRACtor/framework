@@ -1,6 +1,7 @@
 #ifndef PCA_OPTICAL_PROP_H
 #define PCA_OPTICAL_PROP_H
 
+#include "generic_object.h"
 #include "atmosphere_standard.h"
 #include "ground_lambertian.h"
 #include "spectral_domain.h"
@@ -13,7 +14,7 @@ namespace FullPhysics {
   its calculations. The values here are for multiple spectral points
   across a whole channel/band.
  *******************************************************************/
-class PCAOpticalProperties {
+class PCAOpticalProperties : public virtual GenericObject {
 public:
     virtual ~PCAOpticalProperties() = default;
 

@@ -4,9 +4,11 @@
 #include <vector>
 #include <blitz/array.h>
 
+#include "generic_object.h"
+
 namespace FullPhysics {
 
-class PCAEigenSolver {
+class PCAEigenSolver : public virtual GenericObject {
 public:
 
     ~PCAEigenSolver() = default;

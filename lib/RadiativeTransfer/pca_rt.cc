@@ -1,8 +1,5 @@
 #include "pca_rt.h"
 
-#include "pca_optical_properties.h"
-#include "pca_eigensolver.h"
-
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -41,12 +38,12 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     Array<double, 1> wavenumbers(Spec_domain.wavenumber());
 
     // Compute optical properties for the whole band
-    boost::shared_ptr<PCAOpticalPropertiesAtmosphere> pca_opt(new PCAOpticalPropertiesAtmosphere(atm, Spec_domain, Spec_index, primary_absorber));
+    pca_opt.reset(new PCAOpticalPropertiesAtmosphere(atm, Spec_domain, Spec_index, primary_absorber));
 
     // Compute bins
-    PCABinning pca_bin(pca_opt, bin_method, num_bins);
-    auto bins = pca_bin.bin_indexes();
-    Array<int, 1> num_bin_points = pca_bin.num_bin_points();
+    pca_bin.reset(new PCABinning(pca_opt, bin_method, num_bins));
+    auto bins = pca_bin->bin_indexes();
+    Array<int, 1> num_bin_points = pca_bin->num_bin_points();
 
     // Extract optical properties intermediate variable values for each bin
     int num_levels = pca_opt->intermediate_variable().rows();
@@ -67,15 +64,21 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     }
 
     // Compute values for each bin
+    pca_bin_solvers.clear();
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+
+        // Skip empty bins
+        if (num_bin_points(bin_idx) == 0) {
+            continue;
+        }
+
         // Solve PCA solution for intermediate variable optical properties for the bin
 
         // Copy out the intermediate variable values for the spectral domain values in the current bin
         // This requires us to copy into a new array since the bin locations won't be contiguous
         std::vector<blitz::Array<double, 2> > data_list;
         for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
-            Array<double, 2> var_bin_vals(num_levels, num_bin_points(bin_idx));
-            var_bin_vals = bin_inp_iv[bin_idx](Range::all(), var_idx, Range::all());
+            Array<double, 2> var_bin_vals(bin_inp_iv[bin_idx](Range::all(), var_idx, Range::all()));
             data_list.push_back(var_bin_vals);
         }
 
@@ -87,7 +90,9 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         double avg_wn = mean(bin_wns);
 
         // Create PCA solution from binned intermediate variables
-        PCAEigenSolverGeneric pca_solver(data_list, num_eofs); // 4 = # EOFs, TBD make this configrable
+        boost::shared_ptr<PCAEigenSolver> pca_solver;
+        pca_solver.reset(new PCAEigenSolverGeneric(data_list, num_eofs));
+        pca_bin_solvers.push_back(pca_solver);
         
         // Create EOF intermediate values for mean and plus and minus each eof
         // We need to translate back from the eigen solvers vectors to arrays for each intermediate variable index
@@ -95,7 +100,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         // Compute mean IV values
         Array<double, 2> bin_mean_iv(num_levels, num_iv_var);
         for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
-            bin_mean_iv(Range::all(), var_idx) = exp(pca_solver.data_mean()[var_idx]);
+            bin_mean_iv(Range::all(), var_idx) = exp(pca_solver->data_mean()[var_idx]);
         }
         
         // Compute bin mean intensity from each RT 
@@ -120,14 +125,15 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
             for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
                 bin_plus_iv(Range::all(), var_idx) = 
-                    exp(pca_solver.data_mean()[var_idx] + pca_solver.eof_properties()[var_idx](Range::all(), eof_idx));
+                    exp(pca_solver->data_mean()[var_idx] + pca_solver->eof_properties()[var_idx](Range::all(), eof_idx));
 
                 bin_plus_iv(Range::all(), var_idx) = 
-                    exp(pca_solver.data_mean()[var_idx] - pca_solver.eof_properties()[var_idx](Range::all(), eof_idx));
+                    exp(pca_solver->data_mean()[var_idx] - pca_solver->eof_properties()[var_idx](Range::all(), eof_idx));
             }
 
             ArrayAd<double, 2> bin_plus_iv_ad(bin_plus_iv);
             ArrayAd<double, 2> bin_minus_iv_ad(bin_minus_iv);
+
 
             lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
             lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
@@ -142,7 +148,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
         // Compute correction factors
         Array<double, 2> bin_corrections(num_bin_points(bin_idx), number_stokes());
-        bin_corrections = pca_solver.correction(
+        bin_corrections = pca_solver->correction(
                 lidort_mean, twostream_mean, first_order_mean,
                 lidort_plus, twostream_plus, first_order_plus,
                 lidort_minus, twostream_minus, first_order_minus);
