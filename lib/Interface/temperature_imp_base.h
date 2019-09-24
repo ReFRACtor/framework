@@ -24,7 +24,6 @@ public:
                                           units::K); 
   }
   virtual boost::shared_ptr<Temperature> clone() const = 0;
-  virtual boost::shared_ptr<Temperature> clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   
   virtual void update_sub_state_hook() 
   { cache_stale = true; }

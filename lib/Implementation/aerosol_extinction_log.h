@@ -33,9 +33,7 @@ public:
 			  const std::string& Aerosol_name)
     : AerosolExtinctionImpBase(Aerosol_name, blitz::Array<double, 1> (log(Aext)) , Flag, Press) {}
   virtual ~AerosolExtinctionLog() {}
-  virtual boost::shared_ptr<AerosolExtinction> clone() const
-  { return clone(press->clone()); }
-  virtual boost::shared_ptr<AerosolExtinction> clone(const boost::shared_ptr<Pressure>& Pres) const;
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual std::string sub_state_identifier() const { return "aerosol_extinction/" + aerosol_name() + "/log"; }
   virtual std::string state_vector_name_i(int i) const
   { return "Aerosol " + aerosol_name() + " Log(extinction) for Press Lvl " +

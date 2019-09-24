@@ -32,10 +32,7 @@ public:
 			  const std::string& Aerosol_name)
     : AerosolExtinctionImpBase(Aerosol_name, Aext, Flag, Press) {}
   virtual ~AerosolExtinctionLinear() {}
-  virtual boost::shared_ptr<AerosolExtinction> clone() const
-  { return clone(press->clone()); }
-  virtual boost::shared_ptr<AerosolExtinction> clone
-  (const boost::shared_ptr<Pressure>& P) const;
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual std::string sub_state_identifier() const { return "aerosol_extinction/" + aerosol_name() + "/linear"; }
   virtual std::string state_vector_name_i(int i) const
   { return "Aerosol " + aerosol_name() + " Aerosol Ext for Press Lvl " +

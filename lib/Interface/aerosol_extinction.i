@@ -29,8 +29,6 @@ public:
   virtual void add_observer(Observer<AerosolExtinction>& Obs); 
   virtual void remove_observer(Observer<AerosolExtinction>& Obs);
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
-  virtual boost::shared_ptr<AerosolExtinction> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   virtual AutoDerivative<double> extinction_for_layer(int i) const = 0;
   %python_attribute_abstract(aerosol_name, std::string)
   std::string print_to_string() const;

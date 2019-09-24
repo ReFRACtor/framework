@@ -1,5 +1,11 @@
 # Locate Blitz++ library
 
+# We want to use the Conda version if it is available, and the user hasn't
+# otherwise specified a different version
+if(NOT BLITZ_DIR AND DEFINED ENV{CONDA_PREFIX})
+  set(BLITZ_DIR $ENV{CONDA_PREFIX})
+endif(NOT BLITZ_DIR AND DEFINED ENV{CONDA_PREFIX})
+
 FIND_PATH(BLITZ_INCLUDE_DIR blitz/array.h
   HINTS $ENV{BLITZ_DIR} ${BLITZ_DIR}
   PATH_SUFFIXES include

@@ -34,12 +34,7 @@ public:
                boost::lexical_cast<std::string>(i + 1);
     }
 
-    virtual boost::shared_ptr<AbsorberVmr> clone() const
-    {
-        return clone(boost::shared_ptr<Pressure>());
-    }
-
-    virtual boost::shared_ptr<AbsorberVmr> clone(const boost::shared_ptr<Pressure>& Press) const;
+    virtual boost::shared_ptr<AbsorberVmr> clone() const;
 
     //-----------------------------------------------------------------------
     /// VMR on the pressure grid. This is just exp(coeff.value), but this is

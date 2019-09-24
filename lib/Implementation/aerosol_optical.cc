@@ -47,7 +47,8 @@ AerosolOptical::AerosolOptical
   rh(Rh),
   reference_wn_(Reference_wn),
   cache_is_stale(true),
-  nvar(-1)
+  nvar(-1),
+  nlay(-1)
 {
   if((int) aprop.size() != number_particle())
     throw Exception("aprop needs to be size of number_particle()");
@@ -355,23 +356,20 @@ ArrayAd<double, 3> AerosolOptical::pf_mom(double wn,
 }
 
 //-----------------------------------------------------------------------
-/// This version of clone takes a pressure to use. The intent is that
-/// the pressure has been cloned from the original pressure (although
-/// this class has no way to verify this). This allows sets of objects
-/// to be cloned using a common Pressure clone, e.g. Atmosphere.
+/// Clone a Aerosol object. Note that the cloned version will *not*
+/// be attached to and StateVector or Observer<Pressure>, although you
+/// can of course attach them after receiving the cloned object.
 //-----------------------------------------------------------------------
 
-boost::shared_ptr<Aerosol> 
-AerosolOptical::clone(const boost::shared_ptr<Pressure>& Press,
-                  const boost::shared_ptr<RelativeHumidity>& Rh) const
+boost::shared_ptr<Aerosol> AerosolOptical::clone() const
 {
   std::vector<boost::shared_ptr<AerosolExtinction> > aext_clone;
   BOOST_FOREACH(const boost::shared_ptr<AerosolExtinction>& i, aext)
-    aext_clone.push_back(i->clone(Press));
+    aext_clone.push_back(i->clone());
   std::vector<boost::shared_ptr<AerosolProperty> > aprop_clone;
   BOOST_FOREACH(const boost::shared_ptr<AerosolProperty>& i, aprop)
-    aprop_clone.push_back(i->clone(Press, Rh));
-  boost::shared_ptr<Aerosol> res(new AerosolOptical(aext_clone, aprop_clone, Press, Rh));
+    aprop_clone.push_back(i->clone());
+  boost::shared_ptr<Aerosol> res(new AerosolOptical(aext_clone, aprop_clone, press->clone(), rh->clone()));
   return res;
 }
 

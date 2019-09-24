@@ -28,11 +28,10 @@ AbsorberVmrLevel::AbsorberVmrLevel
 {
 }
 
-boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone
-(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
   return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevel(Press, coeff.value(),used_flag,
+    (new AbsorberVmrLevel(press->clone(), coeff.value(),used_flag,
 			  gas_name()));
 }
 

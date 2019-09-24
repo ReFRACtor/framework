@@ -35,10 +35,7 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
 		     const bool Linear_AOD)
   : AerosolExtinctionImpBase(Aerosol_name, Coeffs, Flag, Press, false), linear_aod(Linear_AOD) {}
   virtual ~AerosolShapeGaussian() {}
-  virtual boost::shared_ptr<AerosolExtinction> clone() const
-  { return clone(press->clone()); }
-  virtual boost::shared_ptr<AerosolExtinction> clone
-  (const boost::shared_ptr<Pressure>& P) const;
+  virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual std::string sub_state_identifier() const { return "aerosol_shape/" + aerosol_name() + "/" + (linear_aod ? "linear" : "log"); }
   virtual std::string state_vector_name_i(int i) const
   { return "Aerosol Shape " + aerosol_name() + " " + (linear_aod ? "Linear" : "Logarithmic") + " Gaussian for Coefficient " +

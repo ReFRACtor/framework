@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   boost::shared_ptr<AtmosphereStandard> atm_zeroext = atm->clone();
 
   // Set state vector so that the extinction coefficient of
-  // atm_zeroext is 0. The extiction object must be attached
+  // atm_zeroext is 0. The extinction object must be attached
   // to the state vector for the update to have any effect
   //
   StateVector sv;
@@ -72,16 +72,16 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   sv.update_state(x);
 
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
-  boost::shared_ptr<Temperature> temperature_clone = 
-    atm->temperature_ptr()->clone(pressure_clone);
+  boost::shared_ptr<Temperature> temperature_clone =
+    atm->temperature_ptr()->clone();
   boost::shared_ptr<Ground> ground_clone = atm->ground()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
-    alt_clone.push_back(a->clone(pressure_clone, temperature_clone));
+    alt_clone.push_back(a->clone());
   boost::shared_ptr<Absorber> absorber_clone =
-    atm->absorber_ptr()->clone(pressure_clone, temperature_clone, alt_clone);
+    atm->absorber_ptr()->clone();
   boost::shared_ptr<RelativeHumidity> rh_clone =
-    atm->relative_humidity_ptr()->clone(absorber_clone, temperature_clone, pressure_clone);
+    atm->relative_humidity_ptr()->clone();
   boost::shared_ptr<AerosolOptical> aerosol_null;
   boost::shared_ptr<AtmosphereStandard> 
     atm_rayleigh(new AtmosphereStandard(absorber_clone,
@@ -121,19 +121,18 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
 BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
 {
   // We check that leaving out the ground gives the same results 
-
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
-  boost::shared_ptr<Temperature> temperature_clone = 
-    atm->temperature_ptr()->clone(pressure_clone);
+  boost::shared_ptr<Temperature> temperature_clone =
+    atm->temperature_ptr()->clone();
   boost::shared_ptr<Aerosol> aerosol_clone =
     atm->aerosol_ptr()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
-    alt_clone.push_back(a->clone(pressure_clone, temperature_clone));
+    alt_clone.push_back(a->clone());
   boost::shared_ptr<Absorber> absorber_clone =
-    atm->absorber_ptr()->clone(pressure_clone, temperature_clone, alt_clone);
+    atm->absorber_ptr()->clone();
   boost::shared_ptr<RelativeHumidity> rh_clone =
-    atm->relative_humidity_ptr()->clone(absorber_clone, temperature_clone, pressure_clone);
+    atm->relative_humidity_ptr()->clone();
   boost::shared_ptr<Ground> ground_null;
   boost::shared_ptr<AtmosphereStandard> 
     atm_uplooking(new AtmosphereStandard(absorber_clone,

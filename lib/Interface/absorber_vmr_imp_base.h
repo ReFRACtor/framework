@@ -22,8 +22,6 @@ public:
   volume_mixing_ratio(const AutoDerivative<double>& P) const
   { fill_cache(); return vmr(P); }
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   virtual void update_sub_state_hook() 
   { cache_stale = true; }
   

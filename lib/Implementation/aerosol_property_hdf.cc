@@ -43,17 +43,9 @@ AerosolPropertyHdf::AerosolPropertyHdf
 
 boost::shared_ptr<AerosolProperty> AerosolPropertyHdf::clone() const
 {
-  boost::shared_ptr<RelativeHumidity> rh_dummy;
-  return clone(press->clone(), rh_dummy);
-}
-
-boost::shared_ptr<AerosolProperty> AerosolPropertyHdf::clone
-(const boost::shared_ptr<Pressure>& Press,
- const boost::shared_ptr<RelativeHumidity>& UNUSED(Rh)) const
-{
   HdfFile f(hdf_file);
   return boost::shared_ptr<AerosolProperty>
-    (new AerosolPropertyHdf(f, hdf_group, Press));
+    (new AerosolPropertyHdf(f, hdf_group, press->clone()));
 }
 
 ArrayAd<double, 1> AerosolPropertyHdf::extinction_coefficient_each_layer

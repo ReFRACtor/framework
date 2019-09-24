@@ -59,16 +59,9 @@ AerosolPropertyRhHdf::AerosolPropertyRhHdf
 
 boost::shared_ptr<AerosolProperty> AerosolPropertyRhHdf::clone() const
 {
-  return clone(press->clone(), rh->clone());
-}
-
-boost::shared_ptr<AerosolProperty> AerosolPropertyRhHdf::clone
-(const boost::shared_ptr<Pressure>& Press,
- const boost::shared_ptr<RelativeHumidity>& Rh) const
-{
   HdfFile f(hdf_file);
   return boost::shared_ptr<AerosolProperty>
-    (new AerosolPropertyRhHdf(f, hdf_group, Press, Rh));
+    (new AerosolPropertyRhHdf(f, hdf_group, press->clone(), rh->clone()));
 }
 
 // Right now we don't support extinction_coefficient_each_layer 

@@ -662,26 +662,14 @@ AbsorberAbsco::optical_depth_each_layer_nder(double wn, int spec_index) const
 // See base class for description
 boost::shared_ptr<Absorber> AbsorberAbsco::clone() const
 {
-  boost::shared_ptr<Pressure> pressure_clone = press->clone();
-  boost::shared_ptr<Temperature> temperature_clone = 
-    temp->clone(pressure_clone);
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-    alt_clone.push_back(a->clone(pressure_clone, temperature_clone));
-  return clone(pressure_clone, temperature_clone, alt_clone);
-}
-
-// See base class for description
-boost::shared_ptr<Absorber> AbsorberAbsco::clone
-(const boost::shared_ptr<Pressure>& Press,
- const boost::shared_ptr<Temperature>& Temp,
- const std::vector<boost::shared_ptr<Altitude> >& Alt) const
-{
+    alt_clone.push_back(a->clone());
   std::vector<boost::shared_ptr<AbsorberVmr> > vmr_clone;
   BOOST_FOREACH(const boost::shared_ptr<AbsorberVmr>& a, vmr)
-    vmr_clone.push_back(a->clone(Press));
+    vmr_clone.push_back(a->clone());
   boost::shared_ptr<Absorber> res
-    (new AbsorberAbsco(vmr_clone, Press, Temp, Alt, 
+    (new AbsorberAbsco(vmr_clone, press->clone(), temp->clone(), alt_clone,
 		       gas_absorption, c, nsub));
   return res;
 }

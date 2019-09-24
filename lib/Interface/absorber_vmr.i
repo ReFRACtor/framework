@@ -30,8 +30,6 @@ public:
   virtual void add_observer(Observer<AbsorberVmr>& Obs);
   virtual void remove_observer(Observer<AbsorberVmr>& Obs);
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
-  virtual boost::shared_ptr<AbsorberVmr> 
-  clone(const boost::shared_ptr<Pressure>& Press) const = 0;
   %python_attribute(gas_name, virtual std::string);
   virtual AutoDerivative<double> 
   volume_mixing_ratio(const AutoDerivative<double>& P) const = 0;

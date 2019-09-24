@@ -83,14 +83,13 @@ void TemperatureFixedLevel::calc_temperature_grid() const
 
 // See base class for description of this function
 
-boost::shared_ptr<Temperature> 
-TemperatureFixedLevel::clone(const boost::shared_ptr<Pressure>& Press) const
+boost::shared_ptr<Temperature> TemperatureFixedLevel::clone() const
 {
   boost::shared_ptr<Temperature> res
     (new TemperatureFixedLevel(used_flag_value()(temperature_range()), 
 			       used_flag_value()(0),
 			       coefficient()(temperature_range()).value(),
-			       coefficient()(0).value(), Press, press_level));
+			       coefficient()(0).value(), press->clone(), press_level));
   return res;
 }
 

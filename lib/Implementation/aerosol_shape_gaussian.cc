@@ -17,11 +17,10 @@ REGISTER_LUA_END()
 
 const double AerosolShapeGaussian::min_aod = 1e-9;
 // See base class for description
-boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone
-(const boost::shared_ptr<Pressure>& Pres) const
+boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone() const
 {
     return boost::shared_ptr<AerosolExtinction>
-           (new AerosolShapeGaussian(Pres, used_flag, coeff.value(),
+           (new AerosolShapeGaussian(press->clone(), used_flag, coeff.value(),
                                      aerosol_name(), linear_aod));
 }
 
