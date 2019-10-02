@@ -17,7 +17,7 @@ boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone
 
 void AerosolExtinctionLevel::calc_aerosol_extinction() const
 {
-  aext = mapping->fm_view(coeff, press);
+  aext = mapping->fm_view(coeff);
 }
 
 void AerosolExtinctionLevel::print(std::ostream& Os) const

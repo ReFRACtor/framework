@@ -27,8 +27,7 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff,
-            const boost::shared_ptr<Pressure>& updated_press) const {
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
         int nvar = updated_coeff.number_variable();
         return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(updated_coeff.value())), nvar, true);
     };

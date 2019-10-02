@@ -23,8 +23,7 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff,
-            const boost::shared_ptr<Pressure>& updated_press) const { return updated_coeff; };
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const { return updated_coeff; };
 
     //-----------------------------------------------------------------------
     /// Calculation of initial retrieval view  of coeffs with mapping applied
