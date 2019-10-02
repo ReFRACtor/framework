@@ -54,7 +54,11 @@ public:
     virtual ArrayAd<double, 2> stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const;
 
     const boost::shared_ptr<AtmosphereStandard>& atmosphere() const { return atm; }
-  
+
+    const boost::shared_ptr<LidortRt> lidort() const { return lidort_rt; }
+    const boost::shared_ptr<TwostreamRt> twostream() const { return twostream_rt; }
+    const boost::shared_ptr<FirstOrderRt> first_order() const { return first_order_rt; }
+
     const boost::shared_ptr<PCAOpticalPropertiesAtmosphere> optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
