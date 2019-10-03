@@ -107,8 +107,8 @@ blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>
         ieof = id_mean;
 
         for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-            double x = principal_components()(eof_idx, point_idx);
-            ieof = ieof + term_1(eof_idx, all) * x + term_2(eof_idx, all) * x * x;
+            double pc = principal_components()(eof_idx, point_idx);
+            ieof = ieof + term_1(eof_idx, all) * pc + term_2(eof_idx, all) * pc * pc;
         }
         correction(point_idx, all) = exp(ieof);
     }

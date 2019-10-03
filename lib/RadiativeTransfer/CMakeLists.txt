@@ -50,6 +50,8 @@ set(DIR_SOURCES
 )
 
 set(TEST_SOURCES
+    pca_fortran/pca_correction.f90
+    pca_fortran/pca_correction_plus.f90
     chapman_boa_rt_test.cc
     chapman_boa_test.cc
     first_order_driver_test.cc
