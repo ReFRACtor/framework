@@ -20,7 +20,7 @@ set(DIR_SOURCES
     linear_algebra.cc
     logger.cc
     logger_f.F90
-    mapping.h
+    mapping_linear.h
     mapping_log.h
     mapping_scale.h
     mapping_gaussian.h
