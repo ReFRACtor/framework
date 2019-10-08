@@ -165,7 +165,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, dom_iv_ad));
 
             stokes_output(grid_idx, Range::all()) = 
-                bin_corrections(dom_idx, Range::all()) * twostream_full(Range::all()) + first_order_full(Range::all());
+                bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
         }
     }
 
