@@ -7,6 +7,8 @@ extern "C" {
     void create_bin_uvvswir_v3(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *binlims, double *gasdat, int *ncnt, int *index, int *bin);
 
     void create_bin_uvvswir_v4(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *absflag, int *ncnt, int *index, int *bin);
+
+    void create_bin_uvvswir_v5(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *ncnt, int *index, int *bin);
 }
 
 PCABinning::PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, const Method bin_method, const int num_bins)
@@ -46,7 +48,7 @@ void PCABinning::compute_bins()
     switch(bin_method_) {
         case UVVSWIR_V3:
             if(num_bins_ != 9) {
-                throw Exception("UVVSWIR PCA binning method must use 9 bins");
+                throw Exception("UVVSWIR PCA binning V3 method must use 9 bins");
             }
 
             create_bin_uvvswir_v3(
@@ -56,12 +58,24 @@ void PCABinning::compute_bins()
                 num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
             break;
         case UVVSWIR_V4:
+            if(num_bins_ != 11) {
+                throw Exception("UVVSWIR PCA binning V4 method must use 11 bins");
+            }
+
             create_bin_uvvswir_v4(
                 &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
                 taug.dataFirst(), 
                 tau_tot.dataFirst(), 
                 omega.dataFirst(), 
                 opt_props_->primary_gas_dominates().dataFirst(), 
+                num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
+            break;
+        case UVVSWIR_V5:
+            create_bin_uvvswir_v5(
+                &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
+                taug.dataFirst(), 
+                tau_tot.dataFirst(), 
+                omega.dataFirst(), 
                 num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
             break;
         default:

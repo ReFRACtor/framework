@@ -16,6 +16,7 @@ public:
     enum Method {
         UVVSWIR_V3 = 3,
         UVVSWIR_V4 = 4,
+        UVVSWIR_V5 = 5,
     };
 
     PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, const Method bin_method, const int num_bins);

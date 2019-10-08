@@ -238,7 +238,7 @@ end subroutine create_bin_UVVSWIR_V4
 subroutine create_bin_UVVSWIR_V5 &
             ( E_nlayers, E_ndat, E_maxbins,           &
               ndat, nlay, nbin, gasdat, taudp, omega, &
-              ncnt,index,bin )
+              ncnt,index,bin ) bind(C)
 
    IMPLICIT NONE
 
@@ -252,22 +252,22 @@ subroutine create_bin_UVVSWIR_V5 &
 
 !  Dimensions (only for I/O)
 
-   integer, intent(in) :: E_nlayers, E_ndat, E_maxbins
+   integer(c_int), intent(in) :: E_nlayers, E_ndat, E_maxbins
 
 !  Numbers
 
-   integer, intent(in) :: NLAY, NBIN, NDAT
+   integer(c_int), intent(in) :: NLAY, NBIN, NDAT
 
 !  Optical data
 
-   real(kind=dp), intent(in) :: taudp  (E_nlayers,E_ndat)
-   real(kind=dp), intent(in) :: gasdat (E_nlayers,E_ndat)
-   real(kind=dp), intent(in) :: omega  (E_nlayers,E_ndat)
+   real(kind=c_double), intent(in) :: taudp  (E_nlayers,E_ndat)
+   real(kind=c_double), intent(in) :: gasdat (E_nlayers,E_ndat)
+   real(kind=c_double), intent(in) :: omega  (E_nlayers,E_ndat)
 
 !  outputs
 !  -------
 
-   INTEGER, intent(out) ::  NCNT(0:E_Maxbins), INDEX(E_ndat)
+   INTEGER(c_int), intent(out) ::  NCNT(0:E_Maxbins), INDEX(E_ndat)
 
 !  local variables (Dynamic memory here!!)
 !  ---------------
