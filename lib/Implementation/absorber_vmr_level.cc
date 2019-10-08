@@ -25,7 +25,7 @@ AbsorberVmrLevel::AbsorberVmrLevel
  const blitz::Array<double, 1>& Vmr, 
  const blitz::Array<bool, 1>& Vmr_flag,
  const std::string& Gas_name,
- boost::shared_ptr<MappingImpBase> in_map)
+ boost::shared_ptr<Mapping> in_map)
 {
   bool Mark_according_to_press = false;
   int Pdep_start = 0;
@@ -36,7 +36,7 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                                    const blitz::Array<double, 1>& Vmr,
                                    const bool Vmr_flag,
                                    const std::string& Gas_name,
-                                   boost::shared_ptr<MappingImpBase> in_map)
+                                   boost::shared_ptr<Mapping> in_map)
 {
   bool Mark_according_to_press = false;
   int Pdep_start = 0;

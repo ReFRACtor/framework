@@ -5,7 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
-#include "mapping_imp_base.h"
+#include "mapping.h"
 
 
 namespace FullPhysics {
@@ -13,9 +13,9 @@ namespace FullPhysics {
   This class implements log encoding of coeffs for the retrieval view
   while using the real (linear) values for the forward model view.
 
-  For additional information see docs for MappingImpBase class.
+  For additional information see docs for Mapping class.
 *******************************************************************/
-class MappingLog : public MappingImpBase  {
+class MappingLog : public Mapping  {
 public:
     //-----------------------------------------------------------------------
     /// Default Constructor.
@@ -47,9 +47,9 @@ public:
 
     virtual std::string name() const { return map_name; }
 
-    virtual boost::shared_ptr<MappingImpBase> clone() const
+    virtual boost::shared_ptr<Mapping> clone() const
     {
-      return boost::shared_ptr<MappingImpBase>(new MappingLog());
+      return boost::shared_ptr<Mapping>(new MappingLog());
     }
 
     virtual ~MappingLog() {};

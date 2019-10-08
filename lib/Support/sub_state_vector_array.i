@@ -6,6 +6,9 @@
 %}
 
 %base_import(sub_state_vector_observer)
+%base_import(mapping)
+%base_import(mapping_linear)
+
 %import "pressure.i"
 
 namespace FullPhysics {
@@ -16,21 +19,21 @@ template<class Base> class SubStateVectorArray:
     public Base,
     public SubStateVectorObserver {
 public:
-    SubStateVectorArray(const blitz::Array<double, 1>& Coeff, 
-                        const blitz::Array<bool, 1>& Used_flag);
+    SubStateVectorArray(double Coeff, bool Used_flag,
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
     SubStateVectorArray(const blitz::Array<double, 1>& Coeff, 
                         const blitz::Array<bool, 1>& Used_flag,
-                        const boost::shared_ptr<Pressure>& Press,
+                        const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                         bool Mark_according_to_press = true,
-                        int Pdep_start = 0);
+                        int Pdep_start = 0,
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
     SubStateVectorArray();
     void init(const blitz::Array<double, 1>& Coeff, 
-              const blitz::Array<bool, 1>& Used_flag);
-    void init(const blitz::Array<double, 1>& Coeff, 
               const blitz::Array<bool, 1>& Used_flag,
-              const boost::shared_ptr<Pressure>& Press,
+              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
               bool Mark_according_to_press = true,
-              int Pdep_start = 0);
+              int Pdep_start = 0,
+              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
     virtual ~SubStateVectorArray();
     void mark_used_sub(blitz::Array<bool, 1>& Used) const;
     %python_attribute(sub_state_identifier, std::string);
@@ -49,6 +52,7 @@ protected:
     blitz::Array<double, 2> cov;
     bool mark_according_to_press;
     int pdep_start;
+    boost::shared_ptr<Mapping> mapping;
 };
 }
 

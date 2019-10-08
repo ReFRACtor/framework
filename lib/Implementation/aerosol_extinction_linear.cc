@@ -1,4 +1,5 @@
 #include "aerosol_extinction_linear.h"
+#include "mapping_linear.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
@@ -20,7 +21,7 @@ AerosolExtinctionLinear::AerosolExtinctionLinear(const boost::shared_ptr<Pressur
               const blitz::Array<bool, 1>& Flag,
               const blitz::Array<double, 1>& Aext,
               const std::string& Aerosol_name)
-    : AerosolExtinctionLevel(Press, Flag, Aext, Aerosol_name, boost::make_shared<Mapping>()) {}
+    : AerosolExtinctionLevel(Press, Flag, Aext, Aerosol_name, boost::make_shared<MappingLinear>()) {}
 
 // See base class for description
 boost::shared_ptr<AerosolExtinction> AerosolExtinctionLinear::clone() const

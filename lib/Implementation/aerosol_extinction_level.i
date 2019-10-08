@@ -6,8 +6,8 @@
 %}
 
 %base_import(aerosol_extinction_imp_base)
-%base_import(mapping_imp_base)
 %base_import(mapping)
+%base_import(mapping_linear)
 
 %import "pressure.i"
 %fp_shared_ptr(FullPhysics::AerosolExtinctionLevel)
@@ -22,7 +22,7 @@ public:
 			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name,
-			  boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
+			  boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual boost::shared_ptr<AerosolExtinction> clone
   (const boost::shared_ptr<Pressure>& P) const;

@@ -2,8 +2,8 @@
 #define AEROSOL_EXTINCTION_LEVEL_H
 
 #include "aerosol_extinction_imp_base.h"
-#include "mapping_imp_base.h"
 #include "mapping.h"
+#include "mapping_linear.h"
 #include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
@@ -35,7 +35,7 @@ public:
 			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name,
-			  boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
+			  boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     bool Mark_according_to_press = false;
     int Pdep_start = 0;

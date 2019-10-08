@@ -4,7 +4,7 @@
 #include <blitz/array.h>
 
 #include "array_ad.h"
-#include "mapping_imp_base.h"
+#include "mapping.h"
 #include "pressure.h"
 
 namespace FullPhysics {
@@ -16,25 +16,10 @@ namespace FullPhysics {
   Note that due to the scaling by total optical depth performed in
   this class, it is only suitable for Absorbers.
 
-  For additional information see docs for MappingImpBase class.
+  For additional information see docs for Mapping class.
 *******************************************************************/
-class MappingGaussian : public MappingImpBase  {
+class MappingGaussian : public Mapping  {
 public:
-    //-----------------------------------------------------------------------
-    /// Default constructor, should call init.
-    //-----------------------------------------------------------------------
-    MappingGaussian() {};
-
-    void init(bool Linear_AOD)
-    {
-        linear_total = Linear_AOD;
-        if (linear_total) {
-            map_name = "GaussianLinear";
-        } else {
-            map_name = "GaussianLog";
-        }
-    }
-
     //-----------------------------------------------------------------------
     /// Constructor.
     /// \param Press Pressure object used for defining pressure levels
@@ -52,9 +37,9 @@ public:
         }
     };
 
-    virtual boost::shared_ptr<MappingImpBase> clone() const
+    virtual boost::shared_ptr<Mapping> clone() const
     {
-      return boost::shared_ptr<MappingImpBase>(new MappingGaussian(press, linear_total));
+      return boost::shared_ptr<Mapping>(new MappingGaussian(press, linear_total));
     }
 
     //-----------------------------------------------------------------------

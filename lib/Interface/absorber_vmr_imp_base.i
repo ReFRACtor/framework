@@ -9,8 +9,8 @@
 %base_import(state_vector)
 %base_import(sub_state_vector_array)
 %base_import(absorber_vmr)
-%base_import(mapping_imp_base)
 %base_import(mapping)
+%base_import(mapping_linear)
 
 %fp_shared_ptr(FullPhysics::AbsorberVmrImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AbsorberVmr>);
@@ -58,7 +58,7 @@ protected:
                     const boost::shared_ptr<Pressure>& Press,
                     bool Mark_according_to_press = true,
                     int Pdep_start = 0,
-                    boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
+                    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
 };
 }
 

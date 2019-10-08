@@ -5,6 +5,8 @@
 %}
 
 %base_import(absorber_vmr_imp_base)
+%base_import(mapping)
+%base_import(mapping_linear)
 %import "pressure.i"
 
 %fp_shared_ptr(FullPhysics::AbsorberVmrLevel)
@@ -16,12 +18,12 @@ public:
                      const blitz::Array<double, 1>& Vmr,
                      const blitz::Array<bool, 1>& Vmr_flag,
                      const std::string& Gas_name,
-                     boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
+                     boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
     AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                      const blitz::Array<double, 1>& Vmr,
                      const bool Vmr_flag,
                      const std::string& Gas_name,
-                     boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>());
+                     boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
     virtual boost::shared_ptr<AbsorberVmr> clone() const;
     %python_attribute(sub_state_identifier, std::string);
     virtual std::string state_vector_name_i(int i) const;

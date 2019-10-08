@@ -1,9 +1,10 @@
 #ifndef SUB_STATE_VECTOR_ARRAY_H
 #define SUB_STATE_VECTOR_ARRAY_H
 #include "sub_state_vector_observer.h"
-#include "mapping_imp_base.h"
 #include "mapping.h"
+#include "mapping_linear.h"
 #include "pressure.h"
+#include <blitz/array.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 
@@ -43,7 +44,7 @@ public:
                       const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                       bool Mark_according_to_press = true,
                         int Pdep_start = 0,
-                        boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
         : coeff(in_map->retrieval_init(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
       mark_according_to_press(Mark_according_to_press),
           pdep_start(Pdep_start),
@@ -66,7 +67,7 @@ public:
             const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
             bool Mark_according_to_press = true,
               int Pdep_start = 0,
-              boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
+              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
@@ -87,7 +88,7 @@ public:
   //-----------------------------------------------------------------------
   
     SubStateVectorArray(double Coeff, bool Used_flag,
-                        boost::shared_ptr<MappingImpBase> in_map = boost::make_shared<Mapping>())
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
         : coeff(1, 0), used_flag(1), mark_according_to_press(true), pdep_start(0), mapping(in_map)
   {
         // TODO: Add mapping's retrieval_init of Coeff in this constructor
@@ -249,7 +250,7 @@ protected:
   //-----------------------------------------------------------------------
   /// Mapping from internal coefficients to coefficients exposed to retrieval
   //-----------------------------------------------------------------------
-  boost::shared_ptr<MappingImpBase> mapping;
+  boost::shared_ptr<Mapping> mapping;
         
   friend class boost::serialization::access;
   template<class Archive>

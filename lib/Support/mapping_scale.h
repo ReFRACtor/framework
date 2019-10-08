@@ -5,19 +5,19 @@
 #include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
-#include "mapping_imp_base.h"
+#include "mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a scale factor for the retrieval view
   while applying that scale factor to get the forward model view.
 
-  For additional information see docs for MappingImpBase class.
+  For additional information see docs for Mapping class.
 *******************************************************************/
-class MappingScale : public MappingImpBase  {
+class MappingScale : public Mapping  {
 public:
     //-----------------------------------------------------------------------
-    /// Default Constructor.
+    /// Constructor.
     //-----------------------------------------------------------------------
 
     MappingScale(double Scale, blitz::Array<double, 1> Scalee)
@@ -48,9 +48,9 @@ public:
 
     virtual std::string name() const { return map_name; }
 
-    virtual boost::shared_ptr<MappingImpBase> clone() const
+    virtual boost::shared_ptr<Mapping> clone() const
     {
-      return boost::shared_ptr<MappingImpBase>(new MappingScale(initial_scale_factor, scalee));
+      return boost::shared_ptr<Mapping>(new MappingScale(initial_scale_factor, scalee));
     }
 
     virtual ~MappingScale() {};

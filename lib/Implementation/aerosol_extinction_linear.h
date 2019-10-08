@@ -2,7 +2,6 @@
 #define AEROSOL_EXTINCTION_LINEAR_H
 
 #include "aerosol_extinction_level.h"
-#include "mapping.h"
 #include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
