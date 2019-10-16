@@ -37,10 +37,8 @@ class MusesSimConfig(object):
 
         micro_windows = rf.ArrayWithUnit(np.array(mw_points), "cm^-1")
 
-    def set_microwindows(self, sim_grid):
+    def set_microwindows(self, micro_windows):
         # Use the correct creator
-
-        micro_windows = self.microwindows_from_grid(sim_grid)
 
         self.config_def['spec_win'].update({
             'creator': creator.forward_model.MicroWindowRanges,
@@ -78,16 +76,6 @@ class MusesSimConfig(object):
                 'name': 'sample_grid',
             },
         }
-
-    def setup_emissivity(self, emiss_grid, emiss_values):
-
-        # Setup emissivity values using the picewise method
-        self.config_def['atmosphere']['ground']['grid'] = rf.ArrayWithUnit(emiss_grid, "cm^-1")
-        self.config_def['atmosphere']['ground']['value'] = emiss_values
-
-    def setup_surface_temperature(self, surface_temp):
-
-        self.config_def['atmosphere']['surface_temperature']['value'] = rf.ArrayWithUnit(np.full(self.num_channels, surface_temp, dtype=float), "K")
 
     def setup_atmosphere_profiles(self, atm_gas_list, profile_getter):
 
@@ -134,30 +122,55 @@ class MusesSimConfig(object):
                 self.config_def['atmosphere']['absorber'][absco_gas_name] = gas_def
 
         self.config_def['atmosphere']['absorber']['gases'] = used_gas_list
-     
 
-    def from_case_directory(self, muses_case_dir, atm_gas_list=None):
-        "Set up simulation using inputs from a MUSES simulation run"
+    def setup_emissivity(self, emiss_grid, emiss_values):
+
+        # Setup emissivity values using the picewise method
+        self.config_def['atmosphere']['ground']['grid'] = rf.ArrayWithUnit(emiss_grid, "cm^-1")
+        self.config_def['atmosphere']['ground']['value'] = emiss_values
+
+    def setup_surface_temperature(self, surface_temp):
+
+        self.config_def['atmosphere']['surface_temperature']['value'] = rf.ArrayWithUnit(np.full(self.num_channels, surface_temp, dtype=float), "K")
+
+    def configure(self):
 
         if self.configured:
             raise Exception("Configuration setup already called")
 
-        radiance_fn = os.path.join(muses_case_dir, "Products/Products_Radiance-FM-pantest.nc")
+        self.configured = True
+
+class MusesCaseDirectoryConfig(MusesSimConfig):
+    
+    def __init__(self, muses_case_dir, config_def, num_channels, atm_gas_list=None):
+        super().__init__(config_def, num_channels)
+
+        self.muses_case_dir = muses_case_dir
+
+        self.atm_gas_list = atm_gas_list
+
+    def configure(self):
+        "Set up simulation using inputs from a MUSES simulation run"
+
+        super().configure()
+
+        radiance_fn = os.path.join(self.muses_case_dir, "Products/Products_Radiance-FM-pantest.nc")
         with Dataset(radiance_fn, "r") as rad_file_data:
             sim_grid = rad_file_data['/FREQUENCY'][:]
             surface_height = rad_file_data['/SURFACEALTITUDEMETERS'][0]
 
         # Set microwindows from simulation grid
-        self.set_microwindows(sim_grid)
+        microwindows = self.microwindows_from_grid(sim_grid)
+        self.set_microwindows(microwindows)
 
         # Disable retrieval
         self.disable_retrieval(config_def)
 
         # Set up scenario
-        meas_id_fn = os.path.join(muses_case_dir, "Measurement_ID.asc")
+        meas_id_fn = os.path.join(self.muses_case_dir, "Measurement_ID.asc")
         meas_id_data = MUSES_File(meas_id_fn, header_only=True)
 
-        inst_state_fn = glob(os.path.join(muses_case_dir, "Input/Initial_State/State_CRIS_*.asc"))[0]
+        inst_state_fn = glob(os.path.join(self.muses_case_dir, "Input/Initial_State/State_CRIS_*.asc"))[0]
         inst_state_data = MUSES_File(inst_state_fn, header_only=True)
 
         sample_grid = [ rf.SpectralDomain(sim_grid, rf.Unit("cm^-1")) ]
@@ -175,8 +188,32 @@ class MusesSimConfig(object):
             surface_height = surface_height,
             sample_grid = sample_grid)
 
+        # Load atmosphere values
+        atm_fn = glob(os.path.join(self.muses_case_dir, "Input/Initial_State/State_AtmProfiles_*.asc"))[0]
+        atm_profiles = MUSES_File(atm_fn, as_struct=True)
+
+        column_names_lower = [ c.lower() for c in atm_profiles ]
+
+        def atmosphere_profile(col_name):
+            col_idx = column_names_lower.index(col_name)
+            return atm_profiles[atm_profiles.column_names[col_idx]]
+
+        if self.atm_gas_list is None:
+            # First 3 elements are Level, Pressure, TATM, after that gas names
+            atm_gas_list = atm_profiles.column_names[3:]
+        else:
+            atm_gas_list = self.atm_gas_list
+
+        self.setup_atmosphere_profiles(atm_gas_list, atmosphere_column)
+
+class MusesThermalCaseDirectoryConfig(MusesSimConfig):
+
+    def configure(self):
+
+        super().configure()
+
         # Load surface data
-        surface_file = os.path.join(muses_case_dir, "Input/Initial_State/Emissivity1.asc")
+        surface_file = os.path.join(self.muses_case_dir, "Input/Initial_State/Emissivity1.asc")
         surface_data = MUSES_File(surface_file, as_struct=True)
 
         emiss_grid = surface_data.data['Frequency']
@@ -186,49 +223,44 @@ class MusesSimConfig(object):
 
         self.setup_surface_temperature(surface_data.header['Surface_Temperature'])
 
-        # Load atmosphere values
-        atm_fn = glob(os.path.join(muses_case_dir, "Input/Initial_State/State_AtmProfiles_*.asc"))[0]
-        atm_profiles = MUSES_File(atm_fn, as_struct=True)
+class MusesUipSimConfig(MusesSimConfig):
 
-        column_names_lower = [ c.lower() for c in atm_profiles ]
+    def __init__(self, muses_uip_file, config_def, num_channels, atm_gas_list=None):
+        super().__init__(config_def, num_channels)
 
-        def atmosphere_profile(col_name):
-            col_idx = column_names_lower.index(col_name)
-            return atm_profiles[atm_profiles.column_names[col_idx]]
+        self.muses_uip_file = muses_uip_file
 
-        if atm_gas_list is None:
-            # First 3 elements are Level, Pressure, TATM, after that gas names
-            atm_gas_list = atm_profiles.column_names[3:]
+        self.muses_inputs = readsav(muses_uip_file, python_dict=True)
+        self.uip = self.muses_inputs['uip']
 
-        self.setup_atmosphere_profiles(atm_gas_list, atmosphere_column)
+        self.atm_gas_list = atm_gas_list
 
-        self.configured = True
-
-        return self.config_def
-
-    def from_uip_file(self, muses_uip_file, atm_gas_list=None):
+    def configure(self):
         "Set up simulation using inputs from a MUSES simulation run"
 
-        if self.configured:
-            raise Exception("Configuration setup already called")
+        super().configure()
 
-        muses_inputs = readsav(muses_uip_file, python_dict=True)
-        uip = muses_inputs['uip']
-        sim_grid = muses_inputs['v_ils_total']
+        # Set up microwindow ranges
+        mw_all = self.uip['microwindows_all'][0]
 
-        # Set microwindows from simulation grid
-        self.set_microwindows(sim_grid)
+        microwindows = []
+        sample_grid = []
+        for start, end, spacing in zip(mw_all['start'], mw_all['endd'], mw_all['monospacing']):
+            microwindows.append( (start, end) )
+
+            sample_grid.append( rf.SpectralDomain(np.arange(start, end, spacing), rf.Unit("cm^-1")) )
+
+        self.set_microwindows(microwindows)
 
         # Disable retrieval
         self.disable_retrieval()
 
         # Set up scenario
-        sample_grid = [ rf.SpectralDomain(sim_grid, rf.Unit("cm^-1")) ]
         while len(sample_grid) < self.num_channels:
             # Pad out extra unused channels
             sample_grid.append(rf.SpectralDomain(np.array([]), rf.Unit("cm^-1")))
 
-        obs_table = uip['obs_table'][0]
+        obs_table = self.uip['obs_table'][0]
         
         self.configure_scenario(
             latitude = np.degrees(obs_table['target_latitude'][0]),
@@ -239,28 +271,29 @@ class MusesSimConfig(object):
             surface_height = obs_table['surfacealtitude'][0],
             sample_grid = sample_grid)
 
+        # Helper for pulling information out of the atmosphere matrix
+        def atmosphere_column(param_name):
+            param_list = [ n.decode('UTF-8').lower() for n in self.uip['atmosphere_params'][0] ]
+            
+            param_index = param_list.index(param_name.lower())
+            return self.uip['atmosphere'][0][:, param_index][::-1]
+
+        if atm_gas_list is None:
+            # First 2 elements are Pressure and TATM, after that gas names
+            atm_gas_list = [ n.decode('UTF-8') for n in self.uip['species'][0] ]
+
+        self.setup_atmosphere_profiles(atm_gas_list, atmosphere_column)
+
+class MusesThermalUipSimConfig(MusesUipSimConfig):
+
+    def configure(self):
+        super().configure()
+
         # Load surface data
-        emiss_grid = uip['emissivity'][0]['frequency'][0]
-        emiss_values = uip['emissivity'][0]['value'][0]
+        emiss_grid = self.uip['emissivity'][0]['frequency'][0]
+        emiss_values = self.uip['emissivity'][0]['value'][0]
 
         self.setup_emissivity(emiss_grid, emiss_values)
 
         # Surface temperature
-        self.setup_surface_temperature(uip['surface_temperature'][0])
-
-        # Helper for pulling information out of the atmosphere matrix
-        def atmosphere_column(param_name):
-            param_list = [ n.decode('UTF-8').lower() for n in uip['atmosphere_params'][0] ]
-            
-            param_index = param_list.index(param_name.lower())
-            return uip['atmosphere'][0][:, param_index][::-1]
-
-        if atm_gas_list is None:
-            # First 2 elements are Pressure and TATM, after that gas names
-            atm_gas_list = [ n.decode('UTF-8') for n in uip['species'][0] ]
-
-        self.setup_atmosphere_profiles(atm_gas_list, atmosphere_column)
-
-        self.configured = True
-
-        return self.config_def
+        self.setup_surface_temperature(self.uip['surface_temperature'][0])
