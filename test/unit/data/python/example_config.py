@@ -57,7 +57,7 @@ config_def = {
             'units': static_units("Common/band_reference_point"),
         },
         'num_channels': 3,
-        'absco_base_path': '/mnt/data1/absco/v5.0.0',
+        'absco_base_path': os.environ['ABSCO_PATH'],
         'constants': {
             'creator': creator.common.DefaultConstants,
         },
@@ -79,7 +79,7 @@ config_def = {
         'high_res_spacing': rf.DoubleWithUnit(0.01, "cm^-1"), 
     },
     'instrument': {
-        'creator': creator.instrument.IlsInstrument,
+        'creator': creator.instrument.IlsGratingInstrument,
         'ils_half_width': {
             'creator': creator.value.ArrayWithUnit,
             'value': np.array([4.09e-04, 1.08e-03, 1.40e-03]),
@@ -144,7 +144,7 @@ config_def = {
                     },
                 },
                 'absorption': {
-                    'creator': creator.absorber.AbscoHdf,
+                    'creator': creator.absorber.AbscoLegacy,
                     'table_scale': [1.0, 1.0, 1.004],
                     'filename': "{absco_base_path}/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                 },
@@ -156,7 +156,7 @@ config_def = {
                     'value': np.array([1.0]),
                 },
                 'absorption': {
-                    'creator': creator.absorber.AbscoHdf,
+                    'creator': creator.absorber.AbscoLegacy,
                     'table_scale': 1.0,
                     'filename': "{absco_base_path}/h2o_hitran12.h5",
                 },
@@ -172,7 +172,7 @@ config_def = {
                     'retrieved': False,
                 },
                 'absorption': {
-                    'creator': creator.absorber.AbscoHdf,
+                    'creator': creator.absorber.AbscoLegacy,
                     'table_scale': 1.0,
                     'filename': "{absco_base_path}/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
                  },
