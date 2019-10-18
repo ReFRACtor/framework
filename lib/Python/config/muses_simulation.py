@@ -15,6 +15,9 @@ from refractor.muses_osp import MUSES_File
 
 class MusesSimConfig(object):
 
+    # Must be defined in inheriting instances
+    grid_units = None
+
     def __init__(self, config_def, num_channels):
 
         self.config_def = config_def
@@ -35,14 +38,14 @@ class MusesSimConfig(object):
         for mw_b, mw_e in zip(wbeg, wend):
             mw_points.append( (sim_grid[mw_b], sim_grid[mw_e]) )
 
-        micro_windows = rf.ArrayWithUnit(np.array(mw_points), "cm^-1")
+        return mw_points
 
     def set_microwindows(self, micro_windows):
-        # Use the correct creator
 
+        # Use the correct creator
         self.config_def['spec_win'].update({
             'creator': creator.forward_model.MicroWindowRanges,
-            'micro_windows': micro_windows,
+            'micro_windows': rf.ArrayWithUnit(np.array(micro_windows), self.grid_units),
         })
 
     def disable_retrieval(self):
@@ -53,7 +56,7 @@ class MusesSimConfig(object):
         # Disable L1B input
         self.config_def['input'] = {}
 
-    def configure_scenario(self, latitude=0, longitude=0, obs_azimuth=0, obs_zenith=0, solar_azimuth=0, solar_zenith=1e-6, surface_height=0, sample_grid=None):
+    def setup_scenario(self, latitude=0, longitude=0, obs_azimuth=0, obs_zenith=0, solar_azimuth=0, solar_zenith=1e-6, surface_height=0, sample_grid=None):
 
         self.config_def['scenario'] =  {
             'creator': creator.base.SaveToCommon,
@@ -65,8 +68,12 @@ class MusesSimConfig(object):
             "solar_zenith": rf.ArrayWithUnit(np.full(self.num_channels, solar_zenith, dtype=float), "deg"),
             "stokes_coefficient": np.tile(np.array([1.0, 0.0, 0.0, 0.0]), (self.num_channels, 1)),
             "surface_height": rf.ArrayWithUnit(np.full(self.num_channels, surface_height, dtype=float), "m"),
-            "sample_grid": sample_grid,
+            "sample_grid": "NOT_YET_SET",
         }
+
+    def setup_sample_grid(self, sample_grid):
+
+        self.config_def['scenario']['sample_grid'] = sample_grid
 
         # Use sample grid from scenario
         self.config_def['instrument']['dispersion'] = {
@@ -112,8 +119,11 @@ class MusesSimConfig(object):
 
             if absco_gas_name in self.config_def['atmosphere']['absorber']:
                 gas_def = self.config_def['atmosphere']['absorber'][absco_gas_name]
-                gas_def['vmr']['value'] += profile_getter(in_gas_name)
-                print("Adding {} to existing gas {}".format(in_gas_name, absco_gas_name))
+                if gas_def['vmr']['value'] is not None:
+                    print("Adding {} to existing gas {}".format(in_gas_name, absco_gas_name))
+                    gas_def['vmr']['value'] += profile_getter(in_gas_name)
+                else:
+                    gas_def['vmr']['value'] = profile_getter(in_gas_name)
             else:
                 # Must make a deepcopy so we are not giving each gas a reference to the default definition that changing
                 # would make all have the same values
@@ -133,10 +143,39 @@ class MusesSimConfig(object):
 
         self.config_def['atmosphere']['surface_temperature']['value'] = rf.ArrayWithUnit(np.full(self.num_channels, surface_temp, dtype=float), "K")
 
+    def setup_surface_albedo(self, albedo_values):
+
+        self.config_def['atmosphere']['ground']['lambertian']['values'] = albedo_values
+
+    def configure_scenario(self, sample_grid):
+        # Instruments must define the way they configure the scenario, they can use setup_scenario
+        # to set values
+        raise NotImplementedError("configure_scenario must be implemented in an inheriting class")
+
+    def configure_micro_windows(self):
+        raise NotImplementedError("configure_micro_windows must be implemented in an inheriting class")
+
+    def configure_convolved_grid(self):
+        raise NotImplementedError("configure_convolved must be implemented in an inheriting class")
+
+    def configure_atmosphere(self):
+        raise NotImplementedError("configure_atmosphere must be implemented in an inheriting class")
+
     def configure(self):
 
         if self.configured:
             raise Exception("Configuration setup already called")
+
+        # Disable retrieval
+        self.disable_retrieval()
+
+        self.configure_scenario()
+
+        self.configure_micro_windows()
+
+        self.configure_sample_grid()
+
+        self.configure_atmosphere()
 
         self.configured = True
 
@@ -149,44 +188,31 @@ class MusesCaseDirectoryConfig(MusesSimConfig):
 
         self.atm_gas_list = atm_gas_list
 
-    def configure(self):
-        "Set up simulation using inputs from a MUSES simulation run"
-
-        super().configure()
+    def configure_micro_windows(self):
 
         radiance_fn = os.path.join(self.muses_case_dir, "Products/Products_Radiance-FM-pantest.nc")
         with Dataset(radiance_fn, "r") as rad_file_data:
             sim_grid = rad_file_data['/FREQUENCY'][:]
-            surface_height = rad_file_data['/SURFACEALTITUDEMETERS'][0]
 
         # Set microwindows from simulation grid
         microwindows = self.microwindows_from_grid(sim_grid)
+
         self.set_microwindows(microwindows)
 
-        # Disable retrieval
-        self.disable_retrieval(config_def)
+    def configure_sample_grid(self):
 
-        # Set up scenario
-        meas_id_fn = os.path.join(self.muses_case_dir, "Measurement_ID.asc")
-        meas_id_data = MUSES_File(meas_id_fn, header_only=True)
+        radiance_fn = os.path.join(self.muses_case_dir, "Products/Products_Radiance-FM-pantest.nc")
+        with Dataset(radiance_fn, "r") as rad_file_data:
+            sim_grid = rad_file_data['/FREQUENCY'][:]
 
-        inst_state_fn = glob(os.path.join(self.muses_case_dir, "Input/Initial_State/State_CRIS_*.asc"))[0]
-        inst_state_data = MUSES_File(inst_state_fn, header_only=True)
-
-        sample_grid = [ rf.SpectralDomain(sim_grid, rf.Unit("cm^-1")) ]
+        sample_grid = [ rf.SpectralDomain(sim_grid, rf.Unit(self.grid_units)) ]
         while len(sample_grid) < self.num_channels:
             # Pad out extra unused channels
-            sample_grid.append(rf.SpectralDomain(np.array([]), rf.Unit("cm^-1")))
+            sample_grid.append(rf.SpectralDomain(np.array([]), rf.Unit(self.grid_units)))
 
-        self.configure_scenario(
-            latitude = meas_id_data.header['CRIS_Latitude'],
-            longitude = meas_id_data.header['CRIS_Longitude'],
-            obs_azimuth = inst_state_data.header['satAzi'],
-            obs_zenith = inst_state_data.header['satZen'],
-            solar_azimuth = inst_state_data.header['solazi'],
-            solar_zenith = inst_state_data.header['sza'],
-            surface_height = surface_height,
-            sample_grid = sample_grid)
+        self.setup_sample_grid(sample_grid)
+
+    def configure_atmosphere(self):
 
         # Load atmosphere values
         atm_fn = glob(os.path.join(self.muses_case_dir, "Input/Initial_State/State_AtmProfiles_*.asc"))[0]
@@ -235,50 +261,42 @@ class MusesUipSimConfig(MusesSimConfig):
 
         self.atm_gas_list = atm_gas_list
 
-    def configure(self):
-        "Set up simulation using inputs from a MUSES simulation run"
-
-        super().configure()
+    def configure_micro_windows(self):
 
         # Set up microwindow ranges
         mw_all = self.uip['microwindows_all'][0]
 
         microwindows = []
-        sample_grid = []
         for start, end, spacing in zip(mw_all['start'], mw_all['endd'], mw_all['monospacing']):
             microwindows.append( (start, end) )
 
-            sample_grid.append( rf.SpectralDomain(np.arange(start, end, spacing), rf.Unit("cm^-1")) )
-
         self.set_microwindows(microwindows)
 
-        # Disable retrieval
-        self.disable_retrieval()
+    def configure_sample_grid(self):
+
+        # Set up microwindow ranges
+        mw_all = self.uip['microwindows_all'][0]
+
+        sample_grid = []
+        for start, end, spacing in zip(mw_all['start'], mw_all['endd'], mw_all['monospacing']):
+            sample_grid.append( rf.SpectralDomain(np.arange(start, end, spacing), rf.Unit("cm^-1")) )
 
         # Set up scenario
         while len(sample_grid) < self.num_channels:
             # Pad out extra unused channels
             sample_grid.append(rf.SpectralDomain(np.array([]), rf.Unit("cm^-1")))
 
-        obs_table = self.uip['obs_table'][0]
-        
-        self.configure_scenario(
-            latitude = np.degrees(obs_table['target_latitude'][0]),
-            obs_azimuth = 0,
-            obs_zenith = np.degrees(obs_table['pointing_angle'][0]),
-            solar_azimuth = 0,
-            solar_zenith = 1e-6,
-            surface_height = obs_table['surfacealtitude'][0],
-            sample_grid = sample_grid)
+        self.setup_sample_grid(sample_grid)
+
+    def configure_atmosphere(self):
 
         # Helper for pulling information out of the atmosphere matrix
         def atmosphere_column(param_name):
             param_list = [ n.decode('UTF-8').lower() for n in self.uip['atmosphere_params'][0] ]
-            
             param_index = param_list.index(param_name.lower())
             return self.uip['atmosphere'][0][:, param_index][::-1]
 
-        if atm_gas_list is None:
+        if self.atm_gas_list is None:
             # First 2 elements are Pressure and TATM, after that gas names
             atm_gas_list = [ n.decode('UTF-8') for n in self.uip['species'][0] ]
 
