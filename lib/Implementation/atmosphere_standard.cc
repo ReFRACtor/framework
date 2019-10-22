@@ -218,8 +218,9 @@ void AtmosphereStandard::initialize()
       throw Exception("Altitude is not allowed to be null in AtmosphereStandard");
 
   rayleigh.reset(new Rayleigh(pressure, alt, *constant));
-  if(aerosol)
+  if(aerosol) {
     aerosol->add_observer(*this);
+  }
   pressure->add_observer(*this);
 
   column_optical_depth_cache().reset( new ArrayAdMapCache<double, double, 1>() );
@@ -388,7 +389,7 @@ const
   ArrayAd<double, 1> taug(intermediate_v(ra, taug_index));
   ArrayAd<double, 1> taur(intermediate_v(ra, taur_index));
   ArrayAd<double, 2> taua_i;
-  if(aerosol) {
+  if(!rayleigh_only_atmosphere()) {
     Range taua_r(taua_0_index, taua_0_index + 
 		 (aerosol ? aerosol->number_particle() - 1 : 0));
     taua_i.reference(intermediate_v(ra, taua_r));
@@ -428,7 +429,6 @@ const
 //-----------------------------------------------------------------------
 /// Add in aerosol, if we have any.
 //-----------------------------------------------------------------------
-
   if(aerosol) {
     if(taua_i.is_constant())
       taua_i.value() = aerosol->optical_depth_each_layer(wn).value();
@@ -479,7 +479,7 @@ void AtmosphereStandard::calc_rt_parameters
 /// frac_aer and frac_ray.
 //-----------------------------------------------------------------------
 
-  if(aerosol) {
+  if(!rayleigh_only_atmosphere()) {
     Range taua_r(taua_0_index, taua_0_index + 
 		 (aerosol ? aerosol->number_particle() - 1 : 0));
     ArrayAd<double, 2> taua_i(iv(ra, taua_r));
