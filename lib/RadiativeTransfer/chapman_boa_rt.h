@@ -2,7 +2,7 @@
 #define CHAPMAN_BOA_RT_H
 
 #include "radiative_transfer.h"
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "chapman_boa.h"
 #include "spectral_bound.h"
 
@@ -15,10 +15,10 @@ class ChapmanBoaRT : public RadiativeTransfer,
 		     public Observer<RtAtmosphere>,
                      public boost::noncopyable  {
 public:
-  ChapmanBoaRT(const boost::shared_ptr<AtmosphereOco>& Atm,
+  ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
   	       const blitz::Array<double, 1>& Sza);
 
-  ChapmanBoaRT(const boost::shared_ptr<AtmosphereOco>& Atm,
+  ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 	       const blitz::Array<double, 1>& Sza, 
 	       const SpectralBound& Spec_bound);
 
@@ -38,7 +38,7 @@ public:
   /// Pointer to the Atmosphere class we are using.
   //-----------------------------------------------------------------------
 
-  const boost::shared_ptr<AtmosphereOco>& atmosphere_ptr() const {return atm;}
+  const boost::shared_ptr<AtmosphereStandard>& atmosphere_ptr() const {return atm;}
 
   // See description in base class
   virtual Spectrum reflectance
@@ -64,7 +64,7 @@ private:
   SpectralBound spec_bound;
 
   /// Atmosphere object we are using.
-  boost::shared_ptr<AtmosphereOco> atm;
+  boost::shared_ptr<AtmosphereStandard> atm;
 
   /// Solar zenith angles per spectrometer
   blitz::Array<double, 1> sza;

@@ -20,7 +20,7 @@
 
 namespace FullPhysics {
 
-class GroundBrdfVeg: public Ground {
+class GroundBrdfVeg: public SubStateVectorArray<Ground> {
 public:
     GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
@@ -46,6 +46,7 @@ public:
     const blitz::Array<double, 2> brdf_covariance(const int spec_index) const;
     virtual const double refractive_index(const int Spec_idx) const;
     virtual const double black_sky_albedo(const int Spec_index, const double Sza);
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
     virtual const std::string breon_type() const;
     virtual const DoubleWithUnit reference_point(const int spec_index) const;
@@ -55,7 +56,7 @@ public:
     virtual std::string desc() const;
 };
 
-class GroundBrdfSoil: public Ground {
+class GroundBrdfSoil: public SubStateVectorArray<Ground> {
 public:
     GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
                 const blitz::Array<bool, 2>& Flag,
@@ -81,6 +82,7 @@ public:
     const blitz::Array<double, 2> brdf_covariance(const int spec_index) const;
     virtual const double refractive_index(const int Spec_idx) const;
     virtual const double black_sky_albedo(const int Spec_index, const double Sza);
+    static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
     virtual const double kernel_value(const int Spec_index, const double Sza, const double Vza, const double Azm);
     virtual const std::string breon_type() const;
     virtual const DoubleWithUnit reference_point(const int spec_index) const;

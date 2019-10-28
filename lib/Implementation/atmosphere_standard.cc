@@ -1,4 +1,4 @@
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "old_constant.h"
 #include "linear_algebra.h"
 #include "pressure_fixed_level.h"
@@ -14,7 +14,7 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(AtmosphereOco, RtAtmosphere)
+REGISTER_LUA_DERIVED_CLASS(AtmosphereStandard, RtAtmosphere)
 .def(luabind::constructor<const boost::shared_ptr<Absorber>&,
 	     const boost::shared_ptr<Pressure>&,
 	     const boost::shared_ptr<Temperature>&,
@@ -43,9 +43,9 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereOco, RtAtmosphere)
 	     const boost::shared_ptr<RelativeHumidity>&,
 	     const std::vector<boost::shared_ptr<Altitude> >&,
 	     const boost::shared_ptr<Constant>&>())
-.def("pressure", &AtmosphereOco::pressure_ptr)
-.def("temperature", &AtmosphereOco::temperature_ptr)
-.def("ground", &AtmosphereOco::ground)
+.def("pressure", &AtmosphereStandard::pressure_ptr)
+.def("temperature", &AtmosphereStandard::temperature_ptr)
+.def("ground", &AtmosphereStandard::ground)
 REGISTER_LUA_END()
 #endif
 
@@ -72,15 +72,15 @@ const int taua_0_index = 2;
 /// * Surface temperature
 //-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<Aerosol>& aerosolv,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-         const boost::shared_ptr<Ground>& groundv,
-         const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-	     const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Aerosol>& aerosolv,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const boost::shared_ptr<Ground>& groundv,
+                                       const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
     constant(C), alt(altv), 
@@ -97,14 +97,14 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 /// components except for surface temperature.
 //-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<Aerosol>& aerosolv,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-         const boost::shared_ptr<Ground>& groundv,
-	     const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Aerosol>& aerosolv,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const boost::shared_ptr<Ground>& groundv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), ground_ptr(groundv), 
     constant(C), alt(altv), 
@@ -121,13 +121,13 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 /// components except for ground and surface temperature.
 ///-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<Aerosol>& aerosolv,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-	     const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Aerosol>& aerosolv,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), 
     constant(C), alt(altv), 
@@ -144,14 +144,14 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 /// components except for aerosol
 ///-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-	     const boost::shared_ptr<Ground>& groundv,
-         const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-         const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const boost::shared_ptr<Ground>& groundv,
+                                       const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
     constant(C), alt(altv), 
@@ -168,13 +168,13 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 /// components except for aerosol and surface temperature
 ///-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-	     const boost::shared_ptr<Ground>& groundv,
-         const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const boost::shared_ptr<Ground>& groundv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     rh(rhv), ground_ptr(groundv),
     constant(C), alt(altv), 
@@ -191,12 +191,12 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
 /// components except for ground, aerosol and surface temperature
 //-----------------------------------------------------------------------
 
-AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
-	     const boost::shared_ptr<Pressure>& pressurev,
-	     const boost::shared_ptr<Temperature>& temperaturev,
-	     const boost::shared_ptr<RelativeHumidity>& rhv,
-	     const std::vector<boost::shared_ptr<Altitude> >& altv,
-	     const boost::shared_ptr<Constant>& C)
+AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                                       const boost::shared_ptr<Pressure>& pressurev,
+                                       const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                                       const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     rh(rhv), constant(C), alt(altv), sv_size(0), wn_tau_cache(-1), 
     spec_index_tau_cache(-1),
@@ -205,21 +205,22 @@ AtmosphereOco::AtmosphereOco(const boost::shared_ptr<Absorber>& absorberv,
   initialize();
 }
 
-void AtmosphereOco::initialize()
+void AtmosphereStandard::initialize()
 {
   if(!absorber)
-    throw Exception("Absorber is not allowed to be null in AtmosphereOco");
+    throw Exception("Absorber is not allowed to be null in AtmosphereStandard");
   if(!pressure)
-    throw Exception("Pressure is not allowed to be null in AtmosphereOco");
+    throw Exception("Pressure is not allowed to be null in AtmosphereStandard");
   if(!temperature)
-    throw Exception("Temperature is not allowed to be null in AtmosphereOco");
+    throw Exception("Temperature is not allowed to be null in AtmosphereStandard");
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
     if(!a)
-      throw Exception("Altitude is not allowed to be null in AtmosphereOco");
+      throw Exception("Altitude is not allowed to be null in AtmosphereStandard");
 
   rayleigh.reset(new Rayleigh(pressure, alt, *constant));
-  if(aerosol)
+  if(aerosol) {
     aerosol->add_observer(*this);
+  }
   pressure->add_observer(*this);
 
   column_optical_depth_cache().reset( new ArrayAdMapCache<double, double, 1>() );
@@ -230,7 +231,7 @@ void AtmosphereOco::initialize()
 /// and invalidates the cache
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, StateVector& Sv) {
+void AtmosphereStandard::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, StateVector& Sv) {
     // Remove observers from old aerosol instance
     Sv.remove_observer(*aerosol);
 
@@ -255,8 +256,7 @@ void AtmosphereOco::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, StateVe
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 3> 
-AtmosphereOco::scattering_moment_common(double wn, int nummom, 
-					int numscat) const
+AtmosphereStandard::scattering_moment_common(double wn, int nummom, int numscat) const
 {
   FunctionTimer ft(timer.function_timer());
   firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
@@ -308,14 +308,14 @@ AtmosphereOco::scattering_moment_common(double wn, int nummom,
   } // End handling of atmosphere with aerosol.
 }
 
-void AtmosphereOco::reset_timer()
+void AtmosphereStandard::reset_timer()
 { 
   RtAtmosphere::reset_timer(); 
   Aerosol::timer.reset_elapsed();
   Absorber::timer.reset_elapsed();
 }
 
-std::string AtmosphereOco::timer_info() const
+std::string AtmosphereStandard::timer_info() const
 {
   std::ostringstream os;
   os << RtAtmosphere::timer_info() << "\n"
@@ -330,7 +330,7 @@ std::string AtmosphereOco::timer_info() const
 /// and mark the cache when it changes. 
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::notify_update(const Aerosol& UNUSED(A))
+void AtmosphereStandard::notify_update(const Aerosol& UNUSED(A))
 {
   wn_tau_cache = -1;
   notify_update_do(*this);
@@ -343,7 +343,7 @@ void AtmosphereOco::notify_update(const Aerosol& UNUSED(A))
 /// Returns true if cache is filled, otherwise returns false
 //-----------------------------------------------------------------------
 
-bool AtmosphereOco::fill_cache(double wn, int spec_index) const
+bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 {
   if(fabs(wn - wn_tau_cache) < 1e-6 &&
      spec_index == spec_index_tau_cache)
@@ -369,7 +369,7 @@ bool AtmosphereOco::fill_cache(double wn, int spec_index) const
 /// it naturally falls out of this calculation.
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::calc_intermediate_variable(double wn, int spec_index) 
+void AtmosphereStandard::calc_intermediate_variable(double wn, int spec_index) 
 const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
@@ -389,7 +389,7 @@ const
   ArrayAd<double, 1> taug(intermediate_v(ra, taug_index));
   ArrayAd<double, 1> taur(intermediate_v(ra, taur_index));
   ArrayAd<double, 2> taua_i;
-  if(aerosol) {
+  if(!rayleigh_only_atmosphere()) {
     Range taua_r(taua_0_index, taua_0_index + 
 		 (aerosol ? aerosol->number_particle() - 1 : 0));
     taua_i.reference(intermediate_v(ra, taua_r));
@@ -429,7 +429,6 @@ const
 //-----------------------------------------------------------------------
 /// Add in aerosol, if we have any.
 //-----------------------------------------------------------------------
-
   if(aerosol) {
     if(taua_i.is_constant())
       taua_i.value() = aerosol->optical_depth_each_layer(wn).value();
@@ -452,7 +451,7 @@ const
 ///    something passed into this class.
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::calc_rt_parameters
+void AtmosphereStandard::calc_rt_parameters
 (double wn, const ArrayAd<double, 2>& iv) const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
@@ -480,7 +479,7 @@ void AtmosphereOco::calc_rt_parameters
 /// frac_aer and frac_ray.
 //-----------------------------------------------------------------------
 
-  if(aerosol) {
+  if(!rayleigh_only_atmosphere()) {
     Range taua_r(taua_0_index, taua_0_index + 
 		 (aerosol ? aerosol->number_particle() - 1 : 0));
     ArrayAd<double, 2> taua_i(iv(ra, taua_r));
@@ -527,7 +526,7 @@ void AtmosphereOco::calc_rt_parameters
 }
 //
 // See bass class for description
-ArrayAdWithUnit<double, 1> AtmosphereOco::altitude(int spec_index) const
+ArrayAdWithUnit<double, 1> AtmosphereStandard::altitude(int spec_index) const
 {
   range_check(spec_index, 0, number_spectrometer());
   ArrayAdWithUnit<double, 1> p = pressure->pressure_grid();
@@ -542,7 +541,7 @@ ArrayAdWithUnit<double, 1> AtmosphereOco::altitude(int spec_index) const
 /// The atmospheric thermal blackbody values per level.
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int UNUSED(spec_index)) const
+ArrayAd<double, 1> AtmosphereStandard::atmosphere_blackbody(double wn, int UNUSED(spec_index)) const
 {
     ArrayAdWithUnit<double, 1> temp_grid = temperature->temperature_grid(*pressure);
 
@@ -560,7 +559,7 @@ ArrayAd<double, 1> AtmosphereOco::atmosphere_blackbody(double wn, int UNUSED(spe
 /// The surface thermal blackbody. 
 //-----------------------------------------------------------------------
 
-AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_index) const
+AutoDerivative<double> AtmosphereStandard::surface_blackbody(double wn, int spec_index) const
 {
     if (!surface_temp) {
         Exception error;
@@ -591,7 +590,7 @@ AutoDerivative<double> AtmosphereOco::surface_blackbody(double wn, int spec_inde
 /// object.
 //-----------------------------------------------------------------------
 
-boost::shared_ptr<AtmosphereOco> AtmosphereOco::clone() const
+boost::shared_ptr<AtmosphereStandard> AtmosphereStandard::clone() const
 {
   boost::shared_ptr<Pressure> pressure_clone = pressure->clone();
   boost::shared_ptr<Temperature> temperature_clone = 
@@ -610,16 +609,16 @@ boost::shared_ptr<AtmosphereOco> AtmosphereOco::clone() const
   if(aerosol)
     aerosol_clone = aerosol->clone();
 
-  boost::shared_ptr<AtmosphereOco> res
-    (new AtmosphereOco(absorber_clone, pressure_clone, temperature_clone,
-		       aerosol_clone, rh_clone, ground_clone, alt_clone, 
-		       constant));
+  boost::shared_ptr<AtmosphereStandard> res
+    (new AtmosphereStandard(absorber_clone, pressure_clone, temperature_clone,
+                            aerosol_clone, rh_clone, ground_clone, alt_clone, 
+                            constant));
   return res;
 }
 
-void AtmosphereOco::print(std::ostream& Os) const
+void AtmosphereStandard::print(std::ostream& Os) const
 {
-  Os << "AtmosphereOco:\n";
+  Os << "AtmosphereStandard:\n";
   OstreamPad opad(Os, "    ");
   Os << "  Constant:\n";
   opad << *constant << "\n";
@@ -659,7 +658,7 @@ void AtmosphereOco::print(std::ostream& Os) const
 /// PressureFixedLevel, otherwise it will fail.
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::set_surface_pressure_for_testing(double x)
+void AtmosphereStandard::set_surface_pressure_for_testing(double x)
 {
   PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
   p.set_surface_pressure(x);
@@ -672,7 +671,7 @@ void AtmosphereOco::set_surface_pressure_for_testing(double x)
 /// Lua configuration
 //-----------------------------------------------------------------------
 
-void AtmosphereOco::attach_children_to_sv(StateVector& statev)
+void AtmosphereStandard::attach_children_to_sv(StateVector& statev)
 {
   statev.add_observer(*this);
 

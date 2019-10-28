@@ -1,7 +1,7 @@
 #ifndef PCA_OPTICAL_PROP_H
 #define PCA_OPTICAL_PROP_H
 
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "ground_lambertian.h"
 #include "spectral_domain.h"
 #include "hdf_file.h"
@@ -35,7 +35,7 @@ public:
 class PCAOpticalPropertiesAtmosphere : public PCAOpticalProperties {
 public:
 
-    PCAOpticalPropertiesAtmosphere(const boost::shared_ptr<AtmosphereOco>& atm, const SpectralDomain& spec_domain, int channel_index, std::string primary_absorber, bool show_progress=true);
+    PCAOpticalPropertiesAtmosphere(const boost::shared_ptr<AtmosphereStandard>& atm, const SpectralDomain& spec_domain, int channel_index, std::string primary_absorber, bool show_progress=true);
 
     virtual blitz::Array<double, 1> wavenumber() const { return wavenumber_; }
     virtual blitz::Array<double, 2> gas_optical_depth() const { return gas_optical_depth_; }
@@ -49,7 +49,7 @@ private:
 
     void compute_properties();
 
-    boost::shared_ptr<AtmosphereOco> atmosphere;
+    boost::shared_ptr<AtmosphereStandard> atmosphere;
     boost::shared_ptr<GroundLambertian> lambertian;
 
     bool show_progress_;

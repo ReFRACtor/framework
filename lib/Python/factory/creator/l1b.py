@@ -92,6 +92,7 @@ class ValueFromLevel1b(Creator):
         else:
             return field_val
 
+### This is deprecated and should be removed
 class RelativeAzimuthFromLevel1b(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
@@ -156,3 +157,20 @@ class SolarDistanceFromL1b(Creator):
             solar_dist_units = chan_solar_dist.units
 
         return rf.ArrayWithUnit_double_1(solar_dist_vals, solar_dist_units)
+
+class UncertaintyFromL1b(Creator):
+
+    l1b = param.InstanceOf(rf.Level1b)
+ 
+    def create(self, **kwargs):
+
+        l1b = self.l1b()
+        num_channels = l1b.number_spectrometer()
+
+        uncertainty_list = []
+        for chan_idx in range(num_channels):
+             chan_rad = l1b.radiance(chan_idx)
+             chan_uncert = rf.ArrayWithUnit_double_1(chan_rad.uncertainty, chan_rad.units)
+             uncertainty_list.append(chan_uncert)
+
+        return uncertainty_list

@@ -161,7 +161,7 @@ class FluorescenceEffect(CreatorFlaggedValue):
       cov_unit = param.InstanceOf(rf.Unit)
       which_channels = param.Iterable()
 
-      atmosphere = param.InstanceOf(rf.AtmosphereOco)
+      atmosphere = param.InstanceOf(rf.AtmosphereStandard)
       observation_zenith = param.ArrayWithUnit(dims=1)
       stokes_coefficient = param.Array(dims=2)
       num_channels = param.Scalar(int)

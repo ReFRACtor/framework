@@ -104,8 +104,9 @@ void IlsInstrument::print(std::ostream& Os) const
   for(int i = 0; i < number_spectrometer(); ++i) {
     Os << "  Channel " << (i + 1) << ":\n";
     opad << *ils_[i] << "\n";
-    BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection> ic, inst_corr[i])
-      opad << *ic << "\n";
+    BOOST_FOREACH(boost::shared_ptr<InstrumentCorrection> ic, inst_corr[i]) {
+      if(ic) opad << *ic << "\n";
+    }
     opad.strict_sync();
   }
 }

@@ -21,7 +21,7 @@ namespace FullPhysics {
   The calculation of the Jacobians in LIDORT takes a time directly 
   proportional to the number of variables we are taking the Jacobian 
   with respect to, we use an "intermediate" set of variables for some
-  of the reported gradients (e.g., AtmosphereOco uses taur, taug, and 
+  of the reported gradients (e.g., AtmosphereStandard uses taur, taug, and 
   tau for each of the aerosol). To support future Atmosphere classes, we
   are purposely vague on exactly what these intermediate variables are, at
   least through the RtAtmosphere interface. The

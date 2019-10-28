@@ -15,8 +15,8 @@ namespace FullPhysics {
   notified when the aerosol is updated.
 
   I'm not really sure what the interface for this class should be.
-  Right now it is used only by AtmosphereOco, and there is only one
-  instance AerosolOptical, so the functions are what AtmosphereOco
+  Right now it is used only by AtmosphereStandard, and there is only one
+  instance AerosolOptical, so the functions are what AtmosphereStandard
   needs. But we may perhaps want to modify this in the future to be
   more general. 
 *******************************************************************/
@@ -77,7 +77,7 @@ public:
 /// We take in the optical depth of each layer. This is just what is
 /// returned by optical_depth_each_layer(), we take this in because
 /// we can change what the derivative of optical_depth_each_layer is
-/// respect to, e.g. in AtmosphereOco we use taua_i.
+/// respect to, e.g. in AtmosphereStandard we use taua_i.
 ///
 /// This calculates the derivative with respect to whatever variables
 /// Od is relative to.

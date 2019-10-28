@@ -116,8 +116,9 @@ void StandardForwardModel::print(std::ostream& Os) const
 
     for(int i = 0; i < num_channels(); ++i) {
         Os << "  Spectrum Effect[" << i << "]:\n";
-        BOOST_FOREACH(boost::shared_ptr<SpectrumEffect> se, spec_effect[i])
-        opad << *se << "\n";
+        BOOST_FOREACH(boost::shared_ptr<SpectrumEffect> se, spec_effect[i]) {
+          if(se) opad << *se << "\n";
+        }
         opad.strict_sync();
     }
 }

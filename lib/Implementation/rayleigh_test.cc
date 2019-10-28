@@ -2,7 +2,7 @@
 #include "pressure.h"
 #include "configuration_fixture.h"
 #include "altitude_hydrostatic.h"
-#include "atmosphere_oco.h"
+#include "atmosphere_standard.h"
 #include "unit_test_support.h"
 #include "hdf_file.h"
 #include "default_constant.h"
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {
-  Rayleigh& r = *(dynamic_cast<const AtmosphereOco&>(*config_atmosphere).rayleigh_ptr());
+  Rayleigh& r = *(dynamic_cast<const AtmosphereStandard&>(*config_atmosphere).rayleigh_ptr());
   StateVector& sv = *config_state_vector;
   Array<double, 1> sv0(sv.state().copy());
 

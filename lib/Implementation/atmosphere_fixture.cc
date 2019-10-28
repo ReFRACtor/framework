@@ -5,7 +5,7 @@ using namespace blitz;
 
 AtmosphereFixture::AtmosphereFixture()
 {
-  atm = dynamic_cast<const AtmosphereOco&>(*config_atmosphere).clone();
+  atm = dynamic_cast<const AtmosphereStandard&>(*config_atmosphere).clone();
   press_level = config_pressure_level_input;
 
   // Create a new SV for our cloned Atmosphere to use
