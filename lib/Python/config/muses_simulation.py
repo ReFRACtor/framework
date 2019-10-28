@@ -145,7 +145,7 @@ class MusesSimConfig(object):
 
     def setup_surface_albedo(self, albedo_values):
 
-        self.config_def['atmosphere']['ground']['lambertian']['values'] = albedo_values
+        self.config_def['atmosphere']['ground']['lambertian']['value'] = albedo_values
 
     def configure_scenario(self, sample_grid):
         # Instruments must define the way they configure the scenario, they can use setup_scenario
