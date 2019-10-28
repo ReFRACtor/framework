@@ -22,8 +22,8 @@ public:
 
     OpticalProperties(const ArrayAd<double, 1>& rayleigh_od, 
                       const ArrayAd<double, 2>& gas_od,
-                      const ArrayAd<double, 2>& aerosol_od,
-                      const ArrayAd<double, 2>& aerosol_ssa);
+                      const ArrayAd<double, 2>& aerosol_ext_od,
+                      const ArrayAd<double, 2>& aerosol_sca_od);
 
     OpticalProperties(const DoubleWithUnit spectral_point,
                       const int channel_index,
@@ -36,15 +36,16 @@ public:
     // These accessors simply return what was passed in
     virtual ArrayAd<double, 1> rayleigh_optical_depth() const { return rayleigh_optical_depth_; }
     virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const { return gas_optical_depth_per_particle_; }
-    virtual ArrayAd<double, 2> aerosol_optical_depth_per_particle() const { return aerosol_optical_depth_per_particle_; }
-    virtual ArrayAd<double, 2> aerosol_single_scattering_albedo() const { return aerosol_single_scattering_albedo_per_particle_; }
+    virtual ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle() const { return aerosol_extinction_optical_depth_per_particle_; }
+    virtual ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle() const { return aerosol_scattering_optical_depth_per_particle_; }
 
     // These accessors only calculate their value if their stored value is empty
     virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const;
-    virtual ArrayAd<double, 1> aerosol_optical_depth_per_layer() const;
+    virtual ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer() const;
+    virtual ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer() const;
 
     virtual ArrayAd<double, 1> total_optical_depth() const;
-    virtual ArrayAd<double, 2> total_single_scattering_albedo() const;
+    virtual ArrayAd<double, 1> total_single_scattering_albedo() const;
 
 private:
 
@@ -57,18 +58,19 @@ private:
     ArrayAd<double, 1> rayleigh_optical_depth_;
 
     // Dim: num_layers x num_particles
-    ArrayAd<double, 2> aerosol_optical_depth_per_particle_;
-    ArrayAd<double, 2> aerosol_single_scattering_albedo_per_particle_;
+    ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle_;
+    ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle_;
 
     // Dim: num_layers
     // Summation over all particles
     mutable ArrayAd<double, 1> gas_optical_depth_per_layer_;
-    mutable ArrayAd<double, 1> aerosol_optical_depth_per_layer_;
+    mutable ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer_;
+    mutable ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer_;
 
     // Primary optical properties intended for radiative transfer
     // mutable since thise are computed on demand
     mutable ArrayAd<double, 1> total_optical_depth_;
-    ArrayAd<double, 1> total_single_scattering_albedo_;
+    mutable ArrayAd<double, 1> total_single_scattering_albedo_;
 
     // Reflective surface
     ArrayAd<double, 1> surface_reflective_parameters_;
