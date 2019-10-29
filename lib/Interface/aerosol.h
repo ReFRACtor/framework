@@ -55,7 +55,7 @@ public:
   virtual int number_particle() const = 0;
 
 //-----------------------------------------------------------------------
-/// This gives the optical depth for each layer, for the given wave
+/// This gives the extinction optical depth for each layer, for the given wave
 /// number. Note this only includes the aerosol portion of this,
 /// Atmosphere class combines this with Absorbers and rayleigh
 /// scattering.
@@ -65,18 +65,17 @@ public:
 /// This has size of number_active_layer() x number_particle().
 //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 2> optical_depth_each_layer(double wn) 
-    const = 0;
+  virtual ArrayAd<double, 2> extinction_optical_depth_each_layer(double wn) const = 0;
 
 //-----------------------------------------------------------------------
-/// This gives the single scatter albedo for each layer, for the given wave
+/// This gives the scattering optical depth for each layer, for the given wave
 /// number, for the given particle. Note this only includes the
 /// aerosol portion of this, 
 /// Atmosphere class combines this with Rayleigh scattering.
 ///
 /// We take in the optical depth of each layer. This is just what is
-/// returned by optical_depth_each_layer(), we take this in because
-/// we can change what the derivative of optical_depth_each_layer is
+/// returned by extinction_optical_depth_each_layer(), we take this in because
+/// we can change what the derivative of extinction_optical_depth_each_layer is
 /// respect to, e.g. in AtmosphereStandard we use taua_i.
 ///
 /// This calculates the derivative with respect to whatever variables
@@ -85,9 +84,7 @@ public:
 /// This has size of number_active_layer()
 //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> 
-  ssa_each_layer(double wn, int particle_index,
-		 const ArrayAd<double, 1>& Od) const = 0;
+  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn, int particle_index, const ArrayAd<double, 1>& ext_od) const = 0;
 };
 }
 #endif

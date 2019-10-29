@@ -79,7 +79,7 @@ blitz::Array<std::string, 1> AerosolOptical::aerosol_name_arr() const
 }
 
 //-----------------------------------------------------------------------
-/// We cache the part of the optical_depth_each_layer calculation that
+/// We cache the part of the extinction_optical_depth_each_layer calculation that
 /// is independent of wn.
 //-----------------------------------------------------------------------
 
@@ -129,7 +129,7 @@ void AerosolOptical::fill_cache() const
 }
 
 //-----------------------------------------------------------------------
-/// This gives the optical depth for each layer, for the given wave
+/// This gives the extinction optical depth for each layer, for the given wave
 /// number. Note this only includes the aerosol portion of this,
 /// Atmosphere class combines this with Absorbers and rayleigh
 /// scattering.
@@ -140,7 +140,7 @@ void AerosolOptical::fill_cache() const
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 2> 
-AerosolOptical::optical_depth_each_layer(double wn) const
+AerosolOptical::extinction_optical_depth_each_layer(double wn) const
 {
   Range ra(Range::all());
   firstIndex i1; secondIndex i2; thirdIndex i3;
@@ -165,14 +165,14 @@ AerosolOptical::optical_depth_each_layer(double wn) const
 }
 
 //-----------------------------------------------------------------------
-/// This gives the single scatter albedo for each layer, for the given wave
+/// This gives the scattering optical depth for each layer, for the given wave
 /// number, for the given particle. Note this only includes the
 /// aerosol portion of this, 
 /// Atmosphere class combines this with Rayleigh scattering.
 ///
 /// We take in the optical depth of each layer. This is just what is
-/// returned by optical_depth_each_layer(), we take this in because
-/// we can change what the derivative of optical_depth_each_layer is
+/// returned by extinction_optical_depth_each_layer(), we take this in because
+/// we can change what the derivative of extinction_optical_depth_each_layer is
 /// respect to, e.g. in AtmosphereStandard we use taua_i.
 ///
 /// This calculates the derivative with respect to whatever variables
@@ -181,14 +181,14 @@ AerosolOptical::optical_depth_each_layer(double wn) const
 /// This has size of number_active_layer()
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AerosolOptical::ssa_each_layer
+ArrayAd<double, 1> AerosolOptical::scattering_optical_depth_each_layer
 (double wn,
  int particle_index,
- const ArrayAd<double, 1>& Od) const
+ const ArrayAd<double, 1>& ext_od) const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
   FunctionTimer ft(timer.function_timer());
-  ArrayAd<double, 1> res(Od.copy());
+  ArrayAd<double, 1> res(ext_od.copy());
   ArrayAd<double, 1> t = aprop[particle_index]->scattering_coefficient_each_layer(wn);
   ArrayAd<double, 1> t2 = aprop[particle_index]->extinction_coefficient_each_layer(wn);
   t.value() /= t2.value();
@@ -222,15 +222,15 @@ ArrayAd<double, 1> AerosolOptical::ssa_each_layer
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 1> 
-AerosolOptical::ssa_each_layer(double wn) const
+AerosolOptical::scattering_optical_depth_each_layer(double wn) const
 {
   FunctionTimer ft(timer.function_timer());
-  ArrayAd<double, 2> od(optical_depth_each_layer(wn));
+  ArrayAd<double, 2> od(extinction_optical_depth_each_layer(wn));
   ArrayAd<double, 1> res(od.rows(), nvar);
   res.value() = 0;
   res.jacobian() = 0;
   for(int i = 0; i < number_particle(); ++i) {
-    ArrayAd<double, 1> t(ssa_each_layer(wn, i, od(Range::all(), i)));
+    ArrayAd<double, 1> t(scattering_optical_depth_each_layer(wn, i, od(Range::all(), i)));
     res.value() += t.value();
     res.jacobian() += t.jacobian();
   }

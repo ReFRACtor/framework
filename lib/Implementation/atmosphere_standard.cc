@@ -431,9 +431,9 @@ const
 
   if(aerosol) {
     if(taua_i.is_constant())
-      taua_i.value() = aerosol->optical_depth_each_layer(wn).value();
+      taua_i.value() = aerosol->extinction_optical_depth_each_layer(wn).value();
     else
-      taua_i = aerosol->optical_depth_each_layer(wn);
+      taua_i = aerosol->extinction_optical_depth_each_layer(wn);
   }
 }
 
@@ -488,7 +488,7 @@ void AtmosphereStandard::calc_rt_parameters
     for(int i = 0; i < taua_i.cols(); ++i) {
       scratch(ra, taua_0_index + i) = 1;
       ArrayAd<double, 1> t(taua_i.value()(Range::all(), i), scratch);
-      aersc(ra, i) = aerosol->ssa_each_layer(wn, i, t);
+      aersc(ra, i) = aerosol->scattering_optical_depth_each_layer(wn, i, t);
       scratch(ra, taua_0_index + i) = 0;
     }
     frac_aer.resize(aersc.shape(), iv.cols());

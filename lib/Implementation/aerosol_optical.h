@@ -29,13 +29,10 @@ public:
     notify_update_do(*this); 
   }
 
-  virtual ArrayAd<double, 2> optical_depth_each_layer(double wn) 
-    const;
-  virtual ArrayAd<double, 1> 
-  ssa_each_layer(double wn, int particle_index,
-             const ArrayAd<double, 1>& Od) const;
-  virtual ArrayAd<double, 1> 
-  ssa_each_layer(double wn) const;
+  virtual ArrayAd<double, 2> extinction_optical_depth_each_layer(double wn) const;
+
+  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn, int particle_index, const ArrayAd<double, 1>& ext_od) const;
+  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn) const;
 
 //-----------------------------------------------------------------------
 /// For performance, we cache some data as we calculate it. This
@@ -133,7 +130,7 @@ private:
   boost::shared_ptr<Pressure> press;
   boost::shared_ptr<RelativeHumidity> rh;
   double reference_wn_;
-  // We cache to part of optical_depth_each_layer calculation that
+  // We cache to part of extinction_optical_depth_each_layer calculation that
   // independent of wn.
   mutable bool cache_is_stale;
   mutable ArrayAd<double, 2> od_ind_wn;

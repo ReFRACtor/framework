@@ -25,11 +25,11 @@ OpticalProperties::OpticalProperties(const DoubleWithUnit spectral_point,
 
     rayleigh_optical_depth_ = rayleigh->optical_depth_each_layer(wn, channel_index);
     gas_optical_depth_per_particle_ = absorber->optical_depth_each_layer(wn, channel_index);
-    aerosol_extinction_optical_depth_per_particle_ = aerosol->optical_depth_each_layer(wn);
+    aerosol_extinction_optical_depth_per_particle_ = aerosol->extinction_optical_depth_each_layer(wn);
 
     aerosol_scattering_optical_depth_per_particle_.resize(aerosol_extinction_optical_depth_per_particle_.shape(), aerosol_extinction_optical_depth_per_particle_.number_variable());
     for(int particle_idx = 0; particle_idx < aerosol_extinction_optical_depth_per_particle_.cols(); ++particle_idx) {
-      aerosol_scattering_optical_depth_per_particle_(Range::all(), particle_idx) = aerosol->ssa_each_layer(wn, particle_idx, aerosol_extinction_optical_depth_per_particle_(Range::all(), particle_idx));
+      aerosol_scattering_optical_depth_per_particle_(Range::all(), particle_idx) = aerosol->scattering_optical_depth_each_layer(wn, particle_idx, aerosol_extinction_optical_depth_per_particle_(Range::all(), particle_idx));
     }
 
 }
