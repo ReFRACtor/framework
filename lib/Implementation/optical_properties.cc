@@ -128,7 +128,7 @@ ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer
 /// Total optical depth consisting of rayleigh + gas + aerosol
 /// Gas and aerosol contributions are allowed to possibly be zero.
 /// Computed as:
-/// \f$ \tau_{tot,l} = \tau_{ray,l} + \tau_{gas,l}  + \tau_{aer\_ext,l}
+/// \f$ \tau_{tot,l} = \tau_{ray,l} + \tau_{gas,l}  + \tau_{aer\_ext,l} \f$
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
