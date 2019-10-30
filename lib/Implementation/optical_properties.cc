@@ -3,6 +3,15 @@
 using namespace blitz;
 using namespace FullPhysics;
 
+//-----------------------------------------------------------------------
+/// Initializes an OpticalProperties object using precomputed values:
+/// In the parameters \f$l\f$ stands for layer index, \f$p\f$ stands for particle index.
+/// \param rayleigh_od Rayleigh optical depth for each layer (\f$\tau_{ray,l}\f$)
+/// \param gas_od Gas Absorber optical depth for each layer and gas particle type (\f$\tau_{gas,lp}\f$)
+/// \param aerosol_ext_od Aerosol extinction optical depth for each layer and aerosol particle type (\f$\tau_{aer\_ext,lp}\f$)
+/// \param aerosol_sca_od Aerosol scattering optical depth for each layer and aerosol particle type (\f$\tau_{aer\_sca,lp}\f$)
+//-----------------------------------------------------------------------
+
 OpticalProperties::OpticalProperties(const ArrayAd<double, 1>& rayleigh_od, 
                                      const ArrayAd<double, 2>& gas_od,
                                      const ArrayAd<double, 2>& aerosol_ext_od,
@@ -12,8 +21,13 @@ OpticalProperties::OpticalProperties(const ArrayAd<double, 1>& rayleigh_od,
   aerosol_extinction_optical_depth_per_particle_(aerosol_ext_od), 
   aerosol_scattering_optical_depth_per_particle_(aerosol_sca_od)
 {
-    // The magic is in the initialization
+    // The magic is in the initialization above
 }
+
+//-----------------------------------------------------------------------
+/// Initializes an OpticalProperties object from atmospheric objects
+/// at a specific spectral point for a given instrument channel.
+//-----------------------------------------------------------------------
 
 OpticalProperties::OpticalProperties(const DoubleWithUnit spectral_point,
                                      const int channel_index,
@@ -34,7 +48,10 @@ OpticalProperties::OpticalProperties(const DoubleWithUnit spectral_point,
 
 }
 
-/// Gas optical depth summed over all particles
+//-----------------------------------------------------------------------
+/// Gas Absorber optical depth summed over all particles:
+/// \f$ \tau_{gas,l} = \sum_{p=0}^{P} \tau_{gas,lp} \f$
+//-----------------------------------------------------------------------
 
 ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
 {
@@ -56,7 +73,10 @@ ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
     return gas_optical_depth_per_layer_;
 }
 
-/// Aerosol optical depth summed over all particles
+//-----------------------------------------------------------------------
+/// Aerosol extinction optical depth summed over all particles
+/// \f$ \tau_{aer\_ext,l} = \sum_{p=0}^{P} \tau_{aer\_ext,lp} \f$
+//-----------------------------------------------------------------------
 
 ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer() const
 {
@@ -79,7 +99,10 @@ ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer
     return aerosol_extinction_optical_depth_per_layer_;
 }
 
-/// Aerosol single scattering albedo summed over all particles
+//-----------------------------------------------------------------------
+/// Aerosol scattering optical depth summed over all particles
+/// \f$ \tau_{aer\_sca,l} = \sum_{p=0}^{P} \tau_{aer\_sca,lp} \f$
+//-----------------------------------------------------------------------
 
 ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer() const
 {
@@ -101,9 +124,12 @@ ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer
     return aerosol_scattering_optical_depth_per_layer_;
 }
 
-
+//-----------------------------------------------------------------------
 /// Total optical depth consisting of rayleigh + gas + aerosol
-/// Gas and aerosol contributions may be empty
+/// Gas and aerosol contributions are allowed to possibly be zero.
+/// Computed as:
+/// \f$ \tau_{tot,l} = \tau_{ray,l} + \tau_{gas,l}  + \tau_{aer\_ext,l}
+//-----------------------------------------------------------------------
 
 ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
 {
@@ -142,34 +168,113 @@ ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
     return total_optical_depth_;
 }
 
-ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
+// Private helper that just computes the sum of the rayleigh and aerosol
+// optical depths, the value is used in multiple other calculations and
+// computed once for speed purposes
+ArrayAd<double, 1> OpticalProperties::scattering_sum() const
 {
-    if(total_single_scattering_albedo_.rows() == 0) {
-
+    if(scattering_sum_.rows() == 0) {
         ArrayAd<double, 1> ray_od(rayleigh_optical_depth());
-        ArrayAd<double, 1> tot_od(total_optical_depth());
 
-        total_single_scattering_albedo_.resize(tot_od.rows(), tot_od.number_variable());
+        scattering_sum_.resize(ray_od.rows(), ray_od.number_variable());
 
-        total_single_scattering_albedo_.value() = ray_od.value();
+        scattering_sum_.value() = ray_od.value();
         if(!ray_od.is_constant()) {
-            total_single_scattering_albedo_.jacobian() = ray_od.jacobian();
+            scattering_sum_.jacobian() = ray_od.jacobian();
         }
 
         ArrayAd<double, 1> aer_sca_od(aerosol_scattering_optical_depth_per_layer());
         if(aer_sca_od.rows() > 0) {
-            total_single_scattering_albedo_.value() += aer_sca_od.value();
+            scattering_sum_.value() += aer_sca_od.value();
             if(!aer_sca_od.is_constant()) {
-                total_single_scattering_albedo_.jacobian() += aer_sca_od.jacobian();
+                scattering_sum_.jacobian() += aer_sca_od.jacobian();
             }
         }
 
-        total_single_scattering_albedo_.value() /= tot_od.value();
-        if(!tot_od.is_constant()) {
-            total_single_scattering_albedo_.jacobian() /= tot_od.jacobian();
+    }
+    
+    return scattering_sum_;
+}
+
+//-----------------------------------------------------------------------
+/// Total single scattering albedo
+/// Aerosol contribution is allowed to possibly be zero.
+/// Computed as:
+/// \f$ \omega_{tot,l} = \frac{ \tau_{ray,l} + \tau_{aer\_sca,l} }{ \tau_{tot,l} } \f$
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
+{
+    if(total_single_scattering_albedo_.rows() == 0) {
+        firstIndex i1; 
+
+        ArrayAd<double, 1> ssa_sum(scattering_sum());
+        ArrayAd<double, 1> tot_od(total_optical_depth());
+
+        total_single_scattering_albedo_.resize(ssa_sum.rows(), ssa_sum.number_variable());
+
+        total_single_scattering_albedo_.value() = ssa_sum.value() / tot_od.value();
+
+        if(!total_single_scattering_albedo_.is_constant()) {
+            // Jacobian computed using quotient to avoid divide by zero possible in tot_od jacobian
+            total_single_scattering_albedo_.jacobian() = 
+                ssa_sum.jacobian() / tot_od.value()(i1) - 
+                ssa_sum.value()(i1) / (tot_od.value()(i1) * tot_od.value()(i1)) * tot_od.jacobian();
         }
 
     }
 
     return total_single_scattering_albedo_;
+}
+
+//-----------------------------------------------------------------------
+/// Fraction of the scattering attributable to rayleigh at each layer
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 1> OpticalProperties::rayleigh_fraction() const
+{
+    if(rayleigh_fraction_.rows() == 0) {
+        firstIndex i1; 
+
+        ArrayAd<double, 1> ray_od(rayleigh_optical_depth());
+        ArrayAd<double, 1> ssa_sum(scattering_sum());
+
+        rayleigh_fraction_.resize(ray_od.rows(), ray_od.number_variable());
+        rayleigh_fraction_.value() = ray_od.value() / ssa_sum.value();
+
+        if(!rayleigh_fraction_.is_constant()) {
+            // Jacobian computed using quotient to avoid divide by zero possible in tot_od jacobian
+            rayleigh_fraction_.jacobian() = 
+                ray_od.jacobian() / ssa_sum.value()(i1) - 
+                ray_od.value()(i1) / (ssa_sum.value()(i1) * ssa_sum.value()(i1)) * ssa_sum.jacobian();
+        }
+    }
+
+    return rayleigh_fraction_;
+}
+
+//-----------------------------------------------------------------------
+/// Fraction of the scattering attributable to each aerosol particle at each layer
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
+{
+    if(aerosol_fraction_.rows() == 0) {
+        firstIndex i1; secondIndex i2; thirdIndex i3;
+
+        ArrayAd<double, 2> aer_sca(aerosol_scattering_optical_depth_per_particle());
+        ArrayAd<double, 1> ssa_sum(scattering_sum());
+
+        aerosol_fraction_.resize(aer_sca.rows(), aer_sca.cols(), aer_sca.number_variable());
+        aerosol_fraction_.value() = aer_sca.value() / ssa_sum.value()(i1);
+
+        if(!aerosol_fraction_.is_constant()) {
+            // Jacobian computed using quotient to avoid divide by zero possible in tot_od jacobian
+            aerosol_fraction_.jacobian() = 
+                aer_sca.jacobian() / ssa_sum.value()(i1) - 
+                aer_sca.value()(i1,i2) / (ssa_sum.value()(i1) * ssa_sum.value()(i1)) * ssa_sum.jacobian()(i1, i3);
+        }
+    }
+
+    return aerosol_fraction_;
 }

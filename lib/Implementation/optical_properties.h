@@ -15,8 +15,9 @@ namespace FullPhysics {
   Represents the optical properties for a single spectral point.
   The intention is to contain all the information calculated from
   the atmosphere needed for a radiative transfer calculation along
-  with intermediate computations useful in speed up methods.
+  with intermediate computations useful by approximation methods.
  *******************************************************************/
+
 class OpticalProperties : public virtual GenericObject {
 public:
 
@@ -31,15 +32,29 @@ public:
                       const boost::shared_ptr<Rayleigh>& rayleigh,
                       const boost::shared_ptr<Aerosol>& aerosol);
 
+    /// Deconstructor
     virtual ~OpticalProperties() = default;
 
+    // 
     // These accessors simply return what was passed in
+    // 
+    
+    /// Returns Rayleigh optical depth for each layer: \f$ \tau_{ray,l} \f$
     virtual ArrayAd<double, 1> rayleigh_optical_depth() const { return rayleigh_optical_depth_; }
+
+    /// Returns Gas Absorber optical depth for each layer and particle type: \f$ \tau_{gas,lp} \f$
     virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const { return gas_optical_depth_per_particle_; }
+
+    /// Returns Aerosol extinction optical depth for each layer and particle type: \f$ \tau_{aer\_ext,lp} \f$
     virtual ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle() const { return aerosol_extinction_optical_depth_per_particle_; }
+
+    /// Returns Aerosol scattering optical depth for each layer and particle type: \f$ \tau_{aer\_sca,lp} \f$
     virtual ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle() const { return aerosol_scattering_optical_depth_per_particle_; }
 
+    // 
     // These accessors only calculate their value if their stored value is empty
+    // 
+
     virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer() const;
@@ -47,6 +62,9 @@ public:
     virtual ArrayAd<double, 1> total_optical_depth() const;
     virtual ArrayAd<double, 1> total_single_scattering_albedo() const;
 
+    virtual ArrayAd<double, 1> rayleigh_fraction() const;
+    virtual ArrayAd<double, 2> aerosol_fraction() const;
+    
 private:
 
     // Intermediate optical properties used in the computation of primary properties
@@ -72,6 +90,14 @@ private:
     mutable ArrayAd<double, 1> total_optical_depth_;
     mutable ArrayAd<double, 1> total_single_scattering_albedo_;
 
+    // Helper function and variable for a value used in total_single_scattering_albedo, rayleigh_fraction and aerosol_fraction
+    ArrayAd<double, 1> scattering_sum() const;
+    mutable ArrayAd<double, 1> scattering_sum_;
+
+    // Convenient values needed in scattering moment calculation
+    mutable ArrayAd<double, 1> rayleigh_fraction_;
+    mutable ArrayAd<double, 2> aerosol_fraction_;
+
     // Reflective surface
     ArrayAd<double, 1> surface_reflective_parameters_;
 
@@ -79,9 +105,7 @@ private:
     ArrayAd<double, 1> atmosphere_blackbody_;
     AutoDerivative<double> surface_blackbody_;
 
-    // Convenient values needed in scattering moment calculation
-    ArrayAd<double, 1> rayleigh_fraction_;
-    ArrayAd<double, 2> aerosol_fraction_;
+
 
 
 };
