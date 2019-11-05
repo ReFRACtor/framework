@@ -11,11 +11,16 @@
 
 
 namespace FullPhysics {
+
+%feature("notabstract") MappingLog;
+
 class MappingLog : public Mapping {
 public:
-    const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
-    const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
-    std::string name() const;
+    MappingLog();
+    virtual ~MappingLog();
+    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
+    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
+    virtual std::string name() const;
     virtual boost::shared_ptr<Mapping> clone() const;
 };
 }

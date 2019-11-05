@@ -13,6 +13,7 @@ from refractor import framework as rf
 
 DEFAULT_REFERENCE_ATM_FILENAME = os.path.join(os.environ.get("REFRACTOR_INPUTS", "$ENV{REFRACTOR_INPUTS}"), "reference_atmosphere.h5")
 
+
 class ReferenceAtmFileMixin(object):
 
     def ref_atm_data(self):
@@ -29,6 +30,7 @@ class ReferenceAtmFileMixin(object):
             ref_atm_data = rf.HdfFile(DEFAULT_REFERENCE_ATM_FILENAME)
 
         return ref_atm_data
+
 
 class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
     "Creates a VMR apriori for a gas species using the TCCON method"
@@ -54,6 +56,7 @@ class GasVmrAprioriMetL1b(Creator, ReferenceAtmFileMixin):
 
         apriori_obj = rf.GasVmrApriori(self.met(), self.l1b(), self.altitude()[0], self.ref_atm_data(), "/Reference_Atmosphere", gas_name, self.temp_avg_window())
         return apriori_obj.apriori_vmr(self.pressure())
+
 
 class GasVmrApriori(Creator, ReferenceAtmFileMixin):
     "Creates a VMR apriori for a gas species using the TCCON method"
@@ -91,11 +94,15 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
 
         return vmr_profile
 
+
 class AbsorberVmrLevel(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
 
     pressure = param.InstanceOf(rf.Pressure)
-    log_retrieval = param.Scalar(bool, default=False)
+
+    # Callers should specify either log_retrieval or mapping; not both
+    log_retrieval = param.Scalar(bool, required=False)
+    mapping = param.InstanceOf(rf.Mapping, required=False)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
     gas_name = param.Scalar(str, required=False)
@@ -107,18 +114,27 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
+        if self.log_retrieval() is not None and self.mapping() is not None:
+            raise param.ParamError("Specifying both log_retrieval and mapping is ambiguous")
+        elif self.log_retrieval() is not None:
+            if self.log_retrieval():
+                effective_mapping = rf.MappingLog()
+            else:
+                effective_mapping = rf.MappingLinear()
+        elif self.mapping() is not None:
+            effective_mapping = self.mapping()
+        else:
+            effective_mapping = rf.MappingLinear()
+
         vmr_profile = self.value(gas_name=gas_name)
 
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
-        if self.log_retrieval() and np.any(vmr_profile < 0):
+        if isinstance(effective_mapping, rf.MappingLog) and np.any(vmr_profile < 0):
             raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
+        return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name, effective_mapping)
 
-        if self.log_retrieval():
-            return rf.AbsorberVmrLevelLog(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
-        else:
-            return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name)
 
 class AbsorberVmrLevelScaled(CreatorFlaggedValue):
     "Creates a AbsorberVmrLevelScaled that supplies a AbsorberVmr class for use in an creating an Atmosphere"
@@ -144,6 +160,7 @@ class AbsorberVmrLevelScaled(CreatorFlaggedValue):
         ret_flag = bool(self.retrieval_flag(gas_name=gas_name)[0])
         return rf.AbsorberVmrLevelScaled(self.pressure(), vmr_profile, self.scaling(), ret_flag, gas_name)
 
+
 class AbsorberVmrMet(CreatorFlaggedValue):
 
     met = param.InstanceOf(rf.Meteorology)
@@ -156,10 +173,12 @@ class AbsorberVmrMet(CreatorFlaggedValue):
 
         return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
 
+
 class AbscoInterpolationOption(Enum):
     error = rf.AbscoAer.THROW_ERROR_IF_NOT_ON_WN_GRID
     nearest_neighbor = rf.AbscoAer.NEAREST_NEIGHBOR_WN
     interpolate = rf.AbscoAer.INTERPOLATE_WN
+
 
 class AbscoCreator(Creator):
     "Do not use directly, defines the generic interface that uses a specific Absco class specified in inheriting creators"
@@ -183,7 +202,7 @@ class AbscoCreator(Creator):
             absco_filename = fn_formatter.format(self.filename(), gas=gas_name, **self.common_store)
         except ValueError as exc:
             raise param.ParamError('Error formatting absco filename template "%s": %s' % (self.filename(), exc))
-        
+
         # Try expanding globs
         if not os.path.exists(absco_filename):
             filename_matches = glob(absco_filename)
@@ -220,6 +239,7 @@ class AbscoCreator(Creator):
 
             return self.absco_object(absco_filename, table_scale_vector, spectral_bound, cache_size=cache_size, interp_method=interp_method)
 
+
 class AbscoLegacy(AbscoCreator):
     "Legacy HDF format created for OCO"
 
@@ -233,6 +253,7 @@ class AbscoLegacy(AbscoCreator):
             return rf.AbscoHdf(absco_filename, spectral_bound, table_scale, cache_size, interp_method)
         else:
             return rf.AbscoHdf(absco_filename, table_scale, cache_size, interp_method)
+
 
 class AbscoAer(AbscoCreator):
     "Newer AER generated ABSCO format"
@@ -248,11 +269,13 @@ class AbscoAer(AbscoCreator):
         else:
             return rf.AbscoAer(absco_filename, table_scale, cache_size, interp_method)
 
+
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
 
     vmr = param.InstanceOf(rf.AbsorberVmr)
     absorption = param.InstanceOf(rf.GasAbsorption)
+
 
 class AbsorberAbsco(Creator):
     "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
@@ -264,7 +287,7 @@ class AbsorberAbsco(Creator):
     num_sub_layers = param.Scalar(int, required=False)
     constants = param.InstanceOf(rf.Constant)
     default_gas_definition = param.Dict(required=False)
-            
+
     def create(self, **kwargs):
 
         vmrs = rf.vector_absorber_vmr()
@@ -276,7 +299,7 @@ class AbsorberAbsco(Creator):
                 gas_def = self.param(gas_name, gas_name=gas_name)
             else:
                 gas_def = self.default_gas_definition(gas_name=gas_name)
-            
+
             if gas_def is None:
                 raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
 

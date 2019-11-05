@@ -9,11 +9,13 @@ from .. import param
 
 from refractor import framework as rf
 
+
 class AerosolDefinition(ParamPassThru):
     "Defines the interface expected for aerosol config defnition blocks, values are pass through as a dictionary"
 
     extinction = param.InstanceOf(rf.AerosolExtinction)
     properties = param.InstanceOf(rf.AerosolProperty)
+
 
 class AerosolOptical(Creator):
     "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
@@ -21,8 +23,8 @@ class AerosolOptical(Creator):
     aerosols = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
-    reference_wn = param.Scalar(int, default=1e4/0.755)
- 
+    reference_wn = param.Scalar(int, default=1e4 / 0.755)
+
     def create(self, **kwargs):
 
         vec_extinction = rf.vector_aerosol_extinction()
@@ -56,18 +58,31 @@ class AerosolShapeGaussian(CreatorFlaggedValue):
 
         return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_space())
 
+
 class AerosolProfileExtinction(CreatorFlaggedValue):
 
     pressure = param.InstanceOf(rf.Pressure)
-    log_space = param.Scalar(bool, default=True)
+
+    # Callers should specify either log_space or mapping; not both
+    log_space = param.Scalar(bool, required=False)
+    mapping = param.InstanceOf(rf.Mapping, required=False)
 
     def create(self, aerosol_name=None, **kwargs):
 
-        if self.log_space():
-            return rf.AerosolExtinctionLog(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name)
+        if self.log_space() is not None and self.mapping() is not None:
+            raise param.ParamError("Specifying both log_space and mapping is ambiguous")
+        elif self.log_space() is not None:
+            if self.log_space():
+                effective_mapping = rf.MappingLog()
+            else:
+                effective_mapping = rf.MappingLinear()
+        elif self.mapping() is not None:
+            effective_mapping = self.mapping()
         else:
-            return rf.AerosolExtinctionLinear(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name)
-        
+            effective_mapping = rf.MappingLinear()
+
+        return rf.AerosolExtinctionLevel(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, effective_mapping)
+
 
 class AerosolPropertyHdf(Creator):
 
