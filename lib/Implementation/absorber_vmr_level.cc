@@ -7,7 +7,6 @@ using namespace blitz;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
-// TODO: Add mapping to luabind constructor
 REGISTER_LUA_DERIVED_CLASS(AbsorberVmrLevel, AbsorberVmr)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
 			  const blitz::Array<double, 1>&,
@@ -40,24 +39,16 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
 {
   bool Mark_according_to_press = false;
   int Pdep_start = 0;
-  // TODO: Allow mapping to set the appropriate used_flag / Vmr_flag
-  // For scale mapping only
   blitz::Array<bool, 1> flag(1);
   flag(0) = Vmr_flag;
-  // In the case of a bool Vmr_flag for non-scale mapping, use it for all entries of Vmr
-  /*
-  blitz::Array<bool, 1> flag(Vmr.rows());
-  flag(blitz::Range::all()) = Vmr_flag;
-  */
   init(Gas_name, Vmr, flag, Press, Mark_according_to_press, Pdep_start, in_map);
 }
 
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
-  //TODO: clone for mapping?
   return boost::shared_ptr<AbsorberVmr>
     (new AbsorberVmrLevel(press->clone(), coeff.value(),used_flag,
-			  gas_name(), mapping));
+			  gas_name(), mapping->clone()));
 }
 
 blitz::Array<double, 1> AbsorberVmrLevel::pressure_profile() const

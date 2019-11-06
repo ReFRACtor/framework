@@ -18,9 +18,8 @@ public:
 
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
 
-  // TODO: Re-add support for existing interface
-  // %python_attribute(scale_factor, double)
-  // %python_attribute(scale_uncertainty, double)
+  %python_attribute(scale_factor, double)
+  %python_attribute(scale_uncertainty, double)
   %python_attribute(vmr_profile, blitz::Array<double, 1>)
   %python_attribute(pressure_profile, blitz::Array<double, 1>)
 

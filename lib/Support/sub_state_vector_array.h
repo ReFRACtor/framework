@@ -91,8 +91,8 @@ public:
                         boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
         : coeff(1, 0), used_flag(1), mark_according_to_press(true), pdep_start(0), mapping(in_map)
   {
-        // TODO: Add mapping's retrieval_init of Coeff in this constructor
     coeff.value()(0) = Coeff;
+    coeff = in_map->retrieval_init(coeff.copy());
     used_flag(0) = Used_flag;
     state_vector_observer_initialize(count(used_flag));
   }
@@ -258,7 +258,6 @@ protected:
 };
 }
 
-// TODO: Add mapping to serialization
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
