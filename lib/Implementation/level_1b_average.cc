@@ -146,7 +146,6 @@ bool Level1bAverage::check_field_equal(T && check_field, int arg1) const {
     return true;
 }
 
-/* TODO: change signature to accept string name of function to provide better error output? */
 template <typename T>
 void Level1bAverage::assert_field_equal(T && check_field) const {
     bool field_equal = check_field_equal(check_field);
@@ -157,7 +156,6 @@ void Level1bAverage::assert_field_equal(T && check_field) const {
     }
 }
 
-/* TODO: change signature to accept string name of function to provide better error output? */
 template <typename T>
 void Level1bAverage::assert_field_equal(T && check_field, int arg1) const {
     bool field_equal = check_field_equal(check_field, arg1);

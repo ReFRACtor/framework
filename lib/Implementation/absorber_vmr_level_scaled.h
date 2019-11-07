@@ -1,6 +1,6 @@
 #ifndef ABSORBER_VMR_LEVEL_SCALED_H
 #define ABSORBER_VMR_LEVEL_SCALED_H
-#include "absorber_vmr_scaled.h"
+#include "absorber_vmr_level.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -10,7 +10,7 @@ namespace FullPhysics {
   This particular implementation uses a passed vmr profile
   (interpolated to the current pressure grid), along with a scale factor.
 *******************************************************************/
-class AbsorberVmrLevelScaled : public AbsorberVmrScaled {
+class AbsorberVmrLevelScaled : public AbsorberVmrLevel {
 public:
   AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
                          const blitz::Array<double, 1>& Vmr_profile,
@@ -18,23 +18,8 @@ public:
                          bool Scale_flag,
                          const std::string& Gas_name);
   virtual ~AbsorberVmrLevelScaled() {}
-
-  virtual void print(std::ostream& Os) const;
-
+  virtual double scale_factor() const;
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
-
-  //-----------------------------------------------------------------------
-  /// VMR values passed in from input
-  //-----------------------------------------------------------------------
-  virtual blitz::Array<double, 1> vmr_profile() const;
-
-  //-----------------------------------------------------------------------
-  /// Pressure levels that vmr is on
-  //-----------------------------------------------------------------------
-  virtual blitz::Array<double, 1> pressure_profile() const;
-
-private:
-  blitz::Array<double, 1> vmr_profile_;
 };
 }
 #endif

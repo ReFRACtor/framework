@@ -20,6 +20,10 @@ set(DIR_SOURCES
     linear_algebra.cc
     logger.cc
     logger_f.F90
+    mapping_linear.h
+    mapping_log.h
+    mapping_scale.h
+    mapping_gaussian.h
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc

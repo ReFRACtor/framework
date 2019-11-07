@@ -17,37 +17,48 @@ public:
   AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
 		   const blitz::Array<double, 1>& Vmr, 
 		   const blitz::Array<bool, 1>& Vmr_flag,
-		   const std::string& Gas_name);
+		   const std::string& Gas_name,
+		   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+  AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
+             const blitz::Array<double, 1>& Vmr,
+             const bool Vmr_flag,
+             const std::string& Gas_name,
+             boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
   virtual ~AbsorberVmrLevel() {}
   virtual void print(std::ostream& Os) const;
-  virtual std::string sub_state_identifier() const { return "absorber_levels/" + gas_name(); }
+  virtual std::string sub_state_identifier() const
+  { return "absorber_levels/" + mapping->name() + "/" + gas_name(); }
   virtual std::string state_vector_name_i(int i) const
-  { return gas_name() + " VMR for Press Lvl " + 
+  { return gas_name() + " " + mapping->name() + " VMR for Press Lvl " +
       boost::lexical_cast<std::string>(i + 1); }
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
 
 //-----------------------------------------------------------------------
-/// VMR on the pressure grid. This is just coeff.value, but this is
-/// useful for generating output.
+/// Pressure levels that vmr is on
+//-----------------------------------------------------------------------
+  blitz::Array<double, 1> pressure_profile() const;
+
+//-----------------------------------------------------------------------
+/// VMR on the pressure grid. This is just the forward model view of
+/// coeff.value, but this is useful for generating output.
 //-----------------------------------------------------------------------
   blitz::Array<double, 1> vmr_profile() const 
-  { return coeff.value(); }
+  { return mapping->fm_view(coeff).value(); }
 
 //-----------------------------------------------------------------------
 /// Covariance of vmr profile
 //-----------------------------------------------------------------------
-
   blitz::Array<double, 2> vmr_covariance() const
   {
     using namespace blitz;
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     ArrayAd<double, 1> vmrv(coeff);
     Array<double, 2> res(vmrv.rows(), vmrv.rows());
-    if(vmrv.is_constant())
+    if(vmrv.is_constant()) {
       res = 0;			// Normal only encounter this in
   				// testing, when we haven't yet set up
   				// a covariance matrix and state vector.
-    else {
+    } else {
       
       Array<double, 2> dvmr_dstate(vmrv.jacobian());
       Array<double, 2> t(dvmr_dstate.rows(), sv_cov_full.cols()) ;

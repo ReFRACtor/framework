@@ -9,6 +9,8 @@
 %base_import(state_vector)
 %base_import(sub_state_vector_array)
 %base_import(absorber_vmr)
+%base_import(mapping)
+%base_import(mapping_linear)
 
 %fp_shared_ptr(FullPhysics::AbsorberVmrImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AbsorberVmr>);
@@ -51,11 +53,12 @@ protected:
   mutable boost::function<AutoDerivative<double>(AutoDerivative<double>)> vmr;
   virtual void calc_vmr() const = 0;
   AbsorberVmrImpBase(const std::string& Gas_name,
-		     const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-	             int Pdep_start = 0);
+                    const blitz::Array<double, 1>& Coeff,
+                    const blitz::Array<bool, 1>& Used_flag,
+                    const boost::shared_ptr<Pressure>& Press,
+                    bool Mark_according_to_press = true,
+                    int Pdep_start = 0,
+                    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
 };
 }
 
