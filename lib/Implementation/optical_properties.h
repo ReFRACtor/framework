@@ -21,35 +21,37 @@ namespace FullPhysics {
 class OpticalProperties : public virtual GenericObject {
 public:
 
-    OpticalProperties(const ArrayAd<double, 1>& rayleigh_od, 
-                      const ArrayAd<double, 2>& gas_od,
-                      const ArrayAd<double, 2>& aerosol_ext_od,
-                      const ArrayAd<double, 2>& aerosol_sca_od);
+    OpticalProperties() : initialized(false) {}
 
-    OpticalProperties(const DoubleWithUnit spectral_point,
-                      const int channel_index,
-                      const boost::shared_ptr<Absorber>& absorber,
-                      const boost::shared_ptr<Rayleigh>& rayleigh,
-                      const boost::shared_ptr<Aerosol>& aerosol);
+    virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
+                            const ArrayAd<double, 2>& gas_od,
+                            const ArrayAd<double, 2>& aerosol_ext_od,
+                            const ArrayAd<double, 2>& aerosol_sca_od);
+
+    virtual void initialize(const DoubleWithUnit spectral_point,
+                            const int channel_index,
+                            const boost::shared_ptr<Absorber>& absorber,
+                            const boost::shared_ptr<Rayleigh>& rayleigh,
+                            const boost::shared_ptr<Aerosol>& aerosol);
 
     /// Deconstructor
     virtual ~OpticalProperties() = default;
-
+ 
     // 
     // These accessors simply return what was passed in
     // 
     
     /// Returns Rayleigh optical depth for each layer: \f$ \tau_{ray,l} \f$
-    virtual ArrayAd<double, 1> rayleigh_optical_depth() const { return rayleigh_optical_depth_; }
+    virtual ArrayAd<double, 1> rayleigh_optical_depth() const { assert_init(); return rayleigh_optical_depth_; }
 
     /// Returns Gas Absorber optical depth for each layer and particle type: \f$ \tau_{gas,lp} \f$
-    virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const { return gas_optical_depth_per_particle_; }
+    virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const { assert_init(); return gas_optical_depth_per_particle_; }
 
     /// Returns Aerosol extinction optical depth for each layer and particle type: \f$ \tau_{aer\_ext,lp} \f$
-    virtual ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle() const { return aerosol_extinction_optical_depth_per_particle_; }
+    virtual ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle() const { assert_init(); return aerosol_extinction_optical_depth_per_particle_; }
 
     /// Returns Aerosol scattering optical depth for each layer and particle type: \f$ \tau_{aer\_sca,lp} \f$
-    virtual ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle() const { return aerosol_scattering_optical_depth_per_particle_; }
+    virtual ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle() const { assert_init(); return aerosol_scattering_optical_depth_per_particle_; }
 
     // 
     // These accessors only calculate their value if their stored value is empty
@@ -64,8 +66,20 @@ public:
 
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
+
+    /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
+    virtual blitz::Array<double, 3> intermediate_jacobian() const { assert_init(); return intermediate_jacobian_; }
     
-private:
+protected:
+
+    // Initialization protection
+    bool initialized;
+    void assert_init() const;
+
+    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                           const ArrayAd<double, 2>& gas_od,
+                                           const ArrayAd<double, 2>& aerosol_ext_od,
+                                           const ArrayAd<double, 2>& aerosol_sca_od);
 
     // Intermediate optical properties used in the computation of primary properties
 
@@ -97,6 +111,9 @@ private:
     // Convenient values needed in scattering moment calculation
     mutable ArrayAd<double, 1> rayleigh_fraction_;
     mutable ArrayAd<double, 2> aerosol_fraction_;
+    
+    // For conversion from jacobians wrt internal value to wrt input values
+    blitz::Array<double, 3> intermediate_jacobian_;
 
     // Reflective surface
     ArrayAd<double, 1> surface_reflective_parameters_;
@@ -105,8 +122,22 @@ private:
     ArrayAd<double, 1> atmosphere_blackbody_;
     AutoDerivative<double> surface_blackbody_;
 
+};
 
+/****************************************************************//**
+ *******************************************************************/
 
+class OpticalPropertiesWrtRt : public virtual OpticalProperties {
+public:
+
+    OpticalPropertiesWrtRt() : OpticalProperties() {};
+
+protected:
+
+    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                           const ArrayAd<double, 2>& gas_od,
+                                           const ArrayAd<double, 2>& aerosol_ext_od,
+                                           const ArrayAd<double, 2>& aerosol_sca_od);
 
 };
 

@@ -14,5 +14,6 @@
 %import "aerosol.i"
 
 %fp_shared_ptr(FullPhysics::OpticalProperties)
+%fp_shared_ptr(FullPhysics::OpticalPropertiesWrtRt)
 
 %include "optical_properties.h"

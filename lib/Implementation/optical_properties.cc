@@ -12,16 +12,14 @@ using namespace FullPhysics;
 /// \param aerosol_sca_od Aerosol scattering optical depth for each layer and aerosol particle type (\f$\tau_{aer\_sca,lp}\f$)
 //-----------------------------------------------------------------------
 
-OpticalProperties::OpticalProperties(const ArrayAd<double, 1>& rayleigh_od, 
-                                     const ArrayAd<double, 2>& gas_od,
-                                     const ArrayAd<double, 2>& aerosol_ext_od,
-                                     const ArrayAd<double, 2>& aerosol_sca_od)
-: rayleigh_optical_depth_(rayleigh_od),
-  gas_optical_depth_per_particle_(gas_od), 
-  aerosol_extinction_optical_depth_per_particle_(aerosol_ext_od), 
-  aerosol_scattering_optical_depth_per_particle_(aerosol_sca_od)
+void OpticalProperties::initialize(const ArrayAd<double, 1>& rayleigh_od, 
+                                   const ArrayAd<double, 2>& gas_od,
+                                   const ArrayAd<double, 2>& aerosol_ext_od,
+                                   const ArrayAd<double, 2>& aerosol_sca_od)
 {
-    // The magic is in the initialization above
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od);
+
+    initialized = true;
 }
 
 //-----------------------------------------------------------------------
@@ -29,23 +27,75 @@ OpticalProperties::OpticalProperties(const ArrayAd<double, 1>& rayleigh_od,
 /// at a specific spectral point for a given instrument channel.
 //-----------------------------------------------------------------------
 
-OpticalProperties::OpticalProperties(const DoubleWithUnit spectral_point,
-                                     const int channel_index,
-                                     const boost::shared_ptr<Absorber>& absorber,
-                                     const boost::shared_ptr<Rayleigh>& rayleigh,
-                                     const boost::shared_ptr<Aerosol>& aerosol)
+void OpticalProperties::initialize(const DoubleWithUnit spectral_point,
+                                   const int channel_index,
+                                   const boost::shared_ptr<Absorber>& absorber,
+                                   const boost::shared_ptr<Rayleigh>& rayleigh,
+                                   const boost::shared_ptr<Aerosol>& aerosol)
 {
+
+    Range ra = Range::all();
     double wn = spectral_point.convert_wave(units::inv_cm).value;
 
-    rayleigh_optical_depth_ = rayleigh->optical_depth_each_layer(wn, channel_index);
-    gas_optical_depth_per_particle_ = absorber->optical_depth_each_layer(wn, channel_index);
-    aerosol_extinction_optical_depth_per_particle_ = aerosol->extinction_optical_depth_each_layer(wn);
+    ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, channel_index));
+    ArrayAd<double, 2> gas_od(absorber->optical_depth_each_layer(wn, channel_index));
+    ArrayAd<double, 2> aerosol_ext_od(aerosol->extinction_optical_depth_each_layer(wn));
 
-    aerosol_scattering_optical_depth_per_particle_.resize(aerosol_extinction_optical_depth_per_particle_.shape(), aerosol_extinction_optical_depth_per_particle_.number_variable());
-    for(int particle_idx = 0; particle_idx < aerosol_extinction_optical_depth_per_particle_.cols(); ++particle_idx) {
-      aerosol_scattering_optical_depth_per_particle_(Range::all(), particle_idx) = aerosol->scattering_optical_depth_each_layer(wn, particle_idx, aerosol_extinction_optical_depth_per_particle_(Range::all(), particle_idx));
+    ArrayAd<double, 2> aerosol_sca_od(aerosol_ext_od.shape(), aerosol_ext_od.number_variable());
+    for(int particle_idx = 0; particle_idx < aerosol_sca_od.cols(); particle_idx++) {
+      aerosol_sca_od(ra, particle_idx) = aerosol->scattering_optical_depth_each_layer(wn, particle_idx, aerosol_ext_od(ra, particle_idx));
     }
 
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od);
+
+    initialized = true;
+
+}
+
+//-----------------------------------------------------------------------
+/// Initialize internal variables along with jacobians for the basis
+/// of the implementation.
+///
+/// In the base implementation jacobians are with respect to the input
+/// variables and therefore the intermdiate jacobian is just an identity 
+/// matrix.
+//-----------------------------------------------------------------------
+
+void OpticalProperties::initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                                  const ArrayAd<double, 2>& gas_od,
+                                                  const ArrayAd<double, 2>& aerosol_ext_od,
+                                                  const ArrayAd<double, 2>& aerosol_sca_od)
+{
+
+    // Take references instead of copying for speed
+    rayleigh_optical_depth_.reference(rayleigh_od);
+    gas_optical_depth_per_particle_.reference(gas_od);
+    aerosol_extinction_optical_depth_per_particle_.reference(aerosol_ext_od);
+    aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
+
+    intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
+    intermediate_jacobian_ = 0.0;
+    for(int lay_idx = 0; lay_idx < rayleigh_optical_depth_.rows(); lay_idx++) {
+        for(int jac_idx = 0; jac_idx < rayleigh_optical_depth_.number_variable(); jac_idx++) {
+            intermediate_jacobian_(lay_idx, jac_idx, jac_idx) = 1.0;
+        }
+    }
+
+} 
+
+//-----------------------------------------------------------------------
+/// Protected method that throws an exception if the class has not yet
+/// been initialized. Due to the desire to allow extension by extending
+/// the initialize_with_jacobians method, having a two phase initializtion
+/// is necessary. This method checks that the second phase has been 
+/// run.
+//-----------------------------------------------------------------------
+
+void OpticalProperties::assert_init() const
+{
+    if (!initialized) {
+        throw Exception("This optical properties instance has not yet been initalized. Call an initialize method.");
+    }
 }
 
 //-----------------------------------------------------------------------
@@ -55,6 +105,8 @@ OpticalProperties::OpticalProperties(const DoubleWithUnit spectral_point,
 
 ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
 {
+    assert_init();
+
     // gas component
     ArrayAd<double, 2> gas_od_per_p(gas_optical_depth_per_particle());
     if(gas_optical_depth_per_layer_.rows() == 0 and gas_od_per_p.cols() > 0) {
@@ -80,6 +132,8 @@ ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
 
 ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer() const
 {
+    assert_init(); 
+
     // aerosol component
     ArrayAd<double, 2> aer_od_per_p(aerosol_extinction_optical_depth_per_particle());
     if (aerosol_extinction_optical_depth_per_layer_.rows() == 0 and aer_od_per_p.cols() > 0) {
@@ -106,6 +160,8 @@ ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer
 
 ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer() const
 {
+    assert_init(); 
+
     ArrayAd<double, 2> aer_ssa_per_p(aerosol_scattering_optical_depth_per_particle());
     if (aerosol_scattering_optical_depth_per_layer_.rows() == 0 and aer_ssa_per_p.cols() > 0) {
         firstIndex i1; secondIndex i2;
@@ -133,6 +189,8 @@ ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer
 
 ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
 {
+    assert_init(); 
+
     if (total_optical_depth_.rows() == 0) {
 
         total_optical_depth_.resize(rayleigh_optical_depth_.rows(), rayleigh_optical_depth_.number_variable());
@@ -173,6 +231,8 @@ ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
 // computed once for speed purposes
 ArrayAd<double, 1> OpticalProperties::scattering_sum() const
 {
+    assert_init(); 
+
     if(scattering_sum_.rows() == 0) {
         ArrayAd<double, 1> ray_od(rayleigh_optical_depth());
 
@@ -205,6 +265,8 @@ ArrayAd<double, 1> OpticalProperties::scattering_sum() const
 
 ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
 {
+    assert_init(); 
+
     if(total_single_scattering_albedo_.rows() == 0) {
         firstIndex i1; 
 
@@ -233,6 +295,8 @@ ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
 
 ArrayAd<double, 1> OpticalProperties::rayleigh_fraction() const
 {
+    assert_init(); 
+
     if(rayleigh_fraction_.rows() == 0) {
         firstIndex i1; 
 
@@ -259,6 +323,8 @@ ArrayAd<double, 1> OpticalProperties::rayleigh_fraction() const
 
 ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
 {
+    assert_init(); 
+
     if(aerosol_fraction_.rows() == 0) {
         firstIndex i1; secondIndex i2; thirdIndex i3;
 
@@ -277,4 +343,91 @@ ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
     }
 
     return aerosol_fraction_;
+}
+
+//=======================================================================
+
+// Index of parameters in jacobians for OpticalPropertiesWrtRt
+// Order is due to heritage
+const int gas_jac_index = 0;
+const int rayleigh_jac_index = 1;
+const int aerosol_0_jac_index = 2;
+
+void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                                      const ArrayAd<double, 2>& gas_od,
+                                                      const ArrayAd<double, 2>& aerosol_ext_od,
+                                                      const ArrayAd<double, 2>& aerosol_sca_od)
+{
+
+    Range ra = Range::all();
+    firstIndex i1; secondIndex i2;
+
+    // Jacobians for gas optical depth, rayleigh optical depth and aerosols
+    int num_layers = rayleigh_od.rows();
+    int num_gas = gas_od.cols();
+    int num_aer = aerosol_ext_od.cols();
+
+    int num_inp_jac = rayleigh_od.number_variable();
+    int num_interm_jac = 2 + num_aer;
+
+    // Create mapping of intermediate jacobians to input jacobians for each layer
+    intermediate_jacobian_.resize(num_layers, num_interm_jac, num_inp_jac);
+
+    // At gas optical depth intermediate index the jacobian is the sum of all gas particles, therefore jacobian
+    // for each particle is a fraction of the total
+    gas_optical_depth_per_particle_.value().reference(gas_od.value());
+
+    Array<double, 3> gas_jac(num_layers, num_gas, num_interm_jac);
+    gas_jac = 0.0;
+    for(int gas_idx = 0; gas_idx < num_gas; gas_idx++) {
+        gas_jac(ra, gas_idx, gas_jac_index) = 1.0/num_gas;
+    }
+    gas_optical_depth_per_particle_.jacobian().reference(gas_jac);
+
+    for(int lay_idx = 0; lay_idx < gas_od.rows(); lay_idx++) {
+        intermediate_jacobian_(lay_idx, gas_jac_index, ra) =  sum(gas_od.jacobian()(lay_idx, ra, ra)(i2, i1), i2);
+    }
+
+    // At rayleigh intermediate index the jacobian is the rayleigh jacobian itself
+    rayleigh_optical_depth_.value().reference(rayleigh_od.value());
+
+    Array<double, 2> ray_jac(num_layers, num_interm_jac);
+    ray_jac = 0.0;
+    ray_jac(ra, rayleigh_jac_index) = 1.0;
+    rayleigh_optical_depth_.jacobian().reference(ray_jac);
+
+    intermediate_jacobian_(ra, rayleigh_jac_index, ra) = rayleigh_od.jacobian();
+
+    // At each aerosol intermediate index the jacobian is the aerosol extinction optical depth jacobian
+    // the scattering jacobian is not included to reduce the number of jacobians even if it reduces the
+    // accuracy of the aerosol jacobians
+    aerosol_extinction_optical_depth_per_particle_.value().reference(aerosol_ext_od.value());
+    aerosol_scattering_optical_depth_per_particle_.value().reference(aerosol_sca_od.value());
+
+    Array<double, 3> aer_ext_jac(num_layers, num_aer, num_interm_jac);
+    Array<double, 3> aer_sca_jac(num_layers, num_aer, num_interm_jac);
+
+    aer_ext_jac = 0.0;
+    aer_sca_jac = 0.0;
+
+    for(int aer_idx = 0; aer_idx < num_aer; aer_idx++) {
+        aer_ext_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = 1.0;
+
+        // This is a consequence of the relationship between tau_ext and tau_sca:
+        // tau_sca = tau_ext / ssa_aer
+        // Where ssa_aer = k_sca/k_ext
+        // k here stand for aerosol coefficient
+        // Since tau_sca = k_sca and tau_ext = k_sca (with a wavelength interolation term not shown)
+        // We can through the chain rule show that
+        // tau_sca' = tau_sca / tau_ext
+        // And hence we form a relationship between tau_ext and tau_sca despite tau_sca not being included in 
+        // the intermediate jacobian.
+        aer_sca_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = aerosol_sca_od.value()(ra, aer_idx) / aerosol_ext_od.value()(ra, aer_idx);
+
+        intermediate_jacobian_(ra, aerosol_0_jac_index+aer_idx, ra) = aerosol_ext_od.jacobian()(ra, aer_idx, ra);
+    }
+
+    aerosol_extinction_optical_depth_per_particle_.jacobian().reference(aer_ext_jac);
+    aerosol_scattering_optical_depth_per_particle_.jacobian().reference(aer_sca_jac);
+
 }
