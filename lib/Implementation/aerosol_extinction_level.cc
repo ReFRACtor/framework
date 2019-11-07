@@ -7,11 +7,10 @@ using namespace FullPhysics;
 using namespace blitz;
 
 // See base class for description
-boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone
-(const boost::shared_ptr<Pressure>& Pres) const
+boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone() const
 {
   return boost::shared_ptr<AerosolExtinction>
-    (new AerosolExtinctionLevel(Pres, used_flag, coeff.value(),
+    (new AerosolExtinctionLevel(press->clone(), used_flag, coeff.value(),
 				 aerosol_name(), mapping->clone()));
 }
 

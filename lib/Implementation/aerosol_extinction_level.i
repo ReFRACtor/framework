@@ -24,8 +24,6 @@ public:
 			  const std::string& Aerosol_name,
 			  boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
-  virtual boost::shared_ptr<AerosolExtinction> clone
-  (const boost::shared_ptr<Pressure>& P) const;
   virtual std::string state_vector_name_i(int i) const;
 protected:
   virtual void calc_aerosol_extinction() const;

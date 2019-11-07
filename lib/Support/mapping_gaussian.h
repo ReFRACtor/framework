@@ -27,8 +27,9 @@ public:
     ///   that represents the desired total is in linear space if true,
     ///   logarithmic space if false.
     //-----------------------------------------------------------------------
-    MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD)
-        : press(in_press), linear_total(Linear_AOD)
+    MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_Total,
+                    double Min_Desired = 1e-9)
+        : press(in_press), linear_total(Linear_Total), min_desired(Min_Desired)
     {
         if (linear_total) {
             map_name = "GaussianLinear";
@@ -142,7 +143,7 @@ public:
 
 private:
     std::string map_name;
-    static const double min_desired;
+    double min_desired;
     bool linear_total;
 
     //-----------------------------------------------------------------------
@@ -155,7 +156,6 @@ private:
 
 
 };
-const double MappingGaussian::min_desired = 1e-9;
 }
 
 #endif

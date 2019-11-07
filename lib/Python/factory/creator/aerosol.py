@@ -49,30 +49,30 @@ class AerosolOptical(Creator):
 class AerosolShapeGaussian(CreatorFlaggedValue):
 
     pressure = param.InstanceOf(rf.Pressure)
-    log_space = param.Scalar(bool, default=True)
+    log_retrieval = param.Scalar(bool, default=True)
 
     def create(self, aerosol_name=None, **kwargs):
 
         if aerosol_name is None:
             raise param.ParamError("aerosol_name not supplied to creator")
 
-        return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_space())
+        return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_retrieval())
 
 
 class AerosolProfileExtinction(CreatorFlaggedValue):
 
     pressure = param.InstanceOf(rf.Pressure)
 
-    # Callers should specify either log_space or mapping; not both
-    log_space = param.Scalar(bool, required=False)
+    # Callers should specify either log_retrieval or mapping; not both
+    log_retrieval = param.Scalar(bool, required=False)
     mapping = param.InstanceOf(rf.Mapping, required=False)
 
     def create(self, aerosol_name=None, **kwargs):
 
-        if self.log_space() is not None and self.mapping() is not None:
-            raise param.ParamError("Specifying both log_space and mapping is ambiguous")
-        elif self.log_space() is not None:
-            if self.log_space():
+        if self.log_retrieval() is not None and self.mapping() is not None:
+            raise param.ParamError("Specifying both log_retrieval and mapping is ambiguous")
+        elif self.log_retrieval() is not None:
+            if self.log_retrieval():
                 effective_mapping = rf.MappingLog()
             else:
                 effective_mapping = rf.MappingLinear()

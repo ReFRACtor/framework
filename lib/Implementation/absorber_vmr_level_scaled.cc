@@ -31,11 +31,6 @@ AbsorberVmrLevelScaled::AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>
 
 double AbsorberVmrLevelScaled::scale_factor() const { return coeff(0).value(); }
 
-double AbsorberVmrLevelScaled::scale_uncertainty() const
-{ return (sv_cov_sub.rows() > 0 && sv_cov_sub(0,0) > 0 ?
-          sqrt(sv_cov_sub(0,0)) : 0);
-}
-
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
 {
     return boost::shared_ptr<AbsorberVmr>
