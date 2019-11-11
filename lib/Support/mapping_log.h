@@ -21,7 +21,7 @@ public:
     /// Default Constructor.
     //-----------------------------------------------------------------------
 
-    MappingLog() : map_name("Log") {};
+    MappingLog() : map_name("log") {};
 
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied

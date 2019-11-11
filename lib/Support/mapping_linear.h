@@ -17,7 +17,7 @@ public:
     /// Default Constructor.
     //-----------------------------------------------------------------------
 
-    MappingLinear() : map_name("Linear") {};
+    MappingLinear() : map_name("linear") {};
 
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied

@@ -21,7 +21,7 @@ public:
     //-----------------------------------------------------------------------
 
     MappingOffset(double Offset, blitz::Array<double, 1> Offsetee)
-    : map_name("Offset"), initial_offset(Offset), offsetee(Offsetee) {};
+    : map_name("offset"), initial_offset(Offset), offsetee(Offsetee) {};
 
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied

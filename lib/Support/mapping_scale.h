@@ -21,7 +21,7 @@ public:
     //-----------------------------------------------------------------------
 
     MappingScale(double Scale, blitz::Array<double, 1> Scalee)
-    : map_name("Scale"), initial_scale_factor(Scale), scalee(Scalee) {};
+    : map_name("scale"), initial_scale_factor(Scale), scalee(Scalee) {};
 
     //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied

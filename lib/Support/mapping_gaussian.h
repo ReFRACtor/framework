@@ -32,9 +32,9 @@ public:
         : press(in_press), linear_total(Linear_Total), min_desired(Min_Desired)
     {
         if (linear_total) {
-            map_name = "GaussianLinear";
+            map_name = "gaussian_linear";
         } else {
-            map_name = "GaussianLog";
+            map_name = "gaussian_log";
         }
     };
 
