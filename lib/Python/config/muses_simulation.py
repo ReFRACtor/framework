@@ -298,9 +298,11 @@ class MusesUipSimConfig(MusesSimConfig):
 
         if self.atm_gas_list is None:
             # First 2 elements are Pressure and TATM, after that gas names
-            atm_gas_list = [ n.decode('UTF-8') for n in self.uip['species'][0] ]
+            gas_list = [ n.decode('UTF-8') for n in self.uip['species'][0] ]
+        else:
+            gas_list = self.atm_gas_list
 
-        self.setup_atmosphere_profiles(atm_gas_list, atmosphere_column)
+        self.setup_atmosphere_profiles(gas_list, atmosphere_column)
 
 class MusesThermalUipSimConfig(MusesUipSimConfig):
 
