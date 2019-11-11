@@ -1,8 +1,12 @@
 #ifndef SUB_STATE_VECTOR_ARRAY_H
 #define SUB_STATE_VECTOR_ARRAY_H
 #include "sub_state_vector_observer.h"
+#include "mapping.h"
+#include "mapping_linear.h"
 #include "pressure.h"
+#include <blitz/array.h>
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -39,10 +43,12 @@ public:
                       const blitz::Array<bool, 1>& Used_flag,
                       const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
                       bool Mark_according_to_press = true,
-                      int Pdep_start = 0)
-    : coeff(Coeff.copy()), press(Press), used_flag(Used_flag.copy()),
+                        int Pdep_start = 0,
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+        : coeff(in_map->retrieval_init(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
       mark_according_to_press(Mark_according_to_press),
-      pdep_start(Pdep_start)
+          pdep_start(Pdep_start),
+          mapping(in_map)
   {
     if(coeff.rows() != used_flag.rows()) {
       throw Exception("Coeff and Used_flag need to be the same size");
@@ -60,13 +66,15 @@ public:
             const blitz::Array<bool, 1>& Used_flag,
             const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
             bool Mark_according_to_press = true,
-            int Pdep_start = 0)
+              int Pdep_start = 0,
+              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
-    coeff.reference(Coeff.copy());
+        coeff.reference(in_map->retrieval_init(Coeff.copy()));
     press = Press;
     used_flag.reference(Used_flag.copy());
+        mapping = in_map;
     
     if(coeff.rows() != used_flag.rows()) {
       throw Exception("Coeff and Used_flag need to be the same size");
@@ -79,10 +87,12 @@ public:
   /// Special case when Coeff and Used_flag have exactly one row.
   //-----------------------------------------------------------------------
   
-  SubStateVectorArray(double Coeff, bool Used_flag)
-    : coeff(1, 0), used_flag(1)
+    SubStateVectorArray(double Coeff, bool Used_flag,
+                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+        : coeff(1, 0), used_flag(1), mark_according_to_press(true), pdep_start(0), mapping(in_map)
   {
     coeff.value()(0) = Coeff;
+    coeff = in_map->retrieval_init(coeff.copy());
     used_flag(0) = Used_flag;
     state_vector_observer_initialize(count(used_flag));
   }
@@ -135,11 +145,12 @@ public:
   {
     int si = 0;
         
-    for(int i = 0; i < used_flag.rows(); ++i)
+    for(int i = 0; i < used_flag.rows(); ++i) {
       if(used_flag(i)) {
                 Sv_name(si) = state_vector_name_i(i);
                 ++si;
       }
+    }
   }
   
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov)
@@ -149,11 +160,12 @@ public:
       int si = 0;
       coeff.resize_number_variable(Sv_sub.number_variable());
       
-      for(int i = 0; i < coeff.rows(); ++i)
+     for(int i = 0; i < coeff.rows(); ++i) {
         if(used_flag(i)) {
           coeff(i) = Sv_sub(si);
           ++si;
         }
+     }
     } else {
       cov.resize(0,0);
       coeff.resize_number_variable(0);
@@ -234,6 +246,12 @@ protected:
   //-----------------------------------------------------------------------
   
   int pdep_start;
+        
+  //-----------------------------------------------------------------------
+  /// Mapping from internal coefficients to coefficients exposed to retrieval
+  //-----------------------------------------------------------------------
+  boost::shared_ptr<Mapping> mapping;
+        
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

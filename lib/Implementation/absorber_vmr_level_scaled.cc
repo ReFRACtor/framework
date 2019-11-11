@@ -1,4 +1,6 @@
+#include <boost/make_shared.hpp>
 #include "absorber_vmr_level_scaled.h"
+#include "mapping_scale.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -18,43 +20,20 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 /// Constructor.
 //-----------------------------------------------------------------------
-
-AbsorberVmrLevelScaled::AbsorberVmrLevelScaled
-(const boost::shared_ptr<Pressure>& Press,
+AbsorberVmrLevelScaled::AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
  const blitz::Array<double, 1>& Vmr_profile,
  double Scale,                         
  bool Scale_flag,
  const std::string& Gas_name)
-: AbsorberVmrScaled(Press, Scale, Scale_flag, Gas_name), vmr_profile_(Vmr_profile.copy())
-{
+: AbsorberVmrLevel(Press, Vmr_profile, Scale_flag, Gas_name, boost::make_shared<MappingScale>(Scale, Vmr_profile.copy()))
+{ 
 }
 
-blitz::Array<double, 1> AbsorberVmrLevelScaled::vmr_profile() const
-{ 
-  return vmr_profile_;
-}
-
-blitz::Array<double, 1> AbsorberVmrLevelScaled::pressure_profile() const
-{ 
-  return press->pressure_grid().value.value();
-}
+double AbsorberVmrLevelScaled::scale_factor() const { return coeff(0).value(); }
 
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
 {
-  return boost::shared_ptr<AbsorberVmr>
-    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile_, coeff(0).value(),used_flag(0),
-				gas_name()));
-}
-
-void AbsorberVmrLevelScaled::print(std::ostream& Os) const
-{ 
-  OstreamPad opad(Os, "    ");
-  Os << "AbsorberVmrLevelScaled:\n"
-     << "  Gas name:       " << gas_name() << "\n"
-     << "  Scale:          " << scale_factor() << "\n"
-     << "  Retrieval flag: " << (used_flag_value()(0) ? 
-					"True\n" : "False\n")
-     << "  VMR Profile:\n";
-  opad << vmr_profile_ << "\n";
-  opad.strict_sync();
+    return boost::shared_ptr<AbsorberVmr>
+    (new AbsorberVmrLevelScaled(press->clone(), vmr_profile(), coeff(0).value(),used_flag(0),
+                                gas_name()));
 }

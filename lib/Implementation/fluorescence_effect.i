@@ -27,6 +27,7 @@ public:
                      const Unit& Retrieval_unit);
   virtual void apply_effect(Spectrum& Spec,
 		    const ForwardModelSpectralGrid& Forward_model_grid) const;
+  %python_attribute(contribution, ArrayAd<double, 1>)
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
