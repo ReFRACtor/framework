@@ -18,11 +18,12 @@ class IlsGratingInstrument(Creator):
 
         # Store for use by other dependant creators
         dispersion = self.common_store["dispersion"] = self.dispersion()
+        instrument_correction = self.instrument_correction()
 
         ils_vec = rf.vector_ils()
         for disp, ils_func, half_width in zip(dispersion, self.ils_function(), self.ils_half_width()):
             ils_vec.push_back(rf.IlsGrating(disp, ils_func, half_width))
-        return rf.IlsInstrument(ils_vec, self.instrument_correction())
+        return rf.IlsInstrument(ils_vec, instrument_correction)
 
 
 class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
@@ -186,26 +187,25 @@ class InstrumentCorrectionList(Creator):
 
     corrections = param.Iterable(str)
     num_channels = param.Scalar(int)
+    desc_band_name = param.Iterable(str)
 
     def create(self, **kwargs):
+        
+        channel_names = self.desc_band_name()
 
-        all_corrections = []
-        for correction_name in self.corrections():
-            self.register_parameter(correction_name, param.Iterable())
-            all_corrections.append(self.param(correction_name))
-
-        # Map these into an outer vector for each channel, with an inner vector for each correction
+        # For each channel get all instrument corrections
         inst_corr = rf.vector_vector_instrument_correction()
         for chan_index in range(self.num_channels()):
             per_channel_corr = rf.vector_instrument_correction()
 
-            for correction in all_corrections:
-                per_channel_corr.push_back(correction[chan_index])
+            for correction_name in self.corrections():
+                # Dynamically request a InstrumentCorrection object for the desired name for the desired instrument channel index
+                self.register_parameter(correction_name, param.InstanceOf(rf.InstrumentCorrection))
+                per_channel_corr.push_back(self.param(correction_name, channel_index=chan_index, channel_name=channel_names[chan_index]))
 
             inst_corr.push_back(per_channel_corr)
 
         return inst_corr
-
 
 class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
 
@@ -221,11 +221,7 @@ class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
     uncertainty = param.Iterable(rf.ArrayWithUnit_double_1, required=False)
     scale_to_stddev = param.Scalar(float, required=False)
 
-    # Coming from common
-    num_channels = param.Scalar(int)
-    desc_band_name = param.Iterable(str)
-
-    def create(self, **kwargs):
+    def create(self, channel_index=None, channel_name=None, **kwargs):
 
         coeffs = self.value()
         flags = self.retrieval_flag()
@@ -236,7 +232,6 @@ class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
         scale_to_stddev = self.scale_to_stddev()
         uncertainty = self.uncertainty() 
 
-        band_names = self.desc_band_name()
         hdf_group = self.hdf_group()
 
         if scale_uncertainty and scale_to_stddev is None:
@@ -247,51 +242,32 @@ class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
 
         eof_hdf = rf.HdfFile(self.eof_file())
         
-        eofs = []
-        for chan_idx in range(self.num_channels()):
-            if (scale_uncertainty):
-                eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[chan_idx], bool(flags[chan_idx]), eof_hdf, uncertainty[chan_idx],
-                        chan_idx, sounding_number, order, band_names[chan_idx], hdf_group, scale_to_stddev)
-            else:
-                eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[chan_idx], bool(flags[chan_idx]),
-                    eof_hdf, chan_idx, sounding_number, order, band_names[chan_idx], hdf_group)
-
-            eofs.append(eof_obj)
- 
-        return eofs
-
+        if (scale_uncertainty):
+            return rf.EmpiricalOrthogonalFunction(coeffs[channel_index], bool(flags[channel_index]), eof_hdf, uncertainty[channel_index],
+                    channel_index, sounding_number, order, channel_name, hdf_group, scale_to_stddev)
+        else:
+            eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[channel_index], bool(flags[channel_index]),
+                eof_hdf, channel_index, sounding_number, order, channel_name, hdf_group)
 
 class RadianceScaling(CreatorFlaggedValueMultiChannel):
 
     band_reference = param.ArrayWithUnit(dims=1)
-    num_channels = param.Scalar(int)
-    desc_band_name = param.Iterable(str)
 
-    def create(self, **kwargs):
+    def create(self, channel_index=None, channel_name=None, **kwargs):
 
         params = self.value()
         band_ref = self.band_reference()
         retrieval_flag = self.retrieval_flag()
         band_name = self.desc_band_name()
 
-        rad_scaling = []
-        for chan_index in range(self.num_channels()):
-
-            rad_scaling.append(rf.RadianceScalingSvFit(params[chan_index, :], retrieval_flag[chan_index, :], band_ref[chan_index], band_name[chan_index]))
-
-        return rad_scaling
+        return rf.RadianceScalingSvFit(params[channel_index, :], retrieval_flag[channel_index, :], band_ref[channel_index], channel_name)
 
 
 class ApplyInstrumentUnits(CreatorFlaggedValueMultiChannel):
 
     units = param.InstanceOf(rf.Unit)
     scale_factor = param.Scalar(float)
-    num_channels = param.Scalar(int)
 
-    def create(self, **kwargs):
+    def create(self, channel_index=None, channel_name=None, **kwargs):
 
-        apply_units = []
-        for chan_index in range(self.num_channels()):
-            apply_units.append(rf.ApplyInstrumentUnits(self.units(), self.scale_factor()))
-
-        return apply_units
+       return rf.ApplyInstrumentUnits(self.units(), self.scale_factor())
