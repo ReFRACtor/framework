@@ -480,17 +480,19 @@ void AtmosphereStandard::calc_rt_parameters
 //-----------------------------------------------------------------------
 
   if(!rayleigh_only_atmosphere()) {
-    Range taua_r(taua_0_index, taua_0_index + 
-		 (aerosol ? aerosol->number_particle() - 1 : 0));
+    Range taua_r(taua_0_index, taua_0_index + (aerosol ? aerosol->number_particle() - 1 : 0));
+
     ArrayAd<double, 2> taua_i(iv(ra, taua_r));
     tau.value() += sum(taua_i.value(), i2);
-    ArrayAd<double, 2> aersc(taua_i.shape(), iv.cols());
-    for(int i = 0; i < taua_i.cols(); ++i) {
-      scratch(ra, taua_0_index + i) = 1;
-      ArrayAd<double, 1> t(taua_i.value()(Range::all(), i), scratch);
-      aersc(ra, i) = aerosol->scattering_optical_depth_each_layer(wn, i, t);
-      scratch(ra, taua_0_index + i) = 0;
+
+    ArrayAd<double, 2> aersc(aerosol->scattering_optical_depth_each_layer(wn).value(), iv.cols());
+    aersc.jacobian() = 0;
+    for(int aer_idx = 0; aer_idx < aersc.cols(); ++aer_idx) {
+      int jac_idx = taua_0_index + aer_idx;
+      aersc.jacobian()(ra, aer_idx, jac_idx) = 
+        where(taua_i.value()(ra, aer_idx) != 0, aersc.value()(ra, aer_idx) / taua_i.value()(ra, aer_idx), 0.0);
     }
+
     frac_aer.resize(aersc.shape(), iv.cols());
     ArrayAd<double, 1> ssasum(taur_wrt_iv.copy());
 

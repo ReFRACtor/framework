@@ -30,9 +30,7 @@ public:
   }
 
   virtual ArrayAd<double, 2> extinction_optical_depth_each_layer(double wn) const;
-
-  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn, int particle_index, const ArrayAd<double, 1>& ext_od) const;
-  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn) const;
+  virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const;
 
 //-----------------------------------------------------------------------
 /// For performance, we cache some data as we calculate it. This

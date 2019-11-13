@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(layer_parameters)
   expt_input >> ext_od_expect >> sca_od_expect;
 
   Array<double, 1> ext_od_calc(sum(a->extinction_optical_depth_each_layer(12930.30).value(), i2));
-  Array<double, 1> sca_od_calc(a->scattering_optical_depth_each_layer(12930.30).value());
+  Array<double, 1> sca_od_calc(sum(a->scattering_optical_depth_each_layer(12930.30).value(), i2));
 
   BOOST_CHECK_MATRIX_CLOSE(ext_od_calc, ext_od_expect);
   BOOST_CHECK_MATRIX_CLOSE(sca_od_calc, sca_od_expect);
@@ -84,25 +84,25 @@ BOOST_AUTO_TEST_CASE(sca_od_jac)
   StateVector& sv = *config_state_vector;
   Array<double, 1> sv0(sv.state().copy());
   double wn = 4820.0;
-  ArrayAd<double, 1> sca_od = a->scattering_optical_depth_each_layer(wn);
-  Array<double, 1> sca_od0(sca_od.shape());
+  ArrayAd<double, 2> sca_od = a->scattering_optical_depth_each_layer(wn);
+  Array<double, 2> sca_od0(sca_od.shape());
   sca_od0 = sca_od.value();
-  Array<double, 2> jac = sca_od.jacobian().copy();
+  Array<double, 3> jac = sca_od.jacobian().copy();
   for(int i = 0; i < sv.state().rows(); ++i) {
     Array<double, 1> svn(sv0.copy());
     svn(i) += epsilon(i);
     sv.update_state(svn);
-    Array<double, 1> jacfd(sca_od0.shape());
+    Array<double, 2> jacfd(sca_od0.shape());
     jacfd = (a->scattering_optical_depth_each_layer(wn).value() - sca_od0) / epsilon(i);
     if(false) {                        // Can turn this off to dump values,
                                 // if needed for debugging
-      double diff = max(abs(jac(Range::all(), i) - jacfd));
+      double diff = max(abs(jac(Range::all(), Range::all(), i) - jacfd));
       if(diff > 0)
-        std::cerr << i << ": " << jac(Range::all(), i) << "\n"
+        std::cerr << i << ": " << jac(Range::all(), Range::all(), i) << "\n"
                   << jacfd << "\n"
                   << diff << "\n";
     }
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac(Range::all(), i), jacfd, 1e-6);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac(Range::all(), Range::all(), i), jacfd, 1e-6);
   }
 }
 

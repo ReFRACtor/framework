@@ -35,7 +35,7 @@ public:
          const ArrayAd<double, 2>& frac_aer,
          int nummom = -1, int numscat = -1) const = 0;
   virtual ArrayAd<double, 2> extinction_optical_depth_each_layer(double wn) const = 0;
-  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn, int particle_index, const ArrayAd<double, 1>& Od) const = 0;
+  virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const = 0;
 
   %python_attribute(number_particle, int)
   boost::shared_ptr<Aerosol> clone() const = 0;

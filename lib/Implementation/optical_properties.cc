@@ -40,11 +40,7 @@ void OpticalProperties::initialize(const DoubleWithUnit spectral_point,
     ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, channel_index));
     ArrayAd<double, 2> gas_od(absorber->optical_depth_each_layer(wn, channel_index));
     ArrayAd<double, 2> aerosol_ext_od(aerosol->extinction_optical_depth_each_layer(wn));
-
-    ArrayAd<double, 2> aerosol_sca_od(aerosol_ext_od.shape(), aerosol_ext_od.number_variable());
-    for(int particle_idx = 0; particle_idx < aerosol_sca_od.cols(); particle_idx++) {
-      aerosol_sca_od(ra, particle_idx) = aerosol->scattering_optical_depth_each_layer(wn, particle_idx, aerosol_ext_od(ra, particle_idx));
-    }
+    ArrayAd<double, 2> aerosol_sca_od(aerosol->scattering_optical_depth_each_layer(wn));
 
     initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od);
 

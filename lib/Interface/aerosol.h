@@ -84,7 +84,7 @@ public:
 /// This has size of number_active_layer()
 //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> scattering_optical_depth_each_layer(double wn, int particle_index, const ArrayAd<double, 1>& ext_od) const = 0;
+  virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const = 0;
 };
 }
 #endif
