@@ -189,6 +189,7 @@ set(TEST_SOURCES
     nlls_solver_lm_test.cc
     nonuniform_spectrum_sampling_test.cc
     observation_level_1b_test.cc
+    optical_properties_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     planck_test.cc
