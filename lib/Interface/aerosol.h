@@ -36,6 +36,17 @@ public:
   virtual boost::shared_ptr<Aerosol> clone() const = 0;
 
 //-----------------------------------------------------------------------
+/// Returns the portion of the phase function moments that come from 
+/// a specific aerosol partiicle.
+/// \param wn The wave number.
+/// \param pidx Aerosol particle index
+/// \param nummom Number of moments to fill in
+/// \param numscat Number of scatters to fill in
+//-----------------------------------------------------------------------
+
+  virtual ArrayAd<double, 3> pf_mom(double wn, int pindex, int nummom = -1, int numscat = -1) const = 0;
+
+//-----------------------------------------------------------------------
 /// This calculates the portion of the phase function moments that
 /// come from the aerosol.
 /// \param wn The wave number.

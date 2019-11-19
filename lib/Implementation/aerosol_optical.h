@@ -54,7 +54,8 @@ public:
     notify_update_do(*this);
   }
 
-  virtual ArrayAd<double, 3> pf_mom(double wn, int pindex) const;
+  virtual ArrayAd<double, 3> pf_mom(double wn, int pindex,
+                                    int nummom = -1, int numscat = -1) const;
   virtual blitz::Array<double, 3> pf_mom(double wn, 
                       const blitz::Array<double, 2>& frac_aer) const;
   virtual ArrayAd<double, 3> pf_mom(double wn, 

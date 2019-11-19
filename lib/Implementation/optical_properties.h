@@ -26,13 +26,15 @@ public:
     virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
                             const ArrayAd<double, 2>& gas_od,
                             const ArrayAd<double, 2>& aerosol_ext_od,
-                            const ArrayAd<double, 2>& aerosol_sca_od);
+                            const ArrayAd<double, 2>& aerosol_sca_od,
+                            const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
 
     virtual void initialize(const DoubleWithUnit spectral_point,
                             const int channel_index,
                             const boost::shared_ptr<Absorber>& absorber,
                             const boost::shared_ptr<Rayleigh>& rayleigh,
-                            const boost::shared_ptr<Aerosol>& aerosol);
+                            const boost::shared_ptr<Aerosol>& aerosol,
+                            int num_pf_mom = -1, int num_scattering = -1);
 
     /// Deconstructor
     virtual ~OpticalProperties() = default;
@@ -53,6 +55,10 @@ public:
     /// Returns Aerosol scattering optical depth for each layer and particle type: \f$ \tau_{aer\_sca,lp} \f$
     virtual ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle() const { assert_init(); return aerosol_scattering_optical_depth_per_particle_; }
 
+    /// Returns aerosol phase function moments per particle
+    /// Dimensions: num_moments x num_layers x num_scattering
+    virtual const std::vector<ArrayAd<double, 3> >& aerosol_phase_function_moments_per_particle() const { assert_init(); return aerosol_phase_function_moments_per_particle_; }
+
     // 
     // These accessors only calculate their value if their stored value is empty
     // 
@@ -60,9 +66,12 @@ public:
     virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer() const;
+    virtual ArrayAd<double, 3> aerosol_phase_function_moments_per_layer() const;
 
     virtual ArrayAd<double, 1> total_optical_depth() const;
     virtual ArrayAd<double, 1> total_single_scattering_albedo() const;
+
+    virtual ArrayAd<double, 3> total_phase_function_moments() const;
 
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
@@ -79,9 +88,8 @@ protected:
     virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
-                                           const ArrayAd<double, 2>& aerosol_sca_od);
-
-    // Intermediate optical properties used in the computation of primary properties
+                                           const ArrayAd<double, 2>& aerosol_sca_od,
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
 
     // Dim: num_layers x num_gases
     ArrayAd<double, 2> gas_optical_depth_per_particle_;
@@ -93,11 +101,15 @@ protected:
     ArrayAd<double, 2> aerosol_extinction_optical_depth_per_particle_;
     ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle_;
 
+    // Dim: num_moments x num_layers x num_scattering
+    std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle_;
+
     // Dim: num_layers
     // Summation over all particles
     mutable ArrayAd<double, 1> gas_optical_depth_per_layer_;
     mutable ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer_;
     mutable ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer_;
+    mutable ArrayAd<double, 3> aerosol_phase_function_moments_per_layer_;
 
     // Primary optical properties intended for radiative transfer
     // mutable since thise are computed on demand
@@ -137,7 +149,8 @@ protected:
     virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
-                                           const ArrayAd<double, 2>& aerosol_sca_od);
+                                           const ArrayAd<double, 2>& aerosol_sca_od,
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
 
 };
 

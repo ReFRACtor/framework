@@ -226,11 +226,11 @@ AerosolOptical::scattering_optical_depth_each_layer(double wn) const
 ///         matrix elements
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, int pindex) const
+ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, int pindex, int nummom, int numscat) const
 {
   FunctionTimer ft(timer.function_timer());
   range_check(pindex, 0, number_particle());
-  return aprop[pindex]->phase_function_moment_each_layer(wn);
+  return aprop[pindex]->phase_function_moment_each_layer(wn, nummom, numscat);
 }
 
 //-----------------------------------------------------------------------
