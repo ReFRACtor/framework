@@ -20,6 +20,7 @@ void OpticalProperties::initialize(const ArrayAd<double, 1>& rayleigh_od,
 {
     initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aerosol_pf_moments);
 
+    assert_sizes();
     initialized = true;
 }
 
@@ -52,6 +53,7 @@ void OpticalProperties::initialize(const DoubleWithUnit spectral_point,
 
     initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aerosol_pf_moments);
 
+    assert_sizes();
     initialized = true;
 
 }
@@ -101,6 +103,35 @@ void OpticalProperties::assert_init() const
 {
     if (!initialized) {
         throw Exception("This optical properties instance has not yet been initalized. Call an initialize method.");
+    }
+}
+
+//-----------------------------------------------------------------------
+/// Protected method that throws an exception if the size of input
+/// variables are not consistent with each other.
+//-----------------------------------------------------------------------
+
+void OpticalProperties::assert_sizes() const
+{
+    int num_layers = rayleigh_optical_depth_.rows();
+
+    if(gas_optical_depth_per_particle_.rows() != num_layers) {
+        throw Exception("Gas optical depth value has inconsistent number of layers");
+    }
+
+    if (aerosol_extinction_optical_depth_per_particle_.rows() != num_layers) {
+        throw Exception("Aerosol extinction optical depth has inconsistent number of layers");
+    }
+    if (aerosol_scattering_optical_depth_per_particle_.rows() != num_layers) {
+        throw Exception("Aerosol scattering optical depth has inconsistent number of layers");
+    }
+
+    if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_scattering_optical_depth_per_particle_.cols()) {
+        throw Exception("Aerosol extinction and scattering optical depth has inconsistent number of particles");
+    }
+
+    if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
+        throw Exception("Aerosol extinction optical depth and aerosol phase function moments have inconsistent number of particles");
     }
 }
 
@@ -165,6 +196,7 @@ ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer
 
 ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_per_layer() const
 {
+
 }
 
 //-----------------------------------------------------------------------

@@ -38,6 +38,12 @@ public:
 
     /// Deconstructor
     virtual ~OpticalProperties() = default;
+
+    // Sizes of types of information stored
+
+    virtual int number_layers() const { assert_sizes(); return rayleigh_optical_depth_.rows(); }
+    virtual int number_gas_particles() const { assert_sizes(); return gas_optical_depth_per_particle_.cols(); }
+    virtual int number_aerosol_particles() const { assert_sizes(); return aerosol_extinction_optical_depth_per_particle_.cols(); }
  
     // 
     // These accessors simply return what was passed in
@@ -84,6 +90,7 @@ protected:
     // Initialization protection
     bool initialized;
     void assert_init() const;
+    void assert_sizes() const;
 
     virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
                                            const ArrayAd<double, 2>& gas_od,
