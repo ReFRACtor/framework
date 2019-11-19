@@ -8,9 +8,12 @@ using namespace blitz;
 ModelMeasureStandard::ModelMeasureStandard(const boost::shared_ptr<ForwardModel>& forward_model, 
         const boost::shared_ptr<Observation>& observation, 
         const boost::shared_ptr<StateVector>& state_vector)
-  : fm(forward_model), obs(observation), sv(state_vector),
-    meas_units(obs->radiance_all().spectral_range().units())
-{}
+  : sv(state_vector)
+{
+  fm.push_back(forward_model);
+  obs.push_back(observation);
+  meas_units = obs[0]->radiance_all().spectral_range().units();
+}
 
 
 void ModelMeasureStandard::model_eval()
@@ -49,7 +52,7 @@ void ModelMeasureStandard::radiance_from_fm()
   //  The problem is that with our current model code 
   //  measurement may change.
   //
-  Array<double, 1> temp_msrmnt(obs->radiance_all().spectral_range().data());
+  Array<double, 1> temp_msrmnt(obs[0]->radiance_all().spectral_range().data());
   if(msrmnt.rows() != temp_msrmnt.rows())
     throw Exception("Measurement has changed during the retrieval. :( ");
   double msrmnt_L1_norm = sum(abs(msrmnt));
@@ -58,7 +61,7 @@ void ModelMeasureStandard::radiance_from_fm()
   if( sum(abs(temp_msrmnt-msrmnt))/msrmnt_L1_norm > 0.0000001 )
     throw Exception("Measurement has changed during the retrieval. :( ");
 
-  Spectrum rad_spec = fm->radiance_all(false);
+  Spectrum rad_spec = fm[0]->radiance_all(false);
   SpectralRange rad_mod = rad_spec.spectral_range().convert(meas_units);
   M.reference(rad_mod.data_ad().value());
   assert_model_correct(M);

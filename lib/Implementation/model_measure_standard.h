@@ -58,6 +58,25 @@ public:
   virtual void print(std::ostream& Os) const 
   { Os << "ModelMeasureStandard"; }
 
+//-----------------------------------------------------------------------
+/// Underlying forward model.
+//-----------------------------------------------------------------------
+
+  const std::vector<boost::shared_ptr<ForwardModel> >& forward_model() const
+  { return fm; }
+
+//-----------------------------------------------------------------------
+/// Underlying observation.
+//-----------------------------------------------------------------------
+
+  const std::vector<boost::shared_ptr<Observation> >& observation() const
+  { return obs; }
+  
+//-----------------------------------------------------------------------
+/// Underlying 
+//-----------------------------------------------------------------------
+
+  const boost::shared_ptr<StateVector>& state_vector() const { return sv; };
 
 protected:
 
@@ -77,8 +96,8 @@ protected:
   // fixed pressure level grid.
   virtual void vanishing_params_update();
 
-  boost::shared_ptr<ForwardModel> fm;
-  boost::shared_ptr<Observation> obs;
+  std::vector<boost::shared_ptr<ForwardModel> > fm;
+  std::vector<boost::shared_ptr<Observation> > obs;
   boost::shared_ptr<StateVector> sv;
 
   Unit meas_units;
