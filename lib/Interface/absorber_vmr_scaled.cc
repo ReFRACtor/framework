@@ -30,11 +30,11 @@ AbsorberVmrScaled::AbsorberVmrScaled
 
 void AbsorberVmrScaled::calc_vmr() const
 {
-  plist.clear();
-  vlist.clear();
   blitz::Array<double, 1> v_profile( vmr_profile() );
   blitz::Array<double, 1> press_profile( pressure_profile() );
 
+  std::vector<AutoDerivative<double> > plist;
+  std::vector<AutoDerivative<double> > vlist;
   if (press_profile.rows() != v_profile.rows()) {
     std::stringstream err_msg;
     err_msg << "Size of pressure grid: "
@@ -48,7 +48,10 @@ void AbsorberVmrScaled::calc_vmr() const
     vlist.push_back(t2);
     plist.push_back(press_profile(i));
   }
-  lin = boost::make_shared<lin_type>(plist.begin(), plist.end(), vlist.begin());
+  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
+    lin_type;
+  boost::shared_ptr<lin_type> lin
+    (new lin_type(plist.begin(), plist.end(), vlist.begin()));
   vmr = boost::bind(&lin_type::operator(), lin, _1);
 }
 

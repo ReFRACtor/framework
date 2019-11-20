@@ -1,7 +1,6 @@
 #ifndef TEMPERATURE_OFFSET_H
 #define TEMPERATURE_OFFSET_H
 #include "temperature_imp_base.h"
-#include "linear_interpolate.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -47,12 +46,6 @@ public:
 protected:
   void calc_temperature_grid() const;
 private:
-  /// Cache these variables, so the vmr function can access this data
-  mutable std::vector<AutoDerivative<double> > plist;
-  mutable std::vector<AutoDerivative<double> > tlist;
-  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
-    lin_type;
-  mutable boost::shared_ptr<lin_type> lin;
 };
 }
 #endif

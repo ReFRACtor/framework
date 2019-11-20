@@ -58,9 +58,9 @@ TemperatureFixedLevel::TemperatureFixedLevel
 
 void TemperatureFixedLevel::calc_temperature_grid() const
 {
-  plist.clear();
-  tlist.clear();
   AutoDerivative<double> p = log(press->surface_pressure().value);
+  std::vector<AutoDerivative<double> > plist;
+  std::vector<AutoDerivative<double> > tlist;
   for(int i = 0; i < press->pressure_grid().rows() - 1; ++i) {
     plist.push_back(press->pressure_grid()(i).value);
     tlist.push_back(temperature_levels()(i));
@@ -74,7 +74,10 @@ void TemperatureFixedLevel::calc_temperature_grid() const
   AutoDerivative<double> t = t1 + (p - p1) * (t2 - t1) / (p2 - p1);
   plist.push_back(press->surface_pressure().value);
   tlist.push_back(t);
-  lin = boost::make_shared<lin_type>(plist.begin(), plist.end(), tlist.begin());
+  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
+    lin_type;
+  boost::shared_ptr<lin_type> lin
+    (new lin_type(plist.begin(), plist.end(), tlist.begin()));
   tgrid = boost::bind(&lin_type::operator(), lin, _1);
 }
 
