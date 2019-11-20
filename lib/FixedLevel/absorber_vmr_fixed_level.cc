@@ -40,9 +40,9 @@ boost::shared_ptr<AbsorberVmr> AbsorberVmrFixedLevel::clone() const
 
 void AbsorberVmrFixedLevel::calc_vmr() const
 {
+  plist.clear();
+  vmrlist.clear();
   AutoDerivative<double> p = log(press->surface_pressure().value);
-  std::vector<AutoDerivative<double> > plist;
-  std::vector<AutoDerivative<double> > vmrlist;
   for(int i = 0; i < press->pressure_grid().rows() - 1; ++i) {
     vmrlist.push_back(coeff(i));
     plist.push_back(press->pressure_grid()(i).value);
@@ -54,10 +54,8 @@ void AbsorberVmrFixedLevel::calc_vmr() const
     (p - p1) * (coeff(i) - coeff(i - 1)) / (p2 - p1);
   plist.push_back(press->surface_pressure().value);
   vmrlist.push_back(v);
-  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
-    lin_type;
-  boost::shared_ptr<lin_type> lin
-    (new lin_type(plist.begin(), plist.end(), vmrlist.begin()));
+  lin = boost::make_shared<lin_type>(plist.begin(), plist.end(),
+				     vmrlist.begin());
   vmr = boost::bind(&lin_type::operator(), lin, _1);
 }
 

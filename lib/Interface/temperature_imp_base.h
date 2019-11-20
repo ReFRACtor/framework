@@ -19,7 +19,7 @@ public:
   virtual ~TemperatureImpBase() {}
   virtual AutoDerivativeWithUnit<double> 
   temperature(const AutoDerivativeWithUnit<double>& Press) const
-  { fill_cache(); 
+  { fill_cache();
     return AutoDerivativeWithUnit<double>(tgrid(Press.convert(units::Pa).value),
                                           units::K); 
   }

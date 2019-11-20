@@ -58,17 +58,14 @@ blitz::Array<double, 1> AbsorberVmrLevel::pressure_profile() const
 
 void AbsorberVmrLevel::calc_vmr() const
 {
-  std::vector<AutoDerivative<double> > plist;
-  std::vector<AutoDerivative<double> > vmrlist;
+  plist.clear();
+  vmrlist.clear();
   ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
   for(int i = 0; i < press->pressure_grid().rows(); ++i) {
     vmrlist.push_back(fm_view_coeff(i));
     plist.push_back(press->pressure_grid()(i).value);
   }
-  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
-    lin_type;
-  boost::shared_ptr<lin_type> lin
-    (new lin_type(plist.begin(), plist.end(), vmrlist.begin()));
+  lin = boost::make_shared<lin_type>(plist.begin(), plist.end(), vmrlist.begin());
   vmr = boost::bind(&lin_type::operator(), lin, _1);
 }
 

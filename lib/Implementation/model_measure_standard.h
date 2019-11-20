@@ -86,6 +86,8 @@ protected:
 
   ModelMeasureStandard(const boost::shared_ptr<ForwardModel>& forward_model, const boost::shared_ptr<Observation>& observation, const boost::shared_ptr<StateVector>& state_vector);
 
+  ModelMeasureStandard(const std::vector<boost::shared_ptr<ForwardModel> >& forward_model, const std::vector<boost::shared_ptr<Observation> >& observation, const boost::shared_ptr<StateVector>& state_vector);
+  
   ModelMeasureStandard() {}
 
   void radiance_from_fm();

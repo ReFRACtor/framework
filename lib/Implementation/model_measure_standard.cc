@@ -5,13 +5,31 @@ using namespace FullPhysics;
 using namespace blitz;
 
 
-ModelMeasureStandard::ModelMeasureStandard(const boost::shared_ptr<ForwardModel>& forward_model, 
-        const boost::shared_ptr<Observation>& observation, 
-        const boost::shared_ptr<StateVector>& state_vector)
+ModelMeasureStandard::ModelMeasureStandard
+(const boost::shared_ptr<ForwardModel>& forward_model, 
+ const boost::shared_ptr<Observation>& observation, 
+ const boost::shared_ptr<StateVector>& state_vector)
   : sv(state_vector)
 {
   fm.push_back(forward_model);
   obs.push_back(observation);
+  set_measurement(obs[0]->radiance_all().spectral_range().data(),
+		  Array<double, 1>(sqr(obs[0]->radiance_all().spectral_range().uncertainty())));
+  meas_units = obs[0]->radiance_all().spectral_range().units();
+}
+
+ModelMeasureStandard::ModelMeasureStandard
+(const std::vector<boost::shared_ptr<ForwardModel> >& forward_model, 
+ const std::vector<boost::shared_ptr<Observation> >& observation, 
+ const boost::shared_ptr<StateVector>& state_vector)
+  : fm(forward_model), obs(observation), sv(state_vector)
+{
+  if(forward_model.size() < 1)
+    throw Exception("Need to have at least one forward model.");
+  if(forward_model.size() != observation.size())
+    throw Exception("forward_model and observation vectors need to be the same size");
+  set_measurement(obs[0]->radiance_all().spectral_range().data(),
+		  Array<double, 1>(sqr(obs[0]->radiance_all().spectral_range().uncertainty())));
   meas_units = obs[0]->radiance_all().spectral_range().units();
 }
 

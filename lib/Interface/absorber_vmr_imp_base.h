@@ -22,6 +22,8 @@ public:
   virtual std::string gas_name() const {return gas_name_;}
   virtual AutoDerivative<double> 
   volume_mixing_ratio(const AutoDerivative<double>& P) const
+  //  { fill_cache(); std::cerr << "P:\n" << P << "\nvmr:\n" << vmr(P) << "\n";
+  //    return vmr(P); }
   { fill_cache(); return vmr(P); }
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
   virtual void update_sub_state_hook() 

@@ -2,6 +2,7 @@
 #define ABSORBER_VMR_LEVEL_H
 
 #include "absorber_vmr_imp_base.h"
+#include "linear_interpolate.h"
 #include <boost/lexical_cast.hpp>
 
 namespace FullPhysics {
@@ -82,6 +83,13 @@ public:
   }
 protected:
   virtual void calc_vmr() const;
+private:
+  /// Cache these variables, so the vmr function can access this data
+  mutable std::vector<AutoDerivative<double> > plist;
+  mutable std::vector<AutoDerivative<double> > vmrlist;
+  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
+    lin_type;
+  mutable boost::shared_ptr<lin_type> lin;
 };
 }
 #endif

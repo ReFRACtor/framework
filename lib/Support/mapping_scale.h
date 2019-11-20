@@ -28,8 +28,10 @@ public:
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        int nvar = updated_coeff.number_variable();
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(scalee * updated_coeff.value()(0)), nvar, true);
+      blitz::Array<AutoDerivative<double>, 1> res(scalee.rows());
+      for(int i = 0; i < res.rows(); ++i)
+	res(i) = scalee(i) * updated_coeff(0);
+      return ArrayAd<double,1>(res);
     };
 
     //-----------------------------------------------------------------------
@@ -37,9 +39,9 @@ public:
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& updated_coeff) const {
-        blitz::Array<double, 1> val(1);
-        val(0) = initial_scale_factor;
-        return ArrayAd<double, 1>(val, true);
+      blitz::Array<AutoDerivative<double>, 1> val(1);
+      val(0) = initial_scale_factor;
+      return ArrayAd<double, 1>(val);
     };
 
     //-----------------------------------------------------------------------

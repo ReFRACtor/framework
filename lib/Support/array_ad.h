@@ -53,6 +53,13 @@ public:
   { 
     ARRAY_AD_DIAGNOSTIC_MSG;
   }
+  ArrayAd(const ArrayAd<T, D>& V, bool Force_copy)
+    : val(Force_copy ? V.val.copy() : V.val),
+      jac(Force_copy ? V.jac.copy() : V.jac),
+      is_const(V.is_const) 
+  { 
+    ARRAY_AD_DIAGNOSTIC_MSG;
+  }
   ArrayAd& operator=(const ArrayAd<T, D>& V)
   { 
     ARRAY_AD_DIAGNOSTIC_MSG;

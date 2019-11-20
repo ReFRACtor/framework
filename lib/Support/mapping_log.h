@@ -28,8 +28,10 @@ public:
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        int nvar = updated_coeff.number_variable();
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(exp(updated_coeff.value())), nvar, true);
+      blitz::Array<AutoDerivative<double>, 1> res(updated_coeff.rows());
+      for(int i = 0; i < res.rows(); ++i)
+	res(i) = std::exp(updated_coeff(i));
+      return ArrayAd<double, 1>(res);
     };
 
     //-----------------------------------------------------------------------
@@ -37,8 +39,10 @@ public:
     //-----------------------------------------------------------------------
 
     virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const {
-        int nvar = initial_coeff.number_variable();
-        return ArrayAd<double, 1>( blitz::Array<double, 1>(log(initial_coeff.value())), nvar, true);
+      blitz::Array<AutoDerivative<double>, 1> res(initial_coeff.rows());
+      for(int i = 0; i < res.rows(); ++i)
+	res(i) = std::log(initial_coeff(i));
+      return ArrayAd<double, 1>(res);
     };
 
     //-----------------------------------------------------------------------
