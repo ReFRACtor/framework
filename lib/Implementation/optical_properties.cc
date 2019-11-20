@@ -1,5 +1,7 @@
 #include "optical_properties.h"
 
+#include "rayleigh_greek_moment.h"
+
 using namespace blitz;
 using namespace FullPhysics;
 
@@ -458,11 +460,67 @@ ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_portion() c
 }
 
 //-----------------------------------------------------------------------
-/// 
+/// Compute the portion of the total phase function attributable to
+/// rayleigh scattering. This returns the Rayleigh Greek Moments matrix
+/// multiplied by the fraction of rayleigh.
+///
+/// Returned dimensions: num_moments x num_layers x num_scattering
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 3> OpticalProperties::rayleigh_phase_function_moments_portion() const
+{
+    if(rayleigh_phase_function_moments_portion_.rows() == 0) {
+        firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
+
+        Array<double, 2> pf_ray(RayleighGreekMoment::array().copy());
+        ArrayAd<double, 1> frac_ray(rayleigh_fraction());
+
+        rayleigh_phase_function_moments_portion_.resize(pf_ray.rows(), number_layers(), pf_ray.cols(), frac_ray.number_variable());
+
+        rayleigh_phase_function_moments_portion_.value() = frac_ray.value()(i2) * pf_ray(i1,i3);
+        rayleigh_phase_function_moments_portion_.jacobian() = frac_ray.jacobian()(i2,i4) * pf_ray(i1,i3);
+    }
+
+    return rayleigh_phase_function_moments_portion_;
+}
+
+//-----------------------------------------------------------------------
+/// Compute the total phase function moments which is the summation
+/// of the rayleigh and aerosol portions
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
 {
+    if(total_phase_function_moments_.rows() == 0) {
+        ArrayAd<double, 3> pf_ray(rayleigh_phase_function_moments_portion());
+        ArrayAd<double, 3> pf_aer(aerosol_phase_function_moments_portion());
+
+        Range r_ray_moms(0, pf_ray.rows() - 1);
+        Range ra = Range::all();
+
+        int num_jac = 0;
+        if (!pf_aer.is_constant()) {
+            num_jac = pf_aer.number_variable();
+        } else if(!pf_ray.is_constant()) {
+            num_jac = pf_ray.number_variable();
+        }
+
+        total_phase_function_moments_.resize(pf_aer.shape(), num_jac);
+
+        total_phase_function_moments_.value() = pf_aer.value();
+        total_phase_function_moments_.value()(r_ray_moms, ra, ra) += pf_ray.value();
+
+        total_phase_function_moments_.jacobian() = 0;
+        if (!pf_aer.is_constant()) {
+            total_phase_function_moments_.jacobian() += pf_aer.jacobian();
+        }
+
+        if (!pf_ray.is_constant()) {
+            total_phase_function_moments_.jacobian()(r_ray_moms, ra, ra, ra) += pf_ray.jacobian();
+        }
+    }
+
+    return total_phase_function_moments_;
 }
 
 

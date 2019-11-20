@@ -79,6 +79,7 @@ public:
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
 
+    virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion() const;
     virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion() const;
     virtual ArrayAd<double, 3> total_phase_function_moments() const;
 
@@ -118,7 +119,9 @@ protected:
     mutable ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer_;
 
     // Portion of total phase function attributable to aerosol
+    mutable ArrayAd<double, 3> rayleigh_phase_function_moments_portion_;
     mutable ArrayAd<double, 3> aerosol_phase_function_moments_portion_;
+    mutable ArrayAd<double, 3> total_phase_function_moments_;
 
     // Primary optical properties intended for radiative transfer
     // mutable since thise are computed on demand
