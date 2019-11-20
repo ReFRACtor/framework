@@ -23,14 +23,12 @@ BOOST_AUTO_TEST_CASE(sv_basis_jacobian)
     BOOST_CHECK_MATRIX_CLOSE_TOL(atm->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).value(), opt_prop_wrt_sv.total_single_scattering_albedo().value(), 1e-10);
     BOOST_CHECK_MATRIX_CLOSE_TOL(atm->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).jacobian(), opt_prop_wrt_sv.total_single_scattering_albedo().jacobian(), 1e-10);
 
-    // Create an empty frac_aer to fill in with ones so that we can use the aerosol optical pf_mom routine to compare
-    // against that which is created in Aerosol Optical. Ignore jacobians since currently pf_mom as it comes from
-    // properties files has no associated jacobians
-    ArrayAd<double, 2> frac_aer_ones(opt_prop_wrt_sv.aerosol_fraction().shape(), 0);
-    frac_aer_ones.value() = 1.0;
+    ArrayAd<double, 2> frac_aer(opt_prop_wrt_sv.aerosol_fraction());
+    ArrayAd<double, 3> aer_pf_expt = atm->aerosol_ptr()->pf_mom(test_wn, frac_aer);
+    ArrayAd<double, 3> aer_pf_calc = opt_prop_wrt_sv.aerosol_phase_function_moments_portion();
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(atm->aerosol_ptr()->pf_mom(test_wn, frac_aer_ones).value(), opt_prop_wrt_sv.aerosol_phase_function_moments_per_layer().value(), 1e-10);
-
+    BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.value(), aer_pf_calc.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.jacobian(), aer_pf_calc.jacobian(), 1e-10);
 
 }
 
@@ -51,13 +49,12 @@ BOOST_AUTO_TEST_CASE(rt_basis_jacobian)
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(atm->intermediate_variable(test_wn, test_chan).jacobian(), opt_prop_wrt_rt.intermediate_jacobian(), 1e-10);
 
-    // Create an empty frac_aer to fill in with ones so that we can use the aerosol optical pf_mom routine to compare
-    // against that which is created in Aerosol Optical. Ignore jacobians since currently pf_mom as it comes from
-    // properties files has no associated jacobians
-    ArrayAd<double, 2> frac_aer_ones(opt_prop_wrt_rt.aerosol_fraction().shape(), 0);
-    frac_aer_ones.value() = 1.0;
+    ArrayAd<double, 2> frac_aer(opt_prop_wrt_rt.aerosol_fraction());
+    ArrayAd<double, 3> aer_pf_expt = atm->aerosol_ptr()->pf_mom(test_wn, frac_aer);
+    ArrayAd<double, 3> aer_pf_calc = opt_prop_wrt_rt.aerosol_phase_function_moments_portion();
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(atm->aerosol_ptr()->pf_mom(test_wn, frac_aer_ones).value(), opt_prop_wrt_rt.aerosol_phase_function_moments_per_layer().value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.value(), aer_pf_calc.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.jacobian(), aer_pf_calc.jacobian(), 1e-10);
 
 }
 

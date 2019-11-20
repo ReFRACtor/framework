@@ -72,15 +72,15 @@ public:
     virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer() const;
     virtual ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer() const;
-    virtual ArrayAd<double, 3> aerosol_phase_function_moments_per_layer() const;
 
     virtual ArrayAd<double, 1> total_optical_depth() const;
     virtual ArrayAd<double, 1> total_single_scattering_albedo() const;
 
-    virtual ArrayAd<double, 3> total_phase_function_moments() const;
-
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
+
+    virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion() const;
+    virtual ArrayAd<double, 3> total_phase_function_moments() const;
 
     /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
     virtual blitz::Array<double, 3> intermediate_jacobian() const { assert_init(); return intermediate_jacobian_; }
@@ -116,7 +116,9 @@ protected:
     mutable ArrayAd<double, 1> gas_optical_depth_per_layer_;
     mutable ArrayAd<double, 1> aerosol_extinction_optical_depth_per_layer_;
     mutable ArrayAd<double, 1> aerosol_scattering_optical_depth_per_layer_;
-    mutable ArrayAd<double, 3> aerosol_phase_function_moments_per_layer_;
+
+    // Portion of total phase function attributable to aerosol
+    mutable ArrayAd<double, 3> aerosol_phase_function_moments_portion_;
 
     // Primary optical properties intended for radiative transfer
     // mutable since thise are computed on demand

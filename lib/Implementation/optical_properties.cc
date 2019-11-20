@@ -190,54 +190,6 @@ ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer
     return aerosol_extinction_optical_depth_per_layer_;
 }
 
-//-----------------------------------------------------------------------
-/// Aerosol phase function moments per each layer summed over particle
-/// Output dimensions: num_moments x num_layers x num_scattering
-//-----------------------------------------------------------------------
-
-ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_per_layer() const
-{
-    firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
-    Range ra = Range::all();
-
-    if(aerosol_phase_function_moments_per_layer_.rows() == 0 and aerosol_phase_function_moments_per_particle_.size() > 0) {
-        // Gather the maximum number of moments and scattering dimensions
-
-        int max_num_moms = 0; int max_num_scatt = 0; int num_var = -1;
-        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
-            max_num_moms = std::max(max_num_moms, aerosol_phase_function_moments_per_particle_[part_idx].rows());
-            max_num_scatt = std::max(max_num_scatt, aerosol_phase_function_moments_per_particle_[part_idx].depth());
-
-            if(num_var > 0 && num_var != aerosol_phase_function_moments_per_particle_[part_idx].number_variable()) {
-                throw Exception("Phase function moments per particle have inconsistent number of jacobians");
-            }
-            num_var = aerosol_phase_function_moments_per_particle_[part_idx].number_variable();
-        }
-
-        aerosol_phase_function_moments_per_layer_.resize(max_num_moms, number_layers(), max_num_scatt, num_var);
-        aerosol_phase_function_moments_per_layer_.value() = 0;
-
-        if (!aerosol_phase_function_moments_per_layer_.is_constant()) {
-            aerosol_phase_function_moments_per_layer_.jacobian() = 0;
-        }
-
-        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
-            ArrayAd<double, 3> pf_mom_part(aerosol_phase_function_moments_per_particle_[part_idx]);
-
-            Range r_mom = Range(0, pf_mom_part.rows() - 1);
-            Range r_scatt = Range(0, pf_mom_part.depth() - 1);
-
-            aerosol_phase_function_moments_per_layer_.value()(r_mom, ra, r_scatt) += pf_mom_part.value();
-
-            if (!aerosol_phase_function_moments_per_particle_[part_idx].is_constant()) {
-                aerosol_phase_function_moments_per_layer_.jacobian()(r_mom, ra, r_scatt, ra) += pf_mom_part.jacobian();
-            }
-        }
-
-    }
-
-    return aerosol_phase_function_moments_per_layer_;
-}
 
 //-----------------------------------------------------------------------
 /// Aerosol scattering optical depth summed over all particles
@@ -376,13 +328,6 @@ ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
 }
 
 //-----------------------------------------------------------------------
-/// 
-//-----------------------------------------------------------------------
-ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
-{
-}
-
-//-----------------------------------------------------------------------
 /// Fraction of the scattering attributable to rayleigh at each layer
 //-----------------------------------------------------------------------
 
@@ -437,6 +382,89 @@ ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
 
     return aerosol_fraction_;
 }
+
+
+//-----------------------------------------------------------------------
+/// Returns the portion of the total phase function attributable to
+/// aerosols. This is the summation over particles multiplied by the
+/// fraction of aerosol.
+///
+/// Output dimensions: num_moments x num_layers x num_scattering
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_portion() const
+{
+    firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
+    Range ra = Range::all();
+
+    if(aerosol_phase_function_moments_portion_.rows() == 0 and aerosol_phase_function_moments_per_particle_.size() > 0) {
+        // Gather the maximum number of moments and scattering dimensions
+
+        int max_num_moms = 0; int max_num_scatt = 0; int num_var = -1;
+        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
+            max_num_moms = std::max(max_num_moms, aerosol_phase_function_moments_per_particle_[part_idx].rows());
+            max_num_scatt = std::max(max_num_scatt, aerosol_phase_function_moments_per_particle_[part_idx].depth());
+
+            if(num_var > 0 && num_var != aerosol_phase_function_moments_per_particle_[part_idx].number_variable()) {
+                throw Exception("Phase function moments per particle have inconsistent number of jacobians");
+            }
+            num_var = aerosol_phase_function_moments_per_particle_[part_idx].number_variable();
+        }
+
+        ArrayAd<double, 2> frac_aer(aerosol_fraction());
+
+        if (num_var == 0 && !frac_aer.is_constant()) {
+            num_var = frac_aer.number_variable();
+        }
+
+        aerosol_phase_function_moments_portion_.resize(max_num_moms, number_layers(), max_num_scatt, num_var);
+        aerosol_phase_function_moments_portion_.value() = 0;
+
+        if (!aerosol_phase_function_moments_portion_.is_constant()) {
+            aerosol_phase_function_moments_portion_.jacobian() = 0;
+        }
+
+        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
+            ArrayAd<double, 3> pf_mom_part(aerosol_phase_function_moments_per_particle_[part_idx]);
+
+            Range r_mom = Range(0, pf_mom_part.rows() - 1);
+            Range r_scatt = Range(0, pf_mom_part.depth() - 1);
+
+            Array<double, 3> pf_per_lay_val(aerosol_phase_function_moments_portion_.value()(r_mom, ra, r_scatt));
+            Array<double, 4> pf_per_lay_jac(aerosol_phase_function_moments_portion_.jacobian()(r_mom, ra, r_scatt, ra));
+
+            Array<double, 1> fa_val(frac_aer.value()(ra, part_idx));
+            Array<double, 2> fa_jac(frac_aer.jacobian()(ra, part_idx, ra));
+
+            pf_per_lay_val += fa_val(i2) * pf_mom_part.value()(i1, i2, i3);
+
+            if(pf_mom_part.is_constant()) {
+                if(!frac_aer.is_constant()) {
+                    pf_per_lay_jac += fa_jac(i2, i4) * pf_mom_part.value()(i1, i2, i3);
+                }
+            } else {
+                if(frac_aer.is_constant()) {
+                    pf_per_lay_jac += fa_val(i2) * pf_mom_part.jacobian()(i1, i2, i3, i4);
+                } else {
+                    pf_per_lay_jac += fa_jac(i2,i4) * pf_mom_part.value()(i1, i2, i3) + fa_val(i2) * pf_mom_part.jacobian()(i1, i2, i3, i4);
+                }
+            }
+
+        }
+
+    }
+
+    return aerosol_phase_function_moments_portion_;
+}
+
+//-----------------------------------------------------------------------
+/// 
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
+{
+}
+
 
 //=======================================================================
 
@@ -524,6 +552,11 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     aerosol_extinction_optical_depth_per_particle_.jacobian().reference(aer_ext_jac);
     aerosol_scattering_optical_depth_per_particle_.jacobian().reference(aer_sca_jac);
 
-    /// TODO, set jacobians
     aerosol_phase_function_moments_per_particle_ = aerosol_pf_moments;
+
+    for(int part_idx = 0; part_idx < aerosol_pf_moments.size(); part_idx++) {
+        if (!aerosol_pf_moments[part_idx].is_constant()) {
+            throw Exception("Phase function moments with a jacobian component are not handled at this time");
+        }
+    }
 }
