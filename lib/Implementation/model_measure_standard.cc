@@ -10,7 +10,7 @@ using namespace blitz;
 
 template<class T> void append_array(blitz::Array<T, 1>& A, const blitz::Array<T, 1>& A_to_append)
 {
-  Range r_to(A.rows(), A.rows() + A_to_append.rows());
+  Range r_to(A.rows(), A.rows() + A_to_append.rows()-1);
   A.resizeAndPreserve(A.rows() + A_to_append.rows());
   A(r_to) = A_to_append(Range::all());
 }
@@ -19,7 +19,7 @@ template<class T> void append_array(blitz::Array<T, 2>& A, const blitz::Array<T,
 {
   if(A.cols() != A_to_append.cols())
     throw Exception("Matrices need to have the same number of columns");
-  Range r_to(A.rows(), A.rows() + A_to_append.rows());
+  Range r_to(A.rows(), A.rows() + A_to_append.rows()-1);
   A.resizeAndPreserve(A.rows() + A_to_append.rows(), A.cols());
   A(r_to, Range::all()) = A_to_append(Range::all(), Range::all());
 }

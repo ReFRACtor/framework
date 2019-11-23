@@ -90,13 +90,18 @@ def ObjectCapture(capture_class):
 class ConfigurationCreator(ConfigurationInterface):
     '''Implementation of ConfigurationInterface that uses a dictionary of
     creator function to create all the objects'''
-    def __init__(self, config_func, **strategy_keywords):
+    def __init__(self, config_func=None, config_dict=None, **strategy_keywords):
+        '''Create a ConfigurationCreator. You can either pass in a 
+        config_func which is called with the given **strategy_keywords,
+        or you can pass in a config_dict which is a dictionary of creators 
+        (so like the results of calling this function). Depending on the 
+        context, either can be useful. '''
         # Augment loaded configuration to help capture objects
-        # required for ouput
+        # required for output
         config_def = {
             'creator': creator.base.ParamPassThru, 
             'order': ['file_config'],
-            'file_config': config_func(**strategy_keywords),
+            'file_config': config_func(**strategy_keywords) if config_func else config_dict,
         }
 
         # Capture certain objects without depending on the structure
@@ -137,7 +142,27 @@ class ConfigurationCreator(ConfigurationInterface):
     def solver(self):
         '''Solver to use'''
         return self.config_inst.solver
+
+    @property
+    def initial_guess(self):
+        '''Return the initial guess given to the solver'''
+        return self.solver.problem.parameters
+
+    @property
+    def observation(self):
+        '''Return the observation given to the problem'''
+        return self.solver.problem.max_a_posteriori.observation[0]
     
+    @property
+    def a_priori(self):
+        '''Return the a_priori given the to the solver problem.'''
+        return self.solver.problem.max_a_posteriori.a_priori_params
+
+    @property
+    def a_priori_covariance(self):
+        '''Return the a_priori covariance given the to the solver problem.'''
+        return self.solver.problem.max_a_posteriori.a_priori_cov
+        
     def set_initial_guess(self):
         '''Set the state vector to the initial guess.'''
         self.state_vector.update_state(self.file_config.retrieval.initial_guess)

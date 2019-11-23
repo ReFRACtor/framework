@@ -13,12 +13,16 @@ logger = logging.getLogger(__name__)
 
 class StrategyExecutor(object):
     
-    def __init__(self, config_filename, output_filename=None,
+    def __init__(self, config_filename=None, config_inst=None,
+                 output_filename=None,
                  strategy_filename=None, strategy_list=None):
 
-        logger.debug("Loading configuration from {}".format(config_filename))
-        self.config_module = load_config_module(config_filename)
-
+        if(config_filename):
+            logger.debug("Loading configuration from {}".format(config_filename))
+            self.config_module = load_config_module(config_filename)
+            self._config_inst = None
+        else:
+            self._config_inst = config_inst
         if strategy_filename is not None:
             logger.debug("Loading strategy from {}".format(strategy_filename))
             strategy_module = load_config_module(strategy_filename)
@@ -39,6 +43,8 @@ class StrategyExecutor(object):
         self.covariance_storage = {}
 
     def config_instance(self, **strategy_keywords):
+        if(self._config_inst):
+            return self._config_inst
         logger.debug("Loading configuration")
         return ConfigurationInterface.create_configuration_instance(self.config_module, **strategy_keywords)
     
