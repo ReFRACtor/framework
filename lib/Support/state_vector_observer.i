@@ -9,14 +9,12 @@
     
 %fp_shared_ptr(FullPhysics::StateVectorObserver);
 
-namespace FullPhysics {
+%feature("director") FullPhysics::StateVectorObserver;
 
-%nodefaultctor StateVectorObserver;
+namespace FullPhysics {
 
 class StateVectorObserver : public Observer<StateVector> {
 public:
-  virtual ~StateVectorObserver();
-  std::string print_to_string() const;
   virtual void mark_used(const StateVector& Sv, 
 			 blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 

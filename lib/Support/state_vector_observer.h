@@ -15,6 +15,7 @@ namespace FullPhysics {
 class StateVectorObserver : public Printable<StateVectorObserver>,
   virtual public Observer<StateVector> {
 public:
+  StateVectorObserver() {}
   virtual ~StateVectorObserver() {}
 
 //-----------------------------------------------------------------------
