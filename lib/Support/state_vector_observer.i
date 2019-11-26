@@ -4,20 +4,12 @@
 #include "state_vector_observer.h"
 %}
 
-%import "state_vector.i"
+%base_import(state_vector)
+%base_import(observer)
     
 %fp_shared_ptr(FullPhysics::StateVectorObserver);
-%fp_shared_ptr(FullPhysics::Observer<FullPhysics::StateVector>);
 
 namespace FullPhysics {
-
-class FullPhysics::Observer<FullPhysics::StateVector> {
-public:
-  virtual ~Observer<FullPhysics::StateVector>();
-  virtual void notify_add(StateVector& Obs);
-  virtual void notify_remove(StateVector& Obs);
-  virtual void notify_update(const StateVector& Obs);
-};
 
 %nodefaultctor StateVectorObserver;
 
