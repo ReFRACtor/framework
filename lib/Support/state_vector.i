@@ -34,7 +34,10 @@ public:
     %python_attribute(state_covariance, blitz::Array<double, 2>);
 
     void update_state(const blitz::Array<double, 1>& X);
-    void update_state(const blitz::Array<double, 1>& X, const blitz::Array<double, 2>& Cov);
+    void update_state(const blitz::Array<double, 1>& X,
+		      const blitz::Array<double, 2>& Cov);
+    void update_state(const ArrayAd<double, 1>& X,
+		      const blitz::Array<double, 2>& Cov);
     
     %python_attribute(used_flag, blitz::Array<bool, 1>);
     %python_attribute_with_set(observer_claimed_size, int);

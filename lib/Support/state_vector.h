@@ -54,6 +54,7 @@ public:
 
   void update_state(const blitz::Array<double, 1>& X);
   void update_state(const blitz::Array<double, 1>& X, const blitz::Array<double, 2>& Cov);
+  void update_state(const ArrayAd<double, 1>& X, const blitz::Array<double, 2>& Cov);
   blitz::Array<bool, 1> used_flag() const;
 
 //-----------------------------------------------------------------------
