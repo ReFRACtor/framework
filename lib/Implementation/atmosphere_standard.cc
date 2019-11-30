@@ -84,7 +84,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
     constant(C), alt(altv), 
-    sv_size(0),
+    sv_jac_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
@@ -108,7 +108,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), ground_ptr(groundv), 
     constant(C), alt(altv), 
-    sv_size(0),
+    sv_jac_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
@@ -131,7 +131,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     aerosol(aerosolv), rh(rhv), 
     constant(C), alt(altv), 
-    sv_size(0),
+    sv_jac_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
@@ -155,7 +155,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
     constant(C), alt(altv), 
-    sv_size(0),
+    sv_jac_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
@@ -178,7 +178,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
     rh(rhv), ground_ptr(groundv),
     constant(C), alt(altv), 
-    sv_size(0),
+    sv_jac_size(0),
     wn_tau_cache(-1),
     spec_index_tau_cache(-1),
     nlay(-1)
@@ -198,7 +198,7 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
   : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
-    rh(rhv), constant(C), alt(altv), sv_size(0), wn_tau_cache(-1), 
+    rh(rhv), constant(C), alt(altv), sv_jac_size(0), wn_tau_cache(-1), 
     spec_index_tau_cache(-1),
     nlay(-1)
 {
@@ -385,7 +385,7 @@ const
 
   intermediate_v.resize(number_layer(), 
 			2 + (aerosol ? aerosol->number_particle() : 0),
-			sv_size);
+			sv_jac_size);
   ArrayAd<double, 1> taug(intermediate_v(ra, taug_index));
   ArrayAd<double, 1> taur(intermediate_v(ra, taur_index));
   ArrayAd<double, 2> taua_i;

@@ -184,11 +184,11 @@ public:
   // Use the state vector observer routines to update the length of the
   // state vector size used internally to allocated intermediate variables
   virtual void notify_add(StateVector& Sv)
-  { sv_size = (int) Sv.state().size(); }
+  { sv_jac_size = (int) Sv.state_with_derivative().number_variable(); }
   virtual void notify_remove(StateVector& Sv) 
-  { sv_size = (int) Sv.state().size(); }
+  { sv_jac_size = (int) Sv.state_with_derivative().number_variable(); }
   virtual void notify_update(const StateVector& Sv)
-  { notify_update_do(*this); sv_size = (int) Sv.state().size(); }
+  { notify_update_do(*this); sv_jac_size = (int) Sv.state_with_derivative().number_variable(); }
 
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const Aerosol& A);
@@ -243,7 +243,7 @@ private:
   // locations and this location enters into the hydrostatic equations
   // that determine the gravity and altitude constants.
   std::vector<boost::shared_ptr<Altitude> > alt;
-  int sv_size;
+  int sv_jac_size;
 
   // We cache the last calculation of these values
   // Keeping these around to reuse helps since
