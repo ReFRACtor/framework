@@ -33,9 +33,9 @@ ModelMeasureStandard::ModelMeasureStandard
 {
   fm.push_back(forward_model);
   obs.push_back(observation);
-  set_measurement(obs[0]->radiance_all().spectral_range().data(),
-		  Array<double, 1>(sqr(obs[0]->radiance_all().spectral_range().uncertainty())));
-  meas_units = obs[0]->radiance_all().spectral_range().units();
+  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
+  set_measurement(s0.data(),
+		  Array<double, 1>(sqr(s0.uncertainty())));
 }
 
 ModelMeasureStandard::ModelMeasureStandard
@@ -48,11 +48,12 @@ ModelMeasureStandard::ModelMeasureStandard
     throw Exception("Need to have at least one forward model.");
   if(forward_model.size() != observation.size())
     throw Exception("forward_model and observation vectors need to be the same size");
-  Array<double, 1> a1(obs[0]->radiance_all().spectral_range().data());
-  Array<double, 1> a2(sqr(obs[0]->radiance_all().spectral_range().uncertainty()));
-  meas_units = obs[0]->radiance_all().spectral_range().units();
+  
+  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
+  Array<double, 1> a1(s0.data());
+  Array<double, 1> a2(sqr(s0.uncertainty()));
   for(int i = 1; i < (int) obs.size(); ++i) {
-    SpectralRange s1 = obs[i]->radiance_all().spectral_range().convert(meas_units);
+    SpectralRange s1 = obs[i]->radiance_all().spectral_range();
     append_array(a1, s1.data());
     Array<double, 1> a3(sqr(s1.uncertainty()));
     append_array(a2, a3);
@@ -91,16 +92,17 @@ void ModelMeasureStandard::radiance_from_fm()
 {
   assert_parameter_set_correctly();
 
-  Array<double, 1> temp_msrmnt(obs[0]->radiance_all().spectral_range().data());
+  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
+  Array<double, 1> temp_msrmnt(s0.data());
   Spectrum rad_spec = fm[0]->radiance_all(false);
-  SpectralRange rad_mod = rad_spec.spectral_range().convert(meas_units);
+  SpectralRange rad_mod = rad_spec.spectral_range().convert(s0.units());
   M.reference(rad_mod.data_ad().value());
   K.reference(rad_mod.data_ad().jacobian());
   for(int i = 1; i < (int) obs.size(); ++i) {
-    SpectralRange s1 = obs[i]->radiance_all().spectral_range().convert(meas_units);
+    SpectralRange s1 = obs[i]->radiance_all().spectral_range();
     append_array(temp_msrmnt, s1.data());
     Spectrum s2 = fm[i]->radiance_all(false);
-    SpectralRange s3 = s2.spectral_range().convert(meas_units);
+    SpectralRange s3 = s2.spectral_range().convert(s1.units());
     append_array(M, s3.data_ad().value());
     append_array(K, s3.data_ad().jacobian());
   }
