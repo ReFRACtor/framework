@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(sv_basis_jacobian)
     int test_chan = 0;
 
     // Check results with jacobian wrt to state vector
-    OpticalProperties opt_prop_wrt_sv = OpticalProperties();
+    OpticalPropertiesWrtInput opt_prop_wrt_sv = OpticalPropertiesWrtInput();
     opt_prop_wrt_sv.initialize(DoubleWithUnit(test_wn, units::inv_cm), test_chan, atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_state_vector(test_wn, test_chan).value(), opt_prop_wrt_sv.total_optical_depth().value(), 1e-10);

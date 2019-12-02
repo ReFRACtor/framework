@@ -18,10 +18,10 @@ namespace FullPhysics {
   with intermediate computations useful by approximation methods.
  *******************************************************************/
 
-class OpticalProperties : public virtual GenericObject {
+class OpticalPropertiesImpBase : public virtual GenericObject {
 public:
 
-    OpticalProperties() : initialized(false) {}
+    OpticalPropertiesImpBase() : initialized(false) {}
 
     virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
                             const ArrayAd<double, 2>& gas_od,
@@ -37,7 +37,7 @@ public:
                             int num_pf_mom = -1, int num_scattering = -1);
 
     /// Deconstructor
-    virtual ~OpticalProperties() = default;
+    virtual ~OpticalPropertiesImpBase() = default;
 
     // Sizes of types of information stored
 
@@ -97,7 +97,7 @@ protected:
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
                                            const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments) = 0;
 
     // Dim: num_layers x num_gases
     ArrayAd<double, 2> gas_optical_depth_per_particle_;
@@ -149,12 +149,46 @@ protected:
 };
 
 /****************************************************************//**
+  Represents the optical properties for a single spectral point where 
+  jacobians are with respect to the input jacobians. Therefore the
+  value of the intermediate_jacobian is an identity matrix.
  *******************************************************************/
 
-class OpticalPropertiesWrtRt : public virtual OpticalProperties {
+class OpticalPropertiesWrtInput : public virtual OpticalPropertiesImpBase {
 public:
 
-    OpticalPropertiesWrtRt() : OpticalProperties() {};
+    OpticalPropertiesWrtInput() : OpticalPropertiesImpBase() {};
+
+protected:
+
+    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                           const ArrayAd<double, 2>& gas_od,
+                                           const ArrayAd<double, 2>& aerosol_ext_od,
+                                           const ArrayAd<double, 2>& aerosol_sca_od,
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
+
+};
+
+
+/****************************************************************//**
+  Represents the optical properties for a single spectral point where 
+  jacobians are with respect to the radiative transfer parameters,
+  specifically:
+  * gas optical depth per layer (sum of all particles)
+  * rayleigh optical depth
+  * aerosol optical depth per particle
+
+  The different jacobian basis helps improve the speed of radiative
+  transfer computations which are generally linear in speed with the
+  number of weigthing functions used. After radiative transfer computation
+  the jacobians with respect to the input parameters can be obtained by
+  multiplying by the intermediate_jacobian value.
+  *******************************************************************/
+
+class OpticalPropertiesWrtRt : public virtual OpticalPropertiesImpBase {
+public:
+
+    OpticalPropertiesWrtRt() : OpticalPropertiesImpBase() {};
 
 protected:
 

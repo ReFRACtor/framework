@@ -14,7 +14,7 @@ using namespace FullPhysics;
 /// \param aerosol_sca_od Aerosol scattering optical depth for each layer and aerosol particle type (\f$\tau_{aer\_sca,lp}\f$)
 //-----------------------------------------------------------------------
 
-void OpticalProperties::initialize(const ArrayAd<double, 1>& rayleigh_od, 
+void OpticalPropertiesImpBase::initialize(const ArrayAd<double, 1>& rayleigh_od, 
                                    const ArrayAd<double, 2>& gas_od,
                                    const ArrayAd<double, 2>& aerosol_ext_od,
                                    const ArrayAd<double, 2>& aerosol_sca_od,
@@ -31,7 +31,7 @@ void OpticalProperties::initialize(const ArrayAd<double, 1>& rayleigh_od,
 /// at a specific spectral point for a given instrument channel.
 //-----------------------------------------------------------------------
 
-void OpticalProperties::initialize(const DoubleWithUnit spectral_point,
+void OpticalPropertiesImpBase::initialize(const DoubleWithUnit spectral_point,
                                    const int channel_index,
                                    const boost::shared_ptr<Absorber>& absorber,
                                    const boost::shared_ptr<Rayleigh>& rayleigh,
@@ -61,39 +61,6 @@ void OpticalProperties::initialize(const DoubleWithUnit spectral_point,
 }
 
 //-----------------------------------------------------------------------
-/// Initialize internal variables along with jacobians for the basis
-/// of the implementation.
-///
-/// In the base implementation jacobians are with respect to the input
-/// variables and therefore the intermdiate jacobian is just an identity 
-/// matrix.
-//-----------------------------------------------------------------------
-
-void OpticalProperties::initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-                                                  const ArrayAd<double, 2>& gas_od,
-                                                  const ArrayAd<double, 2>& aerosol_ext_od,
-                                                  const ArrayAd<double, 2>& aerosol_sca_od,
-                                                  const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
-{
-
-    // Take references instead of copying for speed
-    rayleigh_optical_depth_.reference(rayleigh_od);
-    gas_optical_depth_per_particle_.reference(gas_od);
-    aerosol_extinction_optical_depth_per_particle_.reference(aerosol_ext_od);
-    aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
-    aerosol_phase_function_moments_per_particle_ = aerosol_pf_moments;
-
-    intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
-    intermediate_jacobian_ = 0.0;
-    for(int lay_idx = 0; lay_idx < rayleigh_optical_depth_.rows(); lay_idx++) {
-        for(int jac_idx = 0; jac_idx < rayleigh_optical_depth_.number_variable(); jac_idx++) {
-            intermediate_jacobian_(lay_idx, jac_idx, jac_idx) = 1.0;
-        }
-    }
-
-} 
-
-//-----------------------------------------------------------------------
 /// Protected method that throws an exception if the class has not yet
 /// been initialized. Due to the desire to allow extension by extending
 /// the initialize_with_jacobians method, having a two phase initializtion
@@ -101,7 +68,7 @@ void OpticalProperties::initialize_with_jacobians(const ArrayAd<double, 1>& rayl
 /// run.
 //-----------------------------------------------------------------------
 
-void OpticalProperties::assert_init() const
+void OpticalPropertiesImpBase::assert_init() const
 {
     if (!initialized) {
         throw Exception("This optical properties instance has not yet been initalized. Call an initialize method.");
@@ -113,7 +80,7 @@ void OpticalProperties::assert_init() const
 /// variables are not consistent with each other.
 //-----------------------------------------------------------------------
 
-void OpticalProperties::assert_sizes() const
+void OpticalPropertiesImpBase::assert_sizes() const
 {
     int num_layers = rayleigh_optical_depth_.rows();
 
@@ -142,7 +109,7 @@ void OpticalProperties::assert_sizes() const
 /// \f$ \tau_{gas,l} = \sum_{p=0}^{P} \tau_{gas,lp} \f$
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::gas_optical_depth_per_layer() const
 {
     assert_init();
 
@@ -169,7 +136,7 @@ ArrayAd<double, 1> OpticalProperties::gas_optical_depth_per_layer() const
 /// \f$ \tau_{aer\_ext,l} = \sum_{p=0}^{P} \tau_{aer\_ext,lp} \f$
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::aerosol_extinction_optical_depth_per_layer() const
 {
     assert_init(); 
 
@@ -198,7 +165,7 @@ ArrayAd<double, 1> OpticalProperties::aerosol_extinction_optical_depth_per_layer
 /// \f$ \tau_{aer\_sca,l} = \sum_{p=0}^{P} \tau_{aer\_sca,lp} \f$
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::aerosol_scattering_optical_depth_per_layer() const
 {
     assert_init(); 
 
@@ -227,7 +194,7 @@ ArrayAd<double, 1> OpticalProperties::aerosol_scattering_optical_depth_per_layer
 /// \f$ \tau_{tot,l} = \tau_{ray,l} + \tau_{gas,l}  + \tau_{aer\_ext,l} \f$
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::total_optical_depth() const
 {
     assert_init(); 
 
@@ -269,7 +236,7 @@ ArrayAd<double, 1> OpticalProperties::total_optical_depth() const
 // Private helper that just computes the sum of the rayleigh and aerosol
 // optical depths, the value is used in multiple other calculations and
 // computed once for speed purposes
-ArrayAd<double, 1> OpticalProperties::scattering_sum() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::scattering_sum() const
 {
     assert_init(); 
 
@@ -303,7 +270,7 @@ ArrayAd<double, 1> OpticalProperties::scattering_sum() const
 /// \f$ \omega_{tot,l} = \frac{ \tau_{ray,l} + \tau_{aer\_sca,l} }{ \tau_{tot,l} } \f$
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::total_single_scattering_albedo() const
 {
     assert_init(); 
 
@@ -333,7 +300,7 @@ ArrayAd<double, 1> OpticalProperties::total_single_scattering_albedo() const
 /// Fraction of the scattering attributable to rayleigh at each layer
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> OpticalProperties::rayleigh_fraction() const
+ArrayAd<double, 1> OpticalPropertiesImpBase::rayleigh_fraction() const
 {
     assert_init(); 
 
@@ -361,7 +328,7 @@ ArrayAd<double, 1> OpticalProperties::rayleigh_fraction() const
 /// Fraction of the scattering attributable to each aerosol particle at each layer
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
+ArrayAd<double, 2> OpticalPropertiesImpBase::aerosol_fraction() const
 {
     assert_init(); 
 
@@ -394,7 +361,7 @@ ArrayAd<double, 2> OpticalProperties::aerosol_fraction() const
 /// Output dimensions: num_moments x num_layers x num_scattering
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_portion() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_portion() const
 {
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     Range ra = Range::all();
@@ -467,7 +434,7 @@ ArrayAd<double, 3> OpticalProperties::aerosol_phase_function_moments_portion() c
 /// Returned dimensions: num_moments x num_layers x num_scattering
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalProperties::rayleigh_phase_function_moments_portion() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::rayleigh_phase_function_moments_portion() const
 {
     if(rayleigh_phase_function_moments_portion_.rows() == 0) {
         firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
@@ -489,7 +456,7 @@ ArrayAd<double, 3> OpticalProperties::rayleigh_phase_function_moments_portion() 
 /// of the rayleigh and aerosol portions
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments() const
 {
     if(total_phase_function_moments_.rows() == 0) {
         ArrayAd<double, 3> pf_ray(rayleigh_phase_function_moments_portion());
@@ -523,6 +490,39 @@ ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
     return total_phase_function_moments_;
 }
 
+//=======================================================================
+
+//-----------------------------------------------------------------------
+/// Initialize internal variables along with jacobians.
+///
+/// Jacobians are with respect to the input
+/// variables and therefore the intermdiate jacobian is just an identity 
+/// matrix.
+//-----------------------------------------------------------------------
+
+void OpticalPropertiesWrtInput::initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+                                                  const ArrayAd<double, 2>& gas_od,
+                                                  const ArrayAd<double, 2>& aerosol_ext_od,
+                                                  const ArrayAd<double, 2>& aerosol_sca_od,
+                                                  const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+{
+
+    // Take references instead of copying for speed
+    rayleigh_optical_depth_.reference(rayleigh_od);
+    gas_optical_depth_per_particle_.reference(gas_od);
+    aerosol_extinction_optical_depth_per_particle_.reference(aerosol_ext_od);
+    aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
+    aerosol_phase_function_moments_per_particle_ = aerosol_pf_moments;
+
+    intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
+    intermediate_jacobian_ = 0.0;
+    for(int lay_idx = 0; lay_idx < rayleigh_optical_depth_.rows(); lay_idx++) {
+        for(int jac_idx = 0; jac_idx < rayleigh_optical_depth_.number_variable(); jac_idx++) {
+            intermediate_jacobian_(lay_idx, jac_idx, jac_idx) = 1.0;
+        }
+    }
+
+} 
 
 //=======================================================================
 
@@ -531,6 +531,15 @@ ArrayAd<double, 3> OpticalProperties::total_phase_function_moments() const
 const int gas_jac_index = 0;
 const int rayleigh_jac_index = 1;
 const int aerosol_0_jac_index = 2;
+
+//-----------------------------------------------------------------------
+/// Initialize internal variables along with jacobians.
+///
+/// Jacobians are with respect to the following parameters in this order:
+///  * gas optical depth per layer (sum of all particles)
+///  * rayleigh optical depth
+///  * aerosol optical depth per particle
+////-----------------------------------------------------------------------
 
 void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
                                                        const ArrayAd<double, 2>& gas_od,

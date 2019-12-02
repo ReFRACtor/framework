@@ -13,7 +13,8 @@
 %import "rayleigh.i"
 %import "aerosol.i"
 
-%fp_shared_ptr(FullPhysics::OpticalProperties)
+%fp_shared_ptr(FullPhysics::OpticalPropertiesImpBase)
+%fp_shared_ptr(FullPhysics::OpticalPropertiesWrtInput)
 %fp_shared_ptr(FullPhysics::OpticalPropertiesWrtRt)
 
 %include "optical_properties.h"
