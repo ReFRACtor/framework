@@ -17,6 +17,7 @@ set(DIR_SOURCES
     altitude_hydrostatic.cc
     apply_instrument_units.cc
     atmosphere_standard.cc
+    atmosphere_legacy.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
