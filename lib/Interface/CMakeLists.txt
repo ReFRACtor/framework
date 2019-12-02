@@ -41,6 +41,7 @@ set(DIR_SOURCES
     nlls_problem_state.cc
     nlls_solver.cc
     noise_model.cc
+    optical_properties_imp_base.cc
     output.cc
     pressure.cc
     pressure_imp_base.cc

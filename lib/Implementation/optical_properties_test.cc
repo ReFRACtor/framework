@@ -1,6 +1,7 @@
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
-#include "optical_properties.h"
+#include "optical_properties_wrt_input.h"
+#include "optical_properties_wrt_rt.h"
 #include "atmosphere_legacy.h"
 
 #include <blitz/array.h>

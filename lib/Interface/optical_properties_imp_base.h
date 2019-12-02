@@ -1,7 +1,7 @@
-#ifndef PCA_OPTICAL_PROP_H
-#define PCA_OPTICAL_PROP_H
+#ifndef PCA_OPTICAL_PROP_IMP_BASE_H
+#define PCA_OPTICAL_PROP_IMP_BASE_H
 
-#include "generic_object.h"
+#include "optical_properties.h"
 
 #include "array_ad.h"
 
@@ -18,7 +18,7 @@ namespace FullPhysics {
   with intermediate computations useful by approximation methods.
  *******************************************************************/
 
-class OpticalPropertiesImpBase : public virtual GenericObject {
+class OpticalPropertiesImpBase : public virtual OpticalProperties {
 public:
 
     OpticalPropertiesImpBase() : initialized(false) {}
@@ -148,58 +148,5 @@ protected:
 
 };
 
-/****************************************************************//**
-  Represents the optical properties for a single spectral point where 
-  jacobians are with respect to the input jacobians. Therefore the
-  value of the intermediate_jacobian is an identity matrix.
- *******************************************************************/
-
-class OpticalPropertiesWrtInput : public virtual OpticalPropertiesImpBase {
-public:
-
-    OpticalPropertiesWrtInput() : OpticalPropertiesImpBase() {};
-
-protected:
-
-    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-                                           const ArrayAd<double, 2>& gas_od,
-                                           const ArrayAd<double, 2>& aerosol_ext_od,
-                                           const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
-
-};
-
-
-/****************************************************************//**
-  Represents the optical properties for a single spectral point where 
-  jacobians are with respect to the radiative transfer parameters,
-  specifically:
-  * gas optical depth per layer (sum of all particles)
-  * rayleigh optical depth
-  * aerosol optical depth per particle
-
-  The different jacobian basis helps improve the speed of radiative
-  transfer computations which are generally linear in speed with the
-  number of weigthing functions used. After radiative transfer computation
-  the jacobians with respect to the input parameters can be obtained by
-  multiplying by the intermediate_jacobian value.
-  *******************************************************************/
-
-class OpticalPropertiesWrtRt : public virtual OpticalPropertiesImpBase {
-public:
-
-    OpticalPropertiesWrtRt() : OpticalPropertiesImpBase() {};
-
-protected:
-
-    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-                                           const ArrayAd<double, 2>& gas_od,
-                                           const ArrayAd<double, 2>& aerosol_ext_od,
-                                           const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
-
-};
-
 }
-
 #endif

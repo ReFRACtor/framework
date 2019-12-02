@@ -1,11 +1,11 @@
 %include "fp_common.i"
 
 %{
-#include "optical_properties.h"
+#include "optical_properties_imp_base.h"
 #include "sub_state_vector_array.h"
 %}
 
-%base_import(generic_object)
+%base_import(optical_properties)
 
 %import "array_ad.i"
 %import "double_with_unit.i"
@@ -14,7 +14,5 @@
 %import "aerosol.i"
 
 %fp_shared_ptr(FullPhysics::OpticalPropertiesImpBase)
-%fp_shared_ptr(FullPhysics::OpticalPropertiesWrtInput)
-%fp_shared_ptr(FullPhysics::OpticalPropertiesWrtRt)
 
-%include "optical_properties.h"
+%include "optical_properties_imp_base.h"

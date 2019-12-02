@@ -82,7 +82,8 @@ set(DIR_SOURCES
     nlls_solver_lm.cc
     nonuniform_spectrum_sampling.cc
     observation_level_1b.cc
-    optical_properties.cc
+    optical_properties_wrt_input.cc
+    optical_properties_wrt_rt.cc
     output_hdf.cc
     output_hdf_iteration.cc
     planck.F90
