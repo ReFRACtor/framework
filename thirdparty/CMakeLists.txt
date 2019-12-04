@@ -83,6 +83,19 @@ list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 find_package(Eigen REQUIRED)
 list(APPEND THIRDPARTY_INCLUDES ${EIGEN_INCLUDE_DIRS})
 
+# Set up AER OSS if available
+find_package(OSS)
+if(OSS_FOUND)
+    message(STATUS "AER OSS FM will be built.")
+    list(APPEND THIRDPARTY_INCLUDES ${OSS_INCLUDE_DIRS})
+    list(APPEND THIRDPARTY_LIBRARIES ${OSS_LIBRARIES})
+else()
+    message(STATUS "Note: NOT building OSS specific modules")
+endif()
+#  Expose whether we found OSS so we can optionally build our OSS FM
+set(OSS_FOUND ${OSS_FOUND} PARENT_SCOPE)
+
+
 ################################################
 # Configure packages we will possibly build here
 find_package(Blitz)
