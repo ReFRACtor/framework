@@ -10,7 +10,7 @@
 // when we build. But we still need to supply this to get the
 // directors=1 and allprotected=1 set.
 
-%module(directors="1", allprotected="1") refractor
+%module(directors="1", allprotected="1") refractor_swig
 #define SWIG_MODULE refractor_swig
 %{
 #include <boost/shared_ptr.hpp>

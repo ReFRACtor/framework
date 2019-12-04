@@ -23,23 +23,42 @@ def strategy_list(func):
     return func
 
 def load_config_module(filename):
-    "Loads in a Python module by filename in a manner expected of ReFRACtor config function containing modules"
+    '''Loads in a Python module by filename in a manner expected of 
+    ReFRACtor config function containing modules.
+
+    If filename is a directory, we assume we are actually loading __init__.py
+    found in that directory'''
 
     # Add some random characters to the module name to make each read instance unique
     uniq_module_name = "config_" + ''.join([ random.choice(string.ascii_lowercase) for i in range(5) ])
 
-    # Add the path where the file is found to the system path list so imports for
-    # other modules in the same directory can be found
-    # There is probably a better way to do this that does not pollute the systemwide
-    # path variable as a side effect
-    file_path = os.path.realpath(os.path.dirname(filename))
+    # This may need some cleanup. What we are trying to do here is to allow
+    # a config file to load other files in the same directory as it is found,
+    # without conflicting with other configurations (e.g., both omps_nm and
+    # cris have a "base_config.py" file). So we treat the directory as its
+    # own module, to keep these separate. We load the directory as a module
+    # if there is a __init__.py file. The config file then does relative
+    # loading of other files, each "from .base_config import blah"
+    #
+    # Not really sure about the logic here, I've always found python 
+    # modules/search paths really arcane
+    #
+    if os.path.isdir(filename):
+        # If a directory, import the module
+        spec = importlib.util.spec_from_file_location(uniq_module_name, filename + "/__init__.py")
+        module = importlib.util.module_from_spec(spec)
+    else:
+        spec = importlib.util.spec_from_file_location(uniq_module_name, filename)
+        # If we find a __init__.py, treat the directory as a module that
+        # is the scope of filename
+        init_filename = os.path.dirname(filename) + "/__init__.py"
+        if(os.path.isfile(init_filename)):
+            spec2 = importlib.util.spec_from_file_location(uniq_module_name, os.path.dirname(filename) + "/__init__.py")
+            module = importlib.util.module_from_spec(spec2)
+        else:
+            module = importlib.util.module_from_spec(spec)
 
-    if not file_path in sys.path:
-        sys.path.append(file_path)
-
-    # Import the file
-    spec = importlib.util.spec_from_file_location(uniq_module_name, filename)
-    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module    
     spec.loader.exec_module(module)
 
     return module

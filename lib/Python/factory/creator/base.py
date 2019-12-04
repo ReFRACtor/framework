@@ -2,14 +2,9 @@ import logging
 import inspect
 from collections import OrderedDict
 
-# Try and use AttrDict as the dictionary class used to store config instantiation
+# Use AttrDict as the dictionary class used to store config instantiation
 # to make accessing config values easier
-try:
-    from attrdict import AttrDict as ConfigDict
-except ImportError:
-    from warnings import warn
-    warn("Could not import AttrDict, config values not accessible as attributes")
-    ConfigDict = dict
+from attrdict import AttrDict as ConfigDict
 
 from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Scalar
 

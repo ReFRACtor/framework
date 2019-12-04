@@ -101,9 +101,6 @@ protected:
   std::vector<boost::shared_ptr<ForwardModel> > fm;
   std::vector<boost::shared_ptr<Observation> > obs;
   boost::shared_ptr<StateVector> sv;
-
-  Unit meas_units;
-
 };
 }
 #endif

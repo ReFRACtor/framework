@@ -173,6 +173,24 @@ void StateVector::update_state(const blitz::Array<double, 1>& X,
     notify_update_do(*this);
 }
 
+//-----------------------------------------------------------------------
+/// Update the state vector and covariance. This variation sets the
+/// jacobian of X directly, rather than assuming it is an identity matrix.
+//-----------------------------------------------------------------------
+
+void StateVector::update_state(const ArrayAd<double, 1>& X,
+                               const blitz::Array<double, 2>& Cov)
+{
+    if(X.rows() != Cov.rows() ||
+       X.rows() != Cov.cols()) {
+      throw Exception("X and Cov need to be the same size when updating the StateVector");
+    }
+
+    x_.reference(X.copy());
+    cov_.reference(Cov.copy());
+    notify_update_do(*this);
+}
+
 
 //-----------------------------------------------------------------------
 /// Return a Array of boolean values. The value (i) is true if the state

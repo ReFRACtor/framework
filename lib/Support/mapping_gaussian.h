@@ -29,7 +29,7 @@ public:
     //-----------------------------------------------------------------------
     MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_Total,
                     double Min_Desired = 1e-9)
-        : press(in_press), linear_total(Linear_Total), min_desired(Min_Desired)
+      : min_desired(Min_Desired), linear_total(Linear_Total), press(in_press)
     {
         if (linear_total) {
             map_name = "gaussian_linear";

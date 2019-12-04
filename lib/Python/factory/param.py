@@ -190,9 +190,9 @@ class ObjectVector(ConfigParam):
         
         # Check that the type string has vector_ in it and vec_type if that is supplied
         if self.vec_type is not None:
-            check_str = "\.vector_%s" % self.vec_type
+            check_str = r"\.vector_%s" % self.vec_type
         else:
-            check_str = "\.vector_.*"
+            check_str = r"\.vector_.*"
 
         type_str = str(type(value))
 
