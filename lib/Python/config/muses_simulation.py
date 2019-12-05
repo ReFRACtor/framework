@@ -121,9 +121,10 @@ class MusesSimConfig(object):
                 gas_def = self.config_def['atmosphere']['absorber'][absco_gas_name]
                 if gas_def['vmr']['value'] is not None:
                     print("Adding {} to existing gas {}".format(in_gas_name, absco_gas_name))
-                    gas_def['vmr']['value'] += profile_getter(in_gas_name)
+                    gas_def['vmr']['value'] = gas_def['vmr']['value'] + profile_getter(in_gas_name)
                 else:
-                    gas_def['vmr']['value'] = profile_getter(in_gas_name)
+                    gas_def['vmr']['value'] = np.copy(profile_getter(in_gas_name)[:])
+
             else:
                 # Must make a deepcopy so we are not giving each gas a reference to the default definition that changing
                 # would make all have the same values
@@ -261,14 +262,15 @@ class MusesUipSimConfig(MusesSimConfig):
 
         self.atm_gas_list = atm_gas_list
 
-    def configure_micro_windows(self):
+    def configure_micro_windows(self, desired_instrument=None):
 
         # Set up microwindow ranges
         mw_all = self.uip['microwindows_all'][0]
 
         microwindows = []
-        for start, end, spacing in zip(mw_all['start'], mw_all['endd'], mw_all['monospacing']):
-            microwindows.append( (start, end) )
+        for start, end, spacing, inst in zip(mw_all['start'], mw_all['endd'], mw_all['monospacing'], mw_all['instrument']):
+            if desired_instrument is None or desired_instrument == inst.decode('UTF-8'):
+                microwindows.append( (start, end) )
 
         self.set_microwindows(microwindows)
 
