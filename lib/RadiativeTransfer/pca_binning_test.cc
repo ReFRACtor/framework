@@ -1,32 +1,30 @@
 #include "unit_test_support.h"
-#include "global_fixture.h"
+#include "pca_fixture.h"
 
 #include "hdf_file.h"
 
-#include "pca_optical_properties.h"
 #include "pca_binning.h"
+
+#include "optical_properties_wrt_rt.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(pca_binning, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(pca_binning, PcaFixture)
 
 BOOST_AUTO_TEST_CASE(compare_with_offline)
 {
-    // Contains optical data inputs as well as expected outputs in the format
-    // produced in the offline Fortran code
-    // Does not contain all the values accessible by PCAOpticalProperties interface
-    boost::shared_ptr<HdfFile> test_data(new HdfFile(test_data_dir() + "in/pca/binning_test_data.h5"));
-    boost::shared_ptr<PCAOpticalProperties> opt_props(new PCAOpticalPropertiesFile(test_data));
+    boost::shared_ptr<HdfFile> expt_data(new HdfFile(test_data_dir() + "in/pca/binning_test_data.h5"));
 
     // Matches 
-    auto num_bin_points_shape = test_data->read_shape<1>("num_bin_points");
+    auto num_bin_points_shape = expt_data->read_shape<1>("num_bin_points");
     int num_bins = num_bin_points_shape(0);
-    auto binning = PCABinning(opt_props, PCABinning::Method::UVVSWIR_V4, num_bins);
+    int primary_abs_index = 0;
+    auto binning = PCABinning(opt_props, PCABinning::Method::UVVSWIR_V4, num_bins, primary_abs_index);
 
     // Get expected values
-    auto num_bin_points_expt = test_data->read_field<int, 1>("num_bin_points");
-    auto bin_indexes_expt_packed = test_data->read_field<int, 1>("bin_indexes_packed");
+    auto num_bin_points_expt = expt_data->read_field<int, 1>("num_bin_points");
+    auto bin_indexes_expt_packed = expt_data->read_field<int, 1>("bin_indexes_packed");
 
     // Compare number of bin points, if this isn't the same the following certainly won't work
     std::cerr << "expt = " << num_bin_points_expt << std::endl;

@@ -1,7 +1,6 @@
 #include "unit_test_support.h"
-#include "global_fixture.h"
+#include "pca_fixture.h"
 
-#include "pca_optical_properties.h"
 #include "pca_eigensolver.h"
 
 using namespace FullPhysics;
@@ -11,31 +10,39 @@ extern "C" {
     void pca_3m_correction(int *max_eofs_2p1, int *Max_geoms, int *n_eofs, int *npoints, int *ngeoms, double *PrinComps, double *intensity_LD_bin, double *intensity_2S_bin, double *intensity_FO_bin, double *Intensity_Corrfacs);
 }
 
-BOOST_FIXTURE_TEST_SUITE(pca_eigensolver, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(pca_eigensolver, PcaFixture)
 
 BOOST_AUTO_TEST_CASE(compare_with_fortran)
 {
-    std::string opt_prop_filename = test_data_dir() + "in/pca/pca_optical_properties.h5";
-    auto opt_props = PCAOpticalPropertiesFile(opt_prop_filename);
+    Range ra = Range::all();
 
     int num_eofs = 4;
+    int num_layers = opt_props[0]->number_layers();
+    int num_points = opt_props.size();
 
     // Pack data for our generic adaptation class
     std::vector<Array<double, 2> > gridded_data_g;
-    gridded_data_g.push_back(opt_props.total_optical_depth());
-    gridded_data_g.push_back(opt_props.single_scattering_albedo());
+
+    Array<double, 2> grid_total_od(num_layers, num_points);
+    Array<double, 2> grid_total_ssa(num_layers, num_points);
+
+    for(int dat_idx = 0 ; dat_idx < num_points;  dat_idx++) {
+        grid_total_od(ra, dat_idx) = opt_props[dat_idx]->total_optical_depth().value();
+        grid_total_ssa(ra, dat_idx) = opt_props[dat_idx]->total_single_scattering_albedo().value();
+    }
+
+    gridded_data_g.push_back(grid_total_od);
+    gridded_data_g.push_back(grid_total_ssa);
 
     auto eigen_g = PCAEigenSolverGeneric(gridded_data_g, num_eofs);
 
     // Pack data for the fortran adaptation class
     // Get sizes from gridded_data_g to avoid rereading arrays from disk
-    int num_layers = gridded_data_g[0].rows();
-    int num_points = gridded_data_g[1].cols();
     Array<double, 3> gridded_data_f(2, num_layers, num_points);
 
     auto all = Range::all();
-    gridded_data_f(0, all, all) = opt_props.total_optical_depth();
-    gridded_data_f(1, all, all) = opt_props.single_scattering_albedo();
+    gridded_data_f(0, all, all) = grid_total_od;
+    gridded_data_f(1, all, all) = grid_total_ssa;
 
     auto eigen_f = PCAEigenSolverFortran(gridded_data_f, num_eofs);
 
@@ -50,24 +57,33 @@ BOOST_AUTO_TEST_CASE(compare_with_fortran)
         BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.data_perturbations()[ivar], eigen_g.data_perturbations()[ivar], 1e-10);
     }
 }
-
 BOOST_AUTO_TEST_CASE(correction)
 {
 
-    std::string opt_prop_filename = test_data_dir() + "in/pca/pca_optical_properties.h5";
-    auto opt_props = PCAOpticalPropertiesFile(opt_prop_filename);
+    Range ra = Range::all();
 
     int num_eofs = 4;
-
+    int num_layers = opt_props[0]->number_layers();
+    int num_points = opt_props.size();
+    
     // Pack data for our generic adaptation class
     std::vector<Array<double, 2> > gridded_data_g;
-    gridded_data_g.push_back(opt_props.total_optical_depth());
-    gridded_data_g.push_back(opt_props.single_scattering_albedo());
+
+    Array<double, 2> grid_total_od(num_layers, num_points);
+    Array<double, 2> grid_total_ssa(num_layers, num_points);
+
+    for(int dat_idx = 0 ; dat_idx < num_points;  dat_idx++) {
+        grid_total_od(ra, dat_idx) = opt_props[dat_idx]->total_optical_depth().value();
+        grid_total_ssa(ra, dat_idx) = opt_props[dat_idx]->total_single_scattering_albedo().value();
+    }
+
+    gridded_data_g.push_back(grid_total_od);
+    gridded_data_g.push_back(grid_total_ssa);
 
     auto eigen_g = PCAEigenSolverGeneric(gridded_data_g, num_eofs);
 
     // Use some real values extracted from the offline code, the numbers are
-    // not that import given we will be comparing against the fortran code, but
+    // not that important given we will be comparing against the fortran code, but
     // its a good source for something with real variations instead of just
     // using some random numbers
     Array<double, 2> intensity_lidort(num_eofs*2+1, 1);
@@ -113,18 +129,17 @@ BOOST_AUTO_TEST_CASE(correction)
     }
 
     // Run our correction implementation and compare against fortran code
-    int npoints = opt_props.total_optical_depth().cols();
     int ngeoms = 1;
 
-    Array<double, 2> prin_comps(num_eofs, npoints, ColumnMajorArray<2>());
+    Array<double, 2> prin_comps(num_eofs, num_points, ColumnMajorArray<2>());
     prin_comps = eigen_g.principal_components();
 
-    blitz::Array<double, 2> calc_correction(npoints, nstokes);
+    blitz::Array<double, 2> calc_correction(num_points, nstokes);
     calc_correction = eigen_g.correction(lidort_mean, twostream_mean, first_order_mean, lidort_plus, twostream_plus, first_order_plus, lidort_minus, twostream_minus, first_order_minus);
 
-    blitz::Array<double, 2> expt_correction(npoints, ngeoms, ColumnMajorArray<2>());
+    blitz::Array<double, 2> expt_correction(num_points, ngeoms, ColumnMajorArray<2>());
 
-    pca_3m_correction(&num_eofs, &ngeoms, &num_eofs, &npoints, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction.dataFirst());
+    pca_3m_correction(&num_eofs, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction.dataFirst());
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(expt_correction(Range::all(), 0), calc_correction(Range::all(), 0), 1e-10);
 }

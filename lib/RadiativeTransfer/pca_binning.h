@@ -1,8 +1,10 @@
 #ifndef PCA_BINNING_H
 #define PCA_BINNING_H
 
+#include <boost/shared_ptr.hpp>
+
 #include "generic_object.h"
-#include "pca_optical_properties.h"
+#include "optical_properties.h"
 
 namespace FullPhysics {
 
@@ -19,7 +21,7 @@ public:
         UVVSWIR_V5 = 5,
     };
 
-    PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, const Method bin_method, const int num_bins);
+    PCABinning(const std::vector<boost::shared_ptr<OpticalProperties> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index);
     virtual ~PCABinning() = default;
 
     /// Number of spectral points in each bin
@@ -31,10 +33,12 @@ public:
 private:
     void compute_bins();
 
-    boost::shared_ptr<PCAOpticalProperties> opt_props_;
+    std::vector<boost::shared_ptr<OpticalProperties> > opt_props_;
 
     Method bin_method_;
     int num_bins_;
+
+    int primary_abs_index_;
 
     blitz::Array<int, 1> num_bin_points_;
     std::vector<blitz::Array<int, 1> > bin_indexes_;

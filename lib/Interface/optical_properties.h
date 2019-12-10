@@ -1,5 +1,5 @@
-#ifndef PCA_OPTICAL_PROP_H
-#define PCA_OPTICAL_PROP_H
+#ifndef OPTICAL_PROPERTIES_H
+#define OPTICAL_PROPERTIES_H
 
 #include "generic_object.h"
 
@@ -88,6 +88,7 @@ public:
     virtual ArrayAd<double, 3> total_phase_function_moments() const = 0;
 
     /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
+    /// Size is num_layers x num_intermediate_jacobians x num_input_jacobians
     virtual blitz::Array<double, 3> intermediate_jacobian() const = 0;
     
 };

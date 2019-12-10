@@ -1,6 +1,8 @@
+#include "ostream_pad.h"
+
 #include "pca_rt.h"
 
-#include "ostream_pad.h"
+#include "optical_properties_wrt_rt.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -38,26 +40,42 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     Array<double, 1> wavenumbers(Spec_domain.wavenumber());
 
     // Compute optical properties for the whole band
-    pca_opt.reset(new PCAOpticalPropertiesAtmosphere(atm, Spec_domain, Spec_index, primary_absorber));
+    pca_opt.clear();
+
+    for (int dom_idx = 0; dom_idx < Spec_domain.data().rows(); dom_idx++) {
+        boost::shared_ptr<OpticalPropertiesWrtRt> point_opt_prop(new OpticalPropertiesWrtRt());
+        point_opt_prop->initialize(DoubleWithUnit(Spec_domain.data()(dom_idx), Spec_domain.units()), Spec_index,
+                                   atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
+        pca_opt.push_back(point_opt_prop);
+    }
+
+    int primary_abs_index = atm->absorber_ptr()->gas_index(primary_absorber);
 
     // Compute bins
-    pca_bin.reset(new PCABinning(pca_opt, bin_method, num_bins));
+    pca_bin.reset(new PCABinning(pca_opt, bin_method, num_bins, primary_abs_index));
     auto bins = pca_bin->bin_indexes();
     Array<int, 1> num_bin_points = pca_bin->num_bin_points();
 
     // Extract optical properties intermediate variable values for each bin
-    int num_levels = pca_opt->intermediate_variable().rows();
-    int num_iv_var = pca_opt->intermediate_variable().cols();
+    int num_layers = pca_opt[0]->number_layers();
+    int num_iv_var = pca_opt[0]->number_aerosol_particles() + 2;
 
     std::vector<Array<double, 3> > bin_inp_iv;
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
-        Array<double, 3> bin_iv(num_levels, num_iv_var, bins[bin_idx].rows());
+        Array<double, 3> bin_iv(num_layers, num_iv_var, bins[bin_idx].rows());
 
         // Copy out the intermediate variable values for the spectral domain values in the current bin
         // This requires us to copy into a new array since the bin locations won't be contiguous
         for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
-            bin_iv(Range::all(), Range::all(), dom_idx) = 
-                pca_opt->intermediate_variable()(Range::all(), Range::all(), bins[bin_idx](dom_idx));
+            int src_idx = bins[bin_idx](dom_idx);
+
+            bin_iv(Range::all(), 0, dom_idx) = pca_opt[src_idx]->gas_optical_depth_per_layer().value();
+            bin_iv(Range::all(), 1, dom_idx) = pca_opt[src_idx]->rayleigh_optical_depth().value();
+
+            Array<double, 2> aerosol_ext_od(pca_opt[src_idx]->aerosol_scattering_optical_depth_per_particle().value());
+            for(int aer_idx = 0; aer_idx < pca_opt[src_idx]->number_aerosol_particles(); aer_idx++) {
+                bin_iv(Range::all(), 2 + aer_idx, dom_idx) = aerosol_ext_od(Range::all(), aer_idx);
+            }
         }
 
         bin_inp_iv.push_back(bin_iv);
@@ -98,7 +116,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         // We need to translate back from the eigen solvers vectors to arrays for each intermediate variable index
         
         // Compute mean IV values
-        Array<double, 2> bin_mean_iv(num_levels, num_iv_var);
+        Array<double, 2> bin_mean_iv(num_layers, num_iv_var);
         for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
             bin_mean_iv(Range::all(), var_idx) = exp(pca_solver->data_mean()[var_idx]);
         }
@@ -120,8 +138,8 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         Array<double, 2> first_order_minus(num_eofs, number_stokes());
 
         for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-            Array<double, 2> bin_plus_iv(num_levels, num_iv_var);
-            Array<double, 2> bin_minus_iv(num_levels, num_iv_var);
+            Array<double, 2> bin_plus_iv(num_layers, num_iv_var);
+            Array<double, 2> bin_minus_iv(num_layers, num_iv_var);
 
             for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
                 bin_plus_iv(Range::all(), var_idx) = 

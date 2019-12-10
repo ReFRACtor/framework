@@ -11,18 +11,25 @@ extern "C" {
     void create_bin_uvvswir_v5(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *ncnt, int *index, int *bin);
 }
 
-PCABinning::PCABinning(const boost::shared_ptr<PCAOpticalProperties>& optical_properties, const Method bin_method, const int num_bins)
-: opt_props_(optical_properties), bin_method_(bin_method), num_bins_(num_bins)
+PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalProperties> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index)
+: opt_props_(optical_properties), bin_method_(bin_method), num_bins_(num_bins), primary_abs_index_(primary_absorber_index)
 {
     compute_bins();
 }
 
 void PCABinning::compute_bins()
 {
+    int ndat = opt_props_.size();
+
+    if (ndat == 0) {
+        throw Exception("No optical property information present for PCA binning");
+    }
+
+    Range ra = Range::all();
+    firstIndex i1;
 
     // Call selected binning routine
-    int nlayer = opt_props_->gas_optical_depth().rows();
-    int ndat = opt_props_->primary_gas_dominates().rows();
+    int nlayer = opt_props_[0]->number_layers();
     
     // NCNT in the fortran binning code is allocated as 0:NBIN, so allocated as 1+ number of bins to avoid
     // invalid memory writes
@@ -40,9 +47,14 @@ void PCABinning::compute_bins()
     Array<double, 2> tau_tot(nlayer, ndat, ColumnMajorArray<2>());
     Array<double, 2> omega(nlayer, ndat, ColumnMajorArray<2>());
 
-    taug = opt_props_->gas_optical_depth();
-    tau_tot = opt_props_->total_optical_depth();
-    omega = opt_props_->single_scattering_albedo();
+    for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
+        taug(ra, dom_idx) = opt_props_[dom_idx]->gas_optical_depth_per_layer().value();
+        tau_tot(ra, dom_idx) = opt_props_[dom_idx]->total_optical_depth().value();
+        omega(ra, dom_idx) = opt_props_[dom_idx]->total_single_scattering_albedo().value();
+    }
+
+    // Only used for UVVSWIR_V4, resized there
+    Array<int, 1> primary_gas_dominates = Array<int, 1>(blitz::ColumnMajorArray<1>());
     
     // Call fortran binning routine
     switch(bin_method_) {
@@ -62,12 +74,25 @@ void PCABinning::compute_bins()
                 throw Exception("UVVSWIR PCA binning V4 method must use 11 bins");
             }
 
+            primary_gas_dominates.resize(ndat);
+
+            for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
+                Array<double, 2> gas_od(opt_props_[dom_idx]->gas_optical_depth_per_particle().value());
+                Array<double, 1> gas_col_tot(sum(gas_od, i1));
+
+                if ((gas_col_tot(primary_abs_index_)/sum(gas_col_tot)) > 0.75) {
+                    primary_gas_dominates(dom_idx) = 1;
+                } else {
+                    primary_gas_dominates(dom_idx) = 0;
+                }
+            }
+
             create_bin_uvvswir_v4(
                 &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
                 taug.dataFirst(), 
                 tau_tot.dataFirst(), 
                 omega.dataFirst(), 
-                opt_props_->primary_gas_dominates().dataFirst(), 
+                primary_gas_dominates.dataFirst(), 
                 num_points.dataFirst(), indexes_packed.dataFirst(), bins.dataFirst());
             break;
         case UVVSWIR_V5:

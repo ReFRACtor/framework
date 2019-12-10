@@ -1,5 +1,5 @@
-#ifndef PCA_OPTICAL_PROP_WRT_INPUT_H
-#define PCA_OPTICAL_PROP_WRT_INPUT_H
+#ifndef OPTICAL_PROP_WRT_INPUT_H
+#define OPTICAL_PROP_WRT_INPUT_H
 
 #include "optical_properties_imp_base.h"
 

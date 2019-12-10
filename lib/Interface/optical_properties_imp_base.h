@@ -1,5 +1,5 @@
-#ifndef PCA_OPTICAL_PROP_IMP_BASE_H
-#define PCA_OPTICAL_PROP_IMP_BASE_H
+#ifndef OPTICAL_PROP_IMP_BASE_H
+#define OPTICAL_PROP_IMP_BASE_H
 
 #include "optical_properties.h"
 
@@ -84,6 +84,7 @@ public:
     virtual ArrayAd<double, 3> total_phase_function_moments() const;
 
     /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
+    /// Size is num_layers x num_intermediate_jacobians x num_input_jacobians
     virtual blitz::Array<double, 3> intermediate_jacobian() const { assert_init(); return intermediate_jacobian_; }
     
 protected:
@@ -137,6 +138,7 @@ protected:
     mutable ArrayAd<double, 2> aerosol_fraction_;
     
     // For conversion from jacobians wrt internal value to wrt input values
+    // Size is num_layers x num_intermediate_jacobians x num_input_jacobians
     blitz::Array<double, 3> intermediate_jacobian_;
 
     // Reflective surface

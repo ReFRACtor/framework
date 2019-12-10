@@ -10,7 +10,7 @@
 #include "first_order_rt.h"
 
 #include "pca_binning.h"
-#include "pca_optical_properties.h"
+#include "optical_properties.h"
 #include "pca_eigensolver.h"
 
 namespace FullPhysics {
@@ -59,7 +59,7 @@ public:
     const boost::shared_ptr<TwostreamRt> twostream() const { return twostream_rt; }
     const boost::shared_ptr<FirstOrderRt> first_order() const { return first_order_rt; }
 
-    const boost::shared_ptr<PCAOpticalPropertiesAtmosphere> optical_properties() const { return pca_opt; }
+    const std::vector<boost::shared_ptr<OpticalProperties> > optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
         if (bin_index < 0 || bin_index >= pca_bin_solvers.size()) {
@@ -89,7 +89,7 @@ private:
     // These are stored for the current stokes call for debugging purposes
     // They are empty until stokes or stokes_and_jacobian are called.
     // They are reset for each call
-    mutable boost::shared_ptr<PCAOpticalPropertiesAtmosphere> pca_opt;
+    mutable std::vector<boost::shared_ptr<OpticalProperties> > pca_opt;
     mutable boost::shared_ptr<PCABinning> pca_bin;
     mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_bin_solvers;
     
