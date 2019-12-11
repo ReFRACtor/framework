@@ -31,7 +31,9 @@ protected:
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
                                            const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
+                                           const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper);
+
+    virtual const std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
 
 };
 

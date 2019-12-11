@@ -39,11 +39,18 @@ BOOST_AUTO_TEST_CASE(sv_basis_jacobian)
     BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.jacobian(), aer_pf_calc.jacobian(), 1e-10);
 
     // Total pf which include rayleigh portion which is not exposed by Atmosphere interface
-    ArrayAd<double, 3> tot_pf_expt = atm_legacy->scattering_moment_wrt_state_vector(test_wn, test_chan);
-    ArrayAd<double, 3> tot_pf_calc = opt_prop_wrt_sv.total_phase_function_moments();
+    ArrayAd<double, 3> tot_pf_expt_1 = atm_legacy->scattering_moment_wrt_state_vector(test_wn, test_chan);
+    ArrayAd<double, 3> tot_pf_calc_1 = opt_prop_wrt_sv.total_phase_function_moments();
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt.value(), tot_pf_calc.value(), 1e-10);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt.jacobian(), tot_pf_calc.jacobian(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_1.value(), tot_pf_calc_1.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_1.jacobian(), tot_pf_calc_1.jacobian(), 1e-10);
+
+    // Check that phase function can be recomputed with a different number of moments and scattering
+    ArrayAd<double, 3> tot_pf_expt_2 = atm_legacy->scattering_moment_wrt_state_vector(test_wn, test_chan, 200, 1);
+    ArrayAd<double, 3> tot_pf_calc_2 = opt_prop_wrt_sv.total_phase_function_moments(200, 1);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_2.value(), tot_pf_calc_2.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_2.jacobian(), tot_pf_calc_2.jacobian(), 1e-10);
 
 }
 
@@ -78,11 +85,18 @@ BOOST_AUTO_TEST_CASE(rt_basis_jacobian)
     BOOST_CHECK_MATRIX_CLOSE_TOL(aer_pf_expt.jacobian(), aer_pf_calc.jacobian(), 1e-10);
 
     // Total pf which include rayleigh portion which is not exposed by Atmosphere interface
-    ArrayAd<double, 3> tot_pf_expt = atm_legacy->scattering_moment_wrt_state_vector(test_wn, test_chan);
-    ArrayAd<double, 3> tot_pf_calc = opt_prop_wrt_rt.total_phase_function_moments();
+    ArrayAd<double, 3> tot_pf_expt_1 = atm_legacy->scattering_moment_wrt_iv(test_wn, test_chan);
+    ArrayAd<double, 3> tot_pf_calc_1 = opt_prop_wrt_rt.total_phase_function_moments();
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt.value(), tot_pf_calc.value(), 1e-10);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt.jacobian(), tot_pf_calc.jacobian(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_1.value(), tot_pf_calc_1.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_1.jacobian(), tot_pf_calc_1.jacobian(), 1e-10);
+
+    // Check that phase function can be recomputed with a different number of moments and scattering
+    ArrayAd<double, 3> tot_pf_expt_2 = atm_legacy->scattering_moment_wrt_iv(test_wn, test_chan, 200, 1);
+    ArrayAd<double, 3> tot_pf_calc_2 = opt_prop_wrt_rt.total_phase_function_moments(200, 1);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_2.value(), tot_pf_calc_2.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_expt_2.jacobian(), tot_pf_calc_2.jacobian(), 1e-10);
 
 }
 

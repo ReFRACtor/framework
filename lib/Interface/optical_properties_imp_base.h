@@ -12,6 +12,38 @@
 namespace FullPhysics {
 
 /****************************************************************//**
+  Helper class to return aerosol phase functions. Due to the 
+  computational expense of computing these values it is a good idea
+  to delay computation until the number of moments and scattering
+  matrix elements is known. These classes provide wrappers for 
+  encapsulating those calls.
+ *******************************************************************/
+
+class AerosolPhaseFunctionHelper : public GenericObject {
+public:
+    virtual const std::vector<ArrayAd<double, 3> > phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const = 0;
+};
+
+/// Pass through passed aerosol moments, in this case the number of moments and scattering are trimmed from the inputs
+class AerosolPhaseFunctionPassThruHelper : public AerosolPhaseFunctionHelper {
+public:
+    AerosolPhaseFunctionPassThruHelper(const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
+    virtual const std::vector<ArrayAd<double, 3> > phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
+private:
+    std::vector<ArrayAd<double, 3> > aerosol_pf_moments_in;
+};
+
+/// Compute aerosol phase functions using the Aerosol class hiearchy
+class AerosolPhaseFunctionComputeHelper : public AerosolPhaseFunctionHelper {
+public:
+    AerosolPhaseFunctionComputeHelper(const DoubleWithUnit spectral_point, const boost::shared_ptr<Aerosol>& aerosol);
+    virtual const std::vector<ArrayAd<double, 3> > phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
+private:
+    double wn;
+    boost::shared_ptr<Aerosol> aerosol_;
+};
+
+/****************************************************************//**
   Represents the optical properties for a single spectral point.
   The intention is to contain all the information calculated from
   the atmosphere needed for a radiative transfer calculation along
@@ -33,8 +65,7 @@ public:
                             const int channel_index,
                             const boost::shared_ptr<Absorber>& absorber,
                             const boost::shared_ptr<Rayleigh>& rayleigh,
-                            const boost::shared_ptr<Aerosol>& aerosol,
-                            int num_pf_mom = -1, int num_scattering = -1);
+                            const boost::shared_ptr<Aerosol>& aerosol);
 
     /// Deconstructor
     virtual ~OpticalPropertiesImpBase() = default;
@@ -63,7 +94,7 @@ public:
 
     /// Returns aerosol phase function moments per particle
     /// Dimensions: num_moments x num_layers x num_scattering
-    virtual const std::vector<ArrayAd<double, 3> >& aerosol_phase_function_moments_per_particle() const { assert_init(); return aerosol_phase_function_moments_per_particle_; }
+    virtual const std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
 
     // 
     // These accessors only calculate their value if their stored value is empty
@@ -79,9 +110,9 @@ public:
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
 
-    virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion() const;
-    virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion() const;
-    virtual ArrayAd<double, 3> total_phase_function_moments() const;
+    virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion(int num_scattering = -1) const;
+    virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion(int num_moments = -1, int num_scattering = -1) const;
+    virtual ArrayAd<double, 3> total_phase_function_moments(int num_moments = -1, int num_scattering = -1) const;
 
     /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
     /// Size is num_layers x num_intermediate_jacobians x num_input_jacobians
@@ -98,7 +129,7 @@ protected:
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
                                            const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments) = 0;
+                                           const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper) = 0;
 
     // Dim: num_layers x num_gases
     ArrayAd<double, 2> gas_optical_depth_per_particle_;
@@ -111,7 +142,10 @@ protected:
     ArrayAd<double, 2> aerosol_scattering_optical_depth_per_particle_;
 
     // Dim: num_moments x num_layers x num_scattering
-    std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle_;
+    mutable int cached_num_moments;
+    mutable int cached_num_scattering;
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aerosol_phase_function_helper;
+    mutable std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle_;
 
     // Dim: num_layers
     // Summation over all particles

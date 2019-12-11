@@ -20,9 +20,15 @@ void OpticalPropertiesImpBase::initialize(const ArrayAd<double, 1>& rayleigh_od,
                                    const ArrayAd<double, 2>& aerosol_sca_od,
                                    const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
 {
-    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aerosol_pf_moments);
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionPassThruHelper(aerosol_pf_moments));
+
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
 
     assert_sizes();
+
+    cached_num_moments = -1;
+    cached_num_scattering = -1;
+
     initialized = true;
 }
 
@@ -35,8 +41,7 @@ void OpticalPropertiesImpBase::initialize(const DoubleWithUnit spectral_point,
                                    const int channel_index,
                                    const boost::shared_ptr<Absorber>& absorber,
                                    const boost::shared_ptr<Rayleigh>& rayleigh,
-                                   const boost::shared_ptr<Aerosol>& aerosol,
-                                   int num_pf_mom, int num_scattering)
+                                   const boost::shared_ptr<Aerosol>& aerosol)
 {
 
     Range ra = Range::all();
@@ -44,20 +49,20 @@ void OpticalPropertiesImpBase::initialize(const DoubleWithUnit spectral_point,
 
     ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, channel_index));
     ArrayAd<double, 2> gas_od(absorber->optical_depth_each_layer(wn, channel_index));
+
     ArrayAd<double, 2> aerosol_ext_od(aerosol->extinction_optical_depth_each_layer(wn));
     ArrayAd<double, 2> aerosol_sca_od(aerosol->scattering_optical_depth_each_layer(wn));
 
-    // Copy out aerosol phase function moments
-    std::vector<ArrayAd<double, 3> > aerosol_pf_moments;
-    for(int p_idx = 0; p_idx < aerosol->number_particle(); ++p_idx) {
-        aerosol_pf_moments.push_back(aerosol->pf_mom(wn, p_idx, num_pf_mom, num_scattering));
-    }
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
 
-    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aerosol_pf_moments);
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
 
     assert_sizes();
-    initialized = true;
 
+    cached_num_moments = -1;
+    cached_num_scattering = -1;
+
+    initialized = true;
 }
 
 //-----------------------------------------------------------------------
@@ -99,9 +104,6 @@ void OpticalPropertiesImpBase::assert_sizes() const
         throw Exception("Aerosol extinction and scattering optical depth has inconsistent number of particles");
     }
 
-    if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
-        throw Exception("Aerosol extinction optical depth and aerosol phase function moments have inconsistent number of particles");
-    }
 }
 
 //-----------------------------------------------------------------------
@@ -352,6 +354,35 @@ ArrayAd<double, 2> OpticalPropertiesImpBase::aerosol_fraction() const
     return aerosol_fraction_;
 }
 
+//-----------------------------------------------------------------------
+/// Compute the aerosol phase function per particle for the desired
+/// number of moments and scattering matrix elements using a
+/// AerosolPhaseFunctionHelper class.
+/// 
+/// The value will be cached so long as the number of moments and 
+/// scattering do not change.
+//-----------------------------------------------------------------------
+
+const std::vector<ArrayAd<double, 3> > OpticalPropertiesImpBase::aerosol_phase_function_moments_per_particle(int num_moments, int num_scattering) const
+{ 
+    assert_init(); 
+
+    if(aerosol_phase_function_moments_per_particle_.size() == 0 || cached_num_moments != num_moments || cached_num_scattering != num_scattering) {
+        aerosol_phase_function_moments_per_particle_.clear();
+        aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper->phase_function_moments_per_particle(num_moments, num_scattering); 
+
+        // Double check that the sizes of the value computed is consistent with other aerosol values
+        if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
+            throw Exception("Aerosol extinction optical depth and aerosol phase function moments have inconsistent number of particles");
+        }
+
+        // Cache passed values here since this is the end of the chain of events where these numbers would change values
+        cached_num_moments = num_moments;
+        cached_num_scattering = num_scattering;
+    }
+
+    return aerosol_phase_function_moments_per_particle_;
+}
 
 //-----------------------------------------------------------------------
 /// Returns the portion of the total phase function attributable to
@@ -361,23 +392,26 @@ ArrayAd<double, 2> OpticalPropertiesImpBase::aerosol_fraction() const
 /// Output dimensions: num_moments x num_layers x num_scattering
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_portion() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_portion(int num_moments, int num_scattering) const
 {
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     Range ra = Range::all();
 
-    if(aerosol_phase_function_moments_portion_.rows() == 0 and aerosol_phase_function_moments_per_particle_.size() > 0) {
+
+    if(aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper) {
+        std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
+
         // Gather the maximum number of moments and scattering dimensions
 
         int max_num_moms = 0; int max_num_scatt = 0; int num_var = -1;
-        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
-            max_num_moms = std::max(max_num_moms, aerosol_phase_function_moments_per_particle_[part_idx].rows());
-            max_num_scatt = std::max(max_num_scatt, aerosol_phase_function_moments_per_particle_[part_idx].depth());
+        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+            max_num_moms = std::max(max_num_moms, aer_pf_per_pert[part_idx].rows());
+            max_num_scatt = std::max(max_num_scatt, aer_pf_per_pert[part_idx].depth());
 
-            if(num_var > 0 && num_var != aerosol_phase_function_moments_per_particle_[part_idx].number_variable()) {
+            if(num_var > 0 && num_var != aer_pf_per_pert[part_idx].number_variable()) {
                 throw Exception("Phase function moments per particle have inconsistent number of jacobians");
             }
-            num_var = aerosol_phase_function_moments_per_particle_[part_idx].number_variable();
+            num_var = aer_pf_per_pert[part_idx].number_variable();
         }
 
         ArrayAd<double, 2> frac_aer(aerosol_fraction());
@@ -393,8 +427,8 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
             aerosol_phase_function_moments_portion_.jacobian() = 0;
         }
 
-        for(int part_idx = 0; part_idx < aerosol_phase_function_moments_per_particle_.size(); part_idx++) {
-            ArrayAd<double, 3> pf_mom_part(aerosol_phase_function_moments_per_particle_[part_idx]);
+        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+            ArrayAd<double, 3> pf_mom_part(aer_pf_per_pert[part_idx]);
 
             Range r_mom = Range(0, pf_mom_part.rows() - 1);
             Range r_scatt = Range(0, pf_mom_part.depth() - 1);
@@ -434,15 +468,26 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
 /// Returned dimensions: num_moments x num_layers x num_scattering
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalPropertiesImpBase::rayleigh_phase_function_moments_portion() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::rayleigh_phase_function_moments_portion(int num_scattering) const
 {
-    if(rayleigh_phase_function_moments_portion_.rows() == 0) {
+    if(rayleigh_phase_function_moments_portion_.rows() == 0 || rayleigh_phase_function_moments_portion_.depth() != num_scattering) {
         firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
 
         Array<double, 2> pf_ray(RayleighGreekMoment::array().copy());
         ArrayAd<double, 1> frac_ray(rayleigh_fraction());
 
-        rayleigh_phase_function_moments_portion_.resize(pf_ray.rows(), number_layers(), pf_ray.cols(), frac_ray.number_variable());
+        int nscatt;
+        if (num_scattering <= 0) {
+            nscatt = pf_ray.cols();
+        } else if (num_scattering <= pf_ray.cols()) {
+            nscatt = num_scattering;
+        } else {
+            Exception err_msg;
+            err_msg << "Number of scattering matrix elements requested " << num_scattering << " exceeds the number available " << pf_ray.cols() << " for Rayleigh Greek moments";
+            throw err_msg;
+        }
+
+        rayleigh_phase_function_moments_portion_.resize(pf_ray.rows(), number_layers(), nscatt, frac_ray.number_variable());
 
         rayleigh_phase_function_moments_portion_.value() = frac_ray.value()(i2) * pf_ray(i1,i3);
         rayleigh_phase_function_moments_portion_.jacobian() = frac_ray.jacobian()(i2,i4) * pf_ray(i1,i3);
@@ -456,11 +501,11 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::rayleigh_phase_function_moments_por
 /// of the rayleigh and aerosol portions
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments() const
+ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments(int num_moments, int num_scattering) const
 {
-    if(total_phase_function_moments_.rows() == 0) {
-        ArrayAd<double, 3> pf_ray(rayleigh_phase_function_moments_portion());
-        ArrayAd<double, 3> pf_aer(aerosol_phase_function_moments_portion());
+    if(total_phase_function_moments_.rows() == 0 || cached_num_moments != num_moments || cached_num_scattering != num_scattering) {
+        ArrayAd<double, 3> pf_ray(rayleigh_phase_function_moments_portion(num_scattering));
+        ArrayAd<double, 3> pf_aer(aerosol_phase_function_moments_portion(num_moments, num_scattering));
 
         Range r_ray_moms(0, pf_ray.rows() - 1);
         Range ra = Range::all();
@@ -488,4 +533,101 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments() cons
     }
 
     return total_phase_function_moments_;
+}
+
+//=======================================================================
+
+//-----------------------------------------------------------------------
+/// Aerosol phase function helper class that just passes through the
+/// input value, with some trunctation if necessary
+//-----------------------------------------------------------------------
+
+AerosolPhaseFunctionPassThruHelper::AerosolPhaseFunctionPassThruHelper(const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+{
+    aerosol_pf_moments_in = aerosol_pf_moments;
+}
+
+//-----------------------------------------------------------------------
+/// If the number of moments and scattering are not set then return
+/// the original source array, otherwise truncate to the desired
+/// number of moments and/or scattering matrix elements.
+//-----------------------------------------------------------------------
+
+const std::vector<ArrayAd<double, 3> > AerosolPhaseFunctionPassThruHelper::phase_function_moments_per_particle(int num_moments, int num_scattering) const
+{
+    // If number of moments and scattering are set then don't bother with rebuilding the array and return the original
+    if(num_moments < 0 && num_scattering < 0) {
+        return aerosol_pf_moments_in;
+    } else {
+
+        Range ra = Range::all();
+
+        std::vector<ArrayAd<double, 3> > aerosol_pf_moments_out;
+        for(int p_idx = 0; p_idx < aerosol_pf_moments_in.size(); ++p_idx) {
+            ArrayAd<double, 3> source_pf(aerosol_pf_moments_in[p_idx]);
+
+            int nmom_out;
+            if (num_moments <= 0) {
+                nmom_out = source_pf.rows();
+            } else if(num_moments <= source_pf.rows()) {
+                nmom_out = num_moments;
+            } else {
+                Exception err_msg;
+                err_msg << "Number of moments requested " << num_moments << " exceeds the number available " << source_pf.rows() << " from particle at index " << p_idx;
+                throw err_msg;
+            }
+
+            int nscatt_out;
+            if (num_scattering <= 0) {
+                nscatt_out = source_pf.depth();
+            } else if(num_scattering <= source_pf.rows()) {
+                nscatt_out = num_scattering;
+            } else {
+                Exception err_msg;
+                err_msg << "Number of scattering matrix elements requested " << num_scattering << " exceeds the number available " << source_pf.depth() << " from particle at index " << p_idx;
+                throw err_msg;
+            }
+
+            Range r_moments = Range(0, nmom_out-1);
+            Range r_scatt = Range(0, nscatt_out-1);
+
+            ArrayAd<double, 3> dest_pf(nmom_out, source_pf.cols(), nscatt_out, source_pf.number_variable());
+
+            dest_pf.value() = source_pf.value()(r_moments, ra, r_scatt);
+
+            if (!source_pf.is_constant()) {
+                dest_pf.jacobian() = source_pf.jacobian()(r_moments, ra, r_scatt, ra);
+            }
+
+            aerosol_pf_moments_out.push_back(dest_pf);
+        }
+
+        return aerosol_pf_moments_out;
+    }
+}
+
+//-----------------------------------------------------------------------
+/// Aerosol phase function helper that uses the Aerosol class hiearchy
+/// to compute the phase function.
+//-----------------------------------------------------------------------
+
+AerosolPhaseFunctionComputeHelper::AerosolPhaseFunctionComputeHelper(const DoubleWithUnit spectral_point, const boost::shared_ptr<Aerosol>& aerosol)
+{
+    wn = spectral_point.convert_wave(units::inv_cm).value;
+    aerosol_ = aerosol;
+}
+
+//-----------------------------------------------------------------------
+/// Build vector of phase function moments using Aerosol class
+//-----------------------------------------------------------------------
+
+const std::vector<ArrayAd<double, 3> > AerosolPhaseFunctionComputeHelper::phase_function_moments_per_particle(int num_moments, int num_scattering) const
+{
+    // Copy out aerosol phase function moments
+    std::vector<ArrayAd<double, 3> > aerosol_pf_moments;
+    for(int p_idx = 0; p_idx < aerosol_->number_particle(); ++p_idx) {
+        aerosol_pf_moments.push_back(aerosol_->pf_mom(wn, p_idx, num_moments, num_scattering));
+    }
+
+    return aerosol_pf_moments;
 }

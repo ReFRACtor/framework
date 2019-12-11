@@ -37,7 +37,7 @@ public:
 
     /// Returns aerosol phase function moments per particle
     /// Dimensions: num_moments x num_layers x num_scattering
-    virtual const std::vector<ArrayAd<double, 3> >& aerosol_phase_function_moments_per_particle() const = 0;
+    virtual const std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const = 0;
 
     /// Gas Absorber optical depth summed over all particles:
     /// \f$ \tau_{gas,l} = \sum_{p=0}^{P} \tau_{gas,lp} \f$
@@ -74,18 +74,18 @@ public:
     /// fraction of aerosol.
     ///
     /// Output dimensions: num_moments x num_layers x num_scattering
-    virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion() const = 0;
+    virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion(int num_scattering) const = 0;
 
     /// Compute the portion of the total phase function attributable to
     /// rayleigh scattering. This returns the Rayleigh Greek Moments matrix
     /// multiplied by the fraction of rayleigh.
     ///
     /// Returned dimensions: num_moments x num_layers x num_scattering
-    virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion() const = 0;
+    virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion(int num_moments = -1, int num_scattering = -1) const = 0;
 
     /// Compute the total phase function moments which is the summation
     /// of the rayleigh and aerosol portions
-    virtual ArrayAd<double, 3> total_phase_function_moments() const = 0;
+    virtual ArrayAd<double, 3> total_phase_function_moments(int num_moments = -1, int num_scattering = -1) const = 0;
 
     /// Matrix that can be multiplied by the jacobians output by this class to provide jacobians with respect to the original input variables
     /// Size is num_layers x num_intermediate_jacobians x num_input_jacobians

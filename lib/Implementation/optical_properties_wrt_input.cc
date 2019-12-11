@@ -15,7 +15,7 @@ void OpticalPropertiesWrtInput::initialize_with_jacobians(const ArrayAd<double, 
                                                   const ArrayAd<double, 2>& gas_od,
                                                   const ArrayAd<double, 2>& aerosol_ext_od,
                                                   const ArrayAd<double, 2>& aerosol_sca_od,
-                                                  const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+                                                  const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper)
 {
 
     // Take references instead of copying for speed
@@ -23,7 +23,8 @@ void OpticalPropertiesWrtInput::initialize_with_jacobians(const ArrayAd<double, 
     gas_optical_depth_per_particle_.reference(gas_od);
     aerosol_extinction_optical_depth_per_particle_.reference(aerosol_ext_od);
     aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
-    aerosol_phase_function_moments_per_particle_ = aerosol_pf_moments;
+
+    aerosol_phase_function_helper = aer_pf_helper;
 
     intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
     intermediate_jacobian_ = 0.0;

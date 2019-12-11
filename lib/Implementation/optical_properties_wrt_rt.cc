@@ -22,7 +22,7 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
                                                        const ArrayAd<double, 2>& gas_od,
                                                        const ArrayAd<double, 2>& aerosol_ext_od,
                                                        const ArrayAd<double, 2>& aerosol_sca_od,
-                                                       const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+                                                       const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper)
 {
 
     Range ra = Range::all();
@@ -100,11 +100,26 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     aerosol_extinction_optical_depth_per_particle_.jacobian().reference(aer_ext_jac);
     aerosol_scattering_optical_depth_per_particle_.jacobian().reference(aer_sca_jac);
 
-    aerosol_phase_function_moments_per_particle_ = aerosol_pf_moments;
+    aerosol_phase_function_helper = aer_pf_helper;
+}
+
+//-----------------------------------------------------------------------
+/// Override the default behavior of the parent class so we can ensure
+/// that the number of jacobians for this value is indeed constant. For
+/// now we are not able to handle that case. But should the need arise
+/// this method serves as a placeholder where the jacobian manipulation
+/// would need to occur.
+//-----------------------------------------------------------------------
+
+const std::vector<ArrayAd<double, 3> > OpticalPropertiesWrtRt::aerosol_phase_function_moments_per_particle(int num_moments, int num_scattering) const
+{
+    std::vector<ArrayAd<double, 3> > aerosol_pf_moments = OpticalPropertiesImpBase::aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
     for(int part_idx = 0; part_idx < aerosol_pf_moments.size(); part_idx++) {
         if (!aerosol_pf_moments[part_idx].is_constant()) {
             throw Exception("Phase function moments with a jacobian component are not handled at this time");
         }
     }
+
+    return aerosol_pf_moments;
 }
