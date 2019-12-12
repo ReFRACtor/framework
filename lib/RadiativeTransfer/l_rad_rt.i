@@ -42,8 +42,8 @@ public:
   %python_attribute(number_stokes, virtual int)
   %python_attribute(number_stream, virtual int)
   %python_attribute(surface_type, virtual int)
-  virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
-  virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+  virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
+  virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   %python_attribute(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
 };
 }

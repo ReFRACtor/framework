@@ -9,6 +9,9 @@
 #include "ostream_pad.h"
 #include <boost/foreach.hpp>
 #include <cmath>
+
+#include "optical_properties_wrt_rt.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -572,6 +575,14 @@ AutoDerivative<double> AtmosphereLegacy::surface_blackbody(double wn, int spec_i
     double surf_temp_K = surface_temp->surface_temperature(spec_index).convert(Unit("K")).value.value();
     Array<double, 1> surf_temp_grad = surface_temp->surface_temperature(spec_index).value.gradient();
     return planck(wn, surf_temp_K, surf_temp_grad);
+}
+
+boost::shared_ptr<OpticalProperties> AtmosphereLegacy::optical_properties(double wn, int spec_index) const
+{
+    boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop(new OpticalPropertiesWrtRt());
+    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
+
+    return opt_prop;
 }
 
 //-----------------------------------------------------------------------

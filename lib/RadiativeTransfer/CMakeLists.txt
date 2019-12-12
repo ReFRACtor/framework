@@ -34,6 +34,7 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    optical_properties_lsi.cc
     pca_binning.cc
     pca_eigensolver.cc
     radiant2.8_direct.F90

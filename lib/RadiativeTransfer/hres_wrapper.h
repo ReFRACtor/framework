@@ -27,9 +27,9 @@ public:
   virtual int number_stokes() const { return rt_->number_stokes(); }
   virtual int number_stream() const { return rt_->number_stream(); }
   virtual blitz::Array<double, 1> stokes_single_wn
-  (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+  (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn
-  (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+  (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual boost::shared_ptr<RadiativeTransfer> rt() const {return rt_;}
 private:
   boost::shared_ptr<RadiativeTransferSingleWn> rt_;

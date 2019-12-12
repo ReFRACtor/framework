@@ -24,7 +24,7 @@ void OpticalPropertiesWrtInput::initialize_with_jacobians(const ArrayAd<double, 
     aerosol_extinction_optical_depth_per_particle_.reference(aerosol_ext_od);
     aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
 
-    aerosol_phase_function_helper = aer_pf_helper;
+    aerosol_phase_function_helper_ = aer_pf_helper;
 
     intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
     intermediate_jacobian_ = 0.0;

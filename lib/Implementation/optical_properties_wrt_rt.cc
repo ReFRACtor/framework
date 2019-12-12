@@ -100,7 +100,7 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     aerosol_extinction_optical_depth_per_particle_.jacobian().reference(aer_ext_jac);
     aerosol_scattering_optical_depth_per_particle_.jacobian().reference(aer_sca_jac);
 
-    aerosol_phase_function_helper = aer_pf_helper;
+    aerosol_phase_function_helper_ = aer_pf_helper;
 }
 
 //-----------------------------------------------------------------------

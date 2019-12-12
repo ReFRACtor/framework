@@ -38,10 +38,10 @@ public:
   virtual void print(std::ostream& Os) const;
 
   virtual blitz::Array<double, 1> stokes_single_wn
-    (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+    (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn
-    (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+    (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
 
 private:
   static constexpr double SOLID_ANGLE = 6.79929414e-5;
@@ -53,7 +53,7 @@ private:
   mutable blitz::Array<double, 2> l_tau_in;
 
   ArrayAd<double, 1> stokes_and_maybe_jacobian
-    (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+    (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
 
   // Last index we updates the altitude for.
   mutable int alt_spec_index_cache;

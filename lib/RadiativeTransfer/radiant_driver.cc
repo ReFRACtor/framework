@@ -104,18 +104,18 @@ RadiantDriver::~RadiantDriver()
 }
 
 Array<double, 1> RadiantDriver::stokes_single_wn
-(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const {
-  return stokes_and_maybe_jacobian(Wn, Spec_index, Iv).value();
+(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const {
+  return stokes_and_maybe_jacobian(Wn, Spec_index, Opt_prop).value();
 }
 
 ArrayAd<double, 1> RadiantDriver::stokes_and_jacobian_single_wn
-(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
+(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
-  return stokes_and_maybe_jacobian(Wn, Spec_index, Iv);
+  return stokes_and_maybe_jacobian(Wn, Spec_index, Opt_prop);
 }
 
 ArrayAd<double, 1> RadiantDriver::stokes_and_maybe_jacobian
-(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
+(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
   Range rlay(0, atm->number_layer() - 1);
@@ -123,15 +123,12 @@ ArrayAd<double, 1> RadiantDriver::stokes_and_maybe_jacobian
   ArrayAd<double, 1> od, ssa;
   Array<double, 3> jac_iv(0,0,0);
 
-  if(Iv.rows() != 0) {
-    od.reference(atm->optical_depth_wrt_iv(Wn, Spec_index, Iv));
-    if(!Iv.is_constant())
-      jac_iv.reference(Iv.jacobian());
+  if(Opt_prop) {
+    od.reference(Opt_prop->total_optical_depth());
+    jac_iv.reference(Opt_prop->intermediate_jacobian());
   } else {
-    od.reference(atm->optical_depth_wrt_iv(Wn, Spec_index));
-    ArrayAd<double, 2> t(atm->intermediate_variable(Wn, Spec_index));
-    if(!t.is_constant())
-      jac_iv.reference(t.jacobian());
+    od.reference(atm->optical_depth_wrt_rt(Wn, Spec_index));
+    jac_iv.reference(atm->intermediate_jacobian(Wn, Spec_index));
   }
   
   Array<double, 1> jac(jac_iv.depth());

@@ -121,25 +121,25 @@ public:
     return totaltaug_cache;
   };
   virtual ArrayAd<double, 1> 
-    optical_depth_wrt_iv(double wn, int spec_index) const
+    optical_depth_wrt_rt(double wn, int spec_index) const
   {
     fill_cache(wn, spec_index);
     return tau;
   }
   virtual ArrayAd<double, 1> 
-    single_scattering_albedo_wrt_iv(double wn, int spec_index) const
+    single_scattering_albedo_wrt_rt(double wn, int spec_index) const
   {
     fill_cache(wn, spec_index);
     return omega;
   }
   virtual ArrayAd<double, 3>
-  scattering_moment_wrt_iv(double wn, int spec_index, int nummom = -1, int numscat = -1) const
+  phase_function_moments_wrt_rt(double wn, int spec_index, int nummom = -1, int numscat = -1) const
   {
     fill_cache(wn, spec_index);
     return scattering_moment_common(wn, nummom, numscat);
   }
   virtual ArrayAd<double, 1> 
-  optical_depth_wrt_iv(double wn, int UNUSED(spec_index),
+  optical_depth_wrt_rt(double wn, int UNUSED(spec_index),
                        const ArrayAd<double, 2>& iv) const
   {
     FunctionTimer ft(timer.function_timer());
@@ -147,7 +147,7 @@ public:
     return tau;
   }
   virtual ArrayAd<double, 1> 
-  single_scattering_albedo_wrt_iv(double wn, int UNUSED(spec_index),
+  single_scattering_albedo_wrt_rt(double wn, int UNUSED(spec_index),
                                   const ArrayAd<double, 2>& iv) const
   {
     FunctionTimer ft(timer.function_timer());
@@ -155,10 +155,10 @@ public:
     return omega;
   }
   virtual ArrayAd<double, 3>
-  scattering_moment_wrt_iv(double wn, int UNUSED(spec_index), 
-                           const ArrayAd<double, 2>& iv,
-                           int nummom = -1, 
-                           int numscat = -1) const
+  phase_function_moments_wrt_rt(double wn, int UNUSED(spec_index), 
+                                const ArrayAd<double, 2>& iv,
+                                int nummom = -1, 
+                                int numscat = -1) const
   {
     FunctionTimer ft(timer.function_timer());
     calc_rt_parameters(wn, iv);
@@ -178,6 +178,12 @@ public:
     fill_cache(wn, spec_index);
     return intermediate_v;
   }
+
+  /// Included to satisfy RtAtmosphere interface, note that using this method will result
+  /// in computing optical properties on every call, this function is not optimized since
+  /// it is not intended of use, use AtmosphereStandard instead if you need access
+  /// to OpticalProperties
+  virtual boost::shared_ptr<OpticalProperties> optical_properties(double wn, int spec_index) const;
 
   virtual const boost::shared_ptr<Ground> ground() const {return ground_ptr;}
 

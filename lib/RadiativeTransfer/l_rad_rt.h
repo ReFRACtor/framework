@@ -70,8 +70,8 @@ public:
     //-----------------------------------------------------------------------
   void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
   
-    virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
-    virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
+    virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
+    virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   
     const boost::shared_ptr<RadiativeTransferSingleWn>& radiative_transfer() const { return rt; }
 
@@ -94,8 +94,8 @@ private:
             blitz::Array<double, 3> > > l_zmat_interpolate;
 
     // Helper methods for stokes calculation methods
-    ArrayAd<double, 2> get_z_matrix(const double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const;
-    void apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stokes, const blitz::Array<double, 3>& jac_atm, const blitz::Array<double, 2>& jac_surf, const ArrayAd<double, 2>& Iv) const;
+    ArrayAd<double, 2> get_z_matrix(const double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
+    void apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stokes, const blitz::Array<double, 3>& jac_atm, const blitz::Array<double, 2>& jac_surf, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
 
     // Control how to use the l_rad_driver
     bool use_first_order_scatt_calc;

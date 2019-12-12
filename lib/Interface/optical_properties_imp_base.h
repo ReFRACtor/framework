@@ -110,6 +110,8 @@ public:
     virtual ArrayAd<double, 1> rayleigh_fraction() const;
     virtual ArrayAd<double, 2> aerosol_fraction() const;
 
+    virtual boost::shared_ptr<AerosolPhaseFunctionHelper> aerosol_phase_function_helper() const { return aerosol_phase_function_helper_; }
+
     virtual ArrayAd<double, 3> rayleigh_phase_function_moments_portion(int num_scattering = -1) const;
     virtual ArrayAd<double, 3> aerosol_phase_function_moments_portion(int num_moments = -1, int num_scattering = -1) const;
     virtual ArrayAd<double, 3> total_phase_function_moments(int num_moments = -1, int num_scattering = -1) const;
@@ -144,7 +146,7 @@ protected:
     // Dim: num_moments x num_layers x num_scattering
     mutable int cached_num_moments;
     mutable int cached_num_scattering;
-    boost::shared_ptr<AerosolPhaseFunctionHelper> aerosol_phase_function_helper;
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aerosol_phase_function_helper_;
     mutable std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle_;
 
     // Dim: num_layers

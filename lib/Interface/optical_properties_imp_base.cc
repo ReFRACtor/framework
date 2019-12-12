@@ -369,7 +369,7 @@ const std::vector<ArrayAd<double, 3> > OpticalPropertiesImpBase::aerosol_phase_f
 
     if(aerosol_phase_function_moments_per_particle_.size() == 0 || cached_num_moments != num_moments || cached_num_scattering != num_scattering) {
         aerosol_phase_function_moments_per_particle_.clear();
-        aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper->phase_function_moments_per_particle(num_moments, num_scattering); 
+        aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper_->phase_function_moments_per_particle(num_moments, num_scattering); 
 
         // Double check that the sizes of the value computed is consistent with other aerosol values
         if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
@@ -398,7 +398,7 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
     Range ra = Range::all();
 
 
-    if(aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper) {
+    if(aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_) {
         std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
         // Gather the maximum number of moments and scattering dimensions

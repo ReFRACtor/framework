@@ -32,7 +32,7 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
 
 blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
 {
-
+/*
     // Our final output from this routine
     Array<double, 2> stokes_output(Spec_domain.data().rows(), number_stokes());
 
@@ -64,7 +64,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
         Array<double, 3> bin_iv(num_layers, num_iv_var, bins[bin_idx].rows());
 
-        // Copy out the intermediate variable values for the spectral domain values in the current bin
+        // Copy out the optical property values for the spectral domain values in the current bin
         // This requires us to copy into a new array since the bin locations won't be contiguous
         for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
             int src_idx = bins[bin_idx](dom_idx);
@@ -123,6 +123,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         
         // Compute bin mean intensity from each RT 
         ArrayAd<double, 2> bin_mean_iv_ad(bin_mean_iv);
+        bin_mean_opt_props = OpticalPropertiesWrtInput();
 
         Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
         Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
@@ -188,6 +189,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     }
 
     return stokes_output;
+    */
 }
 
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
