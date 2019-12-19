@@ -81,6 +81,8 @@ public:
     //-----------------------------------------------------------------------
     /// Total column optical depth for the given gas. This is 0 if the band
     /// isn't one that sees that gas.
+    ///
+    /// The jacobian output is with respect to the state vector.
     //-----------------------------------------------------------------------
 
     virtual AutoDerivative<double> column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const = 0;

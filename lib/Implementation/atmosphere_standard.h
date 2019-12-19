@@ -113,25 +113,7 @@ public:
         return nlay;
     }
 
-    virtual AutoDerivative<double> column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const
-    {
-        if (totaltaug_cache) {
-            if (not totaltaug_cache->is_valid(wn)) {
-                fill_cache(wn, spec_index);
-            }
-
-            return (*totaltaug_cache)[wn](absorber->gas_index(Gas_name));
-        }
-        else {
-            fill_cache(wn, spec_index);
-            return totaltaug(absorber->gas_index(Gas_name));
-        }
-    }
-
-    virtual boost::shared_ptr<ArrayAdCache<double, double, 1> >& column_optical_depth_cache()
-    {
-        return totaltaug_cache;
-    };
+    virtual AutoDerivative<double> column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const;
 
     virtual ArrayAd<double, 1> optical_depth_wrt_rt(double wn, int spec_index) const
     {
@@ -162,6 +144,7 @@ public:
 
     virtual boost::shared_ptr<OpticalProperties> optical_properties(double wn, int spec_index) const
     {
+        fill_cache(wn, spec_index);
         return opt_prop;
     }
 
@@ -270,8 +253,7 @@ private:
     // has no work to do and no new memory has to be allocated
     mutable double wn_tau_cache;
     mutable int spec_index_tau_cache;
-    boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop;
-    mutable ArrayAd<double, 1> totaltaug;
+    mutable boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop;
     mutable int nlay;
 
     // Items that might need to be cached for access

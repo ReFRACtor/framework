@@ -89,7 +89,9 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
         // And hence we form a relationship between tau_ext and tau_sca despite tau_sca not being included in 
         // the intermediate jacobian.
         if(!aerosol_ext_od.is_constant() && !aerosol_sca_od.is_constant()) {
-            aer_sca_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = aerosol_sca_od.value()(ra, aer_idx) / aerosol_ext_od.value()(ra, aer_idx);
+            aer_sca_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = 
+                where(aerosol_ext_od.value()(ra, aer_idx) != 0, 
+                      aerosol_sca_od.value()(ra, aer_idx) / aerosol_ext_od.value()(ra, aer_idx), 0.0);
         } else {
             aer_sca_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = 0.0;
         }

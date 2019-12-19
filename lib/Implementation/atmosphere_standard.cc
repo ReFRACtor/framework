@@ -225,9 +225,9 @@ void AtmosphereStandard::initialize()
 
     pressure->add_observer(*this);
 
-    column_optical_depth_cache().reset( new ArrayAdMapCache<double, double, 1>() );
+    // Use a map cache, to allow the column optical depth values to 
+    totaltaug_cache.reset( new ArrayAdMapCache<double, double, 1>() );
 
-    opt_prop.reset(new OpticalPropertiesWrtRt());
 }
 
 //-----------------------------------------------------------------------
@@ -308,28 +308,8 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
     wn_tau_cache = wn;
     FunctionTimer ft(timer.function_timer());
 
+    opt_prop.reset(new OpticalPropertiesWrtRt());
     opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
-
-    firstIndex i1;
-    secondIndex i2;
-    thirdIndex i3;
-
-    ArrayAd<double, 2> taug_i(opt_prop->gas_optical_depth_per_particle());
-
-    totaltaug.resize(taug_i.cols(), taug_i.number_variable());
-    totaltaug.value() = sum(taug_i.value()(i2, i1), i2);
-
-    if(!taug_i.is_constant()) {
-        totaltaug.jacobian() = sum(taug_i.jacobian()(i3, i1, i2), i3);
-    }
-    else {
-        totaltaug.jacobian() = 0;
-    }
-
-    // If cache exists, then store the computed value
-    if(totaltaug_cache) {
-        totaltaug_cache->insert(wn, totaltaug);
-    }
 
     return false;
 }
@@ -348,6 +328,33 @@ ArrayAdWithUnit<double, 1> AtmosphereStandard::altitude(int spec_index) const
     }
 
     return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
+}
+
+AutoDerivative<double> AtmosphereStandard::column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const
+{
+    
+    if (not totaltaug_cache->is_valid(wn)) {
+        firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
+
+        // It is easier to go back to the absorber object to compute the jacobians correctly since
+        // the jacobians in opt_prop are wrt to total gas optical depth
+        ArrayAd<double, 2> taug_i = absorber->optical_depth_each_layer(wn, spec_index);
+        ArrayAd<double, 1> totaltaug(taug_i.cols(), taug_i.number_variable());
+
+        totaltaug.value() = sum(taug_i.value()(i2, i1), i2);
+
+        if(!taug_i.is_constant()) {
+            totaltaug.jacobian() = sum(taug_i.jacobian()(i3, i1, i2), i3);
+        } else {
+            totaltaug.jacobian() = 0;
+        }
+
+        // Store the computed value
+        totaltaug_cache->insert(wn, totaltaug);
+    }
+
+    // Value will be computed above if not present
+    return (*totaltaug_cache)[wn](absorber->gas_index(Gas_name));
 }
 
 //-----------------------------------------------------------------------

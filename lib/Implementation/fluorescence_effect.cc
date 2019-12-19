@@ -35,10 +35,6 @@ FluorescenceEffect::FluorescenceEffect
 {
   // We need to use the AtmosphereStandard specific interfaces
   atm_oco = boost::dynamic_pointer_cast<AtmosphereStandard>(Atm);
-
-  // Use a map cache, because due to LSI and non-uniform sampling we can
-  // not count on all values being cached that we need in the right order
-  atm_oco->column_optical_depth_cache().reset( new ArrayAdMapCache<double, double, 1>() );
 }
 
 void FluorescenceEffect::apply_effect(Spectrum& Spec,

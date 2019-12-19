@@ -267,7 +267,7 @@ ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const b
             zmat.jacobian().reference((*l_zmat_interpolate)(Wn));
         }
     } else {
-        ArrayAd<double, 3> pf(atm->phase_function_moments_wrt_rt(Wn, Spec_index));
+        ArrayAd<double, 3> pf(Opt_prop->total_phase_function_moments());
         zmat.reference(driver->z_matrix(pf));
     }
 

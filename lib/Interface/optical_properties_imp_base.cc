@@ -50,10 +50,17 @@ void OpticalPropertiesImpBase::initialize(const DoubleWithUnit spectral_point,
     ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, channel_index));
     ArrayAd<double, 2> gas_od(absorber->optical_depth_each_layer(wn, channel_index));
 
-    ArrayAd<double, 2> aerosol_ext_od(aerosol->extinction_optical_depth_each_layer(wn));
-    ArrayAd<double, 2> aerosol_sca_od(aerosol->scattering_optical_depth_each_layer(wn));
+    ArrayAd<double, 2> aerosol_ext_od;
+    ArrayAd<double, 2> aerosol_sca_od;
 
-    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper;
+
+    if (aerosol) {
+        aerosol_ext_od.reference(aerosol->extinction_optical_depth_each_layer(wn));
+        aerosol_sca_od.reference(aerosol->scattering_optical_depth_each_layer(wn));
+
+        aer_pf_helper.reset(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
+    }
 
     initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
 
@@ -93,10 +100,15 @@ void OpticalPropertiesImpBase::assert_sizes() const
         throw Exception("Gas optical depth value has inconsistent number of layers");
     }
 
-    if (aerosol_extinction_optical_depth_per_particle_.rows() != num_layers) {
+    // If there are no aerosol types then not having the same number of layers is not an error since
+    // there is effectively no aerosols
+    if (aerosol_extinction_optical_depth_per_particle_.cols() > 0 &&
+        aerosol_extinction_optical_depth_per_particle_.rows() != num_layers) {
         throw Exception("Aerosol extinction optical depth has inconsistent number of layers");
     }
-    if (aerosol_scattering_optical_depth_per_particle_.rows() != num_layers) {
+
+    if (aerosol_scattering_optical_depth_per_particle_.cols() > 0 &&
+        aerosol_scattering_optical_depth_per_particle_.rows() != num_layers) {
         throw Exception("Aerosol scattering optical depth has inconsistent number of layers");
     }
 
@@ -367,7 +379,7 @@ const std::vector<ArrayAd<double, 3> > OpticalPropertiesImpBase::aerosol_phase_f
 { 
     assert_init(); 
 
-    if(aerosol_phase_function_moments_per_particle_.size() == 0 || cached_num_moments != num_moments || cached_num_scattering != num_scattering) {
+    if(aerosol_phase_function_helper_ && (aerosol_phase_function_moments_per_particle_.size() == 0 || cached_num_moments != num_moments || cached_num_scattering != num_scattering)) {
         aerosol_phase_function_moments_per_particle_.clear();
         aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper_->phase_function_moments_per_particle(num_moments, num_scattering); 
 
@@ -398,12 +410,12 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
     Range ra = Range::all();
 
 
-    if(aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_) {
+    if(number_aerosol_particles() > 0 && (aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_)) {
         std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
         // Gather the maximum number of moments and scattering dimensions
 
-        int max_num_moms = 0; int max_num_scatt = 0; int num_var = -1;
+        int max_num_moms = 0; int max_num_scatt = 0; int num_var = 0;
         for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
             max_num_moms = std::max(max_num_moms, aer_pf_per_pert[part_idx].rows());
             max_num_scatt = std::max(max_num_scatt, aer_pf_per_pert[part_idx].depth());
@@ -511,25 +523,41 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments(int nu
         Range ra = Range::all();
 
         int num_jac = 0;
-        if (!pf_aer.is_constant()) {
+        if (pf_aer.rows() > 0 && !pf_aer.is_constant()) {
             num_jac = pf_aer.number_variable();
         } else if(!pf_ray.is_constant()) {
             num_jac = pf_ray.number_variable();
         }
 
-        total_phase_function_moments_.resize(pf_aer.shape(), num_jac);
+        // Set size to the number of moments for aerosols if those are defined, otherwise
+        // the phase function just contains rayleigh moments
+        if(pf_aer.rows() > 0) {
+            total_phase_function_moments_.resize(pf_aer.shape(), num_jac);
 
-        total_phase_function_moments_.value() = pf_aer.value();
-        total_phase_function_moments_.value()(r_ray_moms, ra, ra) += pf_ray.value();
+            total_phase_function_moments_.value() = pf_aer.value();
+            total_phase_function_moments_.value()(r_ray_moms, ra, ra) += pf_ray.value();
+        } else {
+            total_phase_function_moments_.resize(pf_ray.shape(), num_jac);
+
+            total_phase_function_moments_.value() = pf_ray.value();
+        }
 
         total_phase_function_moments_.jacobian() = 0;
-        if (!pf_aer.is_constant()) {
+        if (pf_aer.rows() > 0 && !pf_aer.is_constant()) {
             total_phase_function_moments_.jacobian() += pf_aer.jacobian();
         }
 
         if (!pf_ray.is_constant()) {
             total_phase_function_moments_.jacobian()(r_ray_moms, ra, ra, ra) += pf_ray.jacobian();
         }
+
+        // Ensure that the first moment for each layer is equal to one
+        // First check they are witin a tolerance equal to 1.0 and then set to 1.0 to make sure any lazy comparisons
+        // of identically equal to 1.0 pass
+        if(any(abs(1.0 - total_phase_function_moments_.value()(0, ra, 0)) > 1e-6)) {
+            throw Exception("The first phase function moment for all layers must be equal to 1.0");
+        }
+        total_phase_function_moments_(0, ra, 0) = 1;
     }
 
     return total_phase_function_moments_;
