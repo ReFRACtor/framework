@@ -9,10 +9,6 @@
 
 %import "array_ad.i"
 %import "double_with_unit.i"
-%import "absorber.i"
-%import "rayleigh.i"
-%import "aerosol.i"
-
 
 %fp_shared_ptr(FullPhysics::AerosolPhaseFunctionHelper)
 %fp_shared_ptr(FullPhysics::AerosolPhaseFunctionPassThruHelper)

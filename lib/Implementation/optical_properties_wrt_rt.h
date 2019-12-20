@@ -1,7 +1,7 @@
 #ifndef OPTICAL_PROP_WRT_RT_H
 #define OPTICAL_PROP_WRT_RT_H
 
-#include "optical_properties_imp_base.h"
+#include "optical_properties_init_base.h"
 
 namespace FullPhysics {
 
@@ -20,10 +20,10 @@ namespace FullPhysics {
   multiplying by the intermediate_jacobian value.
   *******************************************************************/
 
-class OpticalPropertiesWrtRt : public virtual OpticalPropertiesImpBase {
+class OpticalPropertiesWrtRt : public virtual OpticalPropertiesInitBase {
 public:
 
-    OpticalPropertiesWrtRt() : OpticalPropertiesImpBase() {};
+    OpticalPropertiesWrtRt() : OpticalPropertiesInitBase() {};
 
 protected:
 

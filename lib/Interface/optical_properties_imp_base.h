@@ -3,10 +3,9 @@
 
 #include "optical_properties.h"
 
+#include "double_with_unit.h"
 #include "array_ad.h"
 
-#include "absorber.h"
-#include "rayleigh.h"
 #include "aerosol.h"
 
 namespace FullPhysics {
@@ -54,18 +53,6 @@ class OpticalPropertiesImpBase : public virtual OpticalProperties {
 public:
 
     OpticalPropertiesImpBase() : initialized(false) {}
-
-    virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
-                            const ArrayAd<double, 2>& gas_od,
-                            const ArrayAd<double, 2>& aerosol_ext_od,
-                            const ArrayAd<double, 2>& aerosol_sca_od,
-                            const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
-
-    virtual void initialize(const DoubleWithUnit spectral_point,
-                            const int channel_index,
-                            const boost::shared_ptr<Absorber>& absorber,
-                            const boost::shared_ptr<Rayleigh>& rayleigh,
-                            const boost::shared_ptr<Aerosol>& aerosol);
 
     /// Deconstructor
     virtual ~OpticalPropertiesImpBase() = default;
@@ -126,12 +113,6 @@ protected:
     bool initialized;
     void assert_init() const;
     void assert_sizes() const;
-
-    virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-                                           const ArrayAd<double, 2>& gas_od,
-                                           const ArrayAd<double, 2>& aerosol_ext_od,
-                                           const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper) = 0;
 
     // Dim: num_layers x num_gases
     ArrayAd<double, 2> gas_optical_depth_per_particle_;

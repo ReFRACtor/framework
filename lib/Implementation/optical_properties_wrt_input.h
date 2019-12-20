@@ -1,7 +1,7 @@
 #ifndef OPTICAL_PROP_WRT_INPUT_H
 #define OPTICAL_PROP_WRT_INPUT_H
 
-#include "optical_properties_imp_base.h"
+#include "optical_properties_init_base.h"
 
 namespace FullPhysics {
 
@@ -11,10 +11,10 @@ namespace FullPhysics {
   value of the intermediate_jacobian is an identity matrix.
  *******************************************************************/
 
-class OpticalPropertiesWrtInput : public virtual OpticalPropertiesImpBase {
+class OpticalPropertiesWrtInput : public virtual OpticalPropertiesInitBase {
 public:
 
-    OpticalPropertiesWrtInput() : OpticalPropertiesImpBase() {};
+    OpticalPropertiesWrtInput() : OpticalPropertiesInitBase() {};
 
 protected:
 
