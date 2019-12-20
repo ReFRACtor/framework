@@ -3,12 +3,15 @@
 %{
 #include "optical_properties_imp_base.h"
 #include "sub_state_vector_array.h"
+#include "rayleigh.h"
 %}
 
 %base_import(optical_properties)
 
 %import "array_ad.i"
 %import "double_with_unit.i"
+
+%import "aerosol.i"
 
 %fp_shared_ptr(FullPhysics::AerosolPhaseFunctionHelper)
 %fp_shared_ptr(FullPhysics::AerosolPhaseFunctionPassThruHelper)

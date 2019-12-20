@@ -5,7 +5,7 @@
 #include "sub_state_vector_array.h"
 %}
 
-%base_import(optical_properties_imp_base)
+%base_import(optical_properties_init_base)
 
 %fp_shared_ptr(FullPhysics::OpticalPropertiesWrtRt)
 
