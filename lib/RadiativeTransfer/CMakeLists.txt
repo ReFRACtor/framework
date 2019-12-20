@@ -64,6 +64,7 @@ set(TEST_SOURCES
     lidort_interface_types_test.cc
     lidort_rt_test.cc
     lsi_rt_test.cc
+    optical_properties_lsi_test.cc
     pca_binning_test.cc
     pca_eigensolver_test.cc
     twostream_driver_test.cc

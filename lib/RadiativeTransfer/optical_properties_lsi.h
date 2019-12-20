@@ -11,12 +11,14 @@ namespace FullPhysics {
   LSI algorithm.
   *******************************************************************/
 
-class OpticalPropertiesLsi : public virtual OpticalPropertiesWrtInput {
+class OpticalPropertiesLsi : public virtual OpticalPropertiesImpBase {
 public:
     OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_properties, double wavenumber, const boost::shared_ptr<Aerosol>& aerosol, int num_gas, int num_aerosol);
 
     /// Convert another optical properties class into a packed array of properties
     static ArrayAd<double, 2> pack(const boost::shared_ptr<OpticalProperties>& source_properties);
+
+    virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const { assert_init(); return gas_optical_depth_per_particle_; }
 
 };
 
