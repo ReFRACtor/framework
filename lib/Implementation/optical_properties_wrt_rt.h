@@ -33,6 +33,8 @@ protected:
                                            const ArrayAd<double, 2>& aerosol_sca_od,
                                            const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper);
 
+    virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const;
+
     virtual const std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
 
 };

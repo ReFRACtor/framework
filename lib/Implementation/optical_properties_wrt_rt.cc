@@ -39,17 +39,26 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     // Create mapping of intermediate jacobians to input jacobians for each layer
     intermediate_jacobian_.resize(num_layers, num_interm_jac, num_inp_jac);
 
-    // At gas optical depth intermediate index the jacobian is the sum of all gas particles, therefore jacobian
-    // for each particle is a fraction of the total
+    // Gas optical depth per particle ArrayAd will be set to be a constant
+    // and hence have no jacobian portion, this is due to the fact that
+    // the intermediate jacobian is defined in terms of the total gas optical depth
+    // There is no way to compute the actual jacobian for the per particle
+    // values that can be transformed by the intermediate jacobian matrix
+    // 
+    // The resize below is to enforce that is_const in the ArrayAd is set to True
+    gas_optical_depth_per_particle_.resize(gas_od.value().shape(), 0);
     gas_optical_depth_per_particle_.value().reference(gas_od.value());
 
-    Array<double, 3> gas_jac(num_layers, num_gas, num_interm_jac);
-    gas_jac = 0.0;
-    for(int gas_idx = 0; gas_idx < num_gas; gas_idx++) {
-        gas_jac(ra, gas_idx, gas_jac_index) = 1.0/num_gas;
-    }
-    gas_optical_depth_per_particle_.jacobian().reference(gas_jac);
+    // Go ahead and compute the total gas optical depth values per layer since
+    // we will be setting the jacobian values explicitly since they do not flow
+    // from the per particle jacobians since they are constant
+    gas_optical_depth_per_layer_.resize(gas_od.value().rows(), num_interm_jac);
+    gas_optical_depth_per_layer_.value() = sum(gas_od.value()(i1, i2), i2);
 
+    gas_optical_depth_per_layer_.jacobian() = 0.0;
+    gas_optical_depth_per_layer_.jacobian()(ra, gas_jac_index) = 1.0;
+
+    // Intermediate value for the total gas optical depth is the sum of the per gas jacobians,
     for(int lay_idx = 0; lay_idx < gas_od.rows(); lay_idx++) {
         intermediate_jacobian_(lay_idx, gas_jac_index, ra) =  sum(gas_od.jacobian()(lay_idx, ra, ra)(i2, i1), i2);
     }
@@ -103,6 +112,20 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     aerosol_scattering_optical_depth_per_particle_.jacobian().reference(aer_sca_jac);
 
     aerosol_phase_function_helper_ = aer_pf_helper;
+}
+
+//-----------------------------------------------------------------------
+/// Override the default behavior. This value is computed in the
+/// initialization routine because it is one of the items by which
+/// the intermediate jacobian is defined. Since it has already been
+/// computed, there is no need to attempt to compute it like in the
+/// base class and here we simply return the value created in the
+/// init routine.
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 1> OpticalPropertiesWrtRt::gas_optical_depth_per_layer() const
+{
+    return gas_optical_depth_per_layer_;
 }
 
 //-----------------------------------------------------------------------
