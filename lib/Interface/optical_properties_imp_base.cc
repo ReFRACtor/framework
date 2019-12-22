@@ -487,8 +487,21 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::total_phase_function_moments(int nu
         // Ensure that the first moment for each layer is equal to one
         // First check they are witin a tolerance equal to 1.0 and then set to 1.0 to make sure any lazy comparisons
         // of identically equal to 1.0 pass
-        if(any(abs(1.0 - total_phase_function_moments_.value()(0, ra, 0)) > 1e-6)) {
-            throw Exception("The first phase function moment for all layers must be equal to 1.0");
+        double pf_check_tol = 1e-6;
+        if(any(abs(1.0 - total_phase_function_moments_.value()(0, ra, 0)) > pf_check_tol)) {
+            // Find the first index where there is a problem to report in error message
+            int mom_idx;
+            double fail_value = 0;
+            for(mom_idx = 0; mom_idx < total_phase_function_moments_.cols(); mom_idx++) {
+                fail_value = total_phase_function_moments_.value()(0, mom_idx, 0);
+                if (abs(1.0 - fail_value) > pf_check_tol) {
+                    break;
+                }
+            }
+            Exception err;
+            err << "The first phase function moment for all layers must be equal to 1.0, "
+                << "Instead the value at moment index " << mom_idx << " is " << fail_value;
+            throw err;
         }
         total_phase_function_moments_(0, ra, 0) = 1;
     }
