@@ -49,6 +49,10 @@ void OpticalPropertiesImpBase::assert_sizes() const
         throw Exception("Aerosol extinction and scattering optical depth has inconsistent number of particles");
     }
 
+    if(aerosol_extinction_optical_depth_per_particle_.cols() > 0 and !aerosol_phase_function_helper_) {
+        throw Exception("Number of aerosol particles is greater than zero but there is no aerosol phase function helper defined");
+    }
+
 }
 
 //-----------------------------------------------------------------------
@@ -341,7 +345,6 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
 {
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     Range ra = Range::all();
-
 
     if(number_aerosol_particles() > 0 && (aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_)) {
         std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);

@@ -28,7 +28,7 @@ OpticalPropertiesLsi::OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_prop
     aerosol_scattering_optical_depth_per_particle_.reference(aerosol_sca_od);
 
     DoubleWithUnit spectral_point(wavenumber, units::inv_cm);
-    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
+    aerosol_phase_function_helper_.reset(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
 
     intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
 
