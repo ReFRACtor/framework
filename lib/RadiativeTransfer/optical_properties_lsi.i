@@ -7,6 +7,8 @@
 
 %base_import(optical_properties_imp_base)
 
+%import "aerosol_optical.i"
+
 %fp_shared_ptr(FullPhysics::OpticalPropertiesLsi)
 
 %include "optical_properties_lsi.h"

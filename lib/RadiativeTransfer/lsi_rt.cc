@@ -283,6 +283,12 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
       throw Exception("Failed to convert atmosphere class from LowStreamRt into AtmosphereStandard");
   }
 
+  boost::shared_ptr<AerosolOptical> aerosol = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
+
+  if(!aerosol) {
+      throw Exception("Failed to convert aerosol class to AerosolOptical");
+  }
+
   const std::vector<double>& odb = optical_depth_boundary[Spec_index];
 
 //-----------------------------------------------------------------------
@@ -298,7 +304,7 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
 // There are a number of variables created here:
 //
 // atm_sum - 
-//   Sum of all the intermediate variables (e.g., taug, taur,
+//   Sum of all the packed variables (e.g., taug, taur,
 //   taua_i). We use this to create the average value used in the
 //   correction calculation. This is indexed by wv_index and then
 //   optical depth range.
@@ -326,19 +332,26 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
 // map, then b[x] return the bin that x falls into.
 //-----------------------------------------------------------------------
 
-  // Get first intermediate variable so we can figure out the size of
-  // the intermediate variables (e.g., number_layer x number
-  // variables). The initialize this to all 0s.
+  // Get first set of optical properties so we can figure out the size of
+  // the variables (e.g., number_layer x number variables). 
+  // Then initialize this to all 0s.
 
-  boost::shared_ptr<OpticalProperties> opt_prop_0( atm->optical_properties(wn(0), Spec_index) );
+  boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_0 = 
+      boost::dynamic_pointer_cast<OpticalPropertiesWrtRt>( atm->optical_properties(wn(0), Spec_index) );
+
+  if (!opt_prop_0) {
+      throw Exception("Could not convert OpticalProperties to OpticalPropertiesWrtRt");
+  }
 
   int num_gas = opt_prop_0->number_gas_particles();
   int num_aerosol = opt_prop_0->number_aerosol_particles();
 
+  // Need at least 1 or else FM only mode doesn't work
+  int num_sv_var = std::max(opt_prop_0->intermediate_jacobian().depth(), 1);
+
   ArrayAd<double, 2> init_atm_sum_value(OpticalPropertiesLsi::pack(opt_prop_0));
   init_atm_sum_value = 0;
-  // Need at least 1 or else FM only mode doesn't work
-  int numvar = std::max(init_atm_sum_value.number_variable(), 1);
+
   std::vector<BinMap<int> > cnt; 
   std::vector<BinMap<AutoDerivative<double> > > log_opd_sum; 
   std::vector<BinMap<ArrayAd<double, 2> > > atm_sum;
@@ -351,11 +364,11 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
       boost::bind(&ArrayAd<double, 2>::copy, &init_atm_sum_value)));
   }
 
-  gas_opd.resize(wn.rows(), numvar);
+  gas_opd.resize(wn.rows(), num_sv_var);
   wv_index.resize(wn.rows());
   if(!Skip_stokes_calc) {
     if(Calc_jacobian)
-      stokes_and_jac.resize(wn.rows(), number_stokes(), numvar);
+      stokes_and_jac.resize(wn.rows(), number_stokes(), num_sv_var);
     else
       stokes_only.resize(wn.rows(), number_stokes());
   }
@@ -378,8 +391,16 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
     if(gas_opd(i).value() < 1e-10)
       gas_opd(i) = 1e-10;
     wv_index(i) = (wv_opd / gas_opd(i) >= wv_threshold ? 0 : 1);
-  
-    ArrayAd<double, 2> atmv(OpticalPropertiesLsi::pack(atm->optical_properties(wn(i), Spec_index)));
+
+    boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wn = 
+      boost::dynamic_pointer_cast<OpticalPropertiesWrtRt>( atm->optical_properties(wn(i), Spec_index) );
+
+    if (!opt_prop_wn) {
+      throw Exception("Could not convert OpticalProperties to OpticalPropertiesWrtRt");
+    }
+
+    ArrayAd<double, 2> atmv(OpticalPropertiesLsi::pack(opt_prop_wn));
+
     ++cnt[wv_index(i)][gas_opd.value()(i)];
     log_opd_sum[wv_index(i)][gas_opd.value()(i)] += log(gas_opd(i));
     atm_sum[wv_index(i)][gas_opd.value()(i)].value() += atmv.value();
@@ -440,7 +461,7 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
         atm_avg_w[j].value() /= cnt_w[j];
         atm_avg_w[j].jacobian() /= cnt_w[j];
 
-        boost::shared_ptr<OpticalPropertiesLsi> lsi_avg_props(new OpticalPropertiesLsi(atm_avg_w[j], wn_mid_closest, atm->aerosol_ptr(), num_gas, num_aerosol));
+        boost::shared_ptr<OpticalPropertiesLsi> lsi_avg_props(new OpticalPropertiesLsi(atm_avg_w[j], wn_mid_closest, aerosol, num_gas, num_aerosol));
         
         // And use to get high and low stream values.
         Array<AutoDerivative<double>, 1> low = 
