@@ -228,8 +228,6 @@ if(OSS_FOUND)
     message(STATUS "Adding AER OSS FM to sources")
     list(APPEND DIR_SOURCES oss_forward_model.cc)
     list(APPEND TEST_SOURCES oss_forward_model_test.cc)
-else()
-    message(STATUS "In implementation dir, OSS NOT detected.")
 endif()
 
 # Add current source directory to source file names
