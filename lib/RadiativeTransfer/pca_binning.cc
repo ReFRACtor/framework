@@ -11,7 +11,7 @@ extern "C" {
     void create_bin_uvvswir_v5(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *ncnt, int *index, int *bin);
 }
 
-PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalProperties> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index)
+PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index)
 : opt_props_(optical_properties), bin_method_(bin_method), num_bins_(num_bins), primary_abs_index_(primary_absorber_index)
 {
     compute_bins();
@@ -26,7 +26,6 @@ void PCABinning::compute_bins()
     }
 
     Range ra = Range::all();
-    firstIndex i1;
 
     // Call selected binning routine
     int nlayer = opt_props_[0]->number_layers();
@@ -78,7 +77,10 @@ void PCABinning::compute_bins()
 
             for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
                 Array<double, 2> gas_od(opt_props_[dom_idx]->gas_optical_depth_per_particle().value());
-                Array<double, 1> gas_col_tot(sum(gas_od, i1));
+                Array<double, 1> gas_col_tot(gas_od.cols());
+                for(int gas_idx = 0; gas_idx < gas_od.cols(); gas_idx++) {
+                    gas_col_tot(gas_idx) = sum(gas_od(ra, gas_idx));
+                }
 
                 if ((gas_col_tot(primary_abs_index_)/sum(gas_col_tot)) > 0.75) {
                     primary_gas_dominates(dom_idx) = 1;

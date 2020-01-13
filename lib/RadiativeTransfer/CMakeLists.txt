@@ -35,6 +35,7 @@ set(DIR_SOURCES
     lidort_rt.cc
     lsi_rt.cc
     optical_properties_lsi.cc
+    optical_properties_pca.cc
     pca_binning.cc
     pca_eigensolver.cc
     radiant2.8_direct.F90
@@ -65,8 +66,10 @@ set(TEST_SOURCES
     lidort_rt_test.cc
     lsi_rt_test.cc
     optical_properties_lsi_test.cc
+    optical_properties_pca_test.cc
     pca_binning_test.cc
     pca_eigensolver_test.cc
+    pca_rt_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc

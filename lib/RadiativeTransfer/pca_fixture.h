@@ -46,6 +46,6 @@ public:
         }
     }
 
-    std::vector<boost::shared_ptr<OpticalProperties> > opt_props;
+    std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > opt_props;
 
 };

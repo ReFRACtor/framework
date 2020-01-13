@@ -3,6 +3,7 @@
 #include "pca_rt.h"
 
 #include "optical_properties_wrt_rt.h"
+#include "optical_properties_pca.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -30,15 +31,8 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
 
 }
 
-blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
+void PCARt::compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const
 {
-/*
-    // Our final output from this routine
-    Array<double, 2> stokes_output(Spec_domain.data().rows(), number_stokes());
-
-    // Convenience since other RTs take wavenumbers as input
-    Array<double, 1> wavenumbers(Spec_domain.wavenumber());
-
     // Compute optical properties for the whole band
     pca_opt.clear();
 
@@ -53,33 +47,33 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
     // Compute bins
     pca_bin.reset(new PCABinning(pca_opt, bin_method, num_bins, primary_abs_index));
+}
+
+blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
+{
+
+    // Our final output from this routine
+    Array<double, 2> stokes_output(Spec_domain.data().rows(), number_stokes());
+
+    // Convenience since other RTs take wavenumbers as input
+    Array<double, 1> wavenumbers(Spec_domain.wavenumber());
+
+    // Need to convert aerosol from atmosphere to AerosolOptical for PCA optical properties packing
+    boost::shared_ptr<AerosolOptical> aerosol_optical = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
+
+    if(!aerosol_optical) {
+        throw Exception("Failed to convert aerosol class to AerosolOptical");
+    }
+
+    compute_bins(Spec_domain, Spec_index);
+
     auto bins = pca_bin->bin_indexes();
     Array<int, 1> num_bin_points = pca_bin->num_bin_points();
 
     // Extract optical properties intermediate variable values for each bin
+    int num_gas = atm->absorber_ptr()->number_species();
+    int num_aerosol = atm->aerosol_ptr()->number_particle();
     int num_layers = pca_opt[0]->number_layers();
-    int num_iv_var = pca_opt[0]->number_aerosol_particles() + 2;
-
-    std::vector<Array<double, 3> > bin_inp_iv;
-    for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
-        Array<double, 3> bin_iv(num_layers, num_iv_var, bins[bin_idx].rows());
-
-        // Copy out the optical property values for the spectral domain values in the current bin
-        // This requires us to copy into a new array since the bin locations won't be contiguous
-        for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
-            int src_idx = bins[bin_idx](dom_idx);
-
-            bin_iv(Range::all(), 0, dom_idx) = pca_opt[src_idx]->gas_optical_depth_per_layer().value();
-            bin_iv(Range::all(), 1, dom_idx) = pca_opt[src_idx]->rayleigh_optical_depth().value();
-
-            Array<double, 2> aerosol_ext_od(pca_opt[src_idx]->aerosol_scattering_optical_depth_per_particle().value());
-            for(int aer_idx = 0; aer_idx < pca_opt[src_idx]->number_aerosol_particles(); aer_idx++) {
-                bin_iv(Range::all(), 2 + aer_idx, dom_idx) = aerosol_ext_od(Range::all(), aer_idx);
-            }
-        }
-
-        bin_inp_iv.push_back(bin_iv);
-    }
 
     // Compute values for each bin
     pca_bin_solvers.clear();
@@ -95,9 +89,24 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         // Copy out the intermediate variable values for the spectral domain values in the current bin
         // This requires us to copy into a new array since the bin locations won't be contiguous
         std::vector<blitz::Array<double, 2> > data_list;
-        for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
-            Array<double, 2> var_bin_vals(bin_inp_iv[bin_idx](Range::all(), var_idx, Range::all()));
-            data_list.push_back(var_bin_vals);
+
+        ArrayAd<double, 2> packed_0 = OpticalPropertiesPca::pack(pca_opt[bins[bin_idx](0)]);
+        int num_pack_var = packed_0.cols();
+
+        for (int var_idx = 0; var_idx < num_pack_var; var_idx++) {
+            blitz::Array<double, 2> var_packed(num_layers, num_bin_points(bin_idx));
+
+            var_packed(Range::all(), 0) = packed_0.value()(Range::all(), var_idx);
+
+            data_list.push_back(var_packed);
+        }
+
+        for(int dom_idx = 1; dom_idx < num_bin_points(bin_idx); dom_idx++) {
+            ArrayAd<double, 2> point_packed = OpticalPropertiesPca::pack(pca_opt[bins[bin_idx](dom_idx)]);
+
+            for (int var_idx = 0; var_idx < num_pack_var; var_idx++) {
+                data_list[var_idx](Range::all(), dom_idx) = point_packed.value()(Range::all(), var_idx);
+            }
         }
 
         // Create bin averaged spectral point
@@ -116,18 +125,18 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         // We need to translate back from the eigen solvers vectors to arrays for each intermediate variable index
         
         // Compute mean IV values
-        Array<double, 2> bin_mean_iv(num_layers, num_iv_var);
-        for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
+        Array<double, 2> bin_mean_iv(num_layers, num_pack_var);
+        for (int var_idx = 0; var_idx < num_pack_var; var_idx++) {
             bin_mean_iv(Range::all(), var_idx) = exp(pca_solver->data_mean()[var_idx]);
         }
         
         // Compute bin mean intensity from each RT 
         ArrayAd<double, 2> bin_mean_iv_ad(bin_mean_iv);
-        bin_mean_opt_props = OpticalPropertiesWrtInput();
+        boost::shared_ptr<OpticalPropertiesPca> bin_mean_opt_props(new OpticalPropertiesPca(bin_mean_iv_ad, avg_wn, aerosol_optical, num_gas, num_aerosol));
 
-        Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
-        Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
-        Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_iv_ad));
+        Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_opt_props));
+        Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_opt_props));
+        Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_mean_opt_props));
 
         // Compute bin mean plus eof and mean minus eof intensity from each RT
         Array<double, 2> lidort_plus(num_eofs, number_stokes());
@@ -139,29 +148,31 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
         Array<double, 2> first_order_minus(num_eofs, number_stokes());
 
         for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-            Array<double, 2> bin_plus_iv(num_layers, num_iv_var);
-            Array<double, 2> bin_minus_iv(num_layers, num_iv_var);
+            Array<double, 2> bin_plus_iv(num_layers, num_pack_var);
+            Array<double, 2> bin_minus_iv(num_layers, num_pack_var);
 
-            for (int var_idx = 0; var_idx < num_iv_var; var_idx++) {
+            for (int var_idx = 0; var_idx < num_pack_var; var_idx++) {
                 bin_plus_iv(Range::all(), var_idx) = 
                     exp(pca_solver->data_mean()[var_idx] + pca_solver->eof_properties()[var_idx](Range::all(), eof_idx));
 
-                bin_plus_iv(Range::all(), var_idx) = 
+                bin_minus_iv(Range::all(), var_idx) = 
                     exp(pca_solver->data_mean()[var_idx] - pca_solver->eof_properties()[var_idx](Range::all(), eof_idx));
             }
 
             ArrayAd<double, 2> bin_plus_iv_ad(bin_plus_iv);
             ArrayAd<double, 2> bin_minus_iv_ad(bin_minus_iv);
 
+            boost::shared_ptr<OpticalPropertiesPca> bin_plus_opt_props(new OpticalPropertiesPca(bin_plus_iv_ad, avg_wn, aerosol_optical, num_gas, num_aerosol));
+            boost::shared_ptr<OpticalPropertiesPca> bin_minus_opt_props(new OpticalPropertiesPca(bin_minus_iv_ad, avg_wn, aerosol_optical, num_gas, num_aerosol));
 
-            lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
-            lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
+            lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_opt_props);
+            lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_opt_props);
 
-            twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
-            twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
+            twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_opt_props);
+            twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_opt_props);
 
-            first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_iv_ad);
-            first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_iv_ad);
+            first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_plus_opt_props);
+            first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_minus_opt_props);
 
         }
 
@@ -177,11 +188,8 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             int grid_idx = bins[bin_idx](dom_idx);
             int dom_wn = wavenumbers(grid_idx);
 
-            Array<double, 2> dom_iv( bin_inp_iv[bin_idx](Range::all(), Range::all(), dom_idx) );
-            ArrayAd<double, 2> dom_iv_ad(dom_iv);
-
-            Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, Spec_index, dom_iv_ad));
-            Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, dom_iv_ad));
+            Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
+            Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
 
             stokes_output(grid_idx, Range::all()) = 
                 bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
@@ -189,7 +197,6 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     }
 
     return stokes_output;
-    */
 }
 
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const

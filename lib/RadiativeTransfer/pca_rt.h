@@ -59,7 +59,7 @@ public:
     const boost::shared_ptr<TwostreamRt> twostream() const { return twostream_rt; }
     const boost::shared_ptr<FirstOrderRt> first_order() const { return first_order_rt; }
 
-    const std::vector<boost::shared_ptr<OpticalProperties> > optical_properties() const { return pca_opt; }
+    const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
         if (bin_index < 0 || bin_index >= pca_bin_solvers.size()) {
@@ -71,6 +71,8 @@ public:
     }
 
     virtual void print(std::ostream& Os, bool Short_form = false) const;
+
+    void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
 
 private:
 
@@ -89,7 +91,7 @@ private:
     // These are stored for the current stokes call for debugging purposes
     // They are empty until stokes or stokes_and_jacobian are called.
     // They are reset for each call
-    mutable std::vector<boost::shared_ptr<OpticalProperties> > pca_opt;
+    mutable std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > pca_opt;
     mutable boost::shared_ptr<PCABinning> pca_bin;
     mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_bin_solvers;
     

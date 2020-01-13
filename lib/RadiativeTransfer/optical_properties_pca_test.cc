@@ -1,6 +1,6 @@
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
-#include "optical_properties_lsi.h"
+#include "optical_properties_pca.h"
 #include "atmosphere_legacy.h"
 
 #include <blitz/array.h>
@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(optical_properties_lsi, AtmosphereFixture)
+BOOST_FIXTURE_TEST_SUITE(optical_properties_pca, AtmosphereFixture)
 
 BOOST_AUTO_TEST_CASE(pack)
 {
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(pack)
     boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wrt_rt(new OpticalPropertiesWrtRt());
     opt_prop_wrt_rt->initialize(DoubleWithUnit(test_wn, units::inv_cm), test_chan, atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
 
-    ArrayAd<double, 2> packed_data = OpticalPropertiesLsi::pack(opt_prop_wrt_rt);
+    ArrayAd<double, 2> packed_data = OpticalPropertiesPca::pack(opt_prop_wrt_rt);
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(opt_prop_wrt_rt->intermediate_jacobian(), packed_data.jacobian(), 1e-10);
 
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(unpack)
     boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wrt_rt(new OpticalPropertiesWrtRt());
     opt_prop_wrt_rt->initialize(DoubleWithUnit(test_wn, units::inv_cm), test_chan, atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
 
-    ArrayAd<double, 2> packed_data = OpticalPropertiesLsi::pack(opt_prop_wrt_rt);
+    ArrayAd<double, 2> packed_data = OpticalPropertiesPca::pack(opt_prop_wrt_rt);
 
     boost::shared_ptr<AerosolOptical> aerosol = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
 
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(unpack)
         throw Exception("Failed to convert aerosol class to AerosolOptical");
     }
 
-    boost::shared_ptr<OpticalPropertiesLsi> opt_prop_up(new OpticalPropertiesLsi(packed_data, test_wn, aerosol, opt_prop_wrt_rt->number_gas_particles(), opt_prop_wrt_rt->number_aerosol_particles()));
+    boost::shared_ptr<OpticalPropertiesPca> opt_prop_up(new OpticalPropertiesPca(packed_data, test_wn, aerosol, opt_prop_wrt_rt->number_gas_particles(), opt_prop_wrt_rt->number_aerosol_particles()));
 
     Array<double, 1> ray_od_expect_val(opt_prop_wrt_rt->rayleigh_optical_depth().value());
     Array<double, 1> ray_od_unpack_val(opt_prop_up->rayleigh_optical_depth().value());
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(intermediate_variable)
     boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wrt_rt(new OpticalPropertiesWrtRt());
     opt_prop_wrt_rt->initialize(DoubleWithUnit(test_wn, units::inv_cm), test_chan, atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
 
-    ArrayAd<double, 2> packed_data = OpticalPropertiesLsi::pack(opt_prop_wrt_rt);
+    ArrayAd<double, 2> packed_data = OpticalPropertiesPca::pack(opt_prop_wrt_rt);
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.value(), packed_data.value(), 1e-10);
     BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.jacobian(), packed_data.jacobian(), 1e-10);

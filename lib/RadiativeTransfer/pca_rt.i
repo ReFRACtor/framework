@@ -12,7 +12,7 @@
 %import "twostream_rt.i"
 %import "first_order_rt.i"
 
-%import "optical_properties.i"
+%import "optical_properties_wrt_rt.i"
 %import "pca_binning.i"
 %import "pca_eigensolver.i"
 
@@ -51,10 +51,13 @@ public:
     const boost::shared_ptr<TwostreamRt> twostream() const;
     const boost::shared_ptr<FirstOrderRt> first_order() const;
 
-    const std::vector<boost::shared_ptr<OpticalProperties> > optical_properties() const;
+    const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const;
     const boost::shared_ptr<PCABinning> binning() const;
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index);
   
     virtual void print(std::ostream& Os, bool Short_form = false) const;
+
+    void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
+
 };
 }
