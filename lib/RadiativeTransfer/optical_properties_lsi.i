@@ -12,4 +12,6 @@
 
 %fp_shared_ptr(FullPhysics::OpticalPropertiesLsi)
 
+%template (vector_optical_properties_lsi) std::vector<boost::shared_ptr<FullPhysics::OpticalPropertiesLsi> >;
+
 %include "optical_properties_lsi.h"

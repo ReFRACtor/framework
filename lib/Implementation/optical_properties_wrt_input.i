@@ -9,4 +9,6 @@
 
 %fp_shared_ptr(FullPhysics::OpticalPropertiesWrtInput)
 
+%template (vector_optical_properties_wrt_input) std::vector<boost::shared_ptr<FullPhysics::OpticalPropertiesWrtInput> >;
+
 %include "optical_properties_wrt_input.h"

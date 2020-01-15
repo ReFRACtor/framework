@@ -9,4 +9,6 @@
 
 %fp_shared_ptr(FullPhysics::OpticalPropertiesWrtRt)
 
+%template (vector_optical_properties_wrt_rt) std::vector<boost::shared_ptr<FullPhysics::OpticalPropertiesWrtRt> >;
+
 %include "optical_properties_wrt_rt.h"
