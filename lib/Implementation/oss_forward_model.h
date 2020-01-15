@@ -3,6 +3,7 @@
 #include "forward_model.h"
 #include "state_vector.h"
 #include "rt_atmosphere.h"
+#include "hdf_file.h"
 
 #include <string>
 
@@ -41,7 +42,7 @@ public:
           sel_file(Sel_file), sel_file_sz(Sel_file.length()),
           od_file(Od_file), od_file_sz(Od_file.length()),
           sol_file(Sol_file), sol_file_sz(Sol_file.length()),
-          fix_file(Fix_file), fix_file_sz(Fix_file.length()),max_chans(Max_chans),
+          fix_file(Fix_file), fix_file_sz(Fix_file.length()),
           ch_sel_file(Ch_sel_file), ch_sel_file_sz(Ch_sel_file.length()),
           max_chans(Max_chans) {} ;
     virtual ~OssForwardModel() {}
@@ -75,7 +76,7 @@ public:
       */
       int nInMol = 11;
       int lenG = 10;
-      char nameGas[110] = "H2O       CO2       O3        N2O       CO        CH4       O2        NH3       CCL4      F11       F12       ";
+      char nameGas[150] = "H2O       CO2       O3        N2O       CO        CH4       O2        NH3       CCL4      F11       F12       ";
       int nInJac = 2;
       int lenJ = 2;
       char nameJacob[30] = "H2O       NH3       i";
@@ -148,6 +149,48 @@ public:
       - xkCldlnPres = cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
       - xkCldlnExt = cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
       */
+      int nlevu = 65;
+      int ngas = 11;
+      float Pin[max_chans];
+      float Temp[max_chans];
+      float Tskin = 310.0;
+      float vmrGas[max_chans];
+      int n_SfGrd = 501;
+      float emis[max_chans];
+      float refl[max_chans];
+      float scaleCld = 0.0;
+      float presCld = 0.0;
+      int nCld = 2;
+      float extCld[max_chans];
+      float SfGrd[max_chans];
+      float gridCld[max_chans];
+      float ang = 1.45646667;
+      float sunang = 90.0;
+      float lat = 45.0;
+      float altSfc = 0.0000639999998;
+      int lambertian = 1;
+      int nInJac = 2;
+      int nchanOSS = 3951;
+
+      /* outputs */
+      float y[max_chans];
+      float xkTemp[max_chans];
+      float xkTskin[max_chans];
+      float xkOutGas[max_chans];
+      float xkEm[max_chans];
+      float xkRf[max_chans];
+      float xkCldlnPres[max_chans];
+      float xkCldlnExt[max_chans];
+
+      cppfwdwrapper(nlevu, ngas, Pin, Temp, Tskin, vmrGas,
+      n_SfGrd, emis, refl,
+      scaleCld, presCld, nCld, extCld,
+      SfGrd, gridCld,
+      ang, sunang, lat,
+      altSfc, lambertian, nInJac, nchanOSS,
+      y, xkTemp,
+      xkTskin, xkOutGas, xkEm,
+      xkRf, xkCldlnPres, xkCldlnExt);
 
       /*
 (lldb) p nlevu
