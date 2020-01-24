@@ -78,7 +78,7 @@ public:
       int lenG = 10;
       char nameGas[150] = "H2O       CO2       O3        N2O       CO        CH4       O2        NH3       CCL4      F11       F12       ";
       int nInJac = 2;
-      int lenJ = 2;
+      int lenJ = 10;
       char nameJacob[30] = "H2O       NH3       i";
       int nlevu = 65;
       int n_SfGrd = 501;
@@ -149,9 +149,14 @@ public:
       - xkCldlnPres = cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
       - xkCldlnExt = cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
       */
+      using namespace FullPhysics;
+      using namespace blitz;
+      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5.nc");
+      boost::shared_ptr<HdfFile> test_input_file(new HdfFile(test_fname));
       int nlevu = 65;
       int ngas = 11;
       float Pin[max_chans];
+      Array<float, 1> Pin_arr = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
       float Temp[max_chans];
       float Tskin = 310.0;
       float vmrGas[max_chans];

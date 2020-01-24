@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(radiance)
   std::string od_file = "/export/refractor_data/OSS/aura-tes-B1B2-unapod-loc-clear-23V-M12.4-v1.0.train.lut";
   std::string sol_file = "/export/refractor_data/OSS//newkur.dat";
   std::string fix_file = "/export/refractor_data/OSS/default.dat";
-  std::string ch_sel_file = NULL;
+  std::string ch_sel_file = "NULL";
   OssForwardModel fm(atm, sel_file, od_file, sol_file, fix_file, ch_sel_file);
   fm.setup_grid();
   // TODO: Add checks
