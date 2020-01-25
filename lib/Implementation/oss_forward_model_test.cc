@@ -16,6 +16,7 @@ BOOST_AUTO_TEST_CASE(radiance)
   std::string ch_sel_file = "NULL";
   OssForwardModel fm(atm, sel_file, od_file, sol_file, fix_file, ch_sel_file);
   fm.setup_grid();
+  Spectrum radiance = fm.radiance(0);
   // TODO: Add checks
 }
 

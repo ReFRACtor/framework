@@ -44,7 +44,7 @@ public:
           sol_file(Sol_file), sol_file_sz(Sol_file.length()),
           fix_file(Fix_file), fix_file_sz(Fix_file.length()),
           ch_sel_file(Ch_sel_file), ch_sel_file_sz(Ch_sel_file.length()),
-          max_chans(Max_chans) {} ;
+          max_chans(Max_chans), nchanOSS(-1){} ;
     virtual ~OssForwardModel() {}
     virtual void setup_grid() {
       /*
@@ -83,7 +83,7 @@ public:
       int nlevu = 65;
       int n_SfGrd = 501;
       float minExtCld = 999;
-      int nchanOSS;
+      /* TODO: Make private data member */
       float WvnOSS[max_chans];
 
       cppinitwrapper(nInMol, lenG, nameGas, nInJac, lenJ, nameJacob,
@@ -94,7 +94,6 @@ public:
            ch_sel_file.c_str(), ch_sel_file_sz,
            nlevu, n_SfGrd, minExtCld,
            nchanOSS, WvnOSS, max_chans);
-
     }
     virtual int num_channels() const { return 1; }
     virtual SpectralDomain spectral_domain(int Spec_index) const {
@@ -110,6 +109,8 @@ public:
 
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const {
       /*
+      This method is primarily a wrapper for the following OSS FM function.
+
       cppfwdwrapper(nlevu, ngas, Pin, Temp, Tskin, vmrGas,
       n_SfGrd, emis, refl,
       scaleCld, presCld, nCld, extCld,
@@ -149,152 +150,90 @@ public:
       - xkCldlnPres = cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
       - xkCldlnExt = cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
       */
-      using namespace FullPhysics;
       using namespace blitz;
-      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5.nc");
+
+      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5_nc4.nc");
       boost::shared_ptr<HdfFile> test_input_file(new HdfFile(test_fname));
+
       int nlevu = 65;
+
       int ngas = 11;
-      float Pin[max_chans];
-      Array<float, 1> Pin_arr = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
-      float Temp[max_chans];
+
+      Array<float, 1> Pin = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
+
+      Array<float, 1> Temp = test_input_file->read_field<float, 1>("/Temperature")(Range::all());
+
       float Tskin = 310.0;
-      float vmrGas[max_chans];
+
+      Array<float, 2> vmrGas = test_input_file->read_field<float, 2>("/vmrGas")(Range::all());
+
+      Array<float, 1> emis = test_input_file->read_field<float, 1>("/Emissivity")(Range::all());
+
+      Array<float, 1> refl = test_input_file->read_field<float, 1>("/Reflectivity")(Range::all());
+
       int n_SfGrd = 501;
-      float emis[max_chans];
-      float refl[max_chans];
+
       float scaleCld = 0.0;
+
       float presCld = 0.0;
+
       int nCld = 2;
-      float extCld[max_chans];
-      float SfGrd[max_chans];
-      float gridCld[max_chans];
+
+      Array<float, 1> extCld(nCld);
+      extCld = 0;
+
+      Array<float, 1> SfGrd = test_input_file->read_field<float, 1>("/SurfaceGrid")(Range::all());
+
+      Array<float, 1> gridCld(nCld);
+      gridCld= 0;
+
       float ang = 1.45646667;
+
       float sunang = 90.0;
+
       float lat = 45.0;
+
       float altSfc = 0.0000639999998;
+
       int lambertian = 1;
+
       int nInJac = 2;
-      int nchanOSS = 3951;
+
+      /* Needed since nchanOSS argument to cppfwdwrapper isn't const reference though not modified */
+      int nchanOSS_temp = nchanOSS;
+
 
       /* outputs */
-      float y[max_chans];
-      float xkTemp[max_chans];
-      float xkTskin[max_chans];
-      float xkOutGas[max_chans];
-      float xkEm[max_chans];
-      float xkRf[max_chans];
-      float xkCldlnPres[max_chans];
-      float xkCldlnExt[max_chans];
+      Array<float, 1> y(nchanOSS);
+      y = 0;
+      Array<float, 1> xkTemp(nchanOSS*nlevu);
+      xkTemp = 0;
+      Array<float, 1> xkTskin(nchanOSS);
+      xkTskin = 0;
+      Array<float, 1> xkOutGas(nInJac*nchanOSS*nlevu);
+      xkOutGas = 0;
+      Array<float, 1> xkEm(nchanOSS*n_SfGrd);
+      xkEm = 0;
+      Array<float, 1> xkRf(nchanOSS*n_SfGrd);
+      xkRf = 0;
+      Array<float, 1> xkCldlnPres(nchanOSS);
+      xkCldlnPres = 0;
+      Array<float, 1> xkCldlnExt(nchanOSS*nCld);
+      xkCldlnExt = 0;
 
-      cppfwdwrapper(nlevu, ngas, Pin, Temp, Tskin, vmrGas,
-      n_SfGrd, emis, refl,
-      scaleCld, presCld, nCld, extCld,
-      SfGrd, gridCld,
+      cppfwdwrapper(nlevu, ngas, Pin.data(), Temp.data(), Tskin, vmrGas.data(),
+      n_SfGrd, emis.data(), refl.data(),
+      scaleCld, presCld, nCld, extCld.data(),
+      SfGrd.data(), gridCld.data(),
       ang, sunang, lat,
-      altSfc, lambertian, nInJac, nchanOSS,
-      y, xkTemp,
-      xkTskin, xkOutGas, xkEm,
-      xkRf, xkCldlnPres, xkCldlnExt);
+      altSfc, lambertian, nInJac, nchanOSS_temp,
+      y.data(), xkTemp.data(),
+      xkTskin.data(), xkOutGas.data(), xkEm.data(),
+      xkRf.data(), xkCldlnPres.data(), xkCldlnExt.data());
 
-      /*
-(lldb) p nlevu
-(int) $0 = 65
-
-(lldb) p ngas
-(int) $1 = 11
-
-tape5.nc/Pressure
-(lldb) p Pin
-(float *) $2 = 0x0000000100c530c0
-(lldb) x/20f Pin
-0x100c530c0: 1009.40991
-0x100c530c4: 1000
-0x100c530c8: 908.513977
-0x100c530cc: 825.401978
-0x100c530d0: 749.893005
-0x100c530d4: 681.291015
-0x100c530d8: 618.966003
-0x100c530dc: 562.34198
-0x100c530e0: 510.89801
-0x100c530e4: 464.160004
-0x100c530e8: 421.697998
-0x100c530ec: 383.117004
-0x100c530f0: 348.069
-0x100c530f4: 316.22699
-0x100c530f8: 287.298004
-0x100c530fc: 261.015991
-0x100c53100: 237.136993
-0x100c53104: 215.444
-0x100c53108: 195.735001
-0x100c5310c: 177.828995
-
-tape5.nc/Temperature
-(lldb) p Temp
-(float *) $3 = 0x0000000100c53200
-
-tape5.nc/SkinTemperature
-(lldb) p Tskin
-(float) $4 = 310
-
-tape5.nc/vmrGas
-(lldb) p vmrGas
-(float *) $5 = 0x000000010104f600
-
-(lldb) p n_SfGrd
-(int) $6 = 501
-
-tape5.nc/Emissivity
-(lldb) p emis
-(float *) $7 = 0x000000010100d000
-
-tape5.nc/Reflectivity
-(lldb) p refl
-(float *) $8 = 0x0000000101050200
-
-(lldb) p scaleCld
-(float) $9 = 0
-
-(lldb) p presCld
-(float) $10 = 0
-
-(lldb) p nCld
-(int) $11 = 2
-
-(lldb) p extCld
-(float *) $12 = 0x0000000100c531d0
-
-tape5.nc/SurfaceGrid
-(lldb) p SfGrd
-(float *) $13 = 0x0000000101001800
-
-(lldb) p gridCld
-(float *) $14 = 0x0000000100c53080
-
-(lldb) p ang
-(float) $15 = 1.45646667
-
-(lldb) p sunang
-(float) $16 = 90
-
-tape5.nc/Latitude
-(lldb) p lat
-(float) $17 = 45
-
-(lldb) p altSfc
-(float) $18 = 0.0000639999998
-
-(lldb) p lambertian
-(int) $19 = 1
-
-(lldb) p nInJac
-(int) $20 = 2
-
-(lldb) p nchanOSS
-(int) $21 = 3951
-
-       */
-      return Spectrum();
+      SpectralDomain spec_domain;
+      SpectralRange spec_range;
+      return Spectrum(spec_domain, spec_range);
     }
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 private:
@@ -310,7 +249,8 @@ private:
     std::string ch_sel_file;
     int ch_sel_file_sz;
 
-    const int max_chans;
+    int nchanOSS;
+    int max_chans;
 };
 }
 #endif
