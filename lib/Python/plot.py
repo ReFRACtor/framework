@@ -49,7 +49,7 @@ def plot_microwindows(meas_grid, meas_rad, mod_grid, mod_rad, grid_units=None, r
     
     if meas_uncert is not None:
         plt.figure()
-        plt.plot((mod_rad - meas_rad)/uncert)
+        plt.plot((mod_rad - meas_rad)/meas_uncert)
         plt.title("{}Residual All Samples".format(title_prefix))
 
         plt.figure()
@@ -57,7 +57,7 @@ def plot_microwindows(meas_grid, meas_rad, mod_grid, mod_rad, grid_units=None, r
         plt.title("{}~ SNR".format(title_prefix))
 
         plt.figure()
-        plt.plot(uncert)
+        plt.plot(meas_uncert)
         plt.title("{}Uncertainty All Samples".format(title_prefix))
 
 def plot_fm(fm, l1b, channel_idx=0, show_residual=False, rad=None):

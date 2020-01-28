@@ -1,7 +1,7 @@
 #ifndef AEROSOL_EXTINCTION_LOG_H
 #define AEROSOL_EXTINCTION_LOG_H
 
-#include "aerosol_extinction_imp_base.h"
+#include "aerosol_extinction_level.h"
 #include "pressure.h"
 #include <boost/lexical_cast.hpp>
 
@@ -13,7 +13,7 @@ namespace FullPhysics {
   This implementation just gets the log of the extinction coefficient
   for each level from the state vector.
 *******************************************************************/
-class AerosolExtinctionLog : public AerosolExtinctionImpBase {
+class AerosolExtinctionLog : public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -30,18 +30,12 @@ public:
   AerosolExtinctionLog(const boost::shared_ptr<Pressure>& Press,
 			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
-			  const std::string& Aerosol_name)
-    : AerosolExtinctionImpBase(Aerosol_name, blitz::Array<double, 1> (log(Aext)) , Flag, Press) {}
-  virtual ~AerosolExtinctionLog() {}
+			  const std::string& Aerosol_name);
+
+  virtual ~AerosolExtinctionLog() = default;
+
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
-  virtual std::string sub_state_identifier() const { return "aerosol_extinction/" + aerosol_name() + "/log"; }
-  virtual std::string state_vector_name_i(int i) const
-  { return "Aerosol " + aerosol_name() + " Log(extinction) for Press Lvl " +
-      boost::lexical_cast<std::string>(i + 1); }
-  virtual std::string model_short_name() const { return "profile_log"; }
-  virtual void print(std::ostream& Os) const;
-protected:
-  virtual void calc_aerosol_extinction() const;
+    
 };
 }
 #endif

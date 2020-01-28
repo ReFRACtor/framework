@@ -107,8 +107,10 @@ void AerosolOptical::fill_cache() const
     AutoDerivative<double> dp = delta_press.convert(units::Pa).value;
 
     // Resize number of variables in case surface pressure is not retrieved
-    if (dp.number_variable() == 0)
+    if (dp.number_variable() == 0) {
       dp.gradient().resize(nvar);
+      dp.gradient() = 0.0;
+    }
 
     for(int j = 0; j < number_particle(); ++j) {
       /// We scale the extinction coefficient return by aprop at the 

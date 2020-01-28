@@ -12,16 +12,18 @@ class MaxAPosterioriStandard :
 
 public:
 
-//-----------------------------------------------------------------------
-/// Constructor
-//-----------------------------------------------------------------------
-
   MaxAPosterioriStandard(const boost::shared_ptr<ForwardModel>& fm,
           const boost::shared_ptr<Observation>& observation, 
           const boost::shared_ptr<StateVector>& state_vector,
           const blitz::Array<double, 1> a_priori_params,
           const blitz::Array<double, 2> a_priori_cov);
 
+  MaxAPosterioriStandard(const std::vector<boost::shared_ptr<ForwardModel> >& fm,
+ 	  const std::vector<boost::shared_ptr<Observation> >& observation, 
+          const boost::shared_ptr<StateVector>& state_vector,
+          const blitz::Array<double, 1> a_priori_params,
+          const blitz::Array<double, 2> a_priori_cov);
+  
   virtual ~MaxAPosterioriStandard() {}
 
 //-----------------------------------------------------------------------

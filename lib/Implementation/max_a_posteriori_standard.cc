@@ -16,16 +16,35 @@ REGISTER_LUA_END()
 
 
 
-MaxAPosterioriStandard::MaxAPosterioriStandard(const boost::shared_ptr<ForwardModel>& forward_model,
-        const boost::shared_ptr<Observation>& observation, 
-        const boost::shared_ptr<StateVector>& state_vector,
-        const Array<double, 1> a_priori_params,
-        const Array<double, 2> a_priori_cov)
-  : ModelMeasure(
-        observation->radiance_all().spectral_range().data(),
-        Array<double, 1>(sqr(observation->radiance_all().spectral_range().uncertainty()))),
-    MaxAPosteriori(a_priori_params, a_priori_cov),
-    ModelMeasureStandard(forward_model, observation, state_vector) 
+//-----------------------------------------------------------------------
+/// Constructor
+//-----------------------------------------------------------------------
+
+MaxAPosterioriStandard::MaxAPosterioriStandard
+(const boost::shared_ptr<ForwardModel>& forward_model,
+ const boost::shared_ptr<Observation>& observation, 
+ const boost::shared_ptr<StateVector>& state_vector,
+ const Array<double, 1> a_priori_params,
+ const Array<double, 2> a_priori_cov)
+: MaxAPosteriori(a_priori_params, a_priori_cov),
+  ModelMeasureStandard(forward_model, observation, state_vector) 
+{
+  if(Xa.rows() != sv->observer_claimed_size())
+    throw Exception("A priori state vector size and state vector size expected by the model are not equal. :( ");
+}
+
+//-----------------------------------------------------------------------
+/// Constructor
+//-----------------------------------------------------------------------
+
+MaxAPosterioriStandard::MaxAPosterioriStandard
+(const std::vector<boost::shared_ptr<ForwardModel> >& forward_model,
+ const std::vector<boost::shared_ptr<Observation> >& observation, 
+ const boost::shared_ptr<StateVector>& state_vector,
+ const Array<double, 1> a_priori_params,
+ const Array<double, 2> a_priori_cov)
+: MaxAPosteriori(a_priori_params, a_priori_cov),
+  ModelMeasureStandard(forward_model, observation, state_vector) 
 {
   if(Xa.rows() != sv->observer_claimed_size())
     throw Exception("A priori state vector size and state vector size expected by the model are not equal. :( ");

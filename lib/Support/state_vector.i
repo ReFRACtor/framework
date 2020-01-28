@@ -15,13 +15,10 @@
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::StateVector>);
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::StateVector>);
 
-// Do this so we can derive from this and have it able to be used by the C++ code
-// Defined here since rename does not like being inside of a namespace
 %feature("director") FullPhysics::Observer<FullPhysics::StateVector>;
-%rename(ObserverStateVector) FullPhysics::Observer<FullPhysics::StateVector>;
 
 namespace FullPhysics {
-
+%template(ObserverStateVector) FullPhysics::Observer<FullPhysics::StateVector>;
 %template(ObservableStateVector) FullPhysics::Observable<FullPhysics::StateVector>;
 
 class StateVector: public Observable<StateVector> {
@@ -37,7 +34,10 @@ public:
     %python_attribute(state_covariance, blitz::Array<double, 2>);
 
     void update_state(const blitz::Array<double, 1>& X);
-    void update_state(const blitz::Array<double, 1>& X, const blitz::Array<double, 2>& Cov);
+    void update_state(const blitz::Array<double, 1>& X,
+		      const blitz::Array<double, 2>& Cov);
+    void update_state(const ArrayAd<double, 1>& X,
+		      const blitz::Array<double, 2>& Cov);
     
     %python_attribute(used_flag, blitz::Array<bool, 1>);
     %python_attribute_with_set(observer_claimed_size, int);
@@ -73,5 +73,8 @@ public:
     }
 
 };
-
 }
+
+// This silences  warning messages. Not sure if the message are important
+// or not, but good to have them be quiet
+%rename(ObserverStateVector2) FullPhysics::Observer<FullPhysics::StateVector>;

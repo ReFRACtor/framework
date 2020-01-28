@@ -6,41 +6,23 @@ import pprint
 import numpy as np
 from netCDF4 import Dataset
 
-from .config import load_config_module, find_config_function, find_strategy_function
-from .factory import process_config, creator
-from . import framework as rf
-
-from .output.radiance import ForwardModelRadianceOutput, ObservationRadianceOutput
-from .output.solver import SolverIterationOutput
-from .output.state_vector import StateVectorOutputRetrieval, StateVectorOutputSimulation
+from .config import load_config_module, find_strategy_function
+from .configuration_interface import ConfigurationInterface
 
 logger = logging.getLogger(__name__)
 
-def ObjectCapture(capture_class):
-    "Generate a Creator that watches for an object to be emitted elsewhere then stores it internally to use as its return object"
-
-    class ObjectCaptureCreator(creator.base.Creator):
-        def __init__(self, *vargs, **kwargs):
-            super().__init__(*vargs, **kwargs)
-
-            self.register_to_receive(capture_class)
-            self.captured_object = None
-
-        def receive(self, rec_obj):
-            self.captured_object = rec_obj
-
-        def create(self, **kwargs): 
-            return self.captured_object
-
-    return ObjectCaptureCreator
-
 class StrategyExecutor(object):
     
-    def __init__(self, config_filename, output_filename=None, strategy_filename=None, strategy_list=None):
+    def __init__(self, config_filename=None, config_inst=None,
+                 output_filename=None,
+                 strategy_filename=None, strategy_list=None):
 
-        logger.debug("Loading configuration from {}".format(config_filename))
-        self.config_module = load_config_module(config_filename)
-
+        if(config_filename):
+            logger.debug("Loading configuration from {}".format(config_filename))
+            self.config_module = load_config_module(config_filename)
+            self._config_inst = None
+        else:
+            self._config_inst = config_inst
         if strategy_filename is not None:
             logger.debug("Loading strategy from {}".format(strategy_filename))
             strategy_module = load_config_module(strategy_filename)
@@ -60,112 +42,47 @@ class StrategyExecutor(object):
         # Location where covariances data should be saved
         self.covariance_storage = {}
 
-    def config_definition(self, **strategy_keywords):
-
-        config_func = find_config_function(self.config_module)
-
-
-        # Augment loaded configuration to help capture objects required for ouput
-        config_def = {
-            'creator': creator.base.ParamPassThru, 
-            'order': ['file_config'],
-            'file_config': config_func(**strategy_keywords),
-        }
-
-        # Capture certain objects without depending on the structure of the configuration
-        captured_objects = {
-            'forward_model': ObjectCapture(rf.ForwardModel),
-            'solver': ObjectCapture(rf.IterativeSolver),
-            'state_vector': ObjectCapture(rf.StateVector),
-            'l1b': ObjectCapture(rf.Level1b),
-            'retrieval_components': ObjectCapture(creator.retrieval.RetrievalComponents),
-        }
-        config_def.update(captured_objects)
-        config_def['order'] += list(captured_objects.keys())
-
-        return config_def
-
     def config_instance(self, **strategy_keywords):
-
-        logger.debug("Loading configration")
-
-        config_def = self.config_definition(**strategy_keywords)
-        config_inst = process_config(config_def)
-
+        if(self._config_inst):
+            return self._config_inst
+        logger.debug("Loading configuration")
+        return ConfigurationInterface.create_configuration_instance(self.config_module, **strategy_keywords)
+    
         logger.debug("Configuration processing complete")
 
         return config_inst
 
-    def attach_logging(self, config_inst):
-
-        iter_log = rf.SolverIterationLog(config_inst['state_vector'])
-        config_inst['solver'].add_observer_and_keep_reference(iter_log)
-
-    def attach_output(self, config_inst, step_index):
-
-        if self.output is None:
-            return
-
-        rad_out = ForwardModelRadianceOutput(self.output, step_index, config_inst['solver'])
-        config_inst['forward_model'].add_observer_and_keep_reference(rad_out)
-
-        if config_inst['l1b'] is not None and config_inst['solver'] is not None:
-            obs_out = ObservationRadianceOutput(self.output, step_index, config_inst['l1b'], config_inst['forward_model'])
-            config_inst['solver'].add_observer_and_keep_reference(obs_out)
-
-        if config_inst['state_vector'] is not None and config_inst['solver'] is not None:
-            solver_out = SolverIterationOutput(self.output, step_index)
-            config_inst['solver'].add_observer_and_keep_reference(solver_out)
-
-            sv_out = StateVectorOutputRetrieval(self.output, step_index, config_inst['state_vector'])
-            config_inst['solver'].add_observer_and_keep_reference(sv_out)
-
-        elif config_inst['state_vector'] is not None and config_inst['solver'] is None:
-            sv_out = StateVectorOutputSimulation(self.output, step_index, config_inst['state_vector'])
- 
     def run_solver(self, config_inst, step_index=None):
+        config_inst.attach_logging()
+        config_inst.attach_output(self.output, step_index)
 
-        self.attach_logging(config_inst)
-        self.attach_output(config_inst, step_index)
-
-        if config_inst['solver'] is None:
+        if config_inst.solver is None:
             raise Exception("Solver object was not defined in configuration")
 
-        if config_inst['state_vector'] is None:
+        if config_inst.state_vector is None:
             raise Exception("StateVector object was not defined in configuration")
  
-        config_inst['solver'].solve()
+        config_inst.solver.solve()
 
     def run_forward_model(self, config_inst, step_index=None):
-
-        file_inst = config_inst['file_config']
-        if config_inst['state_vector'] is not None and 'retrieval' in file_inst and 'initial_guess' in file_inst['retrieval']:
-            # Necessary for jacobians to work. Normally this step is done in the solver creator
-            # Do this before attaching output so that state vector can be output correctly
-            logger.debug("Enabling jacobians for forward model simulation")
-            config_inst['state_vector'].update_state(file_inst['retrieval']['initial_guess'])
-
-        self.attach_output(config_inst, step_index)
-
-        config_inst['forward_model'].radiance_all()
-
+        config_inst.set_initial_guess()
+        config_inst.attach_output(step_index)
+        config_inst.radiance_all()
 
     def update_covariance(self, config_inst):
-
         logger.debug("Updating covariances for next step using a posteriori covariance")
-
-        if config_inst['retrieval_components'] is None:
+        if config_inst.retrieval_components is None:
             logger.error("Cannot update covariances: retrieval_components not captured")
             return
 
-        retrieval_components = config_inst['retrieval_components']
+        retrieval_components = config_inst.retrieval_components
     
-        if config_inst['state_vector'] is None or config_inst['solver'] is None:
+        if config_inst.state_vector is None or config_inst.solver is None:
             logger.error("Cannot update covariances: solver or state_vector not defined")
             return
 
-        solver = config_inst["solver"]
-        state_vector = config_inst["state_vector"]
+        solver = config_inst.solver
+        state_vector = config_inst.state_vector
 
         if not hasattr(solver, "problem") and not hasattr(solver.problem, "max_a_posteriori"):
             logger.error("Cannot update covariances: Solver is not using MaxAPosteriori problem")
@@ -198,10 +115,9 @@ class StrategyExecutor(object):
                 self.covariance_storage[rc_name][:] = rc_obj.statevector_covariance[:]
 
     def retrieval_cleanup(self, config_inst):
-        
         # Remove current observers from the state vector since on the next step
         # a difference configuration of the state vector is possible
-        config_inst['state_vector'].clear_observers()
+        config_inst.state_vector.clear_observers()
 
     def execute_retrieval(self, step_indexes=None):
 

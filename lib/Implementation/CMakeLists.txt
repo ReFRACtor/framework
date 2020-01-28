@@ -8,6 +8,7 @@ set(DIR_SOURCES
     absorber_vmr_level_log.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
+    aerosol_extinction_level.cc
     aerosol_extinction_linear.cc
     aerosol_extinction_log.cc
     aerosol_optical.cc
@@ -226,6 +227,14 @@ set(TEST_SOURCES
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
+
+if(OSS_FOUND)
+    message(STATUS "Adding AER OSS FM to sources")
+    list(APPEND DIR_SOURCES oss_forward_model.cc)
+    list(APPEND TEST_SOURCES oss_forward_model_test.cc)
+else()
+    message(STATUS "In implementation dir, OSS NOT detected.")
+endif()
 
 # Add current source directory to source file names
 foreach(source_name ${DIR_SOURCES})

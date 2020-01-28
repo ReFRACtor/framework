@@ -53,6 +53,13 @@ public:
   { 
     ARRAY_AD_DIAGNOSTIC_MSG;
   }
+  ArrayAd(const ArrayAd<T, D>& V, bool Force_copy)
+    : val(Force_copy ? V.val.copy() : V.val),
+      jac(Force_copy ? V.jac.copy() : V.jac),
+      is_const(V.is_const) 
+  { 
+    ARRAY_AD_DIAGNOSTIC_MSG;
+  }
   ArrayAd& operator=(const ArrayAd<T, D>& V)
   { 
     ARRAY_AD_DIAGNOSTIC_MSG;
@@ -383,6 +390,22 @@ public:
       return jac.extent(D);
   }
   const blitz::TinyVector<int, D>& shape() const { return val.shape(); }
+  std::string print_to_string() const
+  {
+    // This reserve shouldn't really be necessary, but on a Mac
+    // 10.4.11 using gcc 4.0.1, there is some kind of bug where we get
+    // a "Double free" error when printing in Ruby. I never tracked
+    // exactly where this occurred, but it was somewhere in the
+    // iostream library when the buffer of os was resized. We just
+    // reserve enough space up front so this isn't an issue. Since
+    // this only gets called when printing, there shouldn't be much of
+    // a performance hit in doing this.
+    std::string buf("blah");
+    buf.reserve(1000);
+    std::ostringstream os(buf);
+    os << "ArrayAd:\n" << *this;
+    return os.str();
+  }
   friend std::ostream& operator<<(std::ostream& os, 
 				  const ArrayAd<T, D>& V)
   { os << V.val << "\n" << V.jac << "\n"; return os;}

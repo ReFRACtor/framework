@@ -43,10 +43,10 @@ class MUSES_File(object):
 
         # Parse heade contents until finding end of header
         curr_line = b""
-        while not re.search(b"^\s*End_of_Header", curr_line):
+        while not re.search(rb"^\s*End_of_Header", curr_line):
             curr_line = muses_file.readline()
             
-            header_value = re.search(b"^([\w-]+)\s*=\s*(.*)$", curr_line)
+            header_value = re.search(rb"^([\w-]+)\s*=\s*(.*)$", curr_line)
             if header_value:
                 key, value = [ s.decode('UTF-8') for s in header_value.groups() ]
 
@@ -54,7 +54,7 @@ class MUSES_File(object):
                 value = value.strip('"').strip()
 
                 # Parse datasize into an array of numbers
-                data_size_re = "\s+x\s*"
+                data_size_re = r"\s+x\s*"
                 if re.search(data_size_re, value):
                     value = [ int(v) for v in re.split(data_size_re, value) ]
 
@@ -237,8 +237,8 @@ class OSP(object):
 
         # Convert latitudes with N (North) and S (South) markings to positive and negative latitudes
         def from_ns(lat_str):
-            num_val = re.sub('[NS]$', '', lat_str)
-            if re.search('S', lat_str):
+            num_val = re.sub(r'[NS]$', '', lat_str)
+            if re.search(r'S', lat_str):
                 return -float(num_val)
             else:
                 return float(num_val)
@@ -246,10 +246,10 @@ class OSP(object):
         # Find the file that exists within the latitude range
         use_lat_file = None
         for lat_file in latitude_files:
-            if re.search("NH3", lat_file):
-                matches = re.search('.*(\d\d[NS])_(\d\d[NS])_{}$'.format(self.nh3_version), lat_file)
+            if re.search(r"NH3", lat_file):
+                matches = re.search(r'.*(\d\d[NS])_(\d\d[NS])_{}$'.format(self.nh3_version), lat_file)
             else:
-                matches = re.search('.*(\d\d[NS])_(\d\d[NS])$', lat_file)
+                matches = re.search(r'.*(\d\d[NS])_(\d\d[NS])$', lat_file)
 
             if matches is None:
                 continue
@@ -270,7 +270,7 @@ class OSP(object):
 
         species_base_dir = self.climatology_base_dir
 
-        all_year_dirs = sorted([ int(y) for y in filter(lambda d: re.match('\d{4}', d), os.listdir(species_base_dir)) ])
+        all_year_dirs = sorted([ int(y) for y in filter(lambda d: re.match(r'\d{4}', d), os.listdir(species_base_dir)) ])
 
         if len(all_year_dirs) > 0:
             year_idx = max(0, bisect_right(all_year_dirs, self.obs_time.year)-1)
@@ -279,7 +279,7 @@ class OSP(object):
         else:
             year_dir = ''
 
-        all_month_dirs = list(filter(lambda d: re.match('[A-Z]{3}', d), os.listdir(species_base_dir)))
+        all_month_dirs = list(filter(lambda d: re.match(r'[A-Z]{3}', d), os.listdir(species_base_dir)))
 
         if len(all_month_dirs) == 1:
             month_dir = all_month_dirs[0]
@@ -364,13 +364,13 @@ class OSP(object):
         if self.num_constraint_levels is not None:
             # If defined find the file with the defined number of constraint levels
             for fn in filenames:
-                if re.search("_{}.asc".format(self.num_constraint_levels), fn):
+                if re.search(r"_{}.asc".format(self.num_constraint_levels), fn):
                     return fn
             return None
         else:
             # Otherwise sort reverse on number of levels and pick the file with the most number of pressure levels
             def extract_num_levels(fn):
-                match = re.search("_(\d+)(?:_\w+)?.asc", fn)
+                match = re.search(r"_(\d+)(?:_\w+)?.asc", fn)
                 if not match:
                     raise Exception("Could not parse number of levels from {}".format(fn))
                 return int(match.group(1))
@@ -398,9 +398,9 @@ class OSP(object):
             return None
 
         if self.use_log:
-            filt_files = filter(lambda f: re.search("_Log_", f, re.IGNORECASE), species_files)
+            filt_files = filter(lambda f: re.search(r"_Log_", f, re.IGNORECASE), species_files)
         else:
-            filt_files = filter(lambda f: re.search("_Linear_", f, re.IGNORECASE), species_files)
+            filt_files = filter(lambda f: re.search(r"_Linear_", f, re.IGNORECASE), species_files)
 
         if constraint:
             co_file = self._pick_constraint_levels_file(list(filt_files))
@@ -540,10 +540,10 @@ class OSP(object):
         clim_glob = re.sub(self._month_directory_name, "*", clim_filename)
 
         # Replace longitude portion
-        clim_glob = re.sub("\d{3}[EW]_\d{3}[EW]", "*", clim_glob)
+        clim_glob = re.sub(r"\d{3}[EW]_\d{3}[EW]", "*", clim_glob)
 
         # Replace latitude portion
-        clim_glob = re.sub("\d{2}[NS]_\d{2}[NS]", "*", clim_glob)
+        clim_glob = re.sub(r"\d{2}[NS]_\d{2}[NS]", "*", clim_glob)
 
         cov_inp_filenames = glob(clim_glob)
     
