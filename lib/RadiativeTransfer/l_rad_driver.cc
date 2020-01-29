@@ -388,7 +388,9 @@ void LRadDriver::calculate_second_order()
 
     int nscatt = pf_f.depth();
     int nlayer = tau_f.rows();
-    int nmom = 2 * nstream;
+
+    // pf_f might have less than 2 * nstream moments if this is a rayleigh only case
+    int nmom = min(2 * nstream, pf_f.rows());
     int nspars = surface_param_f.rows();
     int natm_jac = jac_atm_f.depth();
 

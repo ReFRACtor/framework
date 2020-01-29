@@ -267,7 +267,9 @@ ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const b
             zmat.jacobian().reference((*l_zmat_interpolate)(Wn));
         }
     } else {
-        ArrayAd<double, 3> pf(Opt_prop->total_phase_function_moments());
+        // l_rad fortran code expects there to be 6 scattering moments, so
+        // ensure that this number is passed through regardless of the source data
+        ArrayAd<double, 3> pf(Opt_prop->total_phase_function_moments(-1, 6));
         zmat.reference(driver->z_matrix(pf));
     }
 
