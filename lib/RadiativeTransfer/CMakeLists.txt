@@ -17,10 +17,12 @@ set(DIR_SOURCES
     pca_fortran/pca_auxiliaries.f90
     pca_fortran/pca_eigensolvers.f90
     pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
+    pca_rt.cc
     chapman_boa.cc
     chapman_boa_rt.cc
     first_order_interface.F90
     first_order_driver.cc
+    first_order_rt.cc
     hres_wrapper.cc
     l_rad_driver.cc
     l_rad_driver_f.F90
@@ -32,9 +34,10 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    optical_properties_lsi.cc
+    optical_properties_pca.cc
     pca_binning.cc
     pca_eigensolver.cc
-    pca_optical_properties.cc
     radiant2.8_direct.F90
     radiant_driver.cc
     radiative_transfer.cc
@@ -48,9 +51,12 @@ set(DIR_SOURCES
 )
 
 set(TEST_SOURCES
+    pca_fortran/pca_correction.f90
+    pca_fortran/pca_correction_plus.f90
     chapman_boa_rt_test.cc
     chapman_boa_test.cc
     first_order_driver_test.cc
+    first_order_rt_test.cc
     l_rad_driver_test.cc
     l_rad_rt_test.cc
     lidort_driver_test.cc
@@ -59,8 +65,11 @@ set(TEST_SOURCES
     lidort_interface_types_test.cc
     lidort_rt_test.cc
     lsi_rt_test.cc
+    optical_properties_lsi_test.cc
+    optical_properties_pca_test.cc
     pca_binning_test.cc
     pca_eigensolver_test.cc
+    pca_rt_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc

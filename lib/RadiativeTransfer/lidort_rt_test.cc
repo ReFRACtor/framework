@@ -51,7 +51,6 @@ BOOST_AUTO_TEST_CASE(compare_sphericity)
   //////////////////////
   // Pseudo spherical
   lidort_rt->rt_driver()->set_pseudo_spherical();
-
   refl_jac_calc.reference( lidort_rt->reflectance(wn_arr, 0).spectral_range().data_ad() );
 
   if(false) // Set to true to update expected results
@@ -97,8 +96,6 @@ BOOST_AUTO_TEST_CASE(check_los)
   Array<double, 1> stokes_ps;
   Array<double, 1> stokes_los;
 
-  ArrayAd<double,2> empty_iv;
-
   // Fix sza, azm, but we will vary zen
   sza = 60;
   azm = 0.0;
@@ -133,8 +130,8 @@ BOOST_AUTO_TEST_CASE(check_los)
                                   nstreams, nmoms, do_multiple_scattering_only));
 
     // Run LIDORT drivers
-    stokes_ps(ang_idx) = lidort_ps->stokes_single_wn(wn_arr(0), 0, empty_iv)(0);
-    stokes_los(ang_idx) = lidort_los->stokes_single_wn(wn_arr(0), 0, empty_iv)(0);
+    stokes_ps(ang_idx) = lidort_ps->stokes_single_wn(wn_arr(0), 0)(0);
+    stokes_los(ang_idx) = lidort_los->stokes_single_wn(wn_arr(0), 0)(0);
   }
 
   // These two modes are similar up to a certain point
@@ -177,8 +174,6 @@ BOOST_AUTO_TEST_CASE(check_ps)
   Array<double, 1> stokes_ps;
   Array<double, 1> stokes_pp;
 
-  ArrayAd<double,2> empty_iv;
-
   // Fix zen, azm, but we will vary zen
   zen = 0.0001;
   azm = 0.0;
@@ -210,8 +205,8 @@ BOOST_AUTO_TEST_CASE(check_ps)
     lidort_pp->rt_driver()->set_plane_parallel_plus_ss_correction();
 
     // Run LIDORT drivers
-    stokes_ps(ang_idx) = lidort_ps->stokes_single_wn(wn_arr(0), 0, empty_iv)(0);
-    stokes_pp(ang_idx) = lidort_pp->stokes_single_wn(wn_arr(0), 0, empty_iv)(0);
+    stokes_ps(ang_idx) = lidort_ps->stokes_single_wn(wn_arr(0), 0)(0);
+    stokes_pp(ang_idx) = lidort_pp->stokes_single_wn(wn_arr(0), 0)(0);
   }
 
   // These two modes are similar up to a certain point

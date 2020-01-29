@@ -79,7 +79,7 @@ blitz::Array<std::string, 1> AerosolOptical::aerosol_name_arr() const
 }
 
 //-----------------------------------------------------------------------
-/// We cache the part of the optical_depth_each_layer calculation that
+/// We cache the part of the extinction_optical_depth_each_layer calculation that
 /// is independent of wn.
 //-----------------------------------------------------------------------
 
@@ -131,7 +131,7 @@ void AerosolOptical::fill_cache() const
 }
 
 //-----------------------------------------------------------------------
-/// This gives the optical depth for each layer, for the given wave
+/// This gives the extinction optical depth for each layer, for the given wave
 /// number. Note this only includes the aerosol portion of this,
 /// Atmosphere class combines this with Absorbers and rayleigh
 /// scattering.
@@ -142,7 +142,7 @@ void AerosolOptical::fill_cache() const
 //-----------------------------------------------------------------------
 
 ArrayAd<double, 2> 
-AerosolOptical::optical_depth_each_layer(double wn) const
+AerosolOptical::extinction_optical_depth_each_layer(double wn) const
 {
   Range ra(Range::all());
   firstIndex i1; secondIndex i2; thirdIndex i3;
@@ -167,74 +167,52 @@ AerosolOptical::optical_depth_each_layer(double wn) const
 }
 
 //-----------------------------------------------------------------------
-/// This gives the single scatter albedo for each layer, for the given wave
-/// number, for the given particle. Note this only includes the
-/// aerosol portion of this, 
-/// Atmosphere class combines this with Rayleigh scattering.
-///
-/// We take in the optical depth of each layer. This is just what is
-/// returned by optical_depth_each_layer(), we take this in because
-/// we can change what the derivative of optical_depth_each_layer is
-/// respect to, e.g. in AtmosphereStandard we use taua_i.
-///
-/// This calculates the derivative with respect to whatever variables
-/// Od is relative to.
-///
-/// This has size of number_active_layer()
-//-----------------------------------------------------------------------
-
-ArrayAd<double, 1> AerosolOptical::ssa_each_layer
-(double wn,
- int particle_index,
- const ArrayAd<double, 1>& Od) const
-{
-  firstIndex i1; secondIndex i2; thirdIndex i3;
-  FunctionTimer ft(timer.function_timer());
-  ArrayAd<double, 1> res(Od.copy());
-  ArrayAd<double, 1> t = aprop[particle_index]->scattering_coefficient_each_layer(wn);
-  ArrayAd<double, 1> t2 = aprop[particle_index]->extinction_coefficient_each_layer(wn);
-  t.value() /= t2.value();
-  if(!t.is_constant() && !res.is_constant() &&
-     res.number_variable() != t.number_variable())
-    throw Exception("We don't currently have the code working correctly for combining intermediates and state vector derivatives. We'll need to think through how to do this.");
-  if(!t.is_constant())
-    t.jacobian() = 1 / t2.value()(i1) * t.jacobian()(i1,i2) -
-      t.value()(i1)/(t2.value()(i1) * t2.value()(i1))  * t2.jacobian()(i1,i2);
-  if(res.is_constant() && !t.is_constant())
-    res.resize_number_variable(t.number_variable());
-  Array<double, 1> v(res.value());
-  Array<double, 2> jac(res.jacobian());
-  v *= t.value();
-  if(t.is_constant())
-    jac = t.value()(i1) * jac(i1, i2);
-  else
-    jac = t.value()(i1) * jac(i1,i2) + v(i1) * t.jacobian()(i1,i2);
-  return res;
-}
-
-//-----------------------------------------------------------------------
-/// This gives the single scatter albedo for each layer, for the given wave
+/// This gives the aerosol scattering extinction each layer, for the given wave
 /// number. Note this only includes the
 /// aerosol portion of this, 
 /// Atmosphere class combines this with Rayleigh scattering.
+///
+/// The equation here is:
+///     tau_sca = tau_ind  * k_sca,wn
+/// Where tau_ind is the independent portion of the optical depth and k_sca
+/// is the scattering cofficient at the requested wave number.
+///
+/// Equivalently this could be written as:
+///     tau_sca = tau_ext * k_sca,wn / k_ext,wn
+///
+/// Which means that the scattering optical depth is also equal to the
+/// extinction optical depth times the aerosol single scattering albedo 
+/// calculated as k_sca,wn / k_ext,wn.
+///
+/// The above relationship is important when dealing with jacobians related
+/// to aerosol extinction.
 ///
 /// This calculates the derivatives with respect to the state vector.
 ///
 /// This has size of number_active_layer()
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> 
-AerosolOptical::ssa_each_layer(double wn) const
+ArrayAd<double, 2> 
+AerosolOptical::scattering_optical_depth_each_layer(double wn) const
 {
+  Range ra(Range::all());
+  firstIndex i1; secondIndex i2; thirdIndex i3;
   FunctionTimer ft(timer.function_timer());
-  ArrayAd<double, 2> od(optical_depth_each_layer(wn));
-  ArrayAd<double, 1> res(od.rows(), nvar);
-  res.value() = 0;
-  res.jacobian() = 0;
+  fill_cache();
+  ArrayAd<double, 2> res(od_ind_wn.copy());
   for(int i = 0; i < number_particle(); ++i) {
-    ArrayAd<double, 1> t(ssa_each_layer(wn, i, od(Range::all(), i)));
-    res.value() += t.value();
-    res.jacobian() += t.jacobian();
+    ArrayAd<double, 1> t = aprop[i]->scattering_coefficient_each_layer(wn);
+    if(res.is_constant() && !t.is_constant()) {
+      res.resize_number_variable(t.number_variable());
+      res.jacobian() = 0;
+    }
+    Array<double, 1> v(res.value()(ra, i));
+    Array<double, 2> jac(res.jacobian()(ra, i, ra));
+    v *= t.value();
+    if(t.is_constant())
+      jac = t.value()(i1) * jac(i1, i2);
+    else
+      jac = t.value()(i1) * jac(i1,i2) + v(i1) * t.jacobian()(i1, i2);
   }
   return res;
 }
@@ -250,11 +228,11 @@ AerosolOptical::ssa_each_layer(double wn) const
 ///         matrix elements
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, int pindex) const
+ArrayAd<double, 3> AerosolOptical::pf_mom(double wn, int pindex, int nummom, int numscat) const
 {
   FunctionTimer ft(timer.function_timer());
   range_check(pindex, 0, number_particle());
-  return aprop[pindex]->phase_function_moment_each_layer(wn);
+  return aprop[pindex]->phase_function_moment_each_layer(wn, nummom, numscat);
 }
 
 //-----------------------------------------------------------------------

@@ -248,33 +248,33 @@ void LRadRt::update_altitude(int spec_index) const
 
     driver->setup_geometry(alt, sza(spec_index), zen(spec_index), azm(spec_index));
 
-    ArrayAd<double, 3> pf_min(atm->scattering_moment_wrt_iv(wmin[spec_index], spec_index));
-    ArrayAd<double, 3> pf_max(atm->scattering_moment_wrt_iv(wmax[spec_index], spec_index));
+    ArrayAd<double, 3> pf_min(atm->phase_function_moments_wrt_rt(wmin[spec_index], spec_index));
+    ArrayAd<double, 3> pf_max(atm->phase_function_moments_wrt_rt(wmax[spec_index], spec_index));
    
     setup_z_matrix_interpol(wmin[spec_index], pf_min, wmax[spec_index], pf_max);
 }
 
-ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
+ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
     ArrayAd<double, 2> zmat;
 
     // If we aren't passed in intermediate variables to use by the LSI,
     // then we can use our interpolated value.
-    if(Iv.rows() == 0) {
+    if(!Opt_prop) {
         zmat.value().reference((*zmat_interpolate)(Wn));
 
         if(l_zmat_interpolate) {
             zmat.jacobian().reference((*l_zmat_interpolate)(Wn));
         }
     } else {
-        ArrayAd<double, 3> pf(atm->scattering_moment_wrt_iv(Wn, Spec_index, Iv));
+        ArrayAd<double, 3> pf(Opt_prop->total_phase_function_moments());
         zmat.reference(driver->z_matrix(pf));
     }
 
     return zmat;
 }
 
-void LRadRt::apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stokes, const Array<double, 3>& jac_atm, const Array<double, 2>& jac_surf, const ArrayAd<double, 2>& Iv) const
+void LRadRt::apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stokes, const Array<double, 3>& jac_atm, const Array<double, 2>& jac_surf, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
     //-----------------------------------------------------------------------
     /// To speed up the calculation, the Atmosphere Jacobian was
@@ -288,14 +288,14 @@ void LRadRt::apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stok
 
     Array<double, 3> jac_iv(0, 0, 0);
 
-    if(Iv.rows() == 0) {
-        ArrayAd<double, 2> t(atm->intermediate_variable(Wn, Spec_index));
+    if(!Opt_prop) {
+        Array<double, 3> inter_jac(atm->intermediate_jacobian(Wn, Spec_index));
 
-        if(!t.is_constant()) {
-            jac_iv.reference(t.jacobian());
+        if(inter_jac.cols() > 0) {
+            jac_iv.reference(inter_jac);
         }
-    } else if(!Iv.is_constant()) {
-        jac_iv.reference(Iv.jacobian());
+    } else if(Opt_prop->intermediate_jacobian().cols() > 0) {
+        jac_iv.reference(Opt_prop->intermediate_jacobian());
     }
 
     if (stokes.number_variable() != jac_iv.depth()) {
@@ -327,7 +327,7 @@ void LRadRt::apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stok
 
 // See base class for description of this.
 blitz::Array<double, 1> LRadRt::stokes_single_wn
-(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
+(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
     update_altitude(Spec_index);
 
@@ -335,12 +335,12 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
 
     Array<double, 1> tau;
     Array<double, 1> omega;
-    if(Iv.rows() == 0) {
-        tau.reference(atm->optical_depth_wrt_iv(Wn, Spec_index).value());
-        omega.reference(atm->single_scattering_albedo_wrt_iv(Wn, Spec_index).value());
+    if(!Opt_prop) {
+        tau.reference(atm->optical_depth_wrt_rt(Wn, Spec_index).value());
+        omega.reference(atm->single_scattering_albedo_wrt_rt(Wn, Spec_index).value());
     } else {
-        tau.reference(atm->optical_depth_wrt_iv(Wn, Spec_index, Iv).value());
-        omega.reference(atm->single_scattering_albedo_wrt_iv(Wn, Spec_index, Iv).value());
+        tau.reference(Opt_prop->total_optical_depth().value());
+        omega.reference(Opt_prop->total_single_scattering_albedo().value());
     }
 
     Array<double, 3> pf(0, 0, 0);
@@ -350,12 +350,10 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
         int nscat = (do_second_order ? -1 : 1);
         int nmom = 2 * number_stream();
 
-        if(Iv.rows() == 0)
-            pf.reference(atm->scattering_moment_wrt_iv(Wn, Spec_index, nmom,
-                            nscat).value());
+        if(!Opt_prop)
+            pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, nmom, nscat).value());
         else
-            pf.reference(atm->scattering_moment_wrt_iv(Wn, Spec_index, Iv, nmom,
-                            nscat).value());
+            pf.reference(Opt_prop->total_phase_function_moments(nmom, nscat).value());
     } 
 
     // For second order corrections, we need all the scattering
@@ -364,7 +362,7 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
     // would be to just get the full scattering matrix each time - but
     // this turns out to be a bit of a bottle neck so it is worth the
     // more complicated logic to only get what we need.
-    Array<double, 2> zmat = get_z_matrix(Wn, Spec_index, Iv).value();
+    Array<double, 2> zmat = get_z_matrix(Wn, Spec_index, Opt_prop).value();
 
     driver->setup_optical_inputs(tau, omega, pf, zmat);
 
@@ -390,7 +388,7 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
     // We either are correcting a multi-scatter RT code, or just doing a
     // single scatter alone.
     if(rt) {
-        Array<double, 1> t(rt->stokes_single_wn(Wn, Spec_index, Iv));
+        Array<double, 1> t(rt->stokes_single_wn(Wn, Spec_index, Opt_prop));
 
         for(int i = 0; i < number_stokes(); ++i) {
             stokes(i) = stokes(i) + t(i);
@@ -402,7 +400,7 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
 
 // See base class for description of this.
 ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
-(double Wn, int Spec_index, const ArrayAd<double, 2>& Iv) const
+(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
     update_altitude(Spec_index);
 
@@ -412,20 +410,20 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
     ArrayAd<double, 1> omega;
     Array<double, 3> jac_iv(0, 0, 0);
 
-    if(Iv.rows() == 0) {
-        tau.reference(atm->optical_depth_wrt_iv(Wn, Spec_index));
-        omega.reference(atm->single_scattering_albedo_wrt_iv(Wn, Spec_index));
-        ArrayAd<double, 2> t(atm->intermediate_variable(Wn, Spec_index));
+    if(!Opt_prop) {
+        tau.reference(atm->optical_depth_wrt_rt(Wn, Spec_index));
+        omega.reference(atm->single_scattering_albedo_wrt_rt(Wn, Spec_index));
+        Array<double, 3> inter_jac(atm->intermediate_jacobian(Wn, Spec_index));
 
-        if(!t.is_constant()) {
-            jac_iv.reference(t.jacobian());
+        if(inter_jac.cols() > 0) {
+            jac_iv.reference(inter_jac);
         }
     } else {
-        tau.reference(atm->optical_depth_wrt_iv(Wn, Spec_index, Iv));
-        omega.reference(atm->single_scattering_albedo_wrt_iv(Wn, Spec_index, Iv));
+        tau.reference(Opt_prop->total_optical_depth());
+        omega.reference(Opt_prop->total_single_scattering_albedo());
 
-        if(!Iv.is_constant()) {
-            jac_iv.reference(Iv.jacobian());
+        if(Opt_prop->intermediate_jacobian().cols() > 0) {
+            jac_iv.reference(Opt_prop->intermediate_jacobian());
         }
     }
 
@@ -436,12 +434,11 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
         int nscat = (do_second_order ? -1 : 1);
         int nmom = 2 * number_stream();
 
-        if(Iv.rows() == 0)
-            pf.reference(atm->scattering_moment_wrt_iv(Wn, Spec_index, nmom,
-                            nscat));
-        else
-            pf.reference(atm->scattering_moment_wrt_iv(Wn, Spec_index, Iv, nmom,
-                            nscat));
+        if(!Opt_prop) {
+            pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, nmom, nscat));
+        } else {
+            pf.reference(Opt_prop->total_phase_function_moments(nmom, nscat));
+        }
     } 
 
     // For second order corrections, we need all the scattering
@@ -450,7 +447,7 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
     // would be to just get the full scattering matrix each time - but
     // this turns out to be a bit of a bottle neck so it is worth the
     // more complicated logic to only get what we need.
-    ArrayAd<double, 2> zmat = get_z_matrix(Wn, Spec_index, Iv);
+    ArrayAd<double, 2> zmat = get_z_matrix(Wn, Spec_index, Opt_prop);
 
     driver->setup_optical_inputs(tau.value(), omega.value(), pf.value(), zmat.value());
 
@@ -476,12 +473,12 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
     ArrayAd<double, 1> stokes(driver->stokes().shape(), jac_iv.depth());
     stokes.value() = driver->stokes();
 
-    apply_jacobians(Wn, Spec_index, stokes, driver->atmospheric_jacobian(), driver->surface_jacobian(), Iv);
+    apply_jacobians(Wn, Spec_index, stokes, driver->atmospheric_jacobian(), driver->surface_jacobian(), Opt_prop);
 
     // We either are correcting a multi-scatter RT code, or just doing a
     // single scatter alone.
     if(rt) {
-        ArrayAd<double, 1> t(rt->stokes_and_jacobian_single_wn(Wn, Spec_index, Iv));
+        ArrayAd<double, 1> t(rt->stokes_and_jacobian_single_wn(Wn, Spec_index, Opt_prop));
 
         for(int i = 0; i < number_stokes(); ++i) {
             stokes(i) = stokes(i) + t(i);

@@ -253,6 +253,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(AbscoAer);
   REGISTER_LUA_LIST(AbsorberAbsco);
   REGISTER_LUA_LIST(AtmosphereStandard);
+  REGISTER_LUA_LIST(AtmosphereLegacy);
   REGISTER_LUA_LIST(LidortRt);
   REGISTER_LUA_LIST(SpectralWindowRange);
   REGISTER_LUA_LIST(LRadRt);

@@ -44,8 +44,8 @@ RtAtmosphere::optical_depth_wrt_state_vector(double wn, int spec_index) const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
   Range ra(Range::all());
-  ArrayAd<double, 1> od(optical_depth_wrt_iv(wn, spec_index));
-  Array<double, 3> ivjac(intermediate_variable(wn, spec_index).jacobian());
+  ArrayAd<double, 1> od(optical_depth_wrt_rt(wn, spec_index));
+  Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 1> res(od.rows(), ivjac.depth());
   res.value() = od.value();
   for(int i = 0; i < res.rows(); ++i)
@@ -74,8 +74,8 @@ RtAtmosphere::single_scattering_albedo_wrt_state_vector
 {
   firstIndex i1; secondIndex i2; thirdIndex i3;
   Range ra(Range::all());
-  ArrayAd<double, 1> ss(single_scattering_albedo_wrt_iv(wn, spec_index));
-  Array<double, 3> ivjac(intermediate_variable(wn, spec_index).jacobian());
+  ArrayAd<double, 1> ss(single_scattering_albedo_wrt_rt(wn, spec_index));
+  Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 1> res(ss.rows(), ivjac.depth());
   res.value() = ss.value();
   for(int i = 0; i < res.rows(); ++i)
@@ -109,17 +109,19 @@ RtAtmosphere::single_scattering_albedo_wrt_state_vector
 ///         matrix elements
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 3>
-RtAtmosphere::scattering_moment_wrt_state_vector
+ArrayAd<double, 3> RtAtmosphere::phase_function_moments_wrt_state_vector
 (double wn, int spec_index, int nummom, int numscat) const
 {
   firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4; fifthIndex i5;
-  ArrayAd<double, 3> 
-    pf(scattering_moment_wrt_iv(wn, spec_index, nummom, numscat));
-  Array<double, 3> ivjac(intermediate_variable(wn, spec_index).jacobian());
+  ArrayAd<double, 3> pf(phase_function_moments_wrt_rt(wn, spec_index, nummom, numscat));
+  Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 3> res(pf.rows(), pf.cols(), pf.depth(), ivjac.depth());
   res.value() = pf.value();
   res.jacobian() = sum(pf.jacobian()(i1, i2, i3, i5) * ivjac(i2,i5, i4), i5);
   return res;
 }
 
+Array<double, 3> RtAtmosphere::intermediate_jacobian(double wn, int spec_index) const
+{
+    return optical_properties(wn, spec_index)->intermediate_jacobian();
+}

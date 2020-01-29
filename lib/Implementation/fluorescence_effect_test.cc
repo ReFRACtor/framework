@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE(timing)
   blitz::Array<double, 1> wn_arr(sd.data());
 
   for(int i = 0; i < wn_arr.rows(); i++) {
-    ArrayAd<double, 1> od = atm.optical_depth_wrt_iv(wn_arr(i), 0);
+    ArrayAd<double, 1> od = atm.optical_depth_wrt_rt(wn_arr(i), 0);
     if(i % 1000 == 0)
       std::cerr << "Done with " << i << "\n"
                 << atm.timer_info() << "\n";

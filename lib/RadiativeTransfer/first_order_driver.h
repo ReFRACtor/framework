@@ -4,7 +4,11 @@
 #include "spurr_driver.h"
 #include "first_order_interface.h"
 
+// Include BRDF driver interface from LIDORT driver
+#include "lidort_driver.h"
+
 /****************************************************************//**
+  Driver for optimized first order of scattering RT
  *******************************************************************/
 
 namespace FullPhysics {
@@ -15,6 +19,9 @@ public:
 
     FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments,
                      bool do_solar = true, bool do_thermal = false); 
+
+    int number_moment() const { return num_moments_; }
+    int number_stream() const { return num_streams_; }
 
     void set_plane_parallel() const;
     void set_pseudo_spherical() const;
@@ -39,7 +46,7 @@ public:
     void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
     const boost::shared_ptr<Fo_Ssgeometry_Master> geometry_interface() const { return geometry; }
-    const boost::shared_ptr<Fo_Scalarss_Rtcalcs_I> rt_interface() const { return fo_interface; }
+    const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
  
 private:
 
@@ -53,7 +60,10 @@ private:
 
     boost::shared_ptr<Fo_Ssgeometry_Master> geometry;
     boost::shared_ptr<Fo_Scalarss_Spherfuncs> legendre;
-    boost::shared_ptr<Fo_Scalarss_Rtcalcs_I> fo_interface;
+    boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface_;
+
+    // Specific implementation cast version of brdf_driver()
+    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver;
 };
 
 }

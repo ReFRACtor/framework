@@ -34,8 +34,7 @@ public:
 //-----------------------------------------------------------------------
 
   virtual int number_stream() const = 0;
-  virtual blitz::Array<double, 2> stokes(const SpectralDomain& Spec_domain,
-					 int Spec_index) const;
+  virtual blitz::Array<double, 2> stokes(const SpectralDomain& Spec_domain, int Spec_index) const;
   virtual ArrayAd<double, 2> stokes_and_jacobian
   (const SpectralDomain& Spec_domain, int Spec_index) const;
 
@@ -47,14 +46,14 @@ public:
 ///
 /// \param Wn Wavenumber to calculate for. This should be in cm^-1
 /// \param Spec_index The Spectral index
-/// \param Iv Optional intermediate variables to use, rather than
+/// \param Opt_prop Optional optical properties to use, rather than
 ///   calculating. 
 /// \return The set of stokes coefficients. This is
 ///      number_stokes() in size.
 //-----------------------------------------------------------------------
 
   virtual blitz::Array<double, 1> stokes_single_wn
-  (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv = ArrayAd<double, 2>()) const = 0;
+  (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const = 0;
 
 //-----------------------------------------------------------------------
 /// Calculate stokes vector and Jacobian for the given wavenumber. You can
@@ -64,14 +63,14 @@ public:
 ///
 /// \param Wn Wavenumber to calculate for. This should be in cm^-1
 /// \param Spec_index The Spectral index
-/// \param Iv Optional intermediate variables to use, rather than
+/// \param Opt_prop Optional optical properties to use, rather than
 ///   calculating.
 /// \return The set of stokes coefficients. This is
 ///      number_stokes() in size.
 //-----------------------------------------------------------------------
 
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn
-  (double Wn, int Spec_index, const ArrayAd<double, 2>& Iv = ArrayAd<double, 2>()) const = 0;
+  (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const = 0;
   virtual void print(std::ostream& Os, bool Short_form = false) const;
 
   const boost::shared_ptr<RtAtmosphere>& atmosphere() const

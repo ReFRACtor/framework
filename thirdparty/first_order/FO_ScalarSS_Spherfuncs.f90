@@ -22,14 +22,15 @@
 
 ! ###########################################################
 ! #                                                         #
-! #     FIRST-ORDER SCALAR MODEL (EXACT SINGLE SCATTERING)  #
+! #                 FIRST-ORDER MODEL                       #
+! #     (EXACT SINGLE-SCATTERING and DIRECT-THERMAL)        #
 ! #                                                         #
-! #  This Version :   1.3 F90                               #
-! #  Release Date :   March 2013                            #
+! #  This Version :   1.4 F90                               #
+! #  Release Date :   August 2013                           #
 ! #                                                         #
 ! #   Version 1.1,  13 February 2012, First Code            #
 ! #   Version 1.2,  01 June     2012, Modularization        #
-! #   Version 1.3a, 29 October  2012, Multiple geometries   #
+! #   Version 1.3a, 29 October  2012, Obsgeom Multi-geom.   #
 ! #   Version 1.3b, 24 January  2013, BRDF/SL Supplements   #
 ! #   Version 1.4,  31 July     2013, Lattice Multi-geom.   #
 ! #                                                         #

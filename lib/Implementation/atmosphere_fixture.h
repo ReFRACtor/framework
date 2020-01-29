@@ -30,6 +30,9 @@ public:
   /// Pressure levels we have input data on.
   boost::shared_ptr<PressureLevelInput> press_level;
 
+  /// Helper routine for initializing an Atmosphere in such a way that jacobians are set up and linked to a StateVector
+  void attach_atmosphere_to_sv(boost::shared_ptr<AtmosphereStandard>& atmosphere, boost::shared_ptr<StateVector>& state_vector);
+
   void set_surface_pressure(double x);
  
   /// Statevector that atm is attached as an observer

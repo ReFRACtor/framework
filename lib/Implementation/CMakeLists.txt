@@ -18,6 +18,7 @@ set(DIR_SOURCES
     altitude_hydrostatic.cc
     apply_instrument_units.cc
     atmosphere_standard.cc
+    atmosphere_legacy.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
@@ -82,6 +83,8 @@ set(DIR_SOURCES
     nlls_solver_lm.cc
     nonuniform_spectrum_sampling.cc
     observation_level_1b.cc
+    optical_properties_wrt_input.cc
+    optical_properties_wrt_rt.cc
     output_hdf.cc
     output_hdf_iteration.cc
     planck.F90
@@ -189,6 +192,7 @@ set(TEST_SOURCES
     nlls_solver_lm_test.cc
     nonuniform_spectrum_sampling_test.cc
     observation_level_1b_test.cc
+    optical_properties_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     planck_test.cc
