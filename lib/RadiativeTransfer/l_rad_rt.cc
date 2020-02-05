@@ -492,15 +492,33 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
 void LRadRt::print(std::ostream& Os, bool Short_form) const
 {
     OstreamPad opad(Os, "  ");
-    Os << "LRadRt:\n"
-       << "  Solar zenith angle: \n";
+    Os << "LRadRt:\n";
+
+    opad << "Solar zenith angle:\n";
     opad << sza << "\n";
     opad.strict_sync();
-    Os << "  Zenith angle: \n";
+
+    opad << "Zenith angle:\n";
     opad << zen << "\n";
     opad.strict_sync();
-    Os << "  Azimuth angle: \n";
+
+    opad << "Azimuth angle:\n";
     opad << azm << "\n";
+    opad.strict_sync();
+
+    opad << "Use first order scattering calculation: ";
+    opad << (use_first_order_scatt_calc ? "True" : "False") << "\n\n";
+    opad.strict_sync();
+
+    opad << "Perform second order calculation: ";
+    opad << (do_second_order ? "True" : "False") << "\n\n";
+    opad.strict_sync();
+
+    opad << "Z matrix interp wavenumber ranges:\n";
+    for(int wn_idx = 0; wn_idx < wmin.size(); wn_idx++) {
+        opad << "  " << wmin[wn_idx] << ", " << wmax[wn_idx] << "\n";
+    }
+    opad << "\n";
     opad.strict_sync();
 
     // Output print from parent class

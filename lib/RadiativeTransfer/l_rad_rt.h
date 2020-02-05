@@ -68,12 +68,14 @@ public:
     /// becomes stale when the Atmosphere is changed, so we observe atm
     /// and mark the cache when it changes. 
     //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
+    void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
   
     virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
     virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   
     const boost::shared_ptr<RadiativeTransferSingleWn>& radiative_transfer() const { return rt; }
+
+    const boost::shared_ptr<LRadDriver>& l_rad_driver() const { return driver; };
 
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 

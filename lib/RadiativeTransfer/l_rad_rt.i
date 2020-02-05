@@ -11,6 +11,7 @@
 %import "spectral_bound.i"
 %import "rt_atmosphere.i"
 %import "array_ad.i"
+%import "l_rad_driver.i"
 %fp_shared_ptr(FullPhysics::LRadRt);
 
 namespace FullPhysics {
@@ -45,6 +46,8 @@ public:
   virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   %python_attribute(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
+  %python_attribute(l_rad_driver, boost::shared_ptr<LRadDriver>)
+  ArrayAd<double, 2> interp_z_matrix(double Wn);
 };
 }
 

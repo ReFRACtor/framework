@@ -389,8 +389,7 @@ void LRadDriver::calculate_second_order()
     int nscatt = pf_f.depth();
     int nlayer = tau_f.rows();
 
-    // pf_f might have less than 2 * nstream moments if this is a rayleigh only case
-    int nmom = min(2 * nstream, pf_f.rows());
+    int nmom = 2 * nstream;
     int nspars = surface_param_f.rows();
     int natm_jac = jac_atm_f.depth();
 
@@ -412,11 +411,22 @@ void LRadDriver::calculate_second_order()
                              ColumnMajorArray<2>());
 
     // Use only the parts of the phase function expected by l_rad_second
-    // for coeffs variables. We need to use a to_fortran command here
-    // to ensure we have an array with column first ordering that is also 
-    // contiguous. Using a reference to pf will not work.
-    Array<double, 3> coefs_f(to_fortran(pf_f(Range(0, nmom - 1), ra, ra)));
-    Array<double, 4> l_coefs_f(to_fortran(l_pf_f(Range(0, nmom - 1), ra, ra)));
+    // for coeffs variables. 
+    // But pf_f might have less than 2 * nstream moments if this is a rayleigh only 
+    // case. So ensure we don't try and read from pf_f beyond the end of the array.
+    // Initialize any remaining entries to zero.
+    int num_pf_copy = min(nmom, pf_f.rows());
+
+    Array<double, 3> coefs_f(nmom, pf_f.cols(), pf_f.depth(), ColumnMajorArray<3>());
+    coefs_f(Range(0, num_pf_copy-1), ra, ra) = pf_f;
+
+    Array<double, 4> l_coefs_f(nmom, l_pf_f.rows(), l_pf_f.depth(), l_pf_f.extent(fourthDim), ColumnMajorArray<4>());
+    l_coefs_f(Range(0, num_pf_copy), ra, ra, ra) = l_pf_f;
+
+    if(num_pf_copy < nmom) {
+        coefs_f(Range(num_pf_copy, nmom-1), ra, ra) = 0.0;
+        l_coefs_f(Range(num_pf_copy, nmom-1), ra, ra, ra) = 0.0;
+    }
 
     l_rad_second_driver(&l_rad_struct, &nlayer, &natm_jac, &nstokes,
                         &nmom, &nscatt,
