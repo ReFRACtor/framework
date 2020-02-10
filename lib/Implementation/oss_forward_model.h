@@ -83,8 +83,7 @@ public:
       int nlevu = 65;
       int n_SfGrd = 501;
       float minExtCld = 999;
-      /* TODO: Make private data member */
-      float WvnOSS[max_chans];
+      float cWvnOSS[max_chans];
 
       cppinitwrapper(nInMol, lenG, nameGas, nInJac, lenJ, nameJacob,
            sel_file.c_str(), sel_file_sz,
@@ -93,11 +92,19 @@ public:
            fix_file.c_str(), fix_file_sz,
            ch_sel_file.c_str(), ch_sel_file_sz,
            nlevu, n_SfGrd, minExtCld,
-           nchanOSS, WvnOSS, max_chans);
+           nchanOSS, cWvnOSS, max_chans);
+
+      center_wavelength.value.resize(max_chans);
+      center_wavelength.units =units::inv_cm;
+      for (int i = 0; i < nchanOSS; i++) {
+        center_wavelength(i) = static_cast<double>(cWvnOSS[i]);
+      }
     }
+
     virtual int num_channels() const { return 1; }
+
     virtual SpectralDomain spectral_domain(int Spec_index) const {
-      return SpectralDomain();
+      return SpectralDomain(center_wavelength);
     }
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const {
       return SpectralDomain::PREFER_WAVENUMBER;
@@ -231,9 +238,12 @@ public:
       xkTskin.data(), xkOutGas.data(), xkEm.data(),
       xkRf.data(), xkCldlnPres.data(), xkCldlnExt.data());
 
-      SpectralDomain spec_domain;
-      SpectralRange spec_range;
-      return Spectrum(spec_domain, spec_range);
+      Array<double, 1> rad(nchanOSS);
+      for (int i = 0; i < nchanOSS; i++) {
+        rad(i) = static_cast<double>(y(i));
+      }
+
+      return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
     }
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 private:
@@ -251,6 +261,7 @@ private:
 
     int nchanOSS;
     int max_chans;
+    ArrayWithUnit<double, 1> center_wavelength;
 };
 }
 #endif
