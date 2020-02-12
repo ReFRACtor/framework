@@ -43,6 +43,7 @@ set(DIR_SOURCES
     radiative_transfer.cc
     radiative_transfer_fixed_stokes_coefficient.cc
     radiative_transfer_single_wn.cc
+    raman_sioris.cc
     raman_sioris.f90
     spurr_driver.cc
     spurr_rt.cc

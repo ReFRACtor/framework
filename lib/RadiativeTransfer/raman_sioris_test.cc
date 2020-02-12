@@ -2,10 +2,7 @@
 #include "unit_test_support.h"
 
 #include "hdf_file.h"
-
-extern "C" {
-    void get_raman(int *nz, int *nw, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, double *ts, double *rhos, double *wave, double *sol, double *taus, double *rspec, bool *problems);
-}
+#include "raman_sioris.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -30,22 +27,18 @@ BOOST_AUTO_TEST_CASE(offline_data)
     Array<double, 1> wave = offline_data.read_field<double, 1>("/wave");
     Array<double, 1> sol = offline_data.read_field<double, 1>("/sol");
 
-    Array<double, 2> taus_c = offline_data.read_field<double, 2>("/taus");
-
-    // Convert to column major ordering
-    Array<double, 2> taus_f(to_fortran(taus_c));
+    Array<double, 2> taus = offline_data.read_field<double, 2>("/taus");
 
     bool do_upwelling = true;
     double albedo = 0.5;
 
-    Array<double, 1> rspec_calc(nw, blitz::ColumnMajorArray<1>());
-    bool problems = false;
+    SpectralDomain wave_sd = SpectralDomain(wave, units::nm);
 
-    get_raman(&nz, &nw, &sza, &vza, &sca, &albedo, &do_upwelling, ts.dataFirst(), rhos.dataFirst(), wave.dataFirst(), sol.dataFirst(), taus_f.dataFirst(), rspec_calc.dataFirst(), &problems);
+    Array<double, 1> rspec_calc = FullPhysics::compute_raman_sioris(sza, vza, sca, albedo, do_upwelling, ts, rhos, wave_sd, sol, taus);
 
     Array<double, 1> rspec_expt = offline_data.read_field<double, 1>("rspec");
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(rspec_expt, rspec_expt, 1e-16);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(rspec_expt, rspec_calc, 1e-6);
 
 }
 
