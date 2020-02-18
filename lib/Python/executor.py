@@ -21,14 +21,18 @@ class StrategyExecutor(object):
             logger.debug("Loading configuration from {}".format(config_filename))
             self.config_module = load_config_module(config_filename)
             self._config_inst = None
+
         else:
             self._config_inst = config_inst
+
         if strategy_filename is not None:
             logger.debug("Loading strategy from {}".format(strategy_filename))
             strategy_module = load_config_module(strategy_filename)
             self.strategy_list = find_strategy_function(strategy_module)()
+
         elif strategy_list is not None:
             self.strategy_list = strategy_list
+
         else:
             self.strategy_list = [ {} ]
 
@@ -44,10 +48,11 @@ class StrategyExecutor(object):
 
     def config_instance(self, **strategy_keywords):
         if(self._config_inst):
+            logger.debug("Using configuration instance passed to executor")
             return self._config_inst
+
         logger.debug("Loading configuration")
-        return ConfigurationInterface.create_configuration_instance(self.config_module, **strategy_keywords)
-    
+        config_inst = ConfigurationInterface.create_configuration_instance(self.config_module, **strategy_keywords)
         logger.debug("Configuration processing complete")
 
         return config_inst
@@ -66,7 +71,7 @@ class StrategyExecutor(object):
 
     def run_forward_model(self, config_inst, step_index=None):
         config_inst.set_initial_guess()
-        config_inst.attach_output(step_index)
+        config_inst.attach_output(self.output, step_index)
         config_inst.radiance_all()
 
     def update_covariance(self, config_inst):

@@ -177,8 +177,10 @@ class ConfigurationCreator(ConfigurationInterface):
         '''Attach output for the given step index'''
         if output is None:
             return
+
         rad_out = ForwardModelRadianceOutput(output, step_index, self.solver)
         self.forward_model.add_observer_and_keep_reference(rad_out)
+
         if(self.l1b is not None and self.solver is not None):
             obs_out = ObservationRadianceOutput(output, step_index, self.l1b, self.forward_model)
             self.solver.add_observer_and_keep_reference(obs_out)
@@ -190,9 +192,5 @@ class ConfigurationCreator(ConfigurationInterface):
             sv_out = StateVectorOutputRetrieval(output, step_index, self.state_vector)
             self.solver.add_observer_and_keep_reference(sv_out)
 
-        elif self.state_vector is not None and self.solver is not None:
+        elif self.state_vector is not None and self.solver is None:
             sv_out = StateVectorOutputSimulation(output, step_index, self.state_vector)
- 
-    
-
-        
