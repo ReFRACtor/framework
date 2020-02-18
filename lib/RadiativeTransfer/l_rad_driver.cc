@@ -418,10 +418,10 @@ void LRadDriver::calculate_second_order()
     int num_pf_copy = min(nmom, pf_f.rows());
 
     Array<double, 3> coefs_f(nmom, pf_f.cols(), pf_f.depth(), ColumnMajorArray<3>());
-    coefs_f(Range(0, num_pf_copy-1), ra, ra) = pf_f;
+    coefs_f(Range(0, num_pf_copy-1), ra, ra) = pf_f(Range(0, num_pf_copy-1), ra, ra);
 
     Array<double, 4> l_coefs_f(nmom, l_pf_f.rows(), l_pf_f.depth(), l_pf_f.extent(fourthDim), ColumnMajorArray<4>());
-    l_coefs_f(Range(0, num_pf_copy), ra, ra, ra) = l_pf_f;
+    l_coefs_f(Range(0, num_pf_copy-1), ra, ra, ra) = l_pf_f(Range(0, num_pf_copy-1), ra, ra, ra);
 
     if(num_pf_copy < nmom) {
         coefs_f(Range(num_pf_copy, nmom-1), ra, ra) = 0.0;
