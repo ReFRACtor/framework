@@ -47,8 +47,8 @@ public:
   %sub_state_virtual_func(SpectrumEffect);
 protected:
   SpectrumEffectImpBase();
-  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, 
-			const blitz::Array<bool, 1>& Used_flag);
+  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, const blitz::Array<bool, 1>& Used_flag);
+  SpectrumEffectImpBase(double Coeff, bool Used_flag);
 };
 }
 
