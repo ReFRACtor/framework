@@ -50,6 +50,33 @@ class SolarReferenceSpectrumAsciiFile(Creator):
 
         return solar
 
+class SolarReferenceSpectrum(Creator):
+    """Create a solar reference spectrum where all bands are specified in one file where we
+    rely upon interpolation to those values to get the appropriate values"""
+
+    doppler = param.Iterable(rf.SolarDopplerShift, required=False)
+    grid = param.ArrayWithUnit(dims=1)
+    irradiance = param.ArrayWithUnit(dims=1)
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        doppler_shifts = self.doppler()
+
+        if doppler_shifts is None:
+            doppler_shifts = [None] * self.num_channels()
+
+        spec_domain = rf.SpectralDomain(self.grid())
+        spec_range = rf.SpectralRange(self.irradiance())
+        solar_spec = rf.Spectrum(spec_domain, spec_range)
+
+        solar = []
+        for doppler in doppler_shifts:
+            ref_spec = rf.SolarReferenceSpectrum(solar_spec, doppler)
+            solar.append(ref_spec)
+
+        return solar
+
 class SolarDopplerShiftPolynomial(Creator):
 
     time = param.Iterable(rf.Time)

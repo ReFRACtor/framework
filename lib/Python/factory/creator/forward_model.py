@@ -190,6 +190,38 @@ class FluorescenceEffect(CreatorFlaggedValue):
 
           return fluoresence
 
+class RamanSiorisEffect(CreatorFlaggedValue):
+
+    albedo = param.Array(dims=1)
+
+    solar_zenith = param.ArrayWithUnit(dims=1)
+    observation_zenith = param.ArrayWithUnit(dims=1)
+    relative_azimuth = param.ArrayWithUnit(dims=1)
+    atmosphere = param.InstanceOf(rf.AtmosphereStandard)
+    solar_model = param.Choice(param.ObjectVector("vector_spectrum_effect"), param.Iterable(rf.SolarModel))
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        scale_factor = self.value()
+        used_flag = self.retrieval_flag()
+
+        albedo = self.albedo()
+
+        solar_zenith = self.solar_zenith()
+        obs_zenith = self.observation_zenith()
+        rel_azimuth = self.relative_azimuth()
+        atmosphere = self.atmosphere()
+        solar_model = self.solar_model()
+
+        raman_effect = []
+        for chan_index in range(self.num_channels()):
+            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], bool(used_flag[chan_index]), chan_index,
+                                 solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
+                                 atmosphere, solar_model[chan_index], albedo[chan_index], True) )
+
+        return raman_effect
+
 class ForwardModel(Creator):
 
     instrument = param.InstanceOf(rf.Instrument)
