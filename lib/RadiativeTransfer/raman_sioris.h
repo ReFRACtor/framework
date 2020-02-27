@@ -9,6 +9,7 @@
 #include "atmosphere_standard.h"
 #include "solar_model.h"
 #include "absorber_absco.h"
+#include "forward_model_spectral_grid.h"
 
 namespace FullPhysics {
 

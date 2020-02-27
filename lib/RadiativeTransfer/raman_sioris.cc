@@ -171,8 +171,14 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     Array<double, 1> dry_air_density = absorber_->dry_air_molecular_density_layer().value.value();
     dry_air_density *= 1e-4;
 
+    // Compute a padded grid due to requirements of the fortran code
+    // Pad 10% of the size of the input grid
+    double pad_amount = 
+        0.10 * (Spec.spectral_domain().data()(Spec.spectral_domain().rows()-1) - Spec.spectral_domain().data()(0));
+    SpectralDomain padded_grid = Spec.spectral_domain().add_padding(DoubleWithUnit(pad_amount, units::nm));
+
     // Compute total optical depth, hopefully use any caching that atmosphere class provides
-    Array<double, 1> wn_grid = Spec.spectral_domain().wavenumber();
+    Array<double, 1> wn_grid = padded_grid.wavenumber();
     Array<double, 2> total_optical_depth(wn_grid.rows(), temperature_layers_.rows());
 
     for(int wn_idx = 0; wn_idx < wn_grid.rows(); wn_idx++) {
@@ -180,11 +186,11 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     }
     
     // Convert to the expect solar spectrum units Ph / s / cm^2 / nm^1
-    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(Spec.spectral_domain()).spectral_range().convert(Unit("Ph s^-1 cm^-2 nm^-1")).data();
+    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(padded_grid).spectral_range().convert(Unit("Ph s^-1 cm^-2 nm^-1")).data();
 
     // Compute raman spectrum
-    Array<double, 1> raman_spec(wn_grid.rows());
-    raman_spec = compute_raman_sioris(solar_zenith_, obs_zenith_, scattering_angle_, albedo_, do_upwelling_, temperature_layers_, dry_air_density, Spec.spectral_domain(), solar_spectrum, total_optical_depth);
+    Array<double, 1> raman_spec(padded_grid.data().rows());
+    raman_spec = compute_raman_sioris(solar_zenith_, obs_zenith_, scattering_angle_, albedo_, do_upwelling_, temperature_layers_, dry_air_density, padded_grid, solar_spectrum, total_optical_depth);
 
     // Load scale factor
     AutoDerivative<double> scale_factor = coefficient()(0);
@@ -192,7 +198,15 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     // Apply raman scattering scaling and compute jacobian through a perturbation
     ArrayAd<double, 1> spec_rad = Spec.spectral_range().data_ad();
 
-    Array<double, 1> raman_applied_rad(spec_rad.value() * (raman_spec * scale_factor.value() + 1.0));
+    // Create spectrum with raman effect applied, index into padded raman scattering only for the points to be returned
+    Array<double, 1> raman_applied_rad(spec_rad.rows());
+    for(int pad_idx = 0; pad_idx < padded_grid.data().rows(); pad_idx++) {
+        int out_idx = padded_grid.sample_index()(pad_idx);
+        if (out_idx >= 0) {
+            raman_applied_rad(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * scale_factor.value() + 1.0);
+        }
+    }
+
     //Array<double, 1> raman_applied_rad_pert = spec_rad.data() * (raman_spec * (scale_factor.value() + perturbation_) + 1.0);
 
     spec_rad.value() = raman_applied_rad;
