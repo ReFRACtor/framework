@@ -30,5 +30,46 @@ BOOST_AUTO_TEST_CASE(basic_test)
   BOOST_CHECK_MATRIX_CLOSE(wl.wavelength(units::nm), wavelength * 1e3);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_CASE(padding)
+{
+    Array<double, 1> expt_grid_fwd(90);
+    double nm = 300;
+    double spacing = 0.1;
+    int num_jac = 5;
 
+    for(int idx = 0; idx < expt_grid_fwd.rows(); idx++) {
+        expt_grid_fwd(idx) = nm;
+        nm += spacing;
+    }
+
+    Array<double, 2> expt_jac(90, num_jac);
+    expt_jac(Range::all(), Range::all()) = 0.0;
+    expt_jac(Range(30, 59), Range::all()) = 1.0;
+
+    // Check increasing order
+    ArrayAd<double, 1> inp_grid_fwd( expt_grid_fwd(Range(30, 59)), num_jac );
+    inp_grid_fwd.jacobian() = 1.0;
+
+    SpectralDomain inp_sd_fwd = SpectralDomain(inp_grid_fwd, units::nm);
+
+    SpectralDomain padded_fwd = inp_sd_fwd.add_padding(DoubleWithUnit(expt_grid_fwd(30) - expt_grid_fwd(0), units::nm));
+
+    BOOST_CHECK_MATRIX_CLOSE(expt_grid_fwd, padded_fwd.data());
+    BOOST_CHECK_MATRIX_CLOSE(expt_jac, padded_fwd.data_ad().jacobian());
+
+    // Check decreasing order
+    Array<double, 1> expt_grid_rev = expt_grid_fwd.reverse(firstDim);
+
+    ArrayAd<double, 1> inp_grid_rev( expt_grid_rev(Range(30, 59)), num_jac );
+    inp_grid_rev.jacobian() = 1.0;
+
+    SpectralDomain inp_sd_rev = SpectralDomain(inp_grid_rev, units::nm);
+
+    SpectralDomain padded_sd = inp_sd_rev.add_padding(DoubleWithUnit(expt_grid_rev(0) - expt_grid_rev(30), units::nm));
+
+    BOOST_CHECK_MATRIX_CLOSE(expt_grid_rev, padded_sd.data());
+    BOOST_CHECK_MATRIX_CLOSE(expt_jac, padded_fwd.data_ad().jacobian());
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()

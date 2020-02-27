@@ -92,7 +92,14 @@ public:
 //-----------------------------------------------------------------------
 
   SpectralDomain clone() const;
+  
+//-----------------------------------------------------------------------
+/// Helper methods to give the size of the data
+//-----------------------------------------------------------------------
 
+  int rows() const { return data_.rows(); }
+  int size() const { return data_.rows(); }
+ 
 //-----------------------------------------------------------------------
 /// Indicate if this class prefers wavelength or wavenumber. This is
 /// what data() is.
@@ -108,6 +115,7 @@ public:
   blitz::Array<double, 1> wavenumber(const Unit& Units = units::inv_cm) const;
   blitz::Array<double, 1> wavelength(const Unit& Units = units::micron) const;
   ArrayWithUnit<double, 1> photon_to_radiance_factor() const;
+  SpectralDomain add_padding(const DoubleWithUnit& padding);
   void print(std::ostream& Os) const { Os << "SpectralDomain";}
 
   /// We can define != in terms of this operator.

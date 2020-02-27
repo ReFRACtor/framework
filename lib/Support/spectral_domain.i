@@ -9,6 +9,7 @@
 %import "array_ad.i"
 %import "unit.i"
 %import "array_with_unit.i"
+%import "double_with_unit.i"
 
 %fp_shared_ptr(FullPhysics::SpectralDomain)
 namespace FullPhysics {
@@ -39,6 +40,8 @@ public:
     %python_attribute(sample_index, blitz::Array<int, 1>)
     %python_attribute(units, Unit);
     %python_attribute(type_preference, TypePreference);
+    %python_attribute(rows, int);
+    %python_attribute(size, int);
     blitz::Array<double, 1> convert_wave(const Unit& Units) const;
     blitz::Array<double, 1> convert_wave(const std::string& Units) const;
     blitz::Array<double, 1> wavenumber(const Unit& Units = units::inv_cm) const;
@@ -46,6 +49,7 @@ public:
     blitz::Array<double, 1> wavelength(const Unit& Units = units::micron) const;
     blitz::Array<double, 1> wavelength(const std::string& Units) const;
     ArrayWithUnit<double, 1> photon_to_radiance_factor() const;
+    SpectralDomain add_padding(const DoubleWithUnit& padding);
     std::string print_to_string() const;
 };
 }
