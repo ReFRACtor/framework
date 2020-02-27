@@ -1,6 +1,7 @@
 #ifndef SWIG_TYPE_MAPPER_BASE_H
 #define SWIG_TYPE_MAPPER_BASE_H
 #include <map>
+#include <string>
 #include <exception>
 #include <stdexcept>
 #include <cstring>
