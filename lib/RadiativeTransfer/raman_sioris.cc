@@ -129,9 +129,10 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
                                      const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                                      const boost::shared_ptr<SolarModel>& solar_model,
                                      double albedo,
+                                     double padding_fraction,
                                      bool do_upwelling)
 : SpectrumEffectImpBase(scale_factor, used_flag),
-  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), do_upwelling_(do_upwelling)
+  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), padding_fraction_(padding_fraction), do_upwelling_(do_upwelling)
 {
     // Convert angles to degrees since these should not change
     solar_zenith_ = solar_zenith.convert(units::deg).value;
@@ -174,7 +175,7 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     // Compute a padded grid due to requirements of the fortran code
     // Pad 10% of the size of the input grid
     double pad_amount = 
-        0.10 * (Spec.spectral_domain().data()(Spec.spectral_domain().rows()-1) - Spec.spectral_domain().data()(0));
+        padding_fraction_ * (Spec.spectral_domain().data()(Spec.spectral_domain().rows()-1) - Spec.spectral_domain().data()(0));
     SpectralDomain padded_grid = Spec.spectral_domain().add_padding(DoubleWithUnit(pad_amount, units::nm));
 
     // Compute total optical depth, hopefully use any caching that atmosphere class provides
