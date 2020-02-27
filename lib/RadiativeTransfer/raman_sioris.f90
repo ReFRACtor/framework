@@ -485,7 +485,7 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
 
   IMPLICIT NONE
   INTEGER, PARAMETER        :: dp = KIND(1.0D0)
-  INTEGER, PARAMETER        :: maxpos=218, pixelno=6521
+  INTEGER, PARAMETER        :: maxpos=218
   REAL (KIND=dp), PARAMETER :: pi = 3.14159265358979_dp, O2mix= 0.20949858, &
        N2mix= 0.78079469, CO2mix=0.0003668  
   REAL (KIND=dp), PARAMETER :: c1=1.438769, NL=2.686763D19

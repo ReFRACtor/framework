@@ -1,13 +1,20 @@
 #include "unit.h"
 #include "unit_test_support.h"
+#include "configuration_fixture.h"
 
 #include "hdf_file.h"
 #include "raman_sioris.h"
 
+#include "standard_forward_model.h"
+#include "simple_fixed_spectrum_sampling.h"
+
+#include "default_constant.h"
+#include "absorber_absco.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(raman_sioris, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(raman_sioris, ConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(offline_data)
 {
@@ -39,6 +46,88 @@ BOOST_AUTO_TEST_CASE(offline_data)
     Array<double, 1> rspec_expt = offline_data.read_field<double, 1>("rspec");
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(rspec_expt, rspec_calc, 1e-6);
+
+}
+
+BOOST_AUTO_TEST_CASE(effect)
+{
+    int channel_idx = 0;
+    double scale_factor = 1.9;
+    bool used_flag = true;
+    double albedo = 1.0;
+
+    // Convert this so we can access ->spectrum_effect
+    boost::shared_ptr<StandardForwardModel> fm = boost::dynamic_pointer_cast<StandardForwardModel>(config_forward_model);
+
+    // This is highly dependent on the solar model being the SpectrumEffect at this index
+    boost::shared_ptr<SolarModel> solar_model = boost::dynamic_pointer_cast<SolarModel>(fm->spectrum_effect()[0][0]);
+
+    // Cast to the object we need
+    boost::shared_ptr<AtmosphereStandard> atm = boost::dynamic_pointer_cast<AtmosphereStandard>(config_atmosphere);
+
+    // Construct a rayleigh only atmosphere since we only need rayleigh scattering for Raman scattering
+    boost::shared_ptr<Constant> constant(new DefaultConstant());
+    boost::shared_ptr<AbsorberAbsco> absorber(
+            new AbsorberAbsco(std::vector<boost::shared_ptr<AbsorberVmr> >(),
+                              atm->pressure_ptr(), atm->temperature_ptr(), atm->altitude_ptr(), 
+                              std::vector<boost::shared_ptr<GasAbsorption> >(), constant));
+
+    boost::shared_ptr<AtmosphereStandard> atm_rayleigh(
+            new AtmosphereStandard(absorber, atm->pressure_ptr(), atm->temperature_ptr(), 
+                                   atm->relative_humidity_ptr(), atm->ground(), atm->altitude_ptr(), constant));
+
+    // Pull out angles we need
+    DoubleWithUnit solar_zenith = config_level_1b->solar_zenith(channel_idx);
+    DoubleWithUnit observation_zenith = config_level_1b->sounding_zenith(channel_idx);
+    DoubleWithUnit relative_azimuth = config_level_1b->relative_azimuth(channel_idx);
+
+    RamanSiorisEffect raman = RamanSiorisEffect(scale_factor, used_flag, 
+                                                channel_idx, 
+                                                solar_zenith, observation_zenith, relative_azimuth,
+                                                atm_rayleigh, solar_model, albedo);
+
+    ForwardModelSpectralGrid fm_spec_grid(config_instrument, config_spectral_window, config_spectrum_sampling);
+
+    // Make a grid from 740 to 770 nm
+    // The grid must be wide enough for the RamanSioris code to calculate any values
+    Array<double, 1> grid_vals(30);
+    double wave_nm = 740;
+    for(int grid_idx = 0; grid_idx < grid_vals.rows(); grid_idx++) {
+        grid_vals(grid_idx) = wave_nm++;
+    }
+    SpectralDomain sd = SpectralDomain(grid_vals, units::nm);
+
+    int num_jac = 1;
+    ArrayAd<double, 1> spec_range(sd.data().rows(), num_jac);
+    spec_range.value() = 1.0;
+    spec_range.jacobian() = 0.0;
+
+    // Units don't matter here, but lets just assign something reasonable
+    Unit rad_units("ph / s / m^2 / micron W / (cm^-1) / (ph / (s) / (micron)) sr^-1");
+    Spectrum spec(sd, SpectralRange(spec_range, rad_units));
+
+    // Set up statevector stuff so that we can properly
+    // test the jacobians going through our created fluorescence
+    // class
+    StateVector sv;
+    sv.add_observer(raman);
+    Array<double,1> x(num_jac);
+    x(Range(0,0)) = scale_factor;
+    sv.update_state(x);
+
+    // Apply effect
+    raman.apply_effect(spec, fm_spec_grid);
+
+    // These are not special vals, just values computed after other testing looked okay and captured
+    // for automatic testing. In fact this set up is probably not optimal as this feature should
+    // be wider and not have so much null values on either end
+    Array<double, 1> expt_vals(30); 
+    expt_vals =
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+        1.0409, 1.07519, 1.15625, 1.1122, 1.07699, 1.06549, 1.02736, 1.01291, 1.00533, 1.00195, 
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_vals, spec.spectral_range().data(), 1e-5);
 
 }
 
