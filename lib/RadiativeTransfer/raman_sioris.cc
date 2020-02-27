@@ -186,8 +186,8 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
         total_optical_depth(wn_idx, ra) = atmosphere_->optical_depth_wrt_rt(wn_grid(wn_idx), channel_index_).value();
     }
     
-    // Convert to the expect solar spectrum units Ph / s / cm^2 / nm^1
-    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(padded_grid).spectral_range().convert(Unit("Ph s^-1 cm^-2 nm^-1")).data();
+    // Absolute magnitude of the solar spectrum does not seem to matter, no need to convert to a certain unit
+    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(padded_grid).spectral_range().data();
 
     // Compute raman spectrum
     Array<double, 1> raman_spec(padded_grid.data().rows());
