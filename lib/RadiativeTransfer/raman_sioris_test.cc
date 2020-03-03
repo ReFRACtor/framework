@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(effect)
     }
     SpectralDomain sd = SpectralDomain(grid_vals, units::nm);
 
-    int num_jac = 1;
+    int num_jac = 10;
     ArrayAd<double, 1> spec_range(sd.data().rows(), num_jac);
     spec_range.value() = 1.0;
     spec_range.jacobian() = 0.0;
@@ -118,6 +118,9 @@ BOOST_AUTO_TEST_CASE(effect)
     // Apply effect
     raman.apply_effect(spec, fm_spec_grid);
 
+    Array<double, 1> applied_effect = spec.spectral_range().data();
+    Array<double, 2> calc_jac( spec.spectral_range().data_ad().jacobian() );
+
     // These are not special vals, just values computed after other testing looked okay and captured
     // for automatic testing. In fact this set up is probably not optimal as this feature should
     // be wider and not have so much null values on either end
@@ -127,7 +130,25 @@ BOOST_AUTO_TEST_CASE(effect)
         1.0409, 1.07519, 1.15625, 1.1122, 1.07699, 1.06549, 1.02736, 1.01291, 1.00533, 1.00195, 
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_vals, spec.spectral_range().data(), 1e-5);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_vals, applied_effect, 1e-5);
+
+    // Check jacobian by doing and outside perturbation and comparing
+    double perturbation = 0.001;
+
+    ArrayAd<double, 1> spec_range_pert(sd.data().rows(), 0);
+    spec_range_pert.value() = 1.0;
+    Spectrum spec_pert(sd, SpectralRange(spec_range_pert, spec.spectral_range().units()));
+
+    x(Range(0,0)) = scale_factor + perturbation;
+    sv.update_state(x);
+
+    raman.apply_effect(spec_pert, fm_spec_grid);
+
+    Array<double, 1> pert_effect = spec_pert.spectral_range().data();
+
+    Array<double, 1> expt_jac( (pert_effect - applied_effect) / perturbation );
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_jac, calc_jac(Range::all(), 0), 1e-10);
 
 }
 

@@ -34,7 +34,8 @@ public:
                       const boost::shared_ptr<SolarModel>& solar_model,
                       double albedo,
                       double padding_fraction = 0.10,
-                      bool do_upwelling = true);
+                      bool do_upwelling = true,
+                      double jac_perturbation = 0.001);
 
     virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
@@ -60,6 +61,7 @@ private:
     double albedo_;
     double padding_fraction_;
     bool do_upwelling_;
+    double jac_perturbation_;
 
     double solar_zenith_;
     double obs_zenith_;

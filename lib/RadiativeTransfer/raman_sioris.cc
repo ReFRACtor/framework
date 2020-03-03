@@ -130,9 +130,10 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
                                      const boost::shared_ptr<SolarModel>& solar_model,
                                      double albedo,
                                      double padding_fraction,
-                                     bool do_upwelling)
+                                     bool do_upwelling,
+                                     double jac_perturbation)
 : SpectrumEffectImpBase(scale_factor, used_flag),
-  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), padding_fraction_(padding_fraction), do_upwelling_(do_upwelling)
+  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), padding_fraction_(padding_fraction), do_upwelling_(do_upwelling), jac_perturbation_(jac_perturbation)
 {
     // Convert angles to degrees since these should not change
     solar_zenith_ = solar_zenith.convert(units::deg).value;
@@ -200,17 +201,24 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     ArrayAd<double, 1> spec_rad = Spec.spectral_range().data_ad();
 
     // Create spectrum with raman effect applied, index into padded raman scattering only for the points to be returned
-    Array<double, 1> raman_applied_rad(spec_rad.rows());
+    Array<double, 1> raman_applied_rad_val(spec_rad.rows());
+    Array<double, 1> raman_applied_rad_pert(spec_rad.rows());
+
     for(int pad_idx = 0; pad_idx < padded_grid.data().rows(); pad_idx++) {
         int out_idx = padded_grid.sample_index()(pad_idx);
         if (out_idx >= 0) {
-            raman_applied_rad(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * scale_factor.value() + 1.0);
+            raman_applied_rad_val(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * scale_factor.value() + 1.0);
+            raman_applied_rad_pert(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * (scale_factor.value() + jac_perturbation_) + 1.0);
         }
     }
 
-    //Array<double, 1> raman_applied_rad_pert = spec_rad.data() * (raman_spec * (scale_factor.value() + perturbation_) + 1.0);
+    // Save applied effect
+    spec_rad.value() = raman_applied_rad_val;
 
-    spec_rad.value() = raman_applied_rad;
+    // Compute FD jacobian values
+    for(int sv_idx = 0; sv_idx < coefficient().jacobian().rows(); sv_idx++) {
+        spec_rad.jacobian()(ra, sv_idx) = coefficient().jacobian()(sv_idx) * (raman_applied_rad_pert - raman_applied_rad_val) / jac_perturbation_;
+    }
 
 }
 
