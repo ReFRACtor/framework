@@ -46,7 +46,7 @@ public:
 
     virtual ~PCARt() = default;
 
-    virtual int number_stream() const { lidort_rt->number_stream(); }
+    virtual int number_stream() const { return lidort_rt->number_stream(); }
 
     virtual int number_stokes() const { return stokes_coef->stokes_coefficient().cols(); }
 
