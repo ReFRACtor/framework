@@ -21,6 +21,9 @@ public:
     virtual ~OpticalPropertiesInitBase() = default;
 
     virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
+                            const ArrayAd<double, 2>& gas_od);
+
+    virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
                             const ArrayAd<double, 2>& gas_od,
                             const ArrayAd<double, 2>& aerosol_ext_od,
                             const ArrayAd<double, 2>& aerosol_sca_od,

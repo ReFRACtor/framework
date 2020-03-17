@@ -26,7 +26,11 @@ void OpticalPropertiesWrtInput::initialize_with_jacobians(const ArrayAd<double, 
 
     aerosol_phase_function_helper_ = aer_pf_helper;
 
-    intermediate_jacobian_.resize(rayleigh_optical_depth_.number_variable(), rayleigh_optical_depth_.number_variable());
+    int num_layers = rayleigh_optical_depth_.rows();
+    int num_jac = rayleigh_optical_depth_.number_variable();
+
+    // Interermediate jacobian here is the identity matrix
+    intermediate_jacobian_.resize(num_layers, num_jac, num_jac);
     intermediate_jacobian_ = 0.0;
     for(int lay_idx = 0; lay_idx < rayleigh_optical_depth_.rows(); lay_idx++) {
         for(int jac_idx = 0; jac_idx < rayleigh_optical_depth_.number_variable(); jac_idx++) {

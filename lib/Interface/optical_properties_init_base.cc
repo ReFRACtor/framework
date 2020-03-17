@@ -4,6 +4,31 @@ using namespace blitz;
 using namespace FullPhysics;
 
 //-----------------------------------------------------------------------
+/// Initializes a aerosol free OpticalProperties object using precomputed values:
+/// In the parameters \f$l\f$ stands for layer index, \f$p\f$ stands for particle index.
+/// \param rayleigh_od Rayleigh optical depth for each layer (\f$\tau_{ray,l}\f$)
+/// \param gas_od Gas Absorber optical depth for each layer and gas particle type (\f$\tau_{gas,lp}\f$)
+//-----------------------------------------------------------------------
+
+void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od, 
+                                           const ArrayAd<double, 2>& gas_od)
+{
+    // Empty objects, no aerosols
+    ArrayAd<double, 2> aerosol_ext_od;
+    ArrayAd<double, 2> aerosol_sca_od;
+    boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper;
+
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
+
+    assert_sizes();
+
+    cached_num_moments = 0;
+    cached_num_scattering = 0;
+
+    initialized = true;
+}
+
+//-----------------------------------------------------------------------
 /// Initializes an OpticalProperties object using precomputed values:
 /// In the parameters \f$l\f$ stands for layer index, \f$p\f$ stands for particle index.
 /// \param rayleigh_od Rayleigh optical depth for each layer (\f$\tau_{ray,l}\f$)
@@ -13,10 +38,10 @@ using namespace FullPhysics;
 //-----------------------------------------------------------------------
 
 void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od, 
-                                   const ArrayAd<double, 2>& gas_od,
-                                   const ArrayAd<double, 2>& aerosol_ext_od,
-                                   const ArrayAd<double, 2>& aerosol_sca_od,
-                                   const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+                                           const ArrayAd<double, 2>& gas_od,
+                                           const ArrayAd<double, 2>& aerosol_ext_od,
+                                           const ArrayAd<double, 2>& aerosol_sca_od,
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
 {
     boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionPassThruHelper(aerosol_pf_moments));
 
@@ -36,10 +61,10 @@ void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od
 //-----------------------------------------------------------------------
 
 void OpticalPropertiesInitBase::initialize(const DoubleWithUnit spectral_point,
-                                   const int channel_index,
-                                   const boost::shared_ptr<Absorber>& absorber,
-                                   const boost::shared_ptr<Rayleigh>& rayleigh,
-                                   const boost::shared_ptr<Aerosol>& aerosol)
+                                           const int channel_index,
+                                           const boost::shared_ptr<Absorber>& absorber,
+                                           const boost::shared_ptr<Rayleigh>& rayleigh,
+                                           const boost::shared_ptr<Aerosol>& aerosol)
 {
 
     Range ra = Range::all();
