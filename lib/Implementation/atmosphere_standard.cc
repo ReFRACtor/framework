@@ -1,4 +1,5 @@
 #include "atmosphere_standard.h"
+
 #include "old_constant.h"
 #include "linear_algebra.h"
 #include "pressure_fixed_level.h"
@@ -7,8 +8,12 @@
 #include "planck.h"
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
+
+#include "rayleigh_young.h"
+
 #include <boost/foreach.hpp>
 #include <cmath>
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -217,7 +222,7 @@ void AtmosphereStandard::initialize()
         throw Exception("Altitude is not allowed to be null in AtmosphereStandard");
     }
 
-    rayleigh.reset(new Rayleigh(pressure, alt, *constant));
+    rayleigh.reset(new RayleighYoung(pressure, alt, *constant));
 
     if(aerosol) {
         aerosol->add_observer(*this);

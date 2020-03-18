@@ -1,10 +1,11 @@
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
 
+#include "atmosphere_standard.h"
 #include "atmosphere_legacy.h"
+#include "altitude.h"
 
 #include <blitz/array.h>
-
 
 using namespace FullPhysics;
 using namespace blitz;

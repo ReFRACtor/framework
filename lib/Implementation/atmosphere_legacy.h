@@ -1,6 +1,9 @@
 #ifndef ATMOSPHERE_LEGACY_H
 #define ATMOSPHERE_LEGACY_H
+
 #include "rt_atmosphere.h"
+
+#include "constant.h"
 #include "absorber.h"
 #include "pressure.h"
 #include "temperature.h"

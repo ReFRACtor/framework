@@ -1,6 +1,9 @@
 #ifndef ATMOSPHERE_STANDARD_H
 #define ATMOSPHERE_STANDARD_H
+
 #include "rt_atmosphere.h"
+
+#include "constant.h"
 #include "absorber.h"
 #include "pressure.h"
 #include "temperature.h"

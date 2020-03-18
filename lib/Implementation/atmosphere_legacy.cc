@@ -1,3 +1,4 @@
+
 #include "atmosphere_legacy.h"
 #include "old_constant.h"
 #include "linear_algebra.h"
@@ -7,6 +8,8 @@
 #include "planck.h"
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
+#include "rayleigh_young.h"
+
 #include <boost/foreach.hpp>
 #include <cmath>
 
@@ -220,7 +223,7 @@ void AtmosphereLegacy::initialize()
     if(!a)
       throw Exception("Altitude is not allowed to be null in AtmosphereLegacy");
 
-  rayleigh.reset(new Rayleigh(pressure, alt, *constant));
+  rayleigh.reset(new RayleighYoung(pressure, alt, *constant));
   if(aerosol) {
     aerosol->add_observer(*this);
   }
