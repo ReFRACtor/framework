@@ -11,7 +11,7 @@ using namespace blitz;
 using namespace FullPhysics;
 
 extern "C" {
-    void get_raman(int *nz, int *nw, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, const double *sol, const double *taus, double *rspec, bool *problems);
+    void get_raman(int *nz, int *nw, int* maxnu, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, const double *sol, const double *taus, double *rspec, bool *problems);
 }
 
 //-----------------------------------------------------------------------
@@ -85,11 +85,17 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
         solar_irradiance_f = solar_irradiance;
     }
 
+    // Compute the maximum extent of internal get_raman arrays so we never run into
+    // hitting a maximum value. The Fortran code computes an internal wavelenght grid
+    // spaced every 1 wavenumber, but still in nm. This value represents the extent
+    // it would expect.
+    int maxnu = int(1e7/nm_grid_f(0)) - int(1e7/nm_grid_f(num_points-1)) + 2;
+
     Array<double, 1> raman_spec(num_points, ColumnMajorArray<1>());
 
     bool problems = false;
 
-    get_raman(&num_layers, &num_points, &solar_zenith, &viewing_zenith, &scattering_angle, &albedo, &do_upwelling, temperature_layers.dataFirst(), air_number_density.dataFirst(), nm_grid_f.dataFirst(), solar_irradiance_f.dataFirst(), total_optical_depth_f.dataFirst(), raman_spec.dataFirst(), &problems);
+    get_raman(&num_layers, &num_points, &maxnu, &solar_zenith, &viewing_zenith, &scattering_angle, &albedo, &do_upwelling, temperature_layers.dataFirst(), air_number_density.dataFirst(), nm_grid_f.dataFirst(), solar_irradiance_f.dataFirst(), total_optical_depth_f.dataFirst(), raman_spec.dataFirst(), &problems);
 
     if (problems) {
         throw Exception("raman_sioris fortran code encountered an internal issue.");
@@ -160,10 +166,9 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
 /// Applies the effect of Raman scattering to the passed spectrum.
 /// The effect is multiplicative.
 ///
-/// TODO: Extend the computed range out additional points to account for
-/// the cut-off region in the fortran model. Until this is done,
-/// a couple nm on either size will not have an effect applied.
-//-----------------------------------------------------------------------
+/// Extends the computed range out additional points to account for
+/// the cut-off region in the Fortran model.
+///-----------------------------------------------------------------------
 
 void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const
 {
@@ -177,7 +182,7 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     // Pad 10% of the size of the input grid
     double pad_amount = 
         padding_fraction_ * (Spec.spectral_domain().data()(Spec.spectral_domain().rows()-1) - Spec.spectral_domain().data()(0));
-    SpectralDomain padded_grid = Spec.spectral_domain().add_padding(DoubleWithUnit(pad_amount, units::nm));
+    SpectralDomain padded_grid = Spec.spectral_domain().add_padding(DoubleWithUnit(pad_amount, Spec.spectral_domain().units()));
 
     // Compute total optical depth, hopefully use any caching that atmosphere class provides
     Array<double, 1> wn_grid = padded_grid.wavenumber();

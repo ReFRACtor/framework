@@ -310,7 +310,7 @@ END SUBROUTINE SPLINT
 !     to the grid of you want.                                                      !
 ! ==================================================================================! 
 
-SUBROUTINE GET_RAMAN (nz, nw, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
+SUBROUTINE GET_RAMAN (nz, nw, maxnu, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
      wave, sol, taus, rspec, problems) bind(C)
  
   IMPLICIT NONE
@@ -318,7 +318,7 @@ SUBROUTINE GET_RAMAN (nz, nw, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
   ! ========================
   ! Input/output variables
   ! ========================
-  INTEGER(c_int),        INTENT(IN)  :: nz, nw
+  INTEGER(c_int),        INTENT(IN)  :: nz, nw, maxnu
   LOGICAL(c_bool),       INTENT(IN)  :: do_upwelling
   LOGICAL(c_bool),       INTENT(OUT) :: problems
   REAL (KIND=c_double),  INTENT(IN)  :: sza, sca, vza, albedo
@@ -330,7 +330,7 @@ SUBROUTINE GET_RAMAN (nz, nw, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
   ! ========================
   ! Local Variables
   ! ========================
-  INTEGER,        PARAMETER :: MAXNU   = 15000, NedgePos = 218
+  INTEGER,        PARAMETER :: NedgePos = 218
   REAL (KIND=dp), PARAMETER :: pi      = 3.14159265358979_dp
   REAL (KIND=dp), PARAMETER :: deg2rad = pi / 180.0_dp
 
@@ -365,7 +365,7 @@ SUBROUTINE GET_RAMAN (nz, nw, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
   ramanwav(nu) = wave(1); ramanwav(1) = wave(nw)
   
   IF (nuhi - nulo + 1 > MAXNU) THEN
-     WRITE(*, *) modulename, ': Need to increase MAXNU!!!'
+     WRITE(*, *) modulename, ': Need to increase MAXNU!!! to at least ', (nuhi - nulo + 1), ' current value: ', MAXNU
      errstat = 1; RETURN
   ELSE IF (nuhi <= nulo) THEN
      WRITE(*, *) modulename, ': nulo>=nuhi, should never happen!!!'
@@ -411,7 +411,7 @@ SUBROUTINE GET_RAMAN (nz, nw, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
   ! Call raman program
   CALL RAMAN(nulo, nuhi, nu, nz, sca, tmpalb, ts, rhos, st(1:nu,1:nz), vt(1:nu,1:nz), ring(1:nu))
  
-  ! Interpolate calculated ring back to gome radiance grids
+  ! Interpolate calculated ring back to input radiance grids
   CALL BSPLINE(ramanwav(1:nu), ring(1:nu), nu, wave(1:nw), rspec(1:nw), nw, errstat)
     
   ! Set edge pixels to zero
