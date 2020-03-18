@@ -25,7 +25,7 @@ public:
 
     RayleighImpBase(const boost::shared_ptr<Pressure>& Pres, 
                     const std::vector<boost::shared_ptr<Altitude> >& Alt,
-                    const Constant& C);
+                    const boost::shared_ptr<Constant>& C);
 
     virtual void notify_update(const Pressure& UNUSED(P))
     {
@@ -45,19 +45,19 @@ public:
         Os << "RayleighImpBase";
     }
 
-private:
+protected:
 
+    boost::shared_ptr<Constant> constants;
     boost::shared_ptr<Pressure> pres;
     std::vector<boost::shared_ptr<Altitude> > alt;
+
+private:
 
     mutable bool cache_is_stale;
 
     mutable ArrayAd<double, 2> part_independent_wn;
     void fill_cache() const;
 
-    // Constants. We get this from the Constant class, but stash a copy
-    // of them here.
-    double molar_weight_dry_air;
 };
 }
 #endif

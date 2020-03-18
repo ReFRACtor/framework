@@ -77,6 +77,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
   boost::shared_ptr<Temperature> temperature_clone =
     atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
   boost::shared_ptr<Ground> ground_clone = atm->ground()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
@@ -90,6 +91,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
     atm_rayleigh(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    aerosol_null,
                                    rh_clone,
                                    ground_clone,
@@ -101,6 +103,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   std::vector<boost::shared_ptr<AerosolProperty> >   empty_aprop;
   pressure_clone = atm->pressure_ptr()->clone();
   temperature_clone = atm->temperature_ptr()->clone();
+  rayleigh_clone = atm->rayleigh_ptr()->clone();
   ground_clone = atm->ground()->clone();
   alt_clone.clear();
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr()) {
@@ -117,6 +120,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
     atm_no_aerosol(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    no_aerosol,
                                    rh_clone,
                                    ground_clone,
@@ -175,6 +179,7 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
   boost::shared_ptr<Temperature> temperature_clone =
     atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
   boost::shared_ptr<Aerosol> aerosol_clone =
     atm->aerosol_ptr()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
@@ -189,6 +194,7 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
     atm_uplooking(new AtmosphereStandard(absorber_clone,
                                     pressure_clone,
                                     temperature_clone,
+                                    rayleigh_clone,
                                     aerosol_clone,
                                     rh_clone,
                                     ground_null,
@@ -247,6 +253,7 @@ BOOST_AUTO_TEST_CASE(no_aerosols)
 
   boost::shared_ptr<Temperature> temperature_clone =
     atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
   boost::shared_ptr<Ground> ground_clone = atm->ground()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
@@ -258,6 +265,7 @@ BOOST_AUTO_TEST_CASE(no_aerosols)
     atm_no_aerosol(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    no_aerosol,
                                    rh_clone,
                                    ground_clone,
@@ -271,6 +279,7 @@ BOOST_AUTO_TEST_CASE(no_aerosols)
     atm_rayleigh(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    aerosol_null,
                                    rh_clone,
                                    ground_clone,
@@ -311,7 +320,7 @@ BOOST_AUTO_TEST_CASE(legacy)
     int test_chan = 0;
 
     boost::shared_ptr<AtmosphereLegacy> atm_legacy
-        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(),
+        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
                               atm->aerosol_ptr(), atm->relative_humidity_ptr(), atm->ground(), 
                               atm->altitude_ptr(), atm->constant_ptr()));
 

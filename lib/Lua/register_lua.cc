@@ -301,6 +301,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(Observation);
   REGISTER_LUA_LIST(ObservationLevel1b);
   REGISTER_LUA_LIST(ForwardModelSpectralGrid);
+  REGISTER_LUA_LIST(Rayleigh);
+  REGISTER_LUA_LIST(RayleighYoung);
 }
 }
 

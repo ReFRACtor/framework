@@ -15,7 +15,7 @@ BOOST_FIXTURE_TEST_SUITE(rayleigh_young, ConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(cross_section)
 {
-  DefaultConstant constant;
+  boost::shared_ptr<Constant> constant(new DefaultConstant());
   boost::shared_ptr<Pressure> p = config_pressure;
   boost::shared_ptr<Temperature> t = config_temperature;
   DoubleWithUnit lat(77.1828918457, units::deg);
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(cross_section)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  DefaultConstant constant;
+  boost::shared_ptr<Constant> constant(new DefaultConstant());
   boost::shared_ptr<Pressure> p = config_pressure;
   boost::shared_ptr<Temperature> t = config_temperature;
   DoubleWithUnit lat(77.1828918457, units::deg);

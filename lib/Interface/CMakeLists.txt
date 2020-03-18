@@ -47,6 +47,7 @@ set(DIR_SOURCES
     pressure.cc
     pressure_imp_base.cc
     problem_state.cc
+    rayleigh.cc
     rayleigh_imp_base.cc
     rt_atmosphere.cc
     sample_grid.cc

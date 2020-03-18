@@ -16,9 +16,11 @@ class RayleighYoung: public RayleighImpBase {
 public:
     RayleighYoung(const boost::shared_ptr<Pressure>& Pres,
                   const std::vector<boost::shared_ptr<Altitude> >& Alt,
-                  const Constant& C);
+                  const boost::shared_ptr<Constant>& C);
 
     virtual DoubleWithUnit cross_section(const DoubleWithUnit& W) const;
+
+    virtual boost::shared_ptr<Rayleigh> clone() const;
 
     virtual void print(std::ostream& Os) const
     {
@@ -26,9 +28,6 @@ public:
     }
 
 private:
-    // Constants. We get this from the Constant class, but stash a copy
-    // of them here.
-    double a, b, depolar_fact;
 };
 }
 #endif

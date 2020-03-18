@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(effect)
                               std::vector<boost::shared_ptr<GasAbsorption> >(), constant));
 
     boost::shared_ptr<AtmosphereStandard> atm_rayleigh(
-            new AtmosphereStandard(absorber, atm->pressure_ptr(), atm->temperature_ptr(), 
+            new AtmosphereStandard(absorber, atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
                                    atm->relative_humidity_ptr(), atm->ground(), atm->altitude_ptr(), constant));
 
     // Pull out angles we need

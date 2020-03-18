@@ -1,18 +1,17 @@
 #include "atmosphere_standard.h"
 
-#include "old_constant.h"
+#include <boost/foreach.hpp>
+#include <cmath>
+
+#include "constant.h"
 #include "linear_algebra.h"
-#include "pressure_fixed_level.h"
-#include "temperature_fixed_level.h"
 #include "ground.h"
 #include "planck.h"
+#include "altitude.h"
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
 
-#include "rayleigh_young.h"
-
-#include <boost/foreach.hpp>
-#include <cmath>
+#include "pressure_fixed_level.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -23,6 +22,7 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereStandard, RtAtmosphere)
 .def(luabind::constructor<const boost::shared_ptr<Absorber>&,
      const boost::shared_ptr<Pressure>&,
      const boost::shared_ptr<Temperature>&,
+     const boost::shared_ptr<Rayleigh>&,
      const boost::shared_ptr<Aerosol>&,
      const boost::shared_ptr<RelativeHumidity>&,
      const boost::shared_ptr<Ground>&,
@@ -31,6 +31,7 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereStandard, RtAtmosphere)
 .def(luabind::constructor<const boost::shared_ptr<Absorber>&,
      const boost::shared_ptr<Pressure>&,
      const boost::shared_ptr<Temperature>&,
+     const boost::shared_ptr<Rayleigh>&,
      const boost::shared_ptr<RelativeHumidity>&,
      const boost::shared_ptr<Ground>&,
      const std::vector<boost::shared_ptr<Altitude> >&,
@@ -38,6 +39,7 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereStandard, RtAtmosphere)
 .def(luabind::constructor<const boost::shared_ptr<Absorber>&,
      const boost::shared_ptr<Pressure>&,
      const boost::shared_ptr<Temperature>&,
+     const boost::shared_ptr<Rayleigh>&,
      const boost::shared_ptr<Aerosol>&,
      const boost::shared_ptr<RelativeHumidity>&,
      const std::vector<boost::shared_ptr<Altitude> >&,
@@ -45,6 +47,7 @@ REGISTER_LUA_DERIVED_CLASS(AtmosphereStandard, RtAtmosphere)
 .def(luabind::constructor<const boost::shared_ptr<Absorber>&,
      const boost::shared_ptr<Pressure>&,
      const boost::shared_ptr<Temperature>&,
+     const boost::shared_ptr<Rayleigh>&,
      const boost::shared_ptr<RelativeHumidity>&,
      const std::vector<boost::shared_ptr<Altitude> >&,
      const boost::shared_ptr<Constant>&>())
@@ -60,6 +63,7 @@ REGISTER_LUA_END()
 /// Required:
 /// * Pressure
 /// * Temperature
+/// * Rayleigh
 /// * Relative Humdity
 /// * Altitude
 ///
@@ -72,13 +76,14 @@ REGISTER_LUA_END()
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<Aerosol>& aerosolv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const boost::shared_ptr<Ground>& groundv,
                                        const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
       constant(C), alt(altv),
       sv_jac_size(0),
@@ -97,12 +102,13 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<Aerosol>& aerosolv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const boost::shared_ptr<Ground>& groundv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       aerosol(aerosolv), rh(rhv), ground_ptr(groundv),
       constant(C), alt(altv),
       sv_jac_size(0),
@@ -121,11 +127,12 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<Aerosol>& aerosolv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       aerosol(aerosolv), rh(rhv),
       constant(C), alt(altv),
       sv_jac_size(0),
@@ -144,12 +151,13 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const boost::shared_ptr<Ground>& groundv,
                                        const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
       constant(C), alt(altv),
       sv_jac_size(0),
@@ -168,11 +176,12 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const boost::shared_ptr<Ground>& groundv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       rh(rhv), ground_ptr(groundv),
       constant(C), alt(altv),
       sv_jac_size(0),
@@ -191,10 +200,11 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                                        const boost::shared_ptr<Pressure>& pressurev,
                                        const boost::shared_ptr<Temperature>& temperaturev,
+                                       const boost::shared_ptr<Rayleigh>& rayleighv,
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
       rh(rhv), constant(C), alt(altv), sv_jac_size(0), wn_tau_cache(-1),
       spec_index_tau_cache(-1),
       nlay(-1)
@@ -221,8 +231,6 @@ void AtmosphereStandard::initialize()
     if(!a) {
         throw Exception("Altitude is not allowed to be null in AtmosphereStandard");
     }
-
-    rayleigh.reset(new RayleighYoung(pressure, alt, *constant));
 
     if(aerosol) {
         aerosol->add_observer(*this);
@@ -420,6 +428,8 @@ boost::shared_ptr<AtmosphereStandard> AtmosphereStandard::clone() const
     boost::shared_ptr<Pressure> pressure_clone = pressure->clone();
     boost::shared_ptr<Temperature> temperature_clone =
         temperature->clone();
+    boost::shared_ptr<Rayleigh> rayleigh_clone = rayleigh->clone();
+
     boost::shared_ptr<Ground> ground_clone;
 
     if(ground_ptr) {
@@ -440,7 +450,7 @@ boost::shared_ptr<AtmosphereStandard> AtmosphereStandard::clone() const
     }
 
     boost::shared_ptr<AtmosphereStandard> res
-    (new AtmosphereStandard(absorber_clone, pressure_clone, temperature_clone,
+    (new AtmosphereStandard(absorber_clone, pressure_clone, temperature_clone, rayleigh_clone,
                             aerosol_clone, rh_clone, ground_clone, alt_clone,
                             constant));
     return res;

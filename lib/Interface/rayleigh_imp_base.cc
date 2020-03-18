@@ -9,9 +9,8 @@ using namespace blitz;
 
 RayleighImpBase::RayleighImpBase(const boost::shared_ptr<Pressure>& Pres,
                                  const std::vector<boost::shared_ptr<Altitude> >& Alt,
-                                 const Constant& C)
-    : pres(Pres), alt(Alt), cache_is_stale(true),
-      molar_weight_dry_air(C.molar_weight_dry_air().convert(Unit("g / mol")).value)
+                                 const boost::shared_ptr<Constant>& C)
+    : pres(Pres), alt(Alt), constants(C), cache_is_stale(true)
 {
     pres->add_observer(*this);
     BOOST_FOREACH(boost::shared_ptr<Altitude>& a, alt) {
@@ -65,6 +64,8 @@ void RayleighImpBase::fill_cache() const
     // in tagged B2.06.02_plus_2.07_backport version to find the
     // original code and comment
     const double a0 = 6.02297e26;
+
+    const double molar_weight_dry_air = constants->molar_weight_dry_air().convert(Unit("g / mol")).value;
 
     int nvar = std::max(pres->pressure_grid().value.number_variable(), alt_nvar);
     part_independent_wn.resize((int) alt.size(), pres->number_layer(), nvar);

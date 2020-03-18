@@ -241,6 +241,18 @@ BOOST_AUTO_TEST_CASE(check_ps)
 
 BOOST_AUTO_TEST_SUITE_END()
 
+BOOST_FIXTURE_TEST_SUITE(lidort_rt_single_scattering, LidortLambertianFixture)
+
+BOOST_AUTO_TEST_CASE(compare_computation_methods)
+{
+    boost::shared_ptr<LidortRt> lidort_ps;
+    lidort_ps.reset(new LidortRt(config_atmosphere, stokes_coefs, sza, zen, azm, pure_nadir,
+                                 nstreams, nmoms, do_multiple_scattering_only));
+
+
+}
+BOOST_AUTO_TEST_SUITE_END()
+
 ///////////////////////////////////////////////////////////////////////////////////////
 // VVVVVVVVVVVVVV Cox-Munk VVVVVVVVVVVVVVV
 ///////////////////////////////////////////////////////////////////////////////////////

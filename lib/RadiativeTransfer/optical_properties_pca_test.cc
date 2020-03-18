@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(intermediate_variable)
     int test_chan = 0;
 
     boost::shared_ptr<AtmosphereLegacy> atm_legacy
-        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(),
+        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
                               atm->aerosol_ptr(), atm->relative_humidity_ptr(), atm->ground(), 
                               atm->altitude_ptr(), atm->constant_ptr()));
 
