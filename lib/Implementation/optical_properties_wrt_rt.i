@@ -3,6 +3,7 @@
 %{
 #include "optical_properties_wrt_rt.h"
 #include "sub_state_vector_array.h"
+#include "altitude.h"
 %}
 
 %base_import(optical_properties_init_base)

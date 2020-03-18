@@ -3,6 +3,7 @@
 #include "atmosphere_legacy.h"
 #include "sub_state_vector_array.h"
 #include "rayleigh.h"
+#include "altitude.h"
 %}
 %fp_shared_ptr(FullPhysics::AtmosphereLegacy);
 %base_import(rt_atmosphere)
@@ -12,7 +13,9 @@
 %import "rayleigh.i"
 %import "ground.i"
 %import "surface_temperature.i"
+%import "altitude.i"
 %import "relative_humidity.i"
+%import "constant.i"
 namespace FullPhysics {
 class AtmosphereLegacy;
 }
@@ -27,50 +30,57 @@ class AtmosphereLegacy : public RtAtmosphere,
                       public Observer<Aerosol> {
 public:
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<Aerosol>& aerosolv,
+                   const boost::shared_ptr<RelativeHumidity>& rhv,
+                   const boost::shared_ptr<Ground>& groundv,
+                   const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<Aerosol>& aerosolv,
+                   const boost::shared_ptr<RelativeHumidity>& rhv,
+                   const boost::shared_ptr<Ground>& groundv,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<Aerosol>& aerosolv,
+                   const boost::shared_ptr<RelativeHumidity>& rhv,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<RelativeHumidity>& rhv,
+                   const boost::shared_ptr<Ground>& groundv,
+                   const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<RelativeHumidity>& rhv,
+                   const boost::shared_ptr<Ground>& groundv,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
   AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& Rh,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+                   const boost::shared_ptr<Pressure>& pressurev,
+                   const boost::shared_ptr<Temperature>& temperaturev,
+                   const boost::shared_ptr<Rayleigh>& rayleighv,
+                   const boost::shared_ptr<RelativeHumidity>& Rh,
+                   const std::vector<boost::shared_ptr<Altitude> >& altv,
+                   const boost::shared_ptr<Constant>& C);
+
   virtual ~AtmosphereLegacy();
   virtual ArrayAdWithUnit<double, 1> altitude(int spec_index) const;
   %python_attribute_derived(number_spectrometer, int)

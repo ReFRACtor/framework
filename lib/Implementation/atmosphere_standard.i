@@ -3,6 +3,7 @@
 #include "atmosphere_standard.h"
 #include "sub_state_vector_array.h"
 #include "rayleigh.h"
+#include "altitude.h"
 %}
 %fp_shared_ptr(FullPhysics::AtmosphereStandard);
 %base_import(rt_atmosphere)
@@ -13,6 +14,8 @@
 %import "ground.i"
 %import "surface_temperature.i"
 %import "relative_humidity.i"
+%import "altitude.i"
+%import "constant.i"
 namespace FullPhysics {
 class AtmosphereStandard;
 }
@@ -26,62 +29,69 @@ namespace FullPhysics {
 class AtmosphereStandard : public RtAtmosphere,
     public Observer<Aerosol> {
 public:
-  // Supply all atmospheric consituent classes
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // Supply all atmospheric consituent classes
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<Aerosol>& aerosolv,
+                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                       const boost::shared_ptr<Ground>& groundv,
+                       const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
 
-  // No surface temperature
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // No surface temperature
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<Aerosol>& aerosolv,
+                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                       const boost::shared_ptr<Ground>& groundv,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
 
-  // No ground, no surface temperature
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // No ground, no surface temperature
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<Aerosol>& aerosolv,
+                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
 
-  // No aerosol
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // No aerosol
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                       const boost::shared_ptr<Ground>& groundv,
+                       const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
 
-  // No aerosol, no surface temperature
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // No aerosol, no surface temperature
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<RelativeHumidity>& rhv,
+                       const boost::shared_ptr<Ground>& groundv,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
 
-  // No ground, aerosol or surface temperature
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<RelativeHumidity>& Rh,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
+    // No ground, aerosol or surface temperature
+    AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
+                       const boost::shared_ptr<Pressure>& pressurev,
+                       const boost::shared_ptr<Temperature>& temperaturev,
+                       const boost::shared_ptr<Rayleigh>& rayleighv,
+                       const boost::shared_ptr<RelativeHumidity>& Rh,
+                       const std::vector<boost::shared_ptr<Altitude> >& altv,
+                       const boost::shared_ptr<Constant>& C);
+
   virtual ArrayAdWithUnit<double, 1> altitude(int spec_index) const;
   %python_attribute_derived(number_spectrometer, int)
   %python_attribute_derived(number_layer, int)
