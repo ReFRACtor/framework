@@ -157,93 +157,94 @@ public:
       - xkCldlnPres = cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
       - xkCldlnExt = cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
       */
-      using namespace blitz;
-
-      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5_nc4.nc");
-      boost::shared_ptr<HdfFile> test_input_file(new HdfFile(test_fname));
-
-      int nlevu = 65;
-
-      int ngas = 11;
-
-      Array<float, 1> Pin = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
-
-      Array<float, 1> Temp = test_input_file->read_field<float, 1>("/Temperature")(Range::all());
-
-      float Tskin = 310.0;
-
-      Array<float, 2> vmrGas = test_input_file->read_field<float, 2>("/vmrGas")(Range::all());
-
-      Array<float, 1> emis = test_input_file->read_field<float, 1>("/Emissivity")(Range::all());
-
-      Array<float, 1> refl = test_input_file->read_field<float, 1>("/Reflectivity")(Range::all());
-
-      int n_SfGrd = 501;
-
-      float scaleCld = 0.0;
-
-      float presCld = 0.0;
-
-      int nCld = 2;
-
-      Array<float, 1> extCld(nCld);
-      extCld = 0;
-
-      Array<float, 1> SfGrd = test_input_file->read_field<float, 1>("/SurfaceGrid")(Range::all());
-
-      Array<float, 1> gridCld(nCld);
-      gridCld= 0;
-
-      float ang = 1.45646667;
-
-      float sunang = 90.0;
-
-      float lat = 45.0;
-
-      float altSfc = 0.0000639999998;
-
-      int lambertian = 1;
-
-      int nInJac = 2;
-
-      /* Needed since nchanOSS argument to cppfwdwrapper isn't const reference though not modified */
-      int nchanOSS_temp = nchanOSS;
-
-
-      /* outputs */
-      Array<float, 1> y(nchanOSS);
-      y = 0;
-      Array<float, 1> xkTemp(nchanOSS*nlevu);
-      xkTemp = 0;
-      Array<float, 1> xkTskin(nchanOSS);
-      xkTskin = 0;
-      Array<float, 1> xkOutGas(nInJac*nchanOSS*nlevu);
-      xkOutGas = 0;
-      Array<float, 1> xkEm(nchanOSS*n_SfGrd);
-      xkEm = 0;
-      Array<float, 1> xkRf(nchanOSS*n_SfGrd);
-      xkRf = 0;
-      Array<float, 1> xkCldlnPres(nchanOSS);
-      xkCldlnPres = 0;
-      Array<float, 1> xkCldlnExt(nchanOSS*nCld);
-      xkCldlnExt = 0;
-
-      cppfwdwrapper(nlevu, ngas, Pin.data(), Temp.data(), Tskin, vmrGas.data(),
-      n_SfGrd, emis.data(), refl.data(),
-      scaleCld, presCld, nCld, extCld.data(),
-      SfGrd.data(), gridCld.data(),
-      ang, sunang, lat,
-      altSfc, lambertian, nInJac, nchanOSS_temp,
-      y.data(), xkTemp.data(),
-      xkTskin.data(), xkOutGas.data(), xkEm.data(),
-      xkRf.data(), xkCldlnPres.data(), xkCldlnExt.data());
-
-      Array<double, 1> rad(nchanOSS);
-      for (int i = 0; i < nchanOSS; i++) {
-        rad(i) = static_cast<double>(y(i));
-      }
-
-      return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
+//      using namespace blitz;
+//
+//      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5_nc4.nc");
+//      boost::shared_ptr<HdfFile> test_input_file(new HdfFile(test_fname));
+//
+//      int nlevu = 65;
+//
+//      int ngas = 11;
+//
+//      Array<float, 1> Pin = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
+//
+//      Array<float, 1> Temp = test_input_file->read_field<float, 1>("/Temperature")(Range::all());
+//
+//      float Tskin = 310.0;
+//
+//      Array<float, 2> vmrGas = test_input_file->read_field<float, 2>("/vmrGas")(Range::all());
+//
+//      Array<float, 1> emis = test_input_file->read_field<float, 1>("/Emissivity")(Range::all());
+//
+//      Array<float, 1> refl = test_input_file->read_field<float, 1>("/Reflectivity")(Range::all());
+//
+//      int n_SfGrd = 501;
+//
+//      float scaleCld = 0.0;
+//
+//      float presCld = 0.0;
+//
+//      int nCld = 2;
+//
+//      Array<float, 1> extCld(nCld);
+//      extCld = 0;
+//
+//      Array<float, 1> SfGrd = test_input_file->read_field<float, 1>("/SurfaceGrid")(Range::all());
+//
+//      Array<float, 1> gridCld(nCld);
+//      gridCld= 0;
+//
+//      float ang = 1.45646667;
+//
+//      float sunang = 90.0;
+//
+//      float lat = 45.0;
+//
+//      float altSfc = 0.0000639999998;
+//
+//      int lambertian = 1;
+//
+//      int nInJac = 2;
+//
+//      /* Needed since nchanOSS argument to cppfwdwrapper isn't const reference though not modified */
+//      int nchanOSS_temp = nchanOSS;
+//
+//
+//      /* outputs */
+//      Array<float, 1> y(nchanOSS);
+//      y = 0;
+//      Array<float, 1> xkTemp(nchanOSS*nlevu);
+//      xkTemp = 0;
+//      Array<float, 1> xkTskin(nchanOSS);
+//      xkTskin = 0;
+//      Array<float, 1> xkOutGas(nInJac*nchanOSS*nlevu);
+//      xkOutGas = 0;
+//      Array<float, 1> xkEm(nchanOSS*n_SfGrd);
+//      xkEm = 0;
+//      Array<float, 1> xkRf(nchanOSS*n_SfGrd);
+//      xkRf = 0;
+//      Array<float, 1> xkCldlnPres(nchanOSS);
+//      xkCldlnPres = 0;
+//      Array<float, 1> xkCldlnExt(nchanOSS*nCld);
+//      xkCldlnExt = 0;
+//
+//      cppfwdwrapper(nlevu, ngas, Pin.data(), Temp.data(), Tskin, vmrGas.data(),
+//      n_SfGrd, emis.data(), refl.data(),
+//      scaleCld, presCld, nCld, extCld.data(),
+//      SfGrd.data(), gridCld.data(),
+//      ang, sunang, lat,
+//      altSfc, lambertian, nInJac, nchanOSS_temp,
+//      y.data(), xkTemp.data(),
+//      xkTskin.data(), xkOutGas.data(), xkEm.data(),
+//      xkRf.data(), xkCldlnPres.data(), xkCldlnExt.data());
+//
+//      Array<double, 1> rad(nchanOSS);
+//      for (int i = 0; i < nchanOSS; i++) {
+//        rad(i) = static_cast<double>(y(i));
+//      }
+//
+//      return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
+    	return Spectrum();
     }
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 private:

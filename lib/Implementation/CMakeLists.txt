@@ -230,6 +230,7 @@ if(OSS_FOUND)
     list(APPEND DIR_SOURCES oss_interface.cc)
     list(APPEND TEST_SOURCES oss_configuration_fixture.cc)
     list(APPEND TEST_SOURCES oss_forward_model_test.cc)
+    list(APPEND TEST_SOURCES oss_interface_test.cc)
 endif()
 
 # Add current source directory to source file names

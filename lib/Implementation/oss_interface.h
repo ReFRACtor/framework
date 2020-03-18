@@ -463,6 +463,11 @@ public:
         return OssModifiedOutputs(y, xk_temp, xk_tskin, xk_out_gas, xk_em, xk_rf, xk_cldln_pres, xk_cldln_ext);
     }
 
+    const OssFixedOutputs& FixedOutputs() const {
+        return fixed_outputs;
+    }
+
+
 private:
     int max_strlen(std::vector<std::string> names) {
         int max_len = -1;
