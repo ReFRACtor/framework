@@ -95,6 +95,7 @@ set(DIR_SOURCES
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
     radiance_scaling_sv_fit.cc
+    rayleigh_bodhaine.cc
     rayleigh_young.cc
     rayleigh_young.f90
     reference_vmr_apriori.cc
