@@ -39,14 +39,12 @@ BOOST_AUTO_TEST_CASE(basic)
   alt.push_back(boost::shared_ptr<Altitude>(new AltitudeHydrostatic(p, t, lat, height)));
   RayleighYoung r(p, alt, constant);
  
-  IfstreamCs expt_data(test_data_dir() + "expected/rayleigh/optical_depth");
+  IfstreamCs expt_data(test_data_dir() + "expected/rayleigh_young/optical_depth");
 
   Array<double, 1> od_expect(18);
   expt_data >> od_expect;
 
   Array<double, 1> od_calc(r.optical_depth_each_layer(12930.30, 0).value());
-
-  std::cerr << std::setprecision(20) << std::scientific << od_calc << std::endl;
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(od_expect, od_expect, 1e-6);
 }

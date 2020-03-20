@@ -68,7 +68,7 @@ DoubleWithUnit RayleighBodhaine::cross_section(const DoubleWithUnit& W) const
     // Earth (Bodhaine et al. [1999])
     double refr = 1.0 + (8060.51 + 2480990.0 / (132.274 - wl_um_m2) +
             17455.7 / (39.32957 - wl_um_m2)) *1.0e-8 * 
-            (1.0 + 0.54 * (pvmr[4] / 100.0 -0.0003));
+            (1.0 + 0.54 * (pvmr[3] / 100.0 -0.0003));
 
     double index_factor = std::pow((std::pow(refr, 2.0) - 1.0) / (std::pow(refr, 2.0) + 2.0), 2.0);
 

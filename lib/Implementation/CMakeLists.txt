@@ -201,6 +201,7 @@ set(TEST_SOURCES
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
     rayleigh_only_test.cc
+    rayleigh_bodhaine_test.cc
     rayleigh_young_test.cc
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
