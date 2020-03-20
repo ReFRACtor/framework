@@ -299,7 +299,7 @@ HdfFile::HdfFile(const std::string& Fname, Mode M)
 //-----------------------------------------------------------------------
 
 // In HDF5 1.10: "CommonFG will be deprecated in future releases. In 1.10.1, most member functions are moved to H5Location."
-#if H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10 && H5_VERS_RELEASE >= 1
+#if (H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 10 && H5_VERS_RELEASE >= 1) || (H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 11)
 void HdfFile::create_group_if_needed(const std::string& Dataname, H5::H5Location& Parent)
 #else
 void HdfFile::create_group_if_needed(const std::string& Dataname, H5::CommonFG& Parent)
@@ -339,7 +339,7 @@ bool HdfFile::is_group(const std::string& Objname) const
 //-----------------------------------------------------------------------
 
 // In HDF5 1.10: "CommonFG will be deprecated in future releases. In 1.10.1, most member functions are moved to H5Location."
-#if H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10 && H5_VERS_RELEASE >= 1
+#if (H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 10 && H5_VERS_RELEASE >= 1) || (H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 11)
 bool HdfFile::is_present(const std::string& Objname, 
                          const H5::H5Location& Parent) const
 #else
