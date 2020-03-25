@@ -221,8 +221,10 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
     spec_rad.value() = raman_applied_rad_val;
 
     // Compute FD jacobian values
-    for(int sv_idx = 0; sv_idx < coefficient().jacobian().rows(); sv_idx++) {
-        spec_rad.jacobian()(ra, sv_idx) = coefficient().jacobian()(sv_idx) * (raman_applied_rad_pert - raman_applied_rad_val) / jac_perturbation_;
+    if(!spec_rad.is_constant()) {
+        for(int sv_idx = 0; sv_idx < spec_rad.jacobian().cols(); sv_idx++) {
+            spec_rad.jacobian()(ra, sv_idx) = coefficient().jacobian()(0, sv_idx) * (raman_applied_rad_pert - raman_applied_rad_val) / jac_perturbation_;
+        }
     }
 
 }
