@@ -201,6 +201,10 @@ class RamanSiorisEffect(CreatorFlaggedValue):
     solar_model = param.Choice(param.ObjectVector("vector_spectrum_effect"), param.Iterable(rf.SolarModel))
     num_channels = param.Scalar(int)
 
+    do_upwelling = param.Scalar(bool, default=True)
+    padding_fraction = param.Scalar(float, default=0.10)
+    jacobian_perturbation = param.Scalar(float, default=0.001)
+
     def create(self, **kwargs):
 
         scale_factor = self.value()
@@ -214,11 +218,16 @@ class RamanSiorisEffect(CreatorFlaggedValue):
         atmosphere = self.atmosphere()
         solar_model = self.solar_model()
 
+        padding_fraction = self.padding_fraction()
+        do_upwelling = self.do_upwelling()
+        jac_perturb = self.jacobian_perturbation()
+
         raman_effect = []
         for chan_index in range(self.num_channels()):
             raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], bool(used_flag[chan_index]), chan_index,
                                  solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
-                                 atmosphere, solar_model[chan_index], albedo[chan_index], True) )
+                                 atmosphere, solar_model[chan_index], albedo[chan_index], 
+                                 padding_fraction, do_upwelling, jac_perturb) )
 
         return raman_effect
 
