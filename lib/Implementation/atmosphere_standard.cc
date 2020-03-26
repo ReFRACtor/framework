@@ -238,8 +238,10 @@ void AtmosphereStandard::initialize()
 
     pressure->add_observer(*this);
 
-    // Use a map cache, to allow the column optical depth values to 
-    totaltaug_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+    // Use a map caches, to allow the reuse of values needed outside of the
+    // main spectral grid loops
+    column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+    total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
 
 }
 
@@ -309,10 +311,15 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
         return true;
     }
 
-    // If spectrometer changes then erase totaltaug cache
+    // If spectrometer changes then reset caches ensuring that the cache
+    // is instantiated first
     if(spec_index != spec_index_tau_cache) {
-        if (totaltaug_cache) {
-            totaltaug_cache->clear();
+        if (column_od_cache) {
+            column_od_cache->clear();
+        }
+
+        if(total_od_cache) {
+            total_od_cache->clear();
         }
 
         spec_index_tau_cache = spec_index;
@@ -343,10 +350,21 @@ ArrayAdWithUnit<double, 1> AtmosphereStandard::altitude(int spec_index) const
     return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
 }
 
+ArrayAd<double, 1> AtmosphereStandard::optical_depth_wrt_rt(double wn, int spec_index) const
+{
+    if (!total_od_cache->is_valid(wn)) {
+        fill_cache(wn, spec_index);
+
+        total_od_cache->insert(wn, opt_prop->total_optical_depth());
+    }
+
+    return (*total_od_cache)[wn];
+}
+
 AutoDerivative<double> AtmosphereStandard::column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const
 {
     
-    if (not totaltaug_cache->is_valid(wn)) {
+    if (!column_od_cache->is_valid(wn)) {
         firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
 
         // It is easier to go back to the absorber object to compute the jacobians correctly since
@@ -363,11 +381,11 @@ AutoDerivative<double> AtmosphereStandard::column_optical_depth(double wn, int s
         }
 
         // Store the computed value
-        totaltaug_cache->insert(wn, totaltaug);
+        column_od_cache->insert(wn, totaltaug);
     }
 
     // Value will be computed above if not present
-    return (*totaltaug_cache)[wn](absorber->gas_index(Gas_name));
+    return (*column_od_cache)[wn](absorber->gas_index(Gas_name));
 }
 
 //-----------------------------------------------------------------------

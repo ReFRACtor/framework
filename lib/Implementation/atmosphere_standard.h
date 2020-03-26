@@ -122,13 +122,7 @@ public:
         return nlay;
     }
 
-    virtual AutoDerivative<double> column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const;
-
-    virtual ArrayAd<double, 1> optical_depth_wrt_rt(double wn, int spec_index) const
-    {
-        fill_cache(wn, spec_index);
-        return opt_prop->total_optical_depth();
-    }
+    virtual ArrayAd<double, 1> optical_depth_wrt_rt(double wn, int spec_index) const;
 
     virtual ArrayAd<double, 1> single_scattering_albedo_wrt_rt(double wn, int spec_index) const
     {
@@ -141,6 +135,8 @@ public:
         fill_cache(wn, spec_index);
         return opt_prop->total_phase_function_moments(nummom, numscat);
     }
+
+    virtual AutoDerivative<double> column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const;
 
     virtual ArrayAd<double, 1> atmosphere_blackbody(double wn, int spec_index) const;
 
@@ -268,7 +264,8 @@ private:
     // Items that might need to be cached for access
     // outside of say the radiative transfer loop, without
     // causing everything else to be recalculated
-    boost::shared_ptr<ArrayAdCache<double, double, 1> > totaltaug_cache;
+    boost::shared_ptr<ArrayAdCache<double, double, 1> > column_od_cache;
+    boost::shared_ptr<ArrayAdCache<double, double, 1> > total_od_cache;
 
     void initialize();
     bool fill_cache(double wn, int spec_index) const;
