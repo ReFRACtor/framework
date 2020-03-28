@@ -10,6 +10,7 @@ set(DIR_SOURCES
     default_constant.cc
     double_with_unit.cc
     environment_substitute.cc
+    float_with_unit.cc
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
     fp_time.cc

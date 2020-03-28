@@ -26,7 +26,6 @@ BOOST_AUTO_TEST_CASE(oss_init)
     gas_names.push_back("CCL4");
     gas_names.push_back("F11");
     gas_names.push_back("F12");
-    int num_molecules = gas_names.size();
 
     std::vector<std::string> gas_jacobian_names = std::vector<std::string>();
     gas_jacobian_names.push_back("H2O");
@@ -36,12 +35,14 @@ BOOST_AUTO_TEST_CASE(oss_init)
     int num_surf_points = 501;
     float min_ext_cld = 999;
 
-    OssFixedInputs fixed_inputs = OssFixedInputs(num_molecules, gas_names, gas_jacobian_names, sel_file,
+    OssFixedInputs fixed_inputs = OssFixedInputs(gas_names, gas_jacobian_names, sel_file,
 			  od_file, sol_file, fix_file, ch_sel_file, num_vert_lev, num_surf_points, min_ext_cld);
 
 	OssMasters oss_master = OssMasters(fixed_inputs);
 	oss_master.init();
-	OssFixedOutputs fixed_outputs = oss_master.FixedOutputs();
+	OssFixedOutputs fixed_outputs = oss_master.fixed_outputs;
+    ArrayWithUnit<float, 1> center_wavenumbers = fixed_outputs.center_wavenumber.convert(Unit("Wavenumbers"));
+    std::cout << center_wavenumbers.value;
 }
 
 BOOST_AUTO_TEST_SUITE_END()

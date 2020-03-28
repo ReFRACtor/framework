@@ -7,6 +7,7 @@
 
 #include "generic_object.h"
 #include "array_with_unit.h"
+#include "float_with_unit.h"
 
 extern "C" {
 void cppinitwrapper(int &, int &, char *, int &, int &, char *, const char *,
@@ -23,61 +24,90 @@ void cppfwdwrapper(int &, int &, float *, float *, float &, float *, int &,
 namespace FullPhysics {
 
 /****************************************************************//**
+ OSS function being wrapper occasionally take references to primitives
+ (e.g. int &) that it doesn't modify and that it could accept by value.
+ Rather than creating local temporary variables to hold rvalues
+ returned from things like vector::size(), we use this class instead.
+ *******************************************************************/
+
+template<typename T> class TempLvalue {
+public:
+	TempLvalue(T Val) : val(Val) {}
+	T &ref() { return val; }
+private:
+	T val;
+};
+
+/****************************************************************//**
+ This class helps manage OSS 1d C strings created from components in
+ a vector<std::string>
+ *******************************************************************/
+class OssString: public virtual GenericObject {
+public:
+	OssString() { } /* Allow uninitialized object creation */
+	OssString(const std::vector<std::string>& Components) : components(Components) {
+		oss_str = str_vec_to_oss_str(Components);
+		substrlen = max_substrlen(Components);
+		num_substr = Components.size();
+	}
+	int substrlen; ///< Length of individual strings (with padding) within larger concat'd string
+	int num_substr; ///< Number of individual strings within larger concat'd string
+	std::string oss_str; ///< OSS specific concat'd string with padding to max substrs fixed length
+	std::vector<std::string> components; ///< Backing container of OSS strings
+
+private:
+    int max_substrlen(std::vector<std::string> names) const {
+        int max_sublen = 0;
+        for (const auto& name : names) {
+            if (name.length() > max_sublen) {
+                max_sublen = name.length();
+            }
+        }
+        return max_sublen;
+    }
+
+    std::string str_vec_to_oss_str(std::vector<std::string> names) const {
+        int oss_substr_len = max_substrlen(names);
+        std::stringstream oss_ss;
+        for (const auto& name : names) {
+            oss_ss << std::setw (oss_substr_len) << name;
+        }
+        return oss_ss.str();
+    }
+};
+
+/****************************************************************//**
  This class stores the dynamic outputs set by OSS each FM call
  *******************************************************************/
 class OssModifiedOutputs: public virtual GenericObject {
 public:
-    /* TODO: Remove default constructor */
-    OssModifiedOutputs() {}
-    OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 1>& XkTemp, blitz::Array<float, 1>& XkTskin,
-            blitz::Array<float, 1>& XkOutGas, blitz::Array<float, 1>& XkEm, blitz::Array<float, 1>& XkRf,
-            blitz::Array<float, 1>& XkCldlnPres, blitz::Array<float, 1>& XkCldlnExt) :
-            y(Y), xk_temp(XkTemp), xk_tskin(XkTskin), xk_out_gas(XkOutGas), xk_em(XkEm),
-            xk_rf(XkRf), xk_cldln_pres(XkCldlnPres), xk_cldln_ext(XkCldlnExt){
+    OssModifiedOutputs() { } /* Allow creation of uninitialized objects */
+    OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 1>& Xk_temp, blitz::Array<float, 1>& Xk_tskin,
+            blitz::Array<float, 1>& Xk_out_gas, blitz::Array<float, 1>& Xk_em, blitz::Array<float, 1>& Xk_rf,
+            blitz::Array<float, 1>& Xk_cldln_pres, blitz::Array<float, 1>& Xk_cldln_ext) :
+            y(Y, Unit("(W / m^2 / str / cm")), xk_temp(Xk_temp, Unit("W / m^2 / sr / cm / K")),
+			xk_tskin(Xk_tskin, Unit("W / m^2 / sr / cm / K")),
+			xk_out_gas(Xk_out_gas, Unit("W / m^2 / sr / cm")),
+			xk_em(Xk_em, Unit("W / m^2 / sr / cm")), xk_rf(Xk_rf,Unit("W / m^2 / sr / cm")),
+			xk_cldln_pres(Xk_cldln_pres, Unit("W / m^2 / sr / cm")),
+			xk_cldln_ext(Xk_cldln_ext, Unit("W / m^2 / sr / cm")){
     }
 
-    const blitz::Array<float, 1>& XkCldlnExt() const {
-        return xk_cldln_ext;
+    OssModifiedOutputs(ArrayWithUnit<float, 1>& Y, ArrayWithUnit<float, 1>& Xk_temp, ArrayWithUnit<float, 1>& Xk_tskin,
+            ArrayWithUnit<float, 1>& Xk_out_gas, ArrayWithUnit<float, 1>& Xk_em, ArrayWithUnit<float, 1>& Xk_rf,
+            ArrayWithUnit<float, 1>& Xk_cldln_pres, ArrayWithUnit<float, 1>& Xk_cldln_ext) :
+            y(Y), xk_temp(Xk_temp), xk_tskin(Xk_tskin), xk_out_gas(Xk_out_gas), xk_em(Xk_em),
+            xk_rf(Xk_rf), xk_cldln_pres(Xk_cldln_pres), xk_cldln_ext(Xk_cldln_ext){
     }
 
-    const blitz::Array<float, 1>& XkCldlnPres() const {
-        return xk_cldln_pres;
-    }
-
-    const blitz::Array<float, 1>& XkEm() const {
-        return xk_em;
-    }
-
-    const blitz::Array<float, 1>& XkOutGas() const {
-        return xk_out_gas;
-    }
-
-    const blitz::Array<float, 1>& XkRf() const {
-        return xk_rf;
-    }
-
-    const blitz::Array<float, 1>& XkTemp() const {
-        return xk_temp;
-    }
-
-    const blitz::Array<float, 1>& XkTskin() const {
-        return xk_tskin;
-    }
-
-    const blitz::Array<float, 1>& Y() const {
-        return y;
-    }
-
-private:
-    /* TODO: ArrayWithUnit */
-    blitz::Array<float, 1> y; ///< radiance (W m−2 str−1 cm−1)
-    blitz::Array<float, 1> xk_temp; ///< temperature profile Jacobians (W m−2 str−1 cm−1 K−1)
-    blitz::Array<float, 1> xk_tskin; ///< skin temperature Jacobians (W m−2 str−1 cm−1 K−1)
-    blitz::Array<float, 1> xk_out_gas; ///< gas log concentration Jacobians (W m−2 str−1 cm−1)
-    blitz::Array<float, 1> xk_em; ///< emissivity Jacobians (W m−2 str−1 cm−1)
-    blitz::Array<float, 1> xk_rf; ///< reflectivity Jacobians (W m−2 str−1 cm−1)
-    blitz::Array<float, 1> xk_cldln_pres; ///< cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
-    blitz::Array<float, 1> xk_cldln_ext; ///< cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> y; ///< radiance (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> xk_temp; ///< temperature profile Jacobians (W m−2 str−1 cm−1 K−1)
+    ArrayWithUnit<float, 1> xk_tskin; ///< skin temperature Jacobians (W m−2 str−1 cm−1 K−1)
+    ArrayWithUnit<float, 1> xk_out_gas; ///< gas log concentration Jacobians (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> xk_em; ///< emissivity Jacobians (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> xk_rf; ///< reflectivity Jacobians (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> xk_cldln_pres; ///< cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> xk_cldln_ext; ///< cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
 };
 
 
@@ -86,24 +116,17 @@ private:
  *******************************************************************/
 class OssFixedOutputs: public virtual GenericObject {
 public:
-	/* Constructor to create a empty object */
-	OssFixedOutputs() {}
-    OssFixedOutputs(int NumChan, ArrayWithUnit<float, 1>& CenterWavenumber) :
-            num_chan(NumChan), center_wavenumber(CenterWavenumber) {
+	OssFixedOutputs() { } /* Allow uninitialized object creation */
+    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_wavenumber) :
+            num_chan(Num_chan), center_wavenumber(Center_wavenumber, Unit("Wavenumbers")) {
     }
 
-    const ArrayWithUnit<float, 1>& CenterWavenumber() const {
-        return center_wavenumber;
+    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_wavenumber) :
+            num_chan(Num_chan), center_wavenumber(Center_wavenumber) {
     }
 
-    int NumChan() const {
-        return num_chan;
-    }
-
-private:
     int num_chan; ///< Number of channels available in OSS RTM
     ArrayWithUnit<float, 1> center_wavenumber; //< Center wavenumbers of channels
-
 };
 
 /****************************************************************//**
@@ -111,76 +134,23 @@ private:
  *******************************************************************/
 class OssFixedInputs: public virtual GenericObject {
 public:
-    OssFixedInputs(int NumMolecules, std::vector<std::string>& GasNames,
-            std::vector<std::string>& GasJacobianNames, std::string& SelFile,
-            std::string& OdFile, std::string& SolFile, std::string& FixFile,
-            std::string& ChSelFile, int NumVertLev, int NumSurfPoints,
-            float MinExtinctCld, int MaxChans = 20000) :
-            num_molecules(NumMolecules), gas_names(GasNames), gas_jacobian_names(
-                    GasJacobianNames), sel_file(SelFile), od_file(OdFile), sol_file(
-                    SolFile), fix_file(FixFile), ch_sel_file(ChSelFile), num_vert_lev(
-                    NumVertLev), num_surf_points(NumSurfPoints), min_extinct_cld(
-                    MinExtinctCld), max_chans(MaxChans) {
-
+    OssFixedInputs(std::vector<std::string>& Gas_names,
+            std::vector<std::string>& Gas_jacobian_names, std::string& Sel_file,
+            std::string& Od_file, std::string& Sol_file, std::string& Fix_file,
+            std::string& Ch_sel_file, int Num_vert_lev, int Num_surf_points,
+            float Min_extinct_cld, int Max_chans = 20000) :
+            gas_names(Gas_names), gas_jacobian_names(Gas_jacobian_names),
+			sel_file(Sel_file), od_file(Od_file), sol_file(Sol_file), fix_file(Fix_file),
+			ch_sel_file(Ch_sel_file),num_vert_lev(Num_vert_lev), num_surf_points(Num_surf_points),
+			min_extinct_cld(Min_extinct_cld, Unit("km^-1")), max_chans(Max_chans), oss_gas_names(Gas_names),
+			oss_gas_jacobian_names(Gas_jacobian_names) {
     }
 
-    virtual ~OssFixedInputs() = default;
-
-    const std::string& ChSelFile() const {
-        return ch_sel_file;
-    }
-
-    const std::string& FixFile() const {
-        return fix_file;
-    }
-
-    const std::vector<std::string>& GasJacobianNames() const {
-        /* TODO: Translate to 1d C char array */
-        return gas_jacobian_names;
-    }
-
-    const std::vector<std::string>& GasNames() const {
-        /* TODO: Translate to 1d char array */
-        return gas_names;
-    }
-
-    int MaxChans() const {
-        return max_chans;
-    }
-
-    float MinExtinctCld() const {
-        return min_extinct_cld;
-    }
-
-    int NumMolecules() const {
-        return num_molecules;
-    }
-
-    int NumSurfPoints() const {
-        return num_surf_points;
-    }
-
-    int NumVertLev() const {
-        return num_vert_lev;
-    }
-
-    const std::string& OdFile() const {
-        return od_file;
-    }
-
-    const std::string& SelFile() const {
-        return sel_file;
-    }
-
-    const std::string& SolFile() const {
-        return sol_file;
-    }
-
-private:
     int max_chans; ///< Maximum number of channels
-    int num_molecules; ///< Number of molecules in input profiles
     std::vector<std::string> gas_names; ///< Molecular gas names
+    OssString oss_gas_names; ///< OSS 1d str representation of gas names
     std::vector<std::string> gas_jacobian_names; ///< Molecular gas names for Jacobians
+    OssString oss_gas_jacobian_names; ///< OSS 1d str representation of gas names for Jacobians
     std::string sel_file; ///< File name of OSS nodes and weights
     std::string od_file; ///< File name of optical property lookup table
     std::string sol_file; ///< File name of solar radiance
@@ -188,7 +158,7 @@ private:
     std::string ch_sel_file; ///< File name of list(s) of channel subsets (or "NULL")
     int num_vert_lev; ///< Number of vertical levels of state vector
     int num_surf_points; ///< Number of surface grid points
-    float min_extinct_cld; ///< Threshold of extinction for including cloud in RT (km−1)
+    FloatWithUnit min_extinct_cld; ///< Threshold of extinction for including cloud in RT (km−1)
 };
 
 /****************************************************************//**
@@ -198,166 +168,49 @@ private:
 class OssModifiedInputs: public virtual GenericObject {
 public:
     OssModifiedInputs(blitz::Array<float, 1>& Pressure,
-            blitz::Array<float, 1>& Temp, float SkinTemp,
-            blitz::Array<float, 2>& VmrGas, blitz::Array<float, 1>& Emis,
-            blitz::Array<float, 1>& Refl, float ScaleCld, float PressureCld,
-            blitz::Array<float, 1>& ExtCld, blitz::Array<float, 1>& SurfGrid,
-            blitz::Array<float, 1>& CldGrid, float ObsZenAng, float SolZenAng,
-            float Lat, float SurfAlt, bool Lambertian) :
-            pressure(Pressure), temp(Temp), skin_temp(SkinTemp), vmr_gas(
-                    VmrGas), emis(Emis), refl(Refl), scale_cld(ScaleCld), pressure_cld(
-                    PressureCld), ext_cld(ExtCld), surf_grid(SurfGrid), cld_grid(
-                    CldGrid), obs_zen_ang(ObsZenAng), sol_zen_ang(SolZenAng), lat(
-                    Lat), surf_alt(SurfAlt), lambertian(Lambertian) {
+            blitz::Array<float, 1>& Temp, float Skin_temp,
+            blitz::Array<float, 2>& Vmr_gas, blitz::Array<float, 1>& Emis,
+            blitz::Array<float, 1>& Refl, float Scale_cld, float Pressure_cld,
+            blitz::Array<float, 1>& Ext_cld, blitz::Array<float, 1>& Surf_grid,
+            blitz::Array<float, 1>& Cld_grid, float Obs_zen_ang, float Sol_zen_ang,
+            float Lat, float Surf_alt, bool Lambertian) :
+            pressure(Pressure, units::mbar), temp(Temp, units::K), skin_temp(Skin_temp, units::K),
+			vmr_gas(Vmr_gas, units::dimensionless), emis(Emis, units::dimensionless),
+			refl(Refl, units::dimensionless), scale_cld(Scale_cld, units::dimensionless),
+			pressure_cld(Pressure_cld, units::mbar), ext_cld(Ext_cld, Unit("km^-1")),
+			surf_grid(Surf_grid, units::inv_cm), cld_grid(Cld_grid, units::inv_cm),
+			obs_zen_ang(Obs_zen_ang, units::deg), sol_zen_ang(Sol_zen_ang, units::deg),
+			lat(Lat, units::deg), surf_alt(Surf_alt, units::m), lambertian(Lambertian) {
     }
 
-    virtual ~OssModifiedInputs() = default;
-
-    blitz::Array<float, 1>& CldGrid() {
-        return cld_grid;
+    OssModifiedInputs(ArrayWithUnit<float, 1>& Pressure,
+            ArrayWithUnit<float, 1>& Temp, FloatWithUnit Skin_temp,
+            ArrayWithUnit<float, 2>& Vmr_gas, ArrayWithUnit<float, 1>& Emis,
+            ArrayWithUnit<float, 1>& Refl, FloatWithUnit Scale_cld, FloatWithUnit Pressure_cld,
+            ArrayWithUnit<float, 1>& Ext_cld, ArrayWithUnit<float, 1>& Surf_grid,
+            ArrayWithUnit<float, 1>& Cld_grid, FloatWithUnit Obs_zen_ang, FloatWithUnit Sol_zen_ang,
+			FloatWithUnit Lat, FloatWithUnit Surf_alt, bool Lambertian) :
+            pressure(Pressure), temp(Temp), skin_temp(Skin_temp), vmr_gas(Vmr_gas),
+			emis(Emis), refl(Refl), scale_cld(Scale_cld), pressure_cld(Pressure_cld),
+			ext_cld(Ext_cld), surf_grid(Surf_grid), cld_grid(Cld_grid), obs_zen_ang(Obs_zen_ang),
+			sol_zen_ang(Sol_zen_ang), lat(Lat), surf_alt(Surf_alt), lambertian(Lambertian) {
     }
-
-    void setCldGrid(const blitz::Array<float, 1>& cldGrid) {
-        cld_grid = cldGrid;
-    }
-
-    blitz::Array<float, 1>& Emis() {
-        return emis;
-    }
-
-    void setEmis(const blitz::Array<float, 1>& emis) {
-        this->emis = emis;
-    }
-
-    blitz::Array<float, 1>& ExtCld() {
-        return ext_cld;
-    }
-
-    void setExtCld(const blitz::Array<float, 1>& extCld) {
-        ext_cld = extCld;
-    }
-
-    bool isLambertian() const {
-        return lambertian;
-    }
-
-    void setLambertian(bool lambertian) {
-        this->lambertian = lambertian;
-    }
-
-    float Lat() const {
-        return lat;
-    }
-
-    void setLat(float lat) {
-        this->lat = lat;
-    }
-
-    float ObsZenAng() const {
-        return obs_zen_ang;
-    }
-
-    void setObsZenAng(float obsZenAng) {
-        obs_zen_ang = obsZenAng;
-    }
-
-    blitz::Array<float, 1>& Pressure() {
-        return pressure;
-    }
-
-    void setPressure(const blitz::Array<float, 1>& pressure) {
-        this->pressure = pressure;
-    }
-
-    float PressureCld() const {
-        return pressure_cld;
-    }
-
-    void setPressureCld(float pressureCld) {
-        pressure_cld = pressureCld;
-    }
-
-    blitz::Array<float, 1>& Refl() {
-        return refl;
-    }
-
-    void setRefl(const blitz::Array<float, 1>& refl) {
-        this->refl = refl;
-    }
-
-    float ScaleCld() const {
-        return scale_cld;
-    }
-
-    void setScaleCld(float scaleCld) {
-        scale_cld = scaleCld;
-    }
-
-    float SkinTemp() const {
-        return skin_temp;
-    }
-
-    void setSkinTemp(float skinTemp) {
-        skin_temp = skinTemp;
-    }
-
-    float SolZenAng() const {
-        return sol_zen_ang;
-    }
-
-    void setSolZenAng(float solZenAng) {
-        sol_zen_ang = solZenAng;
-    }
-
-    float SurfAlt() const {
-        return surf_alt;
-    }
-
-    void setSurfAlt(float surfAlt) {
-        surf_alt = surfAlt;
-    }
-
-    blitz::Array<float, 1>& SurfGrid() {
-        return surf_grid;
-    }
-
-    void setSurfGrid(const blitz::Array<float, 1>& surfGrid) {
-        surf_grid = surfGrid;
-    }
-
-    blitz::Array<float, 1>& Temp() {
-        return temp;
-    }
-
-    void setTemp(const blitz::Array<float, 1>& temp) {
-        this->temp = temp;
-    }
-
-    blitz::Array<float, 2>& VmrGas() {
-        return vmr_gas;
-    }
-
-    void setVmrGas(const blitz::Array<float, 2>& vmrGas) {
-        vmr_gas = vmrGas;
-    }
-
-private:
-    /* TODO: ArrayWithUnit and convert on use instead? */
-    blitz::Array<float, 1> pressure; //< Atmospheric pressure profile (ordered from high to low) (mb)
-    blitz::Array<float, 1> temp; //< Temperature profile (K)
-    float skin_temp; //< Skin temperature (K)
-    blitz::Array<float, 2> vmr_gas; //< Volume mixing ratio of gases (unitless)
-    blitz::Array<float, 1> emis; //< Surface emissivity (unitless)
-    blitz::Array<float, 1> refl; //< Surface reflectivity (unitless)
-    float scale_cld; //< Scale of cloud log thickness
-    float pressure_cld; //< Pressure at cloud center (peak of extinction profile) (mb)
-    blitz::Array<float, 1> ext_cld; //< Cloud peak extinction (km−1)
-    blitz::Array<float, 1> surf_grid; //< Vector of surface grid point wavenumbers (cm−1)
-    blitz::Array<float, 1> cld_grid; //< Cloud grid point wavenumbers (cm−1)
-    float obs_zen_ang; //< Observation zenith angle (degrees)
-    float sol_zen_ang; //< Solar zenith angle (degrees)
-    float lat; //< latitude (degrees)
-    float surf_alt; //< surface altitude (m)
+    /* TODO: DoubleWithUnit and convert on use instead? */
+    ArrayWithUnit<float, 1> pressure; //< Atmospheric pressure profile (ordered from high to low) (mb)
+    ArrayWithUnit<float, 1> temp; //< Temperature profile (K)
+    FloatWithUnit skin_temp; //< Skin temperature (K)
+    ArrayWithUnit<float, 2> vmr_gas; //< Volume mixing ratio of gases (unitless)
+    ArrayWithUnit<float, 1> emis; //< Surface emissivity (unitless)
+    ArrayWithUnit<float, 1> refl; //< Surface reflectivity (unitless)
+    FloatWithUnit scale_cld; //< Scale of cloud log thickness
+    FloatWithUnit pressure_cld; //< Pressure at cloud center (peak of extinction profile) (mb)
+    ArrayWithUnit<float, 1> ext_cld; //< Cloud peak extinction (km−1)
+    ArrayWithUnit<float, 1> surf_grid; //< Vector of surface grid point wavenumbers (cm−1)
+    ArrayWithUnit<float, 1> cld_grid; //< Cloud grid point wavenumbers (cm−1)
+    FloatWithUnit obs_zen_ang; //< Observation zenith angle (degrees)
+    FloatWithUnit sol_zen_ang; //< Solar zenith angle (degrees)
+    FloatWithUnit lat; //< latitude (degrees)
+    FloatWithUnit surf_alt; //< surface altitude (m)
     bool lambertian; //< flag for Lambertian (true) or (default,false) specular surface*/
 };
 
@@ -378,114 +231,98 @@ private:
  *******************************************************************/
 class OssMasters: public virtual GenericObject {
 public:
-    OssMasters(OssFixedInputs& FixedInputs) :
-        fixed_inputs(FixedInputs) {}
+    OssMasters(OssFixedInputs& Fixed_inputs) :
+        fixed_inputs(Fixed_inputs) {}
 
     void init() {
-        ArrayWithUnit<float, 1> center_wavenumbers = ArrayWithUnit<float, 1>(blitz::Array<float, 1>(fixed_inputs.MaxChans()),
-                units::inv_cm);
+        int num_gases = fixed_inputs.gas_names.size();
+        OssString oss_gases = fixed_inputs.oss_gas_names;
+        int len_gas_substr = oss_gases.substrlen;
+        std::string oss_gas_str = oss_gases.oss_str;
 
+        int num_jacob = fixed_inputs.gas_jacobian_names.size();
+        OssString oss_gas_jacob = fixed_inputs.oss_gas_jacobian_names;
+        int len_jacob_substr = oss_gas_jacob.substrlen;
+        std::string oss_gas_jacob_str = fixed_inputs.oss_gas_jacobian_names.oss_str;
+
+        // TODO: Replace with TempLvalue? This actually looks clearer instead.
+        int sel_file_sz = fixed_inputs.sel_file.length();
+        int od_file_sz  = fixed_inputs.od_file.length();
+        int sol_file_sz = fixed_inputs.sol_file.length();
+        int fix_file_sz = fixed_inputs.fix_file.length();
+        int ch_sel_file_sz = fixed_inputs.ch_sel_file.length();
+        int num_vert_lev = fixed_inputs.num_vert_lev;
+        int num_surf_points = fixed_inputs.num_surf_points;
+        float min_extinct_cld = fixed_inputs.min_extinct_cld.convert(Unit("km^-1")).value;
+
+        ArrayWithUnit<float, 1> center_wavenumbers =
+        		ArrayWithUnit<float, 1>(blitz::Array<float, 1>(fixed_inputs.max_chans),
+                Unit("Wavenumbers"));
         int num_chan;
-        // create OSS 1d gas string from vec
-        int num_gases = fixed_inputs.GasNames().size();
-        int len_gas_name = max_strlen(fixed_inputs.GasNames());
-        std::string oss_gas_names = str_vec_to_oss_str(fixed_inputs.GasNames());
-        // create OSS 1d gas jacobian string from vec
-        int num_jacob = fixed_inputs.GasJacobianNames().size();
-        int len_jacob_name = max_strlen(fixed_inputs.GasJacobianNames());
-        std::string oss_jacob_gas_names = str_vec_to_oss_str(fixed_inputs.GasJacobianNames());
 
-        // better way?
-        int sel_file_sz = fixed_inputs.SelFile().length();
-        int od_file_sz  = fixed_inputs.OdFile().length();
-        int sol_file_sz = fixed_inputs.SolFile().length();
-        int fix_file_sz = fixed_inputs.FixFile().length();
-        int ch_sel_file_sz = fixed_inputs.ChSelFile().length();
-        int num_vert_lev = fixed_inputs.NumVertLev();
-        int num_surf_points = fixed_inputs.NumSurfPoints();
-        float min_extinct_cld = fixed_inputs.MinExtinctCld();
-
-        cppinitwrapper(num_gases, len_gas_name, &oss_gas_names[0],
-                num_jacob, len_jacob_name, &oss_jacob_gas_names[0],
-                fixed_inputs.SelFile().c_str(), sel_file_sz,
-                fixed_inputs.OdFile().c_str(), od_file_sz,
-                fixed_inputs.SolFile().c_str(), sol_file_sz,
-                fixed_inputs.FixFile().c_str(), fix_file_sz,
-                fixed_inputs.ChSelFile().c_str(), ch_sel_file_sz,
+        // Note std::string guaranteed to be contiguous since C++11 per 21.4.1.5 in ISO C++11 std.
+        // This allows &(std::string())[0] to give you a non-const char * reference in contrast to c_str()
+        cppinitwrapper(num_gases, len_gas_substr, &oss_gas_str[0],
+                num_jacob, len_jacob_substr, &oss_gas_jacob_str[0],
+                fixed_inputs.sel_file.c_str(), sel_file_sz,
+                fixed_inputs.od_file.c_str(), od_file_sz,
+                fixed_inputs.sol_file.c_str(), sol_file_sz,
+                fixed_inputs.fix_file.c_str(), fix_file_sz,
+                fixed_inputs.ch_sel_file.c_str(), ch_sel_file_sz,
                 num_vert_lev, num_surf_points,
                 min_extinct_cld, num_chan,
-                center_wavenumbers.value.data(), fixed_inputs.MaxChans());
+                center_wavenumbers.value.data(), fixed_inputs.max_chans);
 
         center_wavenumbers.value.resizeAndPreserve(num_chan);
 
         fixed_outputs = OssFixedOutputs(num_chan, center_wavenumbers);
     }
 
-    OssModifiedOutputs run_fwd_model(OssModifiedInputs& ModifiedInputs) {
+    OssModifiedOutputs run_fwd_model(OssModifiedInputs& Modified_inputs) {
+        int num_vert_lev = fixed_inputs.num_vert_lev;
+        int num_surf_points = fixed_inputs.num_surf_points;
+        int num_gas = fixed_inputs.gas_names.size();
+        float skin_temp = Modified_inputs.skin_temp.convert(units::K).value;
+        int num_surf_grid = Modified_inputs.surf_grid.rows();
+        float scale_cld = Modified_inputs.scale_cld.convert(units::dimensionless).value;
+        float pressure_cld = Modified_inputs.pressure_cld.convert(units::mbar).value;
+        int num_cld = Modified_inputs.cld_grid.rows();
+        float obs_zen_ang = Modified_inputs.obs_zen_ang.convert(units::deg).value;
+        float sol_zen_ang = Modified_inputs.sol_zen_ang.convert(units::deg).value;
+        float lat = Modified_inputs.lat.convert(units::deg).value;
+        float surf_alt = Modified_inputs.surf_alt.convert(units::m).value;
+        int is_lambertian = Modified_inputs.lambertian;
+        int num_gas_jacob = fixed_inputs.gas_jacobian_names.size();
+        int num_chan = fixed_outputs.num_chan;
+
         /* Outputs */
-        blitz::Array<float, 1> y = blitz::Array<float, 1>(fixed_outputs.NumChan());
-        blitz::Array<float, 1> xk_temp = blitz::Array<float, 1>(fixed_outputs.NumChan() * fixed_inputs.NumVertLev());
-        blitz::Array<float, 1> xk_tskin = blitz::Array<float, 1>(fixed_outputs.NumChan());
-        blitz::Array<float, 1> xk_out_gas = blitz::Array<float, 1>(fixed_outputs.NumChan() * fixed_inputs.NumVertLev() *
-                fixed_inputs.GasJacobianNames().size());
-        blitz::Array<float, 1> xk_em = blitz::Array<float, 1>(fixed_outputs.NumChan() * fixed_inputs.NumSurfPoints());
-        blitz::Array<float, 1> xk_rf = blitz::Array<float, 1>(fixed_outputs.NumChan() * fixed_inputs.NumSurfPoints());
-        blitz::Array<float, 1> xk_cldln_pres = blitz::Array<float, 1>(fixed_outputs.NumChan());
-        blitz::Array<float, 1> xk_cldln_ext = blitz::Array<float, 1>(fixed_outputs.NumChan() * ModifiedInputs.CldGrid().rows());
+        blitz::Array<float, 1> y = blitz::Array<float, 1>(num_chan);
+        blitz::Array<float, 1> xk_temp = blitz::Array<float, 1>(num_chan * num_vert_lev);
+        blitz::Array<float, 1> xk_tskin = blitz::Array<float, 1>(num_chan);
+        blitz::Array<float, 1> xk_out_gas = blitz::Array<float, 1>(num_chan * num_vert_lev * num_gas_jacob);
+        blitz::Array<float, 1> xk_em = blitz::Array<float, 1>(num_chan * num_surf_points);
+        blitz::Array<float, 1> xk_rf = blitz::Array<float, 1>(num_chan * num_surf_points);
+        blitz::Array<float, 1> xk_cldln_pres = blitz::Array<float, 1>(num_chan);
+        blitz::Array<float, 1> xk_cldln_ext = blitz::Array<float, 1>(num_chan * num_cld);
 
-        /* Inputs to use as l-values. Avoids: "expects an l-value for ... argument" */
-        int num_vert_lev = fixed_inputs.NumVertLev();
-        int num_gas = fixed_inputs.GasNames().size();
-        float skin_temp = ModifiedInputs.SkinTemp();
-        int num_surf_grid = ModifiedInputs.SurfGrid().rows();
-        float scale_cld = ModifiedInputs.ScaleCld();
-        float pressure_cld = ModifiedInputs.PressureCld();
-        int num_cld = ModifiedInputs.CldGrid().rows();
-        float obs_zen_ang = ModifiedInputs.ObsZenAng();
-        float sol_zen_ang = ModifiedInputs.SolZenAng();
-        float lat = ModifiedInputs.Lat();
-        float surf_alt = ModifiedInputs.SurfAlt();
-        int is_lambertian = ModifiedInputs.isLambertian();
-        int num_gas_jacob = fixed_inputs.GasJacobianNames().size();
-        int num_chan = fixed_outputs.NumChan();
+        /* Converted inputs */
+        blitz::Array<float, 1> pressure = Modified_inputs.pressure.convert(units::mbar).value;
+        blitz::Array<float, 1> temp = Modified_inputs.temp.convert(units::K).value;
+        blitz::Array<float, 2> vmr_gas = Modified_inputs.vmr_gas.convert(units::dimensionless).value;
+        blitz::Array<float, 1> emis = Modified_inputs.emis.convert(units::dimensionless).value;
+        blitz::Array<float, 1> refl = Modified_inputs.refl.convert(units::dimensionless).value;
+        blitz::Array<float, 1> ext_cld = Modified_inputs.ext_cld.convert(Unit("km^-1")).value;
+        blitz::Array<float, 1> surf_grid = Modified_inputs.surf_grid.convert(units::inv_cm).value;
+        blitz::Array<float, 1> cld_grid = Modified_inputs.cld_grid.convert(units::inv_cm).value;
 
-        cppfwdwrapper(num_vert_lev, num_gas, ModifiedInputs.Pressure().data(),
-        		ModifiedInputs.Temp().data(), skin_temp, ModifiedInputs.VmrGas().data(),
-				num_surf_grid, ModifiedInputs.Emis().data(), ModifiedInputs.Refl().data(),
-				scale_cld, pressure_cld, num_cld,
-                ModifiedInputs.ExtCld().data(), ModifiedInputs.SurfGrid().data(), ModifiedInputs.CldGrid().data(),
-				obs_zen_ang, sol_zen_ang, lat,
-				surf_alt, is_lambertian, num_gas_jacob,
-				num_chan, y.data(), xk_temp.data(),
-				xk_tskin.data(), xk_out_gas.data(), xk_em.data(),
-				xk_rf.data(), xk_cldln_pres.data(), xk_cldln_ext.data());
+        cppfwdwrapper(num_vert_lev, num_gas, pressure.data(),
+        		temp.data(), skin_temp, vmr_gas.data(),	num_surf_grid, emis.data(), refl.data(),
+				scale_cld, pressure_cld, num_cld, ext_cld.data(), surf_grid.data(), cld_grid.data(),
+				obs_zen_ang, sol_zen_ang, lat, surf_alt, is_lambertian, num_gas_jacob, num_chan, y.data(),
+				xk_temp.data(), xk_tskin.data(), xk_out_gas.data(), xk_em.data(), xk_rf.data(),
+				xk_cldln_pres.data(), xk_cldln_ext.data());
 
         return OssModifiedOutputs(y, xk_temp, xk_tskin, xk_out_gas, xk_em, xk_rf, xk_cldln_pres, xk_cldln_ext);
-    }
-
-    const OssFixedOutputs& FixedOutputs() const {
-        return fixed_outputs;
-    }
-
-
-private:
-    int max_strlen(std::vector<std::string> names) {
-        int max_len = -1;
-        for (const auto& name : names) {
-            if (name.length() > max_len) {
-                max_len = name.length();
-            }
-        }
-        return max_len;
-    }
-
-    std::string str_vec_to_oss_str(std::vector<std::string> names) {
-        int oss_name_len = max_strlen(names);
-        std::stringstream oss_ss;
-        for (const auto& name : names) {
-            oss_ss << std::setw (oss_name_len) << name;
-        }
-        return oss_ss.str();
     }
 
     OssFixedInputs fixed_inputs;

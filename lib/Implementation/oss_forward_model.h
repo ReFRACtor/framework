@@ -242,7 +242,7 @@ public:
 //      for (int i = 0; i < nchanOSS; i++) {
 //        rad(i) = static_cast<double>(y(i));
 //      }
-//
+//      /* TODO: Add jacobian to SpectralRange */
 //      return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
     	return Spectrum();
     }
