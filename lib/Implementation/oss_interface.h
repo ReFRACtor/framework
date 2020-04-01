@@ -24,21 +24,6 @@ void cppfwdwrapper(int &, int &, float *, float *, float &, float *, int &,
 namespace FullPhysics {
 
 /****************************************************************//**
- OSS function being wrapper occasionally take references to primitives
- (e.g. int &) that it doesn't modify and that it could accept by value.
- Rather than creating local temporary variables to hold rvalues
- returned from things like vector::size(), we use this class instead.
- *******************************************************************/
-
-template<typename T> class TempLvalue {
-public:
-	TempLvalue(T Val) : val(Val) {}
-	T &ref() { return val; }
-private:
-	T val;
-};
-
-/****************************************************************//**
  This class helps manage OSS 1d C strings created from components in
  a vector<std::string>
  *******************************************************************/
@@ -85,7 +70,8 @@ public:
     OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 1>& Xk_temp, blitz::Array<float, 1>& Xk_tskin,
             blitz::Array<float, 1>& Xk_out_gas, blitz::Array<float, 1>& Xk_em, blitz::Array<float, 1>& Xk_rf,
             blitz::Array<float, 1>& Xk_cldln_pres, blitz::Array<float, 1>& Xk_cldln_ext) :
-            y(Y, Unit("(W / m^2 / str / cm")), xk_temp(Xk_temp, Unit("W / m^2 / sr / cm / K")),
+            // TODO: Only units like Y's work. replacing "cm" with "m" breaks parsing but is how OSS defines it
+            y(Y, Unit("W / cm^2 / sr / cm^-1")), xk_temp(Xk_temp, Unit("W / m^2 / sr / cm / K")),
 			xk_tskin(Xk_tskin, Unit("W / m^2 / sr / cm / K")),
 			xk_out_gas(Xk_out_gas, Unit("W / m^2 / sr / cm")),
 			xk_em(Xk_em, Unit("W / m^2 / sr / cm")), xk_rf(Xk_rf,Unit("W / m^2 / sr / cm")),
@@ -195,7 +181,7 @@ public:
 			ext_cld(Ext_cld), surf_grid(Surf_grid), cld_grid(Cld_grid), obs_zen_ang(Obs_zen_ang),
 			sol_zen_ang(Sol_zen_ang), lat(Lat), surf_alt(Surf_alt), lambertian(Lambertian) {
     }
-    /* TODO: DoubleWithUnit and convert on use instead? */
+
     ArrayWithUnit<float, 1> pressure; //< Atmospheric pressure profile (ordered from high to low) (mb)
     ArrayWithUnit<float, 1> temp; //< Temperature profile (K)
     FloatWithUnit skin_temp; //< Skin temperature (K)
@@ -245,7 +231,6 @@ public:
         int len_jacob_substr = oss_gas_jacob.substrlen;
         std::string oss_gas_jacob_str = fixed_inputs.oss_gas_jacobian_names.oss_str;
 
-        // TODO: Replace with TempLvalue? This actually looks clearer instead.
         int sel_file_sz = fixed_inputs.sel_file.length();
         int od_file_sz  = fixed_inputs.od_file.length();
         int sol_file_sz = fixed_inputs.sol_file.length();
