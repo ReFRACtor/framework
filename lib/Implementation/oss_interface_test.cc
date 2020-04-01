@@ -1,6 +1,5 @@
 #include "oss_interface.h"
 #include "unit_test_support.h"
-#include "double_with_unit.h"
 #include "hdf_file.h"
 
 using namespace FullPhysics;
