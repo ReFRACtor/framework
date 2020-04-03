@@ -34,6 +34,18 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     int num_aer = aerosol_ext_od.cols();
 
     int num_inp_jac = rayleigh_od.number_variable();
+    if(num_gas > 0)
+      num_inp_jac =std::max(num_inp_jac, gas_od.number_variable());
+    if(num_aer > 0)
+      num_inp_jac =std::max(num_inp_jac, aerosol_ext_od.number_variable());
+    if((!rayleigh_od.is_constant() &&
+	rayleigh_od.number_variable() != num_inp_jac) ||
+       (num_gas > 0 && !gas_od.is_constant() &&
+	gas_od.number_variable() != num_inp_jac) ||      
+       (num_aer > 0 && !aerosol_ext_od.is_constant() &&
+	aerosol_ext_od.number_variable() != num_inp_jac))
+      throw Exception("rayleigh_od, gas_od and aerosol_ext_od all need to have the same size jacobian");
+      
     int num_interm_jac = 2 + num_aer;
 
     // Create mapping of intermediate jacobians to input jacobians for each layer
@@ -58,10 +70,16 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     gas_optical_depth_per_layer_.jacobian() = 0.0;
     gas_optical_depth_per_layer_.jacobian()(ra, gas_jac_index) = 1.0;
 
-    // Intermediate value for the total gas optical depth is the sum of the per gas jacobians,
-    for(int lay_idx = 0; lay_idx < gas_od.rows(); lay_idx++) {
-        intermediate_jacobian_(lay_idx, gas_jac_index, ra) =  sum(gas_od.jacobian()(lay_idx, ra, ra)(i2, i1), i2);
-    }
+    // Intermediate value for the total gas optical depth is the sum
+    // of the per gas jacobians,
+    for(int lay_idx = 0; lay_idx < gas_od.rows(); lay_idx++)
+      if(!gas_od.is_constant())
+	intermediate_jacobian_(lay_idx, gas_jac_index, ra) =
+	  sum(gas_od.jacobian()(lay_idx, ra, ra)(i2, i1), i2);
+      else {
+	if(num_inp_jac != 0)
+	  intermediate_jacobian_(lay_idx, gas_jac_index, ra) = 0;
+      }
 
     // At rayleigh intermediate index the jacobian is the rayleigh jacobian itself
     rayleigh_optical_depth_.value().reference(rayleigh_od.value());
@@ -71,7 +89,13 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     ray_jac(ra, rayleigh_jac_index) = 1.0;
     rayleigh_optical_depth_.jacobian().reference(ray_jac);
 
-    intermediate_jacobian_(ra, rayleigh_jac_index, ra) = rayleigh_od.jacobian();
+    if(!rayleigh_od.is_constant())
+      intermediate_jacobian_(ra, rayleigh_jac_index, ra) =
+	rayleigh_od.jacobian();
+    else {
+      if(num_inp_jac != 0)
+	intermediate_jacobian_(ra, rayleigh_jac_index, ra) = 0;
+    }
 
     // At each aerosol intermediate index the jacobian is the aerosol extinction optical depth jacobian
     // the scattering jacobian is not included to reduce the number of jacobians even if it reduces the
@@ -105,7 +129,12 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
             aer_sca_jac(ra, aer_idx, aerosol_0_jac_index+aer_idx) = 0.0;
         }
 
-        intermediate_jacobian_(ra, aerosol_0_jac_index+aer_idx, ra) = aerosol_ext_od.jacobian()(ra, aer_idx, ra);
+	if(!aerosol_ext_od.is_constant())
+	  intermediate_jacobian_(ra, aerosol_0_jac_index+aer_idx, ra) = aerosol_ext_od.jacobian()(ra, aer_idx, ra);
+	else {
+	  if(num_inp_jac != 0)
+	    intermediate_jacobian_(ra, aerosol_0_jac_index+aer_idx, ra) = 0;
+	}
     }
 
     aerosol_extinction_optical_depth_per_particle_.jacobian().reference(aer_ext_jac);

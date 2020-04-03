@@ -340,7 +340,7 @@ void FirstOrderDriver::calculate_rt() const
 
 double FirstOrderDriver::get_intensity() const
 {
-    return solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
+    return solar_interface_->intensity_db()(0) + solar_interface_->intensity_up()(0);
 }
 
 void FirstOrderDriver::copy_jacobians

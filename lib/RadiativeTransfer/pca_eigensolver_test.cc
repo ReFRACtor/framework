@@ -139,7 +139,8 @@ BOOST_AUTO_TEST_CASE(correction)
 
     blitz::Array<double, 2> expt_correction(num_points, ngeoms, ColumnMajorArray<2>());
 
-    pca_3m_correction(&num_eofs, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction.dataFirst());
+    int num_eofs_2p1 = num_eofs * 2 + 1;
+    pca_3m_correction(&num_eofs_2p1, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction.dataFirst());
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(expt_correction(Range::all(), 0), calc_correction(Range::all(), 0), 1e-10);
 }

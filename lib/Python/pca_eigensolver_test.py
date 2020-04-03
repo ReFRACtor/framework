@@ -11,22 +11,22 @@ import pytest
 def opt_props():
     opt_prop_filename = os.path.join(unit_test_data, "in/pca/pca_optical_properties.h5")
 
-    opt_props = rf.PCAOpticalPropertiesFile(opt_prop_filename);
+    opt_props = rf.HdfFile(opt_prop_filename)
 
     return opt_props
 
 def test_eigen_solver_generic(opt_props):
 
     data_list = []
-    data_list.append(opt_props.gas_optical_depth())
-    data_list.append(opt_props.single_scattering_albedo())
+    data_list.append(opt_props.read_double_2d("gas_optical_depth"))
+    data_list.append(opt_props.read_double_2d("single_scattering_albedo"))
 
     pca_solver = rf.PCAEigenSolverGeneric(data_list, 4)
 
 def test_bad_element(opt_props):
 
     data_list = []
-    data_list.append(opt_props.gas_optical_depth())
+    data_list.append(opt_props.read_double_2d("gas_optical_depth"))
     data_list.append("")
 
     with pytest.raises(TypeError) as exc_info:

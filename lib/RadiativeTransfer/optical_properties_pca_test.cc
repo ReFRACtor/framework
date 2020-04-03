@@ -112,21 +112,27 @@ BOOST_AUTO_TEST_CASE(intermediate_variable)
     double test_wn = 13179.0;
     int test_chan = 0;
 
-    boost::shared_ptr<AtmosphereLegacy> atm_legacy
-        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
-                              atm->aerosol_ptr(), atm->relative_humidity_ptr(), atm->ground(), 
-                              atm->altitude_ptr(), atm->constant_ptr()));
+  boost::shared_ptr<AtmosphereLegacy> atm_legacy =
+    boost::make_shared<AtmosphereLegacy>(atm->absorber_ptr(),
+	 atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
+         atm->aerosol_ptr(), atm->relative_humidity_ptr(), atm->ground(), 
+	 atm->altitude_ptr(), atm->constant_ptr());
+  statev->add_observer(*atm_legacy);
+  ArrayAd<double, 2> intermediate_v(atm_legacy->intermediate_variable(test_wn,
+						      test_chan));
 
-    ArrayAd<double, 2> intermediate_v(atm_legacy->intermediate_variable(test_wn, test_chan));
+  boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wrt_rt =
+    boost::make_shared<OpticalPropertiesWrtRt>();
+  opt_prop_wrt_rt->initialize(DoubleWithUnit(test_wn, units::inv_cm),
+			      test_chan, atm->absorber_ptr(),
+			      atm->rayleigh_ptr(), atm->aerosol_ptr());
 
-    boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wrt_rt(new OpticalPropertiesWrtRt());
-    opt_prop_wrt_rt->initialize(DoubleWithUnit(test_wn, units::inv_cm), test_chan, atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
+  ArrayAd<double, 2> packed_data = OpticalPropertiesPca::pack(opt_prop_wrt_rt);
 
-    ArrayAd<double, 2> packed_data = OpticalPropertiesPca::pack(opt_prop_wrt_rt);
-
-    BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.value(), packed_data.value(), 1e-10);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.jacobian(), packed_data.jacobian(), 1e-10);
-
+  BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.value(), packed_data.value(),
+			       1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(intermediate_v.jacobian(),
+			       packed_data.jacobian(), 1e-10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
