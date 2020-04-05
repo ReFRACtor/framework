@@ -57,21 +57,17 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   // the same results.
 
   boost::shared_ptr<AtmosphereStandard> atm_zeroext = atm->clone();
-
   // Set state vector so that the extinction coefficient of
-  // atm_zeroext is 0. The extinction object must be attached
-  // to the state vector for the update to have any effect
-  //
+  // atm_zeroext is 0. 
   StateVector sv;
-  boost::shared_ptr<AerosolOptical> aer_optical(boost::dynamic_pointer_cast<AerosolOptical>(atm_zeroext->aerosol_ptr()));
-  for (int aer_idx = 0; aer_idx < atm_zeroext->aerosol_ptr()->number_particle(); aer_idx++) {
-    if (aer_optical) {
-      sv.add_observer(*aer_optical->aerosol_extinction(aer_idx));
-    }
-  }
-  Array<double, 1> x(sv.observer_claimed_size());
-  x = 1e-20;
-  sv.update_state(x);
+  sv.add_observer(*atm_zeroext);
+  atm_zeroext->attach_children_to_sv(sv);
+  sv.update_state(config_initial_guess->initial_guess());
+  blitz::Array<double, 1> sv_value = sv.state();
+  for(int i = 0; i < sv.state_vector_name().rows(); ++i)
+    if(sv.state_vector_name()(i).find("Aerosol Ext") != std::string::npos)
+      sv_value(i) = 1e-20;
+  sv.update_state(sv_value);
 
   // Leave out the aerosol (null pointer)
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
