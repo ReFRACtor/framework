@@ -65,10 +65,12 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     // we will be setting the jacobian values explicitly since they do not flow
     // from the per particle jacobians since they are constant
     gas_optical_depth_per_layer_.resize(gas_od.value().rows(), num_interm_jac);
-    gas_optical_depth_per_layer_.value() = sum(gas_od.value()(i1, i2), i2);
+    if(gas_optical_depth_per_layer_.rows() > 0) {
+      gas_optical_depth_per_layer_.value() = sum(gas_od.value()(i1, i2), i2);
 
-    gas_optical_depth_per_layer_.jacobian() = 0.0;
-    gas_optical_depth_per_layer_.jacobian()(ra, gas_jac_index) = 1.0;
+      gas_optical_depth_per_layer_.jacobian() = 0.0;
+      gas_optical_depth_per_layer_.jacobian()(ra, gas_jac_index) = 1.0;
+    }
 
     // Intermediate value for the total gas optical depth is the sum
     // of the per gas jacobians,

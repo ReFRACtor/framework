@@ -32,9 +32,9 @@ void OpticalPropertiesImpBase::assert_sizes() const
     // Allow subclasses to possibly not define gas_optical_depth_per_particle_ and instead
     // define only gas_optical_depth_per_layer_. Only fail the check for gas_optical_depth_per_particle_
     // if gas_optical_depth_per_layer_ is empty.
-    if(gas_optical_depth_per_layer_.rows() == 0 && gas_optical_depth_per_particle_.rows() != num_layers) {
+    if(gas_optical_depth_per_layer_.rows() == 0 && gas_optical_depth_per_particle_.cols()!= 0 && gas_optical_depth_per_particle_.rows() != num_layers) {
         throw Exception("Gas optical depth per particle value has inconsistent number of layers");
-    } else if(gas_optical_depth_per_particle_.rows() ==0 && gas_optical_depth_per_layer_.rows() != num_layers) {
+    } else if(gas_optical_depth_per_particle_.rows() ==0 && gas_optical_depth_per_particle_.cols()!= 0 && gas_optical_depth_per_layer_.rows() != num_layers) {
         throw Exception("Gas optical depth per layer value has inconsistent number of layers");
     }
 
