@@ -139,9 +139,13 @@ class SpectrumEffectList(Creator):
     def create(self, **kwargs):
 
         all_effects = []
+        previous_effects = {}
         for effect_name in self.effects():
             self.register_parameter(effect_name, param.Iterable())
-            all_effects.append(self.param(effect_name))
+            per_chan_effects = self.param(effect_name, **previous_effects)
+            all_effects.append(per_chan_effects)
+            # Store effects as they are encountered so that subsequent steps can utilize previous ones
+            previous_effects[effect_name] = per_chan_effects
 
         # Map these into an outer vector for each channel, with an inner vector for each effect
         spec_eff = rf.vector_vector_spectrum_effect()
@@ -205,7 +209,7 @@ class RamanSiorisEffect(CreatorFlaggedValue):
     padding_fraction = param.Scalar(float, default=0.10)
     jacobian_perturbation = param.Scalar(float, default=0.001)
 
-    def create(self, **kwargs):
+    def create(self, solar_model=None, **kwargs):
 
         scale_factor = self.value()
         used_flag = self.retrieval_flag()
@@ -216,7 +220,10 @@ class RamanSiorisEffect(CreatorFlaggedValue):
         obs_zenith = self.observation_zenith()
         rel_azimuth = self.relative_azimuth()
         atmosphere = self.atmosphere()
-        solar_model = self.solar_model()
+
+        # Get value from keyword if not passed through
+        if solar_model is None:
+            solar_model = self.solar_model()
 
         padding_fraction = self.padding_fraction()
         do_upwelling = self.do_upwelling()
