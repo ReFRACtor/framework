@@ -1,4 +1,5 @@
 from itertools import zip_longest
+from collections.abc import Iterable
 
 import numpy as np
 
@@ -55,23 +56,44 @@ class SolarReferenceSpectrum(Creator):
     rely upon interpolation to those values to get the appropriate values"""
 
     doppler = param.Iterable(rf.SolarDopplerShift, required=False)
-    grid = param.ArrayWithUnit(dims=1)
-    irradiance = param.ArrayWithUnit(dims=1)
+
+    # A single set of values for all channels or one per channel
+    grid = param.Choice(param.ArrayWithUnit(dims=1), param.Iterable(rf.ArrayWithUnit_double_1))
+    irradiance = param.Choice(param.ArrayWithUnit(dims=1), param.Iterable(rf.ArrayWithUnit_double_1))
     num_channels = param.Scalar(int)
 
+    def normalize_input(self, input_type, values, num_channels):
+        """Ensure we always have an array of ArrayWithUnit classes whether only one is supplied or multiple
+        check the size of the iterable."""
+
+        if isinstance(values, Iterable):
+            if len(values) != num_channels:
+                raise param.ParamError(f"{input_type} must have {num_channels} values if using an value per channel")
+        elif isinstance(values, rf.ArrayWithUnit_double_1):
+            values = [values] * num_channels
+        else:
+            raise param.ParamError(f"Unhandled input type for {input_type}: {values}")
+
+        return values
+
     def create(self, **kwargs):
+
+        num_channels = self.num_channels()
 
         doppler_shifts = self.doppler()
 
         if doppler_shifts is None:
-            doppler_shifts = [None] * self.num_channels()
+            doppler_shifts = [None] * num_channels
 
-        spec_domain = rf.SpectralDomain(self.grid())
-        spec_range = rf.SpectralRange(self.irradiance())
-        solar_spec = rf.Spectrum(spec_domain, spec_range)
+        grid_values = self.normalize_input("grid", self.grid(), num_channels)
+        irradiance_values = self.normalize_input("irradiance", self.irradiance(), num_channels)
 
         solar = []
-        for doppler in doppler_shifts:
+        for grid, irradiance, doppler in zip(grid_values, irradiance_values, doppler_shifts):
+            spec_domain = rf.SpectralDomain(grid)
+            spec_range = rf.SpectralRange(irradiance)
+            solar_spec = rf.Spectrum(spec_domain, spec_range)
+
             ref_spec = rf.SolarReferenceSpectrum(solar_spec, doppler)
             solar.append(ref_spec)
 

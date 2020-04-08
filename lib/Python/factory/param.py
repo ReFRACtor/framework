@@ -118,15 +118,18 @@ class Iterable(ConfigParam):
         super().__init__(**kwargs)
         self.val_type = val_type
 
+        if val_type is not None and not isinstance(val_type, type):
+            raise ParamError(f"Type supplied must be a type object or None, not {val_type}")
+
     def check_type(self, value):
 
         if not hasattr(value, "__iter__"):
-            raise ParamError("Expected an iterable for value: %s" % value)
+            raise ParamError(f"Expected an iterable for value: {value}")
 
         if self.val_type is not None:
             for idx, iter_val in enumerate(value):
                 if not isinstance(iter_val, self.val_type):
-                    raise ParamError("Expected an instance of %s for value %s at index %d of iterable" % (self.val_type, iter_val, idx))
+                    raise ParamError(f"Expected an instance of {self.val_type} for value {iter_val} at index {idx} of iterable")
 
 class InstanceOf(ConfigParam):
     "Configuration parameter that must be an instance of a specific type of class"
