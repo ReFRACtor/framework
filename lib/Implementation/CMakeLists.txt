@@ -222,6 +222,7 @@ set(TEST_SOURCES
 
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
+# TODO: Remove OSS interface file if NOT OSS_FOUND
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
 if(OSS_FOUND)
