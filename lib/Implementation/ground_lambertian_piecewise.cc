@@ -14,7 +14,7 @@ GroundLambertianPiecewise::GroundLambertianPiecewise(const ArrayWithUnit<double,
 
 boost::shared_ptr<Ground> GroundLambertianPiecewise::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(ArrayWithUnit<double, 1>(wavenumbers, units::inv_cm), coefficient().value(), used_flag));
+    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(spectral_points_, coefficient().value(), used_flag));
 }
 
 std::string GroundLambertianPiecewise::sub_state_identifier() const {
@@ -23,7 +23,7 @@ std::string GroundLambertianPiecewise::sub_state_identifier() const {
 
 std::string GroundLambertianPiecewise::state_vector_name_i(int i) const
 {
-    return "Ground Lambertian Piecewise at wavenumber " + boost::lexical_cast<std::string>(wavenumbers(i));
+    return "Ground Lambertian Piecewise at " + boost::lexical_cast<std::string>(spectral_points_.value(i)) + " " + spectral_points_.units.name();
 }
 
 void GroundLambertianPiecewise::print(std::ostream& Os) const
@@ -31,7 +31,8 @@ void GroundLambertianPiecewise::print(std::ostream& Os) const
     OstreamPad opad(Os, "    ");
     Os << "GroundLambertianPiecewise:" << std::endl;
 
-    opad << wavenumbers.rows() << " lambertian coefficients (" << wavenumbers(0) << "-" << wavenumbers(wavenumbers.rows()-1) << " cm^-1)" << std::endl;
+    Array<double, 1> point_vals = spectral_points_.value;
+    opad << point_vals.rows() << " lambertian coefficients (" << point_vals(0) << "-" << point_vals(point_vals.rows()-1) << " " << spectral_points_.units.name() << ")" << std::endl;
 
     opad.strict_sync();
 }

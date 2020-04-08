@@ -4,6 +4,7 @@
 
 #include "spurr_brdf_types.h"
 #include "ground_lambertian.h"
+#include "ground_lambertian_piecewise.h"
 #include "ground_emissivity_polynomial.h"
 #include "ground_emissivity_piecewise.h"
 #include "ground_coxmunk.h"
@@ -60,6 +61,8 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
   // type integer for use in the Spurr RT Fortran code
   // Do this in the constructor since dynamic casting is an expensive operation
   if(dynamic_cast<GroundLambertian*>(atm->ground().get())) {
+    surface_type_int = LAMBERTIAN;
+  } else if(dynamic_cast<GroundLambertianPiecewise*>(atm->ground().get())) {
     surface_type_int = LAMBERTIAN;
   } else if(dynamic_cast<GroundEmissivityPolynomial*>(atm->ground().get())) {
     surface_type_int = EMISSIVITY;
