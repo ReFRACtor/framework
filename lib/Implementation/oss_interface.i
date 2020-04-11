@@ -54,7 +54,7 @@ public:
 
 class OssFixedOutputs: public virtual GenericObject {
 public:
-	OssFixedOutputs();
+    OssFixedOutputs();
     OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_wavenumber);
     OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_wavenumber);
     int num_chan; ///< Number of channels available in OSS RTM

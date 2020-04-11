@@ -13,7 +13,8 @@ BOOST_AUTO_TEST_CASE(radiance)
   std::string sol_file = oss_data_dir() + "newkur.dat";
   std::string fix_file = oss_data_dir() + "default.dat";
   std::string ch_sel_file = "NULL";
-  OssForwardModel fm(config_atmosphere, sel_file, od_file, sol_file, fix_file, ch_sel_file);
+  OssForwardModel fm(config_atmosphere, config_absorber, config_absorber_calc_jacob, config_pressure, sel_file,
+          od_file, sol_file, fix_file, ch_sel_file);
   fm.setup_grid();
   Spectrum radiance = fm.radiance(0);
   // TODO: Add checks

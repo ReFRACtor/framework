@@ -81,7 +81,7 @@ public:
  *******************************************************************/
 class OssFixedOutputs: public virtual GenericObject {
 public:
-	OssFixedOutputs() { } /* Allow uninitialized object creation */
+    OssFixedOutputs() { } /* Allow uninitialized object creation */
     OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_wavenumber) :
             num_chan(Num_chan), center_wavenumber(Center_wavenumber, Unit("Wavenumbers")) {
     }
@@ -99,6 +99,7 @@ public:
  *******************************************************************/
 class OssFixedInputs: public virtual GenericObject {
 public:
+    OssFixedInputs() { } /* Allow creation of uninitialized objects */
     OssFixedInputs(std::vector<std::string>& Gas_names,
             std::vector<std::string>& Gas_jacobian_names, std::string& Sel_file,
             std::string& Od_file, std::string& Sol_file, std::string& Fix_file,
@@ -184,6 +185,7 @@ public:
  *******************************************************************/
 class OssMasters: public virtual GenericObject {
 public:
+    OssMasters() { } /* Allow creation of uninitialized objects */
     OssMasters(OssFixedInputs& Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
 
     void init();

@@ -23,6 +23,7 @@
 #include "temperature_fixed_level.h"
 #include "rt_atmosphere.h"
 #include "hdf_file.h"
+#include "absorber.h"
 /*
 #include "radiative_transfer.h"
 #include "lua_state.h"
@@ -47,9 +48,12 @@ public:
   boost::shared_ptr<Absorber> config_absorber;
   boost::shared_ptr<Aerosol> config_aerosol;
   */
+  boost::shared_ptr<Absorber> config_absorber;
+  std::vector<bool> config_absorber_calc_jacob;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
   boost::shared_ptr<RtAtmosphere> config_atmosphere;
+
   /*
   boost::shared_ptr<StateVector> config_state_vector;
   boost::shared_ptr<PressureLevelInput> config_pressure_level_input;

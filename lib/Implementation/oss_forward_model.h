@@ -1,9 +1,12 @@
 #ifndef OSS_FORWARD_MODEL_H
 #define OSS_FORWARD_MODEL_H
+#include <map>
 #include "forward_model.h"
 #include "state_vector.h"
 #include "rt_atmosphere.h"
+#include "absorber.h"
 #include "hdf_file.h"
+#include "oss_interface.h"
 
 #include <string>
 
@@ -36,75 +39,42 @@ extern "C" {
 
 class OssForwardModel : public ForwardModel {
 public:
-    OssForwardModel(const boost::shared_ptr<RtAtmosphere>& Atm, const std::string& Sel_file,
-        const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
-        const std::string& Ch_sel_file, int Max_chans = 20000) : atmosphere(Atm),
-          sel_file(Sel_file), sel_file_sz(Sel_file.length()),
-          od_file(Od_file), od_file_sz(Od_file.length()),
-          sol_file(Sol_file), sol_file_sz(Sol_file.length()),
-          fix_file(Fix_file), fix_file_sz(Fix_file.length()),
-          ch_sel_file(Ch_sel_file), ch_sel_file_sz(Ch_sel_file.length()),
-          max_chans(Max_chans), nchanOSS(-1){} ;
+    OssForwardModel(const boost::shared_ptr<RtAtmosphere>& Atm, boost::shared_ptr<Absorber>& Absorber,
+            const std::vector<bool>& Calc_gas_jacobian, const boost::shared_ptr<Pressure>& Pressure,
+            const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
+            const std::string& Ch_sel_file, float Min_extinct_cld = 999.0, int Max_chans = 20000) :
+                absorber(Absorber), atmosphere(Atm), pressure(Pressure), sel_file(Sel_file), sel_file_sz(Sel_file.length()),
+                od_file(Od_file), od_file_sz(Od_file.length()),sol_file(Sol_file), sol_file_sz(Sol_file.length()),
+                fix_file(Fix_file), fix_file_sz(Fix_file.length()),ch_sel_file(Ch_sel_file),
+                ch_sel_file_sz(Ch_sel_file.length()), min_extinct_cld(Min_extinct_cld), max_chans(Max_chans) {
+        std::vector<std::string> gas_names;
+        std::vector<std::string> gas_jacobian_names;
+
+        for (int gas_index = 0; gas_index < absorber->number_species(); gas_index++) {
+            gas_names.push_back(absorber->gas_name(gas_index));
+            if(Calc_gas_jacobian[gas_index]) {
+                gas_jacobian_names.push_back(absorber->gas_name(gas_index));
+            }
+        }
+        int num_vert_lev = pressure->number_level();
+        int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, where does this come from in rf? */
+
+        fixed_inputs = OssFixedInputs(gas_names, gas_names, sel_file, od_file, sol_file, fix_file,
+                ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
+        oss_master = OssMasters(fixed_inputs);
+    }
     virtual ~OssForwardModel() {}
     virtual void setup_grid() {
-      /*
-      cppinitwrapper(nInMol, lenG, nameGas, nInJac, lenJ, nameJacob,
-     sel_file, sel_file_sz,
-     od_file, od_file_sz,
-     sol_file, sol_file_sz,
-     fix_file, fix_file_sz,
-     chSel_file, chSel_file_sz,
-     nlevu, n_SfGrd, minExtCld,
-     nchanOSS, WvnOSS, mxchan);
-      where the arguments are defined as follows.
-      . Inputs
-      - nInMol = number of molecules in input profiles
-      - nameGas = molecular gas names
-      - nameJacob = molecular gas names for Jacobians
-      - sel_file = file name of OSS nodes and weights
-      - od_file = file name of optical property lookup table
-      - sol_file = file name of solar radiance*
-      - fix_file = file name of default profiles for variable gases
-      - chSelFile = file name of list(s) of channel subsets†
-      - nlevu = number of vertical levels of state vector
-      - nsf = number of surface grid points
-      - minExtCld = threshold of extinction for including cloud in RT (km−1)
-
-      . Outputs
-      - nchanOSS = number of channels available in OSS RTM
-      - cWvnOSS = center wavenumbers of channels
-      */
-      int nInMol = 11;
-      int lenG = 10;
-      char nameGas[150] = "H2O       CO2       O3        N2O       CO        CH4       O2        NH3       CCL4      F11       F12       ";
-      int nInJac = 2;
-      int lenJ = 10;
-      char nameJacob[30] = "H2O       NH3       i";
-      int nlevu = 65;
-      int n_SfGrd = 501;
-      float minExtCld = 999;
-      float cWvnOSS[max_chans];
-
-      cppinitwrapper(nInMol, lenG, nameGas, nInJac, lenJ, nameJacob,
-           sel_file.c_str(), sel_file_sz,
-           od_file.c_str(), od_file_sz,
-           sol_file.c_str(), sol_file_sz,
-           fix_file.c_str(), fix_file_sz,
-           ch_sel_file.c_str(), ch_sel_file_sz,
-           nlevu, n_SfGrd, minExtCld,
-           nchanOSS, cWvnOSS, max_chans);
-
-      center_wavelength.value.resize(max_chans);
-      center_wavelength.units =units::inv_cm;
-      for (int i = 0; i < nchanOSS; i++) {
-        center_wavelength(i) = static_cast<double>(cWvnOSS[i]);
-      }
+        using namespace blitz;
+        oss_master.init();
+        center_wavenumber.units = oss_master.fixed_outputs.center_wavenumber.units;
+        center_wavenumber.value = cast<double>(oss_master.fixed_outputs.center_wavenumber.value);
     }
 
     virtual int num_channels() const { return 1; }
 
     virtual SpectralDomain spectral_domain(int Spec_index) const {
-      return SpectralDomain(center_wavelength);
+      return SpectralDomain(center_wavenumber);
     }
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const {
       return SpectralDomain::PREFER_WAVENUMBER;
@@ -249,6 +219,8 @@ public:
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 private:
     boost::shared_ptr<RtAtmosphere> atmosphere;
+    boost::shared_ptr<Absorber> absorber;
+    const boost::shared_ptr<Pressure>& pressure;
     std::string sel_file;
     int sel_file_sz;
     std::string od_file;
@@ -259,10 +231,12 @@ private:
     int fix_file_sz;
     std::string ch_sel_file;
     int ch_sel_file_sz;
-
-    int nchanOSS;
+    float min_extinct_cld;
     int max_chans;
-    ArrayWithUnit<double, 1> center_wavelength;
+
+    OssFixedInputs fixed_inputs;
+    OssMasters oss_master;
+    ArrayWithUnit<double, 1> center_wavenumber;
 };
 }
 #endif
