@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 
 class OutputBase(object):
 
-    def iter_step_group_name(self, step_index=None, iter_index=None, prefix=""):
+    def base_group_name(self, iter_index=None, prefix=""):
         # Determine where to store values
         group_name = prefix
 
@@ -17,8 +17,20 @@ class OutputBase(object):
         else:
             group_name += "Simulation/"
 
+        return group_name
+
+    def step_group_name(self, step_index=None, iter_index=None, prefix=""):
+
+        group_name = self.base_group_name(iter_index, prefix)
+
         if step_index is not None:
             group_name += "Step_{}/".format(step_index + 1)
+
+        return group_name
+
+    def iter_step_group_name(self, step_index=None, iter_index=None, prefix=""):
+
+        group_name = self.step_group_name(step_index, iter_index, prefix)
 
         # See if we can determine and iteration index for retrievals
         if iter_index is not None:
