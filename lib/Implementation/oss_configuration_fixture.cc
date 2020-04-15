@@ -2,6 +2,8 @@
 
 #include "oss_configuration_fixture.h"
 #include "absorber_vmr_level.h"
+#include "temperature_level_offset.h"
+#include "pressure_sigma.h"
 #include "absorber_absco.h"
 #include "gas_absorption.h"
 #include "constant.h"
@@ -14,29 +16,31 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 {
     input_data = boost::make_shared<HdfFile>(oss_run_dir() + input_file);
 
-    /* Pressure in file from high to low */
     Array<float, 1> pressure_nc = input_data->read_field<float, 1>("/Pressure")(Range::all());
 
     double surface_pressure = static_cast<double>(pressure_nc(0));
 
     Array<double, 1> pressure_above_surface(pressure_nc.rows() - 1);
     for (int i = 1; i < pressure_nc.rows(); i++) {
-    pressure_above_surface(i - 1) = static_cast<double>(pressure_nc(i));
+        pressure_above_surface(i - 1) = static_cast<double>(pressure_nc(i));
     }
-
+    /*
     boost::shared_ptr<PressureLevelInput> pressure_level = boost::make_shared<PressureLevelInput>(pressure_above_surface);
 
     config_pressure = boost::make_shared<PressureFixedLevel>(true, pressure_level, surface_pressure);
+    */
+    config_pressure = boost::make_shared<PressureSigma>(pressure_above_surface, surface_pressure, true);
+
 
 
     /* Temperature */
     Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
-
+    Array<double, 1> temp_double = Array<double, 1>(cast<double>(temp_nc));
     double surface_temp = static_cast<double>(temp_nc(0));
 
     Array<double, 1> temp(temp_nc.rows() - 1);
     for (int i = 1; i < temp_nc.rows(); i++) {
-    temp(i - 1) = static_cast<double>(temp_nc(i));
+        temp(i - 1) = static_cast<double>(temp_nc(i));
     }
     Array<bool, 1> temp_flag(temp_nc.rows() - 1);
     temp_flag = true;
@@ -46,8 +50,17 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
      double T_offset,
      const boost::shared_ptr<Pressure>& Press,
      const boost::shared_ptr<PressureLevelInput>& Press_level)
-     */
+
     config_temperature = boost::make_shared<TemperatureFixedLevel>(temp_flag, true, temp, surface_temp, config_pressure, pressure_level);
+    */
+
+    /*
+    TemperatureLevelOffset(const boost::shared_ptr<Pressure>& Press,
+                             const blitz::Array<double, 1>& Temp_levels,
+                             double Temp_offset,
+                             bool Temp_flag);
+    */
+    config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp_double, 0.0, true);
 
     /* Absorbers */
     config_absorber_calc_jacob = std::vector<bool>();
