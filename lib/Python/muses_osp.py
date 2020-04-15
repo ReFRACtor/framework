@@ -139,7 +139,7 @@ def make_resample_map(fine_grid, coarse_grid):
 
 
 class OSP(object):
-    def __init__(self, species, base_dir, latitude, longitude, obs_time, use_log=True, cov_dir="Covariance-scaled", num_constraint_levels=None):
+    def __init__(self, species, base_dir, latitude, longitude, obs_time, use_log=True, cov_dir="Covariance", num_constraint_levels=None):
         self.species = species
         self.base_dir = base_dir
         self.latitude = latitude
@@ -430,7 +430,7 @@ class OSP(object):
         mf = MUSES_File(co_file)
 
         # Find pressures column, convert hPa -> Pa, put in increasing pressure order
-        press_column = mf.column_names.index("Pressures")
+        press_column = mf.column_names.index("Pressure")
         press_data = np.flip(mf.data[:, press_column] * 100)
 
         # Extract out actual map
