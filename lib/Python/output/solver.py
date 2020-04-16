@@ -69,7 +69,8 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
             status = solver_group["status"]
         else:
             status = solver_group.createVariable("status", "S1", (status_dim))
-        status[:] = stringtochar(np.array(solver.status_str, "S3"))
+        status_len = len(solver.status_str)
+        status[:] = stringtochar(np.array(solver.status_str, f"S{status_len}"))
 
         if "num_accepted" in solver_group.variables:
             num_accepted = solver_group["num_accepted"]
