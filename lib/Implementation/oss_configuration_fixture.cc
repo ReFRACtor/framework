@@ -16,37 +16,31 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 {
     input_data = boost::make_shared<HdfFile>(oss_run_dir() + input_file);
 
+    /* Pressure */
     Array<float, 1> pressure_nc = input_data->read_field<float, 1>("/Pressure")(Range::all());
-
     double surface_pressure_nc = static_cast<double>(pressure_nc(0));
     DoubleWithUnit surface_pressure(surface_pressure_nc, units::mbar);
     surface_pressure = surface_pressure.convert(units::Pa);
-    Array<double, 1> pressure_top_bottom(pressure_nc.rows() - 1);
-    for (int i = 1; i < pressure_nc.rows(); i++) {
+    Array<double, 1> pressure_top_bottom(pressure_nc.rows());
+    for (int i = 0; i < pressure_nc.rows(); i++) {
         int level_index = (pressure_nc.rows() - 1) - i;
-        pressure_top_bottom(i - 1) = static_cast<double>(pressure_nc(level_index));
+        pressure_top_bottom(i) = static_cast<double>(pressure_nc(level_index));
     }
     ArrayWithUnit<double,1> fm_pressure(pressure_top_bottom, units::mbar);
     fm_pressure = fm_pressure.convert(units::Pa);
-    /*
-    boost::shared_ptr<PressureLevelInput> pressure_level = boost::make_shared<PressureLevelInput>(pressure_above_surface);
-
-    config_pressure = boost::make_shared<PressureFixedLevel>(true, pressure_level, surface_pressure);
-    */
     config_pressure = boost::make_shared<PressureSigma>(fm_pressure.value, surface_pressure.value, true);
 
-
-
     /* Temperature */
-    Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
-    Array<double, 1> temp_double = Array<double, 1>(cast<double>(temp_nc));
-    double surface_temp = static_cast<double>(temp_nc(0));
+    float skin_temp_nc = input_data->read_field<float>("/SkinTemperature");
+    config_skin_temperature = DoubleWithUnit(static_cast<double>(skin_temp_nc), units::K);
 
-    Array<double, 1> temp(temp_nc.rows() - 1);
-    for (int i = 1; i < temp_nc.rows(); i++) {
-        temp(i - 1) = static_cast<double>(temp_nc(i));
+    Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
+    Array<double, 1> temp(temp_nc.rows());
+    for (int i = 0; i < temp_nc.rows(); i++) {
+        int level_index = (temp_nc.rows() - 1) - i;
+        temp(i) = static_cast<double>(temp_nc(i));
     }
-    Array<bool, 1> temp_flag(temp_nc.rows() - 1);
+    Array<bool, 1> temp_flag(temp_nc.rows());
     temp_flag = true;
     /*
      TemperatureFixedLevel::TemperatureFixedLevel(const blitz::Array<bool, 1>& Flag_temp,
@@ -64,7 +58,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
                              double Temp_offset,
                              bool Temp_flag);
     */
-    config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp_double, 0.0, true);
+    config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
 
     /* Absorbers */
     config_absorber_calc_jacob = std::vector<bool>();

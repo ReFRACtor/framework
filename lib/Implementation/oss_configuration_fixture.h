@@ -52,6 +52,7 @@ public:
   std::vector<bool> config_absorber_calc_jacob;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
+  DoubleWithUnit config_skin_temperature;
   boost::shared_ptr<RtAtmosphere> config_atmosphere;
 
   /*

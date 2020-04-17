@@ -56,7 +56,7 @@ public:
                 gas_jacobian_names.push_back(absorber->gas_name(gas_index));
             }
         }
-        int num_vert_lev = pressure->number_level() + 1; // + 1 for Surface level
+        int num_vert_lev = pressure->number_level();
         int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, where does this come from in rf? */
 
         fixed_inputs = OssFixedInputs(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
@@ -86,128 +86,21 @@ public:
     }
 
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const {
-      /*
-      This method is primarily a wrapper for the following OSS FM function.
+        using namespace blitz; //TODO: Move to top when separated into implementation file
+        ArrayAdWithUnit<double, 1> pressure_grid = pressure->pressure_grid().convert(units::mbar);
+        Array<float, 1> oss_pressure(pressure_grid.value.rows());
+        for (int i = 0; i < oss_pressure.rows(); i++) {
+            int level_index = (pressure_grid.rows() - 1) - i;
+            oss_pressure(i) = static_cast<float>(pressure_grid.value.value()(level_index));
+        }
+        /*  OssModifiedInputs(blitz::Array<float, 1>& Pressure,
+            blitz::Array<float, 1>& Temp, float Skin_temp,
+            blitz::Array<float, 2>& Vmr_gas, blitz::Array<float, 1>& Emis,
+            blitz::Array<float, 1>& Refl, float Scale_cld, float Pressure_cld,
+            blitz::Array<float, 1>& Ext_cld, blitz::Array<float, 1>& Surf_grid,
+            blitz::Array<float, 1>& Cld_grid, float Obs_zen_ang, float Sol_zen_ang,
+            float Lat, float Surf_alt, bool Lambertian)  */
 
-      cppfwdwrapper(nlevu, ngas, Pin, Temp, Tskin, vmrGas,
-      n_SfGrd, emis, refl,
-      scaleCld, presCld, nCld, extCld,
-      SfGrd, gridCld,
-      ang, sunang, lat,
-      altSfc, lambertian, nInJac, nchan,
-      y, xkTemp,
-      xkTskin, xkOutGas, xkEm,
-      xkRf, xkCldlnPres, xkCldlnExt);
-
-      The I/Os are defined as follows.
-      . Inputs
-      - pin = atmospheric pressure profile (ordered from high to low) (mb)
-      - temp = temperature profile (K)
-      - tSkin = skin temperature (K)
-      - vmrGas = volume mixing ratio of gases (unitless)
-      - emis = surface emissivity (unitless)
-      - refl = surface reflectivity (unitless)
-      - scaleCld = scale of cloud log thickness
-      - presCld = pressure at cloud center (peak of extinction profile) (mb)
-      - extCld = cloud peak extinction (km−1)
-      - SfcGrd = vector of surface grid point wavenumbers (cm−1)
-      - gridCld = cloud grid point wavenumbers (cm−1)
-      - ang = observation zenith angle (degrees)
-      - sunang = solar zenith angle (degrees)
-      - lat = latitude (degrees)
-      - altSfc = surface altitude (m)
-      - lambertian = flag for Lambertian (1) or (default) specular (0) surface
-
-      . Outputs
-      - y = radiance (W m−2 str−1 cm−1)
-      - xkTemp = temperature profile Jacobians (W m−2 str−1 cm−1 K−1)
-      - xkTskin = skin temperature Jacobians (W m−2 str−1 cm−1 K−1)
-      - xkOutGas = gas log concentration Jacobians (W m−2 str−1 cm−1)
-      - xkEm = emissivity Jacobians (W m−2 str−1 cm−1)
-      - xkRF = reflectivity Jacobians (W m−2 str−1 cm−1)
-      - xkCldlnPres = cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
-      - xkCldlnExt = cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
-      */
-//      using namespace blitz;
-//
-//      const std::string test_fname("/export/menja_scr/refractor/OSS/run/tape5_nc4.nc");
-//      boost::shared_ptr<HdfFile> test_input_file(new HdfFile(test_fname));
-//
-//      int nlevu = 65;
-//
-//      int ngas = 11;
-//
-//      Array<float, 1> Pin = test_input_file->read_field<float, 1>("/Pressure")(Range::all());
-//
-//      Array<float, 1> Temp = test_input_file->read_field<float, 1>("/Temperature")(Range::all());
-//
-//      float Tskin = 310.0;
-//
-//      Array<float, 2> vmrGas = test_input_file->read_field<float, 2>("/vmrGas")(Range::all());
-//
-//      Array<float, 1> emis = test_input_file->read_field<float, 1>("/Emissivity")(Range::all());
-//
-//      Array<float, 1> refl = test_input_file->read_field<float, 1>("/Reflectivity")(Range::all());
-//
-//      int n_SfGrd = 501;
-//
-//      float scaleCld = 0.0;
-//
-//      float presCld = 0.0;
-//
-//      int nCld = 2;
-//
-//      Array<float, 1> extCld(nCld);
-//      extCld = 0;
-//
-//      Array<float, 1> SfGrd = test_input_file->read_field<float, 1>("/SurfaceGrid")(Range::all());
-//
-//      Array<float, 1> gridCld(nCld);
-//      gridCld= 0;
-//
-//      float ang = 1.45646667;
-//
-//      float sunang = 90.0;
-//
-//      float lat = 45.0;
-//
-//      float altSfc = 0.0000639999998;
-//
-//      int lambertian = 1;
-//
-//      int nInJac = 2;
-//
-//      /* Needed since nchanOSS argument to cppfwdwrapper isn't const reference though not modified */
-//      int nchanOSS_temp = nchanOSS;
-//
-//
-//      /* outputs */
-//      Array<float, 1> y(nchanOSS);
-//      y = 0;
-//      Array<float, 1> xkTemp(nchanOSS*nlevu);
-//      xkTemp = 0;
-//      Array<float, 1> xkTskin(nchanOSS);
-//      xkTskin = 0;
-//      Array<float, 1> xkOutGas(nInJac*nchanOSS*nlevu);
-//      xkOutGas = 0;
-//      Array<float, 1> xkEm(nchanOSS*n_SfGrd);
-//      xkEm = 0;
-//      Array<float, 1> xkRf(nchanOSS*n_SfGrd);
-//      xkRf = 0;
-//      Array<float, 1> xkCldlnPres(nchanOSS);
-//      xkCldlnPres = 0;
-//      Array<float, 1> xkCldlnExt(nchanOSS*nCld);
-//      xkCldlnExt = 0;
-//
-//      cppfwdwrapper(nlevu, ngas, Pin.data(), Temp.data(), Tskin, vmrGas.data(),
-//      n_SfGrd, emis.data(), refl.data(),
-//      scaleCld, presCld, nCld, extCld.data(),
-//      SfGrd.data(), gridCld.data(),
-//      ang, sunang, lat,
-//      altSfc, lambertian, nInJac, nchanOSS_temp,
-//      y.data(), xkTemp.data(),
-//      xkTskin.data(), xkOutGas.data(), xkEm.data(),
-//      xkRf.data(), xkCldlnPres.data(), xkCldlnExt.data());
 //
 //      Array<double, 1> rad(nchanOSS);
 //      for (int i = 0; i < nchanOSS; i++) {
