@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE(oss_interface)
     float expected_start_wavelength = 923.0;
     float expected_wavelength_step = 0.06;
     int expected_number_wavelength = 3951;
+    BOOST_CHECK_EQUAL(center_wavenumbers.value.rows(), expected_number_wavelength);
     for (int i = 0; i < expected_number_wavelength; i++) {
         BOOST_CHECK_CLOSE(center_wavenumbers.value(i), expected_start_wavelength + (i * expected_wavelength_step), 1e-5);
     }

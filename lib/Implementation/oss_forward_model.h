@@ -56,10 +56,10 @@ public:
                 gas_jacobian_names.push_back(absorber->gas_name(gas_index));
             }
         }
-        int num_vert_lev = pressure->number_level();
+        int num_vert_lev = pressure->number_level() + 1; // + 1 for Surface level
         int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, where does this come from in rf? */
 
-        fixed_inputs = OssFixedInputs(gas_names, gas_names, sel_file, od_file, sol_file, fix_file,
+        fixed_inputs = OssFixedInputs(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
                 ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
         oss_master = OssMasters(fixed_inputs);
     }
@@ -68,6 +68,7 @@ public:
         using namespace blitz;
         oss_master.init();
         center_wavenumber.units = oss_master.fixed_outputs.center_wavenumber.units;
+        center_wavenumber.value.resize(oss_master.fixed_outputs.center_wavenumber.value.rows());
         center_wavenumber.value = cast<double>(oss_master.fixed_outputs.center_wavenumber.value);
     }
 

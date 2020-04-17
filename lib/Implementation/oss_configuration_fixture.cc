@@ -18,18 +18,22 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 
     Array<float, 1> pressure_nc = input_data->read_field<float, 1>("/Pressure")(Range::all());
 
-    double surface_pressure = static_cast<double>(pressure_nc(0));
-
-    Array<double, 1> pressure_above_surface(pressure_nc.rows() - 1);
+    double surface_pressure_nc = static_cast<double>(pressure_nc(0));
+    DoubleWithUnit surface_pressure(surface_pressure_nc, units::mbar);
+    surface_pressure = surface_pressure.convert(units::Pa);
+    Array<double, 1> pressure_top_bottom(pressure_nc.rows() - 1);
     for (int i = 1; i < pressure_nc.rows(); i++) {
-        pressure_above_surface(i - 1) = static_cast<double>(pressure_nc(i));
+        int level_index = (pressure_nc.rows() - 1) - i;
+        pressure_top_bottom(i - 1) = static_cast<double>(pressure_nc(level_index));
     }
+    ArrayWithUnit<double,1> fm_pressure(pressure_top_bottom, units::mbar);
+    fm_pressure = fm_pressure.convert(units::Pa);
     /*
     boost::shared_ptr<PressureLevelInput> pressure_level = boost::make_shared<PressureLevelInput>(pressure_above_surface);
 
     config_pressure = boost::make_shared<PressureFixedLevel>(true, pressure_level, surface_pressure);
     */
-    config_pressure = boost::make_shared<PressureSigma>(pressure_above_surface, surface_pressure, true);
+    config_pressure = boost::make_shared<PressureSigma>(fm_pressure.value, surface_pressure.value, true);
 
 
 
