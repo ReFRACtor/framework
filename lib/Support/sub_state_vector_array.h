@@ -66,15 +66,15 @@ public:
             const blitz::Array<bool, 1>& Used_flag,
             const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
             bool Mark_according_to_press = true,
-              int Pdep_start = 0,
-              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+            int Pdep_start = 0,
+            boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
         coeff.reference(in_map->retrieval_init(Coeff.copy()));
     press = Press;
     used_flag.reference(Used_flag.copy());
-        mapping = in_map;
+    mapping = in_map;
     
     if(coeff.rows() != used_flag.rows()) {
       throw Exception("Coeff and Used_flag need to be the same size");

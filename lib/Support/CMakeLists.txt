@@ -37,6 +37,7 @@ set(DIR_SOURCES
     stacked_radiance_mixin.cc
     state_vector.cc
     state_vector_observer.cc
+    string_vector_to_char.cc
     sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc
@@ -69,6 +70,7 @@ set(TEST_SOURCES
     spectral_bound_test.cc
     spectral_domain_test.cc
     state_vector_test.cc
+    string_vector_to_char_test.cc
     unit_test.cc
 )
 
