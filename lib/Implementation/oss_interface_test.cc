@@ -42,14 +42,14 @@ BOOST_AUTO_TEST_CASE(oss_interface)
     OssMasters oss_master = OssMasters(fixed_inputs);
     oss_master.init();
     OssFixedOutputs fixed_outputs = oss_master.fixed_outputs;
-    ArrayWithUnit<float, 1> center_wavenumbers = fixed_outputs.center_wavenumber.convert(Unit("Wavenumbers"));
+    ArrayWithUnit<float, 1> center_spectral_point = fixed_outputs.center_spectral_point.convert(Unit("Wavenumbers"));
 
     float expected_start_wavelength = 923.0;
     float expected_wavelength_step = 0.06;
     int expected_number_wavelength = 3951;
-    BOOST_CHECK_EQUAL(center_wavenumbers.value.rows(), expected_number_wavelength);
+    BOOST_CHECK_EQUAL(center_spectral_point.value.rows(), expected_number_wavelength);
     for (int i = 0; i < expected_number_wavelength; i++) {
-        BOOST_CHECK_CLOSE(center_wavenumbers.value(i), expected_start_wavelength + (i * expected_wavelength_step), 1e-5);
+        BOOST_CHECK_CLOSE(center_spectral_point.value(i), expected_start_wavelength + (i * expected_wavelength_step), 1e-5);
     }
 
     const std::string test_fname(oss_run_dir() + "/tape5_nc4.nc");

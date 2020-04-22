@@ -38,7 +38,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     Array<double, 1> temp(temp_nc.rows());
     for (int i = 0; i < temp_nc.rows(); i++) {
         int level_index = (temp_nc.rows() - 1) - i;
-        temp(i) = static_cast<double>(temp_nc(i));
+        temp(i) = static_cast<double>(temp_nc(level_index));
     }
     Array<bool, 1> temp_flag(temp_nc.rows());
     temp_flag = true;
@@ -60,10 +60,10 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     */
     config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
 
-    /* Absorbers */
+    /* AbsorberVmrs */
     config_absorber_calc_jacob = std::vector<bool>();
     Array<float, 2> vmr_gas = Array<float, 2>(input_data->read_field<float, 2>("/vmrGas")(Range::all()));
-    std::vector<boost::shared_ptr<AbsorberVmr> > vmr = std::vector<boost::shared_ptr<AbsorberVmr> >();
+    std::vector<boost::shared_ptr<AbsorberVmr>> vmr = std::vector<boost::shared_ptr<AbsorberVmr>>();
 
     /* Retrieve list of gases for which we will retrieve jacobians and right trim */
     Array<std::string, 2> hdf_gas_jacob_names = Array<std::string, 2>(input_data->read_field<std::string, 2>("/nameJacobian")(Range::all()));
@@ -76,7 +76,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         gas_jacob_names.push_back(boost::trim_right_copy(full_gas_jacob_name));
     }
 
-    /* Retrieve list of all gases and right trim, marking those for which we want jacobians. Create absorbers */
+    /* Retrieve list of all gases and right trim, marking those for which we want jacobians. Create AbsorberVmrs */
     Array<std::string, 2> hdf_gas_names = Array<std::string, 2>(input_data->read_field<std::string, 2>("/nameGas")(Range::all()));
     std::vector<std::string> gas_names = std::vector<std::string>();
     for (int gas_index = 0; gas_index < hdf_gas_names.rows(); gas_index++) {
@@ -86,21 +86,21 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         }
         std::string gas_name = boost::trim_right_copy(full_gas_name);
         gas_names.push_back(gas_name);
+
+        Array<double, 1> vmr_curr_gas = Array<double, 1>(cast<double>(vmr_gas(gas_index, Range::all())));
+        blitz::Array<bool, 1> vmr_curr_flag = blitz::Array<bool, 1>(vmr_curr_gas.rows());
         if (find(gas_jacob_names.begin(), gas_jacob_names.end(), gas_name) != gas_jacob_names.end()) {
             config_absorber_calc_jacob.push_back(true);
+            vmr_curr_flag = true;
         } else {
             config_absorber_calc_jacob.push_back(false);
+            vmr_curr_flag = false;
         }
-        Array<double, 1> vmr_curr_gas = Array<double, 1>(cast<double>(vmr_gas(gas_index, Range::all())));
-        /* TODO: Double check we want this flag to be all true */
-        blitz::Array<bool, 1> vmr_curr_flag = blitz::Array<bool, 1>(vmr_curr_gas.rows());
-        vmr_curr_flag = true;
         boost::shared_ptr<AbsorberVmrLevel> current_gas = boost::make_shared<AbsorberVmrLevel>(config_pressure,
                 vmr_curr_gas, vmr_curr_flag, gas_name);
         vmr.push_back(current_gas);
     }
-    config_absorber = boost::make_shared<AbsorberAbsco>(vmr, config_pressure, config_temperature, std::vector<boost::shared_ptr<Altitude> >(),
-            std::vector<boost::shared_ptr<GasAbsorption> >(), boost::shared_ptr<Constant>());
+    config_vmr = vmr;
   /*
   AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                      const boost::shared_ptr<Pressure>& pressurev,

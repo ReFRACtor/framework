@@ -4,10 +4,13 @@
 #include <string>
 #include <vector>
 #include <blitz/array.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 #include "generic_object.h"
 #include "array_with_unit.h"
 #include "float_with_unit.h"
+#include "string_vector_to_char.h"
 
 extern "C" {
 void cppinitwrapper(int &, int &, char *, int &, int &, char *, const char *,
@@ -22,25 +25,6 @@ void cppfwdwrapper(int &, int &, float *, float *, float &, float *, int &,
 }
 
 namespace FullPhysics {
-
-/****************************************************************//**
- This class helps manage OSS 1d C strings created from components in
- a vector<std::string>
- *******************************************************************/
-class OssString: public virtual GenericObject {
-public:
-	OssString() { } /* Allow uninitialized object creation */
-	OssString(const std::vector<std::string>& Components);
-	int substrlen; ///< Length of individual strings (with padding) within larger concat'd string
-	int num_substr; ///< Number of individual strings within larger concat'd string
-	std::string oss_str; ///< OSS specific concat'd string with padding to max substrs fixed length
-	std::vector<std::string> components; ///< Backing container of OSS strings
-
-private:
-    int max_substrlen(std::vector<std::string> names) const;
-    std::string str_vec_to_oss_str(std::vector<std::string> names) const;
-};
-
 /****************************************************************//**
  This class stores the dynamic outputs set by OSS each FM call
  *******************************************************************/
@@ -82,16 +66,16 @@ public:
 class OssFixedOutputs: public virtual GenericObject {
 public:
     OssFixedOutputs() { } /* Allow uninitialized object creation */
-    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_wavenumber) :
-            num_chan(Num_chan), center_wavenumber(Center_wavenumber, Unit("Wavenumbers")) {
+    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point) :
+            num_chan(Num_chan), center_spectral_point(Center_spectral_point, Unit("Wavenumbers")) {
     }
 
-    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_wavenumber) :
-            num_chan(Num_chan), center_wavenumber(Center_wavenumber) {
+    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point) :
+            num_chan(Num_chan), center_spectral_point(Center_spectral_point) {
     }
 
     int num_chan; ///< Number of channels available in OSS RTM
-    ArrayWithUnit<float, 1> center_wavenumber; //< Center wavenumbers of channels
+    ArrayWithUnit<float, 1> center_spectral_point; //< Center spectral points of channels (cm−1)
 };
 
 /****************************************************************//**
@@ -108,15 +92,16 @@ public:
             gas_names(Gas_names), gas_jacobian_names(Gas_jacobian_names),
 			sel_file(Sel_file), od_file(Od_file), sol_file(Sol_file), fix_file(Fix_file),
 			ch_sel_file(Ch_sel_file),num_vert_lev(Num_vert_lev), num_surf_points(Num_surf_points),
-			min_extinct_cld(Min_extinct_cld, Unit("km^-1")), max_chans(Max_chans), oss_gas_names(Gas_names),
-			oss_gas_jacobian_names(Gas_jacobian_names) {
+			min_extinct_cld(Min_extinct_cld, Unit("km^-1")), max_chans(Max_chans),
+			oss_gas_names(boost::make_shared<StringVectorToChar>(Gas_names)),
+			oss_gas_jacobian_names(boost::make_shared<StringVectorToChar>(Gas_jacobian_names)) {
     }
 
     int max_chans; ///< Maximum number of channels
     std::vector<std::string> gas_names; ///< Molecular gas names
-    OssString oss_gas_names; ///< OSS 1d str representation of gas names
+    boost::shared_ptr<StringVectorToChar> oss_gas_names; ///< OSS 1d str representation of gas names
     std::vector<std::string> gas_jacobian_names; ///< Molecular gas names for Jacobians
-    OssString oss_gas_jacobian_names; ///< OSS 1d str representation of gas names for Jacobians
+    boost::shared_ptr<StringVectorToChar> oss_gas_jacobian_names; ///< OSS 1d str representation of gas names for Jacobians
     std::string sel_file; ///< File name of OSS nodes and weights
     std::string od_file; ///< File name of optical property lookup table
     std::string sol_file; ///< File name of solar radiance

@@ -5,8 +5,8 @@
 %}
 %import "array_with_unit.i"
 %import "float_with_unit.i"
+%import "string_vector_to_char.i"
 
-%fp_shared_ptr(FullPhysics::OssString);
 %fp_shared_ptr(FullPhysics::OssModifiedOutputs);
 %fp_shared_ptr(FullPhysics::OssFixedOutputs);
 %fp_shared_ptr(FullPhysics::OssFixedInputs);
@@ -14,20 +14,6 @@
 %fp_shared_ptr(FullPhysics::OssMasters);
 
 namespace FullPhysics {
-
-class OssString: public virtual GenericObject {
-public:
-	OssString(); 
-	OssString(const std::vector<std::string>& Components);
-	int substrlen; ///< Length of individual strings (with padding) within larger concat'd string
-	int num_substr; ///< Number of individual strings within larger concat'd string
-	std::string oss_str; ///< OSS specific concat'd string with padding to max substrs fixed length
-	std::vector<std::string> components; ///< Backing container of OSS strings
-
-private:
-    int max_substrlen(std::vector<std::string> names) const;
-    std::string str_vec_to_oss_str(std::vector<std::string> names) const;
-};
 
 class OssModifiedOutputs: public virtual GenericObject {
 public:
@@ -55,10 +41,10 @@ public:
 class OssFixedOutputs: public virtual GenericObject {
 public:
     OssFixedOutputs();
-    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_wavenumber);
-    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_wavenumber);
+    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point);
+    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point);
     int num_chan; ///< Number of channels available in OSS RTM
-    ArrayWithUnit<float, 1> center_wavenumber; //< Center wavenumbers of channels
+    ArrayWithUnit<float, 1> center_spectral_point; //< Center spectral point of channels (cm−1)
 };
 
 class OssFixedInputs: public virtual GenericObject {
@@ -71,9 +57,9 @@ public:
 
     int max_chans; ///< Maximum number of channels
     std::vector<std::string> gas_names; ///< Molecular gas names
-    OssString oss_gas_names; ///< OSS 1d str representation of gas names
+    boost::shared_ptr<StringVectorToChar> oss_gas_names; ///< OSS 1d str representation of gas names
     std::vector<std::string> gas_jacobian_names; ///< Molecular gas names for Jacobians
-    OssString oss_gas_jacobian_names; ///< OSS 1d str representation of gas names for Jacobians
+    boost::shared_ptr<StringVectorToChar> oss_gas_jacobian_names; ///< OSS 1d str representation of gas names for Jacobians
     std::string sel_file; ///< File name of OSS nodes and weights
     std::string od_file; ///< File name of optical property lookup table
     std::string sol_file; ///< File name of solar radiance

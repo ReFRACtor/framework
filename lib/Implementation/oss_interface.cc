@@ -1,42 +1,19 @@
 #include "oss_interface.h"
+#include "string_vector_to_char.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-OssString::OssString(const std::vector<std::string>& Components) : components(Components) {
-    oss_str = str_vec_to_oss_str(Components);
-    substrlen = max_substrlen(Components);
-    num_substr = Components.size();
-}
-int OssString::max_substrlen(std::vector<std::string> names) const {
-    int max_sublen = 0;
-    for (const auto& name : names) {
-        if (name.length() > max_sublen) {
-            max_sublen = name.length();
-        }
-    }
-    return max_sublen;
-}
-
-std::string OssString::str_vec_to_oss_str(std::vector<std::string> names) const {
-    int oss_substr_len = max_substrlen(names);
-    std::stringstream oss_ss;
-    for (const auto& name : names) {
-        oss_ss << std::setw (oss_substr_len) << name;
-    }
-    return oss_ss.str();
-}
-
 void OssMasters::init() {
     int num_gases = fixed_inputs.gas_names.size();
-    OssString oss_gases = fixed_inputs.oss_gas_names;
-    int len_gas_substr = oss_gases.substrlen;
-    std::string oss_gas_str = oss_gases.oss_str;
+    boost::shared_ptr<StringVectorToChar> oss_gases = fixed_inputs.oss_gas_names;
+    int len_gas_substr = oss_gases->substrlen;
+    std::string oss_gas_str = oss_gases->c_str;
 
     int num_jacob = fixed_inputs.gas_jacobian_names.size();
-    OssString oss_gas_jacob = fixed_inputs.oss_gas_jacobian_names;
-    int len_jacob_substr = oss_gas_jacob.substrlen;
-    std::string oss_gas_jacob_str = fixed_inputs.oss_gas_jacobian_names.oss_str;
+    boost::shared_ptr<StringVectorToChar> oss_gas_jacob = fixed_inputs.oss_gas_jacobian_names;
+    int len_jacob_substr = oss_gas_jacob->substrlen;
+    std::string oss_gas_jacob_str = oss_gas_jacob->c_str;
 
     int sel_file_sz = fixed_inputs.sel_file.length();
     int od_file_sz  = fixed_inputs.od_file.length();
@@ -47,7 +24,7 @@ void OssMasters::init() {
     int num_surf_points = fixed_inputs.num_surf_points;
     float min_extinct_cld = fixed_inputs.min_extinct_cld.convert(Unit("km^-1")).value;
 
-    ArrayWithUnit<float, 1> center_wavenumbers =
+    ArrayWithUnit<float, 1> center_spectral_point =
             ArrayWithUnit<float, 1>(blitz::Array<float, 1>(fixed_inputs.max_chans),
             Unit("Wavenumbers"));
     int num_chan;
@@ -63,11 +40,11 @@ void OssMasters::init() {
             fixed_inputs.ch_sel_file.c_str(), ch_sel_file_sz,
             num_vert_lev, num_surf_points,
             min_extinct_cld, num_chan,
-            center_wavenumbers.value.data(), fixed_inputs.max_chans);
+            center_spectral_point.value.data(), fixed_inputs.max_chans);
 
-    center_wavenumbers.value.resizeAndPreserve(num_chan);
+    center_spectral_point.value.resizeAndPreserve(num_chan);
 
-    fixed_outputs = OssFixedOutputs(num_chan, center_wavenumbers);
+    fixed_outputs = OssFixedOutputs(num_chan, center_spectral_point);
 }
 
 OssModifiedOutputs OssMasters::run_fwd_model(OssModifiedInputs& Modified_inputs) {

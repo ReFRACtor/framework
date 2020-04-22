@@ -48,7 +48,7 @@ public:
   boost::shared_ptr<Absorber> config_absorber;
   boost::shared_ptr<Aerosol> config_aerosol;
   */
-  boost::shared_ptr<Absorber> config_absorber;
+  std::vector<boost::shared_ptr<AbsorberVmr>> config_vmr;
   std::vector<bool> config_absorber_calc_jacob;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
