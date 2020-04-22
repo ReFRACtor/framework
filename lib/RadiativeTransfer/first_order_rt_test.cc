@@ -18,23 +18,24 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
   int nmoms = 3;
   bool do_multiple_scattering_only = false;
   bool pure_nadir = false;
+  bool do_deltam_scaling = true;
 
   boost::shared_ptr<LidortRt> lidort_rt;
   lidort_rt.reset(new LidortRt(atmosphere, stokes_coefs, sza, zen, azm, pure_nadir,
                                nstreams, nmoms, do_multiple_scattering_only));
   
-  // Turn off delta-m scaling
-  lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+  // Set deltam scaling on or off
+  lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(do_deltam_scaling);
 
   // Plane-parallel
-  lidort_rt->rt_driver()->set_plane_parallel();
+  //lidort_rt->rt_driver()->set_plane_parallel();
 
-  // These two flags must be on to get agreement between the two models, since FO has no diffuse component,
-  // disable the diffuse in LIDORT
+  // Disable the diffuse calculation in LIDORT
   auto fbool = lidort_rt->rt_driver()->lidort_interface()->lidort_fixin().f_bool();
-  auto mbool = lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool();
   fbool.ts_do_ssfull(true);
-  mbool.ts_do_sscorr_nadir(true);
+
+  //auto mbool = lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool();
+  //mbool.ts_do_sscorr_nadir(true);
 
   ArrayAd<double, 2> lid_rad_jac = lidort_rt->stokes_and_jacobian(wn_arr, 0);
 
@@ -42,7 +43,9 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
   first_order_rt.reset(new FirstOrderRt(atmosphere, stokes_coefs, sza, zen, azm, nstreams, nmoms));
 
   // Use plane parallel to match LIDORT
-  first_order_rt->rt_driver()->set_plane_parallel();
+  //first_order_rt->rt_driver()->set_plane_parallel();
+  
+  first_order_rt->rt_driver()->do_deltam_scaling(do_deltam_scaling);
 
   ArrayAd<double, 2> fo_rad_jac = first_order_rt->stokes_and_jacobian(wn_arr, 0);
 

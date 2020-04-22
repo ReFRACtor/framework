@@ -25,6 +25,7 @@ public:
 
     void set_plane_parallel() const;
     void set_pseudo_spherical() const;
+    void set_line_of_sight() const;
   
     void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
     void setup_geometry(double sza, double azm, double zen) const;
@@ -47,14 +48,21 @@ public:
 
     const boost::shared_ptr<Fo_Ssgeometry_Master> geometry_interface() const { return geometry; }
     const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
+
+    const bool do_deltam_scaling() const { return do_deltam_scaling_; }
+    void do_deltam_scaling(bool do_scaling) { do_deltam_scaling_ = do_scaling; }
  
 private:
 
     void init_interfaces(int nlayers, int surface_type);
     void copy_geometry_flags() const;
 
+    const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 2>& pf) const;
+    const blitz::Array<double, 1> deltam_tms(const blitz::Array<double, 1>& ssa, const blitz::Array<double, 2>& pf) const;
+
     int num_moments_;
     int num_streams_;
+    bool do_deltam_scaling_;
 
     mutable blitz::Array<double, 1> height_diffs;
 

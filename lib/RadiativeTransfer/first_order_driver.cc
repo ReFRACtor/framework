@@ -11,13 +11,19 @@ using namespace blitz;
 /// Construct FirstOrderDriver
 //-----------------------------------------------------------------------
 
-FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
+FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments,
+                                   bool do_solar, bool do_thermal)
   : SpurrRtDriver(do_solar, do_thermal),
     num_moments_(number_moments), num_streams_(number_streams)
 {
     init_interfaces(number_layers, surface_type);
-    // Use pseudo spherical correction by default
-    set_pseudo_spherical();
+
+    // By default enable most accurate mode to match LIDORT defaults
+    set_line_of_sight();
+
+    // Enabled by default to match LIDORT behavior and because its generally a good idea
+    // to leave this enabled except for testing
+    do_deltam_scaling_ = true;
 }
 
 
@@ -119,6 +125,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 /// Set plane parallel sphericity
 void FirstOrderDriver::set_plane_parallel() const
 {
+    // LIDORT should have ts_do_sscorr_nadir(false), ts_do_sscorr_outgoing(false)
     geometry->do_planpar(true);
     geometry->do_enhanced_ps(false);
 
@@ -128,6 +135,17 @@ void FirstOrderDriver::set_plane_parallel() const
 /// Set pseudo spherical sphericity
 void FirstOrderDriver::set_pseudo_spherical() const
 {
+    // Matches LIDORT ts_do_sscorr_nadir(true)
+    geometry->do_planpar(false);
+    geometry->do_enhanced_ps(false);
+
+    copy_geometry_flags();
+}
+
+/// Set pseudo spherical sphericity
+void FirstOrderDriver::set_line_of_sight() const
+{
+    // Matches LIDORT ts_do_sscorr_outgoing(true)
     geometry->do_planpar(false);
     geometry->do_enhanced_ps(true);
 
@@ -200,9 +218,8 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
     solar_interface_->sunpaths_fine(geometry->sunpathsfine());
     solar_interface_->ntraverse_fine(geometry->ntraversefine());
     
-    if (geometry->do_planpar()) {
-        // Account for a bug in the plane parallel version of the geometry routine
-        // where these values are not computed 
+    // Compute these values for plane parallel or regular pseudo spherical modes
+    if (geometry->do_planpar() || (!geometry->do_planpar() && !geometry->do_enhanced_ps())) {
         Array<double, 1> mu0(solar_interface_->mu0());
         Array<double, 1> mu1(solar_interface_->mu1());
 
@@ -229,6 +246,33 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
     // Nothing for now, in future use DT geometry and DT RT
 }
 
+/// Compute truncation factor for use in deltam scaling
+const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 2>& pf) const
+{
+    double dnm1 = 4 * (num_streams_) + 1;
+    Array<double, 1> truncfac(pf.cols());
+    truncfac = pf(2*num_streams_, Range::all()) / dnm1;
+    return truncfac;
+}
+
+/// Compute truncated single scattering from single scattering albedo according to if
+/// delta_m truncation is turned on or not
+const blitz::Array<double, 1> FirstOrderDriver::deltam_tms(const blitz::Array<double, 1>& ssa,
+                                                           const blitz::Array<double, 2>& pf) const
+{
+    // Compute truncated single scattering from single scattering albedo according to if
+    // delta_m truncation is turned on or not
+    Array<double, 1> tms;
+    if (do_deltam_scaling_) {
+        Array<double, 1> truncfac = deltam_trunc_factor(pf);
+        tms.resize(ssa.rows());
+        tms = ssa / (1 - truncfac * ssa);
+    } else {
+        tms.reference(ssa);
+    }
+
+    return tms;
+}
 
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
@@ -251,11 +295,21 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     Array<double, 1> extinction(solar_interface_->extinction());
     extinction = optical_depth / height_diffs;
 
+    // Compute truncated single scattering from single scattering albedo according to if
+    // delta_m truncation is turned on or not
+    Array<double, 1> tms = deltam_tms(ssa, pf);
+
+    if(do_deltam_scaling_) {
+        Array<double, 1> truncfac = deltam_trunc_factor(pf);
+        optical_depth *= (1 - truncfac * ssa);
+        extinction *= (1 - truncfac * ssa);
+    }
+
     // Compute phase function from fourier moments by summing over moments times general spherical function
     // Sum over moment index
     firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
     Array<double, 2> exactscat(solar_interface_->exactscat_up());
-    exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx), mom_idx) * ssa(lay_idx);
+    exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx), mom_idx) * tms(lay_idx);
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
@@ -302,6 +356,26 @@ void FirstOrderDriver::setup_linear_inputs
     firstIndex i1; secondIndex i2;
     l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
 
+    Array<double, 1> truncfac;
+    if(do_deltam_scaling_) {
+        truncfac.reference( deltam_trunc_factor(pf.value()) );
+        for (int par_idx = 0; par_idx < natm_jac; par_idx++) {
+            l_deltau(r_all, par_idx) *= (1 + truncfac * ssa.value()(par_idx));
+            l_extinction(r_all, par_idx) *= (1 + truncfac * ssa.value()(par_idx));
+        }
+    }
+    
+    // Compute truncated single scattering contribution for delta-m scaling
+    Array<double, 1> tms = deltam_tms(ssa.value(), pf.value());
+
+    Array<double, 2> l_tms;
+    if (do_deltam_scaling_) {
+        l_tms.resize(ssa.jacobian().shape());
+        l_tms = ssa.jacobian()(i1, i2) * (1 + truncfac(i1) * tms(i1));
+    } else {
+        l_tms.reference(ssa.jacobian());
+    }
+
     // l_exactscat takes into account ssa jacobian contributions
     // Compute legendre * pf function first seperately so that separate placeholder
     // variables can be used when computing l_exactscat to ensure correct ordering of values
@@ -312,7 +386,7 @@ void FirstOrderDriver::setup_linear_inputs
     legpf = sum(legendre->ss_pleg()(j3, j2) * pf.value()(j3, j1), j3);
 
     firstIndex k1; secondIndex k2; thirdIndex k3;
-    l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * ssa.jacobian()(k1, k3);
+    l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * l_tms(k1, k3);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {

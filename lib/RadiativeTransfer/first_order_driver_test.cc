@@ -12,13 +12,13 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(first_order_driver, GlobalFixture)
 
-void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, int sphericity_mode, bool do_deltam_scaling, bool debug_output)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
-  sza = 0.0;
-  zen = 0.0;
-  azm = 0.0;
+  sza = 1.0e-5;
+  zen = 1.0e-5;
+  azm = 1.0e-5;
   bool pure_nadir = false;
   int nstreams = 1;
   int nmoms = 2;
@@ -44,10 +44,32 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   double jac_surf_temp_lid;
   blitz::Array<double, 1> jac_atm_temp_lid;
 
-  FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms);
+  FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms, do_solar, do_thermal);
 
-  // Use plane parallel since it has to be off from LIDORT
-  fo_driver.set_plane_parallel();
+  // Configure sphericity and phase function affecting options
+  switch(sphericity_mode) {
+    case 0:
+        if(debug_output) std::cerr << "Plane Parallel" << std::endl;
+        fo_driver.set_plane_parallel();
+        break;
+    case 1:
+        if(debug_output) std::cerr << "Psuedo-Spherical" << std::endl;
+        fo_driver.set_pseudo_spherical();
+        break;
+    case 2:
+        if(debug_output) std::cerr << "Line of Sight" << std::endl;
+        fo_driver.set_line_of_sight();
+        break;
+    default:
+        throw Exception("Unknown sphericity_mode value");
+  }
+
+  if (debug_output) {
+      std::cerr << "Do Delta-M Scaling: " << (do_deltam_scaling ? "True" : "False") << std::endl
+                << "--------------------" << std::endl;
+  }
+
+  fo_driver.do_deltam_scaling(do_deltam_scaling);
 
   // Use LIDORT for comparison
   bool do_multiple_scattering_only = false;
@@ -56,15 +78,27 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                 surface_type, zen, pure_nadir,
                                                 do_solar, do_thermal);  
 
-  // Plane-parallel
-  lidort_driver.set_plane_parallel();
+  // Configure sphericity and phase function affecting options
+  switch(sphericity_mode) {
+    case 0:
+        lidort_driver.set_plane_parallel();
+        break;
+    case 1:
+        lidort_driver.set_pseudo_spherical();
+        break;
+    case 2:
+        lidort_driver.set_line_of_sight();
+        break;
+    default:
+        throw Exception("Unknown sphericity_mode value");
+  }
 
-  // Set up LIDORT to turn on single scattering calculations
-  auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
   auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
+  mbool.ts_do_deltam_scaling(do_deltam_scaling);
+
+  // Set up LIDORT to only perform single scattering calculations
+  auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
   fbool.ts_do_ssfull(true);
-  mbool.ts_do_sscorr_nadir(true);
-  mbool.ts_do_deltam_scaling(false);
 
   // Simple height grid evenly spaced
   Array<double, 1> heights(nlayer+1);
@@ -131,7 +165,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   }
 
-  BOOST_CHECK_CLOSE(refl_lid, refl_fo, 5e-3);
+  BOOST_CHECK_CLOSE(refl_lid, refl_fo, 6e-3);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
   double refl_fd;
@@ -173,7 +207,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
               << "jac_atm_fo = " << jac_atm_fo(rjac,rlay).transpose(1,0) << std::endl;
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_fo(rjac,rlay), 1e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_fo(rjac,rlay), 3e-4);
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
 
   if(blitz::any(surface_params.value() > 0.0)) {
@@ -243,7 +277,17 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+
+  // Each sphericity option, delta-m = false
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+
+  // Each sphericity option, delta-m = true
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
   ////////////////
   // Rayleigh only
@@ -262,7 +306,16 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-3, -1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+
+  // Each sphericity option, delta-m = false
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+
+  // Each sphericity option, delta-m = true
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
   ////////////////
   // Gas + Surface
@@ -278,7 +331,16 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+
+  // Each sphericity option, delta-m = false
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+
+  // Each sphericity option, delta-m = true
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
 }
 
