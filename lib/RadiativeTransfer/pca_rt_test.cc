@@ -15,6 +15,7 @@ BOOST_AUTO_TEST_CASE(basic)
 {
     int num_streams = 4;
     int num_moments = 2 * num_streams;
+    bool pure_nadir = false;
 
     std::string primary_absorber = "CO2";
 
@@ -41,10 +42,19 @@ BOOST_AUTO_TEST_CASE(basic)
                   sza, zen, azm,
                   num_streams, num_moments);
 
-  SpectralDomain sd = highres_grid(0);
+    SpectralDomain full_grid = highres_grid(0);
+    SpectralDomain test_grid( full_grid.data()(Range(0, 999)), full_grid.units() );
 
-  blitz::Array<double, 2> stokes = pca_rt.stokes(sd, 0);
- 
+    blitz::Array<double, 2> pca_stokes = pca_rt.stokes(test_grid, 0);
+
+    LidortRt lidort_rt (atm, stokes_coefs, sza, zen, azm, pure_nadir,
+                        num_streams, num_moments, false);
+
+    blitz::Array<double, 2> lidort_stokes = lidort_rt.stokes(test_grid, 0);
+
+    Range r_all = Range::all();
+    BOOST_CHECK_MATRIX_CLOSE_TOL(lidort_stokes(r_all, 0), pca_stokes(r_all, 0), 1e-6);
+   
 }
 
 BOOST_AUTO_TEST_SUITE_END()
