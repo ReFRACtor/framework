@@ -1,6 +1,7 @@
 #ifndef OSS_FORWARD_MODEL_H
 #define OSS_FORWARD_MODEL_H
 #include <map>
+#include <boost/fusion/include/any.hpp>
 #include "forward_model.h"
 #include "state_vector.h"
 #include "rt_atmosphere.h"
@@ -32,21 +33,15 @@ public:
 
         for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
             gas_names.push_back(vmr[gas_index]->gas_name());
-            /* Below fails because state_used() has pstart == -1 so slice is invalid */
-            /*
-            for (bool& used_level : vmr[gas_index]->state_used()) {
-                        std::cout << " used_level is:" << used_level << std::endl;
-            }
-            */
-            if(Calc_gas_jacobian[gas_index]) {
+            if (any(vmr[gas_index]->state_used())) {
                 gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
             }
         }
 
         int num_vert_lev = pressure->number_level();
-        int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, where does this come from in rf? */
+        int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, PiecewiseEmissivity emiss.rows() in rf */
 
-        fixed_inputs = OssFixedInputs(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
+        fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
                 ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
         oss_master = OssMasters(fixed_inputs);
     }
@@ -54,9 +49,9 @@ public:
     virtual void setup_grid() {
         using namespace blitz;
         oss_master.init();
-        center_spectral_point.units = oss_master.fixed_outputs.center_spectral_point.units;
-        center_spectral_point.value.resize(oss_master.fixed_outputs.center_spectral_point.value.rows());
-        center_spectral_point.value = cast<double>(oss_master.fixed_outputs.center_spectral_point.value);
+        center_spectral_point.units = oss_master.fixed_outputs->center_spectral_point.units;
+        center_spectral_point.value.resize(oss_master.fixed_outputs->center_spectral_point.value.rows());
+        center_spectral_point.value = cast<double>(oss_master.fixed_outputs->center_spectral_point.value);
     }
 
     virtual int num_channels() const { return 1; }
@@ -124,7 +119,7 @@ private:
     float min_extinct_cld;
     int max_chans;
 
-    OssFixedInputs fixed_inputs;
+    boost::shared_ptr<OssFixedInputs> fixed_inputs;
     OssMasters oss_master;
     ArrayWithUnit<double, 1> center_spectral_point;
 };

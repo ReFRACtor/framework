@@ -98,6 +98,13 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         }
         boost::shared_ptr<AbsorberVmrLevel> current_gas = boost::make_shared<AbsorberVmrLevel>(config_pressure,
                 vmr_curr_gas, vmr_curr_flag, gas_name);
+        if (current_gas) {
+            StateVector sv;
+            sv.add_observer(*current_gas);
+            Array<double, 1> x(sv.observer_claimed_size());
+            x = 1e-20;
+            sv.update_state(x);
+        }
         vmr.push_back(current_gas);
     }
     config_vmr = vmr;

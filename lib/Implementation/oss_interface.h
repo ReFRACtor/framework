@@ -30,7 +30,6 @@ namespace FullPhysics {
  *******************************************************************/
 class OssModifiedOutputs: public virtual GenericObject {
 public:
-    OssModifiedOutputs() { } /* Allow creation of uninitialized objects */
     OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 1>& Xk_temp, blitz::Array<float, 1>& Xk_tskin,
             blitz::Array<float, 1>& Xk_out_gas, blitz::Array<float, 1>& Xk_em, blitz::Array<float, 1>& Xk_rf,
             blitz::Array<float, 1>& Xk_cldln_pres, blitz::Array<float, 1>& Xk_cldln_ext) :
@@ -65,7 +64,6 @@ public:
  *******************************************************************/
 class OssFixedOutputs: public virtual GenericObject {
 public:
-    OssFixedOutputs() { } /* Allow uninitialized object creation */
     OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point) :
             num_chan(Num_chan), center_spectral_point(Center_spectral_point, Unit("Wavenumbers")) {
     }
@@ -83,7 +81,6 @@ public:
  *******************************************************************/
 class OssFixedInputs: public virtual GenericObject {
 public:
-    OssFixedInputs() { } /* Allow creation of uninitialized objects */
     OssFixedInputs(std::vector<std::string>& Gas_names,
             std::vector<std::string>& Gas_jacobian_names, std::string& Sel_file,
             std::string& Od_file, std::string& Sol_file, std::string& Fix_file,
@@ -171,13 +168,13 @@ public:
 class OssMasters: public virtual GenericObject {
 public:
     OssMasters() { } /* Allow creation of uninitialized objects */
-    OssMasters(OssFixedInputs& Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
+    OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
 
     void init();
-    OssModifiedOutputs run_fwd_model(OssModifiedInputs& Modified_inputs);
+    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 
-    OssFixedInputs fixed_inputs;
-    OssFixedOutputs fixed_outputs;
+    boost::shared_ptr<OssFixedInputs> fixed_inputs;
+    boost::shared_ptr<OssFixedOutputs> fixed_outputs;
 };
 }
 #endif
