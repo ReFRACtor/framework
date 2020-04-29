@@ -57,8 +57,5 @@ public:
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index);
   
     virtual void print(std::ostream& Os, bool Short_form = false) const;
-
-    void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
-
 };
 }

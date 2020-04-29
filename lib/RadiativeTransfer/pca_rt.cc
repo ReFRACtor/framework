@@ -204,6 +204,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     // Convenience since other RTs take wavenumbers as input
     Array<double, 1> wavenumbers(Spec_domain.wavenumber());
 
+    // Create optical property bins from full range optical properties
     compute_bins(Spec_domain, Spec_index);
 
     std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
@@ -217,6 +218,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             continue;
         }
 
+        // We need an effective wavenumber for aerosol property computations
         double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
 
         // Solve PCA solution from optical properties for the bin
@@ -246,7 +248,65 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
 {
-    return ArrayAd<double, 2>(stokes(Spec_domain, Spec_index));
+    // Clear out debugging and per call objects
+    clear_pca_objects();
+
+    // Our final output from this routine
+    ArrayAd<double, 2> stokes_output(Spec_domain.data().rows(), number_stokes(), 0);
+
+    // Convenience since other RTs take wavenumbers as input
+    Array<double, 1> wavenumbers(Spec_domain.wavenumber());
+
+    // Create optical property bins from full range optical properties
+    compute_bins(Spec_domain, Spec_index);
+
+    std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
+
+    // Compute values for each bin
+    for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+        int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+
+        // Skip empty bins
+        if (num_bin_points == 0) {
+            continue;
+        }
+
+        // We need an effective wavenumber for aerosol property computations
+        double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
+
+        // Solve PCA solution from optical properties for the bin
+        boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bins[bin_idx]);
+        
+        // Compute the binned optical properties
+        boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
+
+        // Compute per wavenumber correction factors from RT runs of binned optical properties
+        Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, Spec_index);
+        
+        // Compute 2stream and first order for all points in the bin and use correction to get final values
+        for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+            int grid_idx = bins[bin_idx](dom_idx);
+            int dom_wn = wavenumbers(grid_idx);
+
+            ArrayAd<double, 1> twostream_full(twostream_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
+            ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
+
+            stokes_output.value()(grid_idx, Range::all()) = 
+                bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
+            
+            if (stokes_output.number_variable() == 0) {
+                stokes_output.resize_number_variable(twostream_full.number_variable());
+            }
+
+            // Corrections can be applied for each jacobian independently according to Vijay
+            for (int jac_idx = 0; jac_idx < twostream_full.number_variable(); jac_idx++) {
+                stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
+                    bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
+            }
+        }
+    }
+
+    return stokes_output;
 } 
 
 void PCARt::print(std::ostream& Os, bool Short_form) const 
