@@ -4,16 +4,28 @@
 #include "radiative_transfer_fixed_stokes_coefficient.h"
 
 #include "atmosphere_standard.h"
+#include "aerosol_optical.h"
 
 #include "lidort_rt.h"
 #include "twostream_rt.h"
 #include "first_order_rt.h"
 
 #include "pca_binning.h"
-#include "optical_properties.h"
+#include "optical_properties_pca.h"
 #include "pca_eigensolver.h"
 
 namespace FullPhysics {
+
+/****************************************************************//**
+ Simple heler container class to encapsulate the optical properties
+ computed from the PCA Solver
+*******************************************************************/
+
+struct PCABinOpticalProperties {
+    boost::shared_ptr<OpticalPropertiesPca> mean;
+    std::vector<boost::shared_ptr<OpticalPropertiesPca> > eof_plus;
+    std::vector<boost::shared_ptr<OpticalPropertiesPca> > eof_minus;
+};
 
 /****************************************************************//**
  Implements a radiative transfer using the PCA method where
@@ -62,19 +74,23 @@ public:
     const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
-        if (bin_index < 0 || bin_index >= pca_bin_solvers.size()) {
+        if (bin_index < 0 || bin_index >= pca_solvers.size()) {
             Exception err;
-            err << "Index for binned eigen solver: " << bin_index << " exceeds size of solvers saved: " << pca_bin_solvers.size();
+            err << "Index for binned eigen solver: " << bin_index << " exceeds size of solvers saved: " << pca_solvers.size();
             throw err;
         }
-        return pca_bin_solvers[bin_index];
+        return pca_solvers[bin_index];
     }
 
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 
-    void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
-
 private:
+
+    // Steps of the PCA process
+    void clear_pca_objects() const;
+    void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
+    const boost::shared_ptr<PCAEigenSolver> compute_bin_solution(const blitz::Array<int, 1>& data_indexes) const;
+    const boost::shared_ptr<PCABinOpticalProperties> compute_bin_optical_props(boost::shared_ptr<PCAEigenSolver> pca_solver, double bin_wn) const;
 
     boost::shared_ptr<AtmosphereStandard> atm;
 
@@ -83,6 +99,15 @@ private:
     PCABinning::Method bin_method;
     int num_bins;
     int num_eofs;
+
+    // Sizes needed for allocating arrays
+    int num_gas;
+    int num_aerosol;
+    int num_layer;
+    int num_packed_var;
+
+    // This more specific interface is needed vs the abstract Aerosol interface
+    boost::shared_ptr<AerosolOptical> aerosol_optical;
 
     boost::shared_ptr<LidortRt> lidort_rt;
     boost::shared_ptr<TwostreamRt> twostream_rt;
@@ -93,7 +118,7 @@ private:
     // They are reset for each call
     mutable std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > pca_opt;
     mutable boost::shared_ptr<PCABinning> pca_bin;
-    mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_bin_solvers;
+    mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_solvers;
     
 };
 }
