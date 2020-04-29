@@ -71,6 +71,7 @@ public:
     const boost::shared_ptr<TwostreamRt> twostream() const { return twostream_rt; }
     const boost::shared_ptr<FirstOrderRt> first_order() const { return first_order_rt; }
 
+    // Debugging accessors
     const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
@@ -91,6 +92,8 @@ private:
     void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
     const boost::shared_ptr<PCAEigenSolver> compute_bin_solution(const blitz::Array<int, 1>& data_indexes) const;
     const boost::shared_ptr<PCABinOpticalProperties> compute_bin_optical_props(boost::shared_ptr<PCAEigenSolver> pca_solver, double bin_wn) const;
+    const double bin_effective_wavenumber(blitz::Array<double, 1> &win_wavenumbers, int bin_index) const;
+    blitz::Array<double, 2> compute_bin_correction_factors(boost::shared_ptr<PCAEigenSolver>& pca_solver, boost::shared_ptr<PCABinOpticalProperties>& bin_opt_props, double bin_wn, int channel_index) const;
 
     boost::shared_ptr<AtmosphereStandard> atm;
 

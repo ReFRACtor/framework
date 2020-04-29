@@ -143,6 +143,56 @@ const boost::shared_ptr<PCABinOpticalProperties> PCARt::compute_bin_optical_prop
     return bin_opt_props;
 }
 
+const double PCARt::bin_effective_wavenumber(Array<double, 1> &win_wavenumbers, int bin_index) const
+{
+    // Create bin averaged spectral point
+    int num_bin_points = pca_bin->num_bin_points()(bin_index);
+    Array<int, 1> bin_indexes(pca_bin->bin_indexes()[bin_index]);
+
+    double avg_wn = 0;
+    for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+        avg_wn += win_wavenumbers(bin_indexes(dom_idx));
+    }
+    avg_wn /= num_bin_points;
+
+    return avg_wn;
+}
+
+Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEigenSolver>& pca_solver, boost::shared_ptr<PCABinOpticalProperties>& bin_opt_props, double bin_wn, int channel_index) const
+{
+    Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+    Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+    Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+
+    // Compute bin mean plus eof and mean minus eof intensity from each RT
+    Array<double, 2> lidort_plus(num_eofs, number_stokes());
+    Array<double, 2> twostream_plus(num_eofs, number_stokes());
+    Array<double, 2> first_order_plus(num_eofs, number_stokes());
+
+    Array<double, 2> lidort_minus(num_eofs, number_stokes());
+    Array<double, 2> twostream_minus(num_eofs, number_stokes());
+    Array<double, 2> first_order_minus(num_eofs, number_stokes());
+
+    for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+        lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
+        lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+
+        twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
+        twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+
+        first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
+        first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+    }
+
+    // Compute correction factors
+    Array<double, 2> bin_corrections = pca_solver->correction(
+            lidort_mean, twostream_mean, first_order_mean,
+            lidort_plus, twostream_plus, first_order_plus,
+            lidort_minus, twostream_minus, first_order_minus);
+
+    return bin_corrections;
+}
+
 blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
 {
     // Clear out debugging and per call objects
@@ -156,63 +206,30 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
     compute_bins(Spec_domain, Spec_index);
 
-    auto bins = pca_bin->bin_indexes();
-    Array<int, 1> num_bin_points = pca_bin->num_bin_points();
+    std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+        int num_bin_points = pca_bin->num_bin_points()(bin_idx);
 
         // Skip empty bins
-        if (num_bin_points(bin_idx) == 0) {
+        if (num_bin_points == 0) {
             continue;
         }
 
-        // Solve PCA solution for intermediate variable optical properties for the bin
+        double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
+
+        // Solve PCA solution from optical properties for the bin
         boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bins[bin_idx]);
-
-        // Create bin averaged spectral point
-        Array<double, 1> bin_wns(num_bin_points(bin_idx));
-        for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
-            bin_wns(dom_idx) = wavenumbers(bins[bin_idx](dom_idx));
-        }
-        double avg_wn = mean(bin_wns);
         
-        // Create EOF intermediate values for mean and plus and minus each eof
-        boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, avg_wn);
+        // Compute the binned optical properties
+        boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
+
+        // Compute per wavenumber correction factors from RT runs of binned optical properties
+        Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, Spec_index);
         
-        Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->mean));
-        Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->mean));
-        Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->mean));
-
-        // Compute bin mean plus eof and mean minus eof intensity from each RT
-        Array<double, 2> lidort_plus(num_eofs, number_stokes());
-        Array<double, 2> twostream_plus(num_eofs, number_stokes());
-        Array<double, 2> first_order_plus(num_eofs, number_stokes());
-
-        Array<double, 2> lidort_minus(num_eofs, number_stokes());
-        Array<double, 2> twostream_minus(num_eofs, number_stokes());
-        Array<double, 2> first_order_minus(num_eofs, number_stokes());
-
-        for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-            lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_plus[eof_idx]);
-            lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_minus[eof_idx]);
-
-            twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_plus[eof_idx]);
-            twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_minus[eof_idx]);
-
-            first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_plus[eof_idx]);
-            first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(avg_wn, Spec_index, bin_opt_props->eof_minus[eof_idx]);
-        }
-
-        // Compute correction factors
-        Array<double, 2> bin_corrections(num_bin_points(bin_idx), number_stokes());
-        bin_corrections = pca_solver->correction(
-                lidort_mean, twostream_mean, first_order_mean,
-                lidort_plus, twostream_plus, first_order_plus,
-                lidort_minus, twostream_minus, first_order_minus);
-
         // Compute 2stream and first order for all points in the bin and use correction to get final values
-        for(int dom_idx = 0; dom_idx < num_bin_points(bin_idx); dom_idx++) {
+        for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
             int grid_idx = bins[bin_idx](dom_idx);
             int dom_wn = wavenumbers(grid_idx);
 
