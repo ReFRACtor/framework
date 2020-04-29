@@ -116,11 +116,13 @@ void PCABinning::compute_bins()
     int pack_start = 0;
     for(int bidx = 0; bidx < num_bins_; bidx++) {
         int npoints = num_points(bidx);
-        Array<int, 1> curr_indexes(npoints);
-        // Remove 1 to make zero based indexes
-        curr_indexes = indexes_packed(Range(pack_start, pack_start + npoints-1)) - 1;;
-        pack_start += npoints;
-        bin_indexes_.push_back(curr_indexes);
+        if (npoints > 0) {
+            Array<int, 1> curr_indexes(npoints);
+            // Remove 1 to make zero based indexes
+            curr_indexes = indexes_packed(Range(pack_start, pack_start + npoints-1)) - 1;;
+            pack_start += npoints;
+            bin_indexes_.push_back(curr_indexes);
+        }
     }
 
     // Copy over bin number of points to a correctly sized object
