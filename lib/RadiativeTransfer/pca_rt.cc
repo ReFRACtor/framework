@@ -42,6 +42,8 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
 
     if (aerosol_optical) {
         num_aerosol = aerosol_optical->number_particle();
+    } else {
+        num_aerosol = 0;
     }
 
     num_packed_var = 2 + num_aerosol;
@@ -245,6 +247,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
             stokes_output(grid_idx, Range::all()) = 
                 bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
+
         }
     }
 
