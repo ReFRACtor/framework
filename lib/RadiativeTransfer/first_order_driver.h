@@ -58,7 +58,6 @@ private:
     void copy_geometry_flags() const;
 
     const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 2>& pf) const;
-    const blitz::Array<double, 1> deltam_tms(const blitz::Array<double, 1>& ssa, const blitz::Array<double, 2>& pf) const;
 
     int num_moments_;
     int num_streams_;

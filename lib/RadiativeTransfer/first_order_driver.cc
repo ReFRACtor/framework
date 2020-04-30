@@ -255,25 +255,6 @@ const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz:
     return truncfac;
 }
 
-/// Compute truncated single scattering from single scattering albedo according to if
-/// delta_m truncation is turned on or not
-const blitz::Array<double, 1> FirstOrderDriver::deltam_tms(const blitz::Array<double, 1>& ssa,
-                                                           const blitz::Array<double, 2>& pf) const
-{
-    // Compute truncated single scattering from single scattering albedo according to if
-    // delta_m truncation is turned on or not
-    Array<double, 1> tms;
-    if (do_deltam_scaling_) {
-        Array<double, 1> truncfac = deltam_trunc_factor(pf);
-        tms.resize(ssa.rows());
-        tms = ssa / (1 - truncfac * ssa);
-    } else {
-        tms.reference(ssa);
-    }
-
-    return tms;
-}
-
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
                                             const blitz::Array<double, 2>& pf) const
@@ -295,14 +276,17 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     Array<double, 1> extinction(solar_interface_->extinction());
     extinction = optical_depth / height_diffs;
 
-    // Compute truncated single scattering from single scattering albedo according to if
-    // delta_m truncation is turned on or not
-    Array<double, 1> tms = deltam_tms(ssa, pf);
-
+    // Compute truncated values when delta_m truncation is turned on or not
+    Array<double, 1> tms;
     if(do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf);
         optical_depth *= (1 - truncfac * ssa);
         extinction *= (1 - truncfac * ssa);
+
+        tms.resize(ssa.rows());
+        tms = ssa / (1 - truncfac * ssa);
+    } else {
+        tms.reference(ssa);
     }
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
@@ -356,22 +340,21 @@ void FirstOrderDriver::setup_linear_inputs
     firstIndex i1; secondIndex i2;
     l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
 
-    Array<double, 1> truncfac;
-    if(do_deltam_scaling_) {
-        truncfac.reference( deltam_trunc_factor(pf.value()) );
-        for (int par_idx = 0; par_idx < natm_jac; par_idx++) {
-            l_deltau(r_all, par_idx) *= (1 + truncfac * ssa.value()(par_idx));
-            l_extinction(r_all, par_idx) *= (1 + truncfac * ssa.value()(par_idx));
-        }
-    }
-    
-    // Compute truncated single scattering contribution for delta-m scaling
-    Array<double, 1> tms = deltam_tms(ssa.value(), pf.value());
-
+    // Truncate jacobian weights for deltam scaling
     Array<double, 2> l_tms;
     if (do_deltam_scaling_) {
+        Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
+
+        Array<double, 1> od_correction(od.value().rows());
+        for (int par_idx = 0; par_idx < natm_jac; par_idx++) {
+            od_correction = (ssa.value() * truncfac * ssa.jacobian()(r_all, par_idx)) /
+                            (1 - ssa.value() * truncfac);
+            //l_deltau(r_all, par_idx) -= od_correction;
+           // l_extinction(r_all, par_idx) -= od_correction;
+        }
+      
         l_tms.resize(ssa.jacobian().shape());
-        l_tms = ssa.jacobian()(i1, i2) * (1 + truncfac(i1) * tms(i1));
+        l_tms = ssa.jacobian()(i1, i2) / (1 - truncfac(i1) * ssa.value()(i1));
     } else {
         l_tms.reference(ssa.jacobian());
     }

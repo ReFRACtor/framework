@@ -274,7 +274,11 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
 
-  if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
+  if (debug_output) {
+    std::cerr << "----------------------------" << std::endl
+              << "Surface only" << std::endl 
+              << "----------------------------" << std::endl; 
+  }
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
 
@@ -303,7 +307,12 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
 
-  if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
+  if (debug_output) {
+    std::cerr << "----------------------------" << std::endl
+              << "Rayleigh only" << std::endl 
+              << "----------------------------" << std::endl; 
+  }
+
   pert_atm = 1e-3, -1e-4;
   pert_surf = 1e-8;
 
@@ -328,7 +337,12 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   taur = 1.0e-6/nlayer;
   taug = 1.0/nlayer;
 
-  if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
+  if (debug_output) {
+    std::cerr << "----------------------------" << std::endl
+              << "Gas + Surface" << std::endl 
+              << "----------------------------" << std::endl; 
+  }
+
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
 
