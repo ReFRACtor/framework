@@ -7,6 +7,7 @@
 #include <blitz/array.h>
 #include <boost/progress.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -90,8 +91,7 @@ public:
   { Os << "RadiativeTransfer";}
 protected:
   static AccumulatedTimer timer;
-  boost::shared_ptr<boost::progress_display> progress_display(const 
-		   blitz::Array<double, 1>& wn) const;
+  boost::shared_ptr<boost::progress_display> progress_display(const blitz::Array<double, 1>& wn, boost::optional<std::string> message = boost::optional<std::string>()) const;
 };
 
 }

@@ -16,12 +16,15 @@ REGISTER_LUA_END()
 /// aren't logging, or if we don't have enough points to bother with.
 //-----------------------------------------------------------------------
 boost::shared_ptr<boost::progress_display> 
-RadiativeTransfer::progress_display(const blitz::Array<double, 1>& wn) const
+RadiativeTransfer::progress_display(const blitz::Array<double, 1>& wn, boost::optional<std::string> message) const
 {
   boost::shared_ptr<boost::progress_display> res;
-  if(wn.size() > 100 &&
-     Logger::stream()) {
-    Logger::info() << "RT Progress\n";
+  if(wn.size() > 100 && Logger::stream()) {
+    if (!message) {
+        Logger::info() << "RT Progress\n";
+    } else {
+        Logger::info() << *message << "\n";
+    }
     res.reset(new boost::progress_display(wn.size(), *Logger::stream()));
   }
   return res;

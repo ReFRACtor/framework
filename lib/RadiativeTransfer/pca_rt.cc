@@ -1,4 +1,5 @@
 #include "ostream_pad.h"
+#include <boost/lexical_cast.hpp>
 
 #include "pca_rt.h"
 
@@ -58,13 +59,18 @@ void PCARt::clear_pca_objects() const
 
 void PCARt::compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const
 {
-    // Compute optical properties for the whole band
+    
+    boost::optional<std::string> progress_message("Optical Properties: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
+    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
+    // Compute optical properties for the whole band
     for (int dom_idx = 0; dom_idx < Spec_domain.data().rows(); dom_idx++) {
         boost::shared_ptr<OpticalPropertiesWrtRt> point_opt_prop(new OpticalPropertiesWrtRt());
         point_opt_prop->initialize(DoubleWithUnit(Spec_domain.data()(dom_idx), Spec_domain.units()), Spec_index,
                                    atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
         pca_opt.push_back(point_opt_prop);
+
+        *progress_bar += 1;
     }
 
     int primary_abs_index = atm->absorber_ptr()->gas_index(primary_absorber);
@@ -202,6 +208,8 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
 
 blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
 {
+    FunctionTimer ft(timer.function_timer(true));
+
     // Clear out debugging and per call objects
     clear_pca_objects();
 
@@ -215,6 +223,9 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     compute_bins(Spec_domain, Spec_index);
 
     std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
+
+    boost::optional<std::string> progress_message("PCA RT: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
+    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
@@ -248,14 +259,20 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             stokes_output(grid_idx, Range::all()) = 
                 bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
 
+
+            *progress_bar += 1;
         }
     }
+
+    Logger::info() << atm->timer_info();
 
     return stokes_output;
 }
 
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
 {
+    FunctionTimer ft(timer.function_timer(true));
+
     // Clear out debugging and per call objects
     clear_pca_objects();
 
@@ -269,6 +286,9 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
     compute_bins(Spec_domain, Spec_index);
 
     std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
+
+    boost::optional<std::string> progress_message("PCA RT + Jacobian: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
+    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
@@ -311,8 +331,12 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
                 stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
                     bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
             }
+
+            *progress_bar += 1;
         }
     }
+
+    Logger::info() << atm->timer_info();
 
     return stokes_output;
 } 
