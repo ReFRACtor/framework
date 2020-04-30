@@ -46,21 +46,21 @@ OpticalPropertiesPca::OpticalPropertiesPca(const ArrayAd<double, 2>& packed_prop
     }
     packed_idx += 1;
 
-    Range r_aer_ext(packed_idx, packed_idx + num_aerosol - 1);
-    aerosol_extinction_optical_depth_per_particle_.value().reference(packed_properties.value()(ra, r_aer_ext));
-    aerosol_extinction_optical_depth_per_particle_.resize_number_variable(num_rt_var);
-    if(!packed_properties.is_constant()) {
-        for(int aer_idx = 0; aer_idx < num_aerosol; aer_idx++) {
-            aerosol_extinction_optical_depth_per_particle_.jacobian()(ra, aer_idx, packed_idx) = 1.0;
-            packed_idx += 1;
-        }
-    } else {
-        packed_idx += num_aerosol;
-    }
-
-    // Compute aerosol scattering from aerosol optical depth using aerosol properties
-    // like how this has historically been computed
     if (aerosol) {
+        Range r_aer_ext(packed_idx, packed_idx + num_aerosol - 1);
+        aerosol_extinction_optical_depth_per_particle_.value().reference(packed_properties.value()(ra, r_aer_ext));
+        aerosol_extinction_optical_depth_per_particle_.resize_number_variable(num_rt_var);
+        if(!packed_properties.is_constant()) {
+            for(int aer_idx = 0; aer_idx < num_aerosol; aer_idx++) {
+                aerosol_extinction_optical_depth_per_particle_.jacobian()(ra, aer_idx, packed_idx) = 1.0;
+                packed_idx += 1;
+            }
+        } else {
+            packed_idx += num_aerosol;
+        }
+
+        // Compute aerosol scattering from aerosol optical depth using aerosol properties
+        // like how this has historically been computed
         compute_aerosol_scattering(wavenumber, aerosol);
     }
 
@@ -104,8 +104,10 @@ ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalPro
     packed_v.value()(ra, packed_idx) = ray_od.value();
     packed_idx += 1;
 
-    Range r_aer(packed_idx, packed_idx + source_properties->number_aerosol_particles() - 1);
-    packed_v.value()(ra, r_aer) = aer_ext.value();
+    if (source_properties->number_aerosol_particles() > 0) {
+        Range r_aer(packed_idx, packed_idx + source_properties->number_aerosol_particles() - 1);
+        packed_v.value()(ra, r_aer) = aer_ext.value();
+    }
 
     return packed_v;
 }
