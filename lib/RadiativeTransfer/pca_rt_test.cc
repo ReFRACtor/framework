@@ -2,18 +2,17 @@
 
 #include "atmosphere_fixture.h"
 #include "stokes_coefficient_constant.h"
-#include "pca_binning.h"
+#include "altitude.h"
 
+#include "pca_binning.h"
 #include "pca_rt.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(pca_rt, AtmosphereFixture)
-
-BOOST_AUTO_TEST_CASE(basic)
+void test_pca_rt(const boost::shared_ptr<AtmosphereStandard>& atm, const SpectralDomain& full_grid)
 {
-    int num_streams = 4;
+    int num_streams = 8;
     int num_moments = 2 * num_streams;
     bool pure_nadir = false;
 
@@ -42,7 +41,6 @@ BOOST_AUTO_TEST_CASE(basic)
                   sza, zen, azm,
                   num_streams, num_moments);
 
-    SpectralDomain full_grid = highres_grid(0);
     SpectralDomain test_grid( full_grid.data()(Range(0, 999)), full_grid.units() );
 
     // Use LIDORT for comparison
@@ -80,6 +78,36 @@ BOOST_AUTO_TEST_CASE(basic)
     rms_avg /= jac_sqr_diff.cols();
 
     BOOST_CHECK(rms_avg < 0.02);
+}
+
+BOOST_FIXTURE_TEST_SUITE(pca_rt, AtmosphereFixture)
+
+BOOST_AUTO_TEST_CASE(with_aerosol)
+{
+  test_pca_rt(atm, highres_grid(0));
+}
+
+BOOST_AUTO_TEST_CASE(no_aerosol)
+{ 
+  boost::shared_ptr<AtmosphereStandard> src_atm(boost::dynamic_pointer_cast<AtmosphereStandard>(atm));
+
+  std::vector<boost::shared_ptr<Altitude> > alt_clone;
+    BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, src_atm->altitude_ptr())
+        alt_clone.push_back(a->clone());
+
+  boost::shared_ptr<AtmosphereStandard>
+    atm_no_aerosol(new AtmosphereStandard(src_atm->absorber_ptr()->clone(),
+                                          src_atm->pressure_ptr()->clone(),
+                                          src_atm->temperature_ptr()->clone(),
+                                          src_atm->rayleigh_ptr()->clone(),
+                                          NULL,
+                                          src_atm->relative_humidity_ptr()->clone(),
+                                          src_atm->ground()->clone(),
+                                          alt_clone,
+                                          src_atm->constant_ptr()));
+
+  test_pca_rt(atm_no_aerosol, highres_grid(0));
+ 
 }
 
 BOOST_AUTO_TEST_SUITE_END()
