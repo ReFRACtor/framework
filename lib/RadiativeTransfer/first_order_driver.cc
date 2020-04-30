@@ -249,9 +249,19 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
 /// Compute truncation factor for use in deltam scaling
 const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 2>& pf) const
 {
-    double dnm1 = 4 * (num_streams_) + 1;
     Array<double, 1> truncfac(pf.cols());
-    truncfac = pf(2*num_streams_, Range::all()) / dnm1;
+
+    if(pf.rows() < 2*num_streams_+1) {
+        // If pf does not contain enough moments then we are likely in a aerosol free case, in that case
+        // even if we had a pf matrix that had the number moments available, those entries would be zero
+        // since they would not have been able to be filed in with aerosol moments. Therefore its probably
+        // a rayleigh only atmosphere.
+        truncfac = 0;
+    } else {
+        double dnm1 = 4 * (num_streams_) + 1;
+        truncfac = pf(2*num_streams_, Range::all()) / dnm1;
+    }
+
     return truncfac;
 }
 
@@ -259,15 +269,6 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
                                             const blitz::Array<double, 1>& ssa,
                                             const blitz::Array<double, 2>& pf) const
 {
-    if (pf.rows() != (num_moments_+1)) {
-        // By definition num_moments should be one less than the size of pf array
-        // because in the Fortran code phase function arrays are index from 0:num_moments
-        Exception err;
-        err << "Number of moments specified to First Order: " << num_moments_ 
-            << " need to be one less than the size of the pf array: " << pf.rows();
-        throw err;
-    }
-
     // Total per layer optical depth
     Array<double, 1> optical_depth(solar_interface_->deltaus());
     optical_depth = od;
@@ -290,10 +291,13 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     }
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
-    // Sum over moment index
+    // Sum over moment index, only use the number of common moments available
+    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
+    Range r_all = Range::all();
     firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
+
     Array<double, 2> exactscat(solar_interface_->exactscat_up());
-    exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx), mom_idx) * tms(lay_idx);
+    exactscat = sum(legendre->ss_pleg()(r_mom, r_all)(mom_idx, geom_idx) * pf(r_mom, r_all)(mom_idx, lay_idx), mom_idx) * tms(lay_idx);
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
@@ -364,9 +368,11 @@ void FirstOrderDriver::setup_linear_inputs
     // variables can be used when computing l_exactscat to ensure correct ordering of values
     Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
 
+    // Sum over moment index, only use the number of common moments available
     Array<double, 2> legpf(nlay, ngeom);
+    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
     firstIndex j1; secondIndex j2; thirdIndex j3;
-    legpf = sum(legendre->ss_pleg()(j3, j2) * pf.value()(j3, j1), j3);
+    legpf = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.value()(r_mom, r_all)(j3, j1), j3);
 
     firstIndex k1; secondIndex k2; thirdIndex k3;
     l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * l_tms(k1, k3);
