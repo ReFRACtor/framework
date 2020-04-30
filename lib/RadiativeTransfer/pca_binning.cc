@@ -15,6 +15,18 @@ PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalPropertiesWrtR
 : opt_props_(optical_properties), bin_method_(bin_method), num_bins_(num_bins), primary_abs_index_(primary_absorber_index)
 {
     compute_bins();
+
+    // Check for consistency
+    for (int bin_idx = 0; bin_idx < num_bins; bin_idx++) {
+        if(bin_indexes_[bin_idx].rows() != num_bin_points_(bin_idx)) {
+            Exception err;
+            err << "Number of bin data indexes: " << bin_indexes_[bin_idx].rows()
+                << " does not match number of bin points: " << num_bin_points_(bin_idx) 
+                << " at bin " << bin_idx;
+            throw err;
+        }
+    }
+
 }
 
 void PCABinning::compute_bins()
@@ -116,13 +128,13 @@ void PCABinning::compute_bins()
     int pack_start = 0;
     for(int bidx = 0; bidx < num_bins_; bidx++) {
         int npoints = num_points(bidx);
+        Array<int, 1> curr_indexes(npoints);
         if (npoints > 0) {
-            Array<int, 1> curr_indexes(npoints);
             // Remove 1 to make zero based indexes
             curr_indexes = indexes_packed(Range(pack_start, pack_start + npoints-1)) - 1;;
             pack_start += npoints;
-            bin_indexes_.push_back(curr_indexes);
         }
+        bin_indexes_.push_back(curr_indexes);
     }
 
     // Copy over bin number of points to a correctly sized object
