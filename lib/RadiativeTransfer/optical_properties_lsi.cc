@@ -17,6 +17,10 @@ OpticalPropertiesLsi::OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_prop
 {
     Range ra = Range::all();
 
+    if(num_aerosol > 0 and !aerosol) {
+        throw Exception("Number of aerosols is non zero but aerosol object is null");
+    }
+
     intermediate_jacobian_.reference(packed_properties.jacobian());
     int num_rt_var = intermediate_jacobian_.cols();
 
@@ -41,7 +45,9 @@ OpticalPropertiesLsi::OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_prop
 
     // Compute aerosol scattering from aerosol optical depth using aerosol properties
     // like how this has historically been computed
-    compute_aerosol_scattering(wavenumber, aerosol);
+    if (aerosol) {
+        compute_aerosol_scattering(wavenumber, aerosol);
+    }
 
     DoubleWithUnit spectral_point(wavenumber, units::inv_cm);
     aerosol_phase_function_helper_.reset(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));

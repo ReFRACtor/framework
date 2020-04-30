@@ -27,6 +27,10 @@ OpticalPropertiesPca::OpticalPropertiesPca(const ArrayAd<double, 2>& packed_prop
         throw err;
     }
 
+    if(num_aerosol > 0 and !aerosol) {
+        throw Exception("Number of aerosols is non zero but aerosol object is null");
+    }
+
     int packed_idx = 0;
     gas_optical_depth_per_layer_.value().reference(packed_properties.value()(ra, packed_idx));
     gas_optical_depth_per_layer_.resize_number_variable(num_rt_var);
@@ -56,7 +60,9 @@ OpticalPropertiesPca::OpticalPropertiesPca(const ArrayAd<double, 2>& packed_prop
 
     // Compute aerosol scattering from aerosol optical depth using aerosol properties
     // like how this has historically been computed
-    compute_aerosol_scattering(wavenumber, aerosol);
+    if (aerosol) {
+        compute_aerosol_scattering(wavenumber, aerosol);
+    }
 
     DoubleWithUnit spectral_point(wavenumber, units::inv_cm);
     aerosol_phase_function_helper_.reset(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
@@ -107,7 +113,7 @@ ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalPro
 //-----------------------------------------------------------------------
 /// Compute aerosol scattering value from aerosol extinction by way of
 /// the aerosol single scattering albedo defined by the ratio of the
-/// extinctiona and scattering aerosol properties.
+/// extinction and scattering aerosol properties.
 //-----------------------------------------------------------------------
 
 void OpticalPropertiesPca::compute_aerosol_scattering(double wavenumber, const boost::shared_ptr<AerosolOptical>& aerosol)

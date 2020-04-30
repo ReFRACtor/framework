@@ -26,7 +26,8 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
     // Need to convert aerosol from atmosphere to AerosolOptical for PCA optical properties packing
     aerosol_optical = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
 
-    if(!aerosol_optical) {
+    // Only throw an error if the original pointer is not already null
+    if(atm->aerosol_ptr() && !aerosol_optical) {
         throw Exception("Failed to convert aerosol class to AerosolOptical");
     }
 
@@ -37,8 +38,12 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
     first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm, Number_streams, Number_moments, do_solar_sources, do_thermal_emission));
 
     num_gas = atm->absorber_ptr()->number_species();
-    num_aerosol = atm->aerosol_ptr()->number_particle();
     num_layer = atm->pressure_ptr()->number_layer();
+
+    if (aerosol_optical) {
+        num_aerosol = aerosol_optical->number_particle();
+    }
+
     num_packed_var = 2 + num_aerosol;
 }
 
