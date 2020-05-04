@@ -311,6 +311,29 @@ void FirstOrderDriver::clear_linear_inputs() const
     solar_interface_->n_reflecwfs(0);
 }
 
+/// Compute truncation factor for use in deltam scaling
+const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const
+{
+    Array<double, 2> l_truncfac(pf.cols(), pf.number_variable());
+
+    if(pf.rows() < 2*num_streams_+1) {
+        // If pf does not contain enough moments then we are likely in a aerosol free case, in that case
+        // even if we had a pf matrix that had the number moments available, those entries would be zero
+        // since they would not have been able to be filed in with aerosol moments. Therefore its probably
+        // a rayleigh only atmosphere.
+        l_truncfac = 0;
+    } else {
+        double dnm1 = 4 * (num_streams_) + 1;
+        firstIndex i1; secondIndex i2;
+        Range r_all = Range::all();
+        l_truncfac = pf.jacobian()(2*num_streams_, r_all, r_all)(i1, i2) / dnm1 * 
+            pf.value()(2*num_streams_, r_all)(i1);
+    }
+
+    return l_truncfac;
+}
+
+
 void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
@@ -348,17 +371,23 @@ void FirstOrderDriver::setup_linear_inputs
     Array<double, 2> l_tms;
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
+        Array<double, 2> l_truncfac = deltam_linear_trunc_factor(pf);
 
-        Array<double, 1> od_correction(od.value().rows());
-        for (int par_idx = 0; par_idx < natm_jac; par_idx++) {
-            od_correction = (ssa.value() * truncfac * ssa.jacobian()(r_all, par_idx)) /
-                            (1 - ssa.value() * truncfac);
-            //l_deltau(r_all, par_idx) -= od_correction;
-           // l_extinction(r_all, par_idx) -= od_correction;
-        }
-      
+        Array<double, 1> correction_fac(truncfac.rows());
+        correction_fac = 1 - truncfac * ssa.value();
+
+        l_deltau(r_lay, r_jac) = l_deltau(r_lay, r_jac)(i1, i2) * correction_fac(i1) -
+            od.value()(i1) * (l_truncfac(i1, i2) * ssa.value()(i1) + truncfac(i1) * ssa.jacobian()(i1, i2));
+
+        l_extinction(r_lay, r_jac) = l_extinction(r_lay, r_jac)(i1, i2) * correction_fac(i1) -
+            (od.value()(i1) / height_diffs(i1)) * (l_truncfac(i1, i2) * ssa.value()(i1) + truncfac(i1) * ssa.jacobian()(i1, i2));
+
+        Array<double, 2> l_correction_fac(l_truncfac.shape());
+        l_correction_fac = l_truncfac(i1, i2) * ssa.value()(i1) - truncfac(i1) * ssa.jacobian()(i1, i2);
+
         l_tms.resize(ssa.jacobian().shape());
-        l_tms = ssa.jacobian()(i1, i2) / (1 - truncfac(i1) * ssa.value()(i1));
+        l_tms = (ssa.jacobian()(i1, i2) - ssa.value()(i1) / correction_fac(i1) * l_correction_fac(i1, i2)) / 
+            correction_fac(i1);
     } else {
         l_tms.reference(ssa.jacobian());
     }
