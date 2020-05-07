@@ -286,7 +286,6 @@ SUBROUTINE LIDORT_L_INPUT_MASTER ( &
 !  3. CONTROL NUMBERS
 !  ==================
 
-!  VN 2/23/18. Added thermal cutoff declaration
 !  Thermal Cutoff parameter. Should be set to 1.0e-08.
 !  This is actually a minimum value of layer optical thickness
 !     Added, 5/14/15 for use with Thermal Solutions
@@ -449,7 +448,7 @@ SUBROUTINE LIDORT_L_INPUT_MASTER ( &
             DO_SURFACE_LEAVING,      DO_SL_ISOTROPIC,                  & ! output
             TAYLOR_ORDER, NSTREAMS, NLAYERS, NFINELAYERS, NMOMENTS_INPUT,           & ! output (modified 10/10/13)
             NBEAMS, N_USER_STREAMS, N_USER_RELAZMS, N_USER_OBSGEOMS, N_USER_LEVELS, & ! output (modified 10/25/12)
-            N_THERMAL_COEFFS, FLUX_FACTOR, LIDORT_ACCURACY, THERMAL_CUTOFF,         & ! input/output ! VN 2/23/18. Added THERMAL_CUTOFF
+            N_THERMAL_COEFFS, FLUX_FACTOR, LIDORT_ACCURACY, THERMAL_CUTOFF,         & ! input/output
             EARTH_RADIUS, RFINDEX_PARAMETER, GEOMETRY_SPECHEIGHT,                   & ! input/output
             BEAM_SZAS, USER_ANGLES, USER_RELAZMS, USER_OBSGEOMS, USER_LEVELS )        ! output (modified 10/25/12)
 
@@ -486,7 +485,7 @@ SUBROUTINE LIDORT_L_INPUT_MASTER ( &
             DO_SURFACE_LEAVING,      DO_SL_ISOTROPIC,              & ! input/output
             TAYLOR_ORDER, NSTREAMS, NLAYERS, NFINELAYERS, NMOMENTS_INPUT,           & ! input/output (modified 10/10/13)
             NBEAMS, N_USER_STREAMS, N_USER_RELAZMS, N_USER_OBSGEOMS, N_USER_LEVELS, & ! output (modified 10/25/12)
-            N_THERMAL_COEFFS, FLUX_FACTOR, LIDORT_ACCURACY, THERMAL_CUTOFF,         & ! input/output ! VN 2/23/18. Added THERMAL_CUTOFF
+            N_THERMAL_COEFFS, FLUX_FACTOR, LIDORT_ACCURACY, THERMAL_CUTOFF,         & ! input/output
             EARTH_RADIUS, RFINDEX_PARAMETER, GEOMETRY_SPECHEIGHT,                   & ! input/output
             BEAM_SZAS, USER_ANGLES, USER_RELAZMS, USER_OBSGEOMS, USER_LEVELS,       & ! output (modified 10/25/12)
             STATUS_SUB, NMESSAGES, MESSAGES, ACTIONS )                                ! Output
@@ -544,6 +543,9 @@ SUBROUTINE LIDORT_L_INPUT_MASTER ( &
       LIDORT_FixIn%Cont%TS_NFINELAYERS      = NFINELAYERS
       LIDORT_FixIn%Cont%TS_N_THERMAL_COEFFS = N_THERMAL_COEFFS
       LIDORT_FixIn%Cont%TS_LIDORT_ACCURACY  = LIDORT_ACCURACY
+
+!  New 5.14.15
+      LIDORT_FixIn%Cont%TS_THERMAL_CUTOFF = THERMAL_CUTOFF
 
 !  Fixed Beam inputs
 
