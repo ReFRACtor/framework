@@ -8,10 +8,11 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-const bool do_debug_output = false;
+const bool do_debug_output = true;
 
 void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere, 
                        const boost::shared_ptr<StokesCoefficient>& stokes_coefs,
+                       boost::shared_ptr<StateVector>& state_vector,
                        blitz::Array<double, 1>& sza, 
                        blitz::Array<double, 1>& zen, 
                        blitz::Array<double, 1>& azm, 
@@ -83,35 +84,86 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(lid_rad_jac.value()(all, 0), fo_rad_jac.value()(all, 0), 1e-6);
 
+  Array<double, 1> sv0 = state_vector->state();
+
   for(int jac_idx = 0; jac_idx < fo_rad_jac.jacobian().depth(); jac_idx++) {
+    Array<double, 1> sv_pert = sv0.copy();
+
+    double eps;
+    if (sv_pert(jac_idx) == 0) {
+        eps = 0.01;
+    } else {
+        eps = (sv_pert(jac_idx) * 1.01) - sv_pert(jac_idx);
+    }
+    std::cerr << "eps = " << eps << std::endl;
+
+    sv_pert(jac_idx) += eps;
+
+    state_vector->update_state(sv_pert);
+
+    Array<double, 2> lidort_pert = lidort_rt->stokes(wn_arr, 0);
+    Array<double, 1> lid_fd_jac(lid_rad_jac.rows());
+    lid_fd_jac = (lidort_pert(all, 0) - lid_rad_jac.value()(all, 0)) / eps;
+
+    Array<double, 2> fo_pert = first_order_rt->stokes(wn_arr, 0);
+    Array<double, 1> fo_fd_jac(fo_rad_jac.rows());
+    fo_fd_jac = (fo_pert(all, 0) - fo_rad_jac.value()(all, 0)) / eps;
+
     if(debug_output) {
-      std::cerr << jac_idx << " -- l: ";
+      std::cerr << jac_idx << ": " << state_vector->state_vector_name()(jac_idx); 
+
+      std::cerr << std::endl << " -- lid: ";
       for(int wn_idx = 0; wn_idx < lid_rad_jac.jacobian().rows(); wn_idx++)      
         std::cerr << lid_rad_jac.jacobian()(wn_idx, 0, jac_idx) << " ";
-      std::cerr << std::endl << jac_idx << " -- f: ";
+      std::cerr << " -- fd: ";
+      for(int wn_idx = 0; wn_idx < lid_rad_jac.jacobian().rows(); wn_idx++)      
+        std::cerr << lid_fd_jac(wn_idx) << " ";
+      std::cerr << std::endl << " -- fo: ";
       for(int wn_idx = 0; wn_idx < fo_rad_jac.jacobian().rows(); wn_idx++)      
         std::cerr << fo_rad_jac.jacobian()(wn_idx, 0, jac_idx) << " ";
+      std::cerr << " -- fd: ";
+      for(int wn_idx = 0; wn_idx < fo_rad_jac.jacobian().rows(); wn_idx++)      
+        std::cerr << fo_fd_jac(wn_idx) << " ";
       std::cerr << std::endl;
     }
-    BOOST_CHECK_MATRIX_CLOSE_TOL(lid_rad_jac.jacobian()(all, 0, jac_idx), fo_rad_jac.jacobian()(all, 0, jac_idx), 7e-3);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(lid_rad_jac.jacobian()(all, 0, jac_idx), fo_rad_jac.jacobian()(all, 0, jac_idx), 1e-4);
   }
+
+  state_vector->update_state(sv0);
+
 }
 
 BOOST_FIXTURE_TEST_SUITE(first_order_rt_lambertian, LidortLambertianFixture)
 
 BOOST_AUTO_TEST_CASE(plane_parallel_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 0, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 0, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(psuedo_spherical_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 1, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 0, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(line_of_sight_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 2, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 2, false, do_debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(plane_parallel_with_deltam)
+{ 
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 0, true, do_debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(psuedo_spherical_with_deltam)
+{ 
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 1, true, do_debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(line_of_sight_with_deltam)
+{ 
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 2, true, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(no_aerosol)
@@ -134,7 +186,7 @@ BOOST_AUTO_TEST_CASE(no_aerosol)
                                           alt_clone,
                                           src_atm->constant_ptr()));
   
-  compare_lidort_fo(atm_no_aerosol, stokes_coefs, sza, zen, azm, wn_arr, 2, true, do_debug_output);
+  compare_lidort_fo(atm_no_aerosol, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 2, true, do_debug_output);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -144,17 +196,17 @@ BOOST_FIXTURE_TEST_SUITE(first_order_rt_coxmunk, LidortCoxmunkFixture)
 
 BOOST_AUTO_TEST_CASE(plane_parallel_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 0, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 0, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(psuedo_spherical_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 1, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 1, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(line_of_sight_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 2, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 2, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -167,17 +219,17 @@ BOOST_AUTO_TEST_CASE(plane_parallel_no_deltam)
   // Not sure what is triggering an exception on ubuntu. It is hard to 
   // duplicate this problem, so we'll just shut this off for now.
   FeDisableException disable_fp;
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 0, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 0, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(psuedo_spherical_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 1, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 1, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(line_of_sight_no_deltam)
 { 
-  compare_lidort_fo(config_atmosphere, stokes_coefs, sza, zen, azm, wn_arr, 2, false, do_debug_output);
+  compare_lidort_fo(config_atmosphere, stokes_coefs, config_state_vector, sza, zen, azm, wn_arr, 2, false, do_debug_output);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
