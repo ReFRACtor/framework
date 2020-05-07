@@ -70,7 +70,7 @@ void PCARt::compute_bins(const SpectralDomain& Spec_domain, int Spec_index) cons
                                    atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
         pca_opt.push_back(point_opt_prop);
 
-        *progress_bar += 1;
+        if(progress_bar) *progress_bar += 1;
     }
 
     int primary_abs_index = atm->absorber_ptr()->gas_index(primary_absorber);
@@ -260,7 +260,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
                 bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
 
 
-            *progress_bar += 1;
+            if (progress_bar) *progress_bar += 1;
         }
     }
 
@@ -332,7 +332,7 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
                     bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
             }
 
-            *progress_bar += 1;
+            if (progress_bar) *progress_bar += 1;
         }
     }
 
