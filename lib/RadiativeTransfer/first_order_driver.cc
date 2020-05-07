@@ -368,6 +368,7 @@ void FirstOrderDriver::setup_linear_inputs
     l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
 
     // Truncate jacobian weights for deltam scaling
+    Array<double, 1> tms;
     Array<double, 2> l_tms;
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
@@ -385,12 +386,19 @@ void FirstOrderDriver::setup_linear_inputs
         Array<double, 2> l_correction_fac(l_truncfac.shape());
         l_correction_fac = l_truncfac(i1, i2) * ssa.value()(i1) - truncfac(i1) * ssa.jacobian()(i1, i2);
 
+        tms.resize(ssa.rows());
+        tms = ssa.value() / (1 - truncfac * ssa.value());
+
         l_tms.resize(ssa.jacobian().shape());
         l_tms = (ssa.jacobian()(i1, i2) - ssa.value()(i1) / correction_fac(i1) * l_correction_fac(i1, i2)) / 
             correction_fac(i1);
     } else {
+        tms.reference(ssa.value());
         l_tms.reference(ssa.jacobian());
     }
+
+    // Already computed in setup_optical_inputs
+    Array<double, 2> exactscat(solar_interface_->exactscat_up());
 
     // l_exactscat takes into account ssa jacobian contributions
     // Compute legendre * pf function first seperately so that separate placeholder
@@ -398,13 +406,17 @@ void FirstOrderDriver::setup_linear_inputs
     Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
 
     // Sum over moment index, only use the number of common moments available
-    Array<double, 2> legpf(nlay, ngeom);
     Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
-    firstIndex j1; secondIndex j2; thirdIndex j3;
-    legpf = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.value()(r_mom, r_all)(j3, j1), j3);
 
+    // j1 = layers, j2 = geometry, j3 = moments
+    Array<double, 3> l_legpf(nlay, ngeom, natm_jac);
+    firstIndex j1; secondIndex j2; thirdIndex j3;
+    for(int jac_idx = 0; jac_idx < natm_jac; jac_idx++)
+        l_legpf(r_all, r_all, jac_idx) = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.jacobian()(r_mom, r_all, jac_idx)(j3, j1), j3);
+
+    // k1 = layers, k2 = ngeom, k3 = jacobians
     firstIndex k1; secondIndex k2; thirdIndex k3;
-    l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * l_tms(k1, k3);
+    l_exactscat(r_lay, r_all, r_jac) = l_legpf(k1, k2, k3) * tms(k1) + exactscat(r_lay, r_all)(k1, k2) * l_tms(k1, k3);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
