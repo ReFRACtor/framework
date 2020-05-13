@@ -17,7 +17,6 @@ namespace FullPhysics {
 
 class OssModifiedOutputs: public virtual GenericObject {
 public:
-    OssModifiedOutputs();
     OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 1>& Xk_temp, blitz::Array<float, 1>& Xk_tskin,
             blitz::Array<float, 1>& Xk_out_gas, blitz::Array<float, 1>& Xk_em, blitz::Array<float, 1>& Xk_rf,
             blitz::Array<float, 1>& Xk_cldln_pres, blitz::Array<float, 1>& Xk_cldln_ext);
@@ -40,7 +39,6 @@ public:
 
 class OssFixedOutputs: public virtual GenericObject {
 public:
-    OssFixedOutputs();
     OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point);
     OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point);
     int num_chan; ///< Number of channels available in OSS RTM
@@ -108,12 +106,12 @@ public:
 
 class OssMasters: public virtual GenericObject {
 public:
-    OssMasters(OssFixedInputs& Fixed_inputs);
+    OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs);
 
     void init();
-    OssModifiedOutputs run_fwd_model(OssModifiedInputs& Modified_inputs);
+    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 
-    OssFixedInputs fixed_inputs;
-    OssFixedOutputs fixed_outputs;
+    boost::shared_ptr<OssFixedInputs> fixed_inputs;
+    boost::shared_ptr<OssFixedOutputs> fixed_outputs;
 };
 }

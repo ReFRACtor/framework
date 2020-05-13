@@ -2,11 +2,13 @@
 
 #include "oss_configuration_fixture.h"
 #include "absorber_vmr_level.h"
+#include "surface_temperature_direct.h"
 #include "temperature_level_offset.h"
 #include "pressure_sigma.h"
 #include "absorber_absco.h"
 #include "gas_absorption.h"
 #include "constant.h"
+#include "ground_emissivity_piecewise.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -32,7 +34,13 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 
     /* Temperature */
     float skin_temp_nc = input_data->read_field<float>("/SkinTemperature");
-    config_skin_temperature = DoubleWithUnit(static_cast<double>(skin_temp_nc), units::K);
+    Array<double, 1> skin_temp(1);
+    skin_temp = static_cast<double>(skin_temp_nc);
+    ArrayWithUnit<double, 1> skin_temp_with_unit(skin_temp, units::K);
+    // OSS always returns skin temp jacobians
+    blitz::Array<bool, 1> retrieve_skin_temp(1);
+    retrieve_skin_temp = true;
+    config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit, retrieve_skin_temp);
 
     Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
     Array<double, 1> temp(temp_nc.rows());
@@ -42,26 +50,9 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     }
     Array<bool, 1> temp_flag(temp_nc.rows());
     temp_flag = true;
-    /*
-     TemperatureFixedLevel::TemperatureFixedLevel(const blitz::Array<bool, 1>& Flag_temp,
-     bool Flag_offset, const blitz::Array<double, 1>& Temp,
-     double T_offset,
-     const boost::shared_ptr<Pressure>& Press,
-     const boost::shared_ptr<PressureLevelInput>& Press_level)
-
-    config_temperature = boost::make_shared<TemperatureFixedLevel>(temp_flag, true, temp, surface_temp, config_pressure, pressure_level);
-    */
-
-    /*
-    TemperatureLevelOffset(const boost::shared_ptr<Pressure>& Press,
-                             const blitz::Array<double, 1>& Temp_levels,
-                             double Temp_offset,
-                             bool Temp_flag);
-    */
     config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
 
     /* AbsorberVmrs */
-    config_absorber_calc_jacob = std::vector<bool>();
     Array<float, 2> vmr_gas = Array<float, 2>(input_data->read_field<float, 2>("/vmrGas")(Range::all()));
     std::vector<boost::shared_ptr<AbsorberVmr>> vmr = std::vector<boost::shared_ptr<AbsorberVmr>>();
 
@@ -90,10 +81,8 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         Array<double, 1> vmr_curr_gas = Array<double, 1>(cast<double>(vmr_gas(gas_index, Range::all())));
         blitz::Array<bool, 1> vmr_curr_flag = blitz::Array<bool, 1>(vmr_curr_gas.rows());
         if (find(gas_jacob_names.begin(), gas_jacob_names.end(), gas_name) != gas_jacob_names.end()) {
-            config_absorber_calc_jacob.push_back(true);
             vmr_curr_flag = true;
         } else {
-            config_absorber_calc_jacob.push_back(false);
             vmr_curr_flag = false;
         }
         boost::shared_ptr<AbsorberVmrLevel> current_gas = boost::make_shared<AbsorberVmrLevel>(config_pressure,
@@ -108,6 +97,19 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         vmr.push_back(current_gas);
     }
     config_vmr = vmr;
+
+    /* Ground */
+    Array<float, 1> spectral_points_nc = input_data->read_field<float, 1>("/SurfaceGrid")(Range::all());
+    Array<float, 1> emissivity_val_nc = input_data->read_field<float, 1>("/Emissivity")(Range::all());
+    // OSS always returns emissivity jacobians
+    blitz::Array<bool, 1> retrieve_emiss(spectral_points_nc.rows());
+    retrieve_emiss = true;
+
+    // config_ground = boost::make_shared<GroundEmissivityPiecewise>();
+    /*  GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
+                              const blitz::Array<double, 1>& point_values,
+                              const blitz::Array<bool, 1>& retrieval_flag);
+     */
   /*
   AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
                      const boost::shared_ptr<Pressure>& pressurev,

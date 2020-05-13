@@ -18,12 +18,13 @@
 #include <boost/make_shared.hpp>
 
 #include "global_fixture.h"
-#include "pressure_level_input.h"
-#include "pressure_fixed_level.h"
-#include "temperature_fixed_level.h"
-#include "rt_atmosphere.h"
 #include "hdf_file.h"
 #include "absorber.h"
+#include "surface_temperature.h"
+#include "ground.h"
+#include "rt_atmosphere.h"
+
+
 /*
 #include "radiative_transfer.h"
 #include "lua_state.h"
@@ -44,16 +45,12 @@ public:
   /* Note: input_file is expected to be within oss_data_dir() */
   OssConfigurationFixture(const std::string& input_file = "tape5_nc4.nc");
   ~OssConfigurationFixture();
-  /*
-  boost::shared_ptr<Absorber> config_absorber;
-  boost::shared_ptr<Aerosol> config_aerosol;
-  */
   std::vector<boost::shared_ptr<AbsorberVmr>> config_vmr;
-  std::vector<bool> config_absorber_calc_jacob;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
-  DoubleWithUnit config_skin_temperature;
-  boost::shared_ptr<RtAtmosphere> config_atmosphere;
+  boost::shared_ptr<SurfaceTemperature> config_skin_temperature;
+  boost::shared_ptr<Ground> config_ground;
+  // boost::shared_ptr<RtAtmosphere> config_atmosphere;
 
   /*
   boost::shared_ptr<StateVector> config_state_vector;
@@ -67,7 +64,6 @@ public:
 
   boost::shared_ptr<SpectrumSampling> config_spectrum_sampling;
   boost::shared_ptr<Level1bSampleCoefficient> config_level_1b;
-  boost::shared_ptr<Ground> config_ground;
   boost::shared_ptr<ForwardModel> config_forward_model;
   boost::shared_ptr<Observation> config_observation;
   boost::shared_ptr<RadiativeTransfer> config_rt;

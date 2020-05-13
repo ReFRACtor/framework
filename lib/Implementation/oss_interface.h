@@ -167,7 +167,6 @@ public:
  *******************************************************************/
 class OssMasters: public virtual GenericObject {
 public:
-    OssMasters() { } /* Allow creation of uninitialized objects */
     OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
 
     void init();

@@ -20,7 +20,7 @@ namespace FullPhysics {
 class OssForwardModel : public ForwardModel {
 public:
     OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vmr,
-            const std::vector<bool>& Calc_gas_jacobian, const boost::shared_ptr<Pressure>& Pressure,
+            const boost::shared_ptr<Pressure>& Pressure,
             const boost::shared_ptr<Temperature>& Temperature,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
             const std::string& Ch_sel_file, float Min_extinct_cld = 999.0, int Max_chans = 20000) :
@@ -43,15 +43,15 @@ public:
 
         fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
                 ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
-        oss_master = OssMasters(fixed_inputs);
+        oss_master = boost::make_shared<OssMasters>(fixed_inputs);
     }
     virtual ~OssForwardModel() {}
     virtual void setup_grid() {
         using namespace blitz;
-        oss_master.init();
-        center_spectral_point.units = oss_master.fixed_outputs->center_spectral_point.units;
-        center_spectral_point.value.resize(oss_master.fixed_outputs->center_spectral_point.value.rows());
-        center_spectral_point.value = cast<double>(oss_master.fixed_outputs->center_spectral_point.value);
+        oss_master->init();
+        center_spectral_point.units = oss_master->fixed_outputs->center_spectral_point.units;
+        center_spectral_point.value.resize(oss_master->fixed_outputs->center_spectral_point.value.rows());
+        center_spectral_point.value = cast<double>(oss_master->fixed_outputs->center_spectral_point.value);
     }
 
     virtual int num_channels() const { return 1; }
@@ -120,7 +120,7 @@ private:
     int max_chans;
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
-    OssMasters oss_master;
+    boost::shared_ptr<OssMasters> oss_master;
     ArrayWithUnit<double, 1> center_spectral_point;
 };
 }
