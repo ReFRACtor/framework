@@ -7,6 +7,7 @@
 #include "rt_atmosphere.h"
 #include "absorber.h"
 #include "temperature.h"
+#include "surface_temperature.h"
 #include "hdf_file.h"
 #include "oss_interface.h"
 
@@ -20,12 +21,15 @@ namespace FullPhysics {
 class OssForwardModel : public ForwardModel {
 public:
     OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vmr,
-            const boost::shared_ptr<Pressure>& Pressure,
-            const boost::shared_ptr<Temperature>& Temperature,
+            const boost::shared_ptr<Pressure>& Pressure_,
+            const boost::shared_ptr<Temperature>& Temperature_,
+            const boost::shared_ptr<SurfaceTemperature>& Skin_temperature,
+            const boost::shared_ptr<Ground>& Ground_,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
             const std::string& Ch_sel_file, float Min_extinct_cld = 999.0, int Max_chans = 20000) :
-                vmr(Vmr), pressure(Pressure), temperature(Temperature), sel_file(Sel_file), sel_file_sz(Sel_file.length()),
-                od_file(Od_file), od_file_sz(Od_file.length()),sol_file(Sol_file), sol_file_sz(Sol_file.length()),
+                vmr(Vmr), pressure(Pressure_), temperature(Temperature_), skin_temperature(Skin_temperature),
+                ground(Ground_), sel_file(Sel_file), sel_file_sz(Sel_file.length()), od_file(Od_file),
+                od_file_sz(Od_file.length()),sol_file(Sol_file), sol_file_sz(Sol_file.length()),
                 fix_file(Fix_file), fix_file_sz(Fix_file.length()),ch_sel_file(Ch_sel_file),
                 ch_sel_file_sz(Ch_sel_file.length()), min_extinct_cld(Min_extinct_cld), max_chans(Max_chans) {
         std::vector<std::string> gas_names;
@@ -83,9 +87,10 @@ public:
             int level_index = (temperature_grid.rows() - 1) - i;
             oss_temperature(i) = static_cast<float>(temperature_grid.value.value()(level_index));
         }
-
-        /*  OssModifiedInputs(blitz::Array<float, 1>& Pressure,
-            blitz::Array<float, 1>& Temp, float Skin_temp,
+        float oss_skin_temp = skin_temperature->surface_temperature(channel_index).convert(units::K).value.value();
+        /*
+         * boost::shared_ptr<OssModifiedInputs> modified_inputs = boost::maked_shared<OssModifiedInputs>(
+                oss_pressure, oss_temperature, oss_skin_temp,
             blitz::Array<float, 2>& Vmr_gas, blitz::Array<float, 1>& Emis,
             blitz::Array<float, 1>& Refl, float Scale_cld, float Pressure_cld,
             blitz::Array<float, 1>& Ext_cld, blitz::Array<float, 1>& Surf_grid,
@@ -106,6 +111,8 @@ private:
     std::vector<boost::shared_ptr<AbsorberVmr>> vmr;
     boost::shared_ptr<Pressure> pressure;
     boost::shared_ptr<Temperature> temperature;
+    boost::shared_ptr<SurfaceTemperature> skin_temperature;
+    boost::shared_ptr<Ground> ground;
     std::string sel_file;
     int sel_file_sz;
     std::string od_file;

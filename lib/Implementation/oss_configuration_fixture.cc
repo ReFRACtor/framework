@@ -100,12 +100,17 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 
     /* Ground */
     Array<float, 1> spectral_points_nc = input_data->read_field<float, 1>("/SurfaceGrid")(Range::all());
+    Array<double, 1> spectral_points_double = Array<double, 1>(cast<double>(spectral_points_nc(Range::all())));
+    ArrayWithUnit<double, 1> spectral_points(spectral_points_double, units::inv_cm);
+
     Array<float, 1> emissivity_val_nc = input_data->read_field<float, 1>("/Emissivity")(Range::all());
+    Array<double, 1> emissivity_val = Array<double, 1>(cast<double>(emissivity_val_nc(Range::all())));
+
     // OSS always returns emissivity jacobians
     blitz::Array<bool, 1> retrieve_emiss(spectral_points_nc.rows());
     retrieve_emiss = true;
 
-    // config_ground = boost::make_shared<GroundEmissivityPiecewise>();
+    config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val, retrieve_emiss);
     /*  GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                               const blitz::Array<double, 1>& point_values,
                               const blitz::Array<bool, 1>& retrieval_flag);

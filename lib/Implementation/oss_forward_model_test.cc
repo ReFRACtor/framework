@@ -14,8 +14,8 @@ BOOST_AUTO_TEST_CASE(radiance)
   std::string sol_file = oss_data_dir() + "newkur.dat";
   std::string fix_file = oss_data_dir() + "default.dat";
   std::string ch_sel_file = "NULL";
-  OssForwardModel fm(config_vmr, config_pressure, config_temperature, sel_file,
-          od_file, sol_file, fix_file, ch_sel_file);
+  OssForwardModel fm(config_vmr, config_pressure, config_temperature, config_skin_temperature, config_ground,
+          sel_file, od_file, sol_file, fix_file, ch_sel_file);
   fm.setup_grid();
   SpectralDomain oss_spec_domain = fm.spectral_domain(0);
   Array<double,1> oss_wavenumbers = oss_spec_domain.wavenumber();
