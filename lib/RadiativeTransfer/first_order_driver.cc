@@ -409,14 +409,19 @@ void FirstOrderDriver::setup_linear_inputs
     Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
 
     // j1 = layers, j2 = geometry, j3 = moments
+    Array<double, 2> legpf(nlay, ngeom);
     Array<double, 3> l_legpf(nlay, ngeom, natm_jac);
+
     firstIndex j1; secondIndex j2; thirdIndex j3;
+
+    legpf = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.value()(r_mom, r_all)(j3, j1), j3);
+
     for(int jac_idx = 0; jac_idx < natm_jac; jac_idx++)
         l_legpf(r_all, r_all, jac_idx) = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.jacobian()(r_mom, r_all, jac_idx)(j3, j1), j3);
 
     // k1 = layers, k2 = ngeom, k3 = jacobians
     firstIndex k1; secondIndex k2; thirdIndex k3;
-    l_exactscat(r_lay, r_all, r_jac) = l_legpf(k1, k2, k3) * tms(k1) + exactscat(r_lay, r_all)(k1, k2) * l_tms(k1, k3);
+    l_exactscat(r_lay, r_all, r_jac) = l_legpf(k1, k2, k3) * tms(k1) + legpf(k1, k2) * l_tms(k1, k3);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
