@@ -158,15 +158,26 @@ public:
     virtual void notify_add(StateVector& Sv)
     {
         sv_jac_size = (int) Sv.state_with_derivative().number_variable();
+
+        attach_children_to_sv(Sv);
+
+        // Can handle invalidation of across channel caches when SV changes
+        can_cache_channel = true;
     }
     virtual void notify_remove(StateVector& Sv)
     {
         sv_jac_size = (int) Sv.state_with_derivative().number_variable();
+
+        // Can no longer handle invalidation of across channel caches when SV changes
+        can_cache_channel = false;
     }
     virtual void notify_update(const StateVector& Sv)
     {
         notify_update_do(*this);
         sv_jac_size = (int) Sv.state_with_derivative().number_variable();
+
+        // Invalidate caches since changes have been made to the atmosphere classes
+        invalidate_cache();
     }
 
     virtual void print(std::ostream& Os) const;
@@ -267,8 +278,14 @@ private:
     boost::shared_ptr<ArrayAdCache<double, double, 1> > column_od_cache;
     boost::shared_ptr<ArrayAdCache<double, double, 1> > total_od_cache;
 
+    // Only allow the column_od and total_od caches if the state vector gets attached,
+    // otherwise the cache could become inconsistent with the underlying sources of optical
+    // property information if values are changed through an update through the state vector
+    bool can_cache_channel;
+
     void initialize();
     bool fill_cache(double wn, int spec_index) const;
+    void invalidate_cache() const;
 };
 }
 #endif
