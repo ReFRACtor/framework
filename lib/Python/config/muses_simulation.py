@@ -56,7 +56,7 @@ class MusesSimConfig(object):
         # Disable L1B input
         self.config_def['input'] = {}
 
-    def setup_scenario(self, latitude=0, longitude=0, obs_azimuth=0, obs_zenith=0, solar_azimuth=0, solar_zenith=1e-6, surface_height=0, sample_grid=None):
+    def setup_scenario(self, latitude=0, longitude=0, obs_azimuth=0, obs_zenith=0, solar_azimuth=0, relative_azimuth=0, solar_zenith=1e-6, surface_height=0, sample_grid=None):
 
         self.config_def['scenario'] =  {
             'creator': creator.base.SaveToCommon,
@@ -66,6 +66,7 @@ class MusesSimConfig(object):
             "observation_zenith": rf.ArrayWithUnit(np.full(self.num_channels, obs_zenith, dtype=float), "deg"),
             "solar_azimuth": rf.ArrayWithUnit(np.full(self.num_channels, solar_azimuth, dtype=float), "deg"),
             "solar_zenith": rf.ArrayWithUnit(np.full(self.num_channels, solar_zenith, dtype=float), "deg"),
+            "relative_azimuth": rf.ArrayWithUnit(np.full(self.num_channels, relative_azimuth, dtype=float), "deg"),
             "stokes_coefficient": np.tile(np.array([1.0, 0.0, 0.0, 0.0]), (self.num_channels, 1)),
             "surface_height": rf.ArrayWithUnit(np.full(self.num_channels, surface_height, dtype=float), "m"),
             "sample_grid": "NOT_YET_SET",

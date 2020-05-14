@@ -1,6 +1,7 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
+%include <std_vector.i>
 %include "fp_common.i"
 
 %{
@@ -167,6 +168,9 @@ def to_list(self):
 }
 
 %template(NAME) FullPhysics::ArrayAd<TYPE, DIM>;
+
+%template(vector_ ## NAME) std::vector<FullPhysics::ArrayAd<TYPE, DIM> >;
+
 %enddef
 
 %array_ad_template(ArrayAd_double_1, double, 1, 2);

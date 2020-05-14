@@ -1,4 +1,5 @@
-#include "rayleigh.h"
+#include "rayleigh_young.h"
+
 #include "pressure.h"
 #include "configuration_fixture.h"
 #include "altitude_hydrostatic.h"
@@ -6,36 +7,44 @@
 #include "unit_test_support.h"
 #include "hdf_file.h"
 #include "default_constant.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(rayleigh, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(rayleigh_young, ConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(cross_section)
 {
-  DoubleWithUnit c = Rayleigh::cross_section(DoubleWithUnit(532, units::nm));
-  BOOST_CHECK_CLOSE(c.convert(Unit("m^2")).value, 5.14127e-31, 1e-4);
-}
-
-BOOST_AUTO_TEST_CASE(basic)
-{
-  DefaultConstant constant;
+  boost::shared_ptr<Constant> constant(new DefaultConstant());
   boost::shared_ptr<Pressure> p = config_pressure;
   boost::shared_ptr<Temperature> t = config_temperature;
   DoubleWithUnit lat(77.1828918457, units::deg);
   DoubleWithUnit height(416, units::m);
   std::vector<boost::shared_ptr<Altitude> > alt;
   alt.push_back(boost::shared_ptr<Altitude>(new AltitudeHydrostatic(p, t, lat, height)));
-  Rayleigh r(p, alt, constant);
+  RayleighYoung r(p, alt, constant);
  
-  IfstreamCs expt_data(test_data_dir() + "expected/rayleigh/optical_depth");
+  DoubleWithUnit c = r.cross_section(DoubleWithUnit(532, units::nm));
+  BOOST_CHECK_CLOSE(c.convert(Unit("m^2")).value, 5.14127e-31, 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(basic)
+{
+  boost::shared_ptr<Constant> constant(new DefaultConstant());
+  boost::shared_ptr<Pressure> p = config_pressure;
+  boost::shared_ptr<Temperature> t = config_temperature;
+  DoubleWithUnit lat(77.1828918457, units::deg);
+  DoubleWithUnit height(416, units::m);
+  std::vector<boost::shared_ptr<Altitude> > alt;
+  alt.push_back(boost::shared_ptr<Altitude>(new AltitudeHydrostatic(p, t, lat, height)));
+  RayleighYoung r(p, alt, constant);
+ 
+  IfstreamCs expt_data(test_data_dir() + "expected/rayleigh_young/optical_depth");
 
   Array<double, 1> od_expect(18);
   expt_data >> od_expect;
 
   Array<double, 1> od_calc(r.optical_depth_each_layer(12930.30, 0).value());
-
-  std::cerr << std::setprecision(20) << std::scientific << od_calc << std::endl;
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(od_expect, od_expect, 1e-6);
 }

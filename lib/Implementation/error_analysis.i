@@ -2,6 +2,7 @@
 %{
 #include "error_analysis.h"
 #include "sub_state_vector_array.h"
+#include "altitude.h"
 %}
 %base_import(generic_object)
 %import "connor_solver.i"

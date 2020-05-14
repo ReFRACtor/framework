@@ -18,6 +18,7 @@ set(DIR_SOURCES
     altitude_hydrostatic.cc
     apply_instrument_units.cc
     atmosphere_standard.cc
+    atmosphere_legacy.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
@@ -82,6 +83,8 @@ set(DIR_SOURCES
     nlls_solver_lm.cc
     nonuniform_spectrum_sampling.cc
     observation_level_1b.cc
+    optical_properties_wrt_input.cc
+    optical_properties_wrt_rt.cc
     output_hdf.cc
     output_hdf_iteration.cc
     planck.F90
@@ -92,8 +95,9 @@ set(DIR_SOURCES
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
     radiance_scaling_sv_fit.cc
-    rayleigh.cc
-    rayleigh_f.F90
+    rayleigh_bodhaine.cc
+    rayleigh_young.cc
+    rayleigh_young.f90
     reference_vmr_apriori.cc
     refractive_index.cc
     relative_humidity.cc
@@ -189,6 +193,7 @@ set(TEST_SOURCES
     nlls_solver_lm_test.cc
     nonuniform_spectrum_sampling_test.cc
     observation_level_1b_test.cc
+    optical_properties_test.cc
     output_hdf_iteration_test.cc
     output_hdf_test.cc
     planck_test.cc
@@ -196,7 +201,8 @@ set(TEST_SOURCES
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
     rayleigh_only_test.cc
-    rayleigh_test.cc
+    rayleigh_bodhaine_test.cc
+    rayleigh_young_test.cc
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
     relative_humidity_test.cc

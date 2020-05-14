@@ -3,6 +3,7 @@
 
 //#include "ground.h"
 #include "spurr_brdf_types.h"
+#include "planck.h"
 #include "lidort_driver.h"
 #include "old_constant.h"
 
@@ -11,7 +12,7 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(first_order_driver, GlobalFixture)
 
-void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<double, 1>& taug, Array<double, 1>& taur, bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, bool debug_output)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
@@ -23,17 +24,30 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
   int nmoms = 2;
 
   int nlayer = taug.rows();
+  int nparam = taug.number_variable();
 
   // Set up convenience ranges
   Range all = Range::all();
+  Range rjac(0,nparam-1);
+  Range rlay(0,nlayer-1);
+  Range rsurf(0,surface_params.number_variable()-1);
   double refl_fo;
   double refl_lid;
 
+  blitz::Array<double, 2> jac_atm_fo;
+  blitz::Array<double, 1> jac_surf_param_fo;
+  double jac_surf_temp_fo;
+  blitz::Array<double, 1> jac_atm_temp_fo;
+
+  blitz::Array<double, 2> jac_atm_lid;
+  blitz::Array<double, 1> jac_surf_param_lid;
+  double jac_surf_temp_lid;
+  blitz::Array<double, 1> jac_atm_temp_lid;
+
   FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms);
 
-  // Use plane parallel and turn off delta-m scaling since it has to be off from LIDORT
+  // Use plane parallel since it has to be off from LIDORT
   fo_driver.set_plane_parallel();
-  fo_driver.rt_interface()->do_deltam_scaling(false);
 
   // Use LIDORT for comparison
   bool do_multiple_scattering_only = false;
@@ -59,61 +73,177 @@ void test_first_order(int surface_type, Array<double, 1>& surface_params, Array<
     heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
   }
 
-  Array<double, 1> od(nlayer);
-  Array<double, 1> ssa(nlayer);
-  
+  // Set up atmosphere jacobians to be one for taug and the other for taur
+  taug.jacobian()(all, 0) = 1;
+  taur.jacobian()(all, 1) = 1;
+
+  ArrayAd<double, 1> od(nlayer, nparam);
+  ArrayAd<double, 1> ssa(nlayer, nparam);
+
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
     od(lay_idx) = taur(lay_idx) + taug(lay_idx);
     ssa(lay_idx) = taur(lay_idx) / od(lay_idx);
   }
-  
+
   // No aerosols, and depolization factor = 0 
   // so simplified phase function moments:
-  Array<double, 2> pf(3, nlayer);
+  ArrayAd<double, 2> pf(3, nlayer, nparam);
   pf = 0.0;
   pf(0, all) = 1.0;
   pf(2, all) = 0.5;
 
+  // Set up thermal inputs if enabled
+  double bb_surface = 0.0;
+  Array<double, 1> bb_atm(nlayer + 1);
+  if (do_thermal) {
+      // Just some nominal values to calculate the planck function
+      double wn = 568.69;
+      double temperature = 290.0;
+      bb_surface = planck(wn, temperature);
+      bb_atm = planck(wn, temperature);
+  }
+  
+  // Set up jacobians
+  surface_params.jacobian() = 1.0;
+
+  // Make copies of surface params as it will be modified
+  // internally by the routines
+  ArrayAd<double, 1> lid_surface_params;
+  lid_surface_params = surface_params;
+  ArrayAd<double, 1> fo_surface_params;
+  fo_surface_params = surface_params;
+
   // Run lidort and first order to generate values for comparison
-  refl_lid = lidort_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                 surface_type, surface_params,
-                                                 od, ssa, pf);
-  refl_fo = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                            surface_type, surface_params,
-                                            od, ssa, pf);
+  lidort_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+                                                   surface_type, lid_surface_params,
+                                                   od, ssa, pf, refl_lid,
+                                                   jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid, jac_atm_temp_lid,
+                                                   bb_surface, bb_atm);
+  fo_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+                                               surface_type, fo_surface_params,
+                                               od, ssa, pf, refl_fo,
+                                               jac_atm_fo, jac_surf_param_fo, jac_surf_temp_fo, jac_atm_temp_fo,
+                                               bb_surface, bb_atm);
 
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
               << "refl_fo  = " << refl_fo << std::endl;
+
   }
 
   BOOST_CHECK_CLOSE(refl_lid, refl_fo, 5e-3);
+
+  blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
+  double refl_fd;
+
+  for(int l_idx = 0; l_idx < nlayer; l_idx++) {
+    for(int p_idx = 0; p_idx < nparam; p_idx++) {
+      blitz::Array<double,1> taug_pert( taug.value().copy() );
+      blitz::Array<double,1> taur_pert( taur.value().copy() );
+
+      blitz::Array<double,1> od_pert( od.value().shape() );
+      blitz::Array<double,1> ssa_pert( ssa.value().shape() );
+      blitz::Array<double,2> pf_pert( pf.value().copy() );
+   
+      switch (p_idx) {
+      case 0:
+        taug_pert(l_idx) += pert_atm(p_idx);
+        break;
+      case 1:
+        taur_pert(l_idx) += pert_atm(p_idx);
+        break;
+      }
+
+      od_pert = taur_pert + taug_pert;
+      ssa_pert = taur_pert / od_pert;
+
+      refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                surface_type, surface_params.value().copy(),
+                                                od_pert, ssa_pert, pf_pert,
+                                                bb_surface, bb_atm);
+
+      jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_fo) / pert_atm(p_idx);
+    }
+  }
+
+  if(debug_output) {
+    std::cerr << setprecision(8)
+              << "jac_atm_lid = " << jac_atm_lid(rjac,rlay).transpose(1,0)
+              << "jac_atm_fd = " << jac_atm_fd(rjac, rlay).transpose(1,0)
+              << "jac_atm_fo = " << jac_atm_fo(rjac,rlay).transpose(1,0) << std::endl;
+  }
+
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_fo(rjac,rlay), 1e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
+
+  if(blitz::any(surface_params.value() > 0.0)) {
+    // Check surface jacobians against finite difference
+    blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param_fo.rows() );
+    jac_surf_param_fd = 0.0;
+
+    for(int p_idx = 0; p_idx < pert_surf.rows(); p_idx++) {
+      blitz::Array<double,1> surface_params_pert( surface_params.rows() );
+      surface_params_pert = surface_params.value();
+      surface_params_pert(p_idx) += pert_surf(p_idx);
+
+      refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
+                                                surface_type, surface_params_pert,
+                                                od.value(), ssa.value(), pf.value(),
+                                                bb_surface, bb_atm);
+
+      jac_surf_param_fd(p_idx) = (refl_fd - refl_fo) / pert_surf(p_idx);
+
+      // Adjust analytic jacobians to have same meaning as finite difference one
+      jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_fo(p_idx) *= fo_surface_params.jacobian()(p_idx, 0);
+    }
+
+    if(debug_output) {
+      std::cerr << "jac_surf_param_lid = " << jac_surf_param_lid(rsurf) << std::endl
+                << "jac_surf_param_fd = " << jac_surf_param_fd << std::endl
+                << "jac_surf_param_fo = " << jac_surf_param_fo << std::endl;
+    } 
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf), jac_surf_param_fo(rsurf), 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo, jac_surf_param_fd, 1e-7);
+  }
+
 }
 
 void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
 {
   int nlayer = 2;
-  Array<double, 1> surface_params(1); 
-  Array<double, 1> taug(nlayer);
-  Array<double, 1> taur(nlayer);
+  int nparam = 2;
+  ArrayAd<double, 1> surface_params(1, 1);
+  ArrayAd<double, 1> taug(nlayer, nparam);
+  ArrayAd<double, 1> taur(nlayer, nparam);
 
   // Use simple lambertian throughout
   int surface_type = LAMBERTIAN;
-  
+
+  // Check jacobian using finite derivatives
+  // od, ssa
+  blitz::Array<double, 1> pert_atm(2);
+
+  // Perturbation value for surface fd checking
+  Array<double, 1> pert_surf(1);
+
   ////////////////
   // Surface only
   if (do_thermal && !do_solar) {
       // Make emissivity a large number
-      surface_params = 1.0e-6;
+      surface_params.value() = 1.0e-6;
   } else {
-      surface_params = 1.0;
+      surface_params.value() = 1.0;
   }
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
 
   if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
-  test_first_order(surface_type, surface_params, taug, taur, do_solar, do_thermal, debug_output);
+  pert_atm = 1e-4, 1e-4;
+  pert_surf = 1e-8;
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Rayleigh only
@@ -130,7 +260,9 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   taug = 1.0e-6/nlayer;
 
   if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
-  test_first_order(surface_type, surface_params, taug, taur, do_solar, do_thermal, debug_output);
+  pert_atm = 1e-3, -1e-4;
+  pert_surf = 1e-8;
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Gas + Surface
@@ -144,7 +276,9 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   taug = 1.0/nlayer;
 
   if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
-  test_first_order(surface_type, surface_params, taug, taur, do_solar, do_thermal, debug_output);
+  pert_atm = 1e-4, 1e-4;
+  pert_surf = 1e-8;
+  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
 }
 

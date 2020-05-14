@@ -44,8 +44,16 @@ protected:
 /// Constructor that sets the coefficient() and used_flag() values.
 //-----------------------------------------------------------------------
   SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, 
-			const blitz::Array<bool, 1>& Used_flag)
+                        const blitz::Array<bool, 1>& Used_flag)
     : SubStateVectorArray<SpectrumEffect>(Coeff, Used_flag) {}
+
+//-----------------------------------------------------------------------
+/// Constructor that sets the coefficient and used_flag values when
+/// they are scalar values
+//-----------------------------------------------------------------------
+  SpectrumEffectImpBase(double Coeff, bool Used_flag)
+    : SubStateVectorArray<SpectrumEffect>(Coeff, Used_flag) {}
+
 
 private:
 };

@@ -253,6 +253,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(AbscoAer);
   REGISTER_LUA_LIST(AbsorberAbsco);
   REGISTER_LUA_LIST(AtmosphereStandard);
+  REGISTER_LUA_LIST(AtmosphereLegacy);
   REGISTER_LUA_LIST(LidortRt);
   REGISTER_LUA_LIST(SpectralWindowRange);
   REGISTER_LUA_LIST(LRadRt);
@@ -300,6 +301,8 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(Observation);
   REGISTER_LUA_LIST(ObservationLevel1b);
   REGISTER_LUA_LIST(ForwardModelSpectralGrid);
+  REGISTER_LUA_LIST(Rayleigh);
+  REGISTER_LUA_LIST(RayleighYoung);
 }
 }
 

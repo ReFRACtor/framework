@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(basic)
         double tst_wn = (wn1 + wn2) / 2;
         double expt_value = (values(tst_idx) * (wn2 - tst_wn) + values(tst_idx+1) * (tst_wn - wn1)) / (wn2 - wn1);
 
-        BOOST_CHECK_CLOSE(expt_value, emiss.value_at_wavenumber(tst_wn).value(), 1e-10);
+        BOOST_CHECK_CLOSE(expt_value, emiss.value_at_point(DoubleWithUnit(tst_wn, units::inv_cm)).value(), 1e-10);
     }
 }
 

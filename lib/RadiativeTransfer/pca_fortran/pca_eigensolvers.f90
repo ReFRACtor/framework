@@ -20,6 +20,8 @@ module pca_eigensolvers_m
 !          pca_eigensolver_Continuum_alb  --> PCA for atmospheric optical properties Continuum and surface albedo 
 !          pca_eigensolver_aer  --> PCA for atmospheric optical properties including aerosol Continuum
 !          pca_eigensolver_Continuum_aer  --> PCA for atmospheric optical properties including aerosol Continuum
+!  New 4/2/19  
+!          pca_eigensolver_aer_alb  --> PCA for atmospheric optical properties including aerosol Continuum and surface albedo
 
 !    PRIVATE
 !          Prepare_Eigenmatrix  --> Prepares Autocorrelation matrix (Eigenmatrix)
@@ -32,7 +34,9 @@ use pca_auxiliaries_m, only : PCA_ASYMTX, PCA_Ranker
 use iso_c_binding
 
 private
-public pca_eigensolver_alb, pca_eigensolver, pca_eigensolver_aer,  pca_eigensolver_Continuum_alb, pca_eigensolver_Continuum
+public   pca_eigensolver,           pca_eigensolver_alb,     &
+         pca_eigensolver_aer,       pca_eigensolver_aer_alb,  pca_eigensolver_aer_alb_qbb, &
+         pca_eigensolver_Continuum, pca_eigensolver_Continuum_alb
 
 !  precision parameters
 
@@ -535,6 +539,527 @@ subroutine pca_eigensolver &
    return
 end subroutine pca_eigensolver
 
+subroutine pca_eigensolver_aer_alb &
+           ( Max_Eofs, maxpoints, maxlayers, maxlayers2pa, maxaggregates, & ! Input dimensions
+             n_Eofs, npoints, nlayers, nlayers2pa, naggregates,           & ! Input control
+             taudp, omega, aod, albedo,                                   & ! Input optical properties
+             Atmosmean, aodmean, AlbMean, Eofs, PrinComps,                & ! Outputs
+             fail, message_len, message, trace_len, trace ) bind(C)         ! Exception handling
+
+!  PCA using Eigenproblem methods
+!     maxlayers2pa = maxlayers2 + 6
+  
+   implicit none
+
+!  inputs
+!  ------
+
+!  Dimensioning
+
+   integer(c_int), intent(in)       :: Max_Eofs, maxpoints, maxlayers, maxlayers2pa, maxaggregates
+
+!  Control
+
+   integer(c_int), intent(in)       :: n_Eofs, npoints, nlayers, nlayers2pa, naggregates
+
+!  Optical properties
+
+   real(kind=c_double), intent(in) :: taudp(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: omega(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: aod(maxaggregates,maxpoints)
+   real(kind=c_double), intent(in) :: albedo(maxpoints)
+
+!  outputs
+!  -------
+
+!  Mean values
+
+   real(kind=c_double), intent(out) :: atmosmean(maxlayers,2), aodmean(maxaggregates), Albmean
+
+!  EOFS and Principal Components (Latter is allocatable)
+
+   real(kind=c_double), intent(out) :: eofs  (Max_Eofs,maxlayers2pa)
+   real(kind=c_double), intent(out) :: PrinComps(n_Eofs,npoints)
+
+!  Exception handling and status
+
+   logical, intent(out)       :: fail
+   integer(c_int), intent(in) :: message_len, trace_len
+   character(kind=c_char), intent(out) :: message(message_len)
+   character(kind=c_char), intent(out) :: trace(trace_len)
+
+!  local data arrays
+!  -----------------
+
+   real(kind=dp) ::  data  (npoints,nlayers2pa)
+   real(kind=dp) ::  o3data(npoints,nlayers2pa)
+
+   real(kind=dp) ::  o3_in (nlayers2pa,npoints)
+   real(kind=dp) ::  o3_flt(nlayers2pa,npoints)
+
+!  Other help arrays
+
+   integer       :: order(nlayers2pa)
+   real(kind=dp) :: lambda(nlayers2pa), evec_2(nlayers2pa,nlayers2pa)
+   real(kind=dp) :: KSQ_ordered(nlayers2pa), ksq_abs(nlayers2pa)
+
+!  tolerance input to Eigenpackage module ASYMTX
+
+   real(kind=dp) :: tol
+
+!  (output from Eigenpackage module ASYMTX)
+
+   real(kind=dp) :: KSQ(nlayers2pa), WK(2*nlayers2pa)
+   real(kind=dp) :: eigenmat(nlayers2pa,nlayers2pa)
+   real(kind=dp) :: evec(nlayers2pa,nlayers2pa)
+   INTEGER       :: IER
+   LOGICAL(c_bool) :: ASYMTX_FAILURE
+
+!  Help variables
+
+   character*3   :: ci
+   integer       :: i,k,i1,w,aa,it,nlayers1,nlayers2,nlayers21
+   real(kind=dp) :: stdv, norm, ddim
+   real(kind=dp) :: eigenmat_save(nlayers2pa,nlayers2pa)
+
+!  initialize exception handling
+
+   fail = .false. ; message = ' ' ; trace = ' '
+
+!  Setups
+
+   ddim = 1.0_dp / real(npoints,dp)
+   nlayers1 = nlayers + 1
+   nlayers2 = 2*nlayers
+   nlayers21 = 2*nlayers + 1
+
+!  1. Get & process data
+!     ==================
+
+!  process data into one array, take logarithm
+!   1-5 for aerosols, 6 for the albedo
+   
+   do it = 1,npoints
+      data(it,1:nlayers) = taudp(1:nlayers,it)
+      data(it,nlayers1:nlayers2) = omega(1:nlayers,it)
+!      data(it,nlayers21:nlayers2pa-1) = aod(1:naggregates,it)
+      data(it,nlayers21:nlayers2pa-1) = aod(1:naggregates,it)+1e-10_dp ! assures non-zero values for log in next step
+      data(it,nlayers2pa)            = albedo(it)
+   enddo
+   o3data(:,:) = log(data(:,:))
+
+!  compute mean value for output
+!   1-5 for aerosols, 6 for the albedo
+
+   do i = 1,nlayers
+      Atmosmean(i,1) = sum(o3data(:,i))*ddim
+   enddo
+   do i = nlayers1,nlayers2
+      Atmosmean(i-nlayers,2) = sum(o3data(:,i))*ddim
+   enddo
+   do i = 1,naggregates
+      aodmean(i) = sum(o3data(:,nlayers2+i))*ddim
+   enddo
+   albmean = sum(o3data(:,nlayers2+6))*ddim
+
+!  Transpose
+
+   o3_in = transpose(o3data)
+
+!  Remove time-mean
+
+   do i = 1,nlayers2pa
+      o3_flt(i,:) = o3_in(i,:)-sum(o3_in(i,:))*ddim
+   enddo
+
+!  Sanity Check
+!   do i = 1, nlayers2pa
+!      write(65,'(1p10e16.8)')(o3_flt(i,k),k=1,npoints,20)
+!   enddo
+
+!  2. Prepare Eigenmatrix and Solve Eigenproblem
+!     ==========================================
+
+!  Prepare matrix (cross covariances)
+
+   call Prepare_Eigenmatrix(nlayers2pa,nlayers2pa,npoints,o3_flt,o3_flt,eigenmat)
+
+!  Save eigenmat in case tol needs to be changed
+
+   eigenmat_save = eigenmat
+
+!  Debug
+!    do i = 1, 26
+!       do j = 1, 26
+!           write(677,*),i,j,eigenmat(i,j)
+!       enddo
+!    enddo
+
+!  Solve eigenproblem using PCA_ASYMTX
+
+   tol = 1.0d-6
+
+   CALL PCA_ASYMTX ( eigenmat, nlayers2pa,  nlayers2pa,  nlayers2pa, 2*nlayers2pa, tol, &
+                     EVEC, KSQ, IER, WK, message_len, message, ASYMTX_FAILURE )
+
+!  Change tolerance and rerun PCA_ASYMTX if eigenvalue has not converged
+
+   DO WHILE ( IER.GT.0 )
+      eigenmat = eigenmat_save
+      tol = tol * 10.d0
+      CALL PCA_ASYMTX ( eigenmat, nlayers2pa,  nlayers2pa,  nlayers2pa, 2*nlayers2pa, tol, &
+                        EVEC, KSQ, IER, WK, message_len, message, ASYMTX_FAILURE )
+   ENDDO
+
+!  Exception handling 1
+
+   IF ( ASYMTX_FAILURE  ) THEN
+     TRACE   = 'ASYMTX error in pca_eigensolver'
+     fail = .true. ; RETURN
+   ENDIF
+
+!  Exception handling 2
+
+   IF ( IER.GT.0 ) THEN
+      WRITE(CI,'(I3)')IER
+      MESSAGE = 'Eigenvalue '//CI//' has not converged'
+      TRACE   = 'ASYMTX error in pca_eigensolver'
+      fail = .true. ; RETURN
+   ENDIF
+
+!  Normalize vectors
+
+   do i = 1, nlayers2pa
+      norm   = sum( evec(:,i)*evec(:,i) )
+      do k = 1, nlayers2pa
+         evec(k,i)= evec(k,i) / norm
+      enddo
+   enddo
+
+!  rank absolute(eigenvalues). [subroutine "Ranker" is same as Indexx1]
+
+   do i = 1, nlayers2pa
+      ksq_abs(i) = dabs(ksq(i))
+   enddo
+   call PCA_Ranker(nlayers2pa,ksq_abs,order)
+
+!  Rank the Eigenvectors
+
+   do i = 1, nlayers2pa
+      i1 = nlayers2pa + 1 - i
+      ksq_ordered(i) = ksq_abs(order(i1))
+      do k = 1, nlayers2pa
+          evec_2(k,i)= evec(k,order(i1))
+      enddo
+   enddo
+
+!  3. Prepare EOF and PC output 
+!     =========================
+
+!    *** Only perform for the first few EOFs
+
+   do aa = 1, N_Eofs
+
+!  set the usable eigenvalue
+
+      lambda(aa) = ksq_ordered(aa)
+
+!  Normalize everything according to SQRT(Lambda)
+
+      stdv = sqrt(lambda(aa))
+
+!  EOFs (Unnormalized) --> Transpose the Eigenvectors
+
+      eofs(aa,:) = evec_2(:,aa)
+
+!  Project data onto E1 basis
+!    -- Set the principal components (unnormalized)
+
+      do w = 1, npoints
+         PrinComps(aa,w) = sum(eofs(aa,:)*o3_flt(:,w))
+      enddo
+
+!  Sanity Check
+!      write(*,*)aa,lambda(aa)
+!      write(*,*)eofs(aa,3)
+!      write(*,*)PrinComps(aa,22)
+
+!  Final normalization of EOFs and PCs
+
+      eofs(aa,:) = eofs(aa,:) * stdv
+      PrinComps(aa,:) = PrinComps(aa,:)/stdv
+
+!  End User-defined EOF loop
+
+   enddo
+
+!  Finish
+
+   return
+end subroutine pca_eigensolver_aer_alb
+
+subroutine pca_eigensolver_aer_alb_qbb &
+           ( Max_Eofs, maxpoints, maxlayers, maxlayers2pa, maxaggregates, & ! Input dimensions
+             n_Eofs, npoints, nlayers, nlayers2pa, naggregates,           & ! Input control
+             taudp, omega, aod, albedo, surfbb,                           & ! Input optical properties
+             Atmosmean, aodmean, AlbMean, Qbbmean, Eofs, PrinComps,       & ! Outputs
+             fail, message_len, message, trace_len, trace ) bind(C)                                 ! Exception handling
+
+!  PCA using Eigenproblem methods
+!     maxlayers2pa = maxlayers2 + 6
+  
+   implicit none
+
+!  inputs
+!  ------
+
+!  Dimensioning
+
+   integer(c_int), intent(in)       :: Max_Eofs, maxpoints, maxlayers, maxlayers2pa, maxaggregates
+
+!  Control
+
+   integer(c_int), intent(in)       :: n_Eofs, npoints, nlayers, nlayers2pa, naggregates
+
+!  Optical properties
+
+   real(kind=c_double), intent(in) :: taudp(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: omega(maxlayers,maxpoints)
+   real(kind=c_double), intent(in) :: aod(maxaggregates,maxpoints)
+   real(kind=c_double), intent(in) :: albedo(maxpoints)
+   real(kind=c_double), intent(in) :: Surfbb(maxpoints)
+
+!  outputs
+!  -------
+
+!  Mean values
+
+   real(kind=c_double), intent(out) :: atmosmean(maxlayers,2), aodmean(maxaggregates), Albmean, Qbbmean
+
+!  EOFS and Principal Components (Latter is allocatable)
+
+   real(kind=c_double), intent(out) :: eofs  (Max_Eofs,maxlayers2pa)
+   real(kind=c_double), intent(out) :: PrinComps(n_Eofs,npoints)
+
+!  Exception handling and status
+
+   logical, intent(out)       :: fail
+   integer(c_int), intent(in) :: message_len, trace_len
+   character(kind=c_char), intent(out) :: message(message_len)
+   character(kind=c_char), intent(out) :: trace(trace_len)
+
+!  local data arrays
+!  -----------------
+
+   real(kind=dp) ::  data  (npoints,nlayers2pa)
+   real(kind=dp) ::  o3data(npoints,nlayers2pa)
+
+   real(kind=dp) ::  o3_in (nlayers2pa,npoints)
+   real(kind=dp) ::  o3_flt(nlayers2pa,npoints)
+
+!  Other help arrays
+
+   integer       :: order(nlayers2pa)
+   real(kind=dp) :: lambda(nlayers2pa), evec_2(nlayers2pa,nlayers2pa)
+   real(kind=dp) :: KSQ_ordered(nlayers2pa), ksq_abs(nlayers2pa)
+
+!  tolerance input to Eigenpackage module ASYMTX
+
+   real(kind=dp) :: tol
+
+!  (output from Eigenpackage module ASYMTX)
+
+   real(kind=dp) :: KSQ(nlayers2pa), WK(2*nlayers2pa)
+   real(kind=dp) :: eigenmat(nlayers2pa,nlayers2pa)
+   real(kind=dp) :: evec(nlayers2pa,nlayers2pa)
+   INTEGER       :: IER
+   LOGICAL(c_bool) :: ASYMTX_FAILURE
+
+!  Help variables
+
+   character*3   :: ci
+   integer       :: i,k,i1,w,aa,it,nlayers1,nlayers2,nlayers21
+   real(kind=dp) :: stdv, norm, ddim
+   real(kind=dp) :: eigenmat_save(nlayers2pa,nlayers2pa)
+
+!  initialize exception handling
+
+   fail = .false. ; message = ' ' ; trace = ' '
+
+!  Setups
+
+   ddim = 1.0_dp / real(npoints,dp)
+   nlayers1 = nlayers + 1
+   nlayers2 = 2*nlayers
+   nlayers21 = 2*nlayers + 1
+
+!  1. Get & process data
+!     ==================
+
+!  process data into one array, take logarithm
+!   1-5 for aerosols, 6 for the albedo, 7 for the Surfbb template
+   
+   do it = 1,npoints
+      data(it,1:nlayers) = taudp(1:nlayers,it)
+      data(it,nlayers1:nlayers2) = omega(1:nlayers,it)
+!      data(it,nlayers21:nlayers2pa-2) = aod(1:naggregates,it)
+      data(it,nlayers21:nlayers2pa-2) = aod(1:naggregates,it)+1e-10_dp ! assures non-zero values for log in next step
+      data(it,nlayers2pa-1)           = albedo(it)
+      data(it,nlayers2pa)             = surfbb(it)
+   enddo
+   o3data(:,:) = log(data(:,:))
+
+!  compute mean value for output
+!   1-5 for aerosols, 6 for the albedo, 7 for the Surfbb template
+
+   do i = 1,nlayers
+      Atmosmean(i,1) = sum(o3data(:,i))*ddim
+   enddo
+   do i = nlayers1,nlayers2
+      Atmosmean(i-nlayers,2) = sum(o3data(:,i))*ddim
+   enddo
+   do i = 1,naggregates
+      aodmean(i) = sum(o3data(:,nlayers2+i))*ddim
+   enddo
+   albmean = sum(o3data(:,nlayers2+6))*ddim
+   qbbmean = sum(o3data(:,nlayers2+7))*ddim
+
+!  Transpose
+
+   o3_in = transpose(o3data)
+
+!  Remove time-mean
+
+   do i = 1,nlayers2pa
+      o3_flt(i,:) = o3_in(i,:)-sum(o3_in(i,:))*ddim
+   enddo
+
+!  Sanity Check
+!   do i = 1, nlayers2pa
+!      write(65,'(1p10e16.8)')(o3_flt(i,k),k=1,npoints,20)
+!   enddo
+
+!  2. Prepare Eigenmatrix and Solve Eigenproblem
+!     ==========================================
+
+!  Prepare matrix (cross covariances)
+
+   call Prepare_Eigenmatrix(nlayers2pa,nlayers2pa,npoints,o3_flt,o3_flt,eigenmat)
+
+!  Save eigenmat in case tol needs to be changed
+
+   eigenmat_save = eigenmat
+
+!  Debug
+!    do i = 1, 26
+!       do j = 1, 26
+!           write(677,*),i,j,eigenmat(i,j)
+!       enddo
+!    enddo
+
+!  Solve eigenproblem using PCA_ASYMTX
+
+   tol = 1.0d-6
+
+   CALL PCA_ASYMTX ( eigenmat, nlayers2pa,  nlayers2pa,  nlayers2pa, 2*nlayers2pa, tol, &
+                     EVEC, KSQ, IER, WK, message_len, message, ASYMTX_FAILURE )
+
+!  Change tolerance and rerun PCA_ASYMTX if eigenvalue has not converged
+
+   DO WHILE ( IER.GT.0 )
+      eigenmat = eigenmat_save
+      tol = tol * 10.d0
+      CALL PCA_ASYMTX ( eigenmat, nlayers2pa,  nlayers2pa,  nlayers2pa, 2*nlayers2pa, tol, &
+                        EVEC, KSQ, IER, WK, message_len, message, ASYMTX_FAILURE )
+   ENDDO
+
+!  Exception handling 1
+
+   IF ( ASYMTX_FAILURE  ) THEN
+     TRACE   = 'ASYMTX error in pca_eigensolver'
+     fail = .true. ; RETURN
+   ENDIF
+
+!  Exception handling 2
+
+   IF ( IER.GT.0 ) THEN
+      WRITE(CI,'(I3)')IER
+      MESSAGE = 'Eigenvalue '//CI//' has not converged'
+      TRACE   = 'ASYMTX error in pca_eigensolver'
+      fail = .true. ; RETURN
+   ENDIF
+
+!  Normalize vectors
+
+   do i = 1, nlayers2pa
+      norm   = sum( evec(:,i)*evec(:,i) )
+      do k = 1, nlayers2pa
+         evec(k,i)= evec(k,i) / norm
+      enddo
+   enddo
+
+!  rank absolute(eigenvalues). [subroutine "Ranker" is same as Indexx1]
+
+   do i = 1, nlayers2pa
+      ksq_abs(i) = dabs(ksq(i))
+   enddo
+   call PCA_Ranker(nlayers2pa,ksq_abs,order)
+
+!  Rank the Eigenvectors
+
+   do i = 1, nlayers2pa
+      i1 = nlayers2pa + 1 - i
+      ksq_ordered(i) = ksq_abs(order(i1))
+      do k = 1, nlayers2pa
+          evec_2(k,i)= evec(k,order(i1))
+      enddo
+   enddo
+
+!  3. Prepare EOF and PC output 
+!     =========================
+
+!    *** Only perform for the first few EOFs
+
+   do aa = 1, N_Eofs
+
+!  set the usable eigenvalue
+
+      lambda(aa) = ksq_ordered(aa)
+
+!  Normalize everything according to SQRT(Lambda)
+
+      stdv = sqrt(lambda(aa))
+
+!  EOFs (Unnormalized) --> Transpose the Eigenvectors
+
+      eofs(aa,:) = evec_2(:,aa)
+
+!  Project data onto E1 basis
+!    -- Set the principal components (unnormalized)
+
+      do w = 1, npoints
+         PrinComps(aa,w) = sum(eofs(aa,:)*o3_flt(:,w))
+      enddo
+
+!  Sanity Check
+!      write(*,*)aa,lambda(aa)
+!      write(*,*)eofs(aa,3)
+!      write(*,*)PrinComps(aa,22)
+
+!  Final normalization of EOFs and PCs
+
+      eofs(aa,:) = eofs(aa,:) * stdv
+      PrinComps(aa,:) = PrinComps(aa,:)/stdv
+
+!  End User-defined EOF loop
+
+   enddo
+
+!  Finish
+
+   return
+end subroutine pca_eigensolver_aer_alb_qbb
+
 subroutine pca_eigensolver_aer &
            ( Max_Eofs, maxpoints, maxlayers, maxlayers2pa, maxaggregates, & ! Input dimensions
              n_Eofs, npoints, nlayers, nlayers2pa, naggregates,           & ! Input control
@@ -635,7 +1160,7 @@ subroutine pca_eigensolver_aer &
    do it = 1,npoints
       data(it,1:nlayers) = taudp(1:nlayers,it)
       data(it,nlayers1:nlayers2) = omega(1:nlayers,it)
-      data(it,nlayers21:nlayers2pa) = aod(1:naggregates,it)
+      data(it,nlayers21:nlayers2pa) = aod(1:naggregates,it)+1e-10_dp ! assures non-zero values for log in next step
    enddo
    o3data(:,:) = log(data(:,:))
 

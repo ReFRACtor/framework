@@ -67,3 +67,4 @@ def units(self,val):
 };
 }
 
+%template(vector_double_with_unit) std::vector<FullPhysics::DoubleWithUnit>;

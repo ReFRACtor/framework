@@ -22,7 +22,6 @@ public:
     virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
     virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
-    virtual const AutoDerivative<double> value_at_wavenumber(const double wn) const;
 };
 }
 

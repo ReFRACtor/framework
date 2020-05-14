@@ -7,29 +7,31 @@
 
 namespace FullPhysics {
 
-/******************************************************************
+/**************************************************************//**
   \brief Homemade NLLS solver based on Levenberg-Marquardt
          algorithm.
  
   This class is the implementation of J. J. More's
   version of the Levenberg-Marquardt NLLS solver.
 *******************************************************************/
+
 class NLLSSolverLM :
     public NLLSSolver {
 
 public:
 
-  /******************************************************************
-   * \brief Provides NLLSSolverLM with very algorithm specific
-   *        parameters.
-   *
-   * This class is used to collect and provide a solver of NLLSSolverLM
-   * type with some of the parameters that is not commonly used by
-   * other types of solvers.  The constructor sets each parameter to
-   * a reasonable value; however, the trust region radius "tr_rad" is
-   * problem dependent and could optionally be reset to a value more
-   * appropriate for the problem to be solved.
-  *******************************************************************/
+
+//-----------------------------------------------------------------------
+///  \brief Provides NLLSSolverLM with algorithm specific input parameters.
+/// 
+///  This class is used to collect and provide a solver of NLLSSolverLM
+///  type with some of the parameters that is not commonly used by
+///  other types of solvers.  The constructor sets each parameter to
+///  a reasonable value; however, the trust region radius "tr_rad" is
+///  problem dependent and could optionally be reset to a value more
+///  appropriate for the problem to be solved.
+//-----------------------------------------------------------------------
+
   class Options
   {
   public:
@@ -51,6 +53,52 @@ public:
                           ///< reduction of the value of the cost function after taking
                           ///< a step.  A ratio greater than this tolerance results in
                           ///< accepting the step.  Otherwise, the step is rejected.
+  };
+
+
+//-----------------------------------------------------------------------
+///  \brief For accumulating some NLLSSolverLM algorithm intermediate 
+///         parameters.
+/// 
+///  The purpose of this class is to accumulate some solver intermediate
+///  parameter values that could change from one iteration to the next.  
+///  The values are accumulated either for recording purpose or for use 
+///  by the solver for the next iteration.
+///  
+///  This parameters also give a measure of the linearity of the cost
+///  function in the direction of taken steps.
+//-----------------------------------------------------------------------
+
+  class AlgParams
+  {
+  public:
+    AlgParams()
+      : cr_ratio(0.0), lambda(0.0), tr_rad(0.0), scaled_step_norm(0.0)
+    {}
+
+    double cr_ratio;  ///< The ratio of the actual reduction in the value of the
+                      ///< cost function to the predicted reduction in the value of
+                      ///< the cost function due to a step.  A value close to one
+                      ///< suggest that the cost function is close to be linear
+                      ///< over the step.  (needed from one iteration to the
+                      ///< next and for recording purpose)
+
+    double lambda;  ///< The Levenberg/Marquardt parameter: Its value is modified to 
+                    ///< control the size and the direction of the step.  If the value
+                    ///< of lambda is increased, then the step becomes smaller, and it 
+                    ///< gets turned away from the Gauss-Newton step direction and 
+                    ///< turned towards steepest descent direction.  (needed from one
+                    ///< iteration to the next and for recording purpose)
+
+    double tr_rad;  ///< This is the radius of a trust region centered at
+                    ///< the current point where the algorithm determines
+                    ///< that a linear approximation to the cost function
+                    ///< is a reasonable approximation.  (needed from one 
+                    ///< iteration to the next and for recording purpose)
+
+    double scaled_step_norm;  ///< The norm of the scaled step taken at the current point.
+                              ///< (for recording purpose only)
+
   };
 
 
@@ -82,6 +130,7 @@ public:
 ///  \param[in] vrbs
 ///             read comments on NLLSSolver::NLLSSolver(int32_t,bool)
 //-----------------------------------------------------------------------
+
   NLLSSolverLM( const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
                 const NLLSSolverLM::Options& opt=NLLSSolverLM::Options(),
                 double dx_tol_abs=0.000001, double dx_tol_rel=0.000001,
@@ -104,6 +153,31 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void solve();
+
+
+//-----------------------------------------------------------------------
+///  \brief Returns a std::vector<AlgParams> of intermediate algorithm
+///         parameters.
+/// 
+///  This method returns a std vector of intermediate algorithm
+///  parameters (AlgParams) recorded after each accepted step.  The
+///  recording can be done more frequently, for example, once per
+///  any attempted step (accepted or rejected); however, with the 
+///  current implementation, the recording is once for each accepted
+///  step.  Therefore, 
+///    - algorithm_parameters().size() == IterativeSolver::num_accepted_steps()
+/// 
+///  With the current implementation, algorithm_parameters()[i] refers
+///  to the collection of the intermediate parameters generated when
+///  computing the accepted step that takes the problem from
+///  accepted_points()[i] to accepted_points()[i+1] for
+///  0 <= i < num_accepted_steps().
+/// 
+///  \return A vector of AlgParams
+//-----------------------------------------------------------------------
+
+  virtual const std::vector<AlgParams>& algorithm_parameters() const
+  { return Alg_params_for_each_step; }
 
 
 //-----------------------------------------------------------------------
@@ -141,19 +215,57 @@ protected:
 
   static status_t test_grad_abs( const Eigen::VectorXd& g, double g_tol_abs );
 
+  static status_t test_grad( const Eigen::VectorXd& g, const Eigen::VectorXd& x, double cost, double g_tol_rel, double g_tol_abs );
+
+
+//-----------------------------------------------------------------------
+///  \brief Prints some solver intermediate parameters.
+/// 
+///  The method prints some intermediate solver parameters that
+///  help to understand how linear the cost function is locally.
+///  This method can be public, but it is just not public to 
+///  indicate the parameters are very specific to this algorithm.
+//-----------------------------------------------------------------------
+
+  void print_state_linearity(std::ostream &ostr=std::cout);
+
+
+//-----------------------------------------------------------------------
+///  \brief For recording intermediate algorithm parameters
+/// 
+///  This method is called to record some useful intermediate algorithm
+///  parameters.  They can be studied to learn about the performance of
+///  the Lev/Mar iterative solver.
+/// 
+///  This method can be called once per any attempted step (accepted or 
+///  rejected).  However, in the current implementation of the code, this
+///  method is called once after each accepted step to record the parametes
+///  for accepted steps only.
+/// 
+///  \param[in] ap
+///             NLLSProblemLM::AlgParams type object containing 
+///             intermediate algorithm parameters
+//-----------------------------------------------------------------------
+
+  void record_alg_params_after_step(const AlgParams& ap)
+  { Alg_params_for_each_step.push_back(ap); }
+
+
   double Dx_tol_abs;
   double Dx_tol_rel;
   double G_tol_abs;
   double G_tol_rel;
 
-  Options Opt;
-
-  double CR_ratio;
-  double Lambda;
-
+  const Options Opt;
+  AlgParams Ap;
   Eigen::VectorXd W;
-
   Eigen::VectorXd Dx;
+
+
+private:
+
+  std::vector<AlgParams> Alg_params_for_each_step;  ///< For recording intermediate algorithm parameters
+                                                    ///< throughout the iterative process.
 
 };  // class NLLSProblemLM
 

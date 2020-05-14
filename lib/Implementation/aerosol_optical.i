@@ -18,28 +18,23 @@
 
 namespace FullPhysics {
 class AerosolOptical: public Aerosol,
-               public Observer<Pressure>,
-	       public Observer<AerosolExtinction>,
-	       public Observer<AerosolProperty> {
+                      public Observer<Pressure>,
+                      public Observer<AerosolExtinction>,
+                      public Observer<AerosolProperty> {
 public:
   AerosolOptical(const std::vector<boost::shared_ptr<AerosolExtinction> >& Aext,
-	  const std::vector<boost::shared_ptr<AerosolProperty> >& Aerosol_prop,
-	  const boost::shared_ptr<Pressure>& Press,
-	  const boost::shared_ptr<RelativeHumidity>& Rh,
-	  double Reference_wn);
-  virtual ArrayAd<double, 2> optical_depth_each_layer(double wn) 
-    const;
-  virtual ArrayAd<double, 1> 
-  ssa_each_layer(double wn, int particle_index,
-		 const ArrayAd<double, 1>& Od) const;
-  virtual ArrayAd<double, 1> 
-  ssa_each_layer(double wn) const;
+                 const std::vector<boost::shared_ptr<AerosolProperty> >& Aerosol_prop,
+                 const boost::shared_ptr<Pressure>& Press,
+                 const boost::shared_ptr<RelativeHumidity>& Rh,
+                 double Reference_wn);
+  virtual ArrayAd<double, 2> extinction_optical_depth_each_layer(double wn) const;
+  virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const;
   virtual ArrayAd<double, 3> pf_mom(double wn, int pindex) const;
   virtual blitz::Array<double, 3> pf_mom(double wn, 
-				 const blitz::Array<double, 2>& frac_aer) const;
+                                 const blitz::Array<double, 2>& frac_aer) const;
   virtual ArrayAd<double, 3> pf_mom(double wn, 
-	 const ArrayAd<double, 2>& frac_aer,
-	 int nummom = -1, int numscat = -1) const;
+         const ArrayAd<double, 2>& frac_aer,
+         int nummom = -1, int numscat = -1) const;
   %python_attribute(number_particle, int)
   double aerosol_optical_depth
   (int aer_idx,

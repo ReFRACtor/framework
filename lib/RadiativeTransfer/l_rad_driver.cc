@@ -175,14 +175,14 @@ void LRadDriver::setup_optical_inputs(const Array<double, 1>& od,
     //
     // If we aren't using an underlying multiscattering RT, then this
     // should be zero.
-    int nmom = 2 * nstream;
+    int tms_nmom = 2 * nstream;
 
     if(fscale_f.rows() != od.rows()) {
         fscale_f.reference(Array<double, 1>(od.shape(), ColumnMajorArray<1>()));
     }
 
-    if (use_tms_correction) {
-        fscale_f = pf(nmom, Range::all(), 0) / (2 * nmom + 1);
+    if (use_tms_correction && tms_nmom < pf.rows()) {
+        fscale_f = pf(tms_nmom, Range::all(), 0) / (2 * tms_nmom + 1);
     } else {
         fscale_f = 0;
     }
@@ -275,15 +275,15 @@ void LRadDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
     l_zmat_f = zmat.jacobian();
 
     // Calculate factor needed for TMS correction. This is the
-    int nmom = 2 * nstream;
+    int tms_nmom = 2 * nstream;
     Range ra(Range::all());
 
     if(l_fscale_f.rows() != od.rows() or l_fscale_f.cols() != natm_jac) {
         l_fscale_f.reference(Array<double, 2>(od.rows(), natm_jac, ColumnMajorArray<2>()));
     }
 
-    if (use_tms_correction) {
-        l_fscale_f = pf.jacobian()(nmom, ra, 0, ra) / (2 * nmom + 1);
+    if (use_tms_correction && tms_nmom < pf.rows()) {
+        l_fscale_f = pf.jacobian()(tms_nmom, ra, 0, ra) / (2 * tms_nmom + 1);
     } else {
         l_fscale_f = 0;
     }
@@ -388,6 +388,7 @@ void LRadDriver::calculate_second_order()
 
     int nscatt = pf_f.depth();
     int nlayer = tau_f.rows();
+
     int nmom = 2 * nstream;
     int nspars = surface_param_f.rows();
     int natm_jac = jac_atm_f.depth();
@@ -410,11 +411,22 @@ void LRadDriver::calculate_second_order()
                              ColumnMajorArray<2>());
 
     // Use only the parts of the phase function expected by l_rad_second
-    // for coeffs variables. We need to use a to_fortran command here
-    // to ensure we have an array with column first ordering that is also 
-    // contiguous. Using a reference to pf will not work.
-    Array<double, 3> coefs_f(to_fortran(pf_f(Range(0, nmom - 1), ra, ra)));
-    Array<double, 4> l_coefs_f(to_fortran(l_pf_f(Range(0, nmom - 1), ra, ra)));
+    // for coeffs variables. 
+    // But pf_f might have less than 2 * nstream moments if this is a rayleigh only 
+    // case. So ensure we don't try and read from pf_f beyond the end of the array.
+    // Initialize any remaining entries to zero.
+    int num_pf_copy = min(nmom, pf_f.rows());
+
+    Array<double, 3> coefs_f(nmom, pf_f.cols(), pf_f.depth(), ColumnMajorArray<3>());
+    coefs_f(Range(0, num_pf_copy-1), ra, ra) = pf_f(Range(0, num_pf_copy-1), ra, ra);
+
+    Array<double, 4> l_coefs_f(nmom, l_pf_f.cols(), l_pf_f.depth(), l_pf_f.extent(fourthDim), ColumnMajorArray<4>());
+    l_coefs_f(Range(0, num_pf_copy-1), ra, ra, ra) = l_pf_f(Range(0, num_pf_copy-1), ra, ra, ra);
+
+    if(num_pf_copy < nmom) {
+        coefs_f(Range(num_pf_copy, nmom-1), ra, ra) = 0.0;
+        l_coefs_f(Range(num_pf_copy, nmom-1), ra, ra, ra) = 0.0;
+    }
 
     l_rad_second_driver(&l_rad_struct, &nlayer, &natm_jac, &nstokes,
                         &nmom, &nscatt,

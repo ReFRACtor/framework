@@ -187,11 +187,12 @@ class AbscoCreator(Creator):
     filename = param.Scalar(str)
     table_scale = param.Choice(param.Iterable(), param.Scalar(float), default=1.0)
     spec_win = param.InstanceOf(rf.SpectralWindow)
+    instrument = param.InstanceOf(rf.Instrument)
 
     interp_method = param.Choice(param.Scalar(int), param.InstanceOf(AbscoInterpolationOption), default=0)
     cache_size = param.Scalar(int, default=5000)
 
-    def absco_object(self, absco_filename, table_scale, spectral_bound=None):
+    def absco_object(self, absco_filename, table_scale):
         raise NotImplementedError("Do not use AbscoCreator directly, instead use an inherited creator that defines the type of ABSCO file reader to use")
 
     def create(self, gas_name=None, **kwargs):
@@ -230,14 +231,29 @@ class AbscoCreator(Creator):
         if np.isscalar(table_scale):
             return self.absco_object(absco_filename, table_scale, cache_size=cache_size, interp_method=interp_method)
         else:
-            spectral_bound = self.spec_win().spectral_bound
+            # Create a spectral bound that extends out to the limits of the high resolution radiance points
+            # Otherwise the table scaling value will not apply to all points used in a given instrument channel
+            spec_win = self.spec_win()
+            inst = self.instrument()
+
+            # Original spectral bound just on the convolved radiance range
+            conv_sb = spec_win.spectral_bound
+
+            ext_lower_bound = rf.vector_double_with_unit()
+            ext_upper_bound = rf.vector_double_with_unit()
+            for chan_idx in range(spec_win.number_spectrometer):
+                ext_lower_bound.push_back( conv_sb.lower_bound(chan_idx) -  inst.high_res_extension(chan_idx))
+                ext_upper_bound.push_back( conv_sb.upper_bound(chan_idx) +  inst.high_res_extension(chan_idx))
+
+            # Extended spectral bound
+            hr_sb = rf.SpectralBound(ext_lower_bound, ext_upper_bound)
 
             # Convert to vector to match interface
             table_scale_vector = rf.vector_double()
             for val in table_scale:
                 table_scale_vector.push_back(val)
 
-            return self.absco_object(absco_filename, table_scale_vector, spectral_bound, cache_size=cache_size, interp_method=interp_method)
+            return self.absco_object(absco_filename, table_scale_vector, hr_sb, cache_size=cache_size, interp_method=interp_method)
 
 
 class AbscoLegacy(AbscoCreator):

@@ -160,7 +160,7 @@ private:
   Mode mode_;
 
 // In HDF5 1.10: "CommonFG will be deprecated in future releases. In 1.10.1, most member functions are moved to H5Location."
-#if H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10 && H5_VERS_RELEASE >= 1
+#if (H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 10 && H5_VERS_RELEASE >= 1) || (H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 11)
   void create_group_if_needed(const std::string& Dataname,
                                      H5::H5Location& Parent);
 #else
@@ -171,7 +171,7 @@ private:
   H5::Attribute create_attribute(const std::string& Aname, 
 	 const H5::DataSpace& Ds, const H5::DataType& P);
   bool is_group(const std::string& Objname) const;
-#if H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 10 && H5_VERS_RELEASE >= 1
+#if (H5_VERS_MAJOR == 1 && H5_VERS_MINOR == 10 && H5_VERS_RELEASE >= 1) || (H5_VERS_MAJOR == 1 && H5_VERS_MINOR >= 11)
   bool is_present(const std::string& Objname, 
 		  const H5::H5Location& Parent) const;
 #else

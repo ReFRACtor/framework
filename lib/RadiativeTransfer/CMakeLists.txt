@@ -1,29 +1,27 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
-    l_rad_fortran/calc_geom_first_enh.F90
-    l_rad_fortran/calc_geom_first_reg.F90
-    l_rad_fortran/calc_geom_second.F90
-    l_rad_fortran/l_calc_phase_first.F90
-    l_rad_fortran/l_rad_first_enh.F90
-    l_rad_fortran/l_rad_first_reg.F90
-    l_rad_fortran/l_rad_second.F90
-    l_rad_fortran/l_surface.F90
-    l_rad_fortran/l_surface_fourier.F90
-    l_rad_fortran/geometry_pool.F90
-    l_rad_fortran/l_rad_first_pp.F90
-    l_rad_fortran/l_sscorr_nadir.F90
-    l_rad_fortran/l_sscorr_outgoing.F90
-    l_rad_fortran/l_sscorr_pp.F90
-    pca_fortran/pca_auxiliaries.f90
-    pca_fortran/pca_eigensolvers.f90
-    pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
     chapman_boa.cc
     chapman_boa_rt.cc
-    first_order_interface.F90
     first_order_driver.cc
+    first_order_interface.F90
+    first_order_rt.cc
     hres_wrapper.cc
     l_rad_driver.cc
     l_rad_driver_f.F90
+    l_rad_fortran/calc_geom_first_enh.F90
+    l_rad_fortran/calc_geom_first_reg.F90
+    l_rad_fortran/calc_geom_second.F90
+    l_rad_fortran/geometry_pool.F90
+    l_rad_fortran/l_calc_phase_first.F90
+    l_rad_fortran/l_rad_first_enh.F90
+    l_rad_fortran/l_rad_first_pp.F90
+    l_rad_fortran/l_rad_first_reg.F90
+    l_rad_fortran/l_rad_second.F90
+    l_rad_fortran/l_sscorr_nadir.F90
+    l_rad_fortran/l_sscorr_outgoing.F90
+    l_rad_fortran/l_sscorr_pp.F90
+    l_rad_fortran/l_surface.F90
+    l_rad_fortran/l_surface_fourier.F90
     l_rad_rt.cc
     lidort_driver.cc
     lidort_interface_masters.F90
@@ -32,14 +30,21 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    optical_properties_lsi.cc
+    optical_properties_pca.cc
     pca_binning.cc
     pca_eigensolver.cc
-    pca_optical_properties.cc
+    pca_fortran/UVVSWIR_Eofpc_CreateBin.f90
+    pca_fortran/pca_auxiliaries.f90
+    pca_fortran/pca_eigensolvers.f90
+    pca_rt.cc
     radiant2.8_direct.F90
     radiant_driver.cc
     radiative_transfer.cc
     radiative_transfer_fixed_stokes_coefficient.cc
     radiative_transfer_single_wn.cc
+    raman_sioris.cc
+    raman_sioris.f90
     spurr_driver.cc
     spurr_rt.cc
     twostream_driver.cc
@@ -48,9 +53,12 @@ set(DIR_SOURCES
 )
 
 set(TEST_SOURCES
+    pca_fortran/pca_correction.f90
+    pca_fortran/pca_correction_plus.f90
     chapman_boa_rt_test.cc
     chapman_boa_test.cc
     first_order_driver_test.cc
+    first_order_rt_test.cc
     l_rad_driver_test.cc
     l_rad_rt_test.cc
     lidort_driver_test.cc
@@ -59,8 +67,12 @@ set(TEST_SOURCES
     lidort_interface_types_test.cc
     lidort_rt_test.cc
     lsi_rt_test.cc
+    optical_properties_lsi_test.cc
+    optical_properties_pca_test.cc
     pca_binning_test.cc
     pca_eigensolver_test.cc
+    pca_rt_test.cc
+    raman_sioris_test.cc
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc

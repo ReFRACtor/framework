@@ -1,12 +1,14 @@
 #include "first_order_driver.h"
 #include "wgs84_constant.h"
-#include "lidort_driver.h"
+
+// Include to use consistent jacobian sizes
+#include "lidort_interface_types.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
 //-----------------------------------------------------------------------
-///
+/// Construct FirstOrderDriver
 //-----------------------------------------------------------------------
 
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
@@ -73,21 +75,22 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     ///////
     // Initialize radiance interface
 
-    // Top of atmosphere only
-    int n_user_levels = 1;
-    fo_interface.reset(new Fo_Scalarss_Rtcalcs_I(ngeoms, nlayers, nfine, n_user_levels, ngeoms, nlayers, n_user_levels));
-    
-    // Same setting as LIDORT would have
-    fo_interface->do_deltam_scaling(true);
+    // Use LIDORT parameters to have consistent sizes for maximum weighting functions
+    Lidort_Pars lid_pars = Lidort_Pars::instance();
+    int natmoswfs = lid_pars.max_atmoswfs;
+    int nsurfacewfs = lid_pars.max_surfacewfs; 
 
+    // Initialize solar mode interface
+    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
+    
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
     float lidort_flux_factor = 1.0;
-    fo_interface->flux(0.25 * lidort_flux_factor / geometry->pie());
+    solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
 
     // Recommended value by manual of 50 in case we use cox-munk
     int n_brdf_stream = 50;
-    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver(new LidortBrdfDriver(n_brdf_stream, num_moments_));
+    l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
     Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
 
     // Only use 1 beam meaning only one set of sza, azm
@@ -106,8 +109,9 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     brdf_inputs.bs_do_brdf_surface(true);
     brdf_inputs.bs_do_user_streams(true);
     brdf_inputs.bs_do_solar_sources(do_solar_sources);
-    //brdf_inputs.bs_do_surface_emission(do_thermal_emission);
+    brdf_inputs.bs_do_surface_emission(do_thermal_emission);
 
+    // Copy LidortBrdfDriver pointer into SpurrDriver variable
     brdf_driver_ = l_brdf_driver;
     brdf_driver_->initialize_brdf_inputs(surface_type);
 }
@@ -134,9 +138,9 @@ void FirstOrderDriver::set_pseudo_spherical() const
 void FirstOrderDriver::copy_geometry_flags() const
 {
     // Flags copied from geometry object
-    fo_interface->do_planpar(geometry->do_planpar());
-    fo_interface->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
-    fo_interface->do_enhanced_ps(geometry->do_enhanced_ps());
+    solar_interface_->do_planpar(geometry->do_planpar());
+    solar_interface_->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
+    solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
 void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid) const
@@ -180,27 +184,27 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
 
     // Copy dynamic geometry outputs into FO interface object
     // Consider .reference to avoid copying?
-    Array<int, 2> nfinedivs(fo_interface->nfinedivs());
+    Array<int, 2> nfinedivs(solar_interface_->nfinedivs());
     nfinedivs = geometry->nfinedivs();
 
-    fo_interface->donadir(geometry->donadir());
-    fo_interface->ncrit(geometry->ncrit());
-    fo_interface->xfine(geometry->xfine());
-    fo_interface->wfine(geometry->wfine());
-    fo_interface->csqfine(geometry->csqfine());
-    fo_interface->cotfine(geometry->cotfine());
-    fo_interface->raycon(geometry->raycon());
-    fo_interface->cota(geometry->cota());
-    fo_interface->sunpaths(geometry->sunpaths());
-    fo_interface->ntraverse(geometry->ntraverse());
-    fo_interface->sunpathsfine(geometry->sunpathsfine());
-    fo_interface->ntraversefine(geometry->ntraversefine());
+    solar_interface_->donadir(geometry->donadir());
+    solar_interface_->ncrit(geometry->ncrit());
+    solar_interface_->xfine(geometry->xfine());
+    solar_interface_->wfine(geometry->wfine());
+    solar_interface_->csqfine(geometry->csqfine());
+    solar_interface_->cotfine(geometry->cotfine());
+    solar_interface_->raycon(geometry->raycon());
+    solar_interface_->cota(geometry->cota());
+    solar_interface_->sunpaths(geometry->sunpaths());
+    solar_interface_->ntraverse(geometry->ntraverse());
+    solar_interface_->sunpaths_fine(geometry->sunpathsfine());
+    solar_interface_->ntraverse_fine(geometry->ntraversefine());
     
     if (geometry->do_planpar()) {
         // Account for a bug in the plane parallel version of the geometry routine
         // where these values are not computed 
-        Array<double, 1> mu0(fo_interface->mu0());
-        Array<double, 1> mu1(fo_interface->mu1());
+        Array<double, 1> mu0(solar_interface_->mu0());
+        Array<double, 1> mu1(solar_interface_->mu1());
 
         for (int ns = 0; ns < geometry->nszas(); ns++) {
             int nv_offset = geometry->nvzas() * geometry->nazms() * ns;
@@ -215,8 +219,8 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
             }
         }
     } else {
-        fo_interface->mu0(geometry->mu0());
-        fo_interface->mu1(geometry->mu1());
+        solar_interface_->mu0(geometry->mu0());
+        solar_interface_->mu1(geometry->mu1());
     }
 }
 
@@ -240,82 +244,118 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     }
 
     // Total per layer optical depth
-    Array<double, 1> optical_depth(fo_interface->deltaus());
+    Array<double, 1> optical_depth(solar_interface_->deltaus());
     optical_depth = od;
 
     // Extinction profile
-    Array<double, 1> extinction(fo_interface->extinction());
+    Array<double, 1> extinction(solar_interface_->extinction());
     extinction = optical_depth / height_diffs;
 
     // Compute phase function from fourier moments by summing over moments times general spherical function
-    Array<double, 2> exactscat(fo_interface->exactscat_up());
-
-    exactscat = 0;
-
-    Array<double, 2> moment_sum(pf.cols(), geometry->ngeoms());
-    moment_sum = 0;
-    for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
-        for (int lay_idx = 0; lay_idx < pf.cols(); lay_idx++) {
-            for(int mom_idx = 0; mom_idx < pf.rows(); mom_idx++) {
-                moment_sum(lay_idx, geom_idx) += legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx);
-            }
-        }
-    }
-
-    // For TMS truncation correction
-    double dnm1 = 4 * num_streams_ + 1;
-    for (int geom_idx = 0; geom_idx < geometry->ngeoms(); geom_idx++) {
-        for (int lay_idx = 0; lay_idx < geometry->nlayers(); lay_idx++) {
-            exactscat(lay_idx, geom_idx) = moment_sum(lay_idx, geom_idx);
-            double omw = ssa(lay_idx);
-            double tms;
-            if (fo_interface->do_deltam_scaling()) {
-                double truncfac =  pf(2 * num_streams_ -1, lay_idx) / dnm1;
-                tms = omw / (1.0 - truncfac * omw);
-            } else {
-                tms = omw;
-            }
-            exactscat(lay_idx, geom_idx) *= tms;
-        }
-    }
+    // Sum over moment index
+    firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
+    Array<double, 2> exactscat(solar_interface_->exactscat_up());
+    exactscat = sum(legendre->ss_pleg()(mom_idx, geom_idx) * pf(mom_idx, lay_idx), mom_idx) * ssa(lay_idx);
     
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
-    Array<double, 1> reflectance(fo_interface->reflec());
-    boost::shared_ptr<LidortBrdfDriver> l_brdf_driver = boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver());
+    Array<double, 1> reflectance(solar_interface_->reflec());
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
 void FirstOrderDriver::clear_linear_inputs() const
 {
-    // Nothing for now
+    solar_interface_->do_profilewfs(false);
+    solar_interface_->do_reflecwfs(false); 
+    solar_interface_->n_reflecwfs(0);
 }
 
 void FirstOrderDriver::setup_linear_inputs
-(const ArrayAd<double, 1>& UNUSED(od), 
- const ArrayAd<double, 1>& UNUSED(ssa),
- const ArrayAd<double, 2>& UNUSED(pf),
- bool UNUSED(do_surface_linearization)) const
+(const ArrayAd<double, 1>& od, 
+ const ArrayAd<double, 1>& ssa,
+ const ArrayAd<double, 2>& pf,
+ bool do_surface_linearization) const
 {
-    // Nothing for now
+    // Set which profile layer jacobians are computed
+    int natm_jac = od.number_variable();
+    int nlay = od.rows();
+    int ngeom = geometry->ngeoms();
+
+    Range r_all = Range::all();
+    Range r_jac = Range(0, natm_jac-1);
+    Range r_lay = Range(0, nlay-1);
+
+    // Enable weighting functions
+    solar_interface_->do_profilewfs(true);
+
+    Array<bool, 1> layer_jac_flag( solar_interface_->lvaryflags() );
+    layer_jac_flag = true;
+
+    Array<int, 1> layer_jac_number( solar_interface_->lvarynums() );
+    layer_jac_number = natm_jac;
+
+    // Set up OD related inputs
+    Array<double, 2> l_deltau(solar_interface_->l_deltaus());
+    Array<double, 2> l_extinction(solar_interface_->l_extinction());
+
+    l_deltau(r_lay, r_jac) = od.jacobian();
+
+    firstIndex i1; secondIndex i2;
+    l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
+
+    // l_exactscat takes into account ssa jacobian contributions
+    // Compute legendre * pf function first seperately so that separate placeholder
+    // variables can be used when computing l_exactscat to ensure correct ordering of values
+    Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
+
+    Array<double, 2> legpf(nlay, ngeom);
+    firstIndex j1; secondIndex j2; thirdIndex j3;
+    legpf = sum(legendre->ss_pleg()(j3, j2) * pf.value()(j3, j1), j3);
+
+    firstIndex k1; secondIndex k2; thirdIndex k3;
+    l_exactscat(r_lay, r_all, r_jac) = legpf(k1, k2) * ssa.jacobian()(k1, k3);
+
+    // Set up solar linear inputs
+    if (do_surface_linearization) {
+        int n_surf_wfs = brdf_driver()->n_surface_wfs();
+        Range r_surf_wfs = Range(0, n_surf_wfs-1);
+
+        solar_interface_->do_reflecwfs(true); 
+        solar_interface_->n_reflecwfs(n_surf_wfs);
+        
+        // Set up reflection linearization from BRDF supplement
+        Array<double, 1> reflectance(solar_interface_->reflec());
+        Array<double, 2> ls_reflec( solar_interface_->ls_reflec() );
+
+        ls_reflec(0, r_surf_wfs) = l_brdf_driver->brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
+    }
+ 
 }
 
 
 void FirstOrderDriver::calculate_rt() const
 {
     // Run RT calculation
-    fo_interface->ss_integral_i_up();
+    solar_interface_->ss_integral_ilps_up();
 }
 
 double FirstOrderDriver::get_intensity() const
 {
-    return fo_interface->intensity_db()(0, 0) + fo_interface->intensity_up()(0, 0);
+    return solar_interface_->intensity_db()(0) + solar_interface_->intensity_up()(0);
 }
 
 void FirstOrderDriver::copy_jacobians
-(blitz::Array<double, 2>& UNUSED(jac_atm),
- blitz::Array<double, 1>& UNUSED(jac_surf_param),
+(blitz::Array<double, 2>& jac_atm,
+ blitz::Array<double, 1>& jac_surf_param,
  double& UNUSED(jac_surf_temp),
  blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
 {
-    // Nothing for now
+    Range ra(Range::all());
+
+    // Need to transpose output to be in the expected order of njac, nlay
+    Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, ra, ra) + solar_interface_->lp_jacobians_db()(0, ra, ra));
+    jac_total.transposeSelf(secondDim, firstDim);
+    jac_atm.reference(jac_total);
+
+    jac_surf_param.resize(solar_interface_->max_surfacewfs());
+    jac_surf_param = solar_interface_->ls_jacobians_db()(0, ra);
 }

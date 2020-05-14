@@ -1727,20 +1727,22 @@ end
 function ConfigCommon.atmosphere_oco:create_parent_object(sub_object)
    local c = self.config
 
+   local rayleigh = RayleighYoung(c.pressure, c.altitude, c.constants)
+
    c.number_pressure_level = c.pressure:max_number_level()
    if(c.aerosol and c.ground) then
-      return AtmosphereStandard(c.absorber, c.pressure, c.temperature, c.aerosol, 
+      return AtmosphereStandard(c.absorber, c.pressure, c.temperature, rayleigh, c.aerosol, 
                            c.relative_humidity, c.ground, c.altitude, 
 			   c.constants)
    elseif(c.aerosol) then
-      return AtmosphereStandard(c.absorber, c.pressure, c.temperature, c.aerosol, 
+      return AtmosphereStandard(c.absorber, c.pressure, c.temperature, rayleigh, c.aerosol, 
                            c.relative_humidity, c.altitude, c.constants)
    elseif(c.ground) then
-      return AtmosphereStandard(c.absorber, c.pressure, c.temperature,  
+      return AtmosphereStandard(c.absorber, c.pressure, c.temperature, rayleigh, 
                            c.relative_humidity, c.ground, c.altitude, 
 			   c.constants)
    end
-   return AtmosphereStandard(c.absorber, c.pressure, c.temperature, 
+   return AtmosphereStandard(c.absorber, c.pressure, c.temperature, rayleigh,
 			c.relative_humidity, c.altitude,
                         c.constants)
 end

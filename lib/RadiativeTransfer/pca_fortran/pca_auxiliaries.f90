@@ -43,7 +43,7 @@ contains
 ! ###############################################################
 
 SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
-                       MESSAGE_LEN, MESSAGE, BAD_STATUS ) bind(C)
+                       MESSAGE_LEN, MESSAGE_OUT, BAD_STATUS ) bind(C)
 
    implicit none
 
@@ -98,7 +98,7 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
 
       LOGICAL(c_bool)       , intent(out) :: BAD_STATUS
       integer(c_int), intent(in) :: message_len
-      character(kind=c_char), intent(out) :: MESSAGE(MESSAGE_LEN+1)
+      character(kind=c_char), intent(out) :: MESSAGE_OUT(MESSAGE_LEN+1)
 
 !   S ! R A T ! H   V A R I A B L E S:
 
@@ -139,11 +139,14 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
       LOGICAL          :: B70, B120, B200, B380, B390, B400, B460
       LOGICAL          :: TBLOCK, HESSENBERG_FORM, B490, B520
 
+      character(kind=c_char, len=message_len) :: message_lcl
+      integer :: len_idx
+
 !  output status
 
-      IER        = 0
-      BAD_STATUS = .FALSE.
-      MESSAGE    = ' '
+      IER         = 0
+      BAD_STATUS  = .FALSE.
+      MESSAGE_LCL = ' '
 
 !       Here change to bypass D1MACH:
 
@@ -154,7 +157,11 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
 !        TOL = D1MACH(4)
 
       IF ( M.LT.1 .OR. IA.LT.M .OR. IEVEC.LT.M ) THEN
-        MESSAGE = 'ASYMTX--bad input variable(s)'
+        MESSAGE_LCL = 'ASYMTX--bad input variable(s)'
+        do len_idx = 1, message_len
+          message_out(len_idx) = message_lcl(len_idx:len_idx)
+        end do
+
         BAD_STATUS = .TRUE.
         RETURN
       ENDIF
@@ -167,7 +174,11 @@ SUBROUTINE PCA_ASYMTX( AAD, M, IA, IEVEC, IEVEC2, TOL, EVECD, EVALD, IER, WKD, &
       ELSE IF ( M.EQ.2 )  THEN
          DISCRI = ( AAD(1,1) - AAD(2,2) )**2 + 4.0D0*AAD(1,2)*AAD(2,1)
          IF ( DISCRI.LT.ZERO ) THEN
-           MESSAGE = 'ASYMTX--COMPLEX EVALS IN 2X2 CASE'
+           MESSAGE_LCL = 'ASYMTX--COMPLEX EVALS IN 2X2 CASE'
+           do len_idx = 1, message_len
+             message_out(len_idx) = message_lcl(len_idx:len_idx)
+           end do
+
            BAD_STATUS = .TRUE.
            RETURN
          ENDIF

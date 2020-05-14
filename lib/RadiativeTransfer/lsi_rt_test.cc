@@ -33,6 +33,12 @@ BOOST_AUTO_TEST_CASE(err_est)
     out_expt << std::setprecision(20) << std::scientific 
              << err_est.value()(Range::all(), 0) << std::endl;
   }
+  if(false) {
+    for(int i = 0; i < err_est_expect.rows(); i++) {
+      std::cerr << "[" << i << "]: e: " << err_est_expect(i) << " c: " << err_est.value()(i, 0) 
+                << " d: " << (err_est_expect(i) - err_est.value()(i, 0)) << std::endl;
+    }
+  }
   BOOST_CHECK_MATRIX_CLOSE_TOL(err_est.value()(Range::all(), 0), 
                                err_est_expect, 1e-7);
 }

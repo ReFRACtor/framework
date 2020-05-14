@@ -1,8 +1,11 @@
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
 
-#include <blitz/array.h>
+#include "atmosphere_standard.h"
+#include "atmosphere_legacy.h"
+#include "altitude.h"
 
+#include <blitz/array.h>
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -21,32 +24,24 @@ BOOST_AUTO_TEST_CASE(basic)
   expected_data >> scat_momsub_expect;
   expected_data >> od_expect;
   expected_data >> ssa_expect;
-  ArrayAd<double, 2> iv(atm->intermediate_variable(12929.94, 0));
-  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_iv(12929.94, 0).value(), od_expect, 1e-6);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_iv(12929.94, 0,iv).value(), od_expect, 1e-6);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_rt(12929.94, 0).value(), od_expect, 1e-6);
   BOOST_CHECK_MATRIX_CLOSE_TOL
-    (atm->single_scattering_albedo_wrt_iv(12929.94, 0).value(), ssa_expect, 1e-6);
-  BOOST_CHECK_MATRIX_CLOSE_TOL
-    (atm->single_scattering_albedo_wrt_iv(12929.94, 0,iv).value(), ssa_expect, 1e-6);
+    (atm->single_scattering_albedo_wrt_rt(12929.94, 0).value(), ssa_expect, 1e-6);
   BOOST_CHECK_CLOSE(atm->column_optical_depth(12929.94, 0, "O2").value(), 0.00018824861591009646, 1e-4);
   BOOST_CHECK_CLOSE(atm->column_optical_depth(12929.94, 0, "H2O").value(), 3.459804510441169e-06, 1e-4);
   Array<double, 2> scat_momsub
-    (atm->scattering_moment_wrt_iv(12929.94, 0, 4, 1).value()
+    (atm->phase_function_moments_wrt_rt(12929.94, 0, 4, 1).value()
      (Range::all(), 9, Range::all()));
-  BOOST_CHECK_MATRIX_CLOSE_TOL(scat_momsub, 
-                               scat_momsub_expect, 1e-4);
-  scat_momsub = (atm->scattering_moment_wrt_iv(12929.94, 0, iv, 4, 1).value()
-                 (Range::all(), 9, Range::all()));
   BOOST_CHECK_MATRIX_CLOSE_TOL(scat_momsub, 
                                scat_momsub_expect, 1e-4);
   expected_data >> scat_momsub_expect;
   expected_data >> od_expect;
   expected_data >> ssa_expect;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_iv(12930.30, 0).value(), od_expect, 2e-6);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->single_scattering_albedo_wrt_iv(12930.30, 0).value(), ssa_expect, 1e-6);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->optical_depth_wrt_rt(12930.30, 0).value(), od_expect, 2e-6);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(atm->single_scattering_albedo_wrt_rt(12930.30, 0).value(), ssa_expect, 1e-6);
   BOOST_CHECK_CLOSE(atm->column_optical_depth(12930.30, 0, "O2").value(), 0.00019080438913330467, 1e-4);
   BOOST_CHECK_CLOSE(atm->column_optical_depth(12930.30, 0, "H2O").value(), 5.6828474797889968e-06, 1e-4);
-  Array<double, 2> scat_momsub2(atm->scattering_moment_wrt_iv(12930.30, 0, 4, 1).value()
+  Array<double, 2> scat_momsub2(atm->phase_function_moments_wrt_rt(12930.30, 0, 4, 1).value()
                                 (Range::all(), 9, Range::all()));
   BOOST_CHECK_MATRIX_CLOSE_TOL(scat_momsub2, 
                                scat_momsub_expect, 1e-4);
@@ -62,26 +57,23 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   // the same results.
 
   boost::shared_ptr<AtmosphereStandard> atm_zeroext = atm->clone();
-
   // Set state vector so that the extinction coefficient of
-  // atm_zeroext is 0. The extinction object must be attached
-  // to the state vector for the update to have any effect
-  //
+  // atm_zeroext is 0. 
   StateVector sv;
-  boost::shared_ptr<AerosolOptical> aer_optical(boost::dynamic_pointer_cast<AerosolOptical>(atm_zeroext->aerosol_ptr()));
-  for (int aer_idx = 0; aer_idx < atm_zeroext->aerosol_ptr()->number_particle(); aer_idx++) {
-    if (aer_optical) {
-      sv.add_observer(*aer_optical->aerosol_extinction(aer_idx));
-    }
-  }
-  Array<double, 1> x(sv.observer_claimed_size());
-  x = 1e-20;
-  sv.update_state(x);
+  sv.add_observer(*atm_zeroext);
+  atm_zeroext->attach_children_to_sv(sv);
+  sv.update_state(config_initial_guess->initial_guess());
+  blitz::Array<double, 1> sv_value = sv.state();
+  for(int i = 0; i < sv.state_vector_name().rows(); ++i)
+    if(sv.state_vector_name()(i).find("Aerosol Ext") != std::string::npos)
+      sv_value(i) = 1e-20;
+  sv.update_state(sv_value);
 
   // Leave out the aerosol (null pointer)
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
   boost::shared_ptr<Temperature> temperature_clone =
     atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
   boost::shared_ptr<Ground> ground_clone = atm->ground()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
@@ -95,6 +87,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
     atm_rayleigh(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    aerosol_null,
                                    rh_clone,
                                    ground_clone,
@@ -106,6 +99,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   std::vector<boost::shared_ptr<AerosolProperty> >   empty_aprop;
   pressure_clone = atm->pressure_ptr()->clone();
   temperature_clone = atm->temperature_ptr()->clone();
+  rayleigh_clone = atm->rayleigh_ptr()->clone();
   ground_clone = atm->ground()->clone();
   alt_clone.clear();
   BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr()) {
@@ -122,12 +116,12 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
     atm_no_aerosol(new AtmosphereStandard(absorber_clone,
                                    pressure_clone,
                                    temperature_clone,
+                                   rayleigh_clone,
                                    no_aerosol,
                                    rh_clone,
                                    ground_clone,
                                    alt_clone,
                                    atm->constant_ptr()));
-
 
   BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->ground()->surface_parameter(12929.94, 0).value(),
                            atm_zeroext->ground()->surface_parameter(12929.94, 0).value());
@@ -141,14 +135,14 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
                     atm_zeroext->number_layer());
   BOOST_CHECK_EQUAL(atm_rayleigh->number_layer(),
                     atm_no_aerosol->number_layer());
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_iv(12929.94, 0).value(),
-                           atm_zeroext->optical_depth_wrt_iv(12929.94, 0).value());
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_iv(12929.94, 0).value(),
-                           atm_no_aerosol->optical_depth_wrt_iv(12929.94, 0).value());
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->single_scattering_albedo_wrt_iv(12929.94, 0).value(), 
-                           atm_zeroext->single_scattering_albedo_wrt_iv(12929.94, 0).value());
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->single_scattering_albedo_wrt_iv(12929.94, 0).value(),
-                           atm_no_aerosol->single_scattering_albedo_wrt_iv(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value(),
+                           atm_zeroext->optical_depth_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value(),
+                           atm_no_aerosol->optical_depth_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->single_scattering_albedo_wrt_rt(12929.94, 0).value(), 
+                           atm_zeroext->single_scattering_albedo_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->single_scattering_albedo_wrt_rt(12929.94, 0).value(),
+                           atm_no_aerosol->single_scattering_albedo_wrt_rt(12929.94, 0).value());
   BOOST_CHECK_CLOSE
     (atm_rayleigh->column_optical_depth(12929.94, 0, "O2").value(), 
      atm_zeroext->column_optical_depth(12929.94, 0, "O2").value(), 
@@ -165,14 +159,14 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
     (atm_rayleigh->column_optical_depth(12929.94, 0, "H2O").value(),
      atm_no_aerosol->column_optical_depth(12929.94, 0, "H2O").value(),
      1e-6);
-  Range r1(0,atm_rayleigh->scattering_moment_wrt_iv(12738.853381475927, 0).rows() - 1);
+  Range r1(0,atm_rayleigh->phase_function_moments_wrt_rt(12738.853381475927, 0).rows() - 1);
   Range r2(0,
-           atm_rayleigh->scattering_moment_wrt_iv(12738.853381475927, 0).depth() - 1);
+           atm_rayleigh->phase_function_moments_wrt_rt(12738.853381475927, 0).depth() - 1);
   Range ra = Range::all();
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->scattering_moment_wrt_iv(12929.94, 0).value(),
-                           atm_zeroext->scattering_moment_wrt_iv(12929.94, 0).value()(r1, ra, r2));
-  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->scattering_moment_wrt_iv(12929.94, 0).value(),
-                           atm_no_aerosol->scattering_moment_wrt_iv(12929.94, 0).value()(r1, ra, r2));
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->phase_function_moments_wrt_rt(12929.94, 0).value(),
+                           atm_zeroext->phase_function_moments_wrt_rt(12929.94, 0).value()(r1, ra, r2));
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->phase_function_moments_wrt_rt(12929.94, 0).value(),
+                           atm_no_aerosol->phase_function_moments_wrt_rt(12929.94, 0).value()(r1, ra, r2));
 }
 
 BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
@@ -181,6 +175,7 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
   boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
   boost::shared_ptr<Temperature> temperature_clone =
     atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
   boost::shared_ptr<Aerosol> aerosol_clone =
     atm->aerosol_ptr()->clone();
   std::vector<boost::shared_ptr<Altitude> > alt_clone;
@@ -195,20 +190,24 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
     atm_uplooking(new AtmosphereStandard(absorber_clone,
                                     pressure_clone,
                                     temperature_clone,
+                                    rayleigh_clone,
                                     aerosol_clone,
                                     rh_clone,
                                     ground_null,
                                     alt_clone,
                                     atm->constant_ptr()));
+  boost::shared_ptr<StateVector> sv_uplooking(new StateVector());
+  attach_atmosphere_to_sv(atm_uplooking, sv_uplooking);
 
   BOOST_CHECK_EQUAL(atm_uplooking->number_spectrometer(),
                     atm->number_spectrometer());
   BOOST_CHECK_EQUAL(atm_uplooking->number_layer(),
                     atm->number_layer());
-  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->optical_depth_wrt_iv(12929.94, 0).value(),
-                           atm->optical_depth_wrt_iv(12929.94, 0).value());
-  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->single_scattering_albedo_wrt_iv(12929.94, 0).value(),
-                           atm->single_scattering_albedo_wrt_iv(12929.94, 0).value());
+
+  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->optical_depth_wrt_rt(12929.94, 0).value(),
+                           atm->optical_depth_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->single_scattering_albedo_wrt_rt(12929.94, 0).value(),
+                           atm->single_scattering_albedo_wrt_rt(12929.94, 0).value());
   BOOST_CHECK_CLOSE
     (atm_uplooking->column_optical_depth(12929.94, 0, "O2").value(), 
      atm->column_optical_depth(12929.94, 0, "O2").value(), 1e-6);
@@ -216,20 +215,165 @@ BOOST_AUTO_TEST_CASE(uplooking_atmosphere)
     (atm_uplooking->column_optical_depth(12929.94, 0, "H2O").value(),
      atm->column_optical_depth(12929.94, 0, "H2O").value(),
      1e-6);
-  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->scattering_moment_wrt_iv(12929.94, 0).value(),
-                           atm->scattering_moment_wrt_iv(12929.94, 0).value());
-  BOOST_CHECK_MATRIX_CLOSE(atm_uplooking->scattering_moment_wrt_iv(12929.94, 0).jacobian(),
-                           atm->scattering_moment_wrt_iv(12929.94, 0).jacobian());
-  Array<double, 2> l_opdel_uplooking = 
-    atm_uplooking->optical_depth_wrt_iv(12929.94, 0).jacobian();
-  Array<double, 2> l_opdel =
-    atm->optical_depth_wrt_iv(12929.94, 0).jacobian();
-  Array<double, 2> l_ssa_uplooking = 
-    atm_uplooking->single_scattering_albedo_wrt_iv(12929.94, 0).jacobian();
-  Array<double, 2> l_ssa =
-    atm->single_scattering_albedo_wrt_iv(12929.94, 0).jacobian();
+
+  ArrayAd<double, 3> pf_up(atm_uplooking->phase_function_moments_wrt_rt(12929.94, 0));
+  ArrayAd<double, 3> pf_gnd(atm->phase_function_moments_wrt_rt(12929.94, 0));
+  BOOST_CHECK_MATRIX_CLOSE(pf_up.value(), pf_gnd.value());
+  BOOST_CHECK_MATRIX_CLOSE(pf_up.jacobian(), pf_gnd.jacobian());
+
+  Array<double, 2> l_opdel_uplooking = atm_uplooking->optical_depth_wrt_rt(12929.94, 0).jacobian();
+  Array<double, 2> l_opdel = atm->optical_depth_wrt_rt(12929.94, 0).jacobian();
+
+  Array<double, 2> l_ssa_uplooking = atm_uplooking->single_scattering_albedo_wrt_rt(12929.94, 0).jacobian();
+  Array<double, 2> l_ssa = atm->single_scattering_albedo_wrt_rt(12929.94, 0).jacobian();
+
   BOOST_CHECK_MATRIX_CLOSE(l_opdel_uplooking, l_opdel);
   BOOST_CHECK_MATRIX_CLOSE(l_ssa_uplooking, l_ssa);
+}
+
+BOOST_AUTO_TEST_CASE(no_aerosols)
+{
+  // We check that leaving out the aerosol gives the same results as
+  // having no aerosols particles defined.
+
+
+  // Create an AerosolOptical object with no aerosols in it
+  boost::shared_ptr<Pressure> pressure_clone = atm->pressure_ptr()->clone();
+  boost::shared_ptr<RelativeHumidity> rh_clone = atm->relative_humidity_ptr()->clone();
+  std::vector<boost::shared_ptr<AerosolExtinction> > empty_aext;
+  std::vector<boost::shared_ptr<AerosolProperty> >   empty_aprop;
+  boost::shared_ptr<AerosolOptical> no_aerosol = boost::make_shared<AerosolOptical>(empty_aext,
+                                                  empty_aprop,
+                                                  pressure_clone,
+                                                  rh_clone);
+
+  boost::shared_ptr<Temperature> temperature_clone =
+    atm->temperature_ptr()->clone();
+  boost::shared_ptr<Rayleigh> rayleigh_clone = atm->rayleigh_ptr()->clone();
+  boost::shared_ptr<Ground> ground_clone = atm->ground()->clone();
+  std::vector<boost::shared_ptr<Altitude> > alt_clone;
+  BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, atm->altitude_ptr())
+    alt_clone.push_back(a->clone());
+  boost::shared_ptr<Absorber> absorber_clone =
+    atm->absorber_ptr()->clone();
+
+  boost::shared_ptr<AtmosphereStandard>
+    atm_no_aerosol(new AtmosphereStandard(absorber_clone,
+                                   pressure_clone,
+                                   temperature_clone,
+                                   rayleigh_clone,
+                                   no_aerosol,
+                                   rh_clone,
+                                   ground_clone,
+                                   alt_clone,
+                                   atm->constant_ptr()));
+  // Next line segfaults in current code
+  std::cout << atm_no_aerosol->optical_depth_wrt_rt(12929.94, 0).value();
+
+  boost::shared_ptr<AerosolOptical> aerosol_null;
+  boost::shared_ptr<AtmosphereStandard>
+    atm_rayleigh(new AtmosphereStandard(absorber_clone,
+                                   pressure_clone,
+                                   temperature_clone,
+                                   rayleigh_clone,
+                                   aerosol_null,
+                                   rh_clone,
+                                   ground_clone,
+                                   alt_clone,
+                                   atm->constant_ptr()));
+  /*
+
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->ground()->surface_parameter(12929.94, 0).value(),
+                           no_aerosol->ground()->surface_parameter(12929.94, 0).value());
+  BOOST_CHECK_EQUAL(atm_rayleigh->number_spectrometer(),
+                    no_aerosol->number_spectrometer());
+  BOOST_CHECK_EQUAL(atm_rayleigh->number_layer(),
+                    no_aerosol->number_layer());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value(),
+                           no_aerosol->optical_depth_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->single_scattering_albedo_wrt_rt(12929.94, 0).value(),
+                           no_aerosol->single_scattering_albedo_wrt_rt(12929.94, 0).value());
+  BOOST_CHECK_CLOSE
+    (atm_rayleigh->column_optical_depth(12929.94, 0, "O2").value(),
+     no_aerosol->column_optical_depth(12929.94, 0, "O2").value(),
+     1e-6);
+  BOOST_CHECK_CLOSE
+    (atm_rayleigh->column_optical_depth(12929.94, 0, "H2O").value(),
+     no_aerosol->column_optical_depth(12929.94, 0, "H2O").value(),
+     1e-6);
+  Range r1(0,atm_rayleigh->phase_function_moments_wrt_rt(12738.853381475927, 0).rows() - 1);
+  Range r2(0,
+           atm_rayleigh->phase_function_moments_wrt_rt(12738.853381475927, 0).depth() - 1);
+  Range ra = Range::all();
+  BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->phase_function_moments_wrt_rt(12929.94, 0).value(),
+                           no_aerosol->phase_function_moments_wrt_rt(12929.94, 0).value()(r1, ra, r2));
+                           */
+}
+
+BOOST_AUTO_TEST_CASE(legacy)
+{
+    double test_wn = 13179.0;
+    int test_chan = 0;
+
+    boost::shared_ptr<AtmosphereLegacy> atm_legacy
+        (new AtmosphereLegacy(atm->absorber_ptr(), atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
+                              atm->aerosol_ptr(), atm->relative_humidity_ptr(), atm->ground(), 
+                              atm->altitude_ptr(), atm->constant_ptr()));
+
+    // Total optical depth
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->optical_depth_wrt_state_vector(test_wn, test_chan).value(), 
+                                 atm->optical_depth_wrt_state_vector(test_wn, test_chan).value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->optical_depth_wrt_state_vector(test_wn, test_chan).jacobian(), 
+                                 atm->optical_depth_wrt_state_vector(test_wn, test_chan).jacobian(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->optical_depth_wrt_rt(test_wn, test_chan).value(), 
+                                 atm->optical_depth_wrt_rt(test_wn, test_chan).value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->optical_depth_wrt_rt(test_wn, test_chan).jacobian(), 
+                                 atm->optical_depth_wrt_rt(test_wn, test_chan).jacobian(), 1e-10);
+
+    // Column optical depth
+    BOOST_CHECK_CLOSE(atm_legacy->column_optical_depth(test_wn, test_chan, "O2").value(), 
+                      atm->column_optical_depth(test_wn, test_chan, "O2").value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->column_optical_depth(test_wn, test_chan, "O2").gradient(), 
+                                 atm->column_optical_depth(test_wn, test_chan, "O2").gradient(), 1e-10);
+
+    ArrayAd<double, 2> gas_od_per_part(atm->optical_properties(test_wn, test_chan)->gas_optical_depth_per_particle());
+
+    // Single scattering albedo
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).value(), 
+                                 atm->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).jacobian(),
+                                 atm->single_scattering_albedo_wrt_state_vector(test_wn, test_chan).jacobian(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->single_scattering_albedo_wrt_rt(test_wn, test_chan).value(), 
+                                 atm->single_scattering_albedo_wrt_rt(test_wn, test_chan).value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(atm_legacy->single_scattering_albedo_wrt_rt(test_wn, test_chan).jacobian(),
+                                 atm->single_scattering_albedo_wrt_rt(test_wn, test_chan).jacobian(), 1e-10);
+
+    // Total pf which include rayleigh portion which is not exposed by Atmosphere interface
+    ArrayAd<double, 3> tot_pf_wrt_sv_expt_1 = atm_legacy->phase_function_moments_wrt_state_vector(test_wn, test_chan);
+    ArrayAd<double, 3> tot_pf_wrt_sv_calc_1 = atm->phase_function_moments_wrt_state_vector(test_wn, test_chan);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_sv_expt_1.value(), tot_pf_wrt_sv_calc_1.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_sv_expt_1.jacobian(), tot_pf_wrt_sv_calc_1.jacobian(), 1e-10);
+
+    ArrayAd<double, 3> tot_pf_wrt_rt_expt_1 = atm_legacy->phase_function_moments_wrt_rt(test_wn, test_chan);
+    ArrayAd<double, 3> tot_pf_wrt_rt_calc_1 = atm->phase_function_moments_wrt_rt(test_wn, test_chan);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_rt_expt_1.value(), tot_pf_wrt_rt_calc_1.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_rt_expt_1.jacobian(), tot_pf_wrt_rt_calc_1.jacobian(), 1e-10);
+
+    // Check that phase function can be recomputed with a different number of moments and scattering
+    ArrayAd<double, 3> tot_pf_wrt_sv_expt_2 = atm_legacy->phase_function_moments_wrt_state_vector(test_wn, test_chan, 200, 1);
+    ArrayAd<double, 3> tot_pf_wrt_sv_calc_2 = atm->phase_function_moments_wrt_state_vector(test_wn, test_chan, 200, 1);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_sv_expt_2.value(), tot_pf_wrt_sv_calc_2.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_sv_expt_2.jacobian(), tot_pf_wrt_sv_calc_2.jacobian(), 1e-10);
+
+    ArrayAd<double, 3> tot_pf_wrt_rt_expt_2 = atm_legacy->phase_function_moments_wrt_rt(test_wn, test_chan, 200, 1);
+    ArrayAd<double, 3> tot_pf_wrt_rt_calc_2 = atm->phase_function_moments_wrt_rt(test_wn, test_chan, 200, 1);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_rt_expt_2.value(), tot_pf_wrt_rt_calc_2.value(), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(tot_pf_wrt_rt_expt_2.jacobian(), tot_pf_wrt_rt_calc_2.jacobian(), 1e-10);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -266,7 +410,7 @@ BOOST_AUTO_TEST_CASE(optical_depth_jac)
     svn(i) += epsilon(i);
     sv.update_state(svn);
     Array<double, 1> jacfd(od0.shape());
-    jacfd = (atm.optical_depth_wrt_iv(wn,spec_index).value() - od0) 
+    jacfd = (atm.optical_depth_wrt_rt(wn,spec_index).value() - od0) 
       / epsilon(i);
     if(false) {                        // Can turn this off to dump values,
                                 // if needed for debugging
@@ -310,7 +454,7 @@ BOOST_AUTO_TEST_CASE(ssa_jac)
     svn(i) += epsilon(i);
     sv.update_state(svn);
     Array<double, 1> jacfd(ssa0.shape());
-    jacfd = (atm.single_scattering_albedo_wrt_iv(wn,spec_index).value() - ssa0) 
+    jacfd = (atm.single_scattering_albedo_wrt_rt(wn,spec_index).value() - ssa0) 
       / epsilon(i);
     if(false) {                        // Can turn this off to dump values,
                                 // if needed for debugging
@@ -331,7 +475,7 @@ BOOST_AUTO_TEST_CASE(ssa_jac)
   }
 }
 
-BOOST_AUTO_TEST_CASE(scattering_moment_jac)
+BOOST_AUTO_TEST_CASE(phase_function_moments_jac)
 {
   is_long_test();
   RtAtmosphere& atm = *config_atmosphere;
@@ -340,7 +484,7 @@ BOOST_AUTO_TEST_CASE(scattering_moment_jac)
   int spec_index = 2;
   double wn = 4820.0;
   ArrayAd<double, 3> sm = 
-    atm.scattering_moment_wrt_state_vector(wn, spec_index);
+    atm.phase_function_moments_wrt_state_vector(wn, spec_index);
   Array<double, 3> sm0(sm.shape());
   sm0 = sm.value();
   Array<double, 4> jac = sm.jacobian().copy();
@@ -349,7 +493,7 @@ BOOST_AUTO_TEST_CASE(scattering_moment_jac)
     svn(i) += epsilon(i);
     sv.update_state(svn);
     Array<double, 3> jacfd(sm.shape());
-    jacfd = (atm.scattering_moment_wrt_iv(wn,spec_index).value() - sm0) 
+    jacfd = (atm.phase_function_moments_wrt_rt(wn,spec_index).value() - sm0) 
       / epsilon(i);
     Array<double, 3> diff(jac(Range::all(), Range::all(), Range::all(), i) - 
                           jacfd);
@@ -373,7 +517,7 @@ BOOST_AUTO_TEST_CASE(optical_depth_timing)
   RtAtmosphere& atm = *config_atmosphere;
   int i = 0;
   for(double wn = 12929.94; wn <= 13210.15; wn += 0.01) {
-    ArrayAd<double, 1> od = atm.optical_depth_wrt_iv(wn, 0);
+    ArrayAd<double, 1> od = atm.optical_depth_wrt_rt(wn, 0);
     if(++i % 1000 == 0)
       std::cerr << "Done with " << i << "\n"
                 << atm.timer_info() << "\n";

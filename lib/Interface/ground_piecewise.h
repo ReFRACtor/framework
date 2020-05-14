@@ -26,7 +26,6 @@ public:
     virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
     virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
-    virtual const AutoDerivative<double> value_at_wavenumber(const double wn) const;
 
     virtual void update_sub_state_hook();
 
@@ -41,8 +40,7 @@ public:
 
 protected:
 
-    // Store spectral grid as wavenumbers internally after conversion
-    blitz::Array<double, 1> wavenumbers;
+    ArrayWithUnit<double, 1> spectral_points_;
 
 private:
 

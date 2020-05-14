@@ -219,7 +219,9 @@ class ParamPassThru(ParamIterateCreator):
         result = ConfigDict()
         for param_name in self.param_names:
             logger.debug("Passing through parameter %s" % param_name)
-            result[param_name] = self.param(param_name, **kwargs)
+            ret_obj = self.param(param_name, **kwargs)
+            self._dispatch(ret_obj)
+            result[param_name] = ret_obj
 
         return result
 
@@ -231,8 +233,10 @@ class SaveToCommon(ParamPassThru):
         result = ConfigDict()
         for param_name in self.param_names:
             logger.debug("Saving to the common store parameter %s" % param_name)
-            result[param_name] = self.param(param_name, **kwargs)
-            self.common_store[param_name] = result[param_name]
+            ret_obj = self.param(param_name, **kwargs)
+            self._dispatch(ret_obj)
+            result[param_name] = ret_obj
+            self.common_store[param_name] = ret_obj
 
         return result
 
@@ -243,4 +247,6 @@ class PickChild(Creator):
 
     def create(self, **kwargs):
         self.register_parameter(self.child(), AnyValue())
-        return self.param(self.child(), **kwargs)
+        ret_obj = self.param(self.child(), **kwargs)
+        self._dispatch(ret_obj)
+        return ret_obj

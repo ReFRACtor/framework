@@ -1,9 +1,11 @@
 %include "fp_common.i"
 %{
 #include "pca_binning.h"
+#include "sub_state_vector_array.h"
+#include "altitude.h"
 %}
 
-%import "pca_optical_properties.i"
+%import "optical_properties_wrt_rt.i"
 
 %fp_shared_ptr(FullPhysics::PCABinning);
 

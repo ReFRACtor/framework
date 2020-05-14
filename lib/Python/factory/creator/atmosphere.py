@@ -1,4 +1,5 @@
 import os
+import warnings
 
 import numpy as np
 
@@ -17,6 +18,7 @@ class AtmosphereCreator(Creator):
     absorber = param.InstanceOf(rf.Absorber)
     relative_humidity = param.InstanceOf(rf.RelativeHumidity)
     ground = param.InstanceOf(rf.Ground, required=False)
+    rayleigh = param.InstanceOf(rf.Rayleigh, required=False)
     aerosol = param.InstanceOf(rf.Aerosol, required=False)
     surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
     constants = param.InstanceOf(rf.Constant)
@@ -31,22 +33,28 @@ class AtmosphereCreator(Creator):
         aerosol = self.common_store["aerosol"] = self.aerosol()
         ground = self.common_store["ground"] = self.ground()
         surf_temp = self.common_store["surface_temperature"] = self.surface_temperature()
+        constants = self.common_store["constants"] = self.constants()
+        rayleigh = self.common_store["rayleigh"] = self.rayleigh()
 
         if surf_temp and not ground:
             raise CreatorError("Surface temperature can not be defined without ground being defined for atmosphere setup")
 
+        if rayleigh is None:
+            warnings.warn("Rayleigh not explicitly specified using backwards compatibility component: RayleighYoung")
+            rayleigh = rf.RayleighYoung(pressure, altitude, constants)
+
         if aerosol and ground and surf_temp:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, ground, surf_temp, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, aerosol, relative_humidity, ground, surf_temp, altitude, constants)
         if ground and surf_temp:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, ground, surf_temp, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, relative_humidity, ground, surf_temp, altitude, constants)
         elif aerosol and ground:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, ground, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, aerosol, relative_humidity, ground, altitude, constants)
         elif aerosol:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, aerosol, relative_humidity, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, aerosol, relative_humidity, altitude, constants)
         elif ground:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, ground, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, relative_humidity, ground, altitude, constants)
         else:
-            return rf.AtmosphereStandard(absorber, pressure, temperature, relative_humidity, altitude, self.constants())
+            return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, relative_humidity, altitude, constants)
 
 
 class PressureSigma(CreatorFlaggedValue):

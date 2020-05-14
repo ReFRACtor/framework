@@ -10,6 +10,6 @@
 namespace FullPhysics {
 class RayleighGreekMoment {
 public:
-  static blitz::Array<double, 2> array();
+  static blitz::Array<double, 2> array(double depolar_fact = 0.02790);
 };
 }

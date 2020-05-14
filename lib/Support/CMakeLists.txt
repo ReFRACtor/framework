@@ -44,6 +44,7 @@ set(DIR_SOURCES
 )
 
 set(TEST_SOURCES
+    angle_util_test.cc
     array_ad_cache_test.cc
     array_ad_test.cc
     auto_derivative_test.cc

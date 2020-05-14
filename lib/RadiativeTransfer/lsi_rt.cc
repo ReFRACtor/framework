@@ -5,6 +5,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 
+#include "atmosphere_standard.h"
+#include "optical_properties_lsi.h"
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -12,9 +15,9 @@ using namespace blitz;
 #include "register_lua.h"
 boost::shared_ptr<RadiativeTransfer>
 lsi_rt_create(const boost::shared_ptr<RadiativeTransfer>& Rt_low,
-	      const boost::shared_ptr<RadiativeTransfer>& Rt_high,
-	      const HdfFile& Config_file,
-	      const std::string& Lsi_group)
+              const boost::shared_ptr<RadiativeTransfer>& Rt_high,
+              const HdfFile& Config_file,
+              const std::string& Lsi_group)
 {
   boost::shared_ptr<RadiativeTransferSingleWn> rt_lows =
     boost::dynamic_pointer_cast<RadiativeTransferSingleWn>(Rt_low);
@@ -61,9 +64,9 @@ const double log_threshold = 100;
 //-----------------------------------------------------------------------
 
 LsiRt::LsiRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Low_stream_rt,
-	     const boost::shared_ptr<RadiativeTransferSingleWn>& High_stream_rt,
-	     const std::string& Lsi_fname,
-	     double Water_vapor_fraction_threshold)
+             const boost::shared_ptr<RadiativeTransferSingleWn>& High_stream_rt,
+             const std::string& Lsi_fname,
+             double Water_vapor_fraction_threshold)
 : RadiativeTransferFixedStokesCoefficient(High_stream_rt->stokes_coefficient()),
   low_stream_rt(Low_stream_rt), high_stream_rt(High_stream_rt),
   wv_threshold(Water_vapor_fraction_threshold)
@@ -114,10 +117,10 @@ LsiRt::LsiRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Low_stream_rt,
 //-----------------------------------------------------------------------
 
 LsiRt::LsiRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Low_stream_rt,
-	     const boost::shared_ptr<RadiativeTransferSingleWn>& High_stream_rt,
-	     const HdfFile& Config_file,
-	     const std::string& Lsi_group,
-	     double Water_vapor_fraction_threshold)
+             const boost::shared_ptr<RadiativeTransferSingleWn>& High_stream_rt,
+             const HdfFile& Config_file,
+             const std::string& Lsi_group,
+             double Water_vapor_fraction_threshold)
 : RadiativeTransferFixedStokesCoefficient(High_stream_rt->stokes_coefficient()),
   low_stream_rt(Low_stream_rt), high_stream_rt(High_stream_rt),
   wv_threshold(Water_vapor_fraction_threshold)
@@ -150,9 +153,9 @@ void LsiRt::print(std::ostream& Os, bool Short_form) const
     for(int j = 0; j < (int) optical_depth_boundary[i].size(); ++j) {
       Os << optical_depth_boundary[i][j];
       if(j != (int) optical_depth_boundary[i].size() - 1)
-	Os << ", ";
+        Os << ", ";
       else
-	Os << ")\n";
+        Os << ")\n";
     }
   }
   Os << "\n  High stream:\n";
@@ -165,7 +168,7 @@ void LsiRt::print(std::ostream& Os, bool Short_form) const
 
 // See base class for description
 blitz::Array<double, 2> LsiRt::stokes(const SpectralDomain& Spec_domain,
-				      int Spec_index) const
+                                      int Spec_index) const
 
 {
   FunctionTimer ft(timer.function_timer(true));
@@ -228,10 +231,10 @@ ArrayAd<double, 2> LsiRt::correction_only
     ArrayAd<double, 1> err_est;
     if(gas_opd.value()(i) > log_threshold)
       err_est.reference
-	(ArrayAd<double, 1>(linear_interp[wv_index(i)](gas_opd(i))));
+        (ArrayAd<double, 1>(linear_interp[wv_index(i)](gas_opd(i))));
     else
       err_est.reference
-	(ArrayAd<double, 1>(log_linear_interp[wv_index(i)](gas_opd(i))));
+        (ArrayAd<double, 1>(log_linear_interp[wv_index(i)](gas_opd(i))));
     if(first) {
       res.resize(Spec_domain.data().rows(), err_est.rows(), err_est.number_variable());
       first = false;
@@ -264,13 +267,28 @@ ArrayAd<double, 2> LsiRt::correction_only
 //-----------------------------------------------------------------------
 
 void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
-			    int Spec_index, bool Calc_jacobian, 
-			    bool Skip_stokes_calc) const
+                            int Spec_index, bool Calc_jacobian, 
+                            bool Skip_stokes_calc) const
 {
   Range ra(Range::all());
   Array<double, 1> wn(Spec_domain.wavenumber());
+
   boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
-  const RtAtmosphere& atm = *low_stream_rt->atmosphere_ptr();
+
+  // Cast into an AtmosphereStandard because we need some AtmosphereStandard specific
+  // values below, namely to pull out the Atmosphere class
+  boost::shared_ptr<AtmosphereStandard> atm = boost::dynamic_pointer_cast<AtmosphereStandard>(low_stream_rt->atmosphere_ptr());
+
+  if(!atm) {
+      throw Exception("Failed to convert atmosphere class from LowStreamRt into AtmosphereStandard");
+  }
+
+  boost::shared_ptr<AerosolOptical> aerosol = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
+
+  if(!aerosol) {
+      throw Exception("Failed to convert aerosol class to AerosolOptical");
+  }
+
   const std::vector<double>& odb = optical_depth_boundary[Spec_index];
 
 //-----------------------------------------------------------------------
@@ -286,7 +304,7 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
 // There are a number of variables created here:
 //
 // atm_sum - 
-//   Sum of all the intermediate variables (e.g., taug, taur,
+//   Sum of all the packed variables (e.g., taug, taur,
 //   taua_i). We use this to create the average value used in the
 //   correction calculation. This is indexed by wv_index and then
 //   optical depth range.
@@ -314,15 +332,26 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
 // map, then b[x] return the bin that x falls into.
 //-----------------------------------------------------------------------
 
-  // Get first intermediate variable so we can figure out the size of
-  // the intermediate variables (e.g., number_layer x number
-  // variables). The initialize this to all 0s.
+  // Get first set of optical properties so we can figure out the size of
+  // the variables (e.g., number_layer x number variables). 
+  // Then initialize this to all 0s.
 
-  ArrayAd<double, 2> 
-    init_atm_sum_value(atm.intermediate_variable(wn(0), Spec_index).copy());
-  init_atm_sum_value = 0;
+  boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_0 = 
+      boost::dynamic_pointer_cast<OpticalPropertiesWrtRt>( atm->optical_properties(wn(0), Spec_index) );
+
+  if (!opt_prop_0) {
+      throw Exception("Could not convert OpticalProperties to OpticalPropertiesWrtRt");
+  }
+
+  int num_gas = opt_prop_0->number_gas_particles();
+  int num_aerosol = opt_prop_0->number_aerosol_particles();
+
   // Need at least 1 or else FM only mode doesn't work
-  int numvar = std::max(init_atm_sum_value.number_variable(), 1);
+  int num_sv_var = std::max(opt_prop_0->intermediate_jacobian().depth(), 1);
+
+  ArrayAd<double, 2> init_atm_sum_value(OpticalPropertiesLsi::pack(opt_prop_0));
+  init_atm_sum_value = 0;
+
   std::vector<BinMap<int> > cnt; 
   std::vector<BinMap<AutoDerivative<double> > > log_opd_sum; 
   std::vector<BinMap<ArrayAd<double, 2> > > atm_sum;
@@ -330,16 +359,16 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
     cnt.push_back(BinMap<int>(odb.begin(), odb.end(), 0));
     log_opd_sum.push_back
       (BinMap<AutoDerivative<double> >(odb.begin(), odb.end(), 
-				       AutoDerivative<double>(0.0)));
+                                       AutoDerivative<double>(0.0)));
     atm_sum.push_back(BinMap<ArrayAd<double, 2> > (odb.begin(), odb.end(), 
       boost::bind(&ArrayAd<double, 2>::copy, &init_atm_sum_value)));
   }
 
-  gas_opd.resize(wn.rows(), numvar);
+  gas_opd.resize(wn.rows(), num_sv_var);
   wv_index.resize(wn.rows());
   if(!Skip_stokes_calc) {
     if(Calc_jacobian)
-      stokes_and_jac.resize(wn.rows(), number_stokes(), numvar);
+      stokes_and_jac.resize(wn.rows(), number_stokes(), num_sv_var);
     else
       stokes_only.resize(wn.rows(), number_stokes());
   }
@@ -352,9 +381,9 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
   for(int i = 0; i < wn.rows(); ++i) {
     // We want to move this to metadata
     AutoDerivative<double> maingas_opd = 
-      atm.column_optical_depth(wn(i), Spec_index, main_gas[Spec_index]);
+      atm->column_optical_depth(wn(i), Spec_index, main_gas[Spec_index]);
     AutoDerivative<double> wv_opd = 
-      atm.column_optical_depth(wn(i), Spec_index, "H2O");
+      atm->column_optical_depth(wn(i), Spec_index, "H2O");
     gas_opd(i) = maingas_opd + wv_opd;
     // Algorithm can't actually handle gas_opd == 0. We get this
     // sometimes if we go past the end of the ABSCO tables, so just
@@ -362,7 +391,16 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
     if(gas_opd(i).value() < 1e-10)
       gas_opd(i) = 1e-10;
     wv_index(i) = (wv_opd / gas_opd(i) >= wv_threshold ? 0 : 1);
-    ArrayAd<double, 2> atmv(atm.intermediate_variable(wn(i), Spec_index));
+
+    boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop_wn = 
+      boost::dynamic_pointer_cast<OpticalPropertiesWrtRt>( atm->optical_properties(wn(i), Spec_index) );
+
+    if (!opt_prop_wn) {
+      throw Exception("Could not convert OpticalProperties to OpticalPropertiesWrtRt");
+    }
+
+    ArrayAd<double, 2> atmv(OpticalPropertiesLsi::pack(opt_prop_wn));
+
     ++cnt[wv_index(i)][gas_opd.value()(i)];
     log_opd_sum[wv_index(i)][gas_opd.value()(i)] += log(gas_opd(i));
     atm_sum[wv_index(i)][gas_opd.value()(i)].value() += atmv.value();
@@ -372,15 +410,15 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
     // ahead and collect low streams data if requested.
     if(!Skip_stokes_calc) {
       if(Calc_jacobian)
-	stokes_and_jac(i, ra) = low_stream_rt->stokes_and_jacobian_single_wn
-	  (wn(i), Spec_index);
+        stokes_and_jac(i, ra) = low_stream_rt->stokes_and_jacobian_single_wn
+          (wn(i), Spec_index);
       else
-	stokes_only(i, ra) = low_stream_rt->stokes_single_wn
-	  (wn(i), Spec_index);
+        stokes_only(i, ra) = low_stream_rt->stokes_single_wn
+          (wn(i), Spec_index);
     }
 
   // Update progress meter in log file, if we are using it.
-    if(disp)	
+    if(disp)        
       *disp += 1;
   }
 
@@ -417,46 +455,48 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
     for(int j = 0; j < (int) cnt_w.size(); ++j) {
       // We only do a correction for a bin that has data.
       if(cnt_w[j] != 0) {
-	gas_opd_avg.push_back(exp(log_opd_sum_w[j] / cnt_w[j]));
+        gas_opd_avg.push_back(exp(log_opd_sum_w[j] / cnt_w[j]));
 
-	// Get average atmosphere values
-	atm_avg_w[j].value() /= cnt_w[j];
-	atm_avg_w[j].jacobian() /= cnt_w[j];
-	
-	// And use to get high and low stream values.
-	Array<AutoDerivative<double>, 1> low = 
-	  low_stream_rt->stokes_and_jacobian_single_wn
-	  (wn_mid_closest, Spec_index, atm_avg_w[j]).to_array();
-	Array<AutoDerivative<double>, 1> high = 
-	  high_stream_rt->stokes_and_jacobian_single_wn
-	  (wn_mid_closest, Spec_index, atm_avg_w[j]).to_array();
-	// Use high and low to calculate correction.
-	Array<AutoDerivative<double>, 1> c(low.rows());
-	// We do a scaled correction for the first stokes coefficient
-	// which is the intensity. For the others, we do just a
-	// difference. Note sure exactly how much difference this
-	// makes, but it is what the original Fortran did. Note that
-	// you do *not* want to do a scaled correction for the Q and U
-	// stokes parameters because these can be negative so
-	// 1/1+err_est can produce infinity if err_est is -1 (or a
-	// large number of it is close).
-	c(0) = (fabs(high(0).value()) > 1e-15 ? 
-		(low(0) - high(0)) / high(0) : 0);
-	for(int i =1; i < c.rows(); ++i)
-	  c(i) = low(i) - high(i);
-	err_est.push_back(c);
+        // Get average atmosphere values
+        atm_avg_w[j].value() /= cnt_w[j];
+        atm_avg_w[j].jacobian() /= cnt_w[j];
+
+        boost::shared_ptr<OpticalPropertiesLsi> lsi_avg_props(new OpticalPropertiesLsi(atm_avg_w[j], wn_mid_closest, aerosol, num_gas, num_aerosol));
+        
+        // And use to get high and low stream values.
+        Array<AutoDerivative<double>, 1> low = 
+          low_stream_rt->stokes_and_jacobian_single_wn
+          (wn_mid_closest, Spec_index, lsi_avg_props).to_array();
+        Array<AutoDerivative<double>, 1> high = 
+          high_stream_rt->stokes_and_jacobian_single_wn
+          (wn_mid_closest, Spec_index, lsi_avg_props).to_array();
+        // Use high and low to calculate correction.
+        Array<AutoDerivative<double>, 1> c(low.rows());
+        // We do a scaled correction for the first stokes coefficient
+        // which is the intensity. For the others, we do just a
+        // difference. Note sure exactly how much difference this
+        // makes, but it is what the original Fortran did. Note that
+        // you do *not* want to do a scaled correction for the Q and U
+        // stokes parameters because these can be negative so
+        // 1/1+err_est can produce infinity if err_est is -1 (or a
+        // large number of it is close).
+        c(0) = (fabs(high(0).value()) > 1e-15 ? 
+                (low(0) - high(0)) / high(0) : 0);
+        for(int i =1; i < c.rows(); ++i)
+          c(i) = low(i) - high(i);
+        err_est.push_back(c);
       }
     }
     // Now use corrections values to create Linear and Log-linear
     // interpolaters.
     linear_interp.push_back
       (linear_interp_type(gas_opd_avg.begin(), gas_opd_avg.end(), 
-			  err_est.begin(), 
-			  linear_interp_type::OUT_OF_RANGE_CLIP));
+                          err_est.begin(), 
+                          linear_interp_type::OUT_OF_RANGE_CLIP));
     log_linear_interp.push_back
       (log_linear_interp_type(gas_opd_avg.begin(), gas_opd_avg.end(), 
-			      err_est.begin(),
-			      linear_interp_type::OUT_OF_RANGE_CLIP));
+                              err_est.begin(),
+                              linear_interp_type::OUT_OF_RANGE_CLIP));
   }
 }
 
