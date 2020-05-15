@@ -8,6 +8,7 @@
 #include "absorber.h"
 #include "temperature.h"
 #include "surface_temperature.h"
+#include "ground_piecewise.h"
 #include "hdf_file.h"
 #include "oss_interface.h"
 
@@ -24,7 +25,7 @@ public:
             const boost::shared_ptr<Pressure>& Pressure_,
             const boost::shared_ptr<Temperature>& Temperature_,
             const boost::shared_ptr<SurfaceTemperature>& Skin_temperature,
-            const boost::shared_ptr<Ground>& Ground_,
+            const boost::shared_ptr<GroundPiecewise>& Ground_,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
             const std::string& Ch_sel_file, float Min_extinct_cld = 999.0, int Max_chans = 20000) :
                 vmr(Vmr), pressure(Pressure_), temperature(Temperature_), skin_temperature(Skin_temperature),
@@ -43,7 +44,7 @@ public:
         }
 
         int num_vert_lev = pressure->number_level();
-        int num_surf_points = 501; /* TODO: len(/SurfaceGrid) in tape5.nc, PiecewiseEmissivity emiss.rows() in rf */
+        int num_surf_points = ground->spectral_points().value.rows();
 
         fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
                 ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
@@ -73,6 +74,7 @@ public:
 
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const {
         using namespace blitz; //TODO: Move to top when separated into implementation file
+
         ArrayAdWithUnit<double, 1> pressure_grid = pressure->pressure_grid().convert(units::mbar);
         Array<float, 1> oss_pressure(pressure_grid.value.rows());
         for (int i = 0; i < oss_pressure.rows(); i++) {
@@ -87,12 +89,27 @@ public:
             int level_index = (temperature_grid.rows() - 1) - i;
             oss_temperature(i) = static_cast<float>(temperature_grid.value.value()(level_index));
         }
+
         float oss_skin_temp = skin_temperature->surface_temperature(channel_index).convert(units::K).value.value();
+
+        Array<float, 2> vmr_gas(vmr.size(), pressure->number_level());
+        for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
+            vmr_gas(gas_index, Range::all()) = cast<float>(vmr[gas_index]->vmr_grid(*pressure.get()).value());
+        }
+
+        ArrayWithUnit<double, 1> surface_grid = ground->spectral_points().convert(units::inv_cm);
+        Array<float, 1> oss_surface_grid(cast<float>(surface_grid.value(Range::all())));
+        Array<float, 1> oss_emiss(surface_grid.value.rows());
+        for (int point_index = 0; point_index < surface_grid.value.rows(); point_index++) {
+            oss_emiss(point_index) = static_cast<float>(ground->surface_parameter(
+                    surface_grid.value(point_index), channel_index).value()(0));
+        }
+        Array<float, 1> oss_refl(1.0 - oss_emiss);
+
         /*
          * boost::shared_ptr<OssModifiedInputs> modified_inputs = boost::maked_shared<OssModifiedInputs>(
-                oss_pressure, oss_temperature, oss_skin_temp,
-            blitz::Array<float, 2>& Vmr_gas, blitz::Array<float, 1>& Emis,
-            blitz::Array<float, 1>& Refl, float Scale_cld, float Pressure_cld,
+                oss_pressure, oss_temperature, oss_skin_temp, vmr_gas, oss_emiss, oss_refl
+                float Scale_cld, float Pressure_cld,
             blitz::Array<float, 1>& Ext_cld, blitz::Array<float, 1>& Surf_grid,
             blitz::Array<float, 1>& Cld_grid, float Obs_zen_ang, float Sol_zen_ang,
             float Lat, float Surf_alt, bool Lambertian)  */
@@ -112,7 +129,7 @@ private:
     boost::shared_ptr<Pressure> pressure;
     boost::shared_ptr<Temperature> temperature;
     boost::shared_ptr<SurfaceTemperature> skin_temperature;
-    boost::shared_ptr<Ground> ground;
+    boost::shared_ptr<GroundPiecewise> ground;
     std::string sel_file;
     int sel_file_sz;
     std::string od_file;

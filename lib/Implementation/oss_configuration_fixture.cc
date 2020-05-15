@@ -90,9 +90,11 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         if (current_gas) {
             StateVector sv;
             sv.add_observer(*current_gas);
-            Array<double, 1> x(sv.observer_claimed_size());
-            x = 1e-20;
-            sv.update_state(x);
+            if (sv.observer_claimed_size() > 0) {
+                Array<double, 1> x(sv.observer_claimed_size());
+                x = cast<double>(vmr_gas(gas_index, Range::all()));
+                sv.update_state(x);
+            }
         }
         vmr.push_back(current_gas);
     }

@@ -21,7 +21,7 @@
 #include "hdf_file.h"
 #include "absorber.h"
 #include "surface_temperature.h"
-#include "ground.h"
+#include "ground_piecewise.h"
 #include "rt_atmosphere.h"
 
 
@@ -49,7 +49,7 @@ public:
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
   boost::shared_ptr<SurfaceTemperature> config_skin_temperature;
-  boost::shared_ptr<Ground> config_ground;
+  boost::shared_ptr<GroundPiecewise> config_ground;
   // boost::shared_ptr<RtAtmosphere> config_atmosphere;
 
   /*
