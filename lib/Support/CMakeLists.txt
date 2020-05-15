@@ -10,7 +10,7 @@ set(DIR_SOURCES
     default_constant.cc
     double_with_unit.cc
     environment_substitute.cc
-    float_with_unit.cc
+    float_with_unit.h
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
     fp_time.cc
@@ -29,6 +29,7 @@ set(DIR_SOURCES
     polynomial_eval.cc
     rayleigh_greek_moment.cc
     rf_gauleg.cc
+    scalar_with_unit.cc
     spectral_bound.cc
     spectral_bound.h
     spectral_domain.cc
