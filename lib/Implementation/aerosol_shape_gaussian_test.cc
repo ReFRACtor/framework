@@ -24,27 +24,22 @@ BOOST_AUTO_TEST_CASE(basic)
   coeffs = -3.28341, 1.0, 0.2;
   AerosolShapeGaussian aer_kahn_log = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Kahn", false);
   BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_expt, aer_kahn_log.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 1" << std::endl;
 
   coeffs(0) = exp(coeffs(0));
   AerosolShapeGaussian aer_kahn_lin = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Kahn", true);
   BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_expt, aer_kahn_lin.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 2" << std::endl;
 
   // Water
   Array<double, 1> water_expt;
   gaussian_expt >> water_expt;
-  std::cerr << "Here 3" << std::endl;
 
   coeffs = -3.28341, 0.75, 0.1;
   AerosolShapeGaussian aer_water_log = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Water", false);
   BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt, aer_water_log.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 4" << std::endl;
 
   coeffs(0) = exp(coeffs(0));
   AerosolShapeGaussian aer_water_lin = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Water", true);
   BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt, aer_water_lin.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 5" << std::endl;
 
   // Ice
   Array<double, 1> ice_expt;
@@ -53,12 +48,10 @@ BOOST_AUTO_TEST_CASE(basic)
   coeffs = -3.28341, 0.3, 0.04;
   AerosolShapeGaussian aer_ice_log = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Ice", false);
   BOOST_CHECK_MATRIX_CLOSE_TOL(ice_expt, aer_ice_log.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 6" << std::endl;
 
   coeffs(0) = exp(coeffs(0));
   AerosolShapeGaussian aer_ice_lin = AerosolShapeGaussian(pressure, ret_flag, coeffs, "Ice", true);
   BOOST_CHECK_MATRIX_CLOSE_TOL(ice_expt, aer_ice_lin.aerosol_extinction().value(), 1e-14);
-  std::cerr << "Here 7" << std::endl;
   
 }
 
