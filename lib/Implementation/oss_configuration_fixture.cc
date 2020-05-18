@@ -113,21 +113,12 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     retrieve_emiss = true;
 
     config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val, retrieve_emiss);
-    /*  GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                              const blitz::Array<double, 1>& point_values,
-                              const blitz::Array<bool, 1>& retrieval_flag);
-     */
-  /*
-  AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
-                     const boost::shared_ptr<Pressure>& pressurev,
-                     const boost::shared_ptr<Temperature>& temperaturev,
-                     const boost::shared_ptr<Aerosol>& aerosolv,
-                     const boost::shared_ptr<RelativeHumidity>& rhv,
-                     const boost::shared_ptr<Ground>& groundv,
-                     const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
-                     const std::vector<boost::shared_ptr<Altitude> >& altv,
-                     const boost::shared_ptr<Constant>& C);
-   */
+
+    config_obs_zen_ang = DoubleWithUnit(1.45646667, units::deg);
+    config_sol_zen_ang = DoubleWithUnit(90.0, units::deg);
+    config_lat = DoubleWithUnit(45.0, units::deg);
+    config_surf_alt = DoubleWithUnit(0.0000639999998, units::m);
+    config_lambertian = true;
 }
 
 OssConfigurationFixture::~OssConfigurationFixture() {};

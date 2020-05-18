@@ -26,13 +26,17 @@ public:
             const boost::shared_ptr<Temperature>& Temperature_,
             const boost::shared_ptr<SurfaceTemperature>& Skin_temperature,
             const boost::shared_ptr<GroundPiecewise>& Ground_,
-            const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file, const std::string& Fix_file,
-            const std::string& Ch_sel_file, float Min_extinct_cld = 999.0, int Max_chans = 20000) :
-                vmr(Vmr), pressure(Pressure_), temperature(Temperature_), skin_temperature(Skin_temperature),
-                ground(Ground_), sel_file(Sel_file), sel_file_sz(Sel_file.length()), od_file(Od_file),
-                od_file_sz(Od_file.length()),sol_file(Sol_file), sol_file_sz(Sol_file.length()),
+            DoubleWithUnit Obs_zen_ang, DoubleWithUnit Sol_zen_ang,
+            DoubleWithUnit Lat, DoubleWithUnit Surf_alt, bool Lambertian,
+            const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file,
+            const std::string& Fix_file, const std::string& Ch_sel_file, int Max_chans = 20000) :
+                vmr(Vmr), pressure(Pressure_), temperature(Temperature_),
+                skin_temperature(Skin_temperature), ground(Ground_), obs_zen_ang(Obs_zen_ang),
+                sol_zen_ang(Sol_zen_ang), lat(Lat), surf_alt(Surf_alt), lambertian(Lambertian),
+                sel_file(Sel_file), sel_file_sz(Sel_file.length()), od_file(Od_file),
+                od_file_sz(Od_file.length()), sol_file(Sol_file), sol_file_sz(Sol_file.length()),
                 fix_file(Fix_file), fix_file_sz(Fix_file.length()),ch_sel_file(Ch_sel_file),
-                ch_sel_file_sz(Ch_sel_file.length()), min_extinct_cld(Min_extinct_cld), max_chans(Max_chans) {
+                ch_sel_file_sz(Ch_sel_file.length()), max_chans(Max_chans) {
         std::vector<std::string> gas_names;
         std::vector<std::string> gas_jacobian_names;
 
@@ -45,6 +49,9 @@ public:
 
         int num_vert_lev = pressure->number_level();
         int num_surf_points = ground->spectral_points().value.rows();
+
+        /* TODO: Clouds disabled */
+        float min_extinct_cld = 999.0;
 
         fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
                 ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
@@ -106,22 +113,30 @@ public:
         }
         Array<float, 1> oss_refl(1.0 - oss_emiss);
 
-        /*
-         * boost::shared_ptr<OssModifiedInputs> modified_inputs = boost::maked_shared<OssModifiedInputs>(
-                oss_pressure, oss_temperature, oss_skin_temp, vmr_gas, oss_emiss, oss_refl
-                float Scale_cld, float Pressure_cld,
-            blitz::Array<float, 1>& Ext_cld, blitz::Array<float, 1>& Surf_grid,
-            blitz::Array<float, 1>& Cld_grid, float Obs_zen_ang, float Sol_zen_ang,
-            float Lat, float Surf_alt, bool Lambertian)  */
+        /* TODO: Clouds disabled */
+        float scale_cld = 0.0;
+        float pressure_cld = 0.0;
+        int num_cld = 2; // Note in example: "dummy space, following the setup in main_ir.f90"
+        Array<float, 1> ext_cld(num_cld);
+        ext_cld = 0;
+        Array<float, 1> cld_grid(num_cld);
+        cld_grid = 0;
 
-//
-//      Array<double, 1> rad(nchanOSS);
-//      for (int i = 0; i < nchanOSS; i++) {
-//        rad(i) = static_cast<double>(y(i));
-//      }
-//      /* TODO: Add jacobian to SpectralRange */
-//      return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
-    	return Spectrum();
+        float oss_obs_zen_ang = static_cast<float>(obs_zen_ang.convert(units::deg).value);
+        float oss_sol_zen_ang = static_cast<float>(sol_zen_ang.convert(units::deg).value);
+        float oss_lat = static_cast<float>(lat.convert(units::deg).value);
+        float oss_surf_alt = static_cast<float>(surf_alt.convert(units::m).value);
+        boost::shared_ptr<OssModifiedInputs> modified_inputs = boost::make_shared<OssModifiedInputs>(
+                oss_pressure, oss_temperature, oss_skin_temp, vmr_gas, oss_emiss, oss_refl,
+                scale_cld, pressure_cld, ext_cld, oss_surface_grid,cld_grid,
+                oss_obs_zen_ang, oss_sol_zen_ang, oss_lat, oss_surf_alt, lambertian);
+
+        boost::shared_ptr<OssModifiedOutputs> modified_outputs(oss_master->run_fwd_model(modified_inputs));
+        cached_outputs = modified_outputs;
+        Array<double, 1> rad(cast<double>(modified_outputs->y.value(Range::all())));
+
+        /* TODO: Add jacobian to SpectralRange */
+        return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
     }
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 private:
@@ -130,6 +145,12 @@ private:
     boost::shared_ptr<Temperature> temperature;
     boost::shared_ptr<SurfaceTemperature> skin_temperature;
     boost::shared_ptr<GroundPiecewise> ground;
+    DoubleWithUnit obs_zen_ang;
+    DoubleWithUnit sol_zen_ang;
+    DoubleWithUnit lat;
+    DoubleWithUnit surf_alt;
+    bool lambertian;
+
     std::string sel_file;
     int sel_file_sz;
     std::string od_file;
@@ -140,11 +161,11 @@ private:
     int fix_file_sz;
     std::string ch_sel_file;
     int ch_sel_file_sz;
-    float min_extinct_cld;
     int max_chans;
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
+    mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
     ArrayWithUnit<double, 1> center_spectral_point;
 };
 }

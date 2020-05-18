@@ -50,6 +50,12 @@ public:
   boost::shared_ptr<Temperature> config_temperature;
   boost::shared_ptr<SurfaceTemperature> config_skin_temperature;
   boost::shared_ptr<GroundPiecewise> config_ground;
+  DoubleWithUnit config_obs_zen_ang;
+  DoubleWithUnit config_sol_zen_ang;
+  DoubleWithUnit config_lat;
+  DoubleWithUnit config_surf_alt;
+  bool config_lambertian;
+
   // boost::shared_ptr<RtAtmosphere> config_atmosphere;
 
   /*

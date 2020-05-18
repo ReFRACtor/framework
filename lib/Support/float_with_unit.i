@@ -8,7 +8,7 @@
 %}
 
 %base_import(generic_object)
-%import "unit.i"
+
 %fp_shared_ptr(FullPhysics::FloatWithUnit)
 namespace FullPhysics {
 using FloatWithUnit = ScalarWithUnit<float>;
