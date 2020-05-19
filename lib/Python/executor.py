@@ -15,7 +15,8 @@ class StrategyExecutor(object):
     
     def __init__(self, config_filename=None, config_inst=None,
                  output_filename=None,
-                 strategy_filename=None, strategy_list=None):
+                 strategy_filename=None, strategy_list=None,
+                 config_args=None):
 
         if(config_filename):
             logger.debug("Loading configuration from {}".format(config_filename))
@@ -24,6 +25,7 @@ class StrategyExecutor(object):
 
         else:
             self._config_inst = config_inst
+        self.config_args = config_args
 
         if strategy_filename is not None:
             logger.debug("Loading strategy from {}".format(strategy_filename))
@@ -52,7 +54,7 @@ class StrategyExecutor(object):
             return self._config_inst
 
         logger.debug("Loading configuration")
-        config_inst = ConfigurationInterface.create_configuration_instance(self.config_module, **strategy_keywords)
+        config_inst = ConfigurationInterface.create_configuration_instance(self.config_module, config_args=self.config_args, **strategy_keywords)
         logger.debug("Configuration processing complete")
 
         return config_inst
