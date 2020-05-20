@@ -41,6 +41,10 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
   switch(sphericity_mode) {
     case 0:
         lidort_rt->rt_driver()->set_plane_parallel();
+
+        // This is important for getting agreement.
+        lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool().ts_do_sscorr_nadir(true);
+
         break;
     case 1:
         lidort_rt->rt_driver()->set_pseudo_spherical();
@@ -84,33 +88,47 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(lid_rad_jac.value()(all, 0), fo_rad_jac.value()(all, 0), 1e-6);
 
-  Array<double, 1> sv0 = state_vector->state();
+  Array<double, 1> sv0 = state_vector->state().copy();
 
   for(int jac_idx = 0; jac_idx < fo_rad_jac.jacobian().depth(); jac_idx++) {
     Array<double, 1> sv_pert = sv0.copy();
 
-    double eps;
-    if (sv_pert(jac_idx) == 0) {
-        eps = 0.01;
+    double pert_val;
+    if (sv_pert(jac_idx) < 0) {
+        // Assuming log value
+        sv_pert(jac_idx) = log(exp(sv_pert(jac_idx) * 1.01));
+        pert_val = 0.01;
     } else {
-        eps = (sv_pert(jac_idx) * 1.01) - sv_pert(jac_idx);
-    }
-    std::cerr << "eps = " << eps << std::endl;
+        double eps;
+        if (sv_pert(jac_idx) < 1) {
+            // Small values
+            eps = 0.0001;
+        } else {
+            eps = 0.01;
+        }
 
-    sv_pert(jac_idx) += eps;
+        if (sv_pert(jac_idx) == 0) {
+            sv_pert(jac_idx) = eps;
+            pert_val = eps;
+        } else {
+            sv_pert(jac_idx) += sv_pert(jac_idx) * eps;
+            pert_val = sv_pert(jac_idx) - sv0(jac_idx);
+        }
+    }
 
     state_vector->update_state(sv_pert);
 
     Array<double, 2> lidort_pert = lidort_rt->stokes(wn_arr, 0);
     Array<double, 1> lid_fd_jac(lid_rad_jac.rows());
-    lid_fd_jac = (lidort_pert(all, 0) - lid_rad_jac.value()(all, 0)) / eps;
+    lid_fd_jac = (lidort_pert(all, 0) - lid_rad_jac.value()(all, 0)) / pert_val;
 
     Array<double, 2> fo_pert = first_order_rt->stokes(wn_arr, 0);
     Array<double, 1> fo_fd_jac(fo_rad_jac.rows());
-    fo_fd_jac = (fo_pert(all, 0) - fo_rad_jac.value()(all, 0)) / eps;
+    fo_fd_jac = (fo_pert(all, 0) - fo_rad_jac.value()(all, 0)) / pert_val;
 
     if(debug_output) {
       std::cerr << jac_idx << ": " << state_vector->state_vector_name()(jac_idx); 
+      std::cerr << "\npert_val = " << pert_val << std::endl;
 
       std::cerr << std::endl << " -- lid: ";
       for(int wn_idx = 0; wn_idx < lid_rad_jac.jacobian().rows(); wn_idx++)      

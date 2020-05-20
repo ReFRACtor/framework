@@ -1,7 +1,6 @@
 #include "first_order_driver.h"
 #include "unit_test_support.h"
 
-//#include "ground.h"
 #include "spurr_brdf_types.h"
 #include "planck.h"
 #include "lidort_driver.h"
@@ -82,6 +81,10 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   switch(sphericity_mode) {
     case 0:
         lidort_driver.set_plane_parallel();
+
+        // This is important for getting agreement.
+        lidort_driver.lidort_interface()->lidort_modin().mbool().ts_do_sscorr_nadir(true);
+
         break;
     case 1:
         lidort_driver.set_pseudo_spherical();

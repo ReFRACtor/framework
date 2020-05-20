@@ -376,7 +376,7 @@ void LidortRtDriver::set_plane_parallel() const
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
 
   mboolean_inputs.ts_do_sscorr_outgoing(false);
-  mboolean_inputs.ts_do_sscorr_nadir(true);
+  mboolean_inputs.ts_do_sscorr_nadir(false);
   fboolean_inputs.ts_do_plane_parallel(true);
   mboolean_inputs.ts_do_no_azimuth(true);
 }
@@ -493,7 +493,7 @@ void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
   // Single scattering albedos for all layers and threads 
   Array<double, 1> omega( moptical_inputs.ts_omega_total_input() );
-  omega(rlay) = where(ssa > 0.999999, 0.999999, ssa);
+  omega(rlay) = where(ssa > 0.999, 0.999999, ssa);
 
   // For all layers n and threads t, Legrenre moments of
   // the phase function expansion multiplied by (2L+1);
@@ -623,7 +623,7 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
   l_deltau = where(od.value()(i1) != 0, od.jacobian() / od.value()(i1), 0.0);
 
   Array<double, 1> ssa_limit(ssa.rows());
-  ssa_limit = where(ssa.value() > 0.999999, 0.999999, ssa.value());
+  ssa_limit = where(ssa.value() > 0.999, 0.999999, ssa.value());
   l_omega  = where(ssa_limit(i1) != 0, ssa.jacobian() / ssa_limit(i1), 0.0);
 
   if(pf.is_constant())
