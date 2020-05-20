@@ -14,7 +14,6 @@ typedef const ArrayWithUnit<double, 3>& (SpectralWindowRange::*a1)(void) const;
 REGISTER_LUA_DERIVED_CLASS(SpectralWindowRange, SpectralWindow)
 .def(luabind::constructor<const ArrayWithUnit<double, 3>&>())
 .def(luabind::constructor<const ArrayWithUnit<double, 3>&, const Array<bool, 2>&>())
-.def(luabind::constructor<const ArrayWithUnit<double, 3>&, const Array<double, 2>&>())
 .def("range_array", ((a1) &SpectralWindowRange::range_array))
 .def("dispersion", ((cfunc) &SpectralWindowRange::dispersion))
 REGISTER_LUA_END()
@@ -55,25 +54,57 @@ SpectralWindowRange::SpectralWindowRange
 /// true in the array means the sample is marked as bad.
 //-----------------------------------------------------------------------
 
-template<class T>
 SpectralWindowRange::SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwindow_ranges,
-        const Array<T, 2>& Bad_sample_mask)
+                                         const Array<bool, 2>& Bad_sample_mask)
     : range_(Microwindow_ranges)
 {
     if(range_.value.depth() != 2) {
-        Exception e;
-        e << "Microwindow_ranges needs to have a depth of 2\n"
-          << "(for lower and upper bound). Found depth of " << range_.value.depth();
-        throw e;
+        Exception err;
+        err << "Microwindow_ranges needs to have a depth of 2\n"
+            << "(for lower and upper bound). Found depth of " << range_.value.depth();
+        throw err;
     }
 
-    // Initialize boolean object from any type that can be evaluated for truth
-    bad_sample_mask_.resize(Bad_sample_mask.shape());
+    if(Bad_sample_mask.rows() != range_.rows()) {
+        Exception err;
+        err << "Number of channels in bad sample mask: " << Bad_sample_mask.rows()
+            << " must match the number in the spectral window ranges: " << range_.rows();
+        throw err;
+    }
 
-    for(int i = 0; i < bad_sample_mask_.rows(); ++i) {
-        bad_sample_mask_(i, Range::all()) = where(Bad_sample_mask(i, Range::all()), true, false);
+    for(int chan_idx = 0; chan_idx < Bad_sample_mask.rows(); chan_idx++) {
+        bad_sample_mask_.push_back( Bad_sample_mask(chan_idx, Range::all()) );
     }
 }
+
+//-----------------------------------------------------------------------
+/// In addition to constructing the object using the microwindow
+/// ranges, adds a bad sample mask argument.
+///
+/// The bad sample mask is a vector sized for the number of instrument
+/// channels with each array having a true/false for each sample posistion.
+/// A value of true in the array means the sample is marked as bad.
+//-----------------------------------------------------------------------
+
+SpectralWindowRange::SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwindow_ranges,
+                                         const std::vector<Array<bool, 1> >& Bad_sample_mask)
+    : range_(Microwindow_ranges), bad_sample_mask_(Bad_sample_mask)
+{
+    if(range_.value.depth() != 2) {
+        Exception err;
+        err << "Microwindow_ranges needs to have a depth of 2\n"
+            << "(for lower and upper bound). Found depth of " << range_.value.depth();
+        throw err;
+    }
+
+    if(Bad_sample_mask.size() != range_.rows()) {
+        Exception err;
+        err << "Number of channels in bad sample mask: " << Bad_sample_mask.size()
+            << " must match the number in the spectral window ranges: " << range_.rows();
+        throw err;
+    }
+}
+
 
 // See base class for a description.
 SpectralBound SpectralWindowRange::spectral_bound() const
@@ -126,9 +157,9 @@ SpectralBound SpectralWindowRange::spectral_bound() const
 // See base class for a description.
 
 std::vector<int>
-SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int Spec_index) const
+SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int channel_index) const
 {
-    range_check(Spec_index, 0, number_spectrometer());
+    range_check(channel_index, 0, number_spectrometer());
     std::vector<int> res;
     Array<double, 1> g;
 
@@ -143,22 +174,23 @@ SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int Spec_index) co
         g.reference(Grid.wavelength(range_.units));
     }
 
-    for(int i = 0; i < g.rows(); ++i) {
+    for(int samp_idx = 0; samp_idx < g.rows(); ++samp_idx) {
         bool ok = false;
 
         // Check if sample is bad first, if it is not then check if
         // it falls within the spectral ranges
-        if(bad_sample_mask_.rows() == 0 || !bad_sample_mask_(Spec_index, i)) {
-            for(int j = 0; j < range_.value.cols(); ++j) {
-                if(g(i) >= range_.value(Spec_index, j, 0) &&
-                        g(i) <= range_.value(Spec_index, j, 1)) {
+        if(bad_sample_mask_.size() == 0 || !bad_sample_mask_[channel_index](samp_idx)) {
+            for(int win_idx = 0; win_idx < range_.value.cols(); ++win_idx) {
+                if( g(samp_idx) >= range_.value(channel_index, win_idx, 0) &&
+                    g(samp_idx) <= range_.value(channel_index, win_idx, 1)) {
+
                     ok = true;
                 }
             }
         }
 
         if(ok) {
-            res.push_back(i);
+            res.push_back(samp_idx);
         }
     }
 
@@ -182,5 +214,3 @@ void SpectralWindowRange::print(std::ostream& Os) const
                << range_.value(i, j, 0) << ", " << range_.value(i, j, 1) << ")\n";
     }
 }
-
-template SpectralWindowRange::SpectralWindowRange(const ArrayWithUnit<double, 3>&, const Array<double, 2>&);

@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(bounds_ordering)
     }
 }
 
-BOOST_AUTO_TEST_CASE(bad_sample_mask)
+BOOST_AUTO_TEST_CASE(bad_sample_mask_constructor_1)
 {
     // Use the typical OCO all band ranges
     Array<double, 3> win_ranges(3, 1, 2);
@@ -117,14 +117,14 @@ BOOST_AUTO_TEST_CASE(bad_sample_mask)
 
     // Use a double to replicate what would come from L1B file in snr_coeff,
     // No reason we couldn't just use a bool mask
-    Array<double, 2> bad_sample_mask(3, 1016);
-    bad_sample_mask = 0;
+    Array<bool, 2> bad_sample_mask(3, 1016);
+    bad_sample_mask = false;
 
     // Mark some bad samples
-    bad_sample_mask(0, Range(0,100)) = 1;
-    bad_sample_mask(1, Range(10,20)) = 1;
-    bad_sample_mask(2, Range(0, 9)) = 1;
-    bad_sample_mask(2, Range(1006, 1015)) = 1;
+    bad_sample_mask(0, Range(0,100)) = true;
+    bad_sample_mask(1, Range(10,20)) = true;
+    bad_sample_mask(2, Range(0, 9)) = true;
+    bad_sample_mask(2, Range(1006, 1015)) = true;
 
     SpectralWindowRange spec_win_range(ArrayWithUnit<double, 3>(win_ranges, Unit("um")), bad_sample_mask);
 
@@ -151,6 +151,64 @@ BOOST_AUTO_TEST_CASE(bad_sample_mask)
     }
 
 }
+
+BOOST_AUTO_TEST_CASE(bad_sample_mask_constructor_2)
+{
+    // Use the typical OCO all band ranges
+    Array<double, 3> win_ranges(3, 1, 2);
+    win_ranges =
+        0.755, 0.785,
+        1.58, 1.65,
+        2.03, 2.09;
+
+    // Use a double to replicate what would come from L1B file in snr_coeff,
+    // No reason we couldn't just use a bool mask
+    Array<bool, 1> bad_sample_mask_1(1016);
+    bad_sample_mask_1 = false;
+
+    Array<bool, 1> bad_sample_mask_2(1016);
+    bad_sample_mask_2 = false;
+
+    Array<bool, 1> bad_sample_mask_3(1016);
+    bad_sample_mask_3 = false;
+
+    // Mark some bad samples
+    bad_sample_mask_1(Range(0,100)) = true;
+    bad_sample_mask_2(Range(10,20)) = true;
+    bad_sample_mask_3(Range(0, 9)) = true;
+    bad_sample_mask_3(Range(1006, 1015)) = true;
+
+    std::vector<Array<bool, 1> > bad_sample_mask;
+    bad_sample_mask.push_back(bad_sample_mask_1);
+    bad_sample_mask.push_back(bad_sample_mask_2);
+    bad_sample_mask.push_back(bad_sample_mask_3);
+
+    SpectralWindowRange spec_win_range(ArrayWithUnit<double, 3>(win_ranges, Unit("um")), bad_sample_mask);
+
+    std::vector<int> pix = spec_win_range.grid_indexes(config_instrument->pixel_spectral_domain(0), 0);
+    BOOST_CHECK_EQUAL((int) pix.size(), 1016-101);
+    for(int i = 0; i < (int) pix.size(); i++) {
+        BOOST_CHECK_EQUAL(pix[i], i+101);
+    }
+
+    pix = spec_win_range.grid_indexes(config_instrument->pixel_spectral_domain(1), 1);
+    BOOST_CHECK_EQUAL((int) pix.size(), 1016-11);
+    for(int i = 0; i < (int) pix.size(); i++) {
+        if(i < 10) {
+            BOOST_CHECK_EQUAL(pix[i], i);
+        } else {
+            BOOST_CHECK_EQUAL(pix[i], i+11);
+        }
+    }
+
+    pix = spec_win_range.grid_indexes(config_instrument->pixel_spectral_domain(2), 2);
+    BOOST_CHECK_EQUAL((int) pix.size(), 1016-20);
+    for(int i = 0; i < (int) pix.size(); i++) {
+        BOOST_CHECK_EQUAL(pix[i], i+10);
+    }
+
+}
+
 
 BOOST_AUTO_TEST_CASE(empty_spectral_bounds)
 {
