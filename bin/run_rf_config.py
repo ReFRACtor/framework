@@ -14,6 +14,8 @@ def main():
     parser.add_argument("config_filename", metavar="FILE",
         help="File containing a configuration method returning a configuration instance")
 
+    parser.add_argument("config_args", metavar="ARG", nargs="*",
+                        help="Additional arguments passed to configuration file")
     parser.add_argument("--strategy_filename", "-s", metavar="FILE", default=None,
         help="File containing the strategy defining steps to take for the retrival, if not defined a single step will be taken")
 
@@ -41,7 +43,9 @@ def main():
 
     logging.basicConfig(level=log_level, format="%(message)s", stream=sys.stdout)
 
-    exc = StrategyExecutor(args.config_filename, output_filename=args.output_filename, strategy_filename=args.strategy_filename)
+    exc = StrategyExecutor(args.config_filename, config_args=args.config_args,
+                           output_filename=args.output_filename,
+                           strategy_filename=args.strategy_filename)
 
     if args.simulation:
         exc.execute_simulation(args.step_index)

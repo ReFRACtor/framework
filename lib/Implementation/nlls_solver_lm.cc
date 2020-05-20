@@ -54,7 +54,7 @@ NLLSSolverLM::NLLSSolverLM(
       Dx_tol_abs(dx_tol_abs), Dx_tol_rel(dx_tol_rel),
       G_tol_abs(g_tol_abs), G_tol_rel(g_tol_rel),
       Opt(opt),
-      CR_ratio(0), Lambda(0)
+      Ap()
 {
 }
 
@@ -123,6 +123,27 @@ NLLSSolver::status_t NLLSSolverLM::test_grad_abs(
 
 
 
+NLLSSolver::status_t NLLSSolverLM::test_grad(
+  const VectorXd& g, const VectorXd& x, double cost, double g_tol_rel, double g_tol_abs )
+{
+    // The values of the gradient-test tolerances determine which
+    // tests are performed.  If both tolerances are greater than
+    // zero, then both tests must be successful to have convergence.
+    //
+    status_t stat_rel = test_grad_rel(g, x, cost, g_tol_rel);
+    status_t stat_abs = test_grad_abs(g, g_tol_abs);
+    status_t status = CONTINUE;
+    if( (g_tol_abs>0) && (g_tol_rel>0) )
+      status = ((stat_rel==SUCCESS) && (stat_abs==SUCCESS))?SUCCESS:CONTINUE;
+    else if(g_tol_rel>0)
+      status = stat_rel;
+    else if(g_tol_abs>0)
+      status = stat_abs;
+    return status;
+}
+
+
+
 void NLLSSolverLM::solve()
 {
   W = MAP_BRM_ERM( P->jacobian() ).colwise().stableNorm().cwiseMax(Opt.min_W);
@@ -135,6 +156,13 @@ void NLLSSolverLM::solve()
   // to take a step should be placed here.
   //
   stat = CONTINUE;
+
+  // The trust-region radius on the right side (Opt.tr_rad) is the initial
+  // input trust-region radius option and is const.  The trust-region radius
+  // on the left side (Ap.tr_rad) is the radius that will vary throughout 
+  // the process of solving the NLLS problem.
+  //
+  Ap.tr_rad = Opt.tr_rad;
 
   do {
 
@@ -178,25 +206,9 @@ void NLLSSolverLM::solve()
     else if(stat == SUCCESS)
       break;
 
-    // The values of the gradient-test tolerances determine which
-    // tests are performed.  If both tolerances are greater than
-    // zero, then both tests must be successful to have convergence.
+    // Performs a relative and/or absolute gradient convergence test.
     //
-    // The gradient based convergence test could be done before
-    // calling iterate() just because the initial guess could be a 
-    // minimum.  However, the initial guess could also be a maximum,
-    // where gradient is also zero or very close zero.  Therefore,
-    // it is better to go through at least one iteration to see
-    // whether or not the cost function can be decreased.
-    //
-    status_t stat_rel = test_grad_rel(MAP_BV_ECV(P->gradient()), MAP_BV_ECV(P->parameters()), P->cost(), G_tol_rel);
-    status_t stat_abs = test_grad_abs(MAP_BV_ECV(P->gradient()), G_tol_abs);
-    if( (G_tol_abs>0) && (G_tol_rel>0) )
-      stat = ((stat_rel==SUCCESS) && (stat_abs==SUCCESS))?SUCCESS:CONTINUE;
-    else if(G_tol_rel>0)
-      stat = stat_rel;
-    else if(G_tol_abs>0)
-      stat = stat_abs;
+    stat = test_grad(MAP_BV_ECV(P->gradient()), MAP_BV_ECV(P->parameters()), P->cost(), G_tol_rel, G_tol_abs);
     if(stat == SUCCESS)
       break;
 
@@ -209,6 +221,10 @@ void NLLSSolverLM::solve()
   } while( (stat == CONTINUE)
            && (P->num_cost_evaluations() < max_cost_f_calls)
            && (P->message() == NLLSProblem::NONE) );
+
+  // Read the comments in the middle of the while loop above:
+  // The rest of this method should not get executed if the
+  // method iterate() cannot compute any step.
 
   // The following three lines are only for recording purpose.
   //
@@ -229,15 +245,38 @@ void NLLSSolverLM::print_state(ostream &ostr)
   std::ios oldState(nullptr);
   oldState.copyfmt(ostr);
 
-  ostr << "Solver hm_lmder;  at point # " << num_accepted_steps()
-       << ";  (|f(x)|^2)/2 = " << P->cost() << ";  status = " << status_str() << endl;
+  if(num_accepted_steps() <= 0)
+    ostr << "========== Solver hm_lmder: at current point ==========" << endl;
+  else
+    ostr << "========== Solver hm_lmder: after taking " << num_accepted_steps() << " step(s) ==========" << endl;
+  ostr << "C(x) = (|f(x)|^2)/2:        " << P->cost() << endl
+       << "status:                     " << status_str() << endl
+       << endl;
 
-  (void) ostr.precision(15);
+  (void) ostr.precision(10);
 
-  ostr << "Where the point x is" << endl << fixed << setw(25) << P->parameters() << endl;
-  ostr << "The gradient g(x) is" << endl << fixed << setw(25) << P->gradient() << endl << endl;
+  const uint16_t cw=20;
+  ostr << setw(cw) <<                "x" << setw(cw) <<         "gradient" << setw(cw) <<          "diag(W)" << endl
+       << setw(cw) << "----------------" << setw(cw) << "----------------" << setw(cw) << "----------------" << endl;
+  for(int32_t i=0; i<P->parameter_size(); i++)
+    ostr << setw(cw) << P->parameters()(i) 
+         << setw(cw) << P->gradient()(i) 
+         << setw(cw) << W(i) << endl;
+  ostr << endl;
 
   ostr.copyfmt(oldState);
+}
+
+
+
+void NLLSSolverLM::print_state_linearity(ostream &ostr)
+{
+  ostr << "========== Solver hm_lmder: step linearity params ==========" << endl
+       << "rho (actual to predicted):  " << Ap.cr_ratio << endl
+       << "lambda:                     " << Ap.lambda << endl
+       << "t.r. radius:                " << Ap.tr_rad << endl
+       << "scaled step norm:           " << Ap.scaled_step_norm << endl
+       << endl;
 }
 
 
@@ -287,22 +326,21 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
   //
   VectorXd step;
   VectorXd scaled_step;
-  double scaled_step_norm;
   if(r == n) {
     step = j_QR.solve(-MAP_BV_ECV(P->residual()));
     scaled_step = W.cwiseProduct(step);
-    scaled_step_norm = scaled_step.stableNorm();
+    Ap.scaled_step_norm = scaled_step.stableNorm();
   } else {
     HouseholderQR<MatrixXd> TRrnT_QR(TRrn.transpose());
     MatrixXd TrrT( TRrnT_QR.matrixQR().topRows(r).template triangularView<Upper>() );
     VectorXd y = TrrT.transpose().triangularView<Lower>().solve(-QTResidual.head(r));
-    scaled_step_norm = y.stableNorm();
+    Ap.scaled_step_norm = y.stableNorm();
     VectorXd y_augmented(n);
     y_augmented << y, VectorXd::Zero(n-r);
     scaled_step = j_QR.colsPermutation()*(TRrnT_QR.householderQ()*y_augmented);
     step = W.cwiseInverse().cwiseProduct(scaled_step);
   }
-  Lambda = 0;
+  Ap.lambda = 0;
 
   //  This is the loop that tries to find an acceptable step.  An
   //  acceptable step is one that significantly reduces the value
@@ -317,26 +355,26 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
     //  at this point the step is the Gauss-Newton step and its corresponding
     //  Levenberg-Marquardt parameter is zero.  
     //
-    if( scaled_step_norm > (1.0 + Opt.tr_rad_tol)*Opt.tr_rad ) {
+    if( Ap.scaled_step_norm > (1.0 + Opt.tr_rad_tol)*Ap.tr_rad ) {
 
       //  Compute an upper-bound for updating (increasing the value of)
       //  the Lev-Mar parameter.
       //
-      double upper = (TRrn.transpose()*QTResidual.head(r)).stableNorm()/Opt.tr_rad;
+      double upper = (TRrn.transpose()*QTResidual.head(r)).stableNorm()/Ap.tr_rad;
 
       //  Compute a lower-bound for updating (increasing the value of)
       //  the Lev-Mar parameter.
       //
       double lower = 0;
       if(r == n) {
-        double phi_0 = scaled_step_norm-Opt.tr_rad;
-        VectorXd temp =j_QR.colsPermutation().transpose()*(W.asDiagonal()*scaled_step/scaled_step_norm);
+        double phi_0 = Ap.scaled_step_norm-Ap.tr_rad;
+        VectorXd temp =j_QR.colsPermutation().transpose()*(W.asDiagonal()*scaled_step/Ap.scaled_step_norm);
         VectorXd z = Rrn.transpose().triangularView<Lower>().solve(temp);
-        double phi_prime_0 = -scaled_step_norm * z.squaredNorm();
+        double phi_prime_0 = -Ap.scaled_step_norm * z.squaredNorm();
         lower = -phi_0/phi_prime_0;
       }
       if( !cost_reducing_step )
-        lower = max(Lambda, lower);
+        lower = max(Ap.lambda, lower);
 
       //  At this point  (lower >= 0) && (upper > lower)  must be true.
       assert( (0 <= lower) && (lower < upper) );
@@ -348,8 +386,8 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
         //  not in the open interval (lower, upper), then use the algorithm
         //  to choose a value in the open interval.
         //
-        if( (Lambda <= lower) || (Lambda >= upper) )
-          Lambda = max(0.001*upper, sqrt(lower*upper));
+        if( (Ap.lambda <= lower) || (Ap.lambda >= upper) )
+          Ap.lambda = max(0.001*upper, sqrt(lower*upper));
 
         //  Compute a smaller step for lambda > 0.  Givens rotations form a
         //  major part of this step.
@@ -358,7 +396,7 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
         VectorXd QTRes_extra = VectorXd::Zero(n);
         MatrixXd Rnn = MatrixXd::Zero(n,n);
         Rnn.topRows(r) = Rrn;
-        MatrixXd diag = (sqrt(Lambda)*(j_QR.colsPermutation().transpose()*W)).asDiagonal();
+        MatrixXd diag = (sqrt(Ap.lambda)*(j_QR.colsPermutation().transpose()*W)).asDiagonal();
         for(uint32_t i=0; i<n; i++) {
           double cs, sn;
 
@@ -391,36 +429,36 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
         //  step and find its norm.
         //
         scaled_step = W.cwiseProduct(step);
-        scaled_step_norm = scaled_step.stableNorm();
+        Ap.scaled_step_norm = scaled_step.stableNorm();
 
         //  True if the norm of the new scaled step is almost equal to the
         //  size of the trust region radius, false otherwise.
         //
         step_in_trust_region_found = 
-          (scaled_step_norm >= ((1.0 - Opt.tr_rad_tol)*Opt.tr_rad)) &&  (scaled_step_norm <= ((1.0 + Opt.tr_rad_tol)*Opt.tr_rad));
+          (Ap.scaled_step_norm >= ((1.0 - Opt.tr_rad_tol)*Ap.tr_rad)) &&  (Ap.scaled_step_norm <= ((1.0 + Opt.tr_rad_tol)*Ap.tr_rad));
 
         //  If the step is still outside of the trust region, then update
         //  lower, lambda and upper for another iteration to find a smaller
         //  step.
         //
         if(!step_in_trust_region_found) {
-          double phi = scaled_step_norm-Opt.tr_rad;
-          VectorXd temp =j_QR.colsPermutation().transpose()*(W.asDiagonal()*scaled_step/scaled_step_norm);
+          double phi = Ap.scaled_step_norm-Ap.tr_rad;
+          VectorXd temp =j_QR.colsPermutation().transpose()*(W.asDiagonal()*scaled_step/Ap.scaled_step_norm);
           VectorXd z = Rnn.transpose().triangularView<Lower>().solve(temp);
-          double phi_prime = -scaled_step_norm * z.squaredNorm();
+          double phi_prime = -Ap.scaled_step_norm * z.squaredNorm();
 
           //  Update the upper limit of the Levenberg-Marquardt parameter
           //
           if(phi < 0) 
-            upper = Lambda;
+            upper = Ap.lambda;
 
           //  Update the lower limit of the Levenberg-Marquardt parameter.
           //
-          lower = max(lower, (Lambda-phi/phi_prime));
+          lower = max(lower, (Ap.lambda-phi/phi_prime));
 
           //  Update the Levenberg-Marquardt parameter.
           //
-          Lambda = Lambda-((phi+Opt.tr_rad)/Opt.tr_rad)*(phi/phi_prime);
+          Ap.lambda = Ap.lambda-((phi+Ap.tr_rad)/Ap.tr_rad)*(phi/phi_prime);
         }
 
       } while(!step_in_trust_region_found);
@@ -457,18 +495,18 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
     //  Compute the ratio of the actual to the predicted reduction
     //  in the value of the cost function with the current step.
     //
-    if( (next_res_norm_sqrd >= res_norm_sqrd) || (scaled_step_norm <= 0) ) {
-      CR_ratio = 0;
+    if( (next_res_norm_sqrd >= res_norm_sqrd) || (Ap.scaled_step_norm <= 0) ) {
+      Ap.cr_ratio = 0;
     } else {
-      CR_ratio = (1.0 - next_res_norm_sqrd/res_norm_sqrd) /
+      Ap.cr_ratio = (1.0 - next_res_norm_sqrd/res_norm_sqrd) /
         ( (jacob_step_norm_sqrd/res_norm_sqrd) 
-          + (2.0*Lambda*scaled_step_norm*scaled_step_norm/res_norm_sqrd) );
+          + (2.0*Ap.lambda*Ap.scaled_step_norm*Ap.scaled_step_norm/res_norm_sqrd) );
     }
 
     //  If there is no significant reduction in the value of the cost
     //  function then the step is not good.
     //
-    cost_reducing_step = (CR_ratio > Opt.cr_ratio_tol);
+    cost_reducing_step = (Ap.cr_ratio > Opt.cr_ratio_tol);
     if(!cost_reducing_step) {
 
       //  Step does not reduce the value of the cost function;
@@ -493,10 +531,18 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
       }
 
       //  The new step is good. It reduces the values of the cost
-      //  function, and there is not Jacobian evaluation error at 
-      //  the new point; therefore, save the step.
+      //  function, and there is no Jacobian evaluation error at 
+      //  the new point; therefore, save the step.  Also, record
+      //  some intermediate parameter values generated when 
+      //  computing this step.
       //
       Dx = step;
+      record_alg_params_after_step(Ap);
+
+      //  If we decide to record W, it should happen here.
+
+      if(verbose)
+        print_state_linearity();
 
     }
 
@@ -509,24 +555,24 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
     //  Update the trust-region radius.
     //
     double tr_scaling_factor = 1.0;
-    if(CR_ratio <= 0.25) {
+    if(Ap.cr_ratio <= 0.25) {
       if(next_res_norm_sqrd <= res_norm_sqrd)
         tr_scaling_factor = 0.5;
       else if(next_res_norm_sqrd >= 100*res_norm_sqrd)
         tr_scaling_factor = 0.1;
       else {
         double temp = -( jacob_step_norm_sqrd/res_norm_sqrd 
-                         + Lambda*scaled_step_norm*scaled_step_norm/res_norm_sqrd );
+                         + Ap.lambda*Ap.scaled_step_norm*Ap.scaled_step_norm/res_norm_sqrd );
         tr_scaling_factor = temp / (2.0*temp + 1.0 - next_res_norm_sqrd/res_norm_sqrd);
         if(tr_scaling_factor < 0.1)
           tr_scaling_factor = 0.1;
         else if(tr_scaling_factor > 0.5)
           tr_scaling_factor = 0.5;
       }
-      Opt.tr_rad *= tr_scaling_factor;
-    } else if( (CR_ratio > 0.25 && CR_ratio < 0.75 && Lambda <= 0) || (CR_ratio >= 0.75) ) {
+      Ap.tr_rad *= tr_scaling_factor;
+    } else if( (Ap.cr_ratio > 0.25 && Ap.cr_ratio < 0.75 && Ap.lambda <= 0) || (Ap.cr_ratio >= 0.75) ) {
       tr_scaling_factor = 2.0;
-      Opt.tr_rad = tr_scaling_factor*scaled_step_norm;
+      Ap.tr_rad = tr_scaling_factor*Ap.scaled_step_norm;
     }
 
     //  If at this point the implementor of the problem believes
