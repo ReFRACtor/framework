@@ -9,7 +9,7 @@
 
 %base_import(generic_object)
 %import "unit.i"
-%fp_shared_ptr(FullPhysics::ScalarWithUnit)
+
 namespace FullPhysics {
 template<class T> class ScalarWithUnit : public GenericObject {
 public:

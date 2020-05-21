@@ -28,7 +28,12 @@ BOOST_AUTO_TEST_CASE(radiance)
       BOOST_CHECK_CLOSE(oss_wavenumbers(i), expected_start_wavelength + (i * expected_wavelength_step), 1e-5);
   }
   Spectrum radiance = fm.radiance(0);
-  // TODO: Add checks
+  IfstreamCs expected(test_data_dir() + "expected/oss_interface/radiance_and_jacobian");
+
+  Array<double, 1> rad_expect;
+  expected >> rad_expect;
+  BOOST_CHECK_MATRIX_CLOSE_TOL(radiance.spectral_range().data(), rad_expect, 1e-5);
+
 }
 
 BOOST_AUTO_TEST_SUITE_END()
