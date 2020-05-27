@@ -37,4 +37,7 @@ Documentation
 -------------
 
 Documentation on setup and compiling of the software can be found at:
-https://github.jpl.nasa.gov/pages/refractor/documentation/
+[here](https://github.jpl.nasa.gov/pages/refractor/documentation/)
+
+Doxgyen documentation is available at
+[here](https://github.jpl.nasa.gov/pages/refractor/framework/)
