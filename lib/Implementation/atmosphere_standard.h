@@ -159,8 +159,6 @@ public:
     {
         sv_jac_size = (int) Sv.state_with_derivative().number_variable();
 
-        attach_children_to_sv(Sv);
-
         // Can handle invalidation of across channel caches when SV changes
         can_cache_channel = true;
     }
