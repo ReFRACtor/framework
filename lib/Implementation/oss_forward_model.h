@@ -74,13 +74,13 @@ public:
       char* nameGas[] = "H2O       CO2       O3        N2O       CO        CH4       O2        NH3       CCL4      F11       F12       ";
       int nInJac = 2;
       int lenJ = 2;
-      char* nameJacob[] = "H2O       NH3       i";
+      // char* nameJacob[] = "H2O       NH3       i";
       int nlevu = 65;
       int n_SfGrd = 501;
       float minExtCld = 999;
       int nchanOSS;
       float WvnOSS;
-      const int mxchan;
+      // const int mxchan;
 
     }
     virtual int num_channels() const { return 1; }

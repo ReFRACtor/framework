@@ -52,6 +52,8 @@ public:
     : data_(Data), units_(U), 
       uncertainty_(Uncertainty) {}
 
+  SpectralRange(const SpectralRange&) = default;
+  
 //-----------------------------------------------------------------------
 /// Assignment operator so internals are correctly set 
 //-----------------------------------------------------------------------

@@ -66,7 +66,7 @@ public:
 
     const blitz::Array<bool, 1>& bad_sample_mask(int channel_index) const
     {
-        if (channel_index < 0 || channel_index >= bad_sample_mask_.size()) {
+      if (channel_index < 0 || channel_index >= (int) bad_sample_mask_.size()) {
             Exception err;
             err << "Bad channel index " << channel_index << ", out of range of bad sample mask size: "
                 << bad_sample_mask_.size();

@@ -32,9 +32,8 @@ private:
 class OstreamPad : public boost::iostreams::filtering_ostream {
 public:
   OstreamPad(std::ostream& Os, const std::string& Pad)
-    : os(Os), p(Pad) { push(p); push(Os); }
+    : p(Pad) { push(p); push(Os); }
 private:
-  std::ostream& os;
   OstreamPadFilter p;
 };
 }

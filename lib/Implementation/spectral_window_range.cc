@@ -97,7 +97,7 @@ SpectralWindowRange::SpectralWindowRange(const ArrayWithUnit<double, 3>& Microwi
         throw err;
     }
 
-    if(Bad_sample_mask.size() != range_.rows()) {
+    if((int) Bad_sample_mask.size() != range_.rows()) {
         Exception err;
         err << "Number of channels in bad sample mask: " << Bad_sample_mask.size()
             << " must match the number in the spectral window ranges: " << range_.rows();
