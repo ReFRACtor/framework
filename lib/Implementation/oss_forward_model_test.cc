@@ -8,8 +8,8 @@ BOOST_FIXTURE_TEST_SUITE(oss_forward_constant, AtmosphereFixture)
 
 BOOST_AUTO_TEST_CASE(radiance)
 {
-  OssForwardModel fm(atm);
-  fm.setup_grid();
+  //  OssForwardModel fm(atm);
+  // fm.setup_grid();
   // TODO: Add checks
 }
 
