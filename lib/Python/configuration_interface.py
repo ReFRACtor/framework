@@ -42,9 +42,28 @@ class ConfigurationInterface(ABC):
         output. This is used by run_forward_model of StrategyExecutor'''
         pass
 
-    @abstractmethod
     def attach_output(self, output, step_index):
-        '''Attach output for the given step index'''
+        '''Attach output for the given step index. 
+
+        Note this typically uses the framework Output class, which allows for
+        decentralized output. This was an advantage for the OCO-2 development,
+        where the output depended on the configuration. But for a particular
+        instrument/configuration this might be overly complicated. 
+
+        Some configurations may choose to not do any attachment, and instead
+        just respond to retrieval_step_completed and/or retrieval_completed'''
+        pass
+
+    def retrieval_step_completed(self, step_index):
+        '''Called when a strategy step has been completed, so any desired
+        output can be written out, or whatever other response to a a completed
+        step is desired.'''
+        pass
+
+    def retrieval_completed(self):
+        '''Called when a retrieval has been completed, so any desired
+        output can be written out, or whatever other response to a a completed
+        retrieval is desired.'''
         pass
 
     def attach_logging(self):

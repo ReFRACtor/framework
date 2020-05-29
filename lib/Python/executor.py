@@ -156,6 +156,10 @@ class StrategyExecutor(object):
                 # No need to update covariance for single step retrievals
                 self.update_covariance(config_inst)
 
+            config_inst.retrieval_step_completed(step_index)
+            if(step_index == len(self.strategy_list) - 1):
+                config_inst.retrieval_completed()
+
             # Clean up from this step before continuing to the next step
             self.retrieval_cleanup(config_inst)
             
