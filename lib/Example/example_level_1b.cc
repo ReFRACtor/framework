@@ -42,6 +42,14 @@ int ExampleLevel1b::number_sample(int Spec_index) const
     return rad_shape(1);
 }
 
+blitz::Array<double, 1> ExampleLevel1b::spectral_variable(int channel_index) const
+{ 
+    blitz::Array<double, 1> var_vals(number_sample(channel_index));
+    blitz::firstIndex i1; 
+    var_vals = i1 + 1;
+    return var_vals;
+}
+
 SpectralRange ExampleLevel1b::radiance(int Spec_index) const
 {
     std::string rad_ds_name = group_name + "/radiance_" + boost::lexical_cast<std::string>(Spec_index + 1);

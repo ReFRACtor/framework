@@ -226,14 +226,18 @@ BOOST_AUTO_TEST_CASE(empty_spectral_bounds)
   disp_flag = true, false;
   Array<double, 1> disp_coeff(2);
 
+  Array<double, 1> disp_var(1016);
+  firstIndex i1;
+  disp_var = i1 + 1;
+
   disp_coeff = 0.757691, 1.74757e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, "ABO2", 1016, true)));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "ABO2")));
 
   disp_coeff = 1.59071, 3.62647e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, "WCO2", 1016, true)));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "WCO2")));
 
   disp_coeff = 2.04325, 4.69383e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, "SCO2", 1016, true)));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "SCO2")));
 
 
   SpectralWindowRange spec_win = SpectralWindowRange(ArrayWithUnit<double, 3>(win_range, units::sample_index));
