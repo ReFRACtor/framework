@@ -13,11 +13,13 @@ class ValueFromLevel1b(Creator):
 
     list_fields = [
         'time',
-        'sample_grid'
+        'sample_grid',
+        'spectral_variable',
     ]
 
     array_fields = [
         'stokes_coefficient',
+        'number_sample',
     ]
 
     # Fields that can become ArrayWithUnit if no channel_index supplied
@@ -174,18 +176,3 @@ class UncertaintyFromL1b(Creator):
              uncertainty_list.append(chan_uncert)
 
         return uncertainty_list
-
-class SpectralVariableFromL1b(Creator):
-
-    l1b = param.InstanceOf(rf.Level1bSampleCoefficient)
- 
-    def create(self, **kwargs):
-
-        l1b = self.l1b()
-        num_channels = l1b.number_spectrometer()
-
-        spec_vars = []
-        for chan_idx in range(num_channels):
-            spec_vars.append(l1b.spectral_variable(chan_idx))
-
-        return spec_vars
