@@ -56,9 +56,9 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
         spec_var = self.spectral_variable()
 
         if is_one_based is not None and spec_var is not None:
-            raise ParamError("is_one_based and spectral_variable cannot be defined at the same time")
+            raise param.ParamError("is_one_based and spectral_variable cannot be defined at the same time")
         elif is_one_based is not None:
-            warn("is_one_based is deprecated, instead use the sample_offset parameter")
+            warn("is_one_based is deprecated, instead use the spectral_variable parameter")
 
             if is_one_based:
                 offset = 1
@@ -68,7 +68,7 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
             spec_var = [ np.arange(0, number_samples[c]) + offset for c in range(self.num_channels()) ]
 
         elif spec_var is None:
-            raise ParamError("spectral_variable is a required parameter")
+            raise param.ParamError("spectral_variable is a required parameter")
 
         disp = []
         vec_disp = rf.vector_sample_grid()
