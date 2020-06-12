@@ -64,11 +64,11 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
          (lres_conv[0].convert_wave(u_orig) + Edge_extension).
          convert_wave(u_comp) );
 
-    DoubleWithUnit fpoint = floor(begval / sp) * sp;   
-    hres.push_back(fpoint.convert_wave(u_orig).value);
-
     // Value for for first iteration of loop
-    int smax = (int) round(fpoint.value / sp).value;
+    int smax = (int) floor(begval / sp).value;
+
+    DoubleWithUnit fpoint = smax * sp;   
+    hres.push_back(fpoint.convert_wave(u_orig).value);
 
     BOOST_FOREACH(DoubleWithUnit v, lres_conv) {
       DoubleWithUnit minusval = (v.convert_wave(u_orig) - Edge_extension).
