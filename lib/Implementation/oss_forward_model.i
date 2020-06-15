@@ -4,6 +4,13 @@
 #include "oss_forward_model.h"
 %}
 
+%import "absorber_vmr.i"
+%import "temperature.i"
+%import "surface_temperature.i"
+%import "ground_piecewise.i"
+%import "spectral_domain.i"
+%import "spectrum.i"
+
 %fp_shared_ptr(FullPhysics::OssForwardModel);
 
 namespace FullPhysics {
@@ -24,7 +31,6 @@ public:
     virtual int num_channels() const;
     virtual SpectralDomain spectral_domain(int Spec_index) const;
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
-    virtual boost::shared_ptr<StateVector> state_vector() const;
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void print(std::ostream& Os) const;
 };

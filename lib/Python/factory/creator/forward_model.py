@@ -256,3 +256,70 @@ class ForwardModel(Creator):
         fm.setup_grid()
 
         return fm
+
+class OssForwardModel(Creator):
+    absorber_vmr = param.Dict()
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    surface_temperature = param.InstanceOf(rf.SurfaceTemperature)
+    ground = param.InstanceOf(rf.GroundPiecewise)
+    # TODO: Discuss below with respect to channels
+    # observation_zenith = param.DoubleWithUnit()
+    # solar_zenith = param.DoubleWithUnit()
+    # latitude = param.DoubleWithUnit()
+    # altitude = param.DoubleWithUnit()
+    observation_zenith = param.ArrayWithUnit()
+    solar_zenith = param.ArrayWithUnit()
+    latitude = param.ArrayWithUnit()
+    altitude = param.ArrayWithUnit()
+    # TODO: some configs set this up at vector of altitude instead of ArrayWithUnit from L1B
+    # altitude = param.ObjectVector("altitude")
+    lambertian = param.Scalar(bool, default=True)
+    sel_file = param.Scalar(str)
+    od_file = param.Scalar(str)
+    sol_file = param.Scalar(str)
+    fix_file = param.Scalar(str)
+    ch_sel_file = param.Scalar(str)
+    max_chans =  param.Scalar(int, default=20000)
+
+    def create(self, **kwargs):
+        vmrs = rf.vector_absorber_vmr()
+        for gas_name in self.absorber_vmr()["gases"]:
+            # TODO: Find better way to evaluate these definitions to get an object
+            # Creators will either be AbsorberVmrMUSES, AbsorberVmrLevelScaled or AbsorberRetFlags
+            gas_config = self.absorber_vmr()[gas_name]
+            gas_config["l1b"] = self.common_store["l1b"]
+            gas_config["osp_directory"] = self.common_store["osp_directory"]
+            if "flags" in gas_config: # l1b and osp_directory needed by MUSES AbsorberRetFlags
+                gas_config["flags"]["l1b"] = self.common_store["l1b"]
+                gas_config["flags"]["osp_directory"] = self.common_store["osp_directory"]
+            else: # pressure needed by AbsorberVmrMUSES
+                gas_config["pressure"] = self.common_store["pressure"]
+
+            vmr_creator = gas_config['creator'](gas_config)
+            vmr = vmr_creator.create(gas_name)
+
+            # TODO: discuss below
+            # Attaching StateVector here to avoid "Must attach SubStateVectorObserver to state vector before checking used state."
+            # In OSS, Used state checked to see if jacobians are to be looked up for the gas
+            sv = rf.StateVector()
+            sv.add_observer(vmr)
+            if sv.observer_claimed_size > 0:
+                sv.update_state(vmr.vmr_profile)
+            vmrs.push_back(vmr)
+
+
+        # TODO: discuss support for multiple channels/bands
+        chan_idx = 0
+        obs_zen = rf.DoubleWithUnit(self.observation_zenith().value[chan_idx], self.observation_zenith().units)
+        sol_zen = rf.DoubleWithUnit(self.solar_zenith().value[chan_idx], self.solar_zenith().units)
+        latitude = rf.DoubleWithUnit(self.latitude().value[chan_idx], self.latitude().units)
+        surf_alt = rf.DoubleWithUnit(self.altitude().value[chan_idx], self.altitude().units)
+        fm = rf.OssForwardModel(vmrs, self.pressure(), self.temperature(),
+                                self.surface_temperature(), self.ground(),
+                                obs_zen, sol_zen, latitude, surf_alt, self.lambertian(),
+                                self.sel_file(), self.od_file(), self.sol_file(), self.fix_file(),
+                                self.ch_sel_file(), self.max_chans())
+
+        fm.setup_grid()
+        return fm

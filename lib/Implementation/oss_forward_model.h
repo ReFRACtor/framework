@@ -2,7 +2,6 @@
 #define OSS_FORWARD_MODEL_H
 
 #include "forward_model.h"
-#include "state_vector.h"
 #include "absorber_vmr.h"
 #include "temperature.h"
 #include "surface_temperature.h"
@@ -37,11 +36,6 @@ public:
     }
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const {
         return SpectralDomain::PREFER_WAVENUMBER;
-    }
-    virtual boost::shared_ptr<StateVector> state_vector() const 
-    {
-        /* TODO: Return appropriate state vector */
-        return boost::shared_ptr<StateVector>();
     }
 
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
