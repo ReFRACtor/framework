@@ -177,7 +177,7 @@ error_out(PyObject *m) {
 
 static PyMethodDef wrap_methods[] = {
     {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
-    {NULL, NULL}
+    {NULL, NULL, METH_NOARGS, NULL}
 };
 
 #if PY_MAJOR_VERSION >= 3

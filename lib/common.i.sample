@@ -68,7 +68,8 @@ namespace swig {
 	  if (vec) {
 	    vtype *pseq = new vtype();
 	    PyObject *iterator = PyObject_GetIter(obj);
-	    while(PyObject *item = PyIter_Next(iterator)) {
+	    PyObject *item;
+	    while((item = PyIter_Next(iterator))) {
 	      boost::shared_ptr<T> *itemp;
 	      int newmem = 0;
 	      int res = SWIG_ConvertPtrAndOwn(item, (void**) &itemp, 
