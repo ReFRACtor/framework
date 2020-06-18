@@ -13,11 +13,13 @@ class ValueFromLevel1b(Creator):
 
     list_fields = [
         'time',
-        'sample_grid'
+        'sample_grid',
+        'spectral_variable',
     ]
 
     array_fields = [
         'stokes_coefficient',
+        'number_sample',
     ]
 
     # Fields that can become ArrayWithUnit if no channel_index supplied

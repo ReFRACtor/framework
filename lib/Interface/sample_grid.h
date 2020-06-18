@@ -9,7 +9,6 @@ namespace FullPhysics {
 /****************************************************************//**
   This class calculates the wavenumber for each sample in a single
   band of an Instrument.
-
 *******************************************************************/
 class SampleGrid : virtual public StateVectorObserver,
               public Observable<SampleGrid> {

@@ -32,20 +32,14 @@ SpectralDomain UniformSpectrumSampling::spectral_domain(int spec_index,
     double highres_beg = lowres_conv[0] - offset.value;
     double highres_end = lowres_conv[lowres_conv.size()-1] + offset.value;
 
-    int nsamples = (int) floor((highres_end - highres_beg) / spacing.value) + 1;
+    int nsamples = (int) ceil((highres_end - highres_beg) / spacing.value) + 1;
 
     double extension_val = Edge_extension.convert_wave(u_grid).value;
 
     std::vector<double> highres_points;
     for(int i = 0; i < nsamples; ++i) {
         DoubleWithUnit hr_point(highres_beg + i * spacing.value, u_grid);
-
-        // Only use points that are within a edge extension amount of a low resolution point
-        auto lr_closest = std::lower_bound(lowres_conv.begin(), lowres_conv.end(), hr_point.value);
-
-        if (lr_closest != lowres_conv.end() && abs(hr_point.value - *lr_closest) <= extension_val) {
-            highres_points.push_back(hr_point.convert_wave(u_out).value);
-        }
+        highres_points.push_back(hr_point.convert_wave(u_out).value);
     }
 
     // Make sure the computed grid points are

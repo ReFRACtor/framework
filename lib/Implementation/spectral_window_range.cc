@@ -43,7 +43,6 @@ SpectralWindowRange::SpectralWindowRange
           << "(for lower and upper bound). Found depth of " << range_.value.depth();
         throw e;
     }
-
 }
 
 //-----------------------------------------------------------------------

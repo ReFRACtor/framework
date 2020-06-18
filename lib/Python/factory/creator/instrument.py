@@ -1,3 +1,5 @@
+from warnings import warn
+
 import numpy as np
 
 from .base import Creator
@@ -29,7 +31,8 @@ class IlsGratingInstrument(Creator):
 class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
     number_samples = param.Array(dims=1)
-    is_one_based = param.Scalar(bool, default=False)
+    is_one_based = param.Scalar(bool, required=False)
+    spectral_variable = param.Iterable(np.ndarray, required=False)
     num_parameters = param.Scalar(int, default=2)
     desc_band_name = param.Iterable(str)
     num_channels = param.Scalar(int)
@@ -48,13 +51,31 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
         desc_band_name = self.desc_band_name()
         number_samples = self.number_samples()
+
         is_one_based = self.is_one_based()
+        spec_var = self.spectral_variable()
+
+        if is_one_based is not None and spec_var is not None:
+            raise param.ParamError("is_one_based and spectral_variable cannot be defined at the same time")
+        elif is_one_based is not None:
+            warn("is_one_based is deprecated, instead use the spectral_variable parameter")
+
+            if is_one_based:
+                offset = 1
+            else:
+               offset = 0
+
+            spec_var = [ np.arange(0, number_samples[c]) + offset for c in range(self.num_channels()) ]
+
+        elif spec_var is None:
+            raise param.ParamError("spectral_variable is a required parameter")
 
         disp = []
         vec_disp = rf.vector_sample_grid()
         for chan_idx in range(self.num_channels()):
-            chan_disp = rf.DispersionPolynomial(disp_coeffs.value[chan_idx, :], retrieval_flag[chan_idx, :], disp_coeffs.units,
-                                                desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
+
+            chan_disp = rf.DispersionPolynomial(disp_coeffs[chan_idx, :], retrieval_flag[chan_idx, :], spec_var[chan_idx], desc_band_name[chan_idx])
+
             disp.append(chan_disp)
             vec_disp.push_back(chan_disp)
 

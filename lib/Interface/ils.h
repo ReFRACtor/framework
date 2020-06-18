@@ -73,7 +73,7 @@ public:
   virtual boost::shared_ptr<Ils> clone() const = 0;
 
 //-----------------------------------------------------------------------
-/// This is the pixel grid for each pixel.
+/// This is the spectral grid for each instrument sample point.
 //-----------------------------------------------------------------------
 
   virtual SpectralDomain pixel_grid() const = 0;

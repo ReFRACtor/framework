@@ -11,7 +11,10 @@ BOOST_AUTO_TEST_CASE(basic)
   flag = true, false, true;
   Array<double, 1> coeff(3);
   coeff = 1,2,3;
-  DispersionPolynomial d(coeff, flag, units::inv_cm, "Test band", 10, true);
+  Array<double, 1> var(10);
+  firstIndex i1;
+  var = i1 + 1;
+  DispersionPolynomial d(coeff, flag, units::inv_cm, var, "Test band");
   ArrayAd<double, 1> res(d.pixel_grid().data_ad());
 }
 
@@ -23,7 +26,10 @@ BOOST_AUTO_TEST_CASE(gosat)
   flag = true, true;
   Array<double, 1> coeff(2);
   coeff = 1.28695614e+04, 1.99492886e-01;
-  DispersionPolynomial d(coeff, flag, units::inv_cm, "Test band", 1805, true);
+  Array<double, 1> var(1805);
+  firstIndex i1;
+  var = i1 + 1;
+  DispersionPolynomial d(coeff, flag, units::inv_cm, var, "Test band");
   StateVector sv;
   sv.add_observer(d);
   Array<double,1> x(2);

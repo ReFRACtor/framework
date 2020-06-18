@@ -31,7 +31,7 @@ public:
    const std::vector<int>& Pixel_list) const = 0;
   virtual boost::shared_ptr<Ils> clone() const = 0;
 
-  // Needed for directors, can not use %python_attribute here or else there will
+  // When implementing directors can not use %python_attribute here or else there will
   // be missing symbol problems in the director
   virtual SpectralDomain pixel_grid() const = 0;
   virtual DoubleWithUnit high_res_extension() const = 0;

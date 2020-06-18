@@ -19,7 +19,9 @@ class PerChannelMixin(object):
 class SpectralWindowRange(Creator):
     
     window_ranges = param.ArrayWithUnit(dims=3)
-    bad_sample_mask = param.Array(dims=2, required=False)
+    # Mask of instrument samples that should not be included in spectral regions
+    bad_sample_mask = param.Choice(param.Array(dims=2),
+                                   param.Iterable(np.ndarray), required=False)
     
     def create(self, **kwargs):
 
@@ -44,10 +46,16 @@ class MicroWindowRanges(Creator):
     # Defaults to full_ranges if not supplied or equal to None
     micro_windows = param.Choice(param.ArrayWithUnit(dims=2), param.NoneValue(), required=False)
 
+    # Mask of instrument samples that should not be included in spectral regions
+    bad_sample_mask = param.Choice(param.Array(dims=2),
+                                   param.Iterable(np.ndarray), required=False)
+
     def create(self, **kwargs):
 
         full_ranges = self.full_ranges()
         micro_windows = self.micro_windows()
+        bad_sample_mask = self.bad_sample_mask()
+
         num_channels = full_ranges.rows
 
         # If micro_windows are not supplied use the full_ranges as the
@@ -83,7 +91,12 @@ class MicroWindowRanges(Creator):
                 win_ranges[chan_idx, mw_idx, :] = mw_range
 
         # Assign to configuration
-        return rf.SpectralWindowRange(rf.ArrayWithUnit_double_3(win_ranges, full_ranges.units))
+        win_ranges = rf.ArrayWithUnit(win_ranges, full_ranges.units)
+
+        if bad_sample_mask is not None:
+            return rf.SpectralWindowRange(win_ranges, bad_sample_mask)
+        else:
+            return rf.SpectralWindowRange(win_ranges)
 
 class SpectrumSamplingBase(Creator, PerChannelMixin):
 

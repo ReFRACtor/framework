@@ -968,18 +968,26 @@ end
 
 function ConfigCommon.dispersion_polynomial:create()
    self.config.number_pixel = self:number_pixel()
-
+   
    local i
    local res = {}
    for i=1,self.config.number_pixel:rows() do
+      local var_vals = Blitz_double_array_1d(self.config.number_pixel(i - 1))
+
+      for idx = 0, self.config.number_pixel(i - 1)-1 do
+         if (self.is_one_based) then
+            var_vals:set(idx, idx + 1)
+         else
+            var_vals:set(idx, idx)
+         end
+      end
+ 
       local disp_coeff = self:coefficients(i)
       local disp_units = self:units(i)
       local disp_flag = self:retrieval_flag(i)
       local desc_band_name = self.config.common.desc_band_name:value(i-1)
       res[i] = DispersionPolynomial(disp_coeff, disp_flag, disp_units,
-                                    desc_band_name, 
-                                    self.config.number_pixel(i - 1),
-                                    self.is_one_based)
+                                    var_vals, desc_band_name)
    end
    return res
 end

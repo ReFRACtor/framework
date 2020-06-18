@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 %include "fp_common.i"
 
 %{
@@ -18,10 +15,10 @@ namespace FullPhysics {
 
 class Level1bSampleCoefficient : public Level1b {
 public:
-  Level1bSampleCoefficient(const bool One_based = true);
   virtual ~Level1bSampleCoefficient();
-  virtual int number_sample(int Spec_index) const = 0;
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
-  virtual SpectralDomain sample_grid(int Spec_index) const;
+  virtual int number_sample(int channel_index) const = 0;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int channel_index) const = 0;
+  virtual blitz::Array<double, 1> spectral_variable(int channel_index) const = 0;
+  virtual SpectralDomain sample_grid(int channel_index) const;
 };
 }

@@ -16,8 +16,11 @@ BOOST_AUTO_TEST_CASE(basic)
   flag = true, false;
   Array<double, 1> coeff(2);
   coeff = 1.28695614e+04, 1.99492886e-01;
+  Array<double, 1> var(1805);
+  firstIndex i1;
+  var = i1 + 1;
   boost::shared_ptr<DispersionPolynomial>
-    d(new DispersionPolynomial(coeff, flag, units::inv_cm, "Test band", 1805, true));
+    d(new DispersionPolynomial(coeff, flag, units::inv_cm, var, "Test band"));
   HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
   boost::shared_ptr<IlsTableLinear> ils_func(new IlsTableLinear(hf, 0, "A-Band", "o2"));
   IlsGrating ils(d, ils_func);

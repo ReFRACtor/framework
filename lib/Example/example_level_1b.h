@@ -49,11 +49,13 @@ public:
     virtual DoubleWithUnit relative_velocity(int i) const 
         { return read_scalar_with_unit(group_name + "/relative_velocity", i, units::deg); }
 
+    virtual Time time(int i) const
+        { return Time::time_pgs(read_scalar(group_name + "/time_tai93", i)); }
+
     virtual ArrayWithUnit<double, 1> spectral_coefficient(int i) const
         { return read_array_with_unit(group_name + "/spectral_coefficient", i, units::micron); }
 
-    virtual Time time(int i) const
-        { return Time::time_pgs(read_scalar(group_name + "/time_tai93", i)); }
+    virtual blitz::Array<double, 1> spectral_variable(int channel_index) const;
 
     virtual void print(std::ostream& Os) const { Os << "ExampleL1b"; };
 
