@@ -27,9 +27,9 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
 : SubStateVectorArray<SampleGrid>(Coeff, Used_flag),
-  variable_values_(Var_values),
   coeff_unit(Coeff_unit),
   band_name_(Band_name),
+  variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
   initialize();
@@ -47,9 +47,9 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
 : SubStateVectorArray<SampleGrid>(Coeff, Used_flag),
-  variable_values_(Var_values),
   coeff_unit(Coeff_unit_name),
   band_name_(Band_name),
+  variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
   initialize();
@@ -64,9 +64,9 @@ DispersionPolynomial::DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
 : SubStateVectorArray<SampleGrid>(Coeff.value, Used_flag),
-  variable_values_(Var_values),
   coeff_unit(Coeff.units),
   band_name_(Band_name),
+  variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
   initialize();
