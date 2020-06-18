@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(serialization)
     return;
   boost::shared_ptr<Unit> u = boost::make_shared<Unit>("m / (kg s)^2");
   std::string d = serialize_write_string(u);
-  if(true)
+  if(false)
     std::cerr << d;
   boost::shared_ptr<Unit> ur = serialize_read_string<Unit>(d);
   BOOST_CHECK_EQUAL(*u,*ur);
