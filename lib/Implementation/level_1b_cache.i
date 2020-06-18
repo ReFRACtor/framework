@@ -13,6 +13,19 @@ namespace FullPhysics {
 class Level1bCache : public Level1b {
 public:
   Level1bCache(const Level1b& L1_in);
+  Level1bCache(const blitz::Array<double, 1>& Lat,
+	       const blitz::Array<double, 1>& Lon,
+	       const blitz::Array<double, 1>& Sounding_zenith,	       
+	       const blitz::Array<double, 1>& Sounding_azimuth,
+	       const blitz::Array<double, 1>& Solar_zenith,	       
+	       const blitz::Array<double, 1>& Solar_azimuth,
+	       const blitz::Array<double, 1>& Altitude,
+	       const blitz::Array<double, 1>& Relative_velocity,
+	       const blitz::Array<double, 2>& Stokes_coeff,
+	       const std::vector<boost::shared_ptr<SpectralDomain> >& Samp_grid,
+	       const std::vector<boost::shared_ptr<Time> >& Tm,
+	       const std::vector<boost::shared_ptr<SpectralRange> >& Rad);
+  virtual int number_spectrometer() const;
   virtual DoubleWithUnit latitude(int i) const;
   void set_latitude(int i, const DoubleWithUnit& V);
   virtual DoubleWithUnit longitude(int i) const;
