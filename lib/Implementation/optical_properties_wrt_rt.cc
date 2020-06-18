@@ -169,13 +169,13 @@ ArrayAd<double, 1> OpticalPropertiesWrtRt::gas_optical_depth_per_layer() const
 
 const std::vector<ArrayAd<double, 3> > OpticalPropertiesWrtRt::aerosol_phase_function_moments_per_particle(int num_moments, int num_scattering) const
 {
-    std::vector<ArrayAd<double, 3> > aerosol_pf_moments = OpticalPropertiesImpBase::aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
+  std::vector<ArrayAd<double, 3> > aerosol_pf_moments = OpticalPropertiesImpBase::aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
-    for(int part_idx = 0; part_idx < aerosol_pf_moments.size(); part_idx++) {
-        if (!aerosol_pf_moments[part_idx].is_constant()) {
-            throw Exception("Phase function moments with a jacobian component are not handled at this time");
-        }
+  for(int part_idx = 0; part_idx < (int) aerosol_pf_moments.size();
+      part_idx++) {
+    if (!aerosol_pf_moments[part_idx].is_constant()) {
+      throw Exception("Phase function moments with a jacobian component are not handled at this time");
     }
-
-    return aerosol_pf_moments;
+  }
+  return aerosol_pf_moments;
 }

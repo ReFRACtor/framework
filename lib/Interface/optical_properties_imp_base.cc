@@ -326,7 +326,8 @@ const std::vector<ArrayAd<double, 3> > OpticalPropertiesImpBase::aerosol_phase_f
         aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper_->phase_function_moments_per_particle(num_moments, num_scattering); 
 
         // Double check that the sizes of the value computed is consistent with other aerosol values
-        if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
+        if (aerosol_extinction_optical_depth_per_particle_.cols() !=
+	    (int) aerosol_phase_function_moments_per_particle_.size()) {
             throw Exception("Aerosol extinction optical depth and aerosol phase function moments have inconsistent number of particles");
         }
 
@@ -351,13 +352,17 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     Range ra = Range::all();
 
-    if(number_aerosol_particles() > 0 && (aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_)) {
+    if(number_aerosol_particles() > 0 &&
+       (aerosol_phase_function_moments_portion_.rows() == 0 ||
+	cached_num_scattering != num_moments ||
+	(cached_num_scattering != num_scattering &&
+	 aerosol_phase_function_helper_))) {
         std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
         // Gather the maximum number of moments and scattering dimensions
 
         int max_num_moms = 0; int max_num_scatt = 0; int num_var = 0;
-        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+        for(int part_idx = 0; part_idx < (int) aer_pf_per_pert.size(); part_idx++) {
             max_num_moms = std::max(max_num_moms, aer_pf_per_pert[part_idx].rows());
             max_num_scatt = std::max(max_num_scatt, aer_pf_per_pert[part_idx].depth());
 
@@ -380,7 +385,7 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
             aerosol_phase_function_moments_portion_.jacobian() = 0;
         }
 
-        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+        for(int part_idx = 0; part_idx < (int) aer_pf_per_pert.size(); part_idx++) {
             ArrayAd<double, 3> pf_mom_part(aer_pf_per_pert[part_idx]);
 
             Range r_mom = Range(0, pf_mom_part.rows() - 1);
@@ -545,7 +550,7 @@ const std::vector<ArrayAd<double, 3> > AerosolPhaseFunctionPassThruHelper::phase
         Range ra = Range::all();
 
         std::vector<ArrayAd<double, 3> > aerosol_pf_moments_out;
-        for(int p_idx = 0; p_idx < aerosol_pf_moments_in.size(); ++p_idx) {
+        for(int p_idx = 0; p_idx < (int) aerosol_pf_moments_in.size(); ++p_idx) {
             ArrayAd<double, 3> source_pf(aerosol_pf_moments_in[p_idx]);
 
             int nmom_out;

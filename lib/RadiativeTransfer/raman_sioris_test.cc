@@ -22,8 +22,8 @@ BOOST_AUTO_TEST_CASE(offline_data)
     // that was originally provided by Xiong Liu
     HdfFile offline_data(test_data_dir() + "/in/raman_sioris/offline_test_data.h5");
 
-    int nw = offline_data.read_field<int>("/nw");
-    int nz = offline_data.read_field<int>("/nz");
+    int UNUSED(nw) = offline_data.read_field<int>("/nw");
+    int UNUSED(nz) = offline_data.read_field<int>("/nz");
     double sza = offline_data.read_field<double>("/sza");
     double vza = offline_data.read_field<double>("/vza");
     double sca = offline_data.read_field<double>("/sca");

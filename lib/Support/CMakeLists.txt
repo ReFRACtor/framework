@@ -4,6 +4,7 @@ set(DIR_SOURCES
     array_with_unit.cc
     boost/backtrace.cpp
     blitz_array_serialize_support.cc
+    boost_rational_serialize_support.cc
     generic_object.cc
     constant.cc
     constants.F90

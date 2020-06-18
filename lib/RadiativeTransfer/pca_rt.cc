@@ -77,7 +77,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 
     // Compute values for each bin
     pca_bin_solvers.clear();
-    for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+    for (int bin_idx = 0; bin_idx < (int) bins.size(); bin_idx++) {
 
         // Skip empty bins
         if (num_bin_points(bin_idx) == 0) {

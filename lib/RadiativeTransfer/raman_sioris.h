@@ -46,7 +46,7 @@ public:
     virtual std::string sub_state_identifier() const 
       { return "raman_sioris_" + boost::lexical_cast<std::string>(channel_index_ + 1); }
 
-    virtual std::string state_vector_name_i(int i) const
+  virtual std::string state_vector_name_i(int UNUSED(i)) const
       { return "Raman Sioris Scale Factor, Channel #" + boost::lexical_cast<std::string>(channel_index_ + 1); }
 
     virtual void print(std::ostream& Os) const;

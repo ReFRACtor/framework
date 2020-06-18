@@ -13,7 +13,8 @@
 #include <boost/serialization/map.hpp>
 // At boost 1.64, the header file to include for boost::array changed
 // names. Pretty annoying, but select the right file to include
-#ifdef HAVE_BOOST_SERIALIZATION_BOOST_ARRAY_HPP
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 106400
 #include <boost/serialization/boost_array.hpp>
 #else
 #include <boost/serialization/array.hpp>

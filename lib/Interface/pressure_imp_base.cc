@@ -8,7 +8,8 @@ using namespace FullPhysics;
 SUB_STATE_VECTOR_ARRAY_SERIALIZE(Pressure, SubStateVectorArrayPressure);
 
 template<class Archive>
-void PressureImpBase::serialize(Archive & ar, const unsigned int version)
+void PressureImpBase::serialize(Archive & ar,
+				const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(Pressure);
   FP_BASE(PressureImpBase, Pressure);

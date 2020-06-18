@@ -304,7 +304,7 @@ inline void iter_to_vector_of_arrays(PyObject *sequence, std::vector<blitz::Arra
   }
 
   int iter_index = 0;
-  while (item = PyIter_Next(iterator)) {
+  while ((item = PyIter_Next(iterator))) {
     PythonObject numpy;
     numpy.obj = to_numpy<TYPE>(item);
     if(!numpy.obj) {

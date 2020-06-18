@@ -25,6 +25,15 @@ Level1bCache::Level1bCache(const Level1b& L1_in)
 
 //-----------------------------------------------------------------------
 /// Constructor taking data.
+///
+/// Note we leave off the units, since this gets called from python
+/// where passing an array without units is easier. The angles are all
+/// degrees. The altitude should be meters and relative velocity m/s.
+/// Certainly the degrees coming in are unlikely to be anything other
+/// than deg. I suppose the altitude and relative velocity could be in
+/// other units - if this becomes an issue we can add in the units to
+/// the argument list. We leave the units on for the Samp_grid and
+/// Rad, these tend to vary so we really do want the units here.
 //-----------------------------------------------------------------------
 
 Level1bCache::Level1bCache
@@ -56,14 +65,14 @@ Level1bCache::Level1bCache
     throw Exception("All the arguments need to be the same size");
 
   for(int i = 0; i < Lat.rows(); ++i) {
-    lat.push_back(Lat(i));
-    lon.push_back(Lon(i));
-    szen.push_back(Sounding_zenith(i));
-    sazm.push_back(Sounding_azimuth(i));
-    solzen.push_back(Solar_zenith(i));
-    solazm.push_back(Solar_azimuth(i));
-    alt.push_back(Altitude(i));
-    rvel.push_back(Relative_velocity(i));
+    lat.push_back(DoubleWithUnit(Lat(i), "deg"));
+    lon.push_back(DoubleWithUnit(Lon(i), "deg"));
+    szen.push_back(DoubleWithUnit(Sounding_zenith(i), "deg"));
+    sazm.push_back(DoubleWithUnit(Sounding_azimuth(i), "deg"));
+    solzen.push_back(DoubleWithUnit(Solar_zenith(i), "deg"));
+    solazm.push_back(DoubleWithUnit(Solar_azimuth(i), "deg"));
+    alt.push_back(DoubleWithUnit(Altitude(i), "m"));
+    rvel.push_back(DoubleWithUnit(Relative_velocity(i), "m/s"));
     blitz::Array<double, 1> stk(Stokes_coeff(i, ra));
     stk_coeff.push_back(stk.copy());
     samp_grid.push_back(Samp_grid[i]->clone());

@@ -14,7 +14,8 @@ GroundPiecewise::GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points
 
 
 /// Compute surface parameter array used by radiative transfer
-ArrayAd<double, 1> GroundPiecewise::surface_parameter(const double wn, const int spec_index) const
+ArrayAd<double, 1> GroundPiecewise::surface_parameter
+(const double wn, const int UNUSED(spec_index)) const
 {
     AutoDerivative<double> wn_value = value_at_point(DoubleWithUnit(wn, units::inv_cm));
     ArrayAd<double, 1> spars(1, wn_value.number_variable());

@@ -1,6 +1,8 @@
 #include "unit.h"
 #include "fp_exception.h"
 #include <cmath>
+#include "fp_serialize_support.h"
+#include "boost_rational_serialize_support.h"
 using namespace FullPhysics;
 
 #include <boost/spirit/include/qi.hpp>
@@ -12,6 +14,19 @@ using namespace FullPhysics;
 // phoenix_bind.hpp in older versions of boost.
 // #include <boost/spirit/home/phoenix/bind/bind_function.hpp>
 #include <boost/spirit/include/phoenix_bind.hpp>
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void Unit::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(Unit);
+  ar & FP_NVP_(base_unit_powers) & FP_NVP_(conversion_to_si)
+    & FP_NVP_(name);
+}
+
+FP_IMPLEMENT(Unit);
+#endif
 
 //-----------------------------------------------------------------------
 /// Create a unit. This takes string giving the name (e.g., "m",

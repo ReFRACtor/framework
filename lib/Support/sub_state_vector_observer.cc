@@ -6,7 +6,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void SubStateVectorObserver::serialize(Archive & ar, const unsigned int version)
+void SubStateVectorObserver::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(StateVectorObserver);
   FP_BASE(SubStateVectorObserver, StateVectorObserver);

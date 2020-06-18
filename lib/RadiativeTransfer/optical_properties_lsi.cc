@@ -12,7 +12,12 @@ using namespace blitz;
 /// gas optical depth is available.
 //-----------------------------------------------------------------------
 
-OpticalPropertiesLsi::OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_properties, double wavenumber, const boost::shared_ptr<AerosolOptical>& aerosol, int num_gas, int num_aerosol)
+OpticalPropertiesLsi::OpticalPropertiesLsi
+(const ArrayAd<double, 2>& packed_properties,
+ double wavenumber,
+ const boost::shared_ptr<AerosolOptical>& aerosol,
+ int UNUSED(num_gas),
+ int num_aerosol)
 : OpticalPropertiesImpBase()
 {
     Range ra = Range::all();
