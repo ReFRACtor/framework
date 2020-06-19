@@ -23,55 +23,55 @@ namespace FullPhysics {
 
 class StateVector: public Observable<StateVector> {
 public:
-    virtual ~StateVector();
-    StateVector();
+  StateVector();
     
-    virtual void add_observer(Observer<StateVector>& Obs);
-    virtual void remove_observer(Observer<StateVector>& Obs);
+  virtual void add_observer(Observer<StateVector>& Obs);
+  virtual void remove_observer(Observer<StateVector>& Obs);
 
-    %python_attribute(state, blitz::Array<double, 1>);
-    %python_attribute(state_with_derivative, ArrayAd<double, 1>);
-    %python_attribute(state_covariance, blitz::Array<double, 2>);
+  %python_attribute(state, blitz::Array<double, 1>);
+  %python_attribute(state_with_derivative, ArrayAd<double, 1>);
+  %python_attribute(state_covariance, blitz::Array<double, 2>);
+  
 
-    void update_state(const blitz::Array<double, 1>& X);
-    void update_state(const blitz::Array<double, 1>& X,
-		      const blitz::Array<double, 2>& Cov);
-    void update_state(const ArrayAd<double, 1>& X,
-		      const blitz::Array<double, 2>& Cov);
+  void update_state(const blitz::Array<double, 1>& X);
+  void update_state(const blitz::Array<double, 1>& X,
+		    const blitz::Array<double, 2>& Cov);
+  void update_state(const ArrayAd<double, 1>& X,
+		    const blitz::Array<double, 2>& Cov);
     
-    %python_attribute(used_flag, blitz::Array<bool, 1>);
-    %python_attribute_with_set(observer_claimed_size, int);
+  %python_attribute(used_flag, blitz::Array<bool, 1>);
+  %python_attribute_with_set(observer_claimed_size, int);
 
-    std::string print_to_string() const;
+  std::string print_to_string() const;
 
-    %extend {
-        std::vector<std::string> _state_vector_name() const 
-        {
-            blitz::Array<std::string, 1> sn($self->state_vector_name());
-            std::vector<std::string> res;
-            for(int i = 0; i < sn.extent(blitz::firstDim); ++i) {
-                res.push_back(sn(i));
-            }
-            return res;
-        }
-
-        // Support shared pointers from other languages for add/remove observer
-        void add_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
-            $self->add_observer(*Obs);
-        }
-
-        void remove_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
-            $self->remove_observer(*Obs);
-        }
-
+  %extend {
+    std::vector<std::string> _state_vector_name() const 
+    {
+      blitz::Array<std::string, 1> sn($self->state_vector_name());
+      std::vector<std::string> res;
+      for(int i = 0; i < sn.extent(blitz::firstDim); ++i) {
+	res.push_back(sn(i));
+      }
+      return res;
     }
+
+    // Support shared pointers from other languages for add/remove observer
+    void add_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
+      $self->add_observer(*Obs);
+    }
+
+    void remove_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
+      $self->remove_observer(*Obs);
+    }
+
+  }
 
     %pythoncode {
         @property
         def state_vector_name(self):
             return self._state_vector_name()
     }
-
+  %pickle_serialization();
 };
 }
 

@@ -60,6 +60,9 @@ private:
   // exactly the same lifetime as the containing object.
   boost::shared_ptr<Observer> this_obj;
   friend class Observable<T>;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -221,7 +224,23 @@ protected:
   }
   std::list<boost::weak_ptr<Observer<T> > > olist;
   std::vector<boost::shared_ptr<Observer<T> > > ref_list;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };  
 }
+
+#define FP_EXPORT_OBSERVER_KEY(NAME) \
+namespace FullPhysics { \
+typedef Observer<NAME> Observer ## NAME; \
+typedef Observable<NAME> Observable ## NAME; \
+} \
+FP_EXPORT_KEY(Observer ## NAME); \
+FP_EXPORT_KEY(Observable ## NAME);
+
 #endif
 

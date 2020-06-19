@@ -48,4 +48,5 @@ using boost::archive::polymorphic_oarchive;
 #endif
 
 #include "blitz_array_serialize_support.h"
+#include "observer_serialize_support.h"
 #endif

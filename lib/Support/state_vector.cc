@@ -2,9 +2,25 @@
 #include "spectrum_effect.h"
 #include "fp_exception.h"
 #include <boost/lexical_cast.hpp>
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void StateVector::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableStateVector)
+    & FP_NVP_(x) & FP_NVP_(cov) & FP_NVP(pstart);
+  // Not 100% sure we want to keep pstart. For now we'll do that, but
+  // may need to revisit this. Might want it reset to 1?
+}
+
+FP_IMPLEMENT(StateVector);
+FP_OBSERVER_SERIALIZE(StateVector);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

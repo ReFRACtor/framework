@@ -96,4 +96,5 @@ private:
 }
 
 FP_EXPORT_KEY(Pressure);
+FP_EXPORT_OBSERVER_KEY(Pressure);
 #endif

@@ -29,4 +29,16 @@ BOOST_AUTO_TEST_CASE(basic_test)
   BOOST_CHECK_EQUAL((pt - pt2).total_microseconds(), 0);
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  boost::shared_ptr<Time> tm = boost::make_shared<Time>(Time::time_unix(100.0));
+  std::string d = serialize_write_string(tm);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<Time> tmr = serialize_read_string<Time>(d);
+  BOOST_CHECK_CLOSE(tmr->unix_time(), 100.0, 1e-6);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

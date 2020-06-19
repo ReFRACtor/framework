@@ -1,5 +1,22 @@
 #include "level_1b_cache.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void Level1bCache::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Level1b)
+    & FP_NVP(lat) & FP_NVP(lon) & FP_NVP(szen) & FP_NVP(sazm)
+    & FP_NVP(solzen) & FP_NVP(solazm) & FP_NVP(alt) & FP_NVP(rvel)
+    & FP_NVP(stk_coeff);
+  ar & FP_NVP(tm);
+  // Need remaining fields samp_grid, tm, rad
+}
+
+FP_IMPLEMENT(Level1bCache);
+#endif
 
 //-----------------------------------------------------------------------
 /// Constructor.

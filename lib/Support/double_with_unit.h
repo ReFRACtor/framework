@@ -20,6 +20,7 @@ public:
     : value(V), units(U) {}
   DoubleWithUnit(double V)
     : value(V), units(units::dimensionless) {}
+  virtual ~DoubleWithUnit() {}
   double value;
   Unit units;
 
@@ -64,6 +65,10 @@ public:
   void print(std::ostream& Os) const 
   { Os << value << " " << units.name(); }
 
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 //-----------------------------------------------------------------------
@@ -82,7 +87,6 @@ inline bool operator==(const FullPhysics::DoubleWithUnit& A, const FullPhysics::
 
 
 }
-
 
 //-----------------------------------------------------------------------
 /// Math functions.
@@ -115,5 +119,7 @@ namespace std {
   }
 
 }
+
+FP_EXPORT_KEY(DoubleWithUnit);
 
 #endif

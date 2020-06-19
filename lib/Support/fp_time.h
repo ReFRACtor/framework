@@ -107,6 +107,9 @@ public:
 
 private:
   double unix_time_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 //-----------------------------------------------------------------------
@@ -135,4 +138,7 @@ inline bool operator==(const Time& T1, const Time& T2)
 { return T1.unix_time() ==  T2.unix_time(); }
 
 }
+
+FP_EXPORT_KEY(Time);
+
 #endif

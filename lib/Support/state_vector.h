@@ -13,7 +13,8 @@ namespace FullPhysics {
   vector has updated. Those objects then update their internal state
   to account for the new state vector.
 *******************************************************************/
-class StateVector : public Printable<StateVector>, public Observable<StateVector> {
+class StateVector : public Printable<StateVector>,
+		    public Observable<StateVector> {
 public:
   StateVector()
     : pstart(0)
@@ -53,8 +54,10 @@ public:
   const blitz::Array<double, 2>& state_covariance() const {return cov_;}
 
   void update_state(const blitz::Array<double, 1>& X);
-  void update_state(const blitz::Array<double, 1>& X, const blitz::Array<double, 2>& Cov);
-  void update_state(const ArrayAd<double, 1>& X, const blitz::Array<double, 2>& Cov);
+  void update_state(const blitz::Array<double, 1>& X,
+		    const blitz::Array<double, 2>& Cov);
+  void update_state(const ArrayAd<double, 1>& X,
+		    const blitz::Array<double, 2>& Cov);
   blitz::Array<bool, 1> used_flag() const;
 
 //-----------------------------------------------------------------------
@@ -82,7 +85,12 @@ private:
   // this class, except make it available to StateVectorObservers when 
   // they are attached.
   int pstart;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(StateVector);
+FP_EXPORT_OBSERVER_KEY(StateVector);
 #endif

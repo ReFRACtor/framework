@@ -5,15 +5,16 @@ using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void Pressure::serialize(Archive & UNUSED(ar),
+void Pressure::serialize(Archive& ar,
 			 const unsigned int UNUSED(version))
 {
-  FP_GENERIC_BASE(Pressure);
-  // Leave out the StateVectorObserver part, I'm not sure if we
-  // want to serialize that or not
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservablePressure);
+    
 }
 
 FP_IMPLEMENT(Pressure);
+FP_OBSERVER_SERIALIZE(Pressure);
 #endif
 
 #ifdef HAVE_LUA

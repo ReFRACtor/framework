@@ -52,5 +52,6 @@ public:
   void set_radiance(int i, const SpectralRange& V);
   void set_radiance(int i, const SpectralRange& V,
 		    const std::vector<int>& Plist);
+  %pickle_serialization();
 };
 }

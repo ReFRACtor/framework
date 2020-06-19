@@ -215,7 +215,7 @@ public:
   %python_attribute(pgs_time, double)
   static Time parse_time(const std::string Time_string);
   std::string print_to_string() const;
-  
+  %pickle_serialization();
 #ifdef SWIGRUBY
   %extend {
 // Ruby prefers defining this over defining operator<.

@@ -42,6 +42,7 @@ public:
   %pickle_serialization();
   virtual boost::shared_ptr<Pressure> clone() const = 0;
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }
 
