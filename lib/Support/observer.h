@@ -63,6 +63,10 @@ private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -90,6 +94,25 @@ private:
   The relationship between Observer and Observable is m to n, a 
   Observer can be attached to any number of Observables, and likewise
   an Observable can have any number of Observers attached.
+
+  Another complication is serialization (e.g., calling 
+  serializate_write_string). There isn't "one" way to handle
+  weak_ptr. The first extreme is to serialize none of them - so
+  serialized objects loose all connections. Or we could save all 
+  of them, but then serializing a simple object like Pressure might
+  pull in the whole world though lots of things pointing to each
+  other.
+
+  The way we handle this is to do the serialization twice. The first 
+  time, we mark all the Observer<T> that get serialized. The second
+  time, we keep all weak_ptr that point to one of these objects. So,
+  if you serialize just Pressure you pretty much loose all 
+  Observer<Pressure> objects. But if you serialize ForwardModel, you
+  get all the Observer<Pressure> that are somehow referenced through
+  ForwardModel. 
+
+  This seems like what we will want in general, but we can reevaluate
+  this if we change our minds over time.
 *******************************************************************/
 template<class T> class Observable : public virtual GenericObject {
 public:

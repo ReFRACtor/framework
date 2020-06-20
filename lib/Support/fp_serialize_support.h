@@ -7,8 +7,10 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
+#include <boost/serialization/weak_ptr.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 // At boost 1.64, the header file to include for boost::array changed
