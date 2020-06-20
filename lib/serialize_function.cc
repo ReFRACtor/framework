@@ -38,7 +38,8 @@ public:
     int status = fchdir(dirhandle);
     if(status != 0) {
       close(dirhandle);
-      throw std::runtime_error("Call to fchdir failed");
+      // Don't throw, because this terminates.
+      //      throw std::runtime_error("Call to fchdir failed");
     }
     close(dirhandle);
   }
