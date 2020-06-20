@@ -1,4 +1,6 @@
 #include "serialize_function.h"
+// We may want to integrate this in with swig_rules
+#include "observer_serialize_support.h"
 #include <boost/serialization/shared_ptr.hpp>
 #include <stdexcept>
 #include <fstream>
@@ -38,7 +40,8 @@ public:
     int status = fchdir(dirhandle);
     if(status != 0) {
       close(dirhandle);
-      throw std::runtime_error("Call to fchdir failed");
+      // Don't throw, because this terminates.
+      //      throw std::runtime_error("Call to fchdir failed");
     }
     close(dirhandle);
   }
@@ -75,6 +78,15 @@ void SWIG_MAPPER_NAMESPACE::serialize_write(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  // First pass to mark Observer
+  ObserverSerializedMarker::clear();
+  std::ostringstream os_first_pass;
+  {
+    boost::archive::polymorphic_binary_oarchive oa(os_first_pass);
+    oa << boost::serialization::make_nvp("geocal_object", Obj);
+  }
+
+  // Second pass to save
   std::ofstream os(Fname.c_str());
   boost::archive::polymorphic_xml_oarchive oa(os);
   oa << boost::serialization::make_nvp("geocal_object", Obj);
@@ -87,6 +99,15 @@ void SWIG_MAPPER_NAMESPACE::serialize_write_binary(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  // First pass to mark Observer
+  ObserverSerializedMarker::clear();
+  std::ostringstream os_first_pass;
+  {
+    boost::archive::polymorphic_binary_oarchive oa(os_first_pass);
+    oa << boost::serialization::make_nvp("geocal_object", Obj);
+  }
+
+  // Second pass to save
   std::ofstream os(Fname.c_str());
   boost::archive::polymorphic_binary_oarchive oa(os);
   oa << boost::serialization::make_nvp("geocal_object", Obj);
@@ -103,6 +124,15 @@ std::string SWIG_MAPPER_NAMESPACE::serialize_write_string
 (const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  // First pass to mark Observer
+  ObserverSerializedMarker::clear();
+  std::ostringstream os_first_pass;
+  {
+    boost::archive::polymorphic_binary_oarchive oa(os_first_pass);
+    oa << boost::serialization::make_nvp("geocal_object", Obj);
+  }
+
+  // Second pass to save
   std::ostringstream os;
   {
     boost::archive::polymorphic_xml_oarchive oa(os);
