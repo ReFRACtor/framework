@@ -294,13 +294,14 @@ class LegacyConnorSolver(Creator):
         sv = self.state_vector()
         fm = self.forward_model()
 
+        # TODO: This creator assumes forward models have spectral grids, which is not required by interface
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
-    
+
         cost_func = rf.ConnorCostFunction(sv, fm, observation)
         conv = rf.ConnorConvergence(fm,
-                                 self.threshold(), 
-                                 self.max_iteration(), 
-                                 self.max_divergence(), 
+                                 self.threshold(),
+                                 self.max_iteration(),
+                                 self.max_divergence(),
                                  self.max_chisq())
 
         # Create wrapper function to make the ConnorSolver interface match that of IterativeSolver

@@ -37,9 +37,13 @@ public:
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const {
         return SpectralDomain::PREFER_WAVENUMBER;
     }
-
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
+
+    boost::shared_ptr<OssModifiedOutputs> modified_outputs() const {
+        return cached_outputs;
+    }
+
 private:
     std::vector<boost::shared_ptr<AbsorberVmr>> vmr;
     boost::shared_ptr<Pressure> pressure;

@@ -3,6 +3,7 @@
 %{
 #include "oss_forward_model.h"
 %}
+%base_import(forward_model)
 
 %import "absorber_vmr.i"
 %import "temperature.i"
@@ -10,12 +11,14 @@
 %import "ground_piecewise.i"
 %import "spectral_domain.i"
 %import "spectrum.i"
+%import "oss_interface.i"
 
 %fp_shared_ptr(FullPhysics::OssForwardModel);
+%fp_shared_ptr(FullPhysics::OssModifiedOutputs);
 
 namespace FullPhysics {
 
-class OssForwardModel: public virtual GenericObject {
+class OssForwardModel: public ForwardModel {
 public:
     OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vmr,
             const boost::shared_ptr<Pressure>& Pressure_,
@@ -33,6 +36,7 @@ public:
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void print(std::ostream& Os) const;
+    boost::shared_ptr<OssModifiedOutputs> modified_outputs() const;
 };
 }
     
