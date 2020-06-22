@@ -14,6 +14,8 @@
 %import "oss_interface.i"
 
 %fp_shared_ptr(FullPhysics::OssForwardModel);
+%fp_shared_ptr(FullPhysics::OssFixedInputs);
+%fp_shared_ptr(FullPhysics::OssMasters);
 %fp_shared_ptr(FullPhysics::OssModifiedOutputs);
 
 namespace FullPhysics {
@@ -36,7 +38,9 @@ public:
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void print(std::ostream& Os) const;
-    boost::shared_ptr<OssModifiedOutputs> modified_outputs() const;
+    boost::shared_ptr<OssFixedInputs> fixed_inputs;
+    boost::shared_ptr<OssMasters> oss_master;
+    mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
 };
 }
     

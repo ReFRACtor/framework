@@ -40,10 +40,9 @@ public:
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 
-    boost::shared_ptr<OssModifiedOutputs> modified_outputs() const {
-        return cached_outputs;
-    }
-
+    boost::shared_ptr<OssFixedInputs> fixed_inputs;
+    boost::shared_ptr<OssMasters> oss_master;
+    mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
 private:
     std::vector<boost::shared_ptr<AbsorberVmr>> vmr;
     boost::shared_ptr<Pressure> pressure;
@@ -68,9 +67,6 @@ private:
     int ch_sel_file_sz;
     int max_chans;
 
-    boost::shared_ptr<OssFixedInputs> fixed_inputs;
-    boost::shared_ptr<OssMasters> oss_master;
-    mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
     ArrayWithUnit<double, 1> center_spectral_point;
 };
 }
