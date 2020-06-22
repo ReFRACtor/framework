@@ -1,0 +1,26 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
+%include "geocal_common.i"
+
+%{
+#include "generic_object_map.h"
+%}
+
+%base_import(generic_object)
+%shared_ptr(GeoCal::GenericObjectMap)
+namespace GeoCal {
+class GenericObjectMap : public GenericObject,
+			 public std::map<std::string,
+					 boost::shared_ptr<GenericObject> > {
+public:
+  GenericObjectMap() {}
+  boost::shared_ptr<GenericObject> get_generic(const std::string& Key) const;
+  std::string print_to_string() const;
+  %pickle_serialization()
+};
+}
+
+// List of things "import *" will include
+%python_export("GenericObjectMap")
+
