@@ -261,7 +261,7 @@ protected:
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
-                                          const unsigned int version) \
+					  const unsigned int UNUSED(version)) \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & FP_NVP(coeff) & FP_NVP(press) & FP_NVP(used_flag) & FP_NVP(cov) \

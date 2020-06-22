@@ -7,7 +7,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void PressureSigma::serialize(Archive & ar, const unsigned int version)
+void PressureSigma::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PressureImpBase)
     & FP_NVP_(a) & FP_NVP_(b);

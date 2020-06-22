@@ -82,9 +82,9 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
+  spec_index_(Spec_index),
   eof_scale_uncertainty_(false),
-  scale_to_stddev_(-1),
-  spec_index_(Spec_index)
+  scale_to_stddev_(-1)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
@@ -189,9 +189,9 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
+  spec_index_(Spec_index),
   eof_scale_uncertainty_(false),
-  scale_to_stddev_(-1),
-  spec_index_(Spec_index)
+  scale_to_stddev_(-1)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
@@ -281,9 +281,9 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
+  spec_index_(Spec_index),
   eof_scale_uncertainty_(true),
-  scale_to_stddev_(Scale_to_stddev),
-  spec_index_(Spec_index)
+  scale_to_stddev_(Scale_to_stddev)
 {
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"

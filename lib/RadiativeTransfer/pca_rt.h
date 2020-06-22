@@ -62,12 +62,13 @@ public:
     const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
     const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
     const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
-        if (bin_index < 0 || bin_index >= pca_bin_solvers.size()) {
-            Exception err;
-            err << "Index for binned eigen solver: " << bin_index << " exceeds size of solvers saved: " << pca_bin_solvers.size();
-            throw err;
-        }
-        return pca_bin_solvers[bin_index];
+      if (bin_index < 0 || bin_index >= (int) pca_bin_solvers.size()) {
+	Exception err;
+	err << "Index for binned eigen solver: " << bin_index
+	    << " exceeds size of solvers saved: " << pca_bin_solvers.size();
+	throw err;
+      }
+      return pca_bin_solvers[bin_index];
     }
 
     virtual void print(std::ostream& Os, bool Short_form = false) const;

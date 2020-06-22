@@ -44,3 +44,5 @@ public:
   %pickle_init(1, self.data_ad, self.units, self.uncertainty)
 };
 }
+
+%template(vector_SpectralRange) std::vector<boost::shared_ptr<FullPhysics::SpectralRange> >;

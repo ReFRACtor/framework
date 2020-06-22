@@ -10,7 +10,7 @@ using namespace blitz;
 RayleighImpBase::RayleighImpBase(const boost::shared_ptr<Pressure>& Pres,
                                  const std::vector<boost::shared_ptr<Altitude> >& Alt,
                                  const boost::shared_ptr<Constant>& C)
-    : pres(Pres), alt(Alt), constants(C), cache_is_stale(true)
+    : constants(C), pres(Pres), alt(Alt), cache_is_stale(true)
 {
     pres->add_observer(*this);
     BOOST_FOREACH(boost::shared_ptr<Altitude>& a, alt) {

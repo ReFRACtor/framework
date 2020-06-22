@@ -38,7 +38,8 @@ public:
     /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& updated_coeff) const {
+  virtual const ArrayAd<double, 1>
+  retrieval_init(ArrayAd<double, 1> const& UNUSED(updated_coeff)) const {
       blitz::Array<AutoDerivative<double>, 1> val(1);
       val(0) = initial_scale_factor;
       return ArrayAd<double, 1>(val);

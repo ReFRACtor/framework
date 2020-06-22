@@ -53,3 +53,5 @@ public:
     std::string print_to_string() const;
 };
 }
+
+%template(vector_SpectralDomain) std::vector<boost::shared_ptr<FullPhysics::SpectralDomain> >;

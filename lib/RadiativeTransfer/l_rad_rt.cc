@@ -254,7 +254,11 @@ void LRadRt::update_altitude(int spec_index) const
     setup_z_matrix_interpol(wmin[spec_index], pf_min, wmax[spec_index], pf_max);
 }
 
-ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
+ArrayAd<double, 2> LRadRt::get_z_matrix
+(const double Wn,
+ int UNUSED(Spec_index),
+ const boost::shared_ptr<OpticalProperties>& Opt_prop
+) const
 {
     ArrayAd<double, 2> zmat;
 
@@ -515,7 +519,7 @@ void LRadRt::print(std::ostream& Os, bool Short_form) const
     opad.strict_sync();
 
     opad << "Z matrix interp wavenumber ranges:\n";
-    for(int wn_idx = 0; wn_idx < wmin.size(); wn_idx++) {
+    for(int wn_idx = 0; wn_idx < (int) wmin.size(); wn_idx++) {
         opad << "  " << wmin[wn_idx] << ", " << wmax[wn_idx] << "\n";
     }
     opad << "\n";

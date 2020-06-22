@@ -33,9 +33,6 @@ SpectralDomain UniformSpectrumSampling::spectral_domain(int spec_index,
     double highres_end = lowres_conv[lowres_conv.size()-1] + offset.value;
 
     int nsamples = (int) ceil((highres_end - highres_beg) / spacing.value) + 1;
-
-    double extension_val = Edge_extension.convert_wave(u_grid).value;
-
     std::vector<double> highres_points;
     for(int i = 0; i < nsamples; ++i) {
         DoubleWithUnit hr_point(highres_beg + i * spacing.value, u_grid);

@@ -47,8 +47,8 @@ AerosolOptical::AerosolOptical
   rh(Rh),
   reference_wn_(Reference_wn),
   cache_is_stale(true),
-  nvar(-1),
-  nlay(-1)
+  nlay(-1),
+  nvar(-1)
 {
   if((int) aprop.size() != number_particle())
     throw Exception("aprop needs to be size of number_particle()");

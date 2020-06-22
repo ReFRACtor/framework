@@ -139,7 +139,13 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
                                      bool do_upwelling,
                                      double jac_perturbation)
 : SpectrumEffectImpBase(scale_factor, used_flag),
-  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), padding_fraction_(padding_fraction), do_upwelling_(do_upwelling), jac_perturbation_(jac_perturbation)
+  channel_index_(channel_index),
+  albedo_(albedo),
+  padding_fraction_(padding_fraction),
+  do_upwelling_(do_upwelling),
+  jac_perturbation_(jac_perturbation),
+  atmosphere_(atmosphere),
+  solar_model_(solar_model)
 {
     // Convert angles to degrees since these should not change
     solar_zenith_ = solar_zenith.convert(units::deg).value;
@@ -170,7 +176,10 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
 /// the cut-off region in the Fortran model.
 ///-----------------------------------------------------------------------
 
-void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const
+void RamanSiorisEffect::apply_effect
+(Spectrum& Spec,
+ const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)
+) const
 {
     Range ra = Range::all();
 

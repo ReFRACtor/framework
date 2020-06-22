@@ -29,7 +29,7 @@ public:
 ///            read comments on NLLSSolver::NLLSSolver(int32_t,bool)
 ///
 /// \param[in] fdf_params
-///            .
+///            GSL parameters
 ///
 /// \param[in] x_tol
 ///            Used in testing for a small step size relative to the 
@@ -41,7 +41,7 @@ public:
 ///            Used in testing for a small gradient.
 ///
 /// \param[in] f_tol
-///            .
+///            Used in testing
 ///
 /// \param[in] vrbs
 ///            read comments on NLLSSolver::NLLSSolver(int32_t,bool)

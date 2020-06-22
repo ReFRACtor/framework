@@ -39,7 +39,7 @@ public:
 /// Returns the portion of the phase function moments that come from 
 /// a specific aerosol partiicle.
 /// \param wn The wave number.
-/// \param pidx Aerosol particle index
+/// \param pindex Aerosol particle index
 /// \param nummom Number of moments to fill in
 /// \param numscat Number of scatters to fill in
 //-----------------------------------------------------------------------

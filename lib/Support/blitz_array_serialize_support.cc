@@ -7,7 +7,7 @@
 
 template<class Archive, class T>
 void boost::serialization::save(Archive& ar, const blitz::Array<T, 1>& A, 
-			      const unsigned version) 
+				const unsigned UNUSED(version))
 {
   using boost::serialization::make_array;
   if(A.size() > 0 && !A.isStorageContiguous())
@@ -20,7 +20,7 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 1>& A,
 
 template<typename Archive, class T>
 void boost::serialization::load(Archive& ar, blitz::Array<T, 1>& A, 
-				const unsigned version) 
+				const unsigned UNUSED(version))
 {
   using boost::serialization::make_array;
   int size;
@@ -32,7 +32,7 @@ void boost::serialization::load(Archive& ar, blitz::Array<T, 1>& A,
 
 template<class Archive, class T>
 void boost::serialization::save(Archive& ar, const blitz::Array<T, 2>& A, 
-			      const unsigned version) 
+				const unsigned UNUSED(version))
 {
   using boost::serialization::make_array;
   if(A.size() > 0 && !A.isStorageContiguous())
@@ -46,7 +46,7 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 2>& A,
 
 template<typename Archive, class T>
 void boost::serialization::load(Archive& ar, blitz::Array<T, 2>& A, 
-				const unsigned version) 
+				const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   int rows, cols;
@@ -58,7 +58,7 @@ void boost::serialization::load(Archive& ar, blitz::Array<T, 2>& A,
 
 template<class Archive, class T>
 void boost::serialization::save(Archive& ar, const blitz::Array<T, 3>& A, 
-			      const unsigned version) 
+			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   if(A.size() > 0 && !A.isStorageContiguous())
@@ -73,7 +73,7 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 3>& A,
 
 template<typename Archive, class T>
 void boost::serialization::load(Archive& ar, blitz::Array<T, 3>& A, 
-				const unsigned version) 
+				const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   int rows, cols, depth;
@@ -85,7 +85,7 @@ void boost::serialization::load(Archive& ar, blitz::Array<T, 3>& A,
 
 template<class Archive, class T>
 void boost::serialization::save(Archive& ar, const blitz::Array<T, 4>& A, 
-			      const unsigned version) 
+			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   if(A.size() > 0 && !A.isStorageContiguous())
@@ -102,7 +102,7 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 4>& A,
 
 template<typename Archive, class T>
 void boost::serialization::load(Archive& ar, blitz::Array<T, 4>& A, 
-				const unsigned version) 
+				const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   blitz::TinyVector<int, 4> shp;
@@ -117,7 +117,7 @@ void boost::serialization::load(Archive& ar, blitz::Array<T, 4>& A,
 
 template<class Archive, class T>
 void boost::serialization::save(Archive& ar, const blitz::Array<T, 5>& A, 
-			      const unsigned version) 
+			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   if(A.size() > 0 && !A.isStorageContiguous())
@@ -135,7 +135,7 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 5>& A,
 
 template<typename Archive, class T>
 void boost::serialization::load(Archive& ar, blitz::Array<T, 5>& A, 
-				const unsigned version) 
+				const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
   blitz::TinyVector<int, 5> shp;
