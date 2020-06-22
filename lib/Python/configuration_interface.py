@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from refractor_swig import (SolverIterationLog, ForwardModel, IterativeSolver,
+from refractor_swig import (SolverIterationLog, RtAtmosphere, ForwardModel, IterativeSolver,
                             StateVector, Level1b)
 from .config import find_config_function
 from .factory import process_config, creator
+from .output.atmosphere import AtmosphereOutput
 from .output.radiance import (ForwardModelRadianceOutput,
                               ObservationRadianceOutput)
 from .output.solver import SolverIterationOutput
@@ -126,6 +127,7 @@ class ConfigurationCreator(ConfigurationInterface):
         # Capture certain objects without depending on the structure
         # of the configuration
         captured_objects = {
+            'atmosphere': ObjectCapture(RtAtmosphere),
             'forward_model': ObjectCapture(ForwardModel),
             'solver': ObjectCapture(IterativeSolver),
             'state_vector': ObjectCapture(StateVector),
@@ -139,6 +141,10 @@ class ConfigurationCreator(ConfigurationInterface):
     @property
     def file_config(self):
         return self.config_inst.file_config
+
+    @property
+    def atmosphere(self):
+        return self.config_inst.atmosphere
     
     @property
     def forward_model(self):
@@ -203,6 +209,10 @@ class ConfigurationCreator(ConfigurationInterface):
         if(self.l1b is not None and self.solver is not None):
             obs_out = ObservationRadianceOutput(output, step_index, self.l1b, self.forward_model)
             self.solver.add_observer_and_keep_reference(obs_out)
+
+        if self.atmosphere is not None:
+            atm_out = AtmosphereOutput(output, step_index, self.atmosphere)
+            self.solver.add_observer_and_keep_reference(atm_out)
 
         if self.state_vector is not None and self.solver is not None:
             solver_out = SolverIterationOutput(output, step_index)
