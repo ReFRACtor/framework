@@ -6,6 +6,7 @@ set(DIR_SOURCES
     blitz_array_serialize_support.cc
     boost_rational_serialize_support.cc
     generic_object.cc
+    generic_object_map.cc
     constant.cc
     constants.F90
     default_constant.cc

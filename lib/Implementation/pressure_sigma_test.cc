@@ -2,6 +2,7 @@
 #include "configuration_fixture.h"
 #include "unit_test_support.h"
 #include "fp_serialize_support.h"
+#include "generic_object_map.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -22,30 +23,11 @@ public:
       & FP_NVP(data);
   }
 };
-
-class TestSet : public Printable<TestSet> {
-public:
-  TestSet(const boost::shared_ptr<PressureSigma>& P,
-	  const boost::shared_ptr<TestObserver>& Tobs)
-    : p(P), tobs(Tobs)
-  { }
-  boost::shared_ptr<PressureSigma> p;
-  boost::shared_ptr<TestObserver> tobs;
-  TestSet() {}
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version)
-  {
-      FP_GENERIC_BASE(TestSet);
-      ar & FP_NVP(p) & FP_NVP(tobs);
-  }
-};
 }
 
 FP_EXPORT_KEY(TestObserver);
-FP_EXPORT_KEY(TestSet);
 
 FP_IMPLEMENT(TestObserver);
-FP_IMPLEMENT(TestSet);
 
 BOOST_FIXTURE_TEST_SUITE(pressure_sigma, GlobalFixture)
 
@@ -101,22 +83,25 @@ BOOST_AUTO_TEST_CASE(serialization2)
   Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<PressureSigma> p = boost::make_shared<PressureSigma>(a,b, psurf, true);
-  boost::shared_ptr<TestObserver> pobs = boost::make_shared<TestObserver>();
-  p->add_observer(*pobs);
-  boost::shared_ptr<TestSet> ts = boost::make_shared<TestSet>(p, pobs);
-  std::string d = serialize_write_string(ts);
+  boost::shared_ptr<GenericObjectMap> m =
+    boost::make_shared<GenericObjectMap>();
+  (*m)["p"] = boost::make_shared<PressureSigma>(a, b, psurf, true);
+  (*m)["pobs"] = boost::make_shared<TestObserver>();
+  m->get<PressureSigma>("p")->add_observer(*m->get<TestObserver>("pobs"));
+  std::string d = serialize_write_string(m);
   if(false)
     std::cerr << d;
-  boost::shared_ptr<TestSet> tsr = serialize_read_string<TestSet>(d);
+  boost::shared_ptr<GenericObjectMap> mr =
+    serialize_read_string<GenericObjectMap>(d);
   Array<double, 1> press_grid_expect(3);
   press_grid_expect = 3, 6, 10;
-  BOOST_CHECK_CLOSE(tsr->p->surface_pressure().value.value(), psurf, 1e-4);
-  BOOST_CHECK_MATRIX_CLOSE(tsr->p->pressure_grid().value.value(), press_grid_expect);
+  BOOST_CHECK_CLOSE(mr->get<PressureSigma>("p")->surface_pressure().value.value(), psurf, 1e-4);
+  BOOST_CHECK_MATRIX_CLOSE(mr->get<PressureSigma>("p")->pressure_grid().value.value(), press_grid_expect);
   // Since TestObserver was serialized, we should have a connection
   // with tsr->p.
-  tsr->p->set_surface_pressure(100);
-  BOOST_CHECK(fabs(tsr->tobs->data - tsr->p->surface_pressure_value()) < 1e-4);
+  mr->get<PressureSigma>("p")->set_surface_pressure(100);
+  BOOST_CHECK(fabs(mr->get<TestObserver>("pobs")->data -
+	   mr->get<PressureSigma>("p")->surface_pressure_value()) < 1e-4);
 }
 
 // BOOST_AUTO_TEST_CASE(jacobian)
