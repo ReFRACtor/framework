@@ -3,6 +3,7 @@
 // This contains various support routines for *implementing* the boost
 // serialization (as opposed to *using*  the serialization
 #include "geocal_config.h"
+#include "weak_ptr_serialize_support.h"
 #ifdef GEOCAL_HAVE_BOOST_SERIALIZATION
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
