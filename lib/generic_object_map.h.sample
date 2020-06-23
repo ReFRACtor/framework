@@ -2,6 +2,10 @@
 #define GENERIC_OBJECT_MAP_H
 #include "printable.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/range/adaptor/map.hpp>
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/assign.hpp>
+#include <algorithm>
 #include <string>
 #include <map>
 
@@ -38,6 +42,25 @@ public:
 
   virtual void print(std::ostream& Os) const {Os << "GenericObjectMap";}
 
+//-----------------------------------------------------------------------
+/// List of keys, for python
+//-----------------------------------------------------------------------
+
+  std::vector<std::string> keys() const
+  {
+    std::vector<std::string> r;
+    boost::copy(*this | boost::adaptors::map_keys, std::back_inserter(r));
+    return r;
+  }
+  
+//-----------------------------------------------------------------------
+/// Save object - this is something more easy to call from python.
+//-----------------------------------------------------------------------
+  
+  void set_generic(const std::string& Key,
+		   const boost::shared_ptr<GenericObject>& V)
+  { (*this)[Key] = V; }
+  
 //-----------------------------------------------------------------------
 /// Return object if we have one, or a null pointer if there is no
 /// value in the map.
