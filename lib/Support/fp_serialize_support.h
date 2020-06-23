@@ -3,11 +3,11 @@
 // This contains various support routines for *implementing* the boost
 // serialization (as opposed to *using*  the serialization
 #include "refractor_config.h"
+#include "weak_ptr_serialize_support.h"
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
-#include <boost/serialization/weak_ptr.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/list.hpp>

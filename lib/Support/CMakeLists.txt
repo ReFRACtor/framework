@@ -26,7 +26,6 @@ set(DIR_SOURCES
     mapping_log.h
     mapping_scale.h
     mapping_gaussian.h
-    observer_serialize_support.cc
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc

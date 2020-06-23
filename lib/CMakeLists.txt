@@ -42,6 +42,7 @@ include_directories(${FP_INCLUDES})
 
 # Set up the swig_rules
 add_subdirectory(swig_rules)
+include_directories(${SWIG_INCLUDE_DIR})
 
 install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
 add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
