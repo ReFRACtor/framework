@@ -1,4 +1,5 @@
 #include "serialize_function.h"
+#include "weak_ptr_serialize_support.h"
 #include <boost/serialization/shared_ptr.hpp>
 #include <stdexcept>
 #include <fstream>
@@ -61,6 +62,52 @@ bool SWIG_MAPPER_NAMESPACE::have_serialize_supported()
 #endif
 }
 
+static bool skip_weak_ptr_handling_val = false;
+
+//-----------------------------------------------------------------------
+/// As described in weak_ptr_serialize_support, we can optionally
+/// handle boost::weak_ptr for transversing the serialization twice -
+/// once to mark pointer we encounter and once to serialize all
+/// weak_ptr pointing to objects we encountered.
+///
+/// If you don't actually need this support for boost::weak_ptr, you
+/// can turn this off and avoid the cost of navigating twice through
+/// the serialization.
+//-----------------------------------------------------------------------
+
+bool SWIG_MAPPER_NAMESPACE::skip_weak_ptr_handling()
+{ return skip_weak_ptr_handling_val; }
+
+//-----------------------------------------------------------------------
+/// As described in weak_ptr_serialize_support, we can optionally
+/// handle boost::weak_ptr for transversing the serialization twice -
+/// once to mark pointer we encounter and once to serialize all
+/// weak_ptr pointing to objects we encountered.
+///
+/// If you don't actually need this support for boost::weak_ptr, you
+/// can turn this off and avoid the cost of navigating twice through
+/// the serialization.
+//-----------------------------------------------------------------------
+
+void SWIG_MAPPER_NAMESPACE::skip_weak_ptr_handling(bool Skip)
+{ skip_weak_ptr_handling_val = Skip; }
+
+//-----------------------------------------------------------------------
+/// Function to go through serialization, marking all pointers we
+/// encounter. 
+//-----------------------------------------------------------------------
+
+static void mark_pointer(const boost::shared_ptr<GenericObject>& Obj)
+{
+  if(skip_weak_ptr_handling())
+    return;
+  clear_ptr_serialized_reference();
+  std::ostringstream os_first_pass;
+  boost::archive::polymorphic_binary_oarchive oa(os_first_pass);
+  oa << boost::serialization::make_nvp("geocal_object", Obj);
+  // Don't actually want output, just side effect of marking pointers
+}
+
 //-----------------------------------------------------------------------
 /// Simple function that wraps around writing a boost::serialization
 /// to a xml archive. We abstract this
@@ -76,6 +123,7 @@ void SWIG_MAPPER_NAMESPACE::serialize_write(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  mark_pointer(Obj);
   std::ofstream os(Fname.c_str());
   boost::archive::polymorphic_xml_oarchive oa(os);
   oa << boost::serialization::make_nvp("geocal_object", Obj);
@@ -88,6 +136,7 @@ void SWIG_MAPPER_NAMESPACE::serialize_write_binary(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  mark_pointer(Obj);
   std::ofstream os(Fname.c_str());
   boost::archive::polymorphic_binary_oarchive oa(os);
   oa << boost::serialization::make_nvp("geocal_object", Obj);
@@ -104,6 +153,7 @@ std::string SWIG_MAPPER_NAMESPACE::serialize_write_string
 (const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  mark_pointer(Obj);
   std::ostringstream os;
   {
     boost::archive::polymorphic_xml_oarchive oa(os);
@@ -124,6 +174,7 @@ std::string SWIG_MAPPER_NAMESPACE::serialize_write_binary
 (const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  mark_pointer(Obj);
   std::ostringstream os;
   {
     boost::archive::polymorphic_binary_oarchive oa(os);

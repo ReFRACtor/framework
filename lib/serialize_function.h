@@ -5,6 +5,8 @@
 #include <boost/shared_ptr.hpp>
 
 namespace SWIG_MAPPER_NAMESPACE {
+bool skip_weak_ptr_handling();
+void skip_weak_ptr_handling(bool Skip);
 bool have_serialize_supported();
 void serialize_write(const std::string& Fname, 
 		     const boost::shared_ptr<GenericObject>& Obj);
