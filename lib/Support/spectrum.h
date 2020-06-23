@@ -54,6 +54,11 @@ public:
 private:
   SpectralDomain spec_domain_;
   SpectralRange spec_range_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Spectrum);
 #endif

@@ -1,7 +1,10 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     array_ad.cc
+    array_ad_with_unit.cc
     array_with_unit.cc
+    auto_derivative.cc
+    auto_derivative_with_unit.cc
     boost/backtrace.cpp
     blitz_array_serialize_support.cc
     boost_rational_serialize_support.cc
@@ -11,6 +14,12 @@ set(DIR_SOURCES
     constants.F90
     default_constant.cc
     double_with_unit.cc
+    mapping.cc
+    mapping_gaussian.cc
+    mapping_linear.cc
+    mapping_log.cc
+    mapping_offset.cc
+    mapping_scale.cc
     environment_substitute.cc
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
@@ -34,6 +43,7 @@ set(DIR_SOURCES
     spectral_bound.h
     spectral_domain.cc
     spectral_range.cc
+    named_spectrum.cc
     spectrum.cc
     stacked_radiance_mixin.cc
     state_vector.cc

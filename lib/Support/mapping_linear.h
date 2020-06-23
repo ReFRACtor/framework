@@ -13,41 +13,47 @@ namespace FullPhysics {
 *******************************************************************/
 class MappingLinear : public Mapping {
 public:
-    //-----------------------------------------------------------------------
-    /// Default Constructor.
-    //-----------------------------------------------------------------------
+  virtual ~MappingLinear() {}
 
-    MappingLinear() : map_name("linear") {};
+  //-----------------------------------------------------------------------
+  /// Default Constructor.
+  //-----------------------------------------------------------------------
 
-    //-----------------------------------------------------------------------
-    /// Calculation of forward model view of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  MappingLinear() : map_name("linear") {}
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const { return updated_coeff; };
+  //-----------------------------------------------------------------------
+  /// Calculation of forward model view of coeffs with mapping applied
+  //-----------------------------------------------------------------------
 
-    //-----------------------------------------------------------------------
-    /// Calculation of initial retrieval view  of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  virtual ArrayAd<double, 1> fm_view
+  (const ArrayAd<double, 1>& updated_coeff) const
+  { return updated_coeff; }
 
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const { return initial_coeff; };
+  //-----------------------------------------------------------------------
+  /// Calculation of initial retrieval view  of coeffs with mapping applied
+  //-----------------------------------------------------------------------
 
-    //-----------------------------------------------------------------------
-    /// Assigned mapping name
-    //-----------------------------------------------------------------------
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const
+  { return initial_coeff; }
 
-    virtual std::string name() const { return map_name; }
+  //-----------------------------------------------------------------------
+  /// Assigned mapping name
+  //-----------------------------------------------------------------------
+  
+  virtual std::string name() const { return map_name; }
 
-    virtual boost::shared_ptr<Mapping> clone() const
-    {
-      return boost::shared_ptr<Mapping>(new MappingLinear());
-    }
-
-
-    virtual ~MappingLinear() {};
-
+  virtual boost::shared_ptr<Mapping> clone() const
+  {
+    return boost::shared_ptr<Mapping>(new MappingLinear());
+  }
 private:
-    std::string map_name;
+  std::string map_name;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(MappingLinear);
 #endif

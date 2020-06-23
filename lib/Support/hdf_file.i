@@ -67,10 +67,8 @@ public:
   
       template<class T, int D> ArrayWithUnit<T, D> read_field_with_unit(const std::string& Dataname) const;
     }
-  
-    // 1 here is the pickle format version, so we can tell if we try to
-    // read data with a different format version than the code here.
-    %pickle_init(1, self.file_name, self.mode)
+
+  %pickle_serialization();
 };
 
 }

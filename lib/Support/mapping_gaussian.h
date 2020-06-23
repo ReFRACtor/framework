@@ -20,142 +20,52 @@ namespace FullPhysics {
 *******************************************************************/
 class MappingGaussian : public Mapping  {
 public:
-    //-----------------------------------------------------------------------
-    /// Constructor.
-    /// \param Press Pressure object used for defining pressure levels
-    /// \param Linear_AOD Specifies whether the first gaussian parameter
-    ///   that represents the desired total is in linear space if true,
-    ///   logarithmic space if false.
-    //-----------------------------------------------------------------------
-    MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_Total,
-                    double Min_Desired = 1e-9)
-      : min_desired(Min_Desired), linear_total(Linear_Total), press(in_press)
-    {
-        if (linear_total) {
-            map_name = "gaussian_linear";
-        } else {
-            map_name = "gaussian_log";
-        }
-    };
+  MappingGaussian(const boost::shared_ptr<Pressure>& in_press,
+		  bool Linear_Total,
+		  double Min_Desired = 1e-9);
+  virtual ~MappingGaussian() {};
 
-    virtual boost::shared_ptr<Mapping> clone() const
-    {
-      return boost::shared_ptr<Mapping>(new MappingGaussian(press, linear_total));
-    }
+  virtual boost::shared_ptr<Mapping> clone() const
+  {
+    return boost::shared_ptr<Mapping>(new MappingGaussian(press, linear_total));
+  }
 
-    //-----------------------------------------------------------------------
-    /// Whether this mapping uses a linear total parameter (alternative is log)
-    //-----------------------------------------------------------------------
-    virtual bool is_linear_total() const
-    {
-        return linear_total;
-    }
+  //-----------------------------------------------------------------------
+  /// Whether this mapping uses a linear total parameter (alternative is log)
+  //-----------------------------------------------------------------------
 
-    //-----------------------------------------------------------------------
-    /// Total aerosol optical depth of the extinction values in component.
-    //-----------------------------------------------------------------------
-    virtual AutoDerivative<double> total_optical_depth(ArrayAd<double, 1> component) const
-    {
-        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
-        AutoDerivative<double> tot_component = 0.0;
-        for(int layer_idx = 0; layer_idx < press->number_layer(); layer_idx++) {
-          AutoDerivative<double> delta_press = (pressure_grid(layer_idx + 1) - pressure_grid(layer_idx)) / 2.0;
-          tot_component += (delta_press * (component(layer_idx) + component(layer_idx + 1) ));
-        }
-        return tot_component;
-    }
-    //-----------------------------------------------------------------------
-    /// Calculation of forward model view of coeffs with mapping applied
-    //-----------------------------------------------------------------------
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-        ArrayAd<double, 1> component(press->number_level(), updated_coeff.number_variable());
+  virtual bool is_linear_total() const { return linear_total; }
+  double min_desired() const {return min_desired_;}
+  const boost::shared_ptr<Pressure>& pressure() const { return press; }
+  
+  virtual AutoDerivative<double> total_optical_depth
+  (ArrayAd<double, 1> component) const;
 
-        AutoDerivative<double> desired_val;
+  virtual ArrayAd<double, 1> fm_view
+  (const ArrayAd<double, 1>& updated_coeff) const;
+  
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const
+  { return initial_coeff;}
 
-        if (linear_total) {
-        desired_val = updated_coeff(0);
-        } else {
-            desired_val = std::exp(updated_coeff(0));
-
-        }
-
-        // Don't let component value go lower than a minimum value. Not clear if this
-        // is actually what we want to do, see ticket #2252 for this
-        // suggestion. We might instead want to use a constrained solver.
-        if(desired_val < min_desired) {
-            desired_val = min_desired;
-        }
-
-        int ngaussians = int((updated_coeff.rows() - 1) / 2);
-
-        ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
-        AutoDerivative<double> surface_press = press->surface_pressure().value;
-
-        component.resize(press->number_level(), updated_coeff.number_variable());
-        component.resize_number_variable(updated_coeff.number_variable());
-        component.jacobian() = 0;
-
-        for(int g_idx = 0; g_idx < ngaussians; g_idx++) {
-            AutoDerivative<double> p0 = updated_coeff(g_idx * 2 + 1);
-            AutoDerivative<double> sigma = updated_coeff(g_idx * 2 + 2);
-
-            for(int lev = 0; lev < component.rows(); lev++) {
-                AutoDerivative<double> p = pressure_grid(lev) / surface_press;
-                AutoDerivative<double> g_eval = std::exp( -1 * (p - p0) * (p - p0) / (2 * sigma * sigma) );
-
-                // Because its not that easy to init ArrayAd from python to 0.0
-                if (g_idx == 0) {
-                    component(lev) = g_eval;
-                } else {
-                    component(lev) = component(lev) + g_eval;
-                }
-            }
-        }
-
-        AutoDerivative<double> scaling_N;
-
-        // Protect against a divide by zero
-        if (total_optical_depth(component).value() != 0.0) {
-            scaling_N = desired_val / total_optical_depth(component);
-        } else {
-            scaling_N = 0.0;
-        }
-
-        for(int lev = 0; lev < component.rows(); lev++) {
-            component(lev) = component(lev) * scaling_N;
-        }
-        return component;
-    };
-
-    //-----------------------------------------------------------------------
-    /// Calculation of initial retrieval view  of coeffs
-    //-----------------------------------------------------------------------
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const {
-        return initial_coeff;
-    };
-
-    //-----------------------------------------------------------------------
-    /// Assigned mapping name
-    //-----------------------------------------------------------------------
-    virtual std::string name() const { return map_name; }
-
-    virtual ~MappingGaussian() {};
-
+  virtual std::string name() const { return map_name; }
 private:
-    std::string map_name;
-    double min_desired;
-    bool linear_total;
+  std::string map_name;
+  double min_desired_;
+  bool linear_total;
 
-    //-----------------------------------------------------------------------
-    /// Pressure portion of the state
-    /// Note that levels that define the layers used in the Radiative Transfer
-    /// calculation may vary as we do a retrieval.
-    //-----------------------------------------------------------------------
-    boost::shared_ptr<Pressure> press;
-
-
-
+  //-----------------------------------------------------------------------
+  /// Pressure portion of the state
+  /// Note that levels that define the layers used in the Radiative Transfer
+  /// calculation may vary as we do a retrieval.
+  //-----------------------------------------------------------------------
+  boost::shared_ptr<Pressure> press;
+  MappingGaussian() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(MappingGaussian);
 #endif

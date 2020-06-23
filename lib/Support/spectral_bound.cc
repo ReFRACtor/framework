@@ -1,5 +1,18 @@
 #include "spectral_bound.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectralBound::serialize(Archive& ar,
+			      const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpectralBound);
+  ar & FP_NVP(lower_b) & FP_NVP(upper_b);
+}
+
+FP_IMPLEMENT(SpectralBound);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

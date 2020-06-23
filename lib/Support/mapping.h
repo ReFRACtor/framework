@@ -1,12 +1,8 @@
 #ifndef MAPPING_H
 #define MAPPING_H
-
-
-#include <string>
-
 #include "array_ad.h"
-#include "generic_object.h"
 #include "pressure.h"
+#include <string>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -20,31 +16,42 @@ namespace FullPhysics {
 
   Derived classes capture those different representations.
 *******************************************************************/
-class Mapping : public virtual GenericObject {
+class Mapping : public Printable<Mapping> {
 public:
-    //-----------------------------------------------------------------------
-    /// Calculation of forward model view of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  Mapping() {}
+  virtual ~Mapping() {};
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const = 0;
+  //-----------------------------------------------------------------------
+  /// Calculation of forward model view of coeffs with mapping applied
+  //-----------------------------------------------------------------------
+  virtual ArrayAd<double, 1> fm_view
+  (const ArrayAd<double, 1>& updated_coeff) const = 0;
 
-    //-----------------------------------------------------------------------
-    /// Calculation of initial retrieval view  of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Calculation of initial retrieval view  of coeffs with mapping applied
+  //-----------------------------------------------------------------------
 
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const = 0;
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const = 0;
 
-    //-----------------------------------------------------------------------
-    /// Assigned mapping name
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Assigned mapping name
+  //-----------------------------------------------------------------------
 
-    virtual std::string name() const = 0;
+  virtual std::string name() const = 0;
 
-    virtual boost::shared_ptr<Mapping> clone() const = 0;
+  virtual boost::shared_ptr<Mapping> clone() const = 0;
 
-    virtual ~Mapping() {};
-
+  void print(std::ostream& Os) const
+  { Os << "Mapping\n"
+       << "  name: " << name() << "\n";
+  }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(Mapping);
 #endif

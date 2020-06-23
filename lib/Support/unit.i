@@ -35,6 +35,7 @@ public:
   Unit operator*=(const Unit& Dunit);
   Unit operator*=(double Scale_factor);
   Unit operator/=(const Unit& Dunit);
+  bool operator==(const Unit& U) const;
   %extend {
     Unit __mul__(const Unit& Y) 
     { return *$self * Y; }

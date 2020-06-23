@@ -14,12 +14,15 @@
 
 namespace FullPhysics {
 
-class Mapping : public virtual GenericObject {
+class Mapping : public GenericObject {
 public:
-  virtual ~Mapping() {};
-  virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const = 0;
-  virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const = 0;
-  virtual std::string name() = 0;
-  virtual boost::shared_ptr<Mapping> clone() const = 0;
+  virtual ~Mapping();
+  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const;
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const;
+  %python_attribute(name, std::string);
+  virtual boost::shared_ptr<Mapping> clone() = 0;
+  std::string print_to_string();
+  %pickle_serialization();
 };
 }

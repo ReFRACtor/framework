@@ -11,16 +11,12 @@
 
 
 namespace FullPhysics {
-
-%feature("notabstract") MappingScale;
-
 class MappingScale : public Mapping {
 public:
-    MappingScale(double Scale, blitz::Array<double, 1> Scalee);
-    virtual ~MappingScale() {};
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
-    virtual std::string name() const;
-    virtual boost::shared_ptr<Mapping> clone() const;
+  MappingScale(double Scale, blitz::Array<double, 1> Scalee);
+  virtual boost::shared_ptr<Mapping> clone();
+  %python_attribute(initial_scale_factor, double);
+  %python_attribute(scalee, blitz::Array<double, 1>);
+  %pickle_serialization();
 };
 }

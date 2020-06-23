@@ -1,8 +1,21 @@
 #include "spectral_domain.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectralDomain::serialize(Archive& ar,
+			      const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpectralDomain);
+  ar & FP_NVP_(data) & FP_NVP_(sindex) & FP_NVP_(units);
+}
+
+FP_IMPLEMENT(SpectralDomain);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

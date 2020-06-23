@@ -1,8 +1,36 @@
 #include "hdf_file.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 using namespace H5;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void HdfFile::serialize(Archive & ar,
+			const unsigned int version)
+{
+  FP_GENERIC_BASE(HdfFile);
+  ar & FP_NVP(fname) & FP_NVP_(mode);
+  boost::serialization::split_member(ar, *this, version); \
+}
+
+template<class Archive>
+void HdfFile::save(Archive & UNUSED(ar),
+		   const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+
+template<class Archive>
+void HdfFile::load(Archive & UNUSED(ar),
+		   const unsigned int UNUSED(version)) 
+{
+  init();
+}
+
+FP_IMPLEMENT(HdfFile);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -261,8 +289,17 @@ REGISTER_LUA_END()
 HdfFile::HdfFile(const std::string& Fname, Mode M)
 : fname(Fname), mode_(M)
 {
+  init();
+}
+
+//-----------------------------------------------------------------------
+/// Separate opening the file, so we can call this from serialization.
+//-----------------------------------------------------------------------
+
+void HdfFile::init()
+{
   unsigned int flag;
-  switch(M) {
+  switch(mode_) {
   case READ:
     flag = H5F_ACC_RDONLY;
     break;
@@ -283,10 +320,10 @@ HdfFile::HdfFile(const std::string& Fname, Mode M)
     FileAccPropList file_access = FileAccPropList();
     file_access.setFcloseDegree(H5F_CLOSE_SEMI);
 
-    h.reset(new H5File(Fname, flag, FileCreatPropList::DEFAULT, file_access));
+    h.reset(new H5File(fname, flag, FileCreatPropList::DEFAULT, file_access));
   } catch(const H5::Exception& e) {
     Exception en;
-    en << "While trying to open file '" << Fname 
+    en << "While trying to open file '" << fname 
        << "' a HDF 5 Exception thrown:\n"
        << "  " << e.getDetailMsg();
     throw en;

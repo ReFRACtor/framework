@@ -12,15 +12,12 @@
 
 namespace FullPhysics {
 
-%feature("notabstract") MappingOffset;
-
 class MappingOffset : public Mapping {
 public:
-    MappingOffset(double Offset, blitz::Array<double, 1> Offsetee);
-    virtual ~MappingOffset();
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
-    virtual std::string name() const;
-    virtual boost::shared_ptr<Mapping> clone() const;
+  MappingOffset(double Offset, blitz::Array<double, 1> Offsetee);
+  virtual boost::shared_ptr<Mapping> clone();
+  %python_attribute(initial_offset, double);
+  %python_attribute(offsetee, blitz::Array<double, 1>);
+  %pickle_serialization();
 };
 }

@@ -21,6 +21,7 @@ public:
   %python_attribute(molar_weight_dry_air, virtual DoubleWithUnit);
   %python_attribute(molar_weight_water, virtual DoubleWithUnit);
   %python_attribute(avogadro_constant, virtual DoubleWithUnit);
+  %pickle_serialization();
 };
 
 }

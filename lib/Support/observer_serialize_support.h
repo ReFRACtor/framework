@@ -19,12 +19,12 @@ void Observer ## NAME::save(Archive & , const unsigned int ) const \
   add_ptr_serialized_reference(this); \
 } \
 template<> template<class Archive> \
-void Observer ## NAME::load(Archive & ar, const unsigned int)	\
+void Observer ## NAME::load(Archive & , const unsigned int)	\
 { \
 } \
 template<> template<class Archive> \
 void Observable ## NAME::serialize(Archive& ar, \
-			      const unsigned int version) \
+			      const unsigned int) \
 { \
   FP_GENERIC_BASE(Observable ##NAME); \
   ar & FP_NVP(olist) & FP_NVP(ref_list);	\

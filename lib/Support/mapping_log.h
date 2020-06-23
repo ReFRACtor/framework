@@ -17,51 +17,42 @@ namespace FullPhysics {
 *******************************************************************/
 class MappingLog : public Mapping  {
 public:
-    //-----------------------------------------------------------------------
-    /// Default Constructor.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Default Constructor.
+  //-----------------------------------------------------------------------
 
-    MappingLog() : map_name("log") {};
+  MappingLog() : map_name("log") {};
+  virtual ~MappingLog() {}
+  
+  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
+    const {
+    blitz::Array<AutoDerivative<double>, 1> res(updated_coeff.rows());
+    for(int i = 0; i < res.rows(); ++i)
+      res(i) = std::exp(updated_coeff(i));
+    return ArrayAd<double, 1>(res);
+  }
+  
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const {
+    blitz::Array<AutoDerivative<double>, 1> res(initial_coeff.rows());
+    for(int i = 0; i < res.rows(); ++i)
+      res(i) = std::log(initial_coeff(i));
+    return ArrayAd<double, 1>(res);
+  }
 
-    //-----------------------------------------------------------------------
-    /// Calculation of forward model view of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  virtual std::string name() const { return map_name; }
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-      blitz::Array<AutoDerivative<double>, 1> res(updated_coeff.rows());
-      for(int i = 0; i < res.rows(); ++i)
-	res(i) = std::exp(updated_coeff(i));
-      return ArrayAd<double, 1>(res);
-    };
-
-    //-----------------------------------------------------------------------
-    /// Calculation of initial retrieval view  of coeffs with mapping applied
-    //-----------------------------------------------------------------------
-
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const {
-      blitz::Array<AutoDerivative<double>, 1> res(initial_coeff.rows());
-      for(int i = 0; i < res.rows(); ++i)
-	res(i) = std::log(initial_coeff(i));
-      return ArrayAd<double, 1>(res);
-    };
-
-    //-----------------------------------------------------------------------
-    /// Assigned mapping name
-    //-----------------------------------------------------------------------
-
-    virtual std::string name() const { return map_name; }
-
-    virtual boost::shared_ptr<Mapping> clone() const
-    {
-      return boost::shared_ptr<Mapping>(new MappingLog());
-    }
-
-    virtual ~MappingLog() {};
+  virtual boost::shared_ptr<Mapping> clone() const
+  { return boost::shared_ptr<Mapping>(new MappingLog()); }
 
 private:
-    std::string map_name;
-
+  std::string map_name;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(MappingLog);
 
 #endif

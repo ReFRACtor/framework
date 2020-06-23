@@ -39,9 +39,7 @@ public:
   SpectralRange convert(const Unit& R) const;
   SpectralRange convert(const std::string& R) const;
   std::string print_to_string() const;
-  // 1 here is the pickle format version, so we can tell if we try to
-  // read data with a different format version than the code here.
-  %pickle_init(1, self.data_ad, self.units, self.uncertainty)
+  %pickle_serialization();
 };
 }
 

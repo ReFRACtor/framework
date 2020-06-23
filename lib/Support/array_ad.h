@@ -390,23 +390,19 @@ public:
       return jac.extent(D);
   }
   const blitz::TinyVector<int, D>& shape() const { return val.shape(); }
+  // This is the unusual case where "print_to_string" is not the same
+  // as operator<<. This is because it is useful to save this class
+  // for checking unit tests. In retrospect, would have been better
+  // to use different names for this. But we leave this as is, because
+  // it isn't worth tracking down all the places we would need to
+  // change.
   std::string print_to_string() const
   {
-    // This reserve shouldn't really be necessary, but on a Mac
-    // 10.4.11 using gcc 4.0.1, there is some kind of bug where we get
-    // a "Double free" error when printing in Ruby. I never tracked
-    // exactly where this occurred, but it was somewhere in the
-    // iostream library when the buffer of os was resized. We just
-    // reserve enough space up front so this isn't an issue. Since
-    // this only gets called when printing, there shouldn't be much of
-    // a performance hit in doing this.
-    std::string buf("blah");
-    buf.reserve(1000);
-    std::ostringstream os(buf);
+    std::ostringstream os;
     os << "ArrayAd:\n" << *this;
     return os.str();
   }
-  friend std::ostream& operator<<(std::ostream& os, 
+  friend std::ostream& operator<<(std::ostream& os,
 				  const ArrayAd<T, D>& V)
   { os << V.val << "\n" << V.jac << "\n"; return os;}
   friend std::istream& operator>>(std::istream& is, ArrayAd<T, D>& V)

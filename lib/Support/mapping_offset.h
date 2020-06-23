@@ -14,55 +14,53 @@ namespace FullPhysics {
 
   For additional information see docs for Mapping class.
 *******************************************************************/
+
 class MappingOffset : public Mapping {
 public:
-    //-----------------------------------------------------------------------
-    /// Default Constructor.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Default Constructor.
+  //-----------------------------------------------------------------------
 
-    MappingOffset(double Offset, blitz::Array<double, 1> Offsetee)
-    : map_name("offset"), initial_offset(Offset), offsetee(Offsetee) {};
+  MappingOffset(double Offset, blitz::Array<double, 1> Offsetee)
+    : map_name("offset"), initial_offset_(Offset), offsetee_(Offsetee) {};
 
-    //-----------------------------------------------------------------------
-    /// Calculation of forward model view of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  virtual ~MappingOffset() {};
 
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const {
-      blitz::Array<AutoDerivative<double>, 1> res(offsetee.rows());
-      for(int i = 0; i < res.rows(); ++i)
-	res(i) = offsetee(i) + updated_coeff(0);
-      return ArrayAd<double,1>(res);
-    };
+  double initial_offset() const { return initial_offset_; }
+  const blitz::Array<double, 1>& offsetee() const { return offsetee_;}
+  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
+    const {
+    blitz::Array<AutoDerivative<double>, 1> res(offsetee_.rows());
+    for(int i = 0; i < res.rows(); ++i)
+      res(i) = offsetee_(i) + updated_coeff(0);
+    return ArrayAd<double,1>(res);
+  }
 
-    //-----------------------------------------------------------------------
-    /// Calculation of initial retrieval view  of coeffs with mapping applied
-    //-----------------------------------------------------------------------
+  virtual ArrayAd<double, 1> retrieval_init
+  (const ArrayAd<double, 1>& initial_coeff) const {
+    blitz::Array<AutoDerivative<double>, 1> val(1);
+    val(0) = initial_offset_;
+    return ArrayAd<double, 1>(val);
+  }
 
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const {
-      blitz::Array<AutoDerivative<double>, 1> val(1);
-      val(0) = initial_offset;
-      return ArrayAd<double, 1>(val);
-    };
+  virtual std::string name() const { return map_name; }
 
-    //-----------------------------------------------------------------------
-    /// Assigned mapping name
-    //-----------------------------------------------------------------------
-
-    virtual std::string name() const { return map_name; }
-
-    virtual boost::shared_ptr<Mapping> clone() const
-    {
-      return boost::shared_ptr<Mapping>(new MappingOffset(initial_offset, offsetee));
-    }
-
-    virtual ~MappingOffset() {};
+  virtual boost::shared_ptr<Mapping> clone() const
+  {
+    return boost::shared_ptr<Mapping>(new MappingOffset(initial_offset_,
+							offsetee_));
+  }
 
 private:
-    std::string map_name;
-    double initial_offset;
-    blitz::Array<double, 1> offsetee; // values being offset
-
+  std::string map_name;
+  double initial_offset_;
+  blitz::Array<double, 1> offsetee_; // values being offset
+  MappingOffset() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(MappingOffset);
 #endif

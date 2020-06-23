@@ -1,14 +1,14 @@
-#include "constant.h"
+#include "mapping.h"
 #include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void Constant::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+void Mapping::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
 {
-  FP_GENERIC_BASE(Constant);
+  FP_GENERIC_BASE(Mapping);
 
   // Dummy placeholder, just so we can have derived classes call
   // serialization of this. We use to have derived classes "know"
@@ -19,11 +19,6 @@ void Constant::serialize(Archive & ar,
   ar & FP_NVP2("placeholder", p);
 }
 
-FP_IMPLEMENT(Constant);
+FP_IMPLEMENT(Mapping);
 #endif
 
-#ifdef HAVE_LUA
-#include "register_lua.h"
-REGISTER_LUA_CLASS(Constant)
-REGISTER_LUA_END()
-#endif

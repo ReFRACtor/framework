@@ -1,8 +1,21 @@
 #include "sub_state_vector_proxy.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SubStateVectorProxy::serialize(Archive & ar,
+				       const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver)
+    & FP_NVP(proxied_observers);
+}
+
+FP_IMPLEMENT(SubStateVectorProxy);
+#endif
 
 //-----------------------------------------------------------------------
 /// Registers the classes that will be proxied. Must be called from

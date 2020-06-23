@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 
 %{
@@ -9,18 +12,12 @@
 %import "pressure.i"
 %fp_shared_ptr(FullPhysics::MappingLinear);
 
-
 namespace FullPhysics {
-
-%feature("notabstract") MappingLinear;
 
 class MappingLinear : public Mapping  {
 public:
-    MappingLinear();
-    virtual ~MappingLinear() {};
-    virtual const ArrayAd<double, 1> fm_view(ArrayAd<double, 1> const& updated_coeff) const;
-    virtual const ArrayAd<double, 1> retrieval_init(ArrayAd<double, 1> const& initial_coeff) const;
-    virtual std::string name() const;
-    virtual boost::shared_ptr<Mapping> clone() const;
+  MappingLinear();
+  virtual boost::shared_ptr<Mapping> clone();
+  %pickle_serialization();
 };
 }
