@@ -58,7 +58,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual blitz::Array<bool, 1> state_used() const = 0;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmr);
+FP_EXPORT_OBSERVER_KEY(AbsorberVmr);
 #endif

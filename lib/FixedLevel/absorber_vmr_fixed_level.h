@@ -14,7 +14,7 @@ namespace FullPhysics {
   This implementation just gets the VMR from each level from the 
   state vector. 
 *******************************************************************/
-class AbsorberVmrFixedLevel : public AbsorberVmrImpBase {
+class AbsorberVmrFixedLevel : virtual public AbsorberVmrImpBase {
 public:
   AbsorberVmrFixedLevel(const boost::shared_ptr<Pressure>& Press,
 	const boost::shared_ptr<PressureLevelInput>& Press_level,	   
@@ -49,6 +49,12 @@ protected:
   virtual void calc_vmr() const;
 private:
   boost::shared_ptr<PressureLevelInput> press_level;
+  AbsorberVmrFixedLevel() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmrFixedLevel);
 #endif

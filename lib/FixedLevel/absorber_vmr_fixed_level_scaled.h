@@ -11,7 +11,7 @@ namespace FullPhysics {
   This implementation has the VMR passed to the constructor, and 
   applies a scale factor from the state vector.
 *******************************************************************/
-class AbsorberVmrFixedLevelScaled : public AbsorberVmrImpBase {
+class AbsorberVmrFixedLevelScaled : virtual public AbsorberVmrImpBase {
 public:
   AbsorberVmrFixedLevelScaled(const boost::shared_ptr<Pressure>& Press,
         const boost::shared_ptr<PressureLevelInput>& Press_level,
@@ -43,6 +43,11 @@ protected:
 private:
   boost::shared_ptr<PressureLevelInput> press_level;
   blitz::Array<double, 1> vmr0;
+  AbsorberVmrFixedLevelScaled() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(AbsorberVmrFixedLevelScaled);
 #endif

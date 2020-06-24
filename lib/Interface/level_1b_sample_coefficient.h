@@ -66,6 +66,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void print(std::ostream& Os) const {Os << "Level1bSampleCoefficient";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 } // End of FullPhysics namespace
+
+FP_EXPORT_KEY(Level1bSampleCoefficient);
+
 #endif

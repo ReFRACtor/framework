@@ -48,6 +48,7 @@ public:
   %python_attribute(state_used, blitz::Array<bool, 1>)
 
   %sub_state_virtual_func(AbsorberVmr);
+  %pickle_serialization();
 protected:
   mutable bool cache_stale;
   mutable boost::function<AutoDerivative<double>(AutoDerivative<double>)> vmr;

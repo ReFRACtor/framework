@@ -1,8 +1,20 @@
 #include "level_1b_sample_coefficient.h"
+#include "fp_serialize_support.h"
 #include "fe_disable_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Level1bSampleCoefficient::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Level1b);
+}
+
+FP_IMPLEMENT(Level1bSampleCoefficient);
+#endif
 
 #ifdef HAVE_LUA
 

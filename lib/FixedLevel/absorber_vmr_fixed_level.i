@@ -22,6 +22,7 @@ public:
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(volume_mixing_ratio_level, blitz::Array<double, 1>);
   %python_attribute(volume_mixing_ratio_active_level, blitz::Array<double, 1>);
+  %pickle_serialization();
 protected:
   virtual void calc_vmr() const;
 };

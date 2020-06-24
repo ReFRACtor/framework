@@ -2,6 +2,7 @@
 set(DIR_SOURCES
     absorber.cc
     absorber_vmr.cc
+    absorber_vmr_imp_base.cc
     absorber_vmr_scaled.cc
     aerosol.cc
     aerosol_extinction.cc

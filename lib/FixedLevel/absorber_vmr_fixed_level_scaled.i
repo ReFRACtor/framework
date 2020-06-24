@@ -23,6 +23,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
   %python_attribute(scale_factor, double);
   %python_attribute(scale_uncertainty, double);
+  %pickle_serialization()
 protected:
   virtual void calc_vmr() const;
 };

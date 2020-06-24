@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 %{
 #include "example_level_1b.h"
@@ -10,24 +13,31 @@
 
 namespace FullPhysics {
 
-%feature("notabstract") ExampleLevel1b;
-
 class ExampleLevel1b: public Level1bSampleCoefficient {
 public:
-    ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file, const std::string& observation_id);
-    ExampleLevel1b(const std::string& input_filename, const std::string& observation_id);
-    int number_spectrometer() const;
-    DoubleWithUnit latitude(int i) const;
-    DoubleWithUnit longitude(int i) const;
-    DoubleWithUnit solar_zenith(int i) const;;
-    DoubleWithUnit solar_azimuth(int i) const;
-    DoubleWithUnit altitude(int i) const;
-    DoubleWithUnit sounding_zenith(int i) const;
-    DoubleWithUnit sounding_azimuth(int i) const;
-    blitz::Array<double, 1> stokes_coefficient(int i) const;
-    DoubleWithUnit relative_velocity(int i) const;
-    ArrayWithUnit<double, 1> spectral_coefficient(int i) const;
-    Time time(int i) const;
-    SpectralRange radiance(int Spec_index) const;
+  ExampleLevel1b(const boost::shared_ptr<HdfFile>& input_file,
+		 const std::string& observation_id);
+  ExampleLevel1b(const std::string& input_filename,
+		 const std::string& observation_id);
+  virtual int number_spectrometer() const;
+  virtual DoubleWithUnit latitude(int i) const;
+  virtual DoubleWithUnit longitude(int i) const;
+  virtual DoubleWithUnit solar_zenith(int i) const;;
+  virtual DoubleWithUnit solar_azimuth(int i) const;
+  virtual DoubleWithUnit altitude(int i) const;
+  virtual DoubleWithUnit sounding_zenith(int i) const;
+  virtual DoubleWithUnit sounding_azimuth(int i) const;
+  virtual blitz::Array<double, 1> stokes_coefficient(int i) const;
+  virtual DoubleWithUnit relative_velocity(int i) const;
+  virtual int number_sample(int channel_index) const;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int channel_index)
+    const;
+  virtual blitz::Array<double, 1> spectral_variable(int channel_index)
+    const;
+  Time time(int i) const;
+  SpectralRange radiance(int Spec_index) const;
+  %python_attribute(input, boost::shared_ptr<HdfFile>);
+  %python_attribute(data_index, int);
+  %pickle_serialization()
 };
 }

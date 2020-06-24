@@ -257,5 +257,62 @@ class TestTemperatureFixedLevel(BaseForTesting):
         t3.create()
         pres = self.t2.create()
         t3.check(temp1.temperature_grid(pres), temp2.temperature_grid(pres))
-    
+
+class TestAbsorberVmrFixedLevel(BaseForTesting):
+    def create(self):
+        self.t = TestPressureLevelInput()
+        self.t2 = TestPressureFixedLevel()
+        return AbsorberVmrFixedLevel(self.t2.create(),
+                                     self.t.create(),
+                                     [True,True,False],[10,11,12],"Fred")
+
+    def check(self, a1, a2):
+        assert a1.gas_name == a2.gas_name
+        assert_almost_equal(a1.volume_mixing_ratio_level,
+                            a2.volume_mixing_ratio_level)
+        t3 = TestArrayAd()
+        press = self.t2.create()
+        t3.check(a1.vmr_grid(press), a2.vmr_grid(press))
+
+class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
+    def create(self):
+        self.t = TestPressureLevelInput()
+        self.t2 = TestPressureFixedLevel()
+        return AbsorberVmrFixedLevelScaled(self.t2.create(),
+                                           self.t.create(),
+                                           [10,11,12], True,
+                                           1.5, "Fred")
+
+    def check(self, a1, a2):
+        assert a1.gas_name == a2.gas_name
+        assert a1.scale_factor == pytest.approx(a2.scale_factor)
+        t3 = TestArrayAd()
+        press = self.t2.create()
+        t3.check(a1.vmr_grid(press), a2.vmr_grid(press))
+
+class TestExampleLevelL1b(BaseForTesting):
+    def create(self):
+        self.t = TestHdfFile()
+        return ExampleLevel1b(self.t.create(), "2014090915251774")
+
+    def check(self, f1, f2):
+        self.t.check(f1.input, f2.input)
+        assert f1.data_index == f2.data_index
+
+class TestExampleLevelL1bInfo(BaseForTesting):
+    def create(self):
+        self.t = TestHdfFile()
+        return ExampleLevel1bInfo(self.t.create())
+
+    def check(self, f1, f2):
+        self.t.check(f1.input, f2.input)
+        lst1 = f1.level1b_list()
+        lst2 = f2.level1b_list()
+        t2 = TestExampleLevelL1b()
+        t2.create()
+        assert len(lst1) == len(lst2)
+        for i in range(len(lst1)):
+            t2.check(GenericObject.convert_to_most_specific_class(lst1[i]),
+                     GenericObject.convert_to_most_specific_class(lst2[i]))
+        
         

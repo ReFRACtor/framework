@@ -11,8 +11,7 @@ template<class Archive>
 void PressureImpBase::serialize(Archive & ar,
 				const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Pressure)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayPressure);
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayPressure);
 }
 
 FP_IMPLEMENT(PressureImpBase);

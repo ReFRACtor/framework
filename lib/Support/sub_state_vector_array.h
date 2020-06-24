@@ -39,22 +39,16 @@ public:
 /// before B2.10)
 //-----------------------------------------------------------------------
 
-  SubStateVectorArray(const blitz::Array<double, 1>& Coeff,
-                      const blitz::Array<bool, 1>& Used_flag,
-                      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-                      bool Mark_according_to_press = true,
-                        int Pdep_start = 0,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-        : coeff(in_map->retrieval_init(Coeff.copy())), press(Press), used_flag(Used_flag.copy()),
-      mark_according_to_press(Mark_according_to_press),
-          pdep_start(Pdep_start),
-          mapping(in_map)
+  SubStateVectorArray
+  (const blitz::Array<double, 1>& Coeff,
+   const blitz::Array<bool, 1>& Used_flag,
+   const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+   bool Mark_according_to_press = true,
+   int Pdep_start = 0,
+   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
-    if(coeff.rows() != used_flag.rows()) {
-      throw Exception("Coeff and Used_flag need to be the same size");
-    }
-
-    state_vector_observer_initialize(count(Used_flag));
+    init(Coeff, Used_flag, Press, Mark_according_to_press, Pdep_start,
+	 in_map);
   }
 
   //-----------------------------------------------------------------------
@@ -62,19 +56,20 @@ public:
   //-----------------------------------------------------------------------
   SubStateVectorArray() {}
 
-  void init(const blitz::Array<double, 1>& Coeff,
-            const blitz::Array<bool, 1>& Used_flag,
-            const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-            bool Mark_according_to_press = true,
-              int Pdep_start = 0,
-              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+  void init
+  (const blitz::Array<double, 1>& Coeff,
+   const blitz::Array<bool, 1>& Used_flag,
+   const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+   bool Mark_according_to_press = true,
+   int Pdep_start = 0,
+   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
-        coeff.reference(in_map->retrieval_init(Coeff.copy()));
+    coeff.reference(in_map->retrieval_init(Coeff.copy()));
     press = Press;
     used_flag.reference(Used_flag.copy());
-        mapping = in_map;
+    mapping = in_map;
     
     if(coeff.rows() != used_flag.rows()) {
       throw Exception("Coeff and Used_flag need to be the same size");
@@ -87,14 +82,16 @@ public:
   /// Special case when Coeff and Used_flag have exactly one row.
   //-----------------------------------------------------------------------
   
-    SubStateVectorArray(double Coeff, bool Used_flag,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-        : coeff(1, 0), used_flag(1), mark_according_to_press(true), pdep_start(0), mapping(in_map)
+  SubStateVectorArray
+  (double Coeff, bool Used_flag,
+   const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
-    coeff.value()(0) = Coeff;
-    coeff = in_map->retrieval_init(coeff.copy());
-    used_flag(0) = Used_flag;
-    state_vector_observer_initialize(count(used_flag));
+    blitz::Array<double, 1> coeff_t(1);
+    blitz::Array<bool, 1> used_t(1);
+    coeff_t(0) = Coeff;
+    used_t(0) = Used_flag;
+    init(coeff_t, used_t, Press, true, 0, in_map);
   }
 
   virtual ~SubStateVectorArray() {}
@@ -264,6 +261,7 @@ void SubStateVectorArray<Base>::serialize(Archive & ar, \
 					  const unsigned int UNUSED(version)) \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Base) \
     & FP_NVP(coeff) & FP_NVP(press) & FP_NVP(used_flag) & FP_NVP(cov) \
     & FP_NVP(mark_according_to_press) & FP_NVP(pdep_start); \
 } \

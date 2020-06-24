@@ -1,9 +1,22 @@
 #include <boost/bind.hpp>
 #include "absorber_vmr_fixed_level.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include "linear_interpolate.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberVmrFixedLevel::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrImpBase)
+    & FP_NVP(press_level);
+}
+
+FP_IMPLEMENT(AbsorberVmrFixedLevel);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

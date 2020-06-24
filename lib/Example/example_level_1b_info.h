@@ -15,14 +15,22 @@ namespace FullPhysics {
 
 class ExampleLevel1bInfo: public Level1bInfo {
 public:
-    ExampleLevel1bInfo(const boost::shared_ptr<HdfFile>& input_file);
-    ExampleLevel1bInfo(const std::string& input_filename);
+  ExampleLevel1bInfo(const boost::shared_ptr<HdfFile>& input_file);
+  ExampleLevel1bInfo(const std::string& input_filename);
     
-    std::vector<boost::shared_ptr<Level1b>> level1b_list();
+  std::vector<boost::shared_ptr<Level1b>> level1b_list();
+  const boost::shared_ptr<HdfFile>& input() const { return input_;}
     
 private:
-    boost::shared_ptr<HdfFile> input;
+  boost::shared_ptr<HdfFile> input_;
+  ExampleLevel1bInfo() {}
+  const std::string group_name = "Level1b";
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 
 };
 }
+
+FP_EXPORT_KEY(ExampleLevel1bInfo);
 #endif
