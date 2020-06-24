@@ -1,15 +1,14 @@
 #ifndef GROUND_LAMBERTIAN_H
 #define GROUND_LAMBERTIAN_H
 
-#include "ground.h"
+#include "ground_imp_base.h"
 #include "array_with_unit.h"
-#include "sub_state_vector_array.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a Lambertian albedo as a ground type. 
 *******************************************************************/
-class GroundLambertian: public SubStateVectorArray<Ground> {
+class GroundLambertian: virtual public GroundImpBase {
 
 public:
 
@@ -47,12 +46,16 @@ protected:
                    const blitz::Array<bool, 1>& Flag, 
                    const ArrayWithUnit<double, 1>& Ref_points,
                    const std::vector<std::string>& Desc_band_names);
-
+  GroundLambertian() {}
 private:
   
   ArrayWithUnit<double, 1> reference_points;
   std::vector<std::string> desc_band_names;
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(GroundLambertian);
 #endif

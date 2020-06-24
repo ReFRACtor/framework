@@ -1,4 +1,5 @@
 #include "aerosol_extinction_log.h"
+#include "fp_serialize_support.h"
 #include "mapping_log.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
@@ -6,6 +7,17 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolExtinctionLog::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolExtinctionLevel);
+}
+
+FP_IMPLEMENT(AerosolExtinctionLog);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

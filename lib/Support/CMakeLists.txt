@@ -14,6 +14,7 @@ set(DIR_SOURCES
     constants.F90
     default_constant.cc
     double_with_unit.cc
+    linear_interpolate.cc
     mapping.cc
     mapping_gaussian.cc
     mapping_linear.cc

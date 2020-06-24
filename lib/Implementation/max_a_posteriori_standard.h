@@ -8,7 +8,7 @@ namespace FullPhysics {
   This class implements "maximum a posteriori" for a standard forward model
 *******************************************************************/
 class MaxAPosterioriStandard : 
-  public MaxAPosteriori, public ModelMeasureStandard {
+  virtual public MaxAPosteriori, virtual public ModelMeasureStandard {
 
 public:
 
@@ -40,7 +40,13 @@ protected:
   // Should go away after we end support for 
   // fixed pressure level grid.
   virtual void vanishing_params_update();
-
+private:
+  MaxAPosterioriStandard() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(MaxAPosterioriStandard);
 #endif

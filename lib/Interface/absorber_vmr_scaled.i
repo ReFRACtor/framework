@@ -20,6 +20,7 @@ public:
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(scale_factor, double)
   %python_attribute(scale_uncertainty, double)
+  %pickle_serialization();
 protected:
   virtual void calc_vmr() const;
 };

@@ -19,5 +19,6 @@ public:
 
     virtual void print(std::ostream& Os) const;
     std::string print_to_string() const;
+    %pickle_serialization();
 };
 }

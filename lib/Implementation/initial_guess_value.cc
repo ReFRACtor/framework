@@ -1,9 +1,23 @@
 #include "initial_guess_value.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include "fp_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void InitialGuessValue::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(InitialGuessBuilder)
+    & FP_NVP_(apriori) & FP_NVP_(initial_guess)
+    & FP_NVP_(apriori_covariance);
+}
+
+FP_IMPLEMENT(InitialGuessValue);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -51,5 +51,6 @@ public:
   void aerosol_extinction(int i, const boost::shared_ptr<AerosolExtinction>& V);
   boost::shared_ptr<AerosolProperty> aerosol_property(int i) const;
   void aerosol_property(int i, const boost::shared_ptr<AerosolProperty>& V);
+  %pickle_serialization();
 };
 }

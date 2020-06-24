@@ -20,5 +20,6 @@ public:
   %python_attribute(expected_parameter_size, int)
   %python_attribute_with_set(parameters, blitz::Array<double, 1>)
   %python_attribute_nonconst(max_a_posteriori, boost::shared_ptr<MaxAPosteriori>)
+  %pickle_serialization();
 };
 }

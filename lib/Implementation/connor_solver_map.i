@@ -28,5 +28,6 @@ public:
   %python_attribute(outcome_flag, int)
   %python_attribute(x_update, blitz::Array<double, 1>)
   %python_attribute(fit_statistic, FitStatistic)
+  %pickle_serialization();
 };
 }

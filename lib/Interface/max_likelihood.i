@@ -12,5 +12,6 @@ class MaxLikelihood : virtual public ModelMeasure {
 public:
   MaxLikelihood();
   virtual ~MaxLikelihood();
+  %pickle_serialization();
 };
 }

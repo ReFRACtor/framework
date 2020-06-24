@@ -21,6 +21,7 @@ public:
 
   virtual ~AerosolExtinctionLog() = default;
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
+  %pickle_serialization();
 };
 }
 

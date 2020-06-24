@@ -78,6 +78,13 @@ public:
   virtual ArrayAd<double, 3> 
   phase_function_moment_each_layer(double wn, int nmom = -1, 
 				   int nscatt = -1) const = 0;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolProperty);
+FP_EXPORT_OBSERVER_KEY(AerosolProperty);
 #endif

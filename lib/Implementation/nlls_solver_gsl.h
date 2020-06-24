@@ -10,7 +10,7 @@ namespace FullPhysics {
   implemented Jacobian as well as residual.
 *******************************************************************/
 class NLLSSolverGSL : 
-    public NLLSSolver {
+    virtual public NLLSSolver {
 
 public:
 
@@ -54,6 +54,13 @@ protected:
   virtual const gsl_multifit_fdfsolver_type* get_gsl_multifit_fdfsolver()
   { return gsl_multifit_fdfsolver_lmsder; /*default*/ }
 
+  NLLSSolverGSL() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NLLSSolverGSL);
 #endif

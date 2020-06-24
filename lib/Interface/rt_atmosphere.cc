@@ -1,7 +1,22 @@
 #include "rt_atmosphere.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RtAtmosphere::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableRtAtmosphere);
+    
+}
+
+FP_IMPLEMENT(RtAtmosphere);
+FP_OBSERVER_SERIALIZE(RtAtmosphere);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

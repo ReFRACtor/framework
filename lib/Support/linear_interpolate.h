@@ -21,6 +21,10 @@ public:
   virtual const TX& x_min() const = 0;
   virtual const TX& x_max() const = 0;
   virtual TY operator()(const TX& x) const = 0;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -44,6 +48,10 @@ public:
 private:
   TX x0_;
   TY y0_;
+  Return1Point() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 
@@ -74,6 +82,10 @@ private:
   TX x1_;
   TY y0_;
   TY delta_y0_;
+  LinearInterpolate2Point() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 template<class TX, class TY> class LinearInterpolate;
@@ -191,10 +203,31 @@ public:
 private:
   std::map<TX, boost::shared_ptr<InterpolatePoint<TX, TY> > > inter;
   BehaviorOutOfRange out_of_range;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
+typedef InterpolatePoint<double, double>  InterpolatePoint_double_double;
+typedef Return1Point<double, double>  Return1Point_double_double;
+typedef LinearInterpolate2Point<double, double>  LinearInterpolate2Point_double_double;
+typedef LinearInterpolate<double, double> LinearInterpolate_double_double;
+typedef InterpolatePoint<double, AutoDerivative<double> >  InterpolatePoint_double_auto_derivative_double;
+typedef Return1Point<double, AutoDerivative<double> >  Return1Point_double_auto_derivative_double;
+typedef LinearInterpolate2Point<double, AutoDerivative<double> > LinearInterpolate2Point_double_auto_derivative_double;
+typedef LinearInterpolate<double, AutoDerivative<double> > LinearInterpolate_double_auto_derivative_double;
 }
 // Specialization for autoderivative
 #include "linear_interpolate_ad.h"
+
+FP_EXPORT_KEY(InterpolatePoint_double_double);
+FP_EXPORT_KEY(Return1Point_double_double);
+FP_EXPORT_KEY(LinearInterpolate2Point_double_double);
+FP_EXPORT_KEY(LinearInterpolate_double_double);
+
+FP_EXPORT_KEY(InterpolatePoint_double_auto_derivative_double);
+FP_EXPORT_KEY(Return1Point_double_auto_derivative_double);
+FP_EXPORT_KEY(LinearInterpolate2Point_double_auto_derivative_double);
+FP_EXPORT_KEY(LinearInterpolate_double_auto_derivative_double);
 #endif
 

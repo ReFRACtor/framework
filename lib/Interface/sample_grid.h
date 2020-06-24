@@ -47,6 +47,13 @@ public:
   /// processing.
   //-----------------------------------------------------------------------
   virtual SpectralDomain pixel_grid() const { return this->sample_grid(); }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SampleGrid);
+FP_EXPORT_OBSERVER_KEY(SampleGrid);
 #endif

@@ -269,12 +269,18 @@ protected:
   void record_cost_at_accepted_point(double cost)
   { Cost_at_accepted_points.push_back(cost); }
 
-
+  IterativeSolver() {}
 private:
 
   std::vector< blitz::Array<double, 1> > Accepted_points;
   std::vector< double > Cost_at_accepted_points;
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(IterativeSolver);
+FP_EXPORT_OBSERVER_KEY(IterativeSolver);
+
 #endif

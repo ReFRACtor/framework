@@ -215,9 +215,12 @@ protected:
 
 
 private:
-
   int c_count;
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(CostFunc);
 #endif

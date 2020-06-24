@@ -11,19 +11,20 @@
 namespace FullPhysics {
 class GroundEmissivityPiecewise: public GroundPiecewise {
 public:
-    GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                              const blitz::Array<double, 1>& point_values,
-                              const blitz::Array<bool, 1>& retrieval_flag);
+  GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
+			    const blitz::Array<double, 1>& point_values,
+			    const blitz::Array<bool, 1>& retrieval_flag);
 
-    virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
+  virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
-    virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
+  virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
 
-    virtual boost::shared_ptr<Ground> clone() const;
-    %python_attribute(sub_state_identifier, std::string);
-    virtual std::string state_vector_name_i(int i) const;
-    virtual void print(std::ostream& Os) const;
-    virtual std::string desc() const;
+  virtual boost::shared_ptr<Ground> clone() const;
+  %python_attribute(sub_state_identifier, std::string);
+  virtual std::string state_vector_name_i(int i) const;
+  virtual void print(std::ostream& Os) const;
+  virtual std::string desc() const;
+  %pickle_serialization();
 };
 }
 

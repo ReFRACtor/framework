@@ -1,7 +1,21 @@
 #include "aerosol_property_hdf.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolPropertyHdf::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolPropertyImpBase)
+    & FP_NVP(qext) & FP_NVP(qscat) & FP_NVP(pf) & FP_NVP(hdf_file)
+    & FP_NVP(hdf_group);
+}
+
+FP_IMPLEMENT(AerosolPropertyHdf);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -10,6 +10,7 @@
 
 %fp_shared_ptr(FullPhysics::AbsorberVmrFixedLevelScaled)
 namespace FullPhysics {
+%feature("notabstract") AbsorberVmrFixedLevelScaled;
 class AbsorberVmrFixedLevelScaled : public AbsorberVmrImpBase {
 public:
   AbsorberVmrFixedLevelScaled(const boost::shared_ptr<Pressure>& Press,

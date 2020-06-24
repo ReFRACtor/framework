@@ -16,5 +16,6 @@ public:
   virtual ~CostFuncState();
   virtual void set(const CostFuncState& s);
   virtual void clear();
+  %pickle_serialization();
 };
 }

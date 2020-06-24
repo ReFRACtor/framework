@@ -28,6 +28,8 @@ public:
     virtual ArrayAd<double, 1> optical_depth_each_layer(double wn, int spec_index) const;
     virtual DoubleWithUnit cross_section(const DoubleWithUnit& W) const = 0;
     virtual void print(std::ostream& Os) const;
+  %pickle_serialization();
+
 };
 
 %template(ObservableRayleighImpBase) FullPhysics::Observable<RayleighImpBase>;

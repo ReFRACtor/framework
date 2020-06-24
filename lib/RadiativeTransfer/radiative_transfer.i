@@ -23,5 +23,6 @@ public:
 					 int Spec_index) const = 0;
   virtual ArrayAd<double, 2> stokes_and_jacobian
   (const FullPhysics::SpectralDomain& Spec_domain, int Spec_index) const = 0;
+  %pickle_serialization();
 };
 }

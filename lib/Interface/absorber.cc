@@ -1,7 +1,22 @@
 #include "absorber.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Absorber::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableAbsorber);
+    
+}
+
+FP_IMPLEMENT(Absorber);
+FP_OBSERVER_SERIALIZE(Absorber);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

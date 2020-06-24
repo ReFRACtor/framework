@@ -48,6 +48,7 @@ public:
   %sub_state_virtual_func(AerosolExtinction);
   %python_attribute(aerosol_parameter, blitz::Array<double, 1>);
   %python_attribute(aerosol_parameter_uncertainty, blitz::Array<double, 1>);
+  %pickle_serialization();
 protected:
   mutable bool cache_stale;
   mutable ArrayAd<double, 1> aext;

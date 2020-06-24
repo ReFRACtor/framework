@@ -1,9 +1,22 @@
 #include "ground_coxmunk.h"
+#include "fp_serialize_support.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void GroundCoxmunk::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
+    & FP_NVP_(refractive_index);
+}
+
+FP_IMPLEMENT(GroundCoxmunk);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -6,11 +6,11 @@
 %{
 #include "absorber_vmr_imp_base.h"
 %}
-%base_import(state_vector)
 %base_import(sub_state_vector_array)
+%base_import(state_vector)
 %base_import(absorber_vmr)
 %base_import(mapping)
-%base_import(mapping_linear)
+%import "mapping_linear.i"
 
 %fp_shared_ptr(FullPhysics::AbsorberVmrImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AbsorberVmr>);

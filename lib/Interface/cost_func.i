@@ -20,5 +20,6 @@ public:
   virtual void zero_num_evaluations();
   %python_attribute(message, message_t)
   %python_attribute(message_str, std::string)
+  %pickle_serialization();
 };
 }

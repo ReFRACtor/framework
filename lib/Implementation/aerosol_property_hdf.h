@@ -19,7 +19,7 @@ namespace FullPhysics {
   outside the range of the file is requested, then we extrapolate to
   get the value.
 *******************************************************************/
-class AerosolPropertyHdf : public AerosolPropertyImpBase {
+class AerosolPropertyHdf : virtual public AerosolPropertyImpBase {
 public:
   AerosolPropertyHdf(const HdfFile& F, const std::string& Group_name,
 		     const boost::shared_ptr<Pressure>& Press);
@@ -38,6 +38,12 @@ private:
   boost::shared_ptr<LinearInterpolate<double, double> > qscat;
   boost::shared_ptr<ScatteringMomentInterpolate> pf;
   std::string hdf_file, hdf_group;
+  AerosolPropertyHdf() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolPropertyHdf);
 #endif

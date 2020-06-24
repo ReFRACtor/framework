@@ -50,7 +50,6 @@ public:
   virtual void print(std::ostream& Os, bool Short_form = false) const;
 
 private:
-
   /// Computes Chapman factors on demand
   void compute_chapman_factors(const int Spec_idx) const;
 
@@ -68,8 +67,16 @@ private:
 
   /// Solar zenith angles per spectrometer
   blitz::Array<double, 1> sza;
-
+  ChapmanBoaRT() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(ChapmanBoaRT);
 #endif

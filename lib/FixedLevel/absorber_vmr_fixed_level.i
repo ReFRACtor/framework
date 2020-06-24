@@ -10,6 +10,7 @@
 %import "pressure_level_input.i"
 %fp_shared_ptr(FullPhysics::AbsorberVmrFixedLevel)
 namespace FullPhysics {
+%feature("notabstract") AbsorberVmrFixedLevel;
 class AbsorberVmrFixedLevel : public AbsorberVmrImpBase {
 public:
   AbsorberVmrFixedLevel(const boost::shared_ptr<Pressure>& Press,

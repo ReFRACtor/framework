@@ -1,4 +1,5 @@
 #include "atmosphere_standard.h"
+#include "fp_serialize_support.h"
 
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -15,6 +16,31 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AtmosphereStandard::serialize(Archive & ar,
+				   const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RtAtmosphere)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosol)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & FP_NVP(absorber)
+    & FP_NVP(pressure)
+    & FP_NVP(temperature)
+    & FP_NVP(aerosol)
+    & FP_NVP(rh)
+    & FP_NVP(ground_ptr)
+    & FP_NVP(rayleigh)
+    & FP_NVP(surface_temp)
+    & FP_NVP(constant)
+    & FP_NVP(alt)
+    & FP_NVP(sv_jac_size)
+    & FP_NVP(can_cache_channel);
+}
+
+FP_IMPLEMENT(AtmosphereStandard);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -239,6 +265,24 @@ void AtmosphereStandard::initialize()
 
     // Make sure caches are in a consistent state
     invalidate_cache();
+}
+
+AtmosphereStandard::AtmosphereStandard()
+{
+  // Set up cache as empty, but don't do any other initialization.
+ 
+  // Use a map caches, to allow the reuse of values needed outside of the
+  // main spectral grid loops
+  column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+  total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+
+  // Initially can not use the above two caches unless a
+  /// StateVector gets attached
+  // to handle invalidating these caches
+  can_cache_channel = false;
+
+  // Make sure caches are in a consistent state
+  invalidate_cache();
 }
 
 //-----------------------------------------------------------------------

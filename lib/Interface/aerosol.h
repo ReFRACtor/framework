@@ -21,7 +21,8 @@ namespace FullPhysics {
   more general. 
 *******************************************************************/
 
-class Aerosol: public StateVectorObserver, public Observable<Aerosol> {
+class Aerosol: virtual public StateVectorObserver,
+	       public Observable<Aerosol> {
 public:
   virtual ~Aerosol() {}
   // Used as a convenience to collect timing information to report in 
@@ -96,6 +97,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const = 0;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Aerosol);
+FP_EXPORT_OBSERVER_KEY(Aerosol);
 #endif

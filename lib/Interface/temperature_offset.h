@@ -8,7 +8,7 @@ namespace FullPhysics {
   temperature is retrieved through an offset to an initial guess
   profile.
 *******************************************************************/
-class TemperatureOffset: public TemperatureImpBase {
+class TemperatureOffset: virtual public TemperatureImpBase {
 public:
   TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
 		    double Temp_offset,
@@ -45,7 +45,14 @@ public:
   }
 protected:
   void calc_temperature_grid() const;
+  TemperatureOffset() {}
 private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(TemperatureOffset);
+
 #endif

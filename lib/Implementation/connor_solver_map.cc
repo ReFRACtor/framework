@@ -1,4 +1,5 @@
 #include <connor_solver_map.h>
+#include "fp_serialize_support.h"
 #include <linear_algebra.h>
 #include <fp_exception.h>
 #include <logger.h>
@@ -7,6 +8,19 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ConnorSolverMAP::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSSolver)
+    & FP_NVP(gamma) & FP_NVP_(gamma_last_step) & FP_NVP(fstat)
+    & FP_NVP(dx) & FP_NVP_(convergence_check) & FP_NVP(gamma_initial);
+}
+
+FP_IMPLEMENT(ConnorSolverMAP);
+#endif
 
 
 boost::shared_ptr<IterativeSolver> connor_solver_map_create(

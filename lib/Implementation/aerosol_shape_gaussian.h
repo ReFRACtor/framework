@@ -10,7 +10,7 @@ namespace FullPhysics {
   This class maps the state vector to aerosol extinction defined
   by a Gaussian parameterization.
 *******************************************************************/
-class AerosolShapeGaussian : public AerosolExtinctionLevel {
+class AerosolShapeGaussian : virtual public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -38,6 +38,12 @@ AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
   virtual ~AerosolShapeGaussian() {}
 
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
+private:
+  AerosolShapeGaussian() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(AerosolShapeGaussian);
 #endif

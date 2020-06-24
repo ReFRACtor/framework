@@ -1,10 +1,22 @@
 #include <problem_state.h>
+#include "fp_serialize_support.h"
 #include <fp_exception.h>
-
 
 using namespace FullPhysics;
 using namespace blitz;
 
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ProblemState::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(ProblemState);
+  ar & FP_NVP(X);
+}
+
+FP_IMPLEMENT(ProblemState);
+#endif
 
 bool ProblemState::parameters_different(const Array<double, 1>& x) const
 {

@@ -86,7 +86,13 @@ private:
   void altitude_calc
   (const ArrayAdWithUnit<double, 1>& press_grid,  
    const ArrayAdWithUnit<double, 1>& temp_grid) const;
+  AltitudeHydrostatic() : cache_is_stale(true) {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(AltitudeHydrostatic);
 #endif

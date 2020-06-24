@@ -15,7 +15,8 @@ namespace FullPhysics {
   calculations in thermal infrared bands. Therefore it is 
   unnecessay when doing near infrared or ultraviolet computations.
 *******************************************************************/
-class SurfaceTemperature : virtual public StateVectorObserver, public Observable<SurfaceTemperature> {
+class SurfaceTemperature : virtual public StateVectorObserver,
+			   public Observable<SurfaceTemperature> {
 public:
     virtual ~SurfaceTemperature() {}
 
@@ -43,6 +44,12 @@ public:
     //-----------------------------------------------------------------------
 
     virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(SurfaceTemperature);
+FP_EXPORT_OBSERVER_KEY(SurfaceTemperature);
 #endif

@@ -232,4 +232,48 @@ BOOST_AUTO_TEST_CASE(cache_boundary)
   BOOST_CHECK_CLOSE(data(0,0, 0), 2.5300142872229016e-33, 1e-8);
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  
+  boost::shared_ptr<AbscoHdf> a =
+    boost::make_shared<AbscoHdf>(absco_4d_dir() + "/o2_v4.2.0_drouin.hdf");
+  std::string d = serialize_write_string(a);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<AbscoHdf> ar =
+    serialize_read_string<AbscoHdf>(d);
+  BOOST_CHECK_EQUAL(a->broadener_name(0), ar->broadener_name(0)); 
+  BOOST_CHECK_EQUAL(a->number_broadener_vmr(0),ar->number_broadener_vmr(0));
+  BOOST_CHECK_MATRIX_CLOSE(a->broadener_vmr_grid(0),
+			   ar->broadener_vmr_grid(0));
+  BOOST_CHECK_MATRIX_CLOSE(a->pressure_grid(),
+			   ar->pressure_grid());
+  BOOST_CHECK_MATRIX_CLOSE(a->temperature_grid(),
+			   ar->temperature_grid());
+  ArrayWithUnit<double, 1> pv, tv;
+  ArrayWithUnit<double, 2> bv;
+  pv.value.resize(3);
+  pv.value = 11459.857421875, 12250.0 ,13516.7548828125;
+  pv.units = units::Pa;
+  tv.value.resize(3);
+  tv.value = 183.2799987792969, 190.0, 193.2799987792969;
+  tv.units = units::K;
+  bv.value.resize(1,3);
+  bv.value(0,0) = 0;
+  bv.value(0,1) = 0.01;
+  bv.value(0,2) = 0.05;
+  bv.units = units::dimensionless;
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
+    BOOST_CHECK_CLOSE(a->absorption_cross_section
+		      (12929.94, pv(i), tv(i), bva).value,
+		      ar->absorption_cross_section
+		      (12929.94, pv(i), tv(i), bva).value, 1e-4);
+  }
+}
 BOOST_AUTO_TEST_SUITE_END()

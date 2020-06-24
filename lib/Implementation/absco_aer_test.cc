@@ -156,7 +156,8 @@ BOOST_AUTO_TEST_CASE(read_o2)
   ArrayWithUnit<double,1> broadener(bvalue, "dimensionless");
   double t = f.absorption_cross_section(wn, press, temp,
 					 broadener).value;
-  std::cerr << t << "\n";
+  if(false)
+    std::cerr << t << "\n";
 }
 
 BOOST_AUTO_TEST_CASE(full_wn_range)
@@ -177,6 +178,50 @@ BOOST_AUTO_TEST_CASE(full_wn_range)
   for(int i = 0; i < asize; i += aspace)
     res.push_back(a.absorption_cross_section(a.wavenumber_grid()(i), press,
 					     temp, broadener).value);
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  
+  boost::shared_ptr<AbscoAer> a =
+    boost::make_shared<AbscoAer>(absco_aer_data_dir() + "/H2O_06200-06201_v0.0_init.nc");
+  std::string d = serialize_write_string(a);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<AbscoAer> ar =
+    serialize_read_string<AbscoAer>(d);
+  BOOST_CHECK_EQUAL(a->broadener_name(0), ar->broadener_name(0)); 
+  BOOST_CHECK_EQUAL(a->number_broadener_vmr(0),ar->number_broadener_vmr(0));
+  BOOST_CHECK_MATRIX_CLOSE(a->broadener_vmr_grid(0),
+			   ar->broadener_vmr_grid(0));
+  BOOST_CHECK_MATRIX_CLOSE(a->pressure_grid(),
+			   ar->pressure_grid());
+  Array<double, 1> tsub1(a->temperature_grid()(53, Range(0,7)));
+  Array<double, 1> tsub2(ar->temperature_grid()(53, Range(0,7)));
+  BOOST_CHECK_MATRIX_CLOSE(tsub1, tsub2);
+  ArrayWithUnit<double, 1> pv, tv;
+  ArrayWithUnit<double, 2> bv;
+  pv.value.resize(3);
+  pv.value = 76000, 66000, 40000;
+  pv.units = units::Pa;
+  tv.value.resize(3);
+  tv.value = 183.2799987792969, 190.0, 193.2799987792969;
+  tv.units = units::K;
+  bv.value.resize(1,3);
+  bv.value = 0,0,0;
+  bv.units = units::dimensionless;
+  for(int i = 0; i < 3; ++i) {
+    ArrayWithUnit<double, 1> bva;
+    bva.value.resize(1);
+    bva.value(0) = bv.value(0,i);
+    bva.units = bv.units;
+    BOOST_CHECK_CLOSE(a->absorption_cross_section
+		      (6200.1, pv(i), tv(i), bva).value,
+		      ar->absorption_cross_section
+		      (6200.1, pv(i), tv(i), bva).value, 1e-4);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

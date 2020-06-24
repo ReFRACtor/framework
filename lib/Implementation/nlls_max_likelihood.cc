@@ -1,9 +1,22 @@
 #include <nlls_max_likelihood.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSMaxLikelihood::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblem)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblemState)
+    & FP_NVP(ML);
+}
+
+FP_IMPLEMENT(NLLSMaxLikelihood);
+#endif
 
 
 #ifdef HAVE_LUA

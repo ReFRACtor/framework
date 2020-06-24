@@ -1,8 +1,22 @@
 #include "ground_coxmunk_plus_lambertian.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void GroundCoxmunkPlusLambertian::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Ground)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorProxy)
+    & FP_NVP_(coxmunk) & FP_NVP_(lambertian);
+}
+
+FP_IMPLEMENT(GroundCoxmunkPlusLambertian);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

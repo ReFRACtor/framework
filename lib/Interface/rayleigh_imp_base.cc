@@ -1,7 +1,23 @@
 #include "rayleigh_imp_base.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void RayleighImpBase::serialize(Archive & ar,
+				const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAltitude)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Rayleigh)
+    & FP_NVP(constants) & FP_NVP(pres) & FP_NVP(alt);
+}
+
+FP_IMPLEMENT(RayleighImpBase);
+#endif
 
 //-----------------------------------------------------------------------
 /// Constructor.

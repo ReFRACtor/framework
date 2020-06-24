@@ -26,6 +26,7 @@ public:
   %python_attribute(forward_model, std::vector<boost::shared_ptr<ForwardModel> >)
   %python_attribute(observation, std::vector<boost::shared_ptr<Observation> >)
   %python_attribute(state_vector, boost::shared_ptr<StateVector>)
+  %pickle_serialization();
 protected:
   ModelMeasureStandard();
 };

@@ -29,5 +29,6 @@ public:
 
   virtual ~MaxAPosterioriStandard();
 
+  %pickle_serialization();
 };
 }

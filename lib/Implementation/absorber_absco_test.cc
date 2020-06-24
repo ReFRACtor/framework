@@ -116,6 +116,58 @@ BOOST_AUTO_TEST_CASE(jacobian)
   }
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  secondIndex i2;
+  if(!have_serialize_supported())
+    return;
+  
+  AbsorberAbsco& a = dynamic_cast<AbsorberAbsco&>(*config_absorber);
+  serialize_write("absorber_absco.xml", config_absorber);
+  std::string d = serialize_write_string(config_absorber);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<AbsorberAbsco> ar =
+    serialize_read_string<AbsorberAbsco>(d);
+  Array<double, 1> od_calc_1_1( sum(a.optical_depth_each_layer(12929.94,0).
+				    value(),i2) );
+  Array<double, 1> od_calc_1_2( sum(ar->optical_depth_each_layer(12929.94,0).
+				    value(),i2) );
+  Array<double, 1> od_calc_1_3( sum(a.optical_depth_each_layer_direct_integrate(12929.94,0),i2) );
+  Array<double, 1> od_calc_1_4( sum(ar->optical_depth_each_layer_direct_integrate(12929.94,0),i2) );
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_1_1, od_calc_1_2, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_1_1, od_calc_1_3, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_1_1, od_calc_1_4, 1e-10);
+  Array<double, 1> od_calc_2_1( sum(a.optical_depth_each_layer(12930.30,0).
+				  value(),i2) );
+  Array<double, 1> od_calc_2_2( sum(a.optical_depth_each_layer(12930.30,0).
+				  value(),i2) );
+  Array<double, 1> od_calc_2_3( sum(a.optical_depth_each_layer_direct_integrate(12930.30,0),i2) );
+  Array<double, 1> od_calc_2_4( sum(ar->optical_depth_each_layer_direct_integrate(12930.30,0),i2) );
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_2, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_3, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_4, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_layer().value(), 
+			   ar->pressure_weighting_function_layer().value());
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_grid().value(), 
+			   ar->pressure_weighting_function_grid().value());
+
+  BOOST_CHECK_MATRIX_CLOSE(a.wet_air_column_thickness_layer().value.value(),
+			   ar->wet_air_column_thickness_layer().value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.dry_air_column_thickness_layer().value.value(),
+			   ar->dry_air_column_thickness_layer().value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer("H2O").value.value(),
+			   ar->gas_column_thickness_layer("H2O").value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer("O2").value.value(),
+			   ar->gas_column_thickness_layer("O2").value.value());
+  // Pick an band where we have some CO2, so varying the VMR of CO2 affects 
+  // the results.
+  int spec_index = 2;
+  double wn = 4820.0;
+  ArrayAd<double, 2> od_1 = a.optical_depth_each_layer(wn, spec_index);
+  ArrayAd<double, 2> od_2 = ar->optical_depth_each_layer(wn, spec_index);
+  BOOST_CHECK_MATRIX_CLOSE(od_1.jacobian(), od_2.jacobian());
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(absorber_absco2, ConfigurationTwoBroadener)

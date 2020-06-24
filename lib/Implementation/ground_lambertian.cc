@@ -1,10 +1,23 @@
 #include "ground_lambertian.h"
+#include "fp_serialize_support.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void GroundLambertian::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
+    & FP_NVP(reference_points) & FP_NVP(desc_band_names);
+}
+
+FP_IMPLEMENT(GroundLambertian);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

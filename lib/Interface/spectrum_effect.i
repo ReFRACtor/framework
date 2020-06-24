@@ -42,6 +42,7 @@ public:
   %python_attribute(name, virtual std::string);
   virtual void add_observer(Observer<SpectrumEffect>& Obs);
   virtual void remove_observer(Observer<SpectrumEffect>& Obs);
+  %pickle_serialization();
 };
 
 %template(SubStateVectorArraySpectrumEffect) FullPhysics::SubStateVectorArray<SpectrumEffect>;

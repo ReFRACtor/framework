@@ -19,5 +19,6 @@ public:
 			blitz::Array<double, 1>& OUTPUT,
 			blitz::Array<double, 1>& OUTPUT,
 			blitz::Array<double, 2>& OUTPUT) const = 0;
+  %pickle_serialization();
 };
 }

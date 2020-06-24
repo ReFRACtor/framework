@@ -15,7 +15,8 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class AerosolExtinctionImpBase: public SubStateVectorArray<AerosolExtinction> {
+class AerosolExtinctionImpBase:
+    virtual public SubStateVectorArray<AerosolExtinction> {
 public:
   virtual ~AerosolExtinctionImpBase() {}
   virtual std::string aerosol_name() const {return aerosol_name_;}
@@ -133,13 +134,14 @@ protected:
 /// See SubStateVectorArray for a discussion of Mark_according_to_press and
 /// Pdep_start.
 //-----------------------------------------------------------------------
-  AerosolExtinctionImpBase(const std::string& Aerosol_name,
-		     const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-		     int Pdep_start = 0,
-		     boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+  AerosolExtinctionImpBase
+  (const std::string& Aerosol_name,
+   const blitz::Array<double, 1>& Coeff, 
+   const blitz::Array<bool, 1>& Used_flag,
+   const boost::shared_ptr<Pressure>& Press,
+   bool Mark_according_to_press = true,
+   int Pdep_start = 0,
+   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
     : SubStateVectorArray<AerosolExtinction>(Coeff, Used_flag, Press,
 					     Mark_according_to_press, Pdep_start, in_map),
       cache_stale(true), aerosol_name_(Aerosol_name) { }
@@ -154,6 +156,13 @@ private:
     cache_stale = false;
   }
   std::string aerosol_name_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<AerosolExtinction> SubStateVectorArrayAerosolExtinction;
 }
+
+FP_EXPORT_KEY(AerosolExtinctionImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayAerosolExtinction);
 #endif

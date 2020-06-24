@@ -25,6 +25,7 @@ public:
 			  boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
   virtual std::string state_vector_name_i(int i) const;
+  %pickle_serialization();
 protected:
   virtual void calc_aerosol_extinction() const;
 };

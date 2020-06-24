@@ -32,6 +32,7 @@ public:
   %python_attribute_abstract(stokes_coefficient, ArrayAd<double, 2>)
   virtual boost::shared_ptr<StokesCoefficient> clone() const = 0;
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }
 

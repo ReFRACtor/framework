@@ -1,9 +1,21 @@
 #include <boost/make_shared.hpp>
 #include "absorber_vmr_level_log.h"
+#include "fp_serialize_support.h"
 #include "mapping_log.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberVmrLevelLog::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrLevel);
+}
+
+FP_IMPLEMENT(AbsorberVmrLevelLog);
+#endif
 
 //-----------------------------------------------------------------------
 /// Constructor.

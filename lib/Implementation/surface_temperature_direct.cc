@@ -1,6 +1,24 @@
 #include "surface_temperature_direct.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+SUB_STATE_VECTOR_ARRAY_SERIALIZE(SurfaceTemperature,
+				 SubStateVectorArraySurfaceTemperature);
+
+template<class Archive>
+void SurfaceTemperatureDirect::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArraySurfaceTemperature)
+    & FP_NVP(units);
+}
+
+FP_IMPLEMENT(SurfaceTemperatureDirect);
+#endif
+
 
 SurfaceTemperatureDirect::SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp, blitz::Array<bool, 1> flag)
 {

@@ -36,6 +36,7 @@ public:
   virtual SpectralDomain pixel_grid() const = 0;
   virtual DoubleWithUnit high_res_extension() const = 0;
   virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
+  %pickle_serialization();
 };
 }
 

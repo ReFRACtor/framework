@@ -15,7 +15,9 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class AerosolPropertyImpBase: public SubStateVectorArray<AerosolProperty> {
+class AerosolPropertyImpBase:
+    virtual public SubStateVectorArray<AerosolProperty>
+{
 public:
   virtual ~AerosolPropertyImpBase() {}
   virtual boost::shared_ptr<AerosolProperty> clone() const = 0;
@@ -103,6 +105,15 @@ protected:
 			 const blitz::Array<bool, 1>& Used_flag)
     : SubStateVectorArray<AerosolProperty>(Coeff, Used_flag)
       { }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<AerosolProperty> SubStateVectorArrayAerosolProperty;
 }
+
+FP_EXPORT_KEY(AerosolPropertyImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayAerosolProperty);
+
 #endif

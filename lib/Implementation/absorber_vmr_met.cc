@@ -3,9 +3,22 @@
 #include "absorber_vmr_met.h"
 #include "ostream_pad.h"
 #include "old_constant.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberVmrMet::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrScaled)
+    & FP_NVP(met);
+}
+
+FP_IMPLEMENT(AbsorberVmrMet);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

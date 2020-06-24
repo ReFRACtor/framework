@@ -21,5 +21,6 @@ public:
   %python_attribute_nonconst(nlls_problem, boost::shared_ptr<NLLSProblem>)
   virtual blitz::Array<double, 1> scale_parameters(const blitz::Array<double, 1>& x) const;
   virtual blitz::Array<double, 1> unscale_parameters(const blitz::Array<double, 1>& x) const;
+  %pickle_serialization();
 };
 }

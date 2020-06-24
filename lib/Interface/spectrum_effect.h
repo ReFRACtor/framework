@@ -48,7 +48,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual std::string name() const = 0;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectrumEffect);
+FP_EXPORT_OBSERVER_KEY(SpectrumEffect);
 #endif

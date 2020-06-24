@@ -70,6 +70,7 @@ public:
       $self->from_stream(in);
     }
   }
+  %pickle_serialization();
 };
 
 class ConnorSolverState: public GenericObject {
@@ -101,10 +102,6 @@ public:
   %python_attribute(se, blitz::Array<double, 1>)
   %python_attribute(dx, blitz::Array<double, 1>)
   %python_attribute(fstat, FitStatistic)
-  %pickle_init(1, self.x_i, self.x_a, self.apriori_cov_scaled,
-	       self.sa_m1_scaled, self.sigma_ap, self.gamma,
-	       self.gamma_last_step, self.gamma_initial,
-	       self.residual, self.se, self.k, self.kt_se_m1_k,
-	       self.dx, self.fstat)
+  %pickle_serialization();
 };
 }

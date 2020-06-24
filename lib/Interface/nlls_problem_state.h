@@ -109,7 +109,12 @@ protected:
 
   blitz::Array<double, 1> R;
   blitz::Array<double, 2> J;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NLLSProblemState);
 #endif

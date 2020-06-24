@@ -69,6 +69,13 @@ public:
   virtual DoubleWithUnit high_res_extension(int Spec_index) const = 0;
   virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension) = 0;
   virtual void print(std::ostream& Os) const {Os << "Instrument";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Instrument);
+FP_EXPORT_OBSERVER_KEY(Instrument);
 #endif

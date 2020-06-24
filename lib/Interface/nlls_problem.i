@@ -25,5 +25,6 @@ public:
   %python_attribute(num_residual_evaluations, int);
   %python_attribute(num_jacobian_evaluations, int);
   %python_attribute_abstract(residual_size, int);
+  %pickle_serialization();
 };
 }

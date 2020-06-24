@@ -166,7 +166,10 @@ public:
 			  const blitz::Array<double, 1>& Rad_measure) const
   { return residual_abs_rms(Residual) / 
       (sum(Rad_measure) / Rad_measure.rows()); }
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 inline std::istream& operator>>(std::istream& Is, FitStatistic& Fstat)
@@ -180,6 +183,7 @@ inline std::istream& operator>>(std::istream& Is, FitStatistic& Fstat)
 *******************************************************************/
 class ConvergenceCheck : public Printable<ConvergenceCheck> {
 public:
+  ConvergenceCheck() {}
   virtual ~ConvergenceCheck() {}
 
 //-----------------------------------------------------------------------
@@ -244,6 +248,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void print(std::ostream& Os) const { Os << "ConvergenceCheck";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(FitStatistic);
+FP_EXPORT_KEY(ConvergenceCheck);
 #endif

@@ -2,7 +2,6 @@
 // (Not really c++, but closest emacs mode)
 
 %include "fp_common.i"
-
 %{
 #include "level_1b.h"
 %}
@@ -23,7 +22,7 @@ class Level1b : public GenericObject {
 public:
   virtual ~Level1b();
   std::string print_to_string() const;
-  virtual int number_spectrometer() const = 0;
+  %python_attribute_abstract(number_spectrometer, int);
   virtual DoubleWithUnit latitude(int i) const = 0;
   virtual DoubleWithUnit longitude(int i) const = 0;
   virtual DoubleWithUnit sounding_zenith(int i) const = 0;

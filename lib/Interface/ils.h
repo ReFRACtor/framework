@@ -90,7 +90,14 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Ils);
+FP_EXPORT_OBSERVER_KEY(Ils);
+
 #endif

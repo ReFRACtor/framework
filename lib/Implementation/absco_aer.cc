@@ -1,8 +1,37 @@
 #include "absco_aer.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include <iomanip>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbscoAer::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Absco)
+    & FP_NVP(cache_nline) & FP_NVP_(itype) & FP_NVP(hfile)
+    & FP_NVP(sb) & FP_NVP_(table_scale);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void AbscoAer::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void AbscoAer::load(Archive & UNUSED(ar),
+		    const unsigned int UNUSED(version))
+{
+  load_file();
+}
+
+FP_IMPLEMENT(AbscoAer);
+#endif
+
 #ifdef HAVE_LUA
 #include "register_lua.h"
 typedef void (AbscoAer::*a1)(AbscoAer::InterpolationType);
@@ -93,6 +122,17 @@ void AbscoAer::load_file(const std::string& Fname,
   sb = Spectral_bound;
   std::vector<double> tcopy(Table_scale);
   table_scale_.swap(tcopy);
+  cache_nline = Cache_nline;
+  hfile = boost::make_shared<HdfFile>(Fname);
+  load_file();
+}
+
+//-----------------------------------------------------------------------
+/// Internal reading of file, once we have set up our internal variables.
+//-----------------------------------------------------------------------
+ 
+void AbscoAer::load_file()
+{  
   if(sb.number_spectrometer() > 0 && 
      (int) table_scale_.size() != sb.number_spectrometer()) {
     Exception e;
@@ -107,7 +147,6 @@ void AbscoAer::load_file(const std::string& Fname,
       << "  Table_scale size: " << table_scale_.size() << "\n";
     throw e;
   }
-  cache_nline = Cache_nline;
   cache_double_lbound = 0;
   cache_double_ubound = 0;
   cache_float_lbound = 0;
@@ -116,8 +155,6 @@ void AbscoAer::load_file(const std::string& Fname,
   // Reset caches
   read_cache_float.resize(0,0,0,0,0);
   read_cache_double.resize(0,0,0,0,0);
-
-  hfile.reset(new HdfFile(Fname));
 
   // Read optional metadata
   if (hfile->has_object("Extent_Ranges")) {

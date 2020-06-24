@@ -48,7 +48,15 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<Ground> clone() const = 0;
-
+protected:
+  Ground() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Ground);
+FP_EXPORT_OBSERVER_KEY(Ground);
 #endif

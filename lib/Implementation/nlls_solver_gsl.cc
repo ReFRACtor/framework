@@ -1,10 +1,24 @@
 #include <gsl/gsl_blas.h>
 #include <fp_gsl_matrix.h>
+#include "fp_serialize_support.h"
 #include <gsl_lsp.h>
 #include <nlls_solver_gsl.h>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSSolverGSL::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSSolver)
+    & FP_NVP(Dx_tol_abs) & FP_NVP(Dx_tol_rel)
+    & FP_NVP(G_tol);
+}
+
+FP_IMPLEMENT(NLLSSolverGSL);
+#endif
 
 
 

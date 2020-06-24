@@ -12,7 +12,7 @@ namespace FullPhysics {
   This particular implementation uses the state vector values as
   the VMR for each pressure level.
 *******************************************************************/
-class AbsorberVmrLevel : public AbsorberVmrImpBase {
+class AbsorberVmrLevel : virtual public AbsorberVmrImpBase {
 public:
   AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
 		   const blitz::Array<double, 1>& Vmr, 
@@ -82,6 +82,13 @@ public:
   }
 protected:
   virtual void calc_vmr() const;
+  AbsorberVmrLevel() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmrLevel);
 #endif

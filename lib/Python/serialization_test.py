@@ -38,21 +38,88 @@ class BaseForTesting(object):
         v2 = serialize_read_generic_string(t)
         self.check(v1, v2)
 
+# We have a few things that we need to test in a lot of places. Not sure
+# we want this equality everywhere, this is really just "true for unit
+# tests." We may move these into a more central place like test_support.py,
+# but for now have here.
+
+def _double_with_unit_eq(self, v):
+    return (self.value == pytest.approx(v.value)
+            and self.units == v.units)
+
+DoubleWithUnit.__eq__ = _double_with_unit_eq
+
+def _spectral_domain_eq(s1, s2):
+    # Let assertion exceptions pass through. This is kind of breaking
+    # what == is suppose to be, but since these end up in a assert statement
+    # it is useful to trace back to what didn't match.
+    assert_allclose(s1.data, s2.data)
+    assert_allclose(s1.sample_index, s2.sample_index)
+    assert s1.units == s2.units
+    return True
+
+SpectralDomain.__eq__ = _spectral_domain_eq
+
+def _spectral_range_eq(s1, s2):
+    # Let assertion exceptions pass through. This is kind of breaking
+    # what == is suppose to be, but since these end up in a assert statement
+    # it is useful to trace back to what didn't match.
+    assert_allclose(s1.data, s2.data)
+    assert_allclose(s1.uncertainty, s2.uncertainty)
+    assert s1.units == s2.units
+    return True
+
+SpectralRange.__eq__ = _spectral_range_eq
+
+def _array_with_unit_eq(a1, a2):
+    assert_allclose(a1.value, a2.value)
+    assert a1.units == a2.units
+    return True
+
+def _array_ad_eq(a1, a2):
+    assert_allclose(a1.value, a2.value)
+    assert_allclose(a1.jacobian, a2.jacobian)
+    return True
+
+def _array_ad_with_unit_eq(a1, a2):
+    a1.value == a2.value
+    assert a1.units == a2.units
+    return True
+
+ArrayWithUnit_double_1.__eq__ = _array_with_unit_eq
+ArrayWithUnit_double_2.__eq__ = _array_with_unit_eq
+ArrayWithUnit_double_3.__eq__ = _array_with_unit_eq
+ArrayAd_double_1.__eq__ = _array_ad_eq
+ArrayAd_double_2.__eq__ = _array_ad_eq
+ArrayAd_double_3.__eq__ = _array_ad_eq
+ArrayAdWithUnit_double_1.__eq__ = _array_ad_with_unit_eq
+ArrayAdWithUnit_double_2.__eq__ = _array_ad_with_unit_eq
+ArrayAdWithUnit_double_3.__eq__ = _array_ad_with_unit_eq
+
+# Add auto_derivative
+
 class TestPressureSigma(BaseForTesting):
     def create(self):
-        return PressureSigma([0,0,0],[0.3,0.6,1.0], 10, True)
+        # This is what is used in C++ unit tests in/meteorology/pressure_in
+        pdata = [ 1.0000000000e+02, 7.0000000000e+03, 1.0000000000e+04,
+          2.0000000000e+04, 2.8000000000e+04, 3.5000000000e+04,
+          4.0000000000e+04, 4.5000000000e+04, 5.0000000000e+04,
+          5.5000000000e+04, 6.0000000000e+04, 6.5000000000e+04,
+          7.0000000000e+04, 7.5000000000e+04, 8.0000000000e+04,
+          8.5000000000e+04, 9.0000000000e+04, 9.5000000000e+04,
+          9.6716624900e+04  ]
+        return PressureSigma(pdata, pdata[-1], False)
 
     def check(self, psigma, psigma2):
-        assert_array_almost_equal(psigma.a, psigma2.a)
-        assert_array_almost_equal(psigma.b, psigma2.b)
+        assert_allclose(psigma.a, psigma2.a)
+        assert_allclose(psigma.b, psigma2.b)
         
 class TestArrayAd(BaseForTesting):
     def create(self):
         return ArrayAd_double_1([1,2,3],[[1,0,0],[0,1,0],[0,0,1]])
 
     def check(self, a1, a2):
-        assert_array_almost_equal(a1.value, a2.value)
-        assert_array_almost_equal(a1.jacobian, a2.jacobian)
+        assert a1 == a2
 
 class TestArrayAdWithUnit(BaseForTesting):
     def create(self):
@@ -60,16 +127,14 @@ class TestArrayAdWithUnit(BaseForTesting):
         return ArrayAdWithUnit_double_1(self.t.create(), Unit("m/s"))
 
     def check(self, a1, a2):
-        self.t.check(a1.value, a2.value)
-        assert a1.units == a2.units
+        assert a1 == a2
 
 class TestArrayWithUnit(BaseForTesting):
     def create(self):
         return ArrayWithUnit_double_1([1, 2, 3], Unit("m/s"))
 
     def check(self, a1, a2):
-        assert_array_almost_equal(a1.value, a2.value)
-        assert a1.units == a2.units
+        a1 == a2
 
 class TestAutoDerivative(BaseForTesting):
     def create(self):
@@ -93,22 +158,20 @@ class TestDoubleWithUnit(BaseForTesting):
         return DoubleWithUnit(1.2345, Unit("m/s"))
 
     def check(self, v1, v2):
-        assert v1.value == pytest.approx(v2.value)
-        assert v1.units == v2.units
+        assert v1 == v2
         
 class TestDefaultConstant(BaseForTesting):
     def create(self):
         return DefaultConstant()
 
     def check(self, c1, c2):
-        t = TestDoubleWithUnit()
         assert (c1.rayleigh_depolarization_factor ==
                 pytest.approx(c2.rayleigh_depolarization_factor))
-        t.check(c1.rayleigh_a, c2.rayleigh_a)
-        t.check(c1.rayleigh_b, c2.rayleigh_b)
-        t.check(c1.molar_weight_dry_air, c2.molar_weight_dry_air)
-        t.check(c1.molar_weight_water, c2.molar_weight_water)
-        t.check(c1.avogadro_constant, c2.avogadro_constant)
+        assert c1.rayleigh_a == c2.rayleigh_a
+        assert c1.rayleigh_b == c2.rayleigh_b
+        assert c1.molar_weight_dry_air == c2.molar_weight_dry_air
+        assert c1.molar_weight_water == c2.molar_weight_water
+        assert c1.avogadro_constant == c2.avogadro_constant
 
 class TestHdfFile(BaseForTesting):
     def create(self):
@@ -117,9 +180,8 @@ class TestHdfFile(BaseForTesting):
     def check(self, h1, h2):
         assert h1.file_name == h2.file_name
         assert h1.mode == h2.mode
-        assert_array_almost_equal(
-            h1.read_double_3d("/Level1b/stokes_coefficient"),
-            h2.read_double_3d("/Level1b/stokes_coefficient"))
+        assert_allclose(h1.read_double_3d("/Level1b/stokes_coefficient"),
+                        h2.read_double_3d("/Level1b/stokes_coefficient"))
 
 class TestMappingLinear(BaseForTesting):
     def create(self):
@@ -174,29 +236,23 @@ class TestSpectralBound(BaseForTesting):
 
     def check(self, b1, b2):
         assert b1.number_spectrometer == b2.number_spectrometer
-        t = TestDoubleWithUnit()
         for i in range(b1.number_spectrometer):
-            t.check(b1.lower_bound(i), b2.lower_bound(i))
-            t.check(b1.upper_bound(i), b2.upper_bound(i))
+            assert b1.lower_bound(i) == b2.lower_bound(i)
+            assert b1.upper_bound(i) == b2.upper_bound(i)
 
 class TestSpectralDomain(BaseForTesting):
     def create(self):
         return SpectralDomain([1,2,3], Unit("micron"))
 
     def check(self, s1, s2):
-        assert_array_almost_equal(s1.data, s2.data)
-        assert_array_almost_equal(s1.sample_index, s2.sample_index)
-        assert_array_almost_equal(s1.type_preference, s2.type_preference)
-        assert s1.units == s2.units
+        assert s1 == s2
         
 class TestSpectralRange(BaseForTesting):
     def create(self):
         return SpectralRange([1,2,3], Unit("m/s"), [0.1,0.2,0.3])
 
     def check(self, s1, s2):
-        assert_array_almost_equal(s1.data, s2.data)
-        assert_array_almost_equal(s1.uncertainty, s2.uncertainty)
-        assert s1.units == s2.units
+        assert s1 == s2
 
 class TestSpectrum(BaseForTesting):
     def create(self):
@@ -205,8 +261,8 @@ class TestSpectrum(BaseForTesting):
         return Spectrum(self.t1.create(), self.t2.create())
     
     def check(self, s1, s2):
-        self.t1.check(s1.spectral_domain, s2.spectral_domain)
-        self.t2.check(s1.spectral_range, s2.spectral_range)
+        assert s1.spectral_domain == s2.spectral_domain
+        assert s1.spectral_range == s2.spectral_range
 
 class TestNamedSpectrum(BaseForTesting):
     def create(self):
@@ -233,7 +289,7 @@ class TestPressureLevelInput(BaseForTesting):
         return PressureLevelInput([1,2,3])
 
     def check(self, p1, p2):
-        assert_almost_equal(p1.pressure_level, p2.pressure_level)
+        assert_allclose(p1.pressure_level, p2.pressure_level)
 
 class TestPressureFixedLevel(BaseForTesting):
     def create(self):
@@ -241,9 +297,7 @@ class TestPressureFixedLevel(BaseForTesting):
         return PressureFixedLevel(True, self.t.create(), 3)
     
     def check(self, p1, p2):
-        t2 = TestArrayAdWithUnit()
-        t2.create()
-        t2.check(p1.pressure_grid, p2.pressure_grid)
+        assert p1.pressure_grid == p2.pressure_grid
 
 class TestTemperatureFixedLevel(BaseForTesting):
     def create(self):
@@ -253,10 +307,8 @@ class TestTemperatureFixedLevel(BaseForTesting):
                                      0, self.t2.create(), self.t.create())
 
     def check(self, temp1, temp2):
-        t3 = TestArrayAdWithUnit()
-        t3.create()
         pres = self.t2.create()
-        t3.check(temp1.temperature_grid(pres), temp2.temperature_grid(pres))
+        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
 
 class TestAbsorberVmrFixedLevel(BaseForTesting):
     def create(self):
@@ -268,11 +320,10 @@ class TestAbsorberVmrFixedLevel(BaseForTesting):
 
     def check(self, a1, a2):
         assert a1.gas_name == a2.gas_name
-        assert_almost_equal(a1.volume_mixing_ratio_level,
-                            a2.volume_mixing_ratio_level)
-        t3 = TestArrayAd()
+        assert_allclose(a1.volume_mixing_ratio_level,
+                        a2.volume_mixing_ratio_level)
         press = self.t2.create()
-        t3.check(a1.vmr_grid(press), a2.vmr_grid(press))
+        assert a1.vmr_grid(press) == a2.vmr_grid(press)
 
 class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
     def create(self):
@@ -286,9 +337,8 @@ class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
     def check(self, a1, a2):
         assert a1.gas_name == a2.gas_name
         assert a1.scale_factor == pytest.approx(a2.scale_factor)
-        t3 = TestArrayAd()
         press = self.t2.create()
-        t3.check(a1.vmr_grid(press), a2.vmr_grid(press))
+        assert a1.vmr_grid(press) == a2.vmr_grid(press)
 
 class TestExampleLevelL1b(BaseForTesting):
     def create(self):
@@ -299,6 +349,26 @@ class TestExampleLevelL1b(BaseForTesting):
         self.t.check(f1.input, f2.input)
         assert f1.data_index == f2.data_index
 
+class TestLevelL1bCache(BaseForTesting):
+    def create(self):
+        self.t = TestHdfFile()
+        return Level1bCache(ExampleLevel1b(self.t.create(), "2014090915251774"))
+
+    def check(self, f1, f2):
+        assert f1.number_spectrometer == f2.number_spectrometer
+        for i in range(f1.number_spectrometer):
+            assert f1.latitude(i) == f2.latitude(i)
+            assert f1.longitude(i) == f2.longitude(i)
+            assert f1.sounding_zenith(i) == f2.sounding_zenith(i)
+            assert f1.sounding_azimuth(i) == f2.sounding_azimuth(i)
+            assert f1.solar_zenith(i) == f2.solar_zenith(i)
+            assert f1.solar_azimuth(i) == f2.solar_azimuth(i)
+            assert f1.altitude(i) == f2.altitude(i)
+            assert f1.relative_velocity(i) == f2.relative_velocity(i)
+            assert f1.sample_grid(i) == f2.sample_grid(i)
+            assert f1.radiance(i) == f2.radiance(i)
+            assert f1.time(i).pgs_time == pytest.approx(f2.time(i).pgs_time)
+        
 class TestExampleLevelL1bInfo(BaseForTesting):
     def create(self):
         self.t = TestHdfFile()
@@ -315,4 +385,271 @@ class TestExampleLevelL1bInfo(BaseForTesting):
             t2.check(GenericObject.convert_to_most_specific_class(lst1[i]),
                      GenericObject.convert_to_most_specific_class(lst2[i]))
         
+
+class TestExampleMetFile(BaseForTesting):
+    def create(self):
+        return ExampleMetFile(unit_test_data +
+                              "in/meteorology/example_met_data.h5",
+                              "20091009203401")
+
+    def check(self, f1, f2):
+        assert f1.input.file_name == f2.input.file_name
+        assert f1.input.mode == f2.input.mode
+        assert f1.data_index == f2.data_index
+        assert_allclose(f1.specific_humidity, f2.specific_humidity)
+            
+class TestTemperatureLevelOffset(BaseForTesting):
+    def create(self):
+        self.t = TestPressureSigma()
+        temp_d = [244.2, 214.553, 218.029, 222.544, 218.341, 221.37,
+                  227.38, 233.493, 239.376, 244.52, 248.708, 251.979,
+                  254.537, 256.655, 258.521, 260.155, 261.747,
+                  261.732, 258.598]
+        return TemperatureLevelOffset(self.t.create(), temp_d, 0, True)
+
+    def check(self, temp1, temp2):
+        pres = self.t.create()
+        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
+
+class TestTemperatureMet(BaseForTesting):
+    def create(self):
+        self.t = TestPressureSigma()
+        self.t2 = TestExampleMetFile()
+        return TemperatureMet(self.t2.create(), self.t.create(), 0, True)
+
+    def check(self, temp1, temp2):
+        pres = self.t.create()
+        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
+
+class TestAltitudeHydrostatic(BaseForTesting):
+    def create(self):
+        self.t = TestPressureSigma()
+        self.t2 = TestTemperatureMet()
+        return AltitudeHydrostatic(self.t.create(), self.t2.create(),
+                                   DoubleWithUnit(77.1828918457, "deg"),
+                                   DoubleWithUnit(416, "m"))
+
+    def check(self, a1, a2):
+        pgrid = self.t.create().pressure_grid
+        t3 = TestAutoDerivativeWithUnit()
+        t3.create()
+        for i in range(pgrid.value.rows):
+            p_i = AutoDerivativeWithUnitDouble(pgrid.value[i], pgrid.units)
+            t3.check(a1.altitude(p_i), a2.altitude(p_i))
+            t3.check(a1.gravity(p_i), a2.gravity(p_i))
         
+class TestSurfaceTemperatureDirect(BaseForTesting):
+    def create(self):
+        return SurfaceTemperatureDirect(ArrayWithUnit_double_1([258.598,259.598], "K"),
+                                        [False, False])
+
+    def check(self, t1, t2):
+        t = TestAutoDerivativeWithUnit()
+        t.create()
+        t.check(t1.surface_temperature(0), t2.surface_temperature(0))
+        t.check(t1.surface_temperature(1), t2.surface_temperature(1))
+        
+class TestRayleighBodhaine(BaseForTesting):
+    def create(self):
+        self.t = TestDefaultConstant()
+        self.t2 = TestPressureSigma()
+        self.t3 = TestAltitudeHydrostatic()
+        return RayleighBodhaine(self.t2.create(), [self.t3.create(),],
+                                self.t.create())
+
+    def check(self, r1, r2):
+        wl = DoubleWithUnit(3.091472458622220074e+02, "nm")
+        r1.cross_section(wl) == r2.cross_section(wl)
+
+class TestRayleighYoung(BaseForTesting):
+    def create(self):
+        self.t = TestDefaultConstant()
+        self.t2 = TestPressureSigma()
+        self.t3 = TestAltitudeHydrostatic()
+        return RayleighYoung(self.t2.create(), [self.t3.create(),],
+                                self.t.create())
+
+    def check(self, r1, r2):
+        wl = DoubleWithUnit(3.091472458622220074e+02, "nm")
+        r1.cross_section(wl) == r2.cross_section(wl)
+
+class TestCompositeInitialGuess(BaseForTesting):
+    def create(self):
+        ig = InitialGuessValue()
+        ig.apriori = [1,2]
+        ig.apriori_covariance = [[1,2],[3,4]]
+        ig2 = InitialGuessValue()
+        ig.apriori = [1,2, 3]
+        ig.apriori_covariance = [[1,2, 3],[4,5,6],[7,8,9]]
+        ci = CompositeInitialGuess()
+        ci.add_builder(ig)
+        ci.add_builder(ig2)
+        return ci
+    
+    def check(self, ig1, ig2):
+        assert_allclose(ig1.initial_guess, ig2.initial_guess)
+        assert_allclose(ig1.apriori, ig2.apriori)
+        assert_allclose(ig1.apriori_covariance, ig2.apriori_covariance)
+
+class TestBardNLSSProblem(BaseForTesting):
+    def create(self):
+        f = BardNLLSProblem()
+        f.parameters = [1.0,1.0,1.0]
+        return f
+
+    def check(self, f1, f2):
+        assert_allclose(f1.residual, f2.residual)
+
+class TestMeyerNLSSProblem(BaseForTesting):
+    def create(self):
+        f = MeyerNLLSProblem()
+        f.parameters = [0.02, 4000.0, 250.0]
+        return f
+
+    def check(self, f1, f2):
+        assert_allclose(f1.residual, f2.residual)
+
+class TestBardMLProblem(BaseForTesting):
+    def create(self):
+        # From the nlls_solver_gsl unit test
+        measurement = [0.14, 0.18, 0.22, 0.25, 0.29, 0.32,
+                       0.35, 0.39, 0.37, 0.58, 0.73, 0.96, 1.34, 2.10, 4.39]
+        measurement_error_cov = np.full_like(measurement, 1.0)
+        
+        ml = BardMLProblem(measurement, measurement_error_cov)
+        ml.parameters = [1.0,1.0,1.0]
+        return ml
+
+    def check(self, ml1, ml2):
+        assert_allclose(ml1.model, ml2.model)
+
+class TestMeyerMLProblem(BaseForTesting):
+    def create(self):
+        # From the nlls_solver_gsl unit test
+        measurement = [34780.0, 28610.0, 23650.0, 19630.0, 16370.0,
+                       13720.0, 11540.0, 9744.0, 8261.0, 7030.0, 6005.0,
+                       5147.0, 4427.0, 3820.0, 3307.0, 2872.0]
+        measurement_error_cov = np.full_like(measurement, 1.0)
+        
+        ml = MeyerMLProblem(measurement, measurement_error_cov)
+        ml.parameters = [0.02, 4000.0, 250.0]
+        return ml
+
+    def check(self, ml1, ml2):
+        assert_allclose(ml1.model, ml2.model)
+        
+class TestCostMinimizerGSL(BaseForTesting):
+    def create(self):
+        # We save 2 of these, both at the start and after solving.
+        # We then use the start version from serialization, run, and
+        # make sure it matches the finished version.
+        # The data comes from the cost_minimizer_gsl_test.cc unit test
+        m = GenericObjectMap()
+        x0 = [1.0,1.0,1.0]
+        p1 = BardNLLSProblem()
+        p1.parameters = x0
+        solv1 = CostMinimizerGSL(p1, 1000, 1e-5)
+        p2 = BardNLLSProblem()
+        p2.parameters = x0
+        solv2 = CostMinimizerGSL(p2, 1000, 1e-5)
+        solv2.solve()
+        m["solv_init"] = solv1
+        m["solv_after"] = solv2
+        return m
+
+    def compare(self, s1, s2):
+        '''Compare two solvers'''
+        assert s1.status == s2.status
+        assert s1.num_accepted_steps == s2.num_accepted_steps
+        ap1 = s1.accepted_points
+        ap2 = s2.accepted_points
+        for i in range(len(ap1)):
+            assert_almost_equal(ap1[i], ap2[i])
+        assert_almost_equal(s1.cost_at_accepted_points,
+                            s2.cost_at_accepted_points)
+        
+    def check(self, m1, m2):
+        self.compare(m1.solv_init, m2.solv_init)
+        self.compare(m1.solv_after, m2.solv_after)
+        solv = m2.solv_init
+        solv.solve()
+        self.compare(m1.solv_after, solv)
+
+class BaseForIterativeSolverDer(BaseForTesting):
+    '''There a a few solvers that derive from IterativeSolverDer. These
+    can all be tested the same way, although the creation will be 
+    different. Pull out the comparison parts'''
+    def create_problem(self):
+        x0 = [1.0,1.0,1.0]
+        p = BardNLLSProblem()
+        p.parameters = x0
+        return p
+        
+    def compare(self, s1, s2):
+        '''Compare two solvers'''
+        assert s1.status == s2.status
+        assert s1.num_accepted_steps == s2.num_accepted_steps
+        ap1 = s1.accepted_points
+        ap2 = s2.accepted_points
+        for i in range(len(ap1)):
+            assert_almost_equal(ap1[i], ap2[i])
+        gap1 = s1.gradient_at_accepted_points
+        gap2 = s2.gradient_at_accepted_points
+        for i in range(len(gap1)):
+            assert_almost_equal(gap1[i], gap2[i])
+        assert_almost_equal(s1.cost_at_accepted_points,
+                            s2.cost_at_accepted_points)
+        
+    def check(self, m1, m2):
+        self.compare(m1.solv_init, m2.solv_init)
+        self.compare(m1.solv_after, m2.solv_after)
+        solv = m2.solv_init
+        solv.solve()
+        self.compare(m1.solv_after, solv)
+
+class TestNLLSSolverGSLSM(BaseForIterativeSolverDer):
+    def create(self):
+        m = GenericObjectMap()
+        solv1 = NLLSSolverGSLSM(self.create_problem(), 100)
+        solv2 = NLLSSolverGSLSM(self.create_problem(), 100)
+        solv2.solve()
+        m["solv_init"] = solv1
+        m["solv_after"] = solv2
+        return m
+
+class TestNLLSSolverGSL(BaseForIterativeSolverDer):
+    def create(self):
+        m = GenericObjectMap()
+        solv1 = NLLSSolverGSL(self.create_problem(), 100)
+        solv2 = NLLSSolverGSL(self.create_problem(), 100)
+        solv2.solve()
+        m["solv_init"] = solv1
+        m["solv_after"] = solv2
+        return m
+
+class TestRelativeHumidity(object):
+    def test_serialization(self, sample_absorber, sample_temperature,
+                           sample_pressure):
+        v1 = RelativeHumidity(sample_absorber, sample_temperature,
+                              sample_pressure);
+        t = serialize_write_string(v1)
+        logging.info("Serialization:\n%s" % t)
+        v2 = serialize_read_generic_string(t)
+        self.check(v1, v2)
+
+    def check(self, v1, v2):
+        return
+        assert v1.specific_humidity_grid == v2.specific_humidity_grid
+        assert v1.relative_humidity_grid == v2.relative_humidity_grid
+        assert v1.relative_humidity_layer == v2.relative_humidity_layer
+
+class TestAerosolExtinctionLinear(BaseForTesting):
+    def create(self):
+        self.t = TestPressureSigma()
+        return AerosolExtinctionLinear(self.t.create(), [True, True, True],
+                                       [0.0, 1.0, 0.2], "Kahn")
+
+    def check(self, a1, a2):
+        assert a1.aerosol_extinction == a2.aerosol_extinction
+        assert a1.aerosol_name == a2.aerosol_name
+        assert a1.model_short_name == a2.model_short_name

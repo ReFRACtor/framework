@@ -1,8 +1,20 @@
 #include <model_measure_bard.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ModelMeasureBard::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasure);
+}
+
+FP_IMPLEMENT(ModelMeasureBard);
+#endif
 
 
 void ModelMeasureBard::model_eval()

@@ -1,8 +1,21 @@
 #include <model_measure_standard.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ModelMeasureStandard::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasure)
+    & FP_NVP(fm) & FP_NVP(obs) & FP_NVP(sv);
+}
+
+FP_IMPLEMENT(ModelMeasureStandard);
+#endif
 
 
 // Function to append a second array at the bottom of an existing

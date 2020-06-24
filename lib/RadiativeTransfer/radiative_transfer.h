@@ -92,7 +92,13 @@ protected:
   static AccumulatedTimer timer;
   boost::shared_ptr<boost::progress_display> progress_display(const 
 		   blitz::Array<double, 1>& wn) const;
+private:  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(RadiativeTransfer);
 #endif

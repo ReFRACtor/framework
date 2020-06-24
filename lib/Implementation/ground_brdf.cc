@@ -1,9 +1,38 @@
 #include "ground_brdf.h"
+#include "fp_serialize_support.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void GroundBrdf::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
+    & FP_NVP(reference_points) & FP_NVP(desc_band_names);
+}
+
+template<class Archive>
+void GroundBrdfVeg::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundBrdf);
+}
+
+template<class Archive>
+void GroundBrdfSoil::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundBrdf);
+}
+
+FP_IMPLEMENT(GroundBrdf);
+FP_IMPLEMENT(GroundBrdfVeg);
+FP_IMPLEMENT(GroundBrdfSoil);
+#endif
 
 // Number of coefficients per band in the state vector
 #define NUM_COEFF 7

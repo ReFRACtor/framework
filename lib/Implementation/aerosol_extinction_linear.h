@@ -12,7 +12,7 @@ namespace FullPhysics {
   This implementation just gets the extinction coefficient for each
   level from the state vector.
 *******************************************************************/
-class AerosolExtinctionLinear : public AerosolExtinctionLevel {
+class AerosolExtinctionLinear : virtual public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -34,6 +34,14 @@ public:
   virtual ~AerosolExtinctionLinear() = default;
     
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
+protected:
+  AerosolExtinctionLinear() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolExtinctionLinear);
 #endif

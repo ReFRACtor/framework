@@ -42,6 +42,7 @@ public:
   bool have_data(double wn) const;
   int wn_index(double Wn_in) const;
   int wn_index(double Wn_in, double& F) const;
+  %pickle_serialization();
 };
 }
 

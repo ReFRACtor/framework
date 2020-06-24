@@ -1,9 +1,22 @@
 #include "temperature_met.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void TemperatureMet::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TemperatureOffset)
+    & FP_NVP(met);
+}
+
+FP_IMPLEMENT(TemperatureMet);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

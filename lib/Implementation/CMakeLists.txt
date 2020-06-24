@@ -103,6 +103,7 @@ set(DIR_SOURCES
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
     sample_grid_spectral_domain.cc
+    scattering_moment_interpolator.cc
     simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
     solar_absorption_gfit_file.cc

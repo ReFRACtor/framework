@@ -24,6 +24,7 @@ public:
   virtual void notify_update(const Pressure& P);
   virtual void notify_update(const Temperature& T);
   boost::shared_ptr<Altitude> clone() const;
+  %pickle_serialization();
 };
 
 }

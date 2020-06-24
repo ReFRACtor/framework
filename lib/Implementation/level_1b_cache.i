@@ -25,7 +25,7 @@ public:
 	       const std::vector<boost::shared_ptr<SpectralDomain> >& Samp_grid,
 	       const std::vector<boost::shared_ptr<Time> >& Tm,
 	       const std::vector<boost::shared_ptr<SpectralRange> >& Rad);
-  virtual int number_spectrometer() const;
+  %python_attribute(number_spectrometer, virtual int);
   virtual DoubleWithUnit latitude(int i) const;
   void set_latitude(int i, const DoubleWithUnit& V);
   virtual DoubleWithUnit longitude(int i) const;

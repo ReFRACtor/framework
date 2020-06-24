@@ -71,6 +71,7 @@ public:
 			  blitz::Array<std::string, 1>& Sv_name) const;
   virtual void notify_add(StateVector& Observed_object);
   virtual void notify_remove(StateVector& Observed_object);
+  %pickle_serialization();
 };
 } // Rename below doesn't like being in a namespace
 %feature("director") FullPhysics::SubStateVectorArray<FullPhysics::Absorber>;

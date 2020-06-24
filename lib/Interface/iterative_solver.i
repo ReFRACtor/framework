@@ -32,5 +32,6 @@ public:
   %python_attribute(status, status_t)
   %python_attribute(status_str, std::string)
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }

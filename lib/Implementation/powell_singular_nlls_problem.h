@@ -6,7 +6,8 @@
 
 namespace FullPhysics {
 
-class PowellSingularNLLSProblem : public NLLSProblem, public NLLSProblemState {
+class PowellSingularNLLSProblem : virtual public NLLSProblem,
+				  virtual public NLLSProblemState {
 public:
   PowellSingularNLLSProblem()
     : NLLSProblem()

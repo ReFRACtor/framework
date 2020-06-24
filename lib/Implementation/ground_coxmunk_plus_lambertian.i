@@ -24,5 +24,6 @@ public:
   virtual boost::shared_ptr<Ground> clone() const;
   virtual void print(std::ostream& Os) const;
   virtual std::string desc() const { return "GroundCoxmunkPlusLambertian"; }
+  %pickle_serialization();
 };
 }

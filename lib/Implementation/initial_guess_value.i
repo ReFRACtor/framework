@@ -25,5 +25,6 @@ public:
   void apriori_covariance_subset(const blitz::Array<bool, 1>& Flag, 
 				 const blitz::Array<double, 2>& V);
   %python_attribute_with_set(initial_guess, blitz::Array<double, 1>)
+  %pickle_serialization();
 };
 }

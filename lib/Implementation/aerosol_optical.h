@@ -11,7 +11,7 @@ namespace FullPhysics {
   Implementation of Aerosol. This particular implementation does 
   the aerosol calculation by using the aerosol optical properties.
 *******************************************************************/
-class AerosolOptical: public Aerosol,
+class AerosolOptical: virtual public Aerosol,
                       public Observer<Pressure>,
                       public Observer<AerosolExtinction>,
                       public Observer<AerosolProperty> {
@@ -136,6 +136,12 @@ private:
   mutable int nlay;
   void fill_cache() const;
   mutable int nvar;
+  AerosolOptical() : cache_is_stale(true), nlay(-1), nvar(-1) {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolOptical);
 #endif

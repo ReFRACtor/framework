@@ -15,5 +15,6 @@ public:
   virtual ~ModelState();
   virtual void set(const ModelState& s);
   virtual void clear();
+  %pickle_serialization();
 };
 }

@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 %{
 #include "absorber_vmr_level_scaled.h"
@@ -21,7 +24,7 @@ public:
   %python_attribute(scale_factor, double)
   %python_attribute(vmr_profile, blitz::Array<double, 1>)
   %python_attribute(pressure_profile, blitz::Array<double, 1>)
-
+  %pickle_serialization();
 };
 }
 

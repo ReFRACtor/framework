@@ -25,5 +25,6 @@ public:
   %python_attribute_nonconst(a_posteriori_covariance, blitz::Array<double, 2>)
   %python_attribute(a_priori_cov_chol, blitz::Array<double, 2>)
   %python_attribute_nonconst(param_a_posteriori_uncertainty, blitz::Array<double, 1>)
+  %pickle_serialization();
 };
 }

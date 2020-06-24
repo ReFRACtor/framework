@@ -52,9 +52,15 @@ public:
   }
 
   //-----------------------------------------------------------------------
-  /// Default constructor, should call init.
+  /// Default constructor, should call init if we we have Coeff to set.
   //-----------------------------------------------------------------------
-  SubStateVectorArray() {}
+  SubStateVectorArray()
+  {
+    // Default to no Coeff.
+    blitz::Array<double, 1> no_coeff;
+    blitz::Array<bool, 1> used_flag;
+    init(no_coeff, used_flag);
+  }
 
   void init
   (const blitz::Array<double, 1>& Coeff,
@@ -66,9 +72,11 @@ public:
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
-    coeff.reference(in_map->retrieval_init(Coeff.copy()));
+    if(Coeff.rows() != 0)
+      coeff.reference(in_map->retrieval_init(Coeff.copy()));
     press = Press;
-    used_flag.reference(Used_flag.copy());
+    if(Used_flag.rows() != 0)
+      used_flag.reference(Used_flag.copy());
     mapping = in_map;
     
     if(coeff.rows() != used_flag.rows()) {
@@ -263,7 +271,7 @@ void SubStateVectorArray<Base>::serialize(Archive & ar, \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Base) \
     & FP_NVP(coeff) & FP_NVP(press) & FP_NVP(used_flag) & FP_NVP(cov) \
-    & FP_NVP(mark_according_to_press) & FP_NVP(pdep_start); \
+    & FP_NVP(mark_according_to_press) & FP_NVP(pdep_start) & FP_NVP(mapping); \
 } \
 \
 FP_IMPLEMENT(Type);

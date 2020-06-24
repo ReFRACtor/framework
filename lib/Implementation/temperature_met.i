@@ -22,6 +22,7 @@ public:
   %python_attribute(temperature_offset_uncertainty, double)
   %python_attribute(temperature_profile, blitz::Array<double, 1>)
   %python_attribute(pressure_profile, blitz::Array<double, 1>)
+  %pickle_serialization();
 protected:
   virtual void calc_temperature_grid() const;
 };

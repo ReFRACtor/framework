@@ -11,7 +11,7 @@ namespace FullPhysics {
   Nonlinear Least Squares problem.
 *******************************************************************/
 class NLLSMaxAPosteriori: 
-    public NLLSProblem, public NLLSProblemState {
+    virtual public NLLSProblem, virtual public NLLSProblemState {
 
 public:
 
@@ -98,9 +98,14 @@ public:
 
 
 protected:
-
-  const boost::shared_ptr<MaxAPosteriori> MAP;
-
+  boost::shared_ptr<MaxAPosteriori> MAP;
+  NLLSMaxAPosteriori() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NLLSMaxAPosteriori);
 #endif

@@ -1,9 +1,41 @@
 #include "chapman_boa_rt.h"
+#include "fp_serialize_support.h"
 #include "wgs84_constant.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ChapmanBoaRT::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransfer)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void ChapmanBoaRT::save(Archive & UNUSED(ar),
+			const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do.
+}
+
+template<class Archive> \
+void ChapmanBoaRT::load(Archive & UNUSED(ar),
+			const unsigned int UNUSED(version)) 
+{
+  chapman_cache_stale.resize(sza.rows());
+  chapman_cache_stale = true;
+  chapman_boa.resize(sza.rows());
+}
+
+
+FP_IMPLEMENT(ChapmanBoaRT);
+#endif
 
 boost::shared_ptr<RadiativeTransfer> chapman_boa_rt_create
 (const boost::shared_ptr<RtAtmosphere>& Atm,

@@ -1,8 +1,22 @@
 #include "altitude_hydrostatic.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AltitudeHydrostatic::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Altitude)
+    & FP_NVP(latitude) & FP_NVP(surface_height)
+    & FP_NVP(p) & FP_NVP(t) & FP_NVP(num_sublayer);
+}
+
+FP_IMPLEMENT(AltitudeHydrostatic);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

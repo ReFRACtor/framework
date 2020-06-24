@@ -20,7 +20,7 @@ namespace FullPhysics {
   calculating the gas absorption (e.g, the Absco tables).
 *******************************************************************/
 
-class AbsorberAbsco: public Absorber,
+class AbsorberAbsco: virtual public Absorber,
                      public Observer<AbsorberVmr>,
 		     public Observer<Pressure>,
 		     public Observer<Temperature>, 
@@ -241,6 +241,12 @@ private:
   { return alt[Spec_index]->gravity(AutoDerivativeWithUnit<double>(P.value, P.units)); }
   ArrayAdWithUnit<double, 2> subset_broadener(const ArrayAd<double, 2> bvmr,
 					      const Absco& a) const;
+  AbsorberAbsco() :cache_tau_gas_stale(true) {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberAbsco);
 #endif

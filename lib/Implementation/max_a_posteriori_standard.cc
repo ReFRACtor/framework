@@ -1,7 +1,20 @@
 #include <max_a_posteriori_standard.h>
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void MaxAPosterioriStandard::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasureStandard)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MaxAPosteriori);
+}
+
+FP_IMPLEMENT(MaxAPosterioriStandard);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

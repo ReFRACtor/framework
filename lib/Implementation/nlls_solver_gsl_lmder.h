@@ -11,7 +11,7 @@ namespace FullPhysics {
   identity matrix.
 *******************************************************************/
 class NLLSSolverGSLLMDER : 
-    public NLLSSolverGSL {
+    virtual public NLLSSolverGSL {
 
 public:
 
@@ -45,7 +45,12 @@ protected:
 
   virtual const gsl_multifit_fdfsolver_type* get_gsl_multifit_fdfsolver()
   { return gsl_multifit_fdfsolver_lmder; }
-
+  NLLSSolverGSLLMDER() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(NLLSSolverGSLLMDER);
 #endif

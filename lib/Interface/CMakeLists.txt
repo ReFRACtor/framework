@@ -6,7 +6,9 @@ set(DIR_SOURCES
     absorber_vmr_scaled.cc
     aerosol.cc
     aerosol_extinction.cc
+    aerosol_extinction_imp_base.cc
     aerosol_property.cc
+    aerosol_property_imp_base.cc
     altitude.cc
     composite_initial_guess.cc
     convergence_check.cc
@@ -21,6 +23,7 @@ set(DIR_SOURCES
     forward_model_spectral_grid.cc
     gas_absorption.cc
     ground.cc
+    ground_imp_base.cc
     ground_piecewise.cc
     ils.cc
     ils_function.cc
@@ -61,6 +64,7 @@ set(DIR_SOURCES
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
     stokes_coefficient.cc
+    surface_temperature.cc
     temperature.cc
     temperature_imp_base.cc
     temperature_offset.cc

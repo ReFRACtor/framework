@@ -49,7 +49,7 @@ namespace FullPhysics {
   things like add iteration output or extra logging.
 *******************************************************************/
 
-class ConnorSolverMAP : public NLLSSolver {
+class ConnorSolverMAP : virtual public NLLSSolver {
 public:
   //-----------------------------------------------------------------------
   /// and optionally an initial value for gamma.
@@ -181,9 +181,13 @@ protected:
 
   const boost::shared_ptr<MaxAPosteriori> map;
   boost::shared_ptr<NLLSProblemScaled> scaled_p;
-
+  ConnorSolverMAP() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
-
-
 }
+
+FP_EXPORT_KEY(ConnorSolverMAP);
 #endif

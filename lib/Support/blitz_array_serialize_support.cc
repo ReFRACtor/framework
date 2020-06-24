@@ -185,6 +185,41 @@ template void boost::serialization::save(polymorphic_oarchive& ar,
 					 const unsigned version);
 
 template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<FullPhysics::AutoDerivative<double>, 1>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<FullPhysics::AutoDerivative<double>, 1>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<FullPhysics::AutoDerivative<double>, 2>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<FullPhysics::AutoDerivative<double>, 2>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<FullPhysics::AutoDerivative<double>, 3>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<FullPhysics::AutoDerivative<double>, 3>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<FullPhysics::AutoDerivative<double>, 4>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<FullPhysics::AutoDerivative<double>, 4>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<FullPhysics::AutoDerivative<double>, 5>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<FullPhysics::AutoDerivative<double>, 5>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
 					 blitz::Array<float, 1>& A, 
 					 const unsigned version);
 template void boost::serialization::save(polymorphic_oarchive& ar, 

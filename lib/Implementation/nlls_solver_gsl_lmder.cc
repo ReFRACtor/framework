@@ -1,8 +1,19 @@
 #include <nlls_solver_gsl_lmder.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSSolverGSLLMDER::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSSolverGSL);
+}
+
+FP_IMPLEMENT(NLLSSolverGSLLMDER);
+#endif
 
 
 boost::shared_ptr<IterativeSolver> nlls_solver_gsl_lmder_create(

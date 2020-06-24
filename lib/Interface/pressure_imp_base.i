@@ -8,7 +8,8 @@
 %}
 
 %base_import(pressure)
-%import "sub_state_vector_array.i"
+%base_import(sub_state_vector_array)
+%base_import(state_vector)
 
 %fp_shared_ptr(FullPhysics::PressureImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::Pressure>)

@@ -6,11 +6,31 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void SubStateVectorObserver::serialize(Archive & ar, const unsigned int UNUSED(version))
+void SubStateVectorObserver::serialize(Archive & ar,
+				       const unsigned int version)
 {
+  // sv_sub and sv_cov_sub actually point to a subset of sv_full and
+  // sv_cov_full. So we don't store a copy of this, instead we store
+  // the original data and then in load set up these variable to point
+  // to this data.
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
-    & FP_NVP(sv_full) & FP_NVP(sv_cov_full) & FP_NVP(sv_sub)
-    & FP_NVP(sv_cov_sub) & FP_NVP(pstart) & FP_NVP(plen);
+    & FP_NVP(sv_full) & FP_NVP(sv_cov_full) & FP_NVP(pstart) & FP_NVP(plen);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void SubStateVectorObserver::save(Archive & , const unsigned int ) const
+{
+  // Nothing more to do.
+}
+template<class Archive>
+void SubStateVectorObserver::load(Archive & , const unsigned int)
+{
+  if(pstart >= 0 && plen > 0) {
+    blitz::Range rsub(pstart, pstart + plen - 1);
+    sv_sub.reference(sv_full(rsub));
+    sv_cov_sub.reference(Array<double, 2>(sv_cov_full(rsub, rsub)));
+  }
 }
 
 FP_IMPLEMENT(SubStateVectorObserver);

@@ -19,7 +19,7 @@ namespace FullPhysics {
 /// methods that only use the cost function (no derivatives).
 //-----------------------------------------------------------------------
 
-class CostFuncDiff : public CostFunc {
+class CostFuncDiff : virtual public CostFunc {
 
 public:
 
@@ -224,7 +224,11 @@ protected:
 private:
 
   int d_count;
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(CostFuncDiff);
 #endif

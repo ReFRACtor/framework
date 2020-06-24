@@ -6,7 +6,8 @@
 
 namespace FullPhysics {
 
-class HelicalValleyNLLSProblem : public NLLSProblem, public NLLSProblemState {
+class HelicalValleyNLLSProblem : virtual public NLLSProblem,
+				 virtual public NLLSProblemState {
 public:
   HelicalValleyNLLSProblem()
     : NLLSProblem()

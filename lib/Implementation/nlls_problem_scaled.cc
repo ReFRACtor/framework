@@ -1,8 +1,21 @@
 #include "nlls_problem_scaled.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSProblemScaled::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblem)
+    & FP_NVP(S) & FP_NVP(P);
+}
+
+FP_IMPLEMENT(NLLSProblemScaled);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -27,6 +27,11 @@ private:
   boost::shared_ptr<Temperature> temp;
   boost::shared_ptr<Pressure> press;
   double c;
+  RelativeHumidity() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(RelativeHumidity);
 #endif

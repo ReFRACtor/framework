@@ -53,6 +53,7 @@ public:
   gravity(const AutoDerivativeWithUnit<double>& P) 
     const = 0;
   virtual boost::shared_ptr<Altitude> clone() const = 0;
+  %pickle_serialization();
 };
 }
 %template(vector_altitude) std::vector<boost::shared_ptr<FullPhysics::Altitude> >;

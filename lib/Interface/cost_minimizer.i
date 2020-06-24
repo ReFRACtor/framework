@@ -13,6 +13,6 @@ class CostMinimizer : public IterativeSolver {
 public:
   CostMinimizer(const boost::shared_ptr<CostFunc>& p,
                 int max_cost_function_calls, bool vrbs);
-  virtual ~CostMinimizer();
+  %pickle_serialization();
 };
 }

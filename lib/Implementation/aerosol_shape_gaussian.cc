@@ -1,9 +1,21 @@
 #include "aerosol_shape_gaussian.h"
+#include "fp_serialize_support.h"
 #include "mapping_gaussian.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolShapeGaussian::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolExtinctionLevel);
+}
+
+FP_IMPLEMENT(AerosolShapeGaussian);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -48,6 +48,15 @@ public:
 /// Name of aerosol. 
 //-----------------------------------------------------------------------
   virtual std::string aerosol_name() const = 0;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolExtinction);
+FP_EXPORT_OBSERVER_KEY(AerosolExtinction);
+
 #endif
+

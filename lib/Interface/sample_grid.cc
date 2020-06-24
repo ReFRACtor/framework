@@ -1,6 +1,21 @@
 #include "sample_grid.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SampleGrid::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableSampleGrid);
+    
+}
+
+FP_IMPLEMENT(SampleGrid);
+FP_OBSERVER_SERIALIZE(SampleGrid);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -19,7 +19,7 @@ public:
 		 const std::string& observation_id);
   ExampleLevel1b(const std::string& input_filename,
 		 const std::string& observation_id);
-  virtual int number_spectrometer() const;
+  %python_attribute(number_spectrometer, virtual int);
   virtual DoubleWithUnit latitude(int i) const;
   virtual DoubleWithUnit longitude(int i) const;
   virtual DoubleWithUnit solar_zenith(int i) const;;

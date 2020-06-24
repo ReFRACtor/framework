@@ -65,6 +65,7 @@ protected:
   virtual blitz::Array<double, 3> read_double(double wn) const;
   virtual blitz::Array<float, 3> read_float(double wn) const;
 private:
+  void load_file();
   bool is_float_;
   int cache_nline;
   InterpolationType itype_;
@@ -91,6 +92,14 @@ private:
   // This just points to front of wn. We store this here so
   // don't need to keep calculating this.
   double *wnfront;
+  AbscoHdf() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 template<> inline blitz::Array<double, 4>& AbscoHdf::read_cache<double>() const
@@ -112,4 +121,6 @@ template<> inline void AbscoHdf::bound_set<float>(int lbound, int sz) const
 }
 
 }
+
+FP_EXPORT_KEY(AbscoHdf);
 #endif
