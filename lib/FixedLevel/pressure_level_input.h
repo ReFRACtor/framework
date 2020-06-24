@@ -57,6 +57,14 @@ public:
   void print(std::ostream& Os) const;
 private:
   blitz::Array<double, 1> press_level;
+  PressureLevelInput() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  
 };
 }
+
+FP_EXPORT_KEY(PressureLevelInput);
+
 #endif

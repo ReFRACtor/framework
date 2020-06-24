@@ -1,5 +1,6 @@
 #include <boost/bind.hpp>
 #include "temperature_fixed_level.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "pressure_fixed_level.h"
 #include "ostream_pad.h"
@@ -7,6 +8,18 @@
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void TemperatureFixedLevel::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TemperatureImpBase)
+    & FP_NVP(press_level);
+}
+
+FP_IMPLEMENT(TemperatureFixedLevel);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

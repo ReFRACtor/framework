@@ -27,6 +27,7 @@ public:
   virtual boost::shared_ptr<Pressure> clone() const;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
+  %pickle_serialization();
 protected:
   virtual void calc_pressure_grid() const;
 };

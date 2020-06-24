@@ -9,7 +9,7 @@ namespace FullPhysics {
   particular implementation has a fixed set of pressure levels, with
   only the surface pressure changing.
 *******************************************************************/
-class TemperatureFixedLevel: public TemperatureImpBase {
+class TemperatureFixedLevel: virtual public TemperatureImpBase {
 public:
   TemperatureFixedLevel(const blitz::Array<bool, 1>& Flag_temp, 
 	bool Flag_offset, const blitz::Array<double, 1>& Temp,
@@ -36,6 +36,12 @@ private:
   // Range of coefficient that contains temperature.
   blitz::Range temperature_range() const 
   {return blitz::Range(1, coefficient().rows() - 1);}
+  TemperatureFixedLevel() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(TemperatureFixedLevel);
 #endif

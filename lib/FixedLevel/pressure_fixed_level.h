@@ -14,7 +14,7 @@ namespace FullPhysics {
   it may pass a pressure level, changing the number of levels that lie
   above the surface.
 *******************************************************************/
-class PressureFixedLevel : public PressureImpBase {
+class PressureFixedLevel : virtual public PressureImpBase {
 public:
   PressureFixedLevel(bool Pressure_flag, 
 		     const boost::shared_ptr<PressureLevelInput>& Press_level,
@@ -99,6 +99,13 @@ protected:
   virtual void calc_pressure_grid() const;
 private:
   boost::shared_ptr<PressureLevelInput> press_level;
+  PressureFixedLevel() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(PressureFixedLevel);
+
 #endif

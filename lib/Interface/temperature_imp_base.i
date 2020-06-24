@@ -43,6 +43,7 @@ public:
   temperature(const AutoDerivativeWithUnit<double>& Press) const;
 
   %sub_state_virtual_func(Temperature);
+  %pickle_serialization();
 protected:
   mutable bool cache_stale;
   mutable boost::function<AutoDerivative<double>(const AutoDerivative<double>&)> tgrid;

@@ -1,6 +1,22 @@
 #include "pressure_fixed_level.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
+
+using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void PressureFixedLevel::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PressureImpBase)
+    & FP_NVP(press_level);
+}
+
+FP_IMPLEMENT(PressureFixedLevel);
+#endif
+
 using namespace FullPhysics;
 using namespace blitz;
 #ifdef HAVE_LUA

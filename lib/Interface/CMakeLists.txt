@@ -61,6 +61,7 @@ set(DIR_SOURCES
     spectrum_sampling.cc
     stokes_coefficient.cc
     temperature.cc
+    temperature_imp_base.cc
     temperature_offset.cc
 )
 

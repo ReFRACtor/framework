@@ -30,6 +30,7 @@ public:
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(temperature_offset, double);
   %python_attribute(temperature_offset_uncertainty, double);
+  %pickle_serialization();
 protected:
   virtual void calc_temperature_grid() const;
 };

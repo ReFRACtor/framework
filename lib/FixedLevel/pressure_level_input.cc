@@ -1,7 +1,20 @@
 #include "pressure_level_input.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void PressureLevelInput::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(PressureLevelInput);
+  ar & FP_NVP(press_level);
+}
+
+FP_IMPLEMENT(PressureLevelInput);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

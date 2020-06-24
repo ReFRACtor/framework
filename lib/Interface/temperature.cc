@@ -1,6 +1,21 @@
 #include "temperature.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Temperature::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableTemperature);
+    
+}
+
+FP_IMPLEMENT(Temperature);
+FP_OBSERVER_SERIALIZE(Temperature);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

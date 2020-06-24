@@ -14,7 +14,7 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class TemperatureImpBase: public SubStateVectorArray<Temperature> {
+class TemperatureImpBase: virtual public SubStateVectorArray<Temperature> {
 public:
   virtual ~TemperatureImpBase() {}
   virtual AutoDerivativeWithUnit<double> 
@@ -102,7 +102,12 @@ private:
       calc_temperature_grid();
     cache_stale = false;
   }
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<Temperature> SubStateVectorArrayTemperature;
 }
+FP_EXPORT_KEY(TemperatureImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayTemperature);
 #endif

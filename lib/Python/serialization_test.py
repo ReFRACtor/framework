@@ -227,3 +227,35 @@ class TestStateVector(BaseForTesting):
     def check(self, s1, s2):
         assert_almost_equal(s1.state, s2.state)
         assert_almost_equal(s1.state_covariance, s2.state_covariance)
+
+class TestPressureLevelInput(BaseForTesting):
+    def create(self):
+        return PressureLevelInput([1,2,3])
+
+    def check(self, p1, p2):
+        assert_almost_equal(p1.pressure_level, p2.pressure_level)
+
+class TestPressureFixedLevel(BaseForTesting):
+    def create(self):
+        self.t = TestPressureLevelInput()
+        return PressureFixedLevel(True, self.t.create(), 3)
+    
+    def check(self, p1, p2):
+        t2 = TestArrayAdWithUnit()
+        t2.create()
+        t2.check(p1.pressure_grid, p2.pressure_grid)
+
+class TestTemperatureFixedLevel(BaseForTesting):
+    def create(self):
+        self.t = TestPressureLevelInput()
+        self.t2 = TestPressureFixedLevel()
+        return TemperatureFixedLevel([True,True,False],False,[10,11,12],
+                                     0, self.t2.create(), self.t.create())
+
+    def check(self, temp1, temp2):
+        t3 = TestArrayAdWithUnit()
+        t3.create()
+        pres = self.t2.create()
+        t3.check(temp1.temperature_grid(pres), temp2.temperature_grid(pres))
+    
+        
