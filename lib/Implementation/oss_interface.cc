@@ -68,7 +68,7 @@ boost::shared_ptr<OssModifiedOutputs> OssMasters::run_fwd_model(boost::shared_pt
     blitz::Array<float, 1> y = blitz::Array<float, 1>(num_chan);
     blitz::Array<float, 2> xk_temp = blitz::Array<float, 2>(num_chan, num_vert_lev);
     blitz::Array<float, 1> xk_tskin = blitz::Array<float, 1>(num_chan);
-    blitz::Array<float, 3> xk_out_gas = blitz::Array<float, 3>(num_chan, num_vert_lev, num_gas_jacob);
+    blitz::Array<float, 3> xk_out_gas = blitz::Array<float, 3>(num_gas_jacob, num_chan, num_vert_lev);
     blitz::Array<float, 2> xk_em = blitz::Array<float, 2>(num_chan, num_surf_points);
     blitz::Array<float, 2> xk_rf = blitz::Array<float, 2>(num_chan, num_surf_points);
     blitz::Array<float, 1> xk_cldln_pres = blitz::Array<float, 1>(num_chan);

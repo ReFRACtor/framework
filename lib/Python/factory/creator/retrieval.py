@@ -294,7 +294,6 @@ class LegacyConnorSolver(Creator):
         sv = self.state_vector()
         fm = self.forward_model()
 
-        # TODO: This creator assumes forward models have spectral grids, which is not required by interface
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
         cost_func = rf.ConnorCostFunction(sv, fm, observation)
@@ -352,6 +351,7 @@ class MaxAPosterioriBase(Creator):
     def opt_problem(self):
         fm = self.forward_model()
 
+        # TODO: This creator assumes forward models have spectral grids, which is not required by interface
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
         stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())

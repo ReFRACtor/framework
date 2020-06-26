@@ -258,7 +258,7 @@ class ForwardModel(Creator):
         return fm
 
 class OssForwardModel(Creator):
-    absorber_vmr = param.Dict()
+    absorber = param.Iterable(rf.AbsorberVmr)
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
     surface_temperature = param.InstanceOf(rf.SurfaceTemperature)
@@ -282,32 +282,20 @@ class OssForwardModel(Creator):
     ch_sel_file = param.Scalar(str)
     max_chans =  param.Scalar(int, default=20000)
 
+    ## TEMP ##
+    # Temporary to attach a ForwardModelSpectralGrid until changes are made
+    # to fix the requirement of a ForwardModelSpectralGrid object to create a retrieval
+    # TODO: Remove this
+    instrument = param.InstanceOf(rf.Instrument)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+    spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
+    ## TEMP ##
+
     def create(self, **kwargs):
+
         vmrs = rf.vector_absorber_vmr()
-        for gas_name in self.absorber_vmr()["gases"]:
-            # TODO: Find better way to evaluate these definitions to get an object
-            # Creators will either be AbsorberVmrMUSES, AbsorberVmrLevelScaled or AbsorberRetFlags
-            gas_config = self.absorber_vmr()[gas_name]
-            gas_config["l1b"] = self.common_store["l1b"]
-            gas_config["osp_directory"] = self.common_store["osp_directory"]
-            if "flags" in gas_config: # l1b and osp_directory needed by MUSES AbsorberRetFlags
-                gas_config["flags"]["l1b"] = self.common_store["l1b"]
-                gas_config["flags"]["osp_directory"] = self.common_store["osp_directory"]
-            else: # pressure needed by AbsorberVmrMUSES
-                gas_config["pressure"] = self.common_store["pressure"]
-
-            vmr_creator = gas_config['creator'](gas_config)
-            vmr = vmr_creator.create(gas_name)
-
-            # TODO: discuss below
-            # Attaching StateVector here to avoid "Must attach SubStateVectorObserver to state vector before checking used state."
-            # In OSS, Used state checked to see if jacobians are to be looked up for the gas
-            sv = rf.StateVector()
-            sv.add_observer(vmr)
-            if sv.observer_claimed_size > 0:
-                sv.update_state(vmr.vmr_profile)
-            vmrs.push_back(vmr)
-
+        for vmr_obj in self.absorber():
+            vmrs.push_back(vmr_obj)
 
         # TODO: discuss support for multiple channels/bands
         chan_idx = 0
@@ -322,4 +310,12 @@ class OssForwardModel(Creator):
                                 self.ch_sel_file(), self.max_chans())
 
         fm.setup_grid()
+
+        ## TEMP ##
+        # Temporary to attach a ForwardModelSpectralGrid until changes are made
+        # to fix the requirement of a ForwardModelSpectralGrid object to create a retrieval
+        # TODO: Remove this
+        fm.spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
+        ## TEMP ##
+
         return fm

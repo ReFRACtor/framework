@@ -26,9 +26,13 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
 
     for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
         gas_names.push_back(vmr[gas_index]->gas_name());
-        if (any(vmr[gas_index]->state_used())) {
-            gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
-        }
+        gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
+
+        // Disabled because can not call ->state_used before items are attached to state vector
+        // which wil be after this consturctor has been called
+        //if (any(vmr[gas_index]->state_used())) {
+        //    gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
+        //}
     }
 
     int num_vert_lev = pressure->number_level();

@@ -152,3 +152,31 @@ class RelativeHumidity(Creator):
 
     def create(self, **kwargs):
         return rf.RelativeHumidity(self.absorber(), self.temperature(), self.pressure())
+
+class AtmosphereDictCreator(Creator):
+    "Creates a dictionary of atmosphere components in the correct order"
+
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    absorber = param.Iterable(rf.AbsorberVmr)
+    ground = param.InstanceOf(rf.Ground, required=False)
+    aerosol = param.InstanceOf(rf.Aerosol, required=False)
+    surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
+
+    def create(self, **kwargs):
+
+        pressure = self.common_store["pressure"] = self.pressure()
+        temperature = self.common_store["temperature"] = self.temperature()
+        absorber = self.common_store["absorber"] = self.absorber()
+        aerosol = self.common_store["aerosol"] = self.aerosol()
+        ground = self.common_store["ground"] = self.ground()
+        surf_temp = self.common_store["surface_temperature"] = self.surface_temperature()
+
+        return  {
+            'pressure': pressure,
+            'temperature': temperature,
+            'absorber': absorber,
+            'aerosol': aerosol,
+            'ground': ground,
+            'surface_temperature': surf_temp,
+        }
