@@ -19,7 +19,9 @@
 %fp_shared_ptr(FullPhysics::GroundBrdfSoil);
 
 namespace FullPhysics {
-
+%feature("notabstract") GroundBrdf;
+%feature("notabstract") GroundBrdfVeg;
+%feature("notabstract") GroundBrdfSoil;
 class GroundBrdf: public GroundImpBase {
 public:
   enum ParamIndex {
