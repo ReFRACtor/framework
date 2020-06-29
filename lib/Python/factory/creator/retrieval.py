@@ -353,7 +353,13 @@ class MaxAPosterioriBase(Creator):
 
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
-        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())
+        apriori = self.a_priori()
+        cov = self.covariance()
+
+        if apriori.shape[0] != cov.shape[0] or apriori.shape[0] != cov.shape[1]:
+            raise param.ParamError(f"The number of rows and columns of a priori covariance matrix: {cov.shape} do not equal the size of the a priori parameter values array: {apriori.shape[0]}")
+
+        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), apriori, cov)
 
         opt_problem = rf.NLLSMaxAPosteriori(stat_method)
 
