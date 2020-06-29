@@ -139,7 +139,7 @@ def make_resample_map(fine_grid, coarse_grid):
 
 
 class OSP(object):
-    def __init__(self, species, base_dir, latitude, longitude, obs_time, use_log=True, cov_dir="Covariance", num_constraint_levels=None):
+    def __init__(self, species, base_dir, latitude, longitude, obs_time, instrument_name=None, cov_dir="Covariance"):
         self.species = species
         self.base_dir = base_dir
         self.latitude = latitude
@@ -150,10 +150,9 @@ class OSP(object):
 
         self.obs_time = obs_time
 
-        self.use_log = use_log
         self.cov_dir = cov_dir
 
-        self.num_constraint_levels = num_constraint_levels
+        self.instrument_name = instrument_name
 
         self.nh3_version = "CLN"
 
@@ -163,6 +162,13 @@ class OSP(object):
         if not os.path.exists(clim_base_dir):
             raise Exception("No climatology species directory found: {} for species".format(clim_base_dir, self.species))
         return clim_base_dir
+
+    @property
+    def strategy_base_dir(self):
+        strat_base_dir = os.path.join(self.base_dir, "Strategy_Tables", f"OSP-{self.instrument_name}")
+        if not os.path.exists(strat_base_dir):
+            raise Exception(f"No Strategy Tables directory found at: {strat_base_dir} for instrument name: {self.instrument_name}")
+        return strat_base_dir
  
     @property
     def pressure_filename(self):
@@ -359,12 +365,56 @@ class OSP(object):
 
         return inv_map @ full_grid
 
+    @property
+    def retrieval_strategy_filename(self):
+        ret_strat_fn = os.path.join(self.strategy_base_dir, "Species-66", f"{self.species}.asc")
+        if not os.path.exists(ret_strat_fn):
+            return None
+        return ret_strat_fn
+
+    @property
+    def retrieval_strategy_info(self):
+
+        if not hasattr(self, "_ret_strat"):
+            if self.retrieval_strategy_filename is None:
+                self._ret_strat = {}
+            else:
+                mf = MUSES_File(self.retrieval_strategy_filename, header_only=True)
+                self._ret_strat = mf.header
+
+        return self._ret_strat
+
+    @property
+    def use_log(self):
+
+        if self.retrieval_strategy_info.get("mapType", "") == "Log":
+            return True
+        else:
+            return False
+
+    @property
+    def retrieval_levels(self):
+
+        ret_lev = self.retrieval_strategy_info.get("retrievalLevels", 0)
+
+        if ret_lev == 0:
+            return None
+        else:
+            return np.array([ int(l)-1 for l in ret_lev.split(",") ])
+
     def _pick_constraint_levels_file(self, filenames):
 
-        if self.num_constraint_levels is not None:
+        ret_levs = self.retrieval_levels
+
+        if ret_levs is not None:
+            num_ret_levels = len(ret_levs)
+        else:
+            num_ret_levels = None
+
+        if num_ret_levels is not None:
             # If defined find the file with the defined number of constraint levels
             for fn in filenames:
-                if re.search(r"_{}.asc".format(self.num_constraint_levels), fn):
+                if re.search(r"_{}.asc".format(num_ret_levels), fn):
                     return fn
             return None
         else:
@@ -376,8 +426,11 @@ class OSP(object):
                 return int(match.group(1))
 
             sorted_filenames = sorted(filenames, key=extract_num_levels, reverse=True)
-
-            return sorted_filenames[0]
+    
+            if len(sorted_filenames) > 0:
+                return sorted_filenames[0]
+            else:
+                return None
 
     def _co_star_filename(self, co_dir_suffix, constraint=False):
         "Finds filenames for Covariance and Constraint files which have a similar pattern"
@@ -385,7 +438,7 @@ class OSP(object):
         cov_base_dir = os.path.join(self.base_dir, co_dir_suffix)
 
         if not os.path.exists(cov_base_dir):
-            raise Exception("{} base directory does not exist: {} for species: {}".format(co_dir_suffix, cov_base_dir, self.species))
+            raise Exception("{} base directory does not exist: {} for species: {}".format(co_dir_suffix, cbase_dir, self.species))
 
         if constraint:
             glob_pattern = "Constraint_Matrix_{species}_*"
@@ -408,7 +461,6 @@ class OSP(object):
             co_file = self._pick_lat_file(list(filt_files))
 
         return co_file
-
  
     @property
     def covariance_filename(self):
@@ -417,9 +469,24 @@ class OSP(object):
 
     @property
     def constraint_filename(self):
+        
+        constraint_fn = self.retrieval_strategy_info.get("constraintFilename", None)
 
-        return self._co_star_filename(os.path.join("Constraint"), constraint=True)
+        if constraint_fn is not None:
+            # Replace base path with path to our filees
+            constraint_fn = constraint_fn.replace("../OSP", self.base_dir)
 
+            num_ret_levels = len(self.retrieval_levels)
+
+            # Replace _87 in the filename with the number of retrieval levels like the MUSES code does
+            if self.species == "NH3":
+                constraint_fn = constraint_fn.replace("_87", f"_{num_ret_levels}_{self.nh3_version}")
+            else:
+                constraint_fn = constraint_fn.replace("_87", f"_{num_ret_levels}")
+
+            return constraint_fn
+        else:
+            return self._co_star_filename(os.path.join("Constraint"), constraint=True)
 
     @lru_cache()
     def _co_star_read(self, co_file):
@@ -451,7 +518,7 @@ class OSP(object):
         return cov_press
 
     @property
-    def covariance_full_grid(self):
+    def covariance_matrix(self):
         """Return a covariance matrix for the requested location, error if the covariance type is not available."""
 
         cov_filename = self.covariance_filename
@@ -472,21 +539,6 @@ class OSP(object):
 
         return cov_data
 
-    @lru_cache()
-    def covariance_resampled(self, num_levels):
-
-        cov_filename = self.covariance_filename
-        cov_press = self.covariance_pressure
-        cov_data = self.covariance_full_grid
-
-        # Must build resample map specific to covariance since its fine grid might be different than climatology
-        coarse_grid = self.pressure_resampled(num_levels)
-
-        forward_map = make_resample_map(cov_press, coarse_grid)
-        inv_map = np.linalg.pinv(forward_map)
-
-        return inv_map @ cov_data @ inv_map.transpose()
-
     @property
     def constraint_pressure(self):
 
@@ -495,77 +547,9 @@ class OSP(object):
         return con_press
 
     @property
-    def constraint_full_grid(self):
+    def constraint_matrix(self):
         """Return a constraint matrix for the requested location, error if the covariance type is not available."""
 
         con_filename = self.constraint_filename
         con_press, con_data = self._co_star_read(con_filename)
         return con_data
-
-    @property
-    def constraint_full_indexes(self):
-        "Returns indexes into the full pressure grid where constraint pressues are located"
-
-        press_full = self.pressure_full_grid
-        press_con = self.constraint_pressure
-
-        indexes = []
-        for con_p in press_con:
-            idx = max(bisect_right(press_full, con_p)-1, 0)
-            if idx not in indexes:
-                indexes.append(idx)
-
-        return np.array(indexes)
-
-    @property
-    def constraint_full_flags(self):
-        "Flags indicating which indexes in the full pressure grid are valid for the constraint matrix"
-
-        press_full = self.pressure_full_grid
-        con_indexes = self.constraint_full_indexes
-        
-        flags = np.zeros(press_full.shape[0], dtype=bool)
-        flags[con_indexes] = True
-
-        return flags
-
-    def covariance_compute(self):
-        """Create a simple covariance from climatology data"""
-
-        clim_filename = self.climatology_filename
-
-        # Replace parts of path with wildcards
-
-        # Replace month
-        clim_glob = re.sub(self._month_directory_name, "*", clim_filename)
-
-        # Replace longitude portion
-        clim_glob = re.sub(r"\d{3}[EW]_\d{3}[EW]", "*", clim_glob)
-
-        # Replace latitude portion
-        clim_glob = re.sub(r"\d{2}[NS]_\d{2}[NS]", "*", clim_glob)
-
-        cov_inp_filenames = glob(clim_glob)
-    
-        inp0 = MUSES_File(cov_inp_filenames[0])
-
-        clim_data = np.empty((inp0.data.shape[0], len(cov_inp_filenames)), dtype=float)
-        clim_data[:, 0] = inp0.data[:, 0]
-
-        for idx, inp_file in enumerate(cov_inp_filenames[1:]):
-            inpD = MUSES_File(inp_file)
-            clim_data[:, idx+1] = inpD.data[:, 0]
-
-        cov_data = np.cov(clim_data)
-
-        # Convert to pressure increasing order
-        cov_data = np.flip(cov_data)
-
-        # Add a small value to the diagonal values to make the matrix positive definite 
-        # as due to numerical issues the output isn't always such
-        fudge = np.mean(cov_data) * 1e-10
-
-        diag_idx = np.diag_indices(cov_data.shape[0])
-        cov_data[diag_idx] += fudge
-        
-        return cov_data

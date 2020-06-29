@@ -1,3 +1,4 @@
+import re
 import numpy as np
 
 from .base import Creator
@@ -6,6 +7,7 @@ from .. import param
 from refractor import framework as rf
 from . import atmosphere
 from . import absorber
+from . import retrieval
 
 from refractor.muses_osp import OSP
 
@@ -13,17 +15,18 @@ class CreatorMUSES(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
     osp_directory = param.Scalar(str)
+    osp_instrument_name = param.Scalar(str, default=None)
 
     def osp_common(self):
 
         l1b_obj = self.l1b()
-        osp_dir = self.osp_directory()
 
         osp_common = {
-            "base_dir": osp_dir,
+            "base_dir": self.osp_directory(),
             "latitude": l1b_obj.latitude(0).value,
             "longitude": l1b_obj.longitude(0).value,
             "obs_time": l1b_obj.time(0).as_datetime(),
+            "instrument_name": self.osp_instrument_name(),
         }
 
         return osp_common
@@ -39,7 +42,7 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
 
     def create(self, **kwargs):
 
-        psur_osp = OSP("PSUR", use_log=False, **self.osp_common())
+        psur_osp = OSP("PSUR", **self.osp_common())
 
         if self.pressure_levels() is None:
             self.config_def["pressure_levels"] = psur_osp.pressure_resampled(self.num_levels())
@@ -56,7 +59,7 @@ class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevelOffset):
 
     def create(self, **kwargs):
 
-        tatm_osp = OSP("TATM", use_log=False, **self.osp_common())
+        tatm_osp = OSP("TATM", **self.osp_common())
         
         if self.temperature_levels() is None:
             self.config_def["temperature_levels"] = tatm_osp.climatology_full_grid
@@ -72,7 +75,7 @@ class SurfaceTemperatureMUSES(CreatorMUSES, atmosphere.SurfaceTemperature):
 
     def create(self, **kwargs):
 
-        tsur_osp = OSP("TSUR", use_log=False, **self.osp_common())
+        tsur_osp = OSP("TSUR", **self.osp_common())
 
         if self.value() is None:
             self.config_def['value'] = rf.ArrayWithUnit_double_1(np.full(self.num_channels(), tsur_osp.climatology_full_grid), "K")
@@ -84,50 +87,69 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
     def create(self, gas_name, **kwargs):
         gas_osp = OSP(gas_name, **self.osp_common())
 
-        self.config_def['log_retrieval'] = True
-        self.config_def['value'] = gas_osp.climatology_full_grid
-        self.config_def['pressure'] = self.pressure_obj(gas_osp.pressure_full_grid)
+        ret_levels = gas_osp.retrieval_levels
+
+        self.config_def['log_retrieval'] = gas_osp.use_log 
+
+        if ret_levels is None:
+            self.config_def['value'] = gas_osp.climatology_full_grid
+            self.config_def['pressure'] = self.pressure_obj(gas_osp.pressure_full_grid)
+        else:
+            self.config_def['value'] = gas_osp.climatology_full_grid[ret_levels]
+            self.config_def['pressure'] = self.pressure_obj(gas_osp.pressure_full_grid[ret_levels])
 
         return absorber.AbsorberVmrLevel.create(self, gas_name, **kwargs)
 
-class SurfacePressureCov(CreatorMUSES):
-
-    def create(self, **kwargs):
-        psur_osp = OSP("PSUR", use_log=False, **self.osp_common())
-        return psur_osp.covariance_full_grid
-
-class SurfaceTemperatureCov(CreatorMUSES):
+class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
 
     num_channels = param.Scalar(int)
 
-    def create(self, **kwargs):
-        tsur_osp = OSP("TSUR", use_log=False, **self.osp_common())
-        return np.identity(self.num_channels()) * tsur_osp.covariance_full_grid
+    def absorber_cov(self, gas_name, ret_type):
+        gas_osp = OSP(gas_name, **self.osp_common())
 
-class AbsorberCov(CreatorMUSES):
-
-    gas_name = param.Scalar(str)
-    num_constraint_levels = param.Choice(param.Scalar(int), param.NoneValue(), required=False)
-
-    def create(self, **kwargs):
-        
-        gas_osp = OSP(self.gas_name(), num_constraint_levels=self.num_constraint_levels(), **self.osp_common())
-
-        # Not all gases have a covariance defined, those will not be retrieved
-        if gas_osp.constraint_filename is not None:
-            return np.linalg.inv(gas_osp.constraint_full_grid)
-
-class AbsorberRetFlags(CreatorMUSES):
-
-    gas_name = param.Scalar(str)
-    num_constraint_levels = param.Choice(param.Scalar(int), param.NoneValue(), required=False)
-
-    def create(self, **kwargs):
-        
-        gas_osp = OSP(self.gas_name(), num_constraint_levels=self.num_constraint_levels(), **self.osp_common())
+        if ret_type == "log" and not gas_osp.use_log:
+            raise Exception(f"OSP constraint for {gas_name} is for a log retrieval, but gas is not set up for a log retrieval")
 
         if gas_osp.constraint_filename is not None:
-            return gas_osp.constraint_full_flags
+            return np.linalg.inv(gas_osp.constraint_matrix)
         else:
-            return np.ones(gas_osp.pressure_full_grid.shape[0], dtype=bool)
+            raise param.ParamError(f"No constraint file found for gas: {gas_name}")
 
+    def surface_temp_cov(self):
+        tsur_osp = OSP("TSUR", **self.osp_common())
+        return np.identity(self.num_channels()) * tsur_osp.covariance_matrix
+
+    def surface_press_cov(self):
+        psur_osp = OSP("PSUR", **self.osp_common())
+        return psur_osp.covariance_matrix
+
+    def create(self, **kwargs):
+
+        # Get existing covariance values
+        cov_values = self.values()
+
+        # Add values based on retrieval type
+        for rc_name in self.retrieval_components().keys():
+            # Skip existing defined covariuance values
+            if rc_name in cov_values:
+                continue
+
+            gas_match = re.match("absorber_levels/(.*)/(.*)", rc_name)
+            if gas_match:
+                ret_type = gas_match.groups()[0]
+                gas_name = gas_match.groups()[1]
+
+                cov_values[rc_name] = self.absorber_cov(gas_name, ret_type)
+
+            elif rc_name == "surface_temperature":
+                cov_values[rc_name] = self.surface_temp_cov
+
+            elif rc_name == "surface_temperature":
+                cov_values[rc_name] = self.surface_temp_cov
+
+            else:
+                raise param.ParamError(f"Do not know how to set up covariance for {rc_name} retrieval component")
+
+        self.config_def['values'] = dict(cov_values)
+
+        return retrieval.CovarianceByComponent.create(self, **kwargs)
