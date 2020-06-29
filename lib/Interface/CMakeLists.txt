@@ -26,11 +26,13 @@ set(DIR_SOURCES
     ground_imp_base.cc
     ground_piecewise.cc
     ils.cc
+    ils_imp_base.cc
     ils_function.cc
     initial_guess.cc
     instrument.cc
     instrument_correction.cc
     observation.cc
+    optical_properties.cc
     iterative_solver.cc
     iterative_solver_der.cc
     level_1b.cc

@@ -40,5 +40,6 @@ public:
   virtual void high_res_extension(const DoubleWithUnit& extension);
   boost::shared_ptr<SampleGrid> sample_grid() const {return sample_grid_; }
     virtual boost::shared_ptr<Ils> clone() const = 0;
+  %pickle_serialization();
 };
 }

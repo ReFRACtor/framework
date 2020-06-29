@@ -1,8 +1,20 @@
 #include "forward_model_spectral_grid.h"
+#include "fp_serialize_support.h"
 #include "linear_interpolate.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ForwardModelSpectralGrid::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(ForwardModelSpectralGrid);
+  ar & FP_NVP(inst) & FP_NVP(spectral_window) & FP_NVP(spectrum_sampling);
+}
+
+FP_IMPLEMENT(ForwardModelSpectralGrid);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

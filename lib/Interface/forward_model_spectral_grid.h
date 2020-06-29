@@ -73,6 +73,11 @@ private:
   boost::shared_ptr<Instrument> inst;
   boost::shared_ptr<SpectralWindow> spectral_window;
   boost::shared_ptr<SpectrumSampling> spectrum_sampling;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ForwardModelSpectralGrid);
 #endif
