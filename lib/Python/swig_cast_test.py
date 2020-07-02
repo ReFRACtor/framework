@@ -49,7 +49,7 @@ def test_cast_cpp():
     psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10, True)
     pwrap = rf.PressureHolder(psigma)
     # Test functions only in PressureSigma
-    assert_almost_equal(pwrap.p.b, [0.3, 0.6, 1.0])
+    assert pwrap.p.b == approx([0.3, 0.6, 1.0])
     pinp = rf.PressureLevelInput([1, 2, 3])
     plevel = rf.PressureFixedLevel(False, pinp, 2.5)
     pwrap.p = plevel

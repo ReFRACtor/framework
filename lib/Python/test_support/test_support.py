@@ -1,6 +1,5 @@
 # This contains support routines for unit tests.
 import numpy as np
-from numpy.testing import assert_almost_equal, assert_approx_equal, assert_array_almost_equal, assert_allclose
 from unittest import SkipTest
 from refractor import framework as rf
 import os.path

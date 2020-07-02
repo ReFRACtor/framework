@@ -18,7 +18,17 @@ public:
   PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
 		double Surface_pressure, bool Pressure_flag);
   %python_attribute(surface_pressure_uncertainty, double)
+  %rename(_v_set_surface_pressure) set_surface_pressure;
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure);
+  %pythoncode {
+    @property
+    def surface_pressure(self):
+      return self._v_surface_pressure()
+      
+    @surface_pressure.setter
+    def surface_pressure(self, value):
+       self._v_set_surface_pressure(value)
+  }
   void set_levels_from_grid(const blitz::Array<double, 1>& Pressure_grid);
   virtual boost::shared_ptr<Pressure> clone() const;
   %python_attribute(sub_state_identifier, std::string);

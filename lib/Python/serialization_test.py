@@ -38,64 +38,6 @@ class BaseForTesting(object):
         v2 = serialize_read_generic_string(t)
         self.check(v1, v2)
 
-# We have a few things that we need to test in a lot of places. Not sure
-# we want this equality everywhere, this is really just "true for unit
-# tests." We may move these into a more central place like test_support.py,
-# but for now have here.
-
-def _double_with_unit_eq(self, v):
-    return (self.value == pytest.approx(v.value)
-            and self.units == v.units)
-
-DoubleWithUnit.__eq__ = _double_with_unit_eq
-
-def _spectral_domain_eq(s1, s2):
-    # Let assertion exceptions pass through. This is kind of breaking
-    # what == is suppose to be, but since these end up in a assert statement
-    # it is useful to trace back to what didn't match.
-    assert_allclose(s1.data, s2.data)
-    assert_allclose(s1.sample_index, s2.sample_index)
-    assert s1.units == s2.units
-    return True
-
-SpectralDomain.__eq__ = _spectral_domain_eq
-
-def _spectral_range_eq(s1, s2):
-    # Let assertion exceptions pass through. This is kind of breaking
-    # what == is suppose to be, but since these end up in a assert statement
-    # it is useful to trace back to what didn't match.
-    assert_allclose(s1.data, s2.data)
-    assert_allclose(s1.uncertainty, s2.uncertainty)
-    assert s1.units == s2.units
-    return True
-
-SpectralRange.__eq__ = _spectral_range_eq
-
-def _array_with_unit_eq(a1, a2):
-    assert_allclose(a1.value, a2.value)
-    assert a1.units == a2.units
-    return True
-
-def _array_ad_eq(a1, a2):
-    assert_allclose(a1.value, a2.value)
-    assert_allclose(a1.jacobian, a2.jacobian)
-    return True
-
-def _array_ad_with_unit_eq(a1, a2):
-    a1.value == a2.value
-    assert a1.units == a2.units
-    return True
-
-ArrayWithUnit_double_1.__eq__ = _array_with_unit_eq
-ArrayWithUnit_double_2.__eq__ = _array_with_unit_eq
-ArrayWithUnit_double_3.__eq__ = _array_with_unit_eq
-ArrayAd_double_1.__eq__ = _array_ad_eq
-ArrayAd_double_2.__eq__ = _array_ad_eq
-ArrayAd_double_3.__eq__ = _array_ad_eq
-ArrayAdWithUnit_double_1.__eq__ = _array_ad_with_unit_eq
-ArrayAdWithUnit_double_2.__eq__ = _array_ad_with_unit_eq
-ArrayAdWithUnit_double_3.__eq__ = _array_ad_with_unit_eq
-
 # Add auto_derivative
 
 class TestPressureSigma(BaseForTesting):
@@ -111,15 +53,15 @@ class TestPressureSigma(BaseForTesting):
         return PressureSigma(pdata, pdata[-1], False)
 
     def check(self, psigma, psigma2):
-        assert_allclose(psigma.a, psigma2.a)
-        assert_allclose(psigma.b, psigma2.b)
+        assert psigma.a == approx(psigma2.a)
+        assert psigma.b == approx(psigma2.b)
         
 class TestArrayAd(BaseForTesting):
     def create(self):
         return ArrayAd_double_1([1,2,3],[[1,0,0],[0,1,0],[0,0,1]])
 
     def check(self, a1, a2):
-        assert a1 == a2
+        assert a1 == approx(a2)
 
 class TestArrayAdWithUnit(BaseForTesting):
     def create(self):
@@ -127,22 +69,22 @@ class TestArrayAdWithUnit(BaseForTesting):
         return ArrayAdWithUnit_double_1(self.t.create(), Unit("m/s"))
 
     def check(self, a1, a2):
-        assert a1 == a2
+        assert a1 == approx(a2)
 
 class TestArrayWithUnit(BaseForTesting):
     def create(self):
         return ArrayWithUnit_double_1([1, 2, 3], Unit("m/s"))
 
     def check(self, a1, a2):
-        a1 == a2
+        a1 == approx(a2)
 
 class TestAutoDerivative(BaseForTesting):
     def create(self):
         return AutoDerivativeDouble(2, 0, 2)
 
     def check(self, v1, v2):
-        assert v1.value == pytest.approx(v2.value)
-        assert_array_almost_equal(v1.gradient, v2.gradient)
+        assert v1.value == approx(v2.value)
+        assert v1.gradient == approx(v2.gradient)
 
 class TestAutoDerivativeWithUnit(BaseForTesting):
     def create(self):
@@ -158,7 +100,7 @@ class TestDoubleWithUnit(BaseForTesting):
         return DoubleWithUnit(1.2345, Unit("m/s"))
 
     def check(self, v1, v2):
-        assert v1 == v2
+        assert v1 == approx(v2)
         
 class TestDefaultConstant(BaseForTesting):
     def create(self):
@@ -166,12 +108,12 @@ class TestDefaultConstant(BaseForTesting):
 
     def check(self, c1, c2):
         assert (c1.rayleigh_depolarization_factor ==
-                pytest.approx(c2.rayleigh_depolarization_factor))
-        assert c1.rayleigh_a == c2.rayleigh_a
-        assert c1.rayleigh_b == c2.rayleigh_b
-        assert c1.molar_weight_dry_air == c2.molar_weight_dry_air
-        assert c1.molar_weight_water == c2.molar_weight_water
-        assert c1.avogadro_constant == c2.avogadro_constant
+                approx(c2.rayleigh_depolarization_factor))
+        assert c1.rayleigh_a == approx(c2.rayleigh_a)
+        assert c1.rayleigh_b == approx(c2.rayleigh_b)
+        assert c1.molar_weight_dry_air == approx(c2.molar_weight_dry_air)
+        assert c1.molar_weight_water == approx(c2.molar_weight_water)
+        assert c1.avogadro_constant == approx(c2.avogadro_constant)
 
 class TestHdfFile(BaseForTesting):
     def create(self):
@@ -180,8 +122,8 @@ class TestHdfFile(BaseForTesting):
     def check(self, h1, h2):
         assert h1.file_name == h2.file_name
         assert h1.mode == h2.mode
-        assert_allclose(h1.read_double_3d("/Level1b/stokes_coefficient"),
-                        h2.read_double_3d("/Level1b/stokes_coefficient"))
+        assert (h1.read_double_3d("/Level1b/stokes_coefficient") ==
+                approx(h2.read_double_3d("/Level1b/stokes_coefficient")))
 
 class TestMappingLinear(BaseForTesting):
     def create(self):
@@ -206,7 +148,7 @@ class TestMappingGaussian(BaseForTesting):
         self.t.check(m1.pressure, m2.pressure)
         assert m1.name == m2.name
         assert m1.is_linear_total == m2.is_linear_total
-        assert m1.min_desired == pytest.approx(m2.min_desired)
+        assert m1.min_desired == approx(m2.min_desired)
 
 class TestMappingOffset(BaseForTesting):
     def create(self):
@@ -214,8 +156,8 @@ class TestMappingOffset(BaseForTesting):
 
     def check(self, m1, m2):
         assert m1.name == m2.name
-        assert m1.initial_offset == pytest.approx(m2.initial_offset)
-        assert_array_almost_equal(m1.offsetee, m2.offsetee)
+        assert m1.initial_offset == approx(m2.initial_offset)
+        assert m1.offsetee == approx(m2.offsetee)
 
 class TestMappingScale(BaseForTesting):
     def create(self):
@@ -223,8 +165,8 @@ class TestMappingScale(BaseForTesting):
 
     def check(self, m1, m2):
         assert m1.name == m2.name
-        assert m1.initial_scale_factor == pytest.approx(m2.initial_scale_factor)
-        assert_array_almost_equal(m1.scalee, m2.scalee)
+        assert m1.initial_scale_factor == approx(m2.initial_scale_factor)
+        assert m1.scalee == approx(m2.scalee)
 
 class TestSpectralBound(BaseForTesting):
     def create(self):
@@ -237,22 +179,22 @@ class TestSpectralBound(BaseForTesting):
     def check(self, b1, b2):
         assert b1.number_spectrometer == b2.number_spectrometer
         for i in range(b1.number_spectrometer):
-            assert b1.lower_bound(i) == b2.lower_bound(i)
-            assert b1.upper_bound(i) == b2.upper_bound(i)
+            assert b1.lower_bound(i) == approx(b2.lower_bound(i))
+            assert b1.upper_bound(i) == approx(b2.upper_bound(i))
 
 class TestSpectralDomain(BaseForTesting):
     def create(self):
         return SpectralDomain([1,2,3], Unit("micron"))
 
     def check(self, s1, s2):
-        assert s1 == s2
+        assert s1 == approx(s2)
         
 class TestSpectralRange(BaseForTesting):
     def create(self):
         return SpectralRange([1,2,3], Unit("m/s"), [0.1,0.2,0.3])
 
     def check(self, s1, s2):
-        assert s1 == s2
+        assert s1 == approx(s2)
 
 class TestSpectrum(BaseForTesting):
     def create(self):
@@ -261,8 +203,8 @@ class TestSpectrum(BaseForTesting):
         return Spectrum(self.t1.create(), self.t2.create())
     
     def check(self, s1, s2):
-        assert s1.spectral_domain == s2.spectral_domain
-        assert s1.spectral_range == s2.spectral_range
+        assert s1.spectral_domain == approx(s2.spectral_domain)
+        assert s1.spectral_range == approx(s2.spectral_range)
 
 class TestNamedSpectrum(BaseForTesting):
     def create(self):
@@ -281,15 +223,15 @@ class TestStateVector(BaseForTesting):
         return sv
 
     def check(self, s1, s2):
-        assert_almost_equal(s1.state, s2.state)
-        assert_almost_equal(s1.state_covariance, s2.state_covariance)
+        assert s1.state == approx(s2.state)
+        assert s1.state_covariance == approx(s2.state_covariance)
 
 class TestPressureLevelInput(BaseForTesting):
     def create(self):
         return PressureLevelInput([1,2,3])
 
     def check(self, p1, p2):
-        assert_allclose(p1.pressure_level, p2.pressure_level)
+        assert p1.pressure_level == approx(p2.pressure_level)
 
 class TestPressureFixedLevel(BaseForTesting):
     def create(self):
@@ -297,7 +239,7 @@ class TestPressureFixedLevel(BaseForTesting):
         return PressureFixedLevel(True, self.t.create(), 3)
     
     def check(self, p1, p2):
-        assert p1.pressure_grid == p2.pressure_grid
+        assert p1.pressure_grid == approx(p2.pressure_grid)
 
 class TestTemperatureFixedLevel(BaseForTesting):
     def create(self):
@@ -308,7 +250,7 @@ class TestTemperatureFixedLevel(BaseForTesting):
 
     def check(self, temp1, temp2):
         pres = self.t2.create()
-        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
+        assert temp1.temperature_grid(pres) == approx(temp2.temperature_grid(pres))
 
 class TestAbsorberVmrFixedLevel(BaseForTesting):
     def create(self):
@@ -320,10 +262,10 @@ class TestAbsorberVmrFixedLevel(BaseForTesting):
 
     def check(self, a1, a2):
         assert a1.gas_name == a2.gas_name
-        assert_allclose(a1.volume_mixing_ratio_level,
-                        a2.volume_mixing_ratio_level)
+        assert (a1.volume_mixing_ratio_level ==
+                approx(a2.volume_mixing_ratio_level))
         press = self.t2.create()
-        assert a1.vmr_grid(press) == a2.vmr_grid(press)
+        assert a1.vmr_grid(press) == approx(a2.vmr_grid(press))
 
 class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
     def create(self):
@@ -336,9 +278,9 @@ class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
 
     def check(self, a1, a2):
         assert a1.gas_name == a2.gas_name
-        assert a1.scale_factor == pytest.approx(a2.scale_factor)
+        assert a1.scale_factor == approx(a2.scale_factor)
         press = self.t2.create()
-        assert a1.vmr_grid(press) == a2.vmr_grid(press)
+        assert a1.vmr_grid(press) == approx(a2.vmr_grid(press))
 
 class TestExampleLevelL1b(BaseForTesting):
     def create(self):
@@ -357,17 +299,17 @@ class TestLevelL1bCache(BaseForTesting):
     def check(self, f1, f2):
         assert f1.number_spectrometer == f2.number_spectrometer
         for i in range(f1.number_spectrometer):
-            assert f1.latitude(i) == f2.latitude(i)
-            assert f1.longitude(i) == f2.longitude(i)
-            assert f1.sounding_zenith(i) == f2.sounding_zenith(i)
-            assert f1.sounding_azimuth(i) == f2.sounding_azimuth(i)
-            assert f1.solar_zenith(i) == f2.solar_zenith(i)
-            assert f1.solar_azimuth(i) == f2.solar_azimuth(i)
-            assert f1.altitude(i) == f2.altitude(i)
-            assert f1.relative_velocity(i) == f2.relative_velocity(i)
-            assert f1.sample_grid(i) == f2.sample_grid(i)
-            assert f1.radiance(i) == f2.radiance(i)
-            assert f1.time(i).pgs_time == pytest.approx(f2.time(i).pgs_time)
+            assert f1.latitude(i) == approx(f2.latitude(i))
+            assert f1.longitude(i) == approx(f2.longitude(i))
+            assert f1.sounding_zenith(i) == approx(f2.sounding_zenith(i))
+            assert f1.sounding_azimuth(i) == approx(f2.sounding_azimuth(i))
+            assert f1.solar_zenith(i) == approx(f2.solar_zenith(i))
+            assert f1.solar_azimuth(i) == approx(f2.solar_azimuth(i))
+            assert f1.altitude(i) == approx(f2.altitude(i))
+            assert f1.relative_velocity(i) == approx(f2.relative_velocity(i))
+            assert f1.sample_grid(i) == approx(f2.sample_grid(i))
+            assert f1.radiance(i) == approx(f2.radiance(i))
+            assert f1.time(i).pgs_time == approx(f2.time(i).pgs_time)
         
 class TestExampleLevelL1bInfo(BaseForTesting):
     def create(self):
@@ -396,7 +338,7 @@ class TestExampleMetFile(BaseForTesting):
         assert f1.input.file_name == f2.input.file_name
         assert f1.input.mode == f2.input.mode
         assert f1.data_index == f2.data_index
-        assert_allclose(f1.specific_humidity, f2.specific_humidity)
+        assert f1.specific_humidity == approx(f2.specific_humidity)
             
 class TestTemperatureLevelOffset(BaseForTesting):
     def create(self):
@@ -409,7 +351,7 @@ class TestTemperatureLevelOffset(BaseForTesting):
 
     def check(self, temp1, temp2):
         pres = self.t.create()
-        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
+        assert temp1.temperature_grid(pres) == approx(temp2.temperature_grid(pres))
 
 class TestTemperatureMet(BaseForTesting):
     def create(self):
@@ -419,7 +361,7 @@ class TestTemperatureMet(BaseForTesting):
 
     def check(self, temp1, temp2):
         pres = self.t.create()
-        assert temp1.temperature_grid(pres) == temp2.temperature_grid(pres)
+        assert temp1.temperature_grid(pres) == approx(temp2.temperature_grid(pres))
 
 class TestAltitudeHydrostatic(BaseForTesting):
     def create(self):
@@ -487,9 +429,9 @@ class TestCompositeInitialGuess(BaseForTesting):
         return ci
     
     def check(self, ig1, ig2):
-        assert_allclose(ig1.initial_guess, ig2.initial_guess)
-        assert_allclose(ig1.apriori, ig2.apriori)
-        assert_allclose(ig1.apriori_covariance, ig2.apriori_covariance)
+        assert ig1.initial_guess == approx(ig2.initial_guess)
+        assert ig1.apriori == approx(ig2.apriori)
+        assert ig1.apriori_covariance == approx(ig2.apriori_covariance)
 
 class TestBardNLSSProblem(BaseForTesting):
     def create(self):
@@ -498,7 +440,7 @@ class TestBardNLSSProblem(BaseForTesting):
         return f
 
     def check(self, f1, f2):
-        assert_allclose(f1.residual, f2.residual)
+        assert f1.residual == approx(f2.residual)
 
 class TestMeyerNLSSProblem(BaseForTesting):
     def create(self):
@@ -507,7 +449,7 @@ class TestMeyerNLSSProblem(BaseForTesting):
         return f
 
     def check(self, f1, f2):
-        assert_allclose(f1.residual, f2.residual)
+        assert f1.residual == approx(f2.residual)
 
 class TestBardMLProblem(BaseForTesting):
     def create(self):
@@ -521,7 +463,7 @@ class TestBardMLProblem(BaseForTesting):
         return ml
 
     def check(self, ml1, ml2):
-        assert_allclose(ml1.model, ml2.model)
+        assert ml1.model == approx(ml2.model)
 
 class TestMeyerMLProblem(BaseForTesting):
     def create(self):
@@ -536,7 +478,7 @@ class TestMeyerMLProblem(BaseForTesting):
         return ml
 
     def check(self, ml1, ml2):
-        assert_allclose(ml1.model, ml2.model)
+        assert ml1.model == approx(ml2.model)
         
 class TestCostMinimizerGSL(BaseForTesting):
     def create(self):
@@ -564,9 +506,9 @@ class TestCostMinimizerGSL(BaseForTesting):
         ap1 = s1.accepted_points
         ap2 = s2.accepted_points
         for i in range(len(ap1)):
-            assert_almost_equal(ap1[i], ap2[i])
-        assert_almost_equal(s1.cost_at_accepted_points,
-                            s2.cost_at_accepted_points)
+            assert ap1[i] == approx(ap2[i])
+        assert(s1.cost_at_accepted_points ==
+               approx(s2.cost_at_accepted_points))
         
     def check(self, m1, m2):
         self.compare(m1.solv_init, m2.solv_init)
@@ -592,13 +534,13 @@ class BaseForIterativeSolverDer(BaseForTesting):
         ap1 = s1.accepted_points
         ap2 = s2.accepted_points
         for i in range(len(ap1)):
-            assert_almost_equal(ap1[i], ap2[i])
+            assert ap1[i] == approx(ap2[i])
         gap1 = s1.gradient_at_accepted_points
         gap2 = s2.gradient_at_accepted_points
         for i in range(len(gap1)):
-            assert_almost_equal(gap1[i], gap2[i])
-        assert_almost_equal(s1.cost_at_accepted_points,
-                            s2.cost_at_accepted_points)
+            assert gap1[i] == approx(gap2[i])
+        assert(s1.cost_at_accepted_points ==
+               approx(s2.cost_at_accepted_points))
         
     def check(self, m1, m2):
         self.compare(m1.solv_init, m2.solv_init)
@@ -650,6 +592,6 @@ class TestAerosolExtinctionLinear(BaseForTesting):
                                        [0.0, 1.0, 0.2], "Kahn")
 
     def check(self, a1, a2):
-        assert a1.aerosol_extinction == a2.aerosol_extinction
+        assert a1.aerosol_extinction == approx(a2.aerosol_extinction)
         assert a1.aerosol_name == a2.aerosol_name
         assert a1.model_short_name == a2.model_short_name

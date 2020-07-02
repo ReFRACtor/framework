@@ -19,7 +19,17 @@ public:
 		     const boost::shared_ptr<PressureLevelInput>& Press_level,
 		     double Surface_pressure);
   %python_attribute(surface_pressure_uncertainty, double);
+  %rename(_v_set_surface_pressure) set_surface_pressure;
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure);
+  %pythoncode {
+    @property
+    def surface_pressure(self):
+      return self._v_surface_pressure()
+      
+    @surface_pressure.setter
+    def surface_pressure(self, value):
+       self._v_set_surface_pressure(value)
+  }
   %python_attribute(number_active_level, int)
   %python_attribute(number_active_layer, int)
   %python_attribute(max_number_level, int)
