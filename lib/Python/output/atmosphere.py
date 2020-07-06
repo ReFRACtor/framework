@@ -23,7 +23,8 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
 
         level_dim = self.create_dimension("num_level", self.atm.number_layer+1, self.step_index)
         gas_dim = self.create_dimension("num_gas", self.atm.absorber.number_species, self.step_index)
-        aer_dim = self.create_dimension("num_aerosol", self.atm.aerosol.number_particle, self.step_index)
+        if self.atm.aerosol is not None:
+            aer_dim = self.create_dimension("num_aerosol", self.atm.aerosol.number_particle, self.step_index)
         gas_str_dim = self.create_dimension("gas_string", step_index=self.step_index)
         aer_str_dim = self.create_dimension("aer_string", step_index=self.step_index)
 
@@ -55,16 +56,17 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
     
         # Aerosol 
 
-        aerosol_group = self.create_group("Aerosol", atm_group)
+        if self.atm.aerosol is not None:
+            aerosol_group = self.create_group("Aerosol", atm_group)
 
-        aer_name_list = self.atm.aerosol.aerosol_name
-        self.set_string_variable("aerosol_names", aerosol_group, (aer_dim, aer_str_dim), aer_name_list)
+            aer_name_list = self.atm.aerosol.aerosol_name
+            self.set_string_variable("aerosol_names", aerosol_group, (aer_dim, aer_str_dim), aer_name_list)
 
-        ext_var = self.create_variable("extinction", aerosol_group, float, (aer_dim, level_dim))
+            ext_var = self.create_variable("extinction", aerosol_group, float, (aer_dim, level_dim))
 
-        for aer_idx, aer_name in enumerate(aer_name_list):
-            aer_obj = self.atm.aerosol.aerosol_extinction(aer_idx)
-            ext_var[aer_idx, :] = aer_obj.aerosol_extinction.value
+            for aer_idx, aer_name in enumerate(aer_name_list):
+                aer_obj = self.atm.aerosol.aerosol_extinction(aer_idx)
+                ext_var[aer_idx, :] = aer_obj.aerosol_extinction.value
 
     def notify_update(self, solver):
         try:
