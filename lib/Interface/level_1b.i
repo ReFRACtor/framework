@@ -22,7 +22,7 @@ class Level1b : public GenericObject {
 public:
   virtual ~Level1b();
   std::string print_to_string() const;
-  %python_attribute_abstract(number_spectrometer, int);
+  virtual int number_spectrometer() const = 0;
   virtual DoubleWithUnit latitude(int i) const = 0;
   virtual DoubleWithUnit longitude(int i) const = 0;
   virtual DoubleWithUnit sounding_zenith(int i) const = 0;
