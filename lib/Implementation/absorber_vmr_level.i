@@ -30,6 +30,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
+  %python_attribute(pressure_profile, blitz::Array<double, 1>);
   %python_attribute(vmr_profile, blitz::Array<double, 1>);
   %python_attribute(vmr_covariance, blitz::Array<double, 2>);
   %python_attribute(vmr_uncertainty, blitz::Array<double, 1>);
