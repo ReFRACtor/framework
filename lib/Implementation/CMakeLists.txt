@@ -120,6 +120,7 @@ set(DIR_SOURCES
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
     surface_temperature_direct.cc
+    temperature_level.cc
     temperature_level_offset.cc
     temperature_met.cc
     uniform_spectrum_sampling.cc
@@ -221,6 +222,7 @@ set(TEST_SOURCES
     standard_forward_model_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
+    temperature_level_test.cc
     temperature_level_offset_test.cc
     temperature_met_test.cc
     uniform_spectrum_sampling_test.cc

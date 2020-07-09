@@ -69,10 +69,12 @@ protected:
             const blitz::Array<bool, 1>& Used_flag,
             const boost::shared_ptr<Pressure>& Press,
             bool Mark_according_to_press = true,
-            int Pdep_start = 0)
+            int Pdep_start = 0,
+            boost::shared_ptr<Mapping> Map = boost::make_shared<MappingLinear>())
+
   { SubStateVectorArray<Temperature>::init(Coeff, Used_flag, Press,
                                            Mark_according_to_press,
-                                           Pdep_start);
+                                           Pdep_start, Map);
   }
 
 //-----------------------------------------------------------------------

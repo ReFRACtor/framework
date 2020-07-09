@@ -52,21 +52,28 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
 
         return atmosphere.PressureGrid.create(self, **kwargs)
 
-class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevelOffset):
+class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
 
-    temperature_levels = param.Choice(atmosphere.TemperatureLevelOffset.temperature_levels, param.NoneValue())
-    pressure = param.Choice(atmosphere.TemperatureLevelOffset.pressure, param.NoneValue())
+    value = param.Choice(atmosphere.TemperatureLevel.value, param.NoneValue())
 
     def create(self, **kwargs):
 
         tatm_osp = OSP("TATM", **self.osp_common())
-        
-        if self.temperature_levels() is None:
-            self.config_def["temperature_levels"] = tatm_osp.climatology_full_grid
-            # Override pressure from that emitted through common_store
-            self.config_def["pressure"] = self.pressure_obj(tatm_osp.pressure_full_grid)
 
-        return atmosphere.TemperatureLevelOffset.create(self, **kwargs)
+        ret_levels = tatm_osp.retrieval_levels
+        
+        if self.value() is None:
+            self.config_def["value"] = tatm_osp.climatology_full_grid[ret_levels]
+        else:
+            inp_temperature = self.value()
+            inp_pressure = self.pressure().pressure_grid.value.value
+            resamp_temp = np.interp(tatm_osp.pressure_full_grid, inp_pressure, inp_temperature)
+
+            self.config_def["value"] = resamp_temp[ret_levels]
+
+        self.config_def["pressure"] = self.pressure_obj(tatm_osp.pressure_full_grid[ret_levels])
+
+        return atmosphere.TemperatureLevel.create(self, **kwargs)
 
 class SurfaceTemperatureMUSES(CreatorMUSES, atmosphere.SurfaceTemperature):
 
@@ -123,6 +130,10 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
         psur_osp = OSP("PSUR", **self.osp_common())
         return psur_osp.covariance_matrix
 
+    def temperature_cov(self):
+        temp_osp = OSP("TATM", **self.osp_common())
+        return np.linalg.inv(temp_osp.constraint_matrix)
+
     def create(self, **kwargs):
 
         # Get existing covariance values
@@ -142,10 +153,10 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
                 cov_values[rc_name] = self.absorber_cov(gas_name, ret_type)
 
             elif rc_name == "surface_temperature":
-                cov_values[rc_name] = self.surface_temp_cov
+                cov_values[rc_name] = self.surface_temp_cov()
 
-            elif rc_name == "surface_temperature":
-                cov_values[rc_name] = self.surface_temp_cov
+            elif rc_name == "temperature_level":
+                cov_values[rc_name] = self.temperature_cov()
 
             else:
                 raise param.ParamError(f"Do not know how to set up covariance for {rc_name} retrieval component")
