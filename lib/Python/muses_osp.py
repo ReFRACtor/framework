@@ -414,10 +414,6 @@ class OSP(object):
             if ret_lev[-1] != num_full_levels - 1:
                 ret_lev = np.append(ret_lev, [num_full_levels -1])
             
-            # Make sure top of atmosphere is represented
-            if ret_lev[0] != 0:
-                ret_lev[0] = 0
-
             return ret_lev
 
     def _pick_constraint_levels_file(self, filenames):
