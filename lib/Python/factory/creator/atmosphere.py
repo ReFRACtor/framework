@@ -101,8 +101,17 @@ class SurfaceTemperature(CreatorFlaggedValue):
 
         return rf.SurfaceTemperatureDirect(self.value(), self.retrieval_flag())
 
+class TemperatureLevel(CreatorFlaggedValue):
+    "Creates a TemperatureLevel object statisfying the AtmosphereCreator's temperature parameter"
+    
+    pressure = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.TemperatureLevel(self.value(), self.retrieval_flag(), self.pressure())
+
 class TemperatureLevelOffset(CreatorFlaggedValue):
-    "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"
+    """Creates a TemperatureLevel object statisfying the AtmosphereCreator's temperature parameter. 
+    Instead of all temperature levels only an offset is retrieved."""
     
     temperature_levels = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
