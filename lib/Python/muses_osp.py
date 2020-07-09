@@ -165,6 +165,9 @@ class OSP(object):
 
     @property
     def strategy_base_dir(self):
+        if self.instrument_name is None:
+            raise Exception("No instrument name supplied to constructor, can not use Strategy_Tables based values.")
+
         strat_base_dir = os.path.join(self.base_dir, "Strategy_Tables", f"OSP-{self.instrument_name}")
         if not os.path.exists(strat_base_dir):
             raise Exception(f"No Strategy Tables directory found at: {strat_base_dir} for instrument name: {self.instrument_name}")
@@ -400,7 +403,22 @@ class OSP(object):
         if ret_lev == 0:
             return None
         else:
-            return np.array([ int(l)-1 for l in ret_lev.split(",") ])
+            # Convert to an array and make zero based indexing
+            ret_lev = np.array([ int(l)-1 for l in ret_lev.split(",") ])
+
+            # Reverse order and indexes to match pressure increasing order of ReFRACtor
+            num_full_levels = self.pressure_full_grid.shape[0] 
+            ret_lev = np.flip(num_full_levels - ret_lev - 1)
+
+            # Make sure surface is represented at the end of the array
+            if ret_lev[-1] != num_full_levels - 1:
+                ret_lev = np.append(ret_lev, [num_full_levels -1])
+            
+            # Make sure top of atmosphere is represented
+            if ret_lev[0] != 0:
+                ret_lev[0] = 0
+
+            return ret_lev
 
     def _pick_constraint_levels_file(self, filenames):
 
