@@ -45,5 +45,11 @@ serialize_read_string(const std::string& Data)
 {
   return boost::dynamic_pointer_cast<T>(serialize_read_generic_string(Data));
 }
+
+template<class T> inline boost::shared_ptr<T> 
+serialize_read_binary_string(const std::string& Data)
+{
+  return boost::dynamic_pointer_cast<T>(serialize_read_binary(Data));
+}
 }
 #endif
