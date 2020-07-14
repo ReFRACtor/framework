@@ -57,8 +57,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual std::string hdf_band_name() const { return band_name();}
-
   virtual void print(std::ostream& os) const { os << "IlsFunction";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(IlsFunction);
 #endif

@@ -142,9 +142,11 @@ protected:
    bool Mark_according_to_press = true,
    int Pdep_start = 0,
    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-    : SubStateVectorArray<AerosolExtinction>(Coeff, Used_flag, Press,
-					     Mark_according_to_press, Pdep_start, in_map),
-      cache_stale(true), aerosol_name_(Aerosol_name) { }
+    : cache_stale(true)
+  {
+    init(Aerosol_name, Coeff, Used_flag, Press, Mark_according_to_press,
+	 Pdep_start, in_map);
+  }
 private:
   void fill_cache() const
   {

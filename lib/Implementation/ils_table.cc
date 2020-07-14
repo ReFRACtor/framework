@@ -1,7 +1,25 @@
 #include "ils_table.h"
+#include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template <class Lint> template<class Archive>
+void IlsTable<Lint>::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IlsFunction)
+    & FP_NVP(delta_lambda_to_response)
+    & FP_NVP_(wavenumber) & FP_NVP_(delta_lambda) & FP_NVP_(response)
+    & FP_NVP_(band_name) & FP_NVP_(hdf_band_name)
+    & FP_NVP(interpolate_wavenumber)
+    & FP_NVP(from_hdf_file) & FP_NVP(hdf_file_name) & FP_NVP(hdf_group);
+}
+
+FP_IMPLEMENT(IlsTableLinear);
+FP_IMPLEMENT(IlsTableLog);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

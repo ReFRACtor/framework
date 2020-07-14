@@ -1,7 +1,20 @@
 #include "uniform_spectrum_sampling.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void UniformSpectrumSampling::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling)
+    & FP_NVP(spec_spacing);
+}
+
+FP_IMPLEMENT(UniformSpectrumSampling);
+#endif
 
 // See base class for description.
 

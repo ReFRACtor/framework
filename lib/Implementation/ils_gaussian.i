@@ -20,5 +20,6 @@ public:
   virtual void ils
   (const AutoDerivative<double>& wn_center,
    const blitz::Array<double, 1>& wn, ArrayAd<double, 1>& OUTPUT) const;
+  %pickle_serialization();
 };
 }

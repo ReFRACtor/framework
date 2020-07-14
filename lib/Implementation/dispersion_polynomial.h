@@ -16,7 +16,7 @@ namespace FullPhysics {
   convention, the polynomial is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class DispersionPolynomial: public SubStateVectorArray<SampleGrid> {
+class DispersionPolynomial: virtual public SubStateVectorArray<SampleGrid> {
 public:
   DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
                        const blitz::Array<bool, 1>& Used_flag,
@@ -92,6 +92,12 @@ private:
   blitz::Array<double, 1> variable_values_;
   // Very similar to index_array, but always 1 based.
   blitz::Array<int, 1> spectral_index;
+  DispersionPolynomial() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(DispersionPolynomial);
 #endif

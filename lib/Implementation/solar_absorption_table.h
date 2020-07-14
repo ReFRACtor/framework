@@ -25,6 +25,12 @@ private:
   LinearInterpolate<double, double> table;
   std::string hdf_file_name;
   std::string hdf_group;
+  SolarAbsorptionTable() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarAbsorptionTable);
 #endif

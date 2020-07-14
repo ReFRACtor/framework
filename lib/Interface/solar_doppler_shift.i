@@ -21,5 +21,6 @@ public:
   %python_attribute_abstract(solar_distance, DoubleWithUnit);
   virtual SpectralDomain doppler_stretch(
      const SpectralDomain& Spec_domain) const = 0;
+  %pickle_serialization();
 };
 }

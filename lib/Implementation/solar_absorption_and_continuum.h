@@ -22,7 +22,7 @@ namespace FullPhysics {
   class stitches these objects together to create the full spectrum.
 *******************************************************************/
 
-class SolarAbsorptionAndContinuum : public SolarModel {
+class SolarAbsorptionAndContinuum : public virtual SolarModel {
 public:
 //-----------------------------------------------------------------------
 /// Create a SolarModel that uses the given doppler shift, absorption
@@ -99,6 +99,12 @@ private:
   boost::shared_ptr<SolarDopplerShift> doppler_shift_;
   boost::shared_ptr<SolarAbsorptionSpectrum> absorption_spectrum_;
   boost::shared_ptr<SolarContinuumSpectrum> continuum_spectrum_;
+  SolarAbsorptionAndContinuum() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarAbsorptionAndContinuum);
 #endif

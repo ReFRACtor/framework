@@ -1,8 +1,21 @@
 #include "instrument_doppler.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void InstrumentDoppler::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
+    & FP_NVP(vel_units);
+}
+
+FP_IMPLEMENT(InstrumentDoppler);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

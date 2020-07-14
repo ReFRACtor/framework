@@ -31,7 +31,7 @@ namespace FullPhysics {
 *******************************************************************/
 
 template <class Lint>
-class IlsTable : public IlsFunction {
+class IlsTable : virtual public IlsFunction {
 public:
 //-----------------------------------------------------------------------
 /// Constructor where we just supply the wavenumber, delta_lambda and
@@ -108,10 +108,17 @@ private:
   bool from_hdf_file;
   std::string hdf_file_name;
   std::string hdf_group;
+  IlsTable() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 typedef IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLinear;
 typedef IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLog;
 
 }
+
+FP_EXPORT_KEY(IlsTableLinear);
+FP_EXPORT_KEY(IlsTableLog);
 #endif

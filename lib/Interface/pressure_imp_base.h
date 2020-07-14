@@ -80,8 +80,10 @@ protected:
 //-----------------------------------------------------------------------
   PressureImpBase(const blitz::Array<double, 1>& Coeff, 
 		  const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<Pressure>(Coeff, Used_flag),
-      cache_stale(true) {}
+    : cache_stale(true)
+  {
+    SubStateVectorArray<Pressure>::init(Coeff, Used_flag);
+  }
 private:
   void fill_cache() const
   {

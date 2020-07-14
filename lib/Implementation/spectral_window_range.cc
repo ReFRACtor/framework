@@ -1,11 +1,24 @@
 #include "spectral_window_range.h"
 #include "sample_grid.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectralWindowRange::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectralWindow)
+    & FP_NVP_(range) & FP_NVP_(bad_sample_mask) & FP_NVP_(disp);
+}
+
+FP_IMPLEMENT(SpectralWindowRange);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

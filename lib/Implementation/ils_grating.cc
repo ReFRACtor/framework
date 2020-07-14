@@ -1,10 +1,23 @@
 #include "ils_grating.h"
+#include "fp_serialize_support.h"
 #include "hdf_file.h"
 #include "ostream_pad.h"
 #include "fp_logger.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void IlsGrating::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IlsImpBase)
+    & FP_NVP(ils_func);
+}
+
+FP_IMPLEMENT(IlsGrating);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -1,10 +1,23 @@
 #include "nonuniform_spectrum_sampling.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <algorithm>
 
 using namespace FullPhysics;
 using namespace std;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NonuniformSpectrumSampling::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling)
+    & FP_NVP(interpolated_sampling) & FP_NVP(spec_domain);
+}
+
+FP_IMPLEMENT(NonuniformSpectrumSampling);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

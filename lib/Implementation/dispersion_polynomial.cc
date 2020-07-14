@@ -1,7 +1,21 @@
 #include "dispersion_polynomial.h"
+#include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void DispersionPolynomial::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArraySampleGrid)
+    & FP_NVP(coeff_unit) & FP_NVP_(band_name) & FP_NVP_(variable_values)
+    & FP_NVP(spectral_index);
+}
+
+FP_IMPLEMENT(DispersionPolynomial);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -26,12 +40,12 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
                                            const Unit& Coeff_unit,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
-: SubStateVectorArray<SampleGrid>(Coeff, Used_flag),
-  coeff_unit(Coeff_unit),
+: coeff_unit(Coeff_unit),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
+  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
   initialize();
 }
 
@@ -46,12 +60,12 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
                                            const std::string& Coeff_unit_name,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
-: SubStateVectorArray<SampleGrid>(Coeff, Used_flag),
-  coeff_unit(Coeff_unit_name),
+: coeff_unit(Coeff_unit_name),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
+  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
   initialize();
 }
 
@@ -63,12 +77,12 @@ DispersionPolynomial::DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff
                                            const blitz::Array<bool, 1>& Used_flag,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
-: SubStateVectorArray<SampleGrid>(Coeff.value, Used_flag),
-  coeff_unit(Coeff.units),
+: coeff_unit(Coeff.units),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
+  SubStateVectorArray<SampleGrid>::init(Coeff.value, Used_flag);
   initialize();
 }
 

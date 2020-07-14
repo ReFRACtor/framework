@@ -26,6 +26,7 @@ public:
     const blitz::Array<bool, 1>& bad_sample_mask(int channel_index) const;
     void bad_sample_mask(const blitz::Array<bool, 1>& mask, int channel_index);
     %python_attribute_with_set(dispersion, std::vector<boost::shared_ptr<SampleGrid> >)
+  %pickle_serialization();
 };
 
 }

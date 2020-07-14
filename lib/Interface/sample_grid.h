@@ -4,6 +4,7 @@
 #include "state_vector_observer.h"
 #include "observer.h"
 #include "spectral_domain.h"
+#include "sub_state_vector_array.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -52,8 +53,10 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<SampleGrid> SubStateVectorArraySampleGrid;
 }
 
 FP_EXPORT_KEY(SampleGrid);
 FP_EXPORT_OBSERVER_KEY(SampleGrid);
+FP_EXPORT_KEY(SubStateVectorArraySampleGrid);
 #endif

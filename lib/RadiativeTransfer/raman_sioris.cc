@@ -1,4 +1,5 @@
 #include "raman_sioris.h"
+#include "fp_serialize_support.h"
 
 #include "unit.h"
 
@@ -9,6 +10,24 @@
 
 using namespace blitz;
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RamanSiorisEffect::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & FP_NVP_(channel_index) & FP_NVP_(albedo) & FP_NVP_(padding_fraction)
+    & FP_NVP_(do_upwelling) & FP_NVP_(jac_perturbation) & FP_NVP_(solar_zenith)
+    & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth) & FP_NVP_(scattering_angle)
+    & FP_NVP_(temperature_layers) & FP_NVP_(atmosphere)
+    & FP_NVP_(solar_model) & FP_NVP_(absorber);
+}
+
+FP_IMPLEMENT(RamanSiorisEffect);
+#endif
+
 
 extern "C" {
     void get_raman(int *nz, int *nw, int* maxnu, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, const double *sol, const double *taus, double *rspec, bool *problems);

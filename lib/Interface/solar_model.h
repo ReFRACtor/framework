@@ -39,6 +39,12 @@ public:
   }
 
   virtual std::string name() const { return "solar_model"; }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarModel);
 #endif

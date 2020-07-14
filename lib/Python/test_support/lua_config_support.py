@@ -21,10 +21,16 @@ def config_ls():
 
 
 @pytest.fixture(scope="function")
-def config_forward_model(config_ls):
+def sample_forward_model(config_ls):
     '''A forward model example. Currently comes from Lua, but we may
     change the source in the future'''
     return config_ls.globals.config.forward_model
+
+@pytest.fixture(scope="function")
+def sample_solar_model(config_ls):
+    '''A forward model example. Currently comes from Lua, but we may
+    change the source in the future'''
+    return config_ls.globals.config.forward_model.spectrum_effect[0][0]
 
 @pytest.fixture(scope="function")
 def sample_absorber(config_ls):

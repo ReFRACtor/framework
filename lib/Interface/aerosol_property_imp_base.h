@@ -103,8 +103,9 @@ protected:
 //-----------------------------------------------------------------------
   AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff, 
 			 const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<AerosolProperty>(Coeff, Used_flag)
-      { }
+  {
+    SubStateVectorArray<AerosolProperty>::init(Coeff, Used_flag);
+  }
 private:
   friend class boost::serialization::access;
   template<class Archive>

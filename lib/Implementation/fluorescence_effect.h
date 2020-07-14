@@ -14,7 +14,7 @@ namespace FullPhysics {
  by using a retrievable across the band parametrization of the
  effect.
 *******************************************************************/
-class FluorescenceEffect : public SpectrumEffectImpBase {
+class FluorescenceEffect : virtual public SpectrumEffectImpBase {
 public:
   FluorescenceEffect(const blitz::Array<double, 1>& Coeff,
                      const blitz::Array<bool, 1>& Used_flag,
@@ -90,6 +90,13 @@ private:
   // The fluorescence contribution needs to be
   // scaled by the stokes value
   boost::shared_ptr<StokesCoefficient> stokes_coef;
+
+  FluorescenceEffect() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(FluorescenceEffect);
 #endif

@@ -72,6 +72,12 @@ protected:
   SpectrumSampling() {}
 
   int nspectrometer;		//< Derived classes should set this.
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectrumSampling);
 #endif

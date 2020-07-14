@@ -73,9 +73,9 @@ GroundLambertian::GroundLambertian(const blitz::Array<double, 1>& Spec_coeffs,
                                    const blitz::Array<bool, 1>& Flag, 
                                    const ArrayWithUnit<double, 1>& Ref_points,
                                    const std::vector<std::string>& Desc_band_names)
-  : SubStateVectorArray<Ground>(Spec_coeffs, Flag), 
-    reference_points(Ref_points), desc_band_names(Desc_band_names) 
+  : reference_points(Ref_points), desc_band_names(Desc_band_names) 
 {
+  SubStateVectorArray<Ground>::init(Spec_coeffs, Flag);
 }
 
 ArrayAd<double, 1> GroundLambertian::surface_parameter(const double wn, const int spec_index) const

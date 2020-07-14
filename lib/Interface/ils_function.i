@@ -26,5 +26,6 @@ public:
   // be missing symbol problems in the director
   virtual std::string band_name() const = 0;
   virtual std::string hdf_band_name() const;
+  %pickle_serialization();
 };
 }

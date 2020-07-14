@@ -1,8 +1,22 @@
 #include "solar_absorption_table.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarAbsorptionTable::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarAbsorptionSpectrum)
+    & FP_NVP(domain_unit) & FP_NVP(table) & FP_NVP(hdf_file_name)
+    & FP_NVP(hdf_group);
+}
+
+FP_IMPLEMENT(SolarAbsorptionTable);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

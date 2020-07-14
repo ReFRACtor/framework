@@ -1,9 +1,24 @@
 #include "solar_absorption_and_continuum.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarAbsorptionAndContinuum::serialize(Archive & ar,
+					    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarModel)
+    & FP_NVP_(doppler_shift)
+    & FP_NVP_(absorption_spectrum)
+    & FP_NVP_(continuum_spectrum);
+}
+
+FP_IMPLEMENT(SolarAbsorptionAndContinuum);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

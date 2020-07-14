@@ -95,6 +95,11 @@ public:
 private:
   std::string line_list_file_;
   double fraction_solar_diameter_;
+  SolarAbsorptionGfitFile() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(SolarAbsorptionGfitFile);
 #endif

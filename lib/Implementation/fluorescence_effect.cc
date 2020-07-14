@@ -1,10 +1,25 @@
 #include "fluorescence_effect.h"
+#include "fp_serialize_support.h"
 #include "forward_model_spectral_grid.h"
 #include "ostream_pad.h"
 
 #include <boost/progress.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void FluorescenceEffect::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
+    & FP_NVP(lza) & FP_NVP(reference) & FP_NVP(retrieval_unit)
+    & FP_NVP(spec_index) & FP_NVP(f_contrib_ad) & FP_NVP(atm_oco)
+    & FP_NVP(stokes_coef);
+}
+
+FP_IMPLEMENT(FluorescenceEffect);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -30,5 +30,6 @@ public:
   virtual void print(std::ostream& Os) const;
 
   virtual std::string name() const;
+  %pickle_serialization();
 };
 }

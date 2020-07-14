@@ -94,9 +94,10 @@ protected:
                      const boost::shared_ptr<Pressure>& Press,
                      bool Mark_according_to_press = true,
                      int Pdep_start = 0)
-    : SubStateVectorArray<Temperature>(Coeff, Used_flag, Press,
-                                       Mark_according_to_press, Pdep_start),
-      cache_stale(true) { }
+    : cache_stale(true)
+  {
+    init(Coeff, Used_flag, Press, Mark_according_to_press, Pdep_start);
+  }
 private:
   void fill_cache() const
   {

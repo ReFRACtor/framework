@@ -51,6 +51,7 @@ public:
 	      const ForwardModelSpectralGrid& Forward_model_grid) const;
   virtual void notify_update(const Pressure& pressure);
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
+  %pickle_serialization();
 };
   
 }

@@ -1,7 +1,20 @@
 #include "simple_fixed_spectrum_sampling.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SimpleFixedSpectrumSampling::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling)
+    & FP_NVP(spec_domain);
+}
+
+FP_IMPLEMENT(SimpleFixedSpectrumSampling);
+#endif
 
 //-----------------------------------------------------------------------
 /// Constructor. This creates a fixed spacing grid. wn_end may be

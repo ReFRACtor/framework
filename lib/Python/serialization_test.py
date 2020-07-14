@@ -580,10 +580,9 @@ class TestRelativeHumidity(object):
         self.check(v1, v2)
 
     def check(self, v1, v2):
-        return
-        assert v1.specific_humidity_grid == v2.specific_humidity_grid
-        assert v1.relative_humidity_grid == v2.relative_humidity_grid
-        assert v1.relative_humidity_layer == v2.relative_humidity_layer
+        assert v1.specific_humidity_grid == approx(v2.specific_humidity_grid)
+        assert v1.relative_humidity_grid == approx(v2.relative_humidity_grid)
+        assert v1.relative_humidity_layer == approx(v2.relative_humidity_layer)
 
 class TestAerosolExtinctionLinear(BaseForTesting):
     def create(self):
@@ -657,4 +656,18 @@ class TestOpticalPropertiesPca(TestOpticalPropertiesWrtRt):
         return OpticalPropertiesPca(pdata, wn, sample_atmosphere.aerosol,
                                     opt_wrt_rt.number_gas_particles(),
                                     opt_wrt_rt.number_aerosol_particles())
+
+class TestSolarAbsorptionAndContinuum(object):
+    def test_serialization(self, sample_solar_model):
+        v1 = sample_solar_model
+        # XML is slow, so use binary data here
+        t = serialize_write_binary(v1)
+        # Skip this, it takes a good chunk of time to write this out
+        # in xml
+        #logging.info("Serialization:\n%s" % t)
+        v2 = serialize_read_binary(t)
+        self.check(v1, v2)
+
+    def check(self, v1, v2):
+        pass
     

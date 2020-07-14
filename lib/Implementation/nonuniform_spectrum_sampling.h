@@ -55,6 +55,12 @@ private:
   SpectralDomain sort_sd(const SpectralDomain& In) const;
   boost::shared_ptr<SpectrumSampling> interpolated_sampling;
   std::vector<SpectralDomain> spec_domain;
+  NonuniformSpectrumSampling() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NonuniformSpectrumSampling);
 #endif

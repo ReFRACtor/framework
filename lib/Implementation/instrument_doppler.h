@@ -12,7 +12,7 @@ namespace FullPhysics {
  due to the relative velocity between earth and the instrument.
  This value is retrievable due to the way the class is structured.
 *******************************************************************/
-class InstrumentDoppler : public SpectrumEffectImpBase {
+class InstrumentDoppler : virtual public SpectrumEffectImpBase {
 public:
   InstrumentDoppler(const DoubleWithUnit& Relative_velocity, 
                     const bool Used_flag = false);
@@ -34,6 +34,12 @@ public:
 
 private:
   Unit vel_units;
+  InstrumentDoppler() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(InstrumentDoppler);
 #endif

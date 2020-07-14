@@ -95,12 +95,18 @@ class FullPhysics::SubStateVectorArray<FullPhysics::Absorber>:
     public Absorber,
     public SubStateVectorObserver {
 public:
-  SubStateVectorArray<FullPhysics::Absorber>(const blitz::Array<double, 1>& Coeff, 
-		      const blitz::Array<bool, 1>& Used_flag);
-  SubStateVectorArray<FullPhysics::Absorber>(const blitz::Array<double, 1>& Coeff, 
-		      const blitz::Array<bool, 1>& Used_flag,
-		      const boost::shared_ptr<Pressure>& Press);
   SubStateVectorArray<FullPhysics::Absorber>();
+    void init(const blitz::Array<double, 1>& Coeff, 
+              const blitz::Array<bool, 1>& Used_flag,
+              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+              bool Mark_according_to_press = true,
+              int Pdep_start = 0,
+              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+    void init(double Coeff, bool Used_flag,
+	      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+	      bool Mark_according_to_press = true,
+	      int Pdep_start = 0,
+	      boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
 
   // Functions from Absorber base class, see note above.
   virtual int number_species() const;

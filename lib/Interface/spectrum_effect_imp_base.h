@@ -13,7 +13,8 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class SpectrumEffectImpBase: public SubStateVectorArray<SpectrumEffect> {
+class SpectrumEffectImpBase:
+    virtual public SubStateVectorArray<SpectrumEffect> {
 public:
   virtual ~SpectrumEffectImpBase() {}
   virtual boost::shared_ptr<SpectrumEffect> clone() const = 0;
@@ -45,17 +46,24 @@ protected:
 //-----------------------------------------------------------------------
   SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, 
                         const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<SpectrumEffect>(Coeff, Used_flag) {}
+  {
+    init(Coeff, Used_flag);
+  }
 
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient and used_flag values when
 /// they are scalar values
 //-----------------------------------------------------------------------
   SpectrumEffectImpBase(double Coeff, bool Used_flag)
-    : SubStateVectorArray<SpectrumEffect>(Coeff, Used_flag) {}
-
-
+  { init(Coeff, Used_flag); }
 private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<SpectrumEffect> SubStateVectorArraySpectrumEffect;
 }
+
+FP_EXPORT_KEY(SpectrumEffectImpBase);
+FP_EXPORT_KEY(SubStateVectorArraySpectrumEffect);
 #endif

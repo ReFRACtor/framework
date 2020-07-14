@@ -28,6 +28,7 @@ public:
   %python_attribute(pixel_grid, SpectralDomain)
   %python_attribute(sample_grid, SpectralDomain);
   virtual boost::shared_ptr<FullPhysics::SampleGrid> clone() const;
+  %pickle_serialization();
 };
 
 }

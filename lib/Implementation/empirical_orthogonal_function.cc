@@ -77,8 +77,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
  int Order,
  const std::string& Band_name,
  const std::string& Hdf_group)
-: SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag),
-  band_name(Band_name),
+: band_name(Band_name),
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
@@ -86,6 +85,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(false),
   scale_to_stddev_(-1)
 {
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +
@@ -184,8 +184,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
  int Order,
  const std::string& Band_name,
  const std::string& Hdf_group)
-: SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag),
-  band_name(Band_name),
+: band_name(Band_name),
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
@@ -193,6 +192,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(false),
   scale_to_stddev_(-1)
 {
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +
@@ -276,8 +276,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
  const std::string& Band_name,
  const std::string& Hdf_group,
  double Scale_to_stddev)
-: SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag),
-  band_name(Band_name),
+: band_name(Band_name),
   hdf_group(Hdf_group),
   order_(Order),
   sounding_number_(Sounding_number),
@@ -285,6 +284,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(true),
   scale_to_stddev_(Scale_to_stddev)
 {
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +

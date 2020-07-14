@@ -17,5 +17,6 @@ public:
 		      bool Convert_from_photon = true);
   virtual Spectrum solar_continuum_spectrum(
      const SpectralDomain& spec_domain) const;
+  %pickle_serialization();
 };
 }

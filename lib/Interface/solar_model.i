@@ -24,6 +24,7 @@ public:
   virtual Spectrum apply_solar_model(const Spectrum& Spec) const;
   virtual Spectrum solar_spectrum(const SpectralDomain& Spec_domain) const = 0;
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
+  %pickle_serialization();
 };
 }
 %template(vector_solar_model) std::vector<boost::shared_ptr<FullPhysics::SolarModel> >;

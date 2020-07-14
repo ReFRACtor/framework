@@ -12,18 +12,18 @@ void StandardForwardModel::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ForwardModel)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableNamedSpectrumPtr);
-  //std::cerr << "Step 1\n";
-  // ar & FP_NVP(spec_effect);
-  //std::cerr << "Step 2\n";
-  //ar & FP_NVP(inst);
-  // std::cerr << "Step 3\n";
-  //ar & FP_NVP(swin);
+  std::cerr << "Step 1\n";
+  ar & FP_NVP(spec_effect);
+  std::cerr << "Step 2\n";
+  ar & FP_NVP(inst);
+  std::cerr << "Step 3\n";
+  ar & FP_NVP(swin);
   // std::cerr << "Step 4\n";
   // ar & FP_NVP(rt);
-  // std::cerr << "Step 5\n";
-  // ar & FP_NVP_(spectrum_sampling);
-  //std::cerr << "Step 6\n";
-  //ar & FP_NVP(g);
+  std::cerr << "Step 5\n";
+  ar & FP_NVP_(spectrum_sampling);
+  std::cerr << "Step 6\n";
+  ar & FP_NVP(g);
 }
 
 FP_IMPLEMENT(StandardForwardModel);

@@ -31,9 +31,10 @@ public:
                         const blitz::Array<bool, 1>& Used_flag,
                         const DoubleWithUnit& Band_ref,
                         const std::string& Band_name)
-    : RadianceScaling(Coeff, Band_ref, Band_name),
-      SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag)
-  { } 
+  {
+    RadianceScaling::init(Coeff, Band_ref, Band_name);
+    SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
+  } 
 
   virtual ~RadianceScalingSvFit() {}
 

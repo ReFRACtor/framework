@@ -62,7 +62,9 @@ protected:
 //-----------------------------------------------------------------------
   RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff, 
 			   const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<RadiativeTransferRetrievable>(Coeff, Used_flag) {}
+  {
+    init(Coeff, Used_flag);
+  }
 
 private:
 };

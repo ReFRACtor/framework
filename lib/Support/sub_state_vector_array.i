@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 
 %{
@@ -19,40 +22,37 @@ template<class Base> class SubStateVectorArray:
     public Base,
     public SubStateVectorObserver {
 public:
-    SubStateVectorArray(double Coeff, bool Used_flag,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
-    SubStateVectorArray(const blitz::Array<double, 1>& Coeff, 
-                        const blitz::Array<bool, 1>& Used_flag,
-                        const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-                        bool Mark_according_to_press = true,
-                        int Pdep_start = 0,
-                        boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
-    SubStateVectorArray();
-    void init(const blitz::Array<double, 1>& Coeff, 
-              const blitz::Array<bool, 1>& Used_flag,
-              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-              bool Mark_according_to_press = true,
-              int Pdep_start = 0,
-              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
-    virtual ~SubStateVectorArray();
-    void mark_used_sub(blitz::Array<bool, 1>& Used) const;
-    %python_attribute(sub_state_identifier, std::string);
-    virtual std::string state_vector_name_i(int i) const;
-    virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
-    virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
-    virtual void update_sub_state_hook();
-    %python_attribute(coefficient, ArrayAd<double, 1>);
-    %python_attribute(used_flag_value, blitz::Array<bool, 1>);
-    %python_attribute(statevector_covariance, blitz::Array<double, 2>);
-    %python_attribute(pressure, boost::shared_ptr<Pressure>);
+  SubStateVectorArray();
+  void init(const blitz::Array<double, 1>& Coeff, 
+	    const blitz::Array<bool, 1>& Used_flag,
+	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+	    bool Mark_according_to_press = true,
+	    int Pdep_start = 0,
+	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+  void init(double Coeff, bool Used_flag,
+	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+	    bool Mark_according_to_press = true,
+	    int Pdep_start = 0,
+	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+  virtual ~SubStateVectorArray();
+  void mark_used_sub(blitz::Array<bool, 1>& Used) const;
+  %python_attribute(sub_state_identifier, std::string);
+  virtual std::string state_vector_name_i(int i) const;
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
+  virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
+  virtual void update_sub_state_hook();
+  %python_attribute(coefficient, ArrayAd<double, 1>);
+  %python_attribute(used_flag_value, blitz::Array<bool, 1>);
+  %python_attribute(statevector_covariance, blitz::Array<double, 2>);
+  %python_attribute(pressure, boost::shared_ptr<Pressure>);
 protected:
-    ArrayAd<double, 1> coeff;
-    boost::shared_ptr<Pressure> press;
-    blitz::Array<bool, 1> used_flag;
-    blitz::Array<double, 2> cov;
-    bool mark_according_to_press;
-    int pdep_start;
-    boost::shared_ptr<Mapping> mapping;
+  ArrayAd<double, 1> coeff;
+  boost::shared_ptr<Pressure> press;
+  blitz::Array<bool, 1> used_flag;
+  blitz::Array<double, 2> cov;
+  bool mark_according_to_press;
+  int pdep_start;
+  boost::shared_ptr<Mapping> mapping;
 };
 }
 

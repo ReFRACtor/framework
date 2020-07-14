@@ -50,6 +50,7 @@ set(DIR_SOURCES
     optical_properties_imp_base.cc
     optical_properties_init_base.cc
     output.cc
+    perturbation.cc
     pressure.cc
     pressure_imp_base.cc
     problem_state.cc
@@ -66,6 +67,7 @@ set(DIR_SOURCES
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
     stokes_coefficient.cc
+    stokes_coefficient_imp_base.cc
     surface_temperature.cc
     temperature.cc
     temperature_imp_base.cc

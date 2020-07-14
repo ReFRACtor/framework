@@ -1,7 +1,20 @@
 #include "spectrum_sampling_fixed_spacing.h"
+#include "fp_serialize_support.h"
 #include <fstream>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectrumSamplingFixedSpacing::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling)
+    & FP_NVP(spec_spacing);
+}
+
+FP_IMPLEMENT(SpectrumSamplingFixedSpacing);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

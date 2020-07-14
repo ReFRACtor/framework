@@ -36,5 +36,6 @@ public:
   %python_attribute(fluorescence_at_reference_uncertainty, double)
   %python_attribute(fluorescence_slope, double)
   %python_attribute(fluorescence_slope_uncertainty, double)
+  %pickle_serialization();
  };
 }

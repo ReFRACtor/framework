@@ -25,34 +25,27 @@ template<class Base> class SubStateVectorArray:
     virtual public Base,
     virtual public SubStateVectorObserver {
 public:
-//-----------------------------------------------------------------------
-/// Constructor.
-///
-/// The optional Mark_according_to_press and Pdep_start
-/// can be supplied with the Press.
-/// If this Mark_according_to_press it true, then we will only mark
-/// parameters in mark_used_sub() as used for
-/// i > Press->number_level() + Pdep_start. If Mark_according_to_press is
-/// false then we skip this logic but otherwise store the Pressure.
-/// This may seem a bit arcane, but it fits well with some of the classes
-/// that derive from this one (the old fixed level classes, used
-/// before B2.10)
-//-----------------------------------------------------------------------
-
-  SubStateVectorArray
-  (const blitz::Array<double, 1>& Coeff,
-   const blitz::Array<bool, 1>& Used_flag,
-   const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-   bool Mark_according_to_press = true,
-   int Pdep_start = 0,
-   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-  {
-    init(Coeff, Used_flag, Press, Mark_according_to_press, Pdep_start,
-	 in_map);
-  }
-
+  // Note, we use to have constructors for SubStateVectorArray that
+  // turn around and call init. Turns out this was causing a problem,
+  // since SubStateVectorArray is generally inherited virtual (which
+  // is required by boost serialization).
+  //
+  // This is because of a fairly subtle language rule. In C++ with
+  // virtual base classes, the most derived class calls the
+  // constructor. So if we have SubStateVectorArray<Foo> -> FooImpBase
+  // -> FooExample then only FooExample calls SubStateVectorArray<Foo>
+  // constructor. Most of the time this would means
+  // SubStateVectorArray *default* constructor will likely be called
+  // (see
+  // https://stackoverflow.com/questions/9907722/why-is-default-constructor-called-in-virtual-inheritance).
+  // This is almost certainly not what is intended, so we instead
+  // don't depend on the constructor and instead call the init
+  // function.
+  //
+  // We've removed all the nondefault constructors to keep from
+  // accidentally calling them. Instead, use "init".
   //-----------------------------------------------------------------------
-  /// Default constructor, should call init if we we have Coeff to set.
+  /// Default constructor, should call init if we have Coeff to set.
   //-----------------------------------------------------------------------
   SubStateVectorArray()
   {
@@ -85,23 +78,24 @@ public:
     
     state_vector_observer_initialize(count(Used_flag));
   }
+
+  
   
   //-----------------------------------------------------------------------
   /// Special case when Coeff and Used_flag have exactly one row.
   //-----------------------------------------------------------------------
-  
-  SubStateVectorArray
-  (double Coeff, bool Used_flag,
-   const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+  void init(double Coeff, bool Used_flag,
+    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+    bool Mark_according_to_press = true,
+    int Pdep_start = 0,
+    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
   {
     blitz::Array<double, 1> coeff_t(1);
     blitz::Array<bool, 1> used_t(1);
     coeff_t(0) = Coeff;
     used_t(0) = Used_flag;
-    init(coeff_t, used_t, Press, true, 0, in_map);
-  }
-
+    init(coeff_t, used_t, Press, Mark_according_to_press, Pdep_start, in_map);
+  }  
   virtual ~SubStateVectorArray() {}
   void mark_used_sub(blitz::Array<bool, 1>& Used) const
   {

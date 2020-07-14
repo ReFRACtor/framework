@@ -52,14 +52,15 @@ public:
 			      const std::string& Hdf_group = "N/A",
 			      int Sounding_number = 0,
 			      bool Eof_depend_on_sounding_number = false)
-    : SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag),
-      band_name(Band_name),
+    : band_name(Band_name),
       hdf_group(Hdf_group),
       order_(Order),
       sounding_number_(Sounding_number),
       eof_depend_on_sounding_number_(Eof_depend_on_sounding_number),
       eof_(Eof_waveform)
-  { }
+  {
+    init(Coeff, Used_flag);
+  }
 
   EmpiricalOrthogonalFunction(double Coeff, 
 			      bool Used_flag,
