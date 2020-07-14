@@ -12,5 +12,7 @@ void NamedSpectrum::serialize(Archive& ar,
 }
 
 FP_IMPLEMENT(NamedSpectrum);
+FP_OBSERVER_SERIALIZE(NamedSpectrumPtr);
+FP_OBSERVER_SERIALIZE(NamedSpectrumPtrVec);
 #endif
 

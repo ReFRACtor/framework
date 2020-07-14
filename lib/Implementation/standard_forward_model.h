@@ -20,118 +20,125 @@ namespace FullPhysics {
   other instruments.
 *******************************************************************/
 
-class StandardForwardModel : public ForwardModel, public Observable<boost::shared_ptr<NamedSpectrum> > {
+class StandardForwardModel : public ForwardModel,
+			     public Observable<boost::shared_ptr<NamedSpectrum> > {
 public:
-    StandardForwardModel(
-        const boost::shared_ptr<Instrument>& Inst,
-        const boost::shared_ptr<SpectralWindow>& Spectral_window,
-        const boost::shared_ptr<RadiativeTransfer>& Rt,
-        const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
-        const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect =
-            std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
+  StandardForwardModel(
+		       const boost::shared_ptr<Instrument>& Inst,
+		       const boost::shared_ptr<SpectralWindow>& Spectral_window,
+		       const boost::shared_ptr<RadiativeTransfer>& Rt,
+		       const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
+		       const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect =
+		       std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
 
-    virtual ~StandardForwardModel() {}
+  virtual ~StandardForwardModel() {}
 
-    virtual void setup_grid()
-    {
-        g.reset(new ForwardModelSpectralGrid(inst, swin, spectrum_sampling_));
+  virtual void setup_grid()
+  {
+    g.reset(new ForwardModelSpectralGrid(inst, swin, spectrum_sampling_));
+  }
+
+  virtual int num_channels() const
+  {
+    return swin->number_spectrometer();
+  }
+
+  virtual SpectralDomain spectral_domain(int channel_index) const
+  {
+    if(!g) {
+      throw Exception ("setup_grid needs to be called before calling spectral_domain");
     }
 
-    virtual int num_channels() const
-    {
-        return swin->number_spectrometer();
-    }
+    return g->low_resolution_grid(channel_index);
+  }
 
-    virtual SpectralDomain spectral_domain(int channel_index) const
-    {
-        if(!g) {
-            throw Exception ("setup_grid needs to be called before calling spectral_domain");
-        }
+  virtual SpectralDomain::TypePreference spectral_domain_type_preference() const
+  {
+    return inst->pixel_spectral_domain(0).type_preference();
+  }
 
-        return g->low_resolution_grid(channel_index);
-    }
+  virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) const;
 
-    virtual SpectralDomain::TypePreference spectral_domain_type_preference() const
-    {
-        return inst->pixel_spectral_domain(0).type_preference();
-    }
+  virtual void print(std::ostream& Os) const;
 
-    virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) const;
+  // These are useful for python, so make available here.
+  const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& spectrum_effect() const
+  {
+    return spec_effect;
+  }
 
-    virtual void print(std::ostream& Os) const;
+  const boost::shared_ptr<Instrument>& instrument() const
+  {
+    return inst;
+  }
 
-    // These are useful for python, so make available here.
-    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& spectrum_effect() const
-    {
-        return spec_effect;
-    }
+  void instrument(const boost::shared_ptr<Instrument>& V)
+  {
+    inst = V;
+  }
 
-    const boost::shared_ptr<Instrument>& instrument() const
-    {
-        return inst;
-    }
+  const boost::shared_ptr<SpectralWindow>& spectral_window() const
+  {
+    return swin;
+  }
 
-    void instrument(const boost::shared_ptr<Instrument>& V)
-    {
-        inst = V;
-    }
+  void spectral_window(const boost::shared_ptr<SpectralWindow>& V)
+  {
+    swin = V;
+  }
 
-    const boost::shared_ptr<SpectralWindow>& spectral_window() const
-    {
-        return swin;
-    }
+  const boost::shared_ptr<RadiativeTransfer>& radiative_transfer() const
+  {
+    return rt;
+  }
+  void radiative_transfer(const boost::shared_ptr<RadiativeTransfer>& V)
+  {
+    rt = V;
+  }
 
-    void spectral_window(const boost::shared_ptr<SpectralWindow>& V)
-    {
-        swin = V;
-    }
+  const boost::shared_ptr<SpectrumSampling>& spectrum_sampling() const
+  {
+    return spectrum_sampling_;
+  }
 
-    const boost::shared_ptr<RadiativeTransfer>& radiative_transfer() const
-    {
-        return rt;
-    }
-    void radiative_transfer(const boost::shared_ptr<RadiativeTransfer>& V)
-    {
-        rt = V;
-    }
+  void spectrum_sampling(const boost::shared_ptr<SpectrumSampling>& V)
+  {
+    spectrum_sampling_ = V;
+  }
 
-    const boost::shared_ptr<SpectrumSampling>& spectrum_sampling() const
-    {
-        return spectrum_sampling_;
-    }
+  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
 
-    void spectrum_sampling(const boost::shared_ptr<SpectrumSampling>& V)
-    {
-        spectrum_sampling_ = V;
-    }
+  const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grid() const
+  {
+    return g;
+  }
 
-    Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
+  /// Required observable functions
+  virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs)
+  {
+    add_observer_do(Obs);
+  }
 
-    const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grid() const
-    {
-        return g;
-    }
+  virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs)
+  {
+    remove_observer_do(Obs);
+  }
 
-    /// Required observable functions
-    virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs)
-    {
-        add_observer_do(Obs);
-    }
-
-    virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs)
-    {
-        remove_observer_do(Obs);
-    }
-
-    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
 
 private:
-    std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > spec_effect;
-    boost::shared_ptr<Instrument> inst;
-    boost::shared_ptr<SpectralWindow> swin;
-    boost::shared_ptr<RadiativeTransfer> rt;
-    boost::shared_ptr<SpectrumSampling> spectrum_sampling_;
-    boost::shared_ptr<ForwardModelSpectralGrid> g;
+  std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > spec_effect;
+  boost::shared_ptr<Instrument> inst;
+  boost::shared_ptr<SpectralWindow> swin;
+  boost::shared_ptr<RadiativeTransfer> rt;
+  boost::shared_ptr<SpectrumSampling> spectrum_sampling_;
+  boost::shared_ptr<ForwardModelSpectralGrid> g;
+  StandardForwardModel() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(StandardForwardModel);
 #endif

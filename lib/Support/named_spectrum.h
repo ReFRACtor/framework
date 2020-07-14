@@ -2,6 +2,7 @@
 #define NAMED_SPECTRUM_H
 
 #include "spectrum.h"
+#include "observer.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -52,8 +53,13 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef boost::shared_ptr<NamedSpectrum> NamedSpectrumPtr;
+typedef std::vector<boost::shared_ptr<NamedSpectrum> > NamedSpectrumPtrVec;
+  
 }
 
 FP_EXPORT_KEY(NamedSpectrum);
-
+FP_EXPORT_OBSERVER_KEY(NamedSpectrumPtr);
+FP_EXPORT_OBSERVER_KEY(NamedSpectrumPtrVec);
 #endif
