@@ -595,3 +595,66 @@ class TestAerosolExtinctionLinear(BaseForTesting):
         assert a1.aerosol_extinction == approx(a2.aerosol_extinction)
         assert a1.aerosol_name == a2.aerosol_name
         assert a1.model_short_name == a2.model_short_name
+
+class TestOpticalPropertiesWrtRt(object):
+    def test_serialization(self, sample_atmosphere):
+        wn = 13179.0;
+        chan = 0;
+        v1 = self.create(sample_atmosphere,wn,chan)
+        t = serialize_write_string(v1)
+        logging.info("Serialization:\n%s" % t)
+        v2 = serialize_read_generic_string(t)
+        self.check(v1, v2)
+
+    # Have a few closely related classes that start with a
+    # OpticalPropertiesWrtRt. Give a chance for derived classes to
+    # create other OpticalProperties classes before we check results.
+    def create(self, sample_atmosphere, wn, chan):
+        self.skip_list = set()
+        return sample_atmosphere.optical_properties(wn, chan)
+
+    def check(self, op1, op2):
+        assert op1.number_layers() == op2.number_layers()
+        assert op1.number_gas_particles() == op2.number_gas_particles()
+        assert op1.number_aerosol_particles() == op2.number_aerosol_particles()
+        for f in ["rayleigh_optical_depth",
+                  "gas_optical_depth_per_particle",
+                  "aerosol_extinction_optical_depth_per_particle",
+                  "aerosol_scattering_optical_depth_per_particle",
+                  "gas_optical_depth_per_layer",
+                  "aerosol_extinction_optical_depth_per_layer",
+                  "aerosol_scattering_optical_depth_per_layer",
+                  "total_optical_depth",
+                  "total_single_scattering_albedo",
+                  "rayleigh_fraction",
+                  "aerosol_fraction",
+                  "rayleigh_phase_function_moments_portion",
+                  "aerosol_phase_function_moments_portion",
+                  "total_phase_function_moments",
+                  "intermediate_jacobian",
+                  ]:
+            if f not in self.skip_list:
+                assert getattr(op1,f)() == approx(getattr(op2,f)())
+
+class TestOpticalPropertiesLsi(TestOpticalPropertiesWrtRt):
+    def create(self, sample_atmosphere, wn, chan):
+        self.skip_list = set()
+        # Can't call this in OpticalPropertiesLsi
+        self.skip_list.add("gas_optical_depth_per_particle")
+        opt_wrt_rt = sample_atmosphere.optical_properties(wn, chan)
+        pdata = OpticalPropertiesLsi.pack(opt_wrt_rt)
+        return OpticalPropertiesLsi(pdata, wn, sample_atmosphere.aerosol,
+                                    opt_wrt_rt.number_gas_particles(),
+                                    opt_wrt_rt.number_aerosol_particles())
+
+class TestOpticalPropertiesPca(TestOpticalPropertiesWrtRt):
+    def create(self, sample_atmosphere, wn, chan):
+        self.skip_list = set()
+        # Can't call this in OpticalPropertiesPca
+        self.skip_list.add("gas_optical_depth_per_particle")
+        opt_wrt_rt = sample_atmosphere.optical_properties(wn, chan)
+        pdata = OpticalPropertiesPca.pack(opt_wrt_rt)
+        return OpticalPropertiesPca(pdata, wn, sample_atmosphere.aerosol,
+                                    opt_wrt_rt.number_gas_particles(),
+                                    opt_wrt_rt.number_aerosol_particles())
+    

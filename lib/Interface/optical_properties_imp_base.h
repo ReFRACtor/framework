@@ -255,6 +255,7 @@ protected:
   // Thermal surface
   ArrayAd<double, 1> atmosphere_blackbody_;
   AutoDerivative<double> surface_blackbody_;
+private:  
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

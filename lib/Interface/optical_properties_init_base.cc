@@ -1,7 +1,19 @@
 #include "optical_properties_init_base.h"
+#include "fp_serialize_support.h"
 
 using namespace blitz;
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void OpticalPropertiesInitBase::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpticalPropertiesImpBase);
+}
+
+FP_IMPLEMENT(OpticalPropertiesInitBase);
+#endif
 
 //-----------------------------------------------------------------------
 /// Initializes a aerosol free OpticalProperties object using precomputed values:

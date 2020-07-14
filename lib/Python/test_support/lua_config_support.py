@@ -51,6 +51,16 @@ def sample_temperature(config_ls):
     return config_ls.globals.config.temperature
 
 @pytest.fixture(scope="function")
+def sample_atmosphere(config_ls):
+    '''Sample atmosphere, to use in tests that need one. 
+
+    This currently comes from the old Lua code, just for convenience. We
+    probably want to come up with a different method (e.g, directly create
+    this), since we are trying to phase out the Lua. But for now, use it 
+    because it is available.'''
+    return config_ls.globals.config.atmosphere
+
+@pytest.fixture(scope="function")
 def sample_pressure(config_ls):
     '''Sample pressure, to use in tests that need one. 
 

@@ -1,7 +1,19 @@
 #include "optical_properties_pca.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void OpticalPropertiesPca::serialize(Archive & ar,
+				     const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpticalPropertiesImpBase);
+}
+
+FP_IMPLEMENT(OpticalPropertiesPca);
+#endif
 
 //-----------------------------------------------------------------------
 /// Reconstruct a OpticalProperties object from packed optical properties
@@ -33,14 +45,14 @@ OpticalPropertiesPca::OpticalPropertiesPca
     }
 
     int packed_idx = 0;
-    gas_optical_depth_per_layer_.value().reference(packed_properties.value()(ra, packed_idx));
+    gas_optical_depth_per_layer_.value().reference(packed_properties.value()(ra, packed_idx).copy());
     gas_optical_depth_per_layer_.resize_number_variable(num_rt_var);
     if(!packed_properties.is_constant()) {
         gas_optical_depth_per_layer_.jacobian()(ra, packed_idx) = 1.0;
     }
     packed_idx += 1;
 
-    rayleigh_optical_depth_.value().reference(packed_properties.value()(ra, packed_idx));
+    rayleigh_optical_depth_.value().reference(packed_properties.value()(ra, packed_idx).copy());
     rayleigh_optical_depth_.resize_number_variable(num_rt_var);
     if(!packed_properties.is_constant()) {
         rayleigh_optical_depth_.jacobian()(ra, packed_idx) = 1.0;
@@ -48,7 +60,7 @@ OpticalPropertiesPca::OpticalPropertiesPca
     packed_idx += 1;
 
     Range r_aer_ext(packed_idx, packed_idx + num_aerosol - 1);
-    aerosol_extinction_optical_depth_per_particle_.value().reference(packed_properties.value()(ra, r_aer_ext));
+    aerosol_extinction_optical_depth_per_particle_.value().reference(packed_properties.value()(ra, r_aer_ext).copy());
     aerosol_extinction_optical_depth_per_particle_.resize_number_variable(num_rt_var);
     if(!packed_properties.is_constant()) {
         for(int aer_idx = 0; aer_idx < num_aerosol; aer_idx++) {

@@ -1,7 +1,19 @@
 #include "optical_properties_wrt_rt.h"
+#include "fp_serialize_support.h"
 
 using namespace blitz;
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void OpticalPropertiesWrtRt::serialize(Archive & ar,
+				       const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpticalPropertiesInitBase);
+}
+
+FP_IMPLEMENT(OpticalPropertiesWrtRt);
+#endif
 
 // Index of parameters in jacobians for OpticalPropertiesWrtRt
 // Order is due to heritage

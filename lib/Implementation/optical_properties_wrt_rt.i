@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 
 %{
@@ -12,4 +15,18 @@
 
 %template (vector_optical_properties_wrt_rt) std::vector<boost::shared_ptr<FullPhysics::OpticalPropertiesWrtRt> >;
 
-%include "optical_properties_wrt_rt.h"
+namespace FullPhysics {
+class OpticalPropertiesWrtRt : public OpticalPropertiesInitBase {
+public:
+  OpticalPropertiesWrtRt() : OpticalPropertiesInitBase() {};
+  %pickle_serialization();
+protected:
+  virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
+					 const ArrayAd<double, 2>& gas_od,
+					 const ArrayAd<double, 2>& aerosol_ext_od,
+					 const ArrayAd<double, 2>& aerosol_sca_od,
+					 const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper);
+};
+
+}
+

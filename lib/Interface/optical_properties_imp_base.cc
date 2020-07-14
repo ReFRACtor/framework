@@ -47,6 +47,7 @@ void OpticalPropertiesImpBase::serialize(Archive & ar,
     & FP_NVP_(aerosol_extinction_optical_depth_per_particle)
     & FP_NVP_(aerosol_scattering_optical_depth_per_particle)
     & FP_NVP_(aerosol_phase_function_helper)
+    & FP_NVP_(gas_optical_depth_per_layer)
     & FP_NVP_(intermediate_jacobian)
     & FP_NVP_(surface_reflective_parameters)
     & FP_NVP_(atmosphere_blackbody)
@@ -56,6 +57,7 @@ void OpticalPropertiesImpBase::serialize(Archive & ar,
 FP_IMPLEMENT(AerosolPhaseFunctionHelper);
 FP_IMPLEMENT(AerosolPhaseFunctionPassThruHelper);
 FP_IMPLEMENT(AerosolPhaseFunctionComputeHelper);
+FP_IMPLEMENT(OpticalPropertiesImpBase);
 #endif
 
 //-----------------------------------------------------------------------
