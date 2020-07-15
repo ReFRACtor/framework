@@ -47,7 +47,8 @@ void OssMasters::init() {
     fixed_outputs = boost::make_shared<OssFixedOutputs>(num_chan, center_spectral_point);
 }
 
-boost::shared_ptr<OssModifiedOutputs> OssMasters::run_fwd_model(boost::shared_ptr<OssModifiedInputs> Modified_inputs) {
+boost::shared_ptr<OssModifiedOutputs> OssMasters::run_fwd_model(int Channel_index,
+        boost::shared_ptr<OssModifiedInputs> Modified_inputs) {
     int num_vert_lev = fixed_inputs->num_vert_lev;
     int num_surf_points = fixed_inputs->num_surf_points;
     int num_gas = fixed_inputs->gas_names.size();

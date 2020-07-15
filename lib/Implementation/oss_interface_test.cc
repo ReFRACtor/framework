@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE(oss_interface)
             refl, scale_cld, pres_cld, ext_cld, surf_grid, cld_grid, obs_zen_ang, sol_zen_ang,
             lat, surf_alt, lambertian);
 
-    boost::shared_ptr<OssModifiedOutputs> modified_outputs = oss_master.run_fwd_model(modified_inputs);
+    boost::shared_ptr<OssModifiedOutputs> modified_outputs = oss_master.run_fwd_model(1, modified_inputs);
 
     IfstreamCs expected(test_data_dir() + "expected/oss_interface/radiance_and_jacobian");
 

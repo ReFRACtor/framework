@@ -13,14 +13,17 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
         DoubleWithUnit Obs_zen_ang, DoubleWithUnit Sol_zen_ang,
         DoubleWithUnit Lat, DoubleWithUnit Surf_alt, bool Lambertian,
         const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file,
-        const std::string& Fix_file, const std::string& Ch_sel_file, int Max_chans) :
+        const std::string& Fix_file, const std::string& Ch_sel_file,
+        std::vector<boost::shared_ptr<SpectralDomain>> Channel_domains,
+        int Max_chans) :
             vmr(Vmr), pressure(Pressure_), temperature(Temperature_),
             skin_temperature(Skin_temperature), ground(Ground_), obs_zen_ang(Obs_zen_ang),
             sol_zen_ang(Sol_zen_ang), lat(Lat), surf_alt(Surf_alt), lambertian(Lambertian),
             sel_file(Sel_file), sel_file_sz(Sel_file.length()), od_file(Od_file),
             od_file_sz(Od_file.length()), sol_file(Sol_file), sol_file_sz(Sol_file.length()),
             fix_file(Fix_file), fix_file_sz(Fix_file.length()),ch_sel_file(Ch_sel_file),
-            ch_sel_file_sz(Ch_sel_file.length()), max_chans(Max_chans) {
+            ch_sel_file_sz(Ch_sel_file.length()), channel_domains(Channel_domains),
+            max_chans(Max_chans) {
     std::vector<std::string> gas_names;
     std::vector<std::string> gas_jacobian_names;
 
@@ -42,7 +45,7 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
     float min_extinct_cld = 999.0;
 
     fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
-            ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, max_chans);
+            ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, channel_domains, max_chans);
     oss_master = boost::make_shared<OssMasters>(fixed_inputs);
 }
 
@@ -103,10 +106,14 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
             scale_cld, pressure_cld, ext_cld, oss_surface_grid,cld_grid,
             oss_obs_zen_ang, oss_sol_zen_ang, oss_lat, oss_surf_alt, lambertian);
 
-    boost::shared_ptr<OssModifiedOutputs> modified_outputs(oss_master->run_fwd_model(modified_inputs));
+    boost::shared_ptr<OssModifiedOutputs> modified_outputs(oss_master->run_fwd_model(channel_index, modified_inputs));
     cached_outputs = modified_outputs;
     Array<double, 1> rad(cast<double>(modified_outputs->y.value(Range::all())));
 
     /* TODO: Add jacobian to SpectralRange */
     return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
+}
+
+void OssForwardModel::setup_retrieval(OssRetrievalFlags Retrieval_flags) const {
+    retrieval_flags = boost::make_shared<OssRetrievalFlags>(Retrieval_flags);
 }

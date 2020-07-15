@@ -7,6 +7,7 @@
 #include "surface_temperature.h"
 #include "ground_piecewise.h"
 #include "oss_interface.h"
+#include "oss_retrieval_flags.h"
 
 #include <string>
 
@@ -25,7 +26,10 @@ public:
             DoubleWithUnit Obs_zen_ang, DoubleWithUnit Sol_zen_ang,
             DoubleWithUnit Lat, DoubleWithUnit Surf_alt, bool Lambertian,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file,
-            const std::string& Fix_file, const std::string& Ch_sel_file, int Max_chans = 20000);
+            const std::string& Fix_file, const std::string& Ch_sel_file,
+            std::vector<boost::shared_ptr<SpectralDomain>> channel_domains =
+                    std::vector<boost::shared_ptr<SpectralDomain>>(),
+            int Max_chans = 20000);
     virtual ~OssForwardModel() {}
     virtual void setup_grid();
 
@@ -38,11 +42,13 @@ public:
         return SpectralDomain::PREFER_WAVENUMBER;
     }
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+    virtual void setup_retrieval(OssRetrievalFlags Retrieval_flags) const;
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
     mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
+    mutable boost::shared_ptr<OssRetrievalFlags> retrieval_flags;
 private:
     std::vector<boost::shared_ptr<AbsorberVmr>> vmr;
     boost::shared_ptr<Pressure> pressure;
@@ -67,6 +73,7 @@ private:
     int ch_sel_file_sz;
     int max_chans;
 
+    std::vector<boost::shared_ptr<SpectralDomain>> channel_domains;
     ArrayWithUnit<double, 1> center_spectral_point;
 };
 }

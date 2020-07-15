@@ -2,7 +2,9 @@
 
 %{
 #include "oss_interface.h"
+#include "spectral_domain.h"
 %}
+%import "spectral_domain.i"
 %import "array_with_unit.i"
 %import "float_with_unit.i"
 %import "string_vector_to_char.i"
@@ -51,9 +53,11 @@ public:
             std::vector<std::string>& Gas_jacobian_names, std::string& Sel_file,
             std::string& Od_file, std::string& Sol_file, std::string& Fix_file,
             std::string& Ch_sel_file, int Num_vert_lev, int Num_surf_points,
-            float Min_extinct_cld, int Max_chans = 20000);
+            float Min_extinct_cld,
+            std::vector<boost::shared_ptr<SpectralDomain>> Channel_domains =
+                    std::vector<boost::shared_ptr<SpectralDomain>>(),
+            int Max_chans = 20000);
 
-    int max_chans; ///< Maximum number of channels
     std::vector<std::string> gas_names; ///< Molecular gas names
     boost::shared_ptr<StringVectorToChar> oss_gas_names; ///< OSS 1d str representation of gas names
     std::vector<std::string> gas_jacobian_names; ///< Molecular gas names for Jacobians
@@ -66,6 +70,8 @@ public:
     int num_vert_lev; ///< Number of vertical levels of state vector
     int num_surf_points; ///< Number of surface grid points
     FloatWithUnit min_extinct_cld; ///< Threshold of extinction for including cloud in RT (km−1)
+	std::vector<boost::shared_ptr<SpectralDomain>> channel_domains;
+    int max_chans; ///< Maximum number of channels
 };
 
 class OssModifiedInputs: public virtual GenericObject {
@@ -109,9 +115,12 @@ public:
     OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs);
 
     void init();
-    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(boost::shared_ptr<OssModifiedInputs> Modified_inputs);
+    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(int Channel_index,
+        boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssFixedOutputs> fixed_outputs;
 };
 }
+
+%template(vector_spectral_domain) std::vector<boost::shared_ptr<FullPhysics::SpectralDomain> >;

@@ -24,6 +24,14 @@ void cppfwdwrapper(int &, int &, float *, float *, float &, float *, int &,
         float *, float *, float *, float *, float *, float *, float *);
 }
 
+extern "C" {
+  void cpploadchanselect(int &, int *, int &);
+}
+
+extern "C" {
+  void cppsetchanselect(int &);
+}
+
 namespace FullPhysics {
 /****************************************************************//**
  This class stores the dynamic outputs set by OSS each FM call
@@ -85,15 +93,20 @@ public:
             std::vector<std::string>& Gas_jacobian_names, std::string& Sel_file,
             std::string& Od_file, std::string& Sol_file, std::string& Fix_file,
             std::string& Ch_sel_file, int Num_vert_lev, int Num_surf_points,
-            float Min_extinct_cld, int Max_chans = 20000) :
+            float Min_extinct_cld,
+            std::vector<boost::shared_ptr<SpectralDomain>> Channel_domains =
+                    std::vector<boost::shared_ptr<SpectralDomain>>(),
+            int Max_chans = 20000) :
             gas_names(Gas_names), gas_jacobian_names(Gas_jacobian_names),
 			sel_file(Sel_file), od_file(Od_file), sol_file(Sol_file), fix_file(Fix_file),
 			ch_sel_file(Ch_sel_file),num_vert_lev(Num_vert_lev), num_surf_points(Num_surf_points),
 			min_extinct_cld(Min_extinct_cld, Unit("km^-1")), max_chans(Max_chans),
 			oss_gas_names(boost::make_shared<StringVectorToChar>(Gas_names)),
-			oss_gas_jacobian_names(boost::make_shared<StringVectorToChar>(Gas_jacobian_names)) {
+			oss_gas_jacobian_names(boost::make_shared<StringVectorToChar>(Gas_jacobian_names)),
+			channel_domains(Channel_domains) {
     }
 
+    std::vector<boost::shared_ptr<SpectralDomain>> channel_domains;
     int max_chans; ///< Maximum number of channels
     std::vector<std::string> gas_names; ///< Molecular gas names
     boost::shared_ptr<StringVectorToChar> oss_gas_names; ///< OSS 1d str representation of gas names
@@ -170,7 +183,8 @@ public:
     OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
 
     void init();
-    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(boost::shared_ptr<OssModifiedInputs> Modified_inputs);
+    boost::shared_ptr<OssModifiedOutputs> run_fwd_model(int Channel_index,
+            boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssFixedOutputs> fixed_outputs;

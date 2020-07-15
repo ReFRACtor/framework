@@ -30,7 +30,9 @@ public:
             DoubleWithUnit Obs_zen_ang, DoubleWithUnit Sol_zen_ang,
             DoubleWithUnit Lat, DoubleWithUnit Surf_alt, bool Lambertian,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file,
-            const std::string& Fix_file, const std::string& Ch_sel_file, int Max_chans = 20000);
+            const std::string& Fix_file, const std::string& Ch_sel_file,
+			std::vector<boost::shared_ptr<SpectralDomain>> Channel_domains,
+            int Max_chans = 20000);
     virtual ~OssForwardModel();
     virtual void setup_grid();
     virtual int num_channels() const;
@@ -41,6 +43,7 @@ public:
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
     mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;
+    mutable boost::shared_ptr<OssRetrievalFlags> retrieval_flags;
 };
 }
     
