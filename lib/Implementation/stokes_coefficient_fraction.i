@@ -17,5 +17,6 @@ public:
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
 protected:
   virtual void calc_stokes_coeff() const;
+  %pickle_serialization();
 };
 }

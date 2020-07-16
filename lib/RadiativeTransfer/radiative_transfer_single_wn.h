@@ -95,6 +95,11 @@ protected:
   RadiativeTransferSingleWn() {}
 
   boost::shared_ptr<RtAtmosphere> atm;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(RadiativeTransferSingleWn);
 #endif

@@ -1,4 +1,5 @@
 #include "first_order_driver.h"
+#include "fp_serialize_support.h"
 #include "wgs84_constant.h"
 
 // Include to use consistent jacobian sizes
@@ -7,21 +8,48 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void FirstOrderDriver::serialize(Archive & ar,
+				 const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
+    & FP_NVP_(num_moments) & FP_NVP_(num_streams) & FP_NVP_(num_layers)
+    & FP_NVP_(surf_type) & FP_NVP_(is_pseudo_spherical);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void FirstOrderDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void FirstOrderDriver::load(Archive & UNUSED(ar),
+		    const unsigned int UNUSED(version))
+{
+  init_interfaces();
+}
+
+FP_IMPLEMENT(FirstOrderDriver);
+#endif
+
 //-----------------------------------------------------------------------
 /// Construct FirstOrderDriver
 //-----------------------------------------------------------------------
 
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
   : SpurrRtDriver(do_solar, do_thermal),
-    num_moments_(number_moments), num_streams_(number_streams)
+    num_moments_(number_moments), num_streams_(number_streams),
+    num_layers_(number_layers), surf_type_(surface_type),
+    is_pseudo_spherical_(true)
 {
-    init_interfaces(number_layers, surface_type);
-    // Use pseudo spherical correction by default
-    set_pseudo_spherical();
+    init_interfaces();
 }
 
 
-void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
+void FirstOrderDriver::init_interfaces()
 {
     // We process 1 geometry at a time for now
     int nszas = 1;
@@ -32,7 +60,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     // Match what is used by LIDORT driver
     int nfine = 4;
 
-    geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
+    geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, num_layers_, nfine, ngeoms, nszas, nvzas, nazms, num_layers_, nfine));
 
     // Use same definitions as Fortran code
     // Define pi and degrees to radians
@@ -81,7 +109,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
     int nsurfacewfs = lid_pars.max_surfacewfs; 
 
     // Initialize solar mode interface
-    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
+    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, num_layers_, nfine, natmoswfs, nsurfacewfs, ngeoms, num_layers_));
     
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
@@ -113,25 +141,32 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
     // Copy LidortBrdfDriver pointer into SpurrDriver variable
     brdf_driver_ = l_brdf_driver;
-    brdf_driver_->initialize_brdf_inputs(surface_type);
+    brdf_driver_->initialize_brdf_inputs(surf_type_);
+
+    if(is_pseudo_spherical_)
+      set_pseudo_spherical();
+    else
+      set_plane_parallel();
 }
 
 /// Set plane parallel sphericity
-void FirstOrderDriver::set_plane_parallel() const
+void FirstOrderDriver::set_plane_parallel()
 {
     geometry->do_planpar(true);
     geometry->do_enhanced_ps(false);
 
     copy_geometry_flags();
+    is_pseudo_spherical_ = false;
 }
 
 /// Set pseudo spherical sphericity
-void FirstOrderDriver::set_pseudo_spherical() const
+void FirstOrderDriver::set_pseudo_spherical()
 {
     geometry->do_planpar(false);
     geometry->do_enhanced_ps(true);
 
     copy_geometry_flags();
+    is_pseudo_spherical_ = true;
 }
 
 /// Copy flags for sphericity calculations from geometry object

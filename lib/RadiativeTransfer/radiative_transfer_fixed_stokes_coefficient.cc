@@ -1,8 +1,22 @@
 #include "radiative_transfer_fixed_stokes_coefficient.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RadiativeTransferFixedStokesCoefficient::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransfer)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableNamedSpectrumPtrVec)
+    & FP_NVP(stokes_coef);
+}
+
+FP_IMPLEMENT(RadiativeTransferFixedStokesCoefficient);
+#endif
 
 static const char* stoke_names[] = {"I", "Q", "U", "V"};
 static const int max_num_stokes = 4;

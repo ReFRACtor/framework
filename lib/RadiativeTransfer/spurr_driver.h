@@ -34,7 +34,7 @@ namespace FullPhysics {
   by the specific incarnation of Spurr BRDF code.
 *******************************************************************/
 
-class SpurrBrdfDriver : public virtual GenericObject {
+class SpurrBrdfDriver : public Printable<SpurrBrdfDriver> {
 
 public:
   virtual void initialize_brdf_inputs(int surface_type);
@@ -48,7 +48,7 @@ public:
   virtual int n_surface_wfs() const = 0;
   virtual bool do_kparams_derivs(const int kernel_index) const = 0;
   virtual bool do_shadow_effect() const = 0;
-
+  virtual void print(std::ostream& Os) const {Os << "SpurrBrdfDriver";}
 protected:
   virtual void initialize_brdf_kernel(int kernel_type);
 
@@ -77,6 +77,10 @@ protected:
   // These are set through attributes linked to a valid array by the implementing class. 
   mutable blitz::Array<double, 1> brdf_factors;
   mutable blitz::Array<double, 2> brdf_params;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -87,7 +91,7 @@ protected:
   class to make unit testing easier.
 *******************************************************************/
 
-class SpurrRtDriver : public virtual GenericObject {
+class SpurrRtDriver : public Printable<SpurrRtDriver> {
 
 public:
 
@@ -159,6 +163,7 @@ public:
 
   /// Copy jacobians out of internal xdata structures
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
+  virtual void print(std::ostream& Os) const {Os << "SpurrRtDriver";}
 
 protected:
 
@@ -166,9 +171,14 @@ protected:
 
   /// Spurr BRDF class interface class to use
   mutable boost::shared_ptr<SpurrBrdfDriver> brdf_driver_;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
 
+FP_EXPORT_KEY(SpurrBrdfDriver);
+FP_EXPORT_KEY(SpurrRtDriver);
 #endif

@@ -1,9 +1,34 @@
 #include "spurr_driver.h"
 #include "spurr_brdf_types.h"
+#include "fp_serialize_support.h"
 #include "ground.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpurrBrdfDriver::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpurrBrdfDriver);
+  // Not positive if we need to save/read these or not
+  ar & FP_NVP(brdf_factors) & FP_NVP(brdf_params);
+}
+
+template<class Archive>
+void SpurrRtDriver::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpurrRtDriver);
+  // Not positive if we need to save/read the brdf_driver_ or bot
+  ar & FP_NVP(do_solar_sources) & FP_NVP(do_thermal_emission)
+    & FP_NVP_(brdf_driver);
+}
+
+FP_IMPLEMENT(SpurrBrdfDriver);
+FP_IMPLEMENT(SpurrRtDriver);
+#endif
 
 //-----------------------------------------------------------------------
 /// Initializes the BRDF kernels for the given Ground surface type 

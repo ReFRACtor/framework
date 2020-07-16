@@ -1,4 +1,5 @@
 #include "spurr_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <cmath>
 
@@ -13,6 +14,21 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpurrRt::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & FP_NVP(surface_type_int) & FP_NVP(do_solar_sources)
+    & FP_NVP(do_thermal_emission) & FP_NVP(sza) & FP_NVP(zen)
+    & FP_NVP(azm) & FP_NVP_(rt_driver);
+}
+
+FP_IMPLEMENT(SpurrRt);
+#endif
 
 // For debugging purposes, it can be useful to dump out the input
 // used by this class. We'll leave this code in place, in case we

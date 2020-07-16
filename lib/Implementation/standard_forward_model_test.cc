@@ -200,7 +200,6 @@ BOOST_AUTO_TEST_CASE(serialization)
 					     config_spectrum_sampling,
 					     spec_effect);
   fm->setup_grid();
-  std::cerr << *fm << "\n";
   Array<double, 1> rad_expect;
   expected >> rad_expect;
   std::string d = serialize_write_string(fm);

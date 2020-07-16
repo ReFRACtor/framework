@@ -64,8 +64,13 @@ protected:
   mutable int alt_spec_index_cache, geo_spec_index_cache;
   virtual void update_altitude(int spec_index) const;
   virtual void update_geometry(int spec_index) const;
-
+  SpurrRt() : alt_spec_index_cache(-1), geo_spec_index_cache(-1) {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpurrRt);
 #endif
 

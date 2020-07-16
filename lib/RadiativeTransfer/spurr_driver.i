@@ -5,13 +5,15 @@
 #include "spurr_driver.h"
 %}
 
+%base_import(generic_object)
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::SpurrBrdfDriver);
 %fp_shared_ptr(FullPhysics::SpurrRtDriver);
 
 namespace FullPhysics {
-class SpurrBrdfDriver {
+  class SpurrBrdfDriver : public GenericObject {
 public:
+  std::string print_to_string() const;
   virtual void initialize_brdf_inputs(int surface_type);
   virtual void setup_geometry(double sza, double azm, double zen) const = 0;
   virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) const;
@@ -21,13 +23,15 @@ public:
   %python_attribute_abstract(n_kernel_params_wfs, int)
   %python_attribute_abstract(n_surface_wfs, int)
   %python_attribute_abstract(do_shadow_effect, bool)
+  %pickle_serialization();
 };
 
-class SpurrRtDriver {
+class SpurrRtDriver : public GenericObject {
 public:
 
   SpurrRtDriver(bool do_solar = true, bool do_thermal = false);
 
+  std::string print_to_string() const;
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
                                        double sza, double azm, double zen,
                                        int surface_type,
@@ -68,6 +72,7 @@ public:
   virtual void calculate_rt() const = 0;
   virtual double get_intensity() const = 0;
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
+  %pickle_serialization();
 };
 }
 

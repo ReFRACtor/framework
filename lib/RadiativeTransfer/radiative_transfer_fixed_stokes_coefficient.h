@@ -63,6 +63,12 @@ protected:
 
   /// Object to go from stokes vector to reflectance. 
   boost::shared_ptr<StokesCoefficient> stokes_coef;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(RadiativeTransferFixedStokesCoefficient);
 #endif

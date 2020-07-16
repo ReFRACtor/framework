@@ -27,5 +27,6 @@ protected:
   (const blitz::Array<double, 2>& Stokes_coef,
    const boost::shared_ptr<RtAtmosphere>& Atm);
   boost::shared_ptr<RtAtmosphere> atm;
+  %pickle_serialization();
 };
 }

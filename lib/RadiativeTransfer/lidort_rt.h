@@ -39,6 +39,13 @@ public:
   { return boost::shared_ptr<LidortRtDriver>(boost::dynamic_pointer_cast<LidortRtDriver>(rt_driver_)); }
   
   virtual void print(std::ostream& Os, bool Short_form = false) const;
+private:
+  LidortRt() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(LidortRt);
 #endif

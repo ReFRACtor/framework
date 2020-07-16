@@ -18,8 +18,8 @@ void StandardForwardModel::serialize(Archive & ar,
   ar & FP_NVP(inst);
   std::cerr << "Step 3\n";
   ar & FP_NVP(swin);
-  // std::cerr << "Step 4\n";
-  // ar & FP_NVP(rt);
+  std::cerr << "Step 4\n";
+  ar & FP_NVP(rt);
   std::cerr << "Step 5\n";
   ar & FP_NVP_(spectrum_sampling);
   std::cerr << "Step 6\n";

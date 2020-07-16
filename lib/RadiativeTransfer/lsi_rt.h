@@ -53,6 +53,12 @@ private:
        blitz::Array<AutoDerivative<double>, 1> > log_linear_interp_type;
   mutable std::vector<linear_interp_type> linear_interp;
   mutable std::vector<log_linear_interp_type> log_linear_interp;
+  LsiRt() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(LsiRt);
 #endif
