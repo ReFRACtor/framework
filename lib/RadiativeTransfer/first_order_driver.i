@@ -18,8 +18,10 @@ class FirstOrderDriver : public SpurrRtDriver {
 public:
   FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments,
 		   bool do_solar = true, bool do_thermal = false);
-  int number_moment() const;
-  int number_stream() const;
+  %python_attribute(number_moment, int);
+  %python_attribute(number_stream, int);
+  %python_attribute(number_layer, int);
+  %python_attribute(surface_type, int);
   void set_plane_parallel();
   void set_pseudo_spherical();
   void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;

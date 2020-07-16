@@ -26,6 +26,7 @@ public:
   %python_attribute(n_surface_wfs, int)
   %python_attribute(do_shadow_effect, bool)
   virtual bool do_kparams_derivs(const int kernel_index) const;
+  %pickle_serialization();
 };
 
 class LidortRtDriver : public SpurrRtDriver {
@@ -63,6 +64,7 @@ public:
   void calculate_rt() const;
   double get_intensity() const;
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  %pickle_serialization();
 };
 
 }

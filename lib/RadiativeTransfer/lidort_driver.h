@@ -30,7 +30,9 @@ public:
   virtual bool do_shadow_effect() const;
 
 protected:
+  int nstream_;
   int nmoment_;
+  void init();
 
   virtual void calculate_brdf() const;
 
@@ -49,6 +51,15 @@ protected:
                                             const blitz::Array<bool, 1>& do_params_wfs);
 
   boost::shared_ptr<Brdf_Linsup_Masters> brdf_interface_;
+private:
+  LidortBrdfDriver() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -109,10 +120,24 @@ protected:
   int nstream_, nmoment_;
   bool do_multi_scatt_only_;
   int surface_type_;
+  blitz::Array<double, 1> zen_;
   bool pure_nadir_;
   bool do_thermal_scattering_;
   boost::shared_ptr<Lidort_Lps_Masters> lidort_interface_;
+private:
+  LidortRtDriver() {}
+  void init();
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(LidortBrdfDriver);
+FP_EXPORT_KEY(LidortRtDriver);
 #endif

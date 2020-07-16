@@ -20,6 +20,8 @@ public:
 
   int number_moment() const { return num_moments_; }
   int number_stream() const { return num_streams_; }
+  int number_layer() const {return num_layers_; }
+  int surface_type() const {return  surf_type_; }
 
   void set_plane_parallel();
   void set_pseudo_spherical();

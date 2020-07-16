@@ -1,4 +1,5 @@
 #include "lidort_driver.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
 #include "old_constant.h"
@@ -12,6 +13,57 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LidortBrdfDriver::serialize(Archive & ar,
+				 const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrBrdfDriver)
+    & FP_NVP_(nstream) & FP_NVP_(nmoment);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void LidortBrdfDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void LidortBrdfDriver::load(Archive & UNUSED(ar),
+			    const unsigned int UNUSED(version))
+{
+  init();
+}
+
+template<class Archive>
+void LidortRtDriver::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
+    & FP_NVP_(nstream) & FP_NVP_(nmoment)
+    & FP_NVP_(do_multi_scatt_only) & FP_NVP_(surface_type)
+    & FP_NVP_(zen) & FP_NVP_(pure_nadir) & FP_NVP_(do_thermal_scattering);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void LidortRtDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void LidortRtDriver::load(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version))
+{
+  init();
+}
+
+FP_IMPLEMENT(LidortBrdfDriver);
+FP_IMPLEMENT(LidortRtDriver);
+#endif
+
 //=======================================================================
 // LidortBrdfInterface
 //=======================================================================
@@ -20,7 +72,14 @@ using namespace blitz;
 /// Initialize Lidort BRDF interface
 //-----------------------------------------------------------------------
 
-LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment) : nmoment_(nmoment)
+LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment)
+  : nstream_(nstream),
+    nmoment_(nmoment)
+{
+  init();
+}
+
+void LidortBrdfDriver::init()
 {
   brdf_interface_.reset( new Brdf_Linsup_Masters() );
 
@@ -33,7 +92,7 @@ LidortBrdfDriver::LidortBrdfDriver(int nstream, int nmoment) : nmoment_(nmoment)
 
   // This MUST be consistent with streams used for 
   // LIDORT RT calculation
-  brdf_inputs.bs_nstreams(nstream);
+  brdf_inputs.bs_nstreams(nstream_);
 
   // Recommended value from LIDORT manual
   // Number of quadtrature streams for BRDF calculation
@@ -170,15 +229,21 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
   : SpurrRtDriver(do_solar_sources, do_thermal_emission),
     nstream_(nstream), nmoment_(nmoment),
     do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type),
+    zen_(zen.copy()),
     pure_nadir_(pure_nadir), do_thermal_scattering_(do_thermal_scattering)
 {
   brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
+  init();
+}
+
+void LidortRtDriver::init()
+{
   lidort_interface_.reset( new Lidort_Lps_Masters() );
 
   // Check inputs against sizes allowed by LIDORT
   Lidort_Pars lid_pars = Lidort_Pars::instance();
-  range_check(nstream, 1, lid_pars.maxstreams+1);
-  range_check(nmoment, 2, lid_pars.maxmoments_input+1);
+  range_check(nstream_, 1, lid_pars.maxstreams+1);
+  range_check(nmoment_, 2, lid_pars.maxmoments_input+1);
 
   // Initialize BRDF data structure
   brdf_driver()->initialize_brdf_inputs(surface_type_);
@@ -186,7 +251,7 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
   initialize_rt();
 
   // Set up scatting mode based on viewing zenith angle
-  setup_sphericity(max(zen));
+  setup_sphericity(max(zen_));
 }
 
 int LidortRtDriver::number_moment() const 
