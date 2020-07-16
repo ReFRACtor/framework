@@ -1,7 +1,9 @@
 #include "blitz_array_serialize_support.h"
 #include "fp_serialize_support.h"
 #include "fp_exception.h"
+#include "linear_algebra.h"
 
+using namespace FullPhysics;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 #include <boost/serialization/array.hpp>
 
@@ -10,12 +12,12 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 1>& A,
 				const unsigned UNUSED(version))
 {
   using boost::serialization::make_array;
-  if(A.size() > 0 && !A.isStorageContiguous())
-    throw FullPhysics::Exception("We can only save contiguous matrix data");
   int size = A.rows();
   ar << FP_NVP(size);
-  if(A.size() > 0)
-    ar << FP_NVP2("data", make_array(A.data(), A.size()));
+  if(A.size() > 0) {
+    blitz::Array<T, 1> d = to_c_order(A);
+    ar << FP_NVP2("data", make_array(d.data(), d.size()));
+  }
 }
 
 template<typename Archive, class T>
@@ -35,13 +37,13 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 2>& A,
 				const unsigned UNUSED(version))
 {
   using boost::serialization::make_array;
-  if(A.size() > 0 && !A.isStorageContiguous())
-    throw FullPhysics::Exception("We can only save contiguous matrix data");
   int rows = A.rows();
   int cols = A.cols();
   ar << FP_NVP(rows) << FP_NVP(cols);
-  if(A.size() > 0)
-    ar << FP_NVP2("data", make_array(A.data(), A.size()));
+  if(A.size() > 0) {
+    blitz::Array<T, 2> d = to_c_order(A);
+    ar << FP_NVP2("data", make_array(d.data(), d.size()));
+  }
 }
 
 template<typename Archive, class T>
@@ -61,14 +63,14 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 3>& A,
 			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
-  if(A.size() > 0 && !A.isStorageContiguous())
-    throw FullPhysics::Exception("We can only save contiguous matrix data");
   int rows = A.rows();
   int cols = A.cols();
   int depth = A.depth();
   ar << FP_NVP(rows) << FP_NVP(cols) << FP_NVP(depth);
-  if(A.size() > 0)
-    ar << FP_NVP2("data", make_array(A.data(), A.size()));
+  if(A.size() > 0) {
+    blitz::Array<T, 3> d = to_c_order(A);
+    ar << FP_NVP2("data", make_array(d.data(), d.size()));
+  }
 }
 
 template<typename Archive, class T>
@@ -88,16 +90,16 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 4>& A,
 			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
-  if(A.size() > 0 && !A.isStorageContiguous())
-    throw FullPhysics::Exception("We can only save contiguous matrix data");
   int shp0 = A.shape()(0);
   int shp1 = A.shape()(1);
   int shp2 = A.shape()(2);
   int shp3 = A.shape()(3);
   ar << FP_NVP(shp0) << FP_NVP(shp1) << FP_NVP(shp2)
      << FP_NVP(shp3);
-  if(A.size() > 0)
-    ar << FP_NVP2("data", make_array(A.data(), A.size()));
+  if(A.size() > 0) {
+    blitz::Array<T, 4> d = to_c_order(A);
+    ar << FP_NVP2("data", make_array(d.data(), d.size()));
+  }
 }
 
 template<typename Archive, class T>
@@ -120,8 +122,6 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 5>& A,
 			      const unsigned UNUSED(version)) 
 {
   using boost::serialization::make_array;
-  if(A.size() > 0 && !A.isStorageContiguous())
-    throw FullPhysics::Exception("We can only save contiguous matrix data");
   int shp0 = A.shape()(0);
   int shp1 = A.shape()(1);
   int shp2 = A.shape()(2);
@@ -129,8 +129,10 @@ void boost::serialization::save(Archive& ar, const blitz::Array<T, 5>& A,
   int shp4 = A.shape()(4);
   ar << FP_NVP(shp0) << FP_NVP(shp1) << FP_NVP(shp2)
      << FP_NVP(shp3) << FP_NVP(shp4);
-  if(A.size() > 0)
-    ar << FP_NVP2("data", make_array(A.data(), A.size()));
+  if(A.size() > 0) {
+    blitz::Array<T, 5> d = to_c_order(A);
+    ar << FP_NVP2("data", make_array(d.data(), d.size()));
+  }
 }
 
 template<typename Archive, class T>
@@ -182,6 +184,41 @@ template void boost::serialization::load(polymorphic_iarchive& ar,
 					 const unsigned version);
 template void boost::serialization::save(polymorphic_oarchive& ar, 
 					 const blitz::Array<double, 5>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<char, 1>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<char, 1>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<char, 2>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<char, 2>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<char, 3>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<char, 3>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<char, 4>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<char, 4>& A, 
+					 const unsigned version);
+
+template void boost::serialization::load(polymorphic_iarchive& ar, 
+					 blitz::Array<char, 5>& A, 
+					 const unsigned version);
+template void boost::serialization::save(polymorphic_oarchive& ar, 
+					 const blitz::Array<char, 5>& A, 
 					 const unsigned version);
 
 template void boost::serialization::load(polymorphic_iarchive& ar, 

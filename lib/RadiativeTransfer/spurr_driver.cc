@@ -12,8 +12,18 @@ void SpurrBrdfDriver::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(SpurrBrdfDriver);
-  // Not positive if we need to save/read these or not
-  ar & FP_NVP(brdf_factors) & FP_NVP(brdf_params);
+  // Note we don't actually want to save the brdf_factors and
+  // brdf_params. These are references to arrays internal to the
+  // various drivers (e.g., Twostream_Ls_Brdf_Supplement).
+  // ar & FP_NVP(brdf_factors) & FP_NVP(brdf_params);
+
+  // Dummy placeholder, just so we can have derived classes call
+  // serialization of this. We use to have derived classes "know"
+  // that the base class doesn't have anything. But seems better to
+  // *always* have base classes do something, so we can add stuff in
+  // the future w/o breaking a bunch of code.
+  std::string p = "empty";
+  ar & FP_NVP2("placeholder", p);
 }
 
 template<class Archive>
@@ -21,7 +31,6 @@ void SpurrRtDriver::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(SpurrRtDriver);
-  // Not positive if we need to save/read the brdf_driver_ or bot
   ar & FP_NVP(do_solar_sources) & FP_NVP(do_thermal_emission)
     & FP_NVP_(brdf_driver);
 }

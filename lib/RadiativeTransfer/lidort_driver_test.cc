@@ -96,15 +96,14 @@ BOOST_AUTO_TEST_CASE(solar_sources)
 {
   Fixture1 t;
   t.run_test(t.lidort_driver);
+  t.lidort_driver->brdf_interface()->write_fortran_file("test.txt");
 }
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
-  return;
   if(!have_serialize_supported())
     return;
   Fixture1 t;
-  t.run_test(t.lidort_driver);
   std::string d = serialize_write_string(t.lidort_driver);
   if(false)
     std::cerr << d;
@@ -245,8 +244,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_plus_lamb_simple,
-			 GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_plus_lamb_simple, GlobalFixture)
 
 class Fixture1 : public LidortDriverCoxmunkFixture
 {

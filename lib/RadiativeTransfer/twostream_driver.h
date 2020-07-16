@@ -45,6 +45,14 @@ protected:
                                             const blitz::Array<bool, 1>& do_params_wfs);
 
   boost::shared_ptr<Twostream_Ls_Brdf_Supplement> twostream_brdf_;
+  TwostreamBrdfDriver() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -84,7 +92,7 @@ public:
   boost::shared_ptr<Twostream_Lps_Master> twostream_interface() const { return twostream_interface_; }
   
   bool do_full_quadrature() const { return do_fullquadrature_; };
-
+  int surface_type() const { return surface_type_; }
 protected:
   void initialize_rt();
 
@@ -92,7 +100,18 @@ protected:
   bool do_fullquadrature_;
 
   boost::shared_ptr<Twostream_Lps_Master> twostream_interface_;
+  TwostreamRtDriver() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(TwostreamBrdfDriver);
+FP_EXPORT_KEY(TwostreamRtDriver);
 #endif

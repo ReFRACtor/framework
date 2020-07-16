@@ -49,6 +49,7 @@ set(DIR_SOURCES
     spurr_rt.cc
     twostream_driver.cc
     twostream_interface.F90
+    twostream_interface_serialization.cc
     twostream_rt.cc
 )
 

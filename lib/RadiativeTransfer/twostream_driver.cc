@@ -1,4 +1,5 @@
 #include "twostream_driver.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 #include "wgs84_constant.h"
 #include "ground.h"
@@ -7,6 +8,68 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void TwostreamBrdfDriver::serialize(Archive & ar,
+				 const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrBrdfDriver)
+    & FP_NVP_(twostream_brdf);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void TwostreamBrdfDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void TwostreamBrdfDriver::load(Archive & UNUSED(ar),
+			    const unsigned int UNUSED(version))
+{
+  brdf_params.reference( twostream_brdf_->brdf_parameters() );
+  brdf_factors.reference( twostream_brdf_->brdf_factors() );
+}
+
+template<class Archive>
+void TwostreamRtDriver::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
+    & FP_NVP_(surface_type) & FP_NVP_(do_fullquadrature)
+    & FP_NVP_(twostream_interface);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void TwostreamRtDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void TwostreamRtDriver::load(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version))
+{
+  // Link twostream interface brdf inputs to brdf interface
+  twostream_interface_->brdf_f_0().reference(brdf_interface()->brdf_f_0());
+  twostream_interface_->brdf_f().reference(brdf_interface()->brdf_f());
+  twostream_interface_->ubrdf_f().reference(brdf_interface()->ubrdf_f());
+
+  twostream_interface_->ls_brdf_f_0().reference(brdf_interface()->ls_brdf_f_0());
+  twostream_interface_->ls_brdf_f().reference(brdf_interface()->ls_brdf_f());
+  twostream_interface_->ls_ubrdf_f().reference(brdf_interface()->ls_ubrdf_f());
+
+  if (do_thermal_emission) {
+      twostream_interface_->ls_emissivity().reference(brdf_interface()->ls_emissivity());
+  }
+}
+
+FP_IMPLEMENT(TwostreamBrdfDriver);
+FP_IMPLEMENT(TwostreamRtDriver);
+#endif
 
 
 //-----------------------------------------------------------------------

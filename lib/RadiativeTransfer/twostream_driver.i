@@ -24,6 +24,7 @@ public:
   %python_attribute(do_shadow_effect,bool)
   %python_attribute(brdf_interface, boost::shared_ptr<Twostream_Ls_Brdf_Supplement>)
   virtual bool do_kparams_derivs(const int kernel_index) const;
+  %pickle_serialization();
 };
 
 class TwostreamRtDriver {
@@ -52,5 +53,6 @@ public:
   %python_attribute(twostream_interface, boost::shared_ptr<Twostream_Lps_Master>)
 
   %python_attribute(do_full_quadrature, bool)
+  %pickle_serialization();
 };
 }

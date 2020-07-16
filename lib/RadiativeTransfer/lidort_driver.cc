@@ -232,12 +232,12 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
     zen_(zen.copy()),
     pure_nadir_(pure_nadir), do_thermal_scattering_(do_thermal_scattering)
 {
-  brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
   init();
 }
 
 void LidortRtDriver::init()
 {
+  brdf_driver_.reset( new LidortBrdfDriver(nstream_, nmoment_) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
 
   // Check inputs against sizes allowed by LIDORT
