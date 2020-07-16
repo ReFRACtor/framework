@@ -24,10 +24,12 @@ bool check_brdf_inputs(boost::shared_ptr<LidortRtDriver>& lidort_driver) {
   return brdf_check_status.ts_status_inputcheck() == lid_pars.lidort_success;
 }
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_solar, LidortDriverLambertianFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_solar, GlobalFixture)
 
-BOOST_AUTO_TEST_CASE(solar_sources)
+class Fixture1 : public LidortDriverLambertianFixture
 {
+public:
+void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   double refl_calc;
   double refl_expected;
 
@@ -41,7 +43,7 @@ BOOST_AUTO_TEST_CASE(solar_sources)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value());
   
@@ -60,7 +62,7 @@ BOOST_AUTO_TEST_CASE(solar_sources)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -77,7 +79,7 @@ BOOST_AUTO_TEST_CASE(solar_sources)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -87,15 +89,38 @@ BOOST_AUTO_TEST_CASE(solar_sources)
   // Note the tolerance here is in %
   refl_expected = 2.387246757232095E-003;
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 6e-3);
+}
+};
 
+BOOST_AUTO_TEST_CASE(solar_sources)
+{
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  return;
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
+  std::string d = serialize_write_string(t.lidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LidortRtDriver> ldriver_r =
+    serialize_read_string<LidortRtDriver>(d);
+  t.run_test(ldriver_r);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_thermal, LidortDriverLambertianThermalFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_thermal, GlobalFixture)
 
-BOOST_AUTO_TEST_CASE(thermal_emission)
+class Fixture1 : public LidortDriverLambertianThermalFixture
 {
+public:
+void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   double refl_calc;
   double refl_expt;
 
@@ -119,7 +144,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
@@ -138,7 +163,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
@@ -156,7 +181,7 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
@@ -165,15 +190,24 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   BOOST_CHECK_CLOSE(refl_expt, refl_calc, 7e-3);
 
 }
+};
 
+BOOST_AUTO_TEST_CASE(thermal_emission)
+{
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
+}
+  
 BOOST_AUTO_TEST_SUITE_END()
  
 ///////////////////////////////////////////////////////////////////////////////////////
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_simple, LidortDriverCoxmunkFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_simple, GlobalFixture)
 
-BOOST_AUTO_TEST_CASE(simple)
+class Fixture1 : public LidortDriverCoxmunkFixture
 {
+public:
+void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   double refl_calc;
   double refl_expected;
 
@@ -188,7 +222,7 @@ BOOST_AUTO_TEST_CASE(simple)
   od = taur + taug;
   ssa.value() = taur / od.value();
 
-  refl_calc = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+  refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -199,15 +233,25 @@ BOOST_AUTO_TEST_CASE(simple)
   BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
 
 }
+};
+
+BOOST_AUTO_TEST_CASE(simple)
+{
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_plus_lamb_simple, LidortDriverCoxmunkFixture)
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_coxmunk_plus_lamb_simple,
+			 GlobalFixture)
 
-BOOST_AUTO_TEST_CASE(simple)
+class Fixture1 : public LidortDriverCoxmunkFixture
 {
+public:
+void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   double refl_calc;
   double refl_expt;
 
@@ -226,7 +270,7 @@ BOOST_AUTO_TEST_CASE(simple)
   
   //////
   // Plane-parallel
-  lidort_driver->set_plane_parallel();
+  ldriver->set_plane_parallel();
 
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf_param;
@@ -238,7 +282,7 @@ BOOST_AUTO_TEST_CASE(simple)
   lidort_surface.value() = surface_params;
   lidort_surface.jacobian() = 1.0;
 
-  lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+  ldriver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc, 
                                                     jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
@@ -270,7 +314,7 @@ BOOST_AUTO_TEST_CASE(simple)
     surface_params_pert = surface_params;
     surface_params_pert(p_idx) += pert_values(p_idx);
 
-    refl_fd = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+    refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -280,13 +324,13 @@ BOOST_AUTO_TEST_CASE(simple)
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
 
   // Pseudo-spherical mode FD test
-  lidort_driver->set_pseudo_spherical();
-  lidort_driver->lidort_interface()->lidort_modin().mbool().ts_do_no_azimuth(true);
+  ldriver->set_pseudo_spherical();
+  ldriver->lidort_interface()->lidort_modin().mbool().ts_do_no_azimuth(true);
  
   lidort_surface.value() = surface_params;
   lidort_surface.jacobian() = 1.0;
 
-  lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+  ldriver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc,
                                                     jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
@@ -302,7 +346,7 @@ BOOST_AUTO_TEST_CASE(simple)
     surface_params_pert = surface_params;
     surface_params_pert(p_idx) += pert_values(p_idx);
 
-    refl_fd = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+    refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -316,11 +360,11 @@ BOOST_AUTO_TEST_CASE(simple)
   azm = azm + 1e-3; // or else risk divide by zero
   zen = zen + 1e-3; // or else risk divide by zero
 
-  lidort_driver->set_line_of_sight();
+  ldriver->set_line_of_sight();
 
   lidort_surface.value() = surface_params;
   lidort_surface.jacobian() = 1.0;
-  lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+  ldriver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                  surface_type, lidort_surface,
                                                  od, ssa, pf, refl_calc,
                                                  jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
@@ -336,7 +380,7 @@ BOOST_AUTO_TEST_CASE(simple)
     surface_params_pert = surface_params;
     surface_params_pert(p_idx) += pert_values(p_idx);
 
-    refl_fd = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+    refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -346,14 +390,22 @@ BOOST_AUTO_TEST_CASE(simple)
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
 
 }
-
-BOOST_AUTO_TEST_SUITE_END()
-
-BOOST_FIXTURE_TEST_SUITE(lidort_driver_brdf_veg, LidortDriverBrdfVegFixture)
+};
 
 BOOST_AUTO_TEST_CASE(simple)
 {
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
+}
 
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_FIXTURE_TEST_SUITE(lidort_driver_brdf_veg, GlobalFixture)
+
+class Fixture1 : public LidortDriverBrdfVegFixture
+{
+public:
+void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   double refl_calc;
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf_param;
@@ -384,7 +436,7 @@ BOOST_AUTO_TEST_CASE(simple)
   // Set sza to compare with that used in the l_rad test we compare against
   sza = 0.1;
 
-  lidort_driver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
+  ldriver->reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
                                                     surface_type, lidort_surface,
                                                     od, ssa, pf, refl_calc, 
                                                     jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
@@ -410,7 +462,7 @@ BOOST_AUTO_TEST_CASE(simple)
     surface_params_pert = surface_params;
     surface_params_pert(p_idx) += pert_values(p_idx);
 
-    refl_fd = lidort_driver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
+    refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
@@ -419,6 +471,13 @@ BOOST_AUTO_TEST_CASE(simple)
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 2e-7);
 
+}
+};
+
+BOOST_AUTO_TEST_CASE(simple)
+{
+  Fixture1 t;
+  t.run_test(t.lidort_driver);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
