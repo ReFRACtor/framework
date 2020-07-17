@@ -196,7 +196,20 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   Fixture1 t;
   t.run_test(t.lidort_driver);
 }
-  
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  std::string d = serialize_write_string(t.lidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LidortRtDriver> ldriver_r =
+    serialize_read_string<LidortRtDriver>(d);
+  t.run_test(ldriver_r);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
  
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -238,6 +251,19 @@ BOOST_AUTO_TEST_CASE(simple)
 {
   Fixture1 t;
   t.run_test(t.lidort_driver);
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  std::string d = serialize_write_string(t.lidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LidortRtDriver> ldriver_r =
+    serialize_read_string<LidortRtDriver>(d);
+  t.run_test(ldriver_r);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -396,6 +422,19 @@ BOOST_AUTO_TEST_CASE(simple)
   t.run_test(t.lidort_driver);
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  std::string d = serialize_write_string(t.lidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LidortRtDriver> ldriver_r =
+    serialize_read_string<LidortRtDriver>(d);
+  t.run_test(ldriver_r);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_FIXTURE_TEST_SUITE(lidort_driver_brdf_veg, GlobalFixture)
@@ -476,6 +515,19 @@ BOOST_AUTO_TEST_CASE(simple)
 {
   Fixture1 t;
   t.run_test(t.lidort_driver);
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  std::string d = serialize_write_string(t.lidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LidortRtDriver> ldriver_r =
+    serialize_read_string<LidortRtDriver>(d);
+  t.run_test(ldriver_r);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

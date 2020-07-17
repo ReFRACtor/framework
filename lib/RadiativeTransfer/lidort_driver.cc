@@ -19,7 +19,8 @@ void LidortBrdfDriver::serialize(Archive & ar,
 				 const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrBrdfDriver)
-    & FP_NVP_(nstream) & FP_NVP_(nmoment);
+    & FP_NVP_(nstream) & FP_NVP_(nmoment)
+    & FP_NVP_(brdf_interface);
   boost::serialization::split_member(ar, *this, version);
 }
 
@@ -33,7 +34,9 @@ template<class Archive>
 void LidortBrdfDriver::load(Archive & UNUSED(ar),
 			    const unsigned int UNUSED(version))
 {
-  init();
+  Brdf_Sup_Inputs& brdf_inputs = brdf_interface_->brdf_sup_in();
+  brdf_params.reference( brdf_inputs.bs_brdf_parameters() );
+  brdf_factors.reference( brdf_inputs.bs_brdf_factors() );
 }
 
 template<class Archive>
@@ -43,7 +46,8 @@ void LidortRtDriver::serialize(Archive & ar,
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
     & FP_NVP_(nstream) & FP_NVP_(nmoment)
     & FP_NVP_(do_multi_scatt_only) & FP_NVP_(surface_type)
-    & FP_NVP_(zen) & FP_NVP_(pure_nadir) & FP_NVP_(do_thermal_scattering);
+    & FP_NVP_(zen) & FP_NVP_(pure_nadir) & FP_NVP_(do_thermal_scattering)
+    & FP_NVP_(lidort_interface);
   boost::serialization::split_member(ar, *this, version);
 }
 
@@ -57,7 +61,8 @@ template<class Archive>
 void LidortRtDriver::load(Archive & UNUSED(ar),
 			  const unsigned int UNUSED(version))
 {
-  init();
+  // Nothing more I think. We can delete save and load if we end up
+  // not needing these
 }
 
 FP_IMPLEMENT(LidortBrdfDriver);
@@ -102,7 +107,7 @@ void LidortBrdfDriver::init()
   brdf_factors.reference( brdf_inputs.bs_brdf_factors() );
 }
 
-void LidortBrdfDriver::setup_geometry(double sza, double azm, double zen) const
+void LidortBrdfDriver::setup_geometry(double sza, double azm, double zen)
 {
 
   Brdf_Sup_Inputs& brdf_inputs = brdf_interface_->brdf_sup_in();
@@ -380,7 +385,7 @@ void LidortRtDriver::initialize_rt()
 
 /// Set up/reset sphericity mode which may be affected by
 /// the current zenith viewing angle
-void LidortRtDriver::setup_sphericity(double UNUSED(zen)) const
+void LidortRtDriver::setup_sphericity(double UNUSED(zen))
 {
 
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
@@ -435,7 +440,7 @@ void LidortRtDriver::setup_sphericity(double UNUSED(zen)) const
 }
 
 /// Set plane parallel sphericity
-void LidortRtDriver::set_plane_parallel() const
+void LidortRtDriver::set_plane_parallel()
 {
   Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
@@ -447,7 +452,7 @@ void LidortRtDriver::set_plane_parallel() const
 }
 
 /// Set pseudo spherical sphericity
-void LidortRtDriver::set_pseudo_spherical() const
+void LidortRtDriver::set_pseudo_spherical()
 {
   // Lidort may cause floating point exceptions when doing setup. This
   // is because it may copy garbage value, which are never used. By
@@ -465,7 +470,7 @@ void LidortRtDriver::set_pseudo_spherical() const
 }
 
 /// Set plane parallel plus single scattering correction
-void LidortRtDriver::set_plane_parallel_plus_ss_correction() const
+void LidortRtDriver::set_plane_parallel_plus_ss_correction()
 {
   Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
@@ -477,7 +482,7 @@ void LidortRtDriver::set_plane_parallel_plus_ss_correction() const
 }
 
 /// Set line of sight mode
-void LidortRtDriver::set_line_of_sight() const
+void LidortRtDriver::set_line_of_sight()
 {
   Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
@@ -488,7 +493,7 @@ void LidortRtDriver::set_line_of_sight() const
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
-void LidortRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid) const
+void LidortRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid)
 {
 
   Lidort_Fixed_Chapman& fchapman_inputs = lidort_interface_->lidort_fixin().chapman();
@@ -506,7 +511,7 @@ void LidortRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_
   lidort_interface_->lidort_fixin().cont().ts_nlayers(nlayer);
 }
 
-void LidortRtDriver::setup_geometry(double sza, double azm, double zen) const
+void LidortRtDriver::setup_geometry(double sza, double azm, double zen)
 {
 
   Lidort_Modified_Sunrays& mbeam_inputs = lidort_interface_->lidort_modin().msunrays();
@@ -527,7 +532,7 @@ void LidortRtDriver::setup_geometry(double sza, double azm, double zen) const
   ld_zen(0) = zen;
 }
 
-void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const
+void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb)
 {
   Lidort_Fixed_Optical& foptical_inputs = lidort_interface_->lidort_fixin().optical();
 
@@ -541,7 +546,7 @@ void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<
 
 void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                           const blitz::Array<double, 1>& ssa,
-                                          const blitz::Array<double, 2>& pf) const
+                                          const blitz::Array<double, 2>& pf)
 {
 
   // Ranges for copying inputs to method
@@ -569,7 +574,7 @@ void LidortRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
   phasmoms(rmom, rlay) = where(abs(pf) > 1e-11, pf, 1e-11);
 }
 
-void LidortRtDriver::clear_linear_inputs() const
+void LidortRtDriver::clear_linear_inputs()
 {
   Lidort_Fixed_Lincontrol& lincontrol = lidort_interface_->lidort_linfixin().cont();
  
@@ -583,7 +588,7 @@ void LidortRtDriver::clear_linear_inputs() const
 void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od, 
                                          const ArrayAd<double, 1>& ssa,
                                          const ArrayAd<double, 2>& pf,
-                                         bool do_surface_linearization) const
+                                         bool do_surface_linearization)
 {
   
   if(od.number_variable() > Lidort_Pars::instance().max_atmoswfs) {

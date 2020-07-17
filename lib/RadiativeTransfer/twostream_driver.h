@@ -15,7 +15,7 @@ public:
   TwostreamBrdfDriver(int surface_type);
   virtual ~TwostreamBrdfDriver() {}
 
-  virtual void setup_geometry(double sza, double azm, double zen) const;
+  virtual void setup_geometry(double sza, double azm, double zen);
 
   virtual int n_brdf_kernels() const;
 
@@ -64,20 +64,20 @@ public:
   TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true,
           bool do_solar = true, bool do_thermal = false);
 
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
-  void setup_geometry(double sza, double azm, double zen) const;
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
 
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const;
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf) const;
+                            const blitz::Array<double, 2>& pf);
 
-  void clear_linear_inputs() const;
+  void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
                            const ArrayAd<double, 2>& pf,
-                           bool do_surface_linearization) const;
+                           bool do_surface_linearization);
 
   void calculate_rt() const;
   double get_intensity() const;

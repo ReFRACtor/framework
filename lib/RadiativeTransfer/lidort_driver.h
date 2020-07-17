@@ -19,7 +19,7 @@ public:
   // other than default
   const boost::shared_ptr<Brdf_Linsup_Masters> brdf_interface() const { return brdf_interface_; };
 
-  virtual void setup_geometry(double sza, double azm, double zen) const;
+  virtual void setup_geometry(double sza, double azm, double zen);
 
   virtual int n_brdf_kernels() const;
 
@@ -75,11 +75,11 @@ public:
   int number_moment() const;
   int number_stream() const;
 
-  void setup_sphericity(double zen) const;
-  void set_plane_parallel() const;
-  void set_pseudo_spherical() const;
-  void set_plane_parallel_plus_ss_correction() const;
-  void set_line_of_sight() const;
+  void setup_sphericity(double zen);
+  void set_plane_parallel();
+  void set_pseudo_spherical();
+  void set_plane_parallel_plus_ss_correction();
+  void set_line_of_sight();
 
   bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
 
@@ -95,19 +95,19 @@ public:
   /// Interface to LIDORT RT software inputs to allow changing LIDORT configuration to values other than default
   const boost::shared_ptr<Lidort_Lps_Masters> lidort_interface() const { return lidort_interface_; }
 
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
-  void setup_geometry(double sza, double azm, double zen) const;
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
 
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const;
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf) const;
-  void clear_linear_inputs() const;
+                            const blitz::Array<double, 2>& pf);
+  void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
                            const ArrayAd<double, 2>& pf,
-                           bool do_surface_linearization) const;
+                           bool do_surface_linearization);
 
   void calculate_rt() const;
   double get_intensity() const;

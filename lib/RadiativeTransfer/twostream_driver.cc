@@ -98,7 +98,7 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int UNUSED(surface_type))
 }
 
 void TwostreamBrdfDriver::setup_geometry
-(double sza, double UNUSED(azm), double zen) const
+(double sza, double UNUSED(azm), double zen) 
 {
   // Solar zenith angles (degrees) [0,90]
   Array<double, 1> beam_szas( twostream_brdf_->beam_szas() );
@@ -316,7 +316,7 @@ void TwostreamRtDriver::initialize_rt()
   }
 }
 
-void TwostreamRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid) const
+void TwostreamRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid) 
 {
 
   int nlayers = in_height_grid.rows() - 1;
@@ -330,7 +330,7 @@ void TwostreamRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_heig
   ts_height_grid(Range(0, nlayers)) = in_height_grid;
 }
 
-void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
+void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) 
 {
   // Solar zenith angles (degrees) [0,90]
   Array<double, 1> ts_sza( twostream_interface_->beam_szas() );
@@ -347,7 +347,7 @@ void TwostreamRtDriver::setup_geometry(double sza, double azm, double zen) const
   ts_zen(0) = zen;
 }
 
-void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const
+void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) 
 {
   twostream_interface_->surfbb(surface_bb);
 
@@ -362,7 +362,7 @@ void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Arr
 
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                              const blitz::Array<double, 1>& ssa,
-                                             const blitz::Array<double, 2>& pf) const
+                                             const blitz::Array<double, 2>& pf) 
 {
   // Ranges for copying inputs to method
   Range rlay(0, od.extent(firstDim) - 1);
@@ -388,7 +388,7 @@ void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
   }
 }
 
-void TwostreamRtDriver::clear_linear_inputs() const
+void TwostreamRtDriver::clear_linear_inputs()
 {
   // Disable wfs for both types supported
   twostream_interface_->do_profile_wfs(false);
@@ -398,7 +398,7 @@ void TwostreamRtDriver::clear_linear_inputs() const
 void TwostreamRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od, 
                                             const ArrayAd<double, 1>& ssa,
                                             const ArrayAd<double, 2>& pf,
-                                            bool do_surface_linearization) const
+                                            bool do_surface_linearization) 
 {
   // Number of profile weighting functions in layer n
   int natm_jac = od.number_variable();

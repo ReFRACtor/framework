@@ -20,46 +20,43 @@ public:
 
   int number_moment() const { return num_moments_; }
   int number_stream() const { return num_streams_; }
-  int number_layer() const {return num_layers_; }
-  int surface_type() const {return  surf_type_; }
 
   void set_plane_parallel();
   void set_pseudo_spherical();
   
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
-  void setup_geometry(double sza, double azm, double zen) const;
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
   
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const;
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
   
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
 			    const blitz::Array<double, 1>& ssa,
-			    const blitz::Array<double, 2>& pf) const;
+			    const blitz::Array<double, 2>& pf);
   
-  void clear_linear_inputs() const;
+  void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
 			   const ArrayAd<double, 1>& ssa,
 			   const ArrayAd<double, 2>& pf,
-			   bool do_surface_linearization) const;
+			   bool do_surface_linearization);
   
   void calculate_rt() const;
   double get_intensity() const;
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
-  const boost::shared_ptr<Fo_Ssgeometry_Master> geometry_interface() const { return geometry; }
-  const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
+  const boost::shared_ptr<Fo_Ssgeometry_Master>& geometry_interface() const
+  { return geometry; }
+  const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps>& solar_interface() const
+  { return solar_interface_; }
  
 private:
 
-  void init_interfaces();
-  void copy_geometry_flags() const;
+  void init_interfaces(int nlayers, int surface_type);
+  void copy_geometry_flags();
 
   int num_moments_;
   int num_streams_;
-  int num_layers_;
-  int surf_type_;
-  bool is_pseudo_spherical_;
 
-  mutable blitz::Array<double, 1> height_diffs;
+  blitz::Array<double, 1> height_diffs;
 
   boost::shared_ptr<Fo_Ssgeometry_Master> geometry;
   boost::shared_ptr<Fo_Scalarss_Spherfuncs> legendre;
@@ -71,10 +68,6 @@ private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
-  template<class Archive>
-  void save(Archive & ar, const unsigned int version) const;
-  template<class Archive>
-  void load(Archive & ar, const unsigned int version);
 };
 
 }

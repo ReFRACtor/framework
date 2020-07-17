@@ -11,25 +11,13 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void FirstOrderDriver::serialize(Archive & ar,
-				 const unsigned int version)
+				 const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
-    & FP_NVP_(num_moments) & FP_NVP_(num_streams) & FP_NVP_(num_layers)
-    & FP_NVP_(surf_type) & FP_NVP_(is_pseudo_spherical);
-  boost::serialization::split_member(ar, *this, version);
-}
-
-template<class Archive>
-void FirstOrderDriver::save(Archive & UNUSED(a),
-		    const unsigned int UNUSED(version)) const
-{
-  // Nothing more to do
-}
-template<class Archive>
-void FirstOrderDriver::load(Archive & UNUSED(ar),
-		    const unsigned int UNUSED(version))
-{
-  init_interfaces();
+    & FP_NVP_(num_moments) & FP_NVP_(num_streams)
+    & FP_NVP(height_diffs)
+    & FP_NVP(geometry) & FP_NVP(legendre) & FP_NVP_(solar_interface)
+    & FP_NVP(l_brdf_driver);
 }
 
 FP_IMPLEMENT(FirstOrderDriver);
@@ -41,15 +29,15 @@ FP_IMPLEMENT(FirstOrderDriver);
 
 FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments, bool do_solar, bool do_thermal) 
   : SpurrRtDriver(do_solar, do_thermal),
-    num_moments_(number_moments), num_streams_(number_streams),
-    num_layers_(number_layers), surf_type_(surface_type),
-    is_pseudo_spherical_(true)
+    num_moments_(number_moments), num_streams_(number_streams)
 {
-    init_interfaces();
+  init_interfaces(number_layers, surface_type);
+  // Use pseudo spherical correction by default
+  set_pseudo_spherical();
 }
 
 
-void FirstOrderDriver::init_interfaces()
+void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 {
     // We process 1 geometry at a time for now
     int nszas = 1;
@@ -60,7 +48,7 @@ void FirstOrderDriver::init_interfaces()
     // Match what is used by LIDORT driver
     int nfine = 4;
 
-    geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, num_layers_, nfine, ngeoms, nszas, nvzas, nazms, num_layers_, nfine));
+    geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
 
     // Use same definitions as Fortran code
     // Define pi and degrees to radians
@@ -109,7 +97,7 @@ void FirstOrderDriver::init_interfaces()
     int nsurfacewfs = lid_pars.max_surfacewfs; 
 
     // Initialize solar mode interface
-    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, num_layers_, nfine, natmoswfs, nsurfacewfs, ngeoms, num_layers_));
+    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
     
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
@@ -141,12 +129,7 @@ void FirstOrderDriver::init_interfaces()
 
     // Copy LidortBrdfDriver pointer into SpurrDriver variable
     brdf_driver_ = l_brdf_driver;
-    brdf_driver_->initialize_brdf_inputs(surf_type_);
-
-    if(is_pseudo_spherical_)
-      set_pseudo_spherical();
-    else
-      set_plane_parallel();
+    brdf_driver_->initialize_brdf_inputs(surface_type);
 }
 
 /// Set plane parallel sphericity
@@ -156,7 +139,6 @@ void FirstOrderDriver::set_plane_parallel()
     geometry->do_enhanced_ps(false);
 
     copy_geometry_flags();
-    is_pseudo_spherical_ = false;
 }
 
 /// Set pseudo spherical sphericity
@@ -166,11 +148,10 @@ void FirstOrderDriver::set_pseudo_spherical()
     geometry->do_enhanced_ps(true);
 
     copy_geometry_flags();
-    is_pseudo_spherical_ = true;
 }
 
 /// Copy flags for sphericity calculations from geometry object
-void FirstOrderDriver::copy_geometry_flags() const
+void FirstOrderDriver::copy_geometry_flags()
 {
     // Flags copied from geometry object
     solar_interface_->do_planpar(geometry->do_planpar());
@@ -178,7 +159,7 @@ void FirstOrderDriver::copy_geometry_flags() const
     solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
-void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid) const
+void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid)
 {
     int nlayers = height_grid.rows() - 1;
 
@@ -191,7 +172,7 @@ void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_g
     }
 }
 
-void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
+void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
 {
     Array<double, 1> alpha_boa(geometry->alpha_boa());
     alpha_boa(0) = zen;
@@ -259,7 +240,7 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
     }
 }
 
-void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb)) const
+void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb))
 {
     // Nothing for now, in future use DT geometry and DT RT
 }
@@ -267,7 +248,7 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
 
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
-                                            const blitz::Array<double, 2>& pf) const
+                                            const blitz::Array<double, 2>& pf) 
 {
     if (pf.rows() != (num_moments_+1)) {
         // By definition num_moments should be one less than the size of pf array
@@ -297,7 +278,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
-void FirstOrderDriver::clear_linear_inputs() const
+void FirstOrderDriver::clear_linear_inputs() 
 {
     solar_interface_->do_profilewfs(false);
     solar_interface_->do_reflecwfs(false); 
@@ -308,7 +289,7 @@ void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
  const ArrayAd<double, 2>& pf,
- bool do_surface_linearization) const
+ bool do_surface_linearization) 
 {
     // Set which profile layer jacobians are computed
     int natm_jac = od.number_variable();

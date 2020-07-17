@@ -144,7 +144,7 @@ void SpurrBrdfDriver::initialize_brdf_kernel(int which_brdf) {
 /// This routine is intended to be called for each spectral point
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) const
+ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) 
 {
   // Copy input surface parameters as the returned value may
   // be modified to properly account for changes to parameters
@@ -209,7 +209,7 @@ ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const Ar
   return rt_surf_params;
 }
 
-void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   // brdf_params value only used if do_brdf_surface = True
   // albedo set to brdf weighting function so that weighting function
@@ -222,7 +222,7 @@ void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 
   brdf_params(kernel_index, 0) = 1.0;
 }
 
-void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   brdf_factors(kernel_index) = 1.0;
 
@@ -246,7 +246,7 @@ void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>&
   do_shadow_effect(surface_parameters(shadow_idx).value() > 0.0);
 }
 
-void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   // Modify surface_parameters in place so that jacobians reflect modifications
   int kf_idx   = parameter_indexes(0);
@@ -264,7 +264,7 @@ void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& 
   brdf_params(kernel_index, 2) = surface_parameters(geom_idx).value();
 }
 
-void SpurrBrdfDriver::setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   int kf_idx = parameter_indexes(0);
   

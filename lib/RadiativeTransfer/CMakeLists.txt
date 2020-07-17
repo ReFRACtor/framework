@@ -4,6 +4,7 @@ set(DIR_SOURCES
     chapman_boa_rt.cc
     first_order_driver.cc
     first_order_interface.F90
+    first_order_interface_serialization.cc
     first_order_rt.cc
     hres_wrapper.cc
     l_rad_driver.cc
@@ -25,6 +26,7 @@ set(DIR_SOURCES
     l_rad_rt.cc
     lidort_driver.cc
     lidort_interface_masters.F90
+    lidort_interface_masters_serialization.cc
     lidort_interface_masters_io.F90
     lidort_interface_types.F90
     lidort_interface_types_io.F90
