@@ -39,6 +39,7 @@ public:
     virtual SpectralDomain spectral_domain(int Spec_index) const;
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+    virtual void setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const;
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;

@@ -46,10 +46,15 @@ public:
   OssConfigurationFixture(const std::string& input_file = "tape5_nc4.nc");
   ~OssConfigurationFixture();
   std::vector<boost::shared_ptr<AbsorberVmr>> config_vmr;
+  std::vector<blitz::Array<int, 1>> retrieval_gas_levels;
   boost::shared_ptr<Pressure> config_pressure;
   boost::shared_ptr<Temperature> config_temperature;
+  blitz::Array<int, 1> retrieval_temperature_levels;
   boost::shared_ptr<SurfaceTemperature> config_skin_temperature;
+  bool retrieval_skin_temperature_flag;
   boost::shared_ptr<GroundPiecewise> config_ground;
+  blitz::Array<int, 1> retrieval_emissivity_flags;
+  blitz::Array<int, 1> retrieval_reflectivity_flags;
   DoubleWithUnit config_obs_zen_ang;
   DoubleWithUnit config_sol_zen_ang;
   DoubleWithUnit config_lat;

@@ -41,6 +41,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     blitz::Array<bool, 1> retrieve_skin_temp(1);
     retrieve_skin_temp = true;
     config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit, retrieve_skin_temp);
+    retrieval_skin_temperature_flag = false;
 
     Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
     Array<double, 1> temp(temp_nc.rows());
@@ -51,6 +52,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     Array<bool, 1> temp_flag(temp_nc.rows());
     temp_flag = true;
     config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
+    retrieval_temperature_levels = Array<int, 1>();
 
     /* AbsorberVmrs */
     Array<float, 2> vmr_gas = Array<float, 2>(input_data->read_field<float, 2>("/vmrGas")(Range::all()));
@@ -70,6 +72,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     /* Retrieve list of all gases and right trim, marking those for which we want jacobians. Create AbsorberVmrs */
     Array<std::string, 2> hdf_gas_names = Array<std::string, 2>(input_data->read_field<std::string, 2>("/nameGas")(Range::all()));
     std::vector<std::string> gas_names = std::vector<std::string>();
+    retrieval_gas_levels = std::vector<Array<int, 1>>();
     for (int gas_index = 0; gas_index < hdf_gas_names.rows(); gas_index++) {
         std::string full_gas_name = std::string();
         for (auto& gas_name_char : hdf_gas_names(gas_index, Range::all())) {
@@ -80,22 +83,19 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 
         Array<double, 1> vmr_curr_gas = Array<double, 1>(cast<double>(vmr_gas(gas_index, Range::all())));
         blitz::Array<bool, 1> vmr_curr_flag = blitz::Array<bool, 1>(vmr_curr_gas.rows());
+        Array<int, 1> gas_levels;
         if (find(gas_jacob_names.begin(), gas_jacob_names.end(), gas_name) != gas_jacob_names.end()) {
+            gas_levels.resize(vmr_curr_gas.rows());
+            for (int gas_level_index = 0; gas_level_index < vmr_curr_gas.rows(); gas_level_index++) {
+                gas_levels(gas_level_index) = gas_level_index;
+            }
             vmr_curr_flag = true;
         } else {
             vmr_curr_flag = false;
         }
+        retrieval_gas_levels.push_back(gas_levels);
         boost::shared_ptr<AbsorberVmrLevel> current_gas = boost::make_shared<AbsorberVmrLevel>(config_pressure,
                 vmr_curr_gas, vmr_curr_flag, gas_name);
-        if (current_gas) {
-            StateVector sv;
-            sv.add_observer(*current_gas);
-            if (sv.observer_claimed_size() > 0) {
-                Array<double, 1> x(sv.observer_claimed_size());
-                x = cast<double>(vmr_gas(gas_index, Range::all()));
-                sv.update_state(x);
-            }
-        }
         vmr.push_back(current_gas);
     }
     config_vmr = vmr;
@@ -111,6 +111,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     // OSS always returns emissivity jacobians
     blitz::Array<bool, 1> retrieve_emiss(spectral_points_nc.rows());
     retrieve_emiss = true;
+    retrieval_emissivity_flags = Array<int, 1>();
 
     config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val, retrieve_emiss);
 

@@ -42,7 +42,7 @@ public:
         return SpectralDomain::PREFER_WAVENUMBER;
     }
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
-    virtual void setup_retrieval(OssRetrievalFlags Retrieval_flags) const;
+    virtual void setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
@@ -75,6 +75,8 @@ private:
 
     std::vector<boost::shared_ptr<SpectralDomain>> channel_domains;
     ArrayWithUnit<double, 1> center_spectral_point;
+
+    bool is_setup;
 };
 }
 #endif

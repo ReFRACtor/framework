@@ -23,19 +23,18 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
             od_file_sz(Od_file.length()), sol_file(Sol_file), sol_file_sz(Sol_file.length()),
             fix_file(Fix_file), fix_file_sz(Fix_file.length()),ch_sel_file(Ch_sel_file),
             ch_sel_file_sz(Ch_sel_file.length()), channel_domains(Channel_domains),
-            max_chans(Max_chans) {
+            max_chans(Max_chans), is_setup(false) {
+}
+
+void OssForwardModel::setup_grid() {
     std::vector<std::string> gas_names;
     std::vector<std::string> gas_jacobian_names;
 
     for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
         gas_names.push_back(vmr[gas_index]->gas_name());
-        gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
-
-        // Disabled because can not call ->state_used before items are attached to state vector
-        // which wil be after this consturctor has been called
-        //if (any(vmr[gas_index]->state_used())) {
-        //    gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
-        //}
+        if (retrieval_flags->gas_levels[gas_index].rows()) {
+            gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
+        }
     }
 
     int num_vert_lev = pressure->number_level();
@@ -47,16 +46,17 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
     fixed_inputs = boost::make_shared<OssFixedInputs>(gas_names, gas_jacobian_names, sel_file, od_file, sol_file, fix_file,
             ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, channel_domains, max_chans);
     oss_master = boost::make_shared<OssMasters>(fixed_inputs);
-}
-
-void OssForwardModel::setup_grid() {
     oss_master->init();
     center_spectral_point.units = oss_master->fixed_outputs->center_spectral_point.units;
     center_spectral_point.value.resize(oss_master->fixed_outputs->center_spectral_point.value.rows());
     center_spectral_point.value = cast<double>(oss_master->fixed_outputs->center_spectral_point.value);
+    is_setup = true;
 }
 
 Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const {
+    if (!is_setup) {
+        throw Exception("Call setup_grid() to initialize before asking for radiances.");
+    }
     ArrayAdWithUnit<double, 1> pressure_grid = pressure->pressure_grid().convert(units::mbar);
     Array<float, 1> oss_pressure(pressure_grid.value.rows());
     for (int i = 0; i < oss_pressure.rows(); i++) {
@@ -110,10 +110,41 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
     cached_outputs = modified_outputs;
     Array<double, 1> rad(cast<double>(modified_outputs->y.value(Range::all())));
 
+    int num_state_variables = 0;
+    ArrayAd<double, 1> res(rad.rows(), num_state_variables);
+    if (retrieval_flags) {
+        /* First pass count only - for allocation */
+        num_state_variables += retrieval_flags->temp_levels.rows();
+        if (retrieval_flags->skin_temp_flag) {
+            num_state_variables++;
+        }
+
+        int gas_index = 0;
+        for (const Array<int, 1>& gas_level : retrieval_flags->gas_levels) {
+            if(gas_level.rows()) {
+                num_state_variables += gas_level.rows();
+            }
+            gas_index++;
+        }
+
+        num_state_variables += retrieval_flags->emissivity_flags.rows();
+        num_state_variables += retrieval_flags->reflectivity_flags.rows();
+
+        res.resize(rad.rows(), num_state_variables);
+        /* Second pass fill in jacobian */
+        for (const int& temp_level : retrieval_flags->temp_levels) {
+                std::cout << "testing temp_level" << temp_level << '\n';
+        }
+    }
+    res.value() = rad;
     /* TODO: Add jacobian to SpectralRange */
     return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
 }
 
-void OssForwardModel::setup_retrieval(OssRetrievalFlags Retrieval_flags) const {
-    retrieval_flags = boost::make_shared<OssRetrievalFlags>(Retrieval_flags);
+void OssForwardModel::setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {
+    if (is_setup) {
+        throw Exception("Too late to setup retrieval. setup_retrieval() first then setup_grid()");
+    }
+    retrieval_flags = Retrieval_flags;
+
 }

@@ -94,6 +94,18 @@ BOOST_AUTO_TEST_CASE(oss_interface)
 
     boost::shared_ptr<OssModifiedOutputs> modified_outputs = oss_master.run_fwd_model(1, modified_inputs);
 
+    /*
+    ofstream write_expected(test_data_dir() + "expected/oss_interface/radiance_and_jacobian");
+    write_expected << modified_outputs->y.value;
+    write_expected << modified_outputs->xk_temp.value;
+    write_expected << modified_outputs->xk_tskin.value;
+    write_expected << modified_outputs->xk_out_gas.value;
+    write_expected << modified_outputs->xk_em.value;
+    write_expected << modified_outputs->xk_rf.value;
+    write_expected << modified_outputs->xk_cldln_pres.value;
+    write_expected << modified_outputs->xk_cldln_ext.value;
+    write_expected.close();
+    */
     IfstreamCs expected(test_data_dir() + "expected/oss_interface/radiance_and_jacobian");
 
     Array<double, 1> rad_expect;
