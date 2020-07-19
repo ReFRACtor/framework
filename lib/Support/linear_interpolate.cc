@@ -43,9 +43,10 @@ FP_IMPLEMENT(LinearInterpolate2Point_double_double);
 FP_IMPLEMENT(LinearInterpolate_double_double);
 
 
-FP_IMPLEMENT(InterpolatePoint_double_auto_derivative_double);
-FP_IMPLEMENT(Return1Point_double_auto_derivative_double);
-FP_IMPLEMENT(LinearInterpolate2Point_double_auto_derivative_double);
-FP_IMPLEMENT(LinearInterpolate_double_auto_derivative_double);
+// See comments in linear_interpolate.h
+// FP_IMPLEMENT(InterpolatePoint_double_auto_derivative_double);
+// FP_IMPLEMENT(Return1Point_double_auto_derivative_double);
+// FP_IMPLEMENT(LinearInterpolate2Point_double_auto_derivative_double);
+// FP_IMPLEMENT(LinearInterpolate_double_auto_derivative_double);
 
 #endif

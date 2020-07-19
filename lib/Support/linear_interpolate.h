@@ -225,9 +225,15 @@ FP_EXPORT_KEY(Return1Point_double_double);
 FP_EXPORT_KEY(LinearInterpolate2Point_double_double);
 FP_EXPORT_KEY(LinearInterpolate_double_double);
 
-FP_EXPORT_KEY(InterpolatePoint_double_auto_derivative_double);
-FP_EXPORT_KEY(Return1Point_double_auto_derivative_double);
-FP_EXPORT_KEY(LinearInterpolate2Point_double_auto_derivative_double);
-FP_EXPORT_KEY(LinearInterpolate_double_auto_derivative_double);
+// I don't think these work correctly. The serialization is also
+// pretty slow. We could probably come up with a more optimized way
+// to serialize these, but this is only used in a handful of places
+// and the data is easy enough to regenerate from other things we are
+// already serializing. Comment out for now so we don't accidentally
+// use this. We can uncomment and sort this out if it becomes an issue.
+// FP_EXPORT_KEY(InterpolatePoint_double_auto_derivative_double);
+// FP_EXPORT_KEY(Return1Point_double_auto_derivative_double);
+// FP_EXPORT_KEY(LinearInterpolate2Point_double_auto_derivative_double);
+// FP_EXPORT_KEY(LinearInterpolate_double_auto_derivative_double);
 #endif
 

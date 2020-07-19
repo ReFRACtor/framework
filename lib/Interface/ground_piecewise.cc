@@ -10,9 +10,25 @@ void GroundPiecewise::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
-    & FP_NVP_(spectral_points)
-    & FP_NVP(ground_interp);
+    & FP_NVP_(spectral_points);
+  // Skip saving this, instead we recreate it.
+  //    & FP_NVP(ground_interp);
 }
+
+template<class Archive>
+void GroundPiecewise::save(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void GroundPiecewise::load(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version))
+{
+  // This updates ground_interp.
+  update_sub_state_hook();
+}
+
 
 FP_IMPLEMENT(GroundPiecewise);
 #endif
