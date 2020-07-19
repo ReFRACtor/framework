@@ -1,5 +1,5 @@
 #include "l_rad_driver.h"
-
+#include "fp_serialize_support.h"
 #include "wgs84_constant.h"
 #include "linear_algebra.h"
 #include "ostream_pad.h"
@@ -43,6 +43,36 @@ extern "C" {
                 const int* nmom, const int* npar, const double* dcoef,
                 const double* l_dcoef, double* zmat, double* l_zmat);
 }
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LRadDriver::serialize(Archive & ar,
+			const unsigned int version)
+{
+  FP_GENERIC_BASE(LRadDriver);
+  ar & FP_NVP(nstream) & FP_NVP(nstokes) & FP_NVP(surface_type)
+    & FP_NVP(use_tms_correction) & FP_NVP(pure_nadir)
+    & FP_NVP(regular_ps) & FP_NVP(enhanced_ps);
+  // Note all the arrays are initialized on first use, so we don't
+  // need to store them.
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void LRadDriver::save(Archive & UNUSED(a),
+		    const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template<class Archive>
+void LRadDriver::load(Archive & UNUSED(ar),
+			    const unsigned int UNUSED(version))
+{
+  lr_init(&nstream, &nstokes, &surface_type, &l_rad_struct);
+}
+
+FP_IMPLEMENT(LRadDriver);
+#endif
 
 LRadDriver::LRadDriver(int Number_stream, int Number_stokes,
                        int Surface_type,

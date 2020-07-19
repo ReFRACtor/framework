@@ -296,6 +296,8 @@ BOOST_AUTO_TEST_CASE(lambertian_solar)
 
 BOOST_AUTO_TEST_CASE(lambertian_solar_serialization)
 {
+  if(!have_serialize_supported())
+    return;
   bool do_solar = true;
   bool do_thermal = false;
   bool debug_output = false;
@@ -345,6 +347,8 @@ BOOST_AUTO_TEST_CASE(lambertian_thermal)
 
 BOOST_AUTO_TEST_CASE(lambertian_thermal_serialization)
 {
+  if(!have_serialize_supported())
+    return;
   bool do_solar = false;
   bool do_thermal = true;
   bool debug_output = true;
@@ -419,6 +423,8 @@ BOOST_AUTO_TEST_CASE(coxmunk)
 
 BOOST_AUTO_TEST_CASE(coxmunk_serialization)
 {
+  if(!have_serialize_supported())
+    return;
   bool do_solar = true;
   bool do_thermal = false;
   bool debug_output = false; 
@@ -520,6 +526,8 @@ BOOST_AUTO_TEST_CASE(brdf)
 
 BOOST_AUTO_TEST_CASE(brdf_serialization)
 {
+  if(!have_serialize_supported())
+    return;
   bool do_solar = true;
   bool do_thermal = false;
   bool debug_output = false;

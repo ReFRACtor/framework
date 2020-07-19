@@ -1,4 +1,5 @@
 #include "l_rad_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
 #include "ground_lambertian.h"
@@ -8,6 +9,22 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LRadRt::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & FP_NVP(surface_type_int) & FP_NVP(use_first_order_scatt_calc)
+    & FP_NVP(do_second_order) & FP_NVP(sza) & FP_NVP(zen)
+    & FP_NVP(azm) & FP_NVP(wmin) & FP_NVP(wmax) & FP_NVP(rt)
+    & FP_NVP(driver);
+}
+
+FP_IMPLEMENT(LRadRt);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

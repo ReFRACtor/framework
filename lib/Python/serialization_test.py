@@ -670,4 +670,8 @@ class TestSolarAbsorptionAndContinuum(object):
 
     def check(self, v1, v2):
         pass
-    
+
+def test_performance(isolated_dir, sample_forward_model):
+    t = serialize_write_string(sample_forward_model)
+    print(len(t))
+    f2 = serialize_read_generic_string(t)

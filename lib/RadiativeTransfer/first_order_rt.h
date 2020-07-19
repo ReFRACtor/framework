@@ -40,6 +40,13 @@ public:
   { return boost::shared_ptr<FirstOrderDriver>(boost::dynamic_pointer_cast<FirstOrderDriver>(rt_driver_)); }
 
   virtual void print(std::ostream& Os, bool Short_form = false) const;
+private:
+  FirstOrderRt() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(FirstOrderRt);
 #endif

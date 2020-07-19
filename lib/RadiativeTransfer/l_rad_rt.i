@@ -48,6 +48,7 @@ public:
   %python_attribute(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
   %python_attribute(l_rad_driver, boost::shared_ptr<LRadDriver>)
   ArrayAd<double, 2> interp_z_matrix(double Wn);
+  %pickle_serialization();
 };
 }
 

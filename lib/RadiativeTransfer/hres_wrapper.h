@@ -33,6 +33,12 @@ public:
   virtual boost::shared_ptr<RadiativeTransfer> rt() const {return rt_;}
 private:
   boost::shared_ptr<RadiativeTransferSingleWn> rt_;
+  HresWrapper() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(HresWrapper)
 #endif
