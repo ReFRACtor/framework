@@ -227,6 +227,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   // Surface only
   surface_params(0) = 1.0e-6;
   surface_params(1) = 1.334;
+  surface_params(2) = 0; // Not used
+  surface_params(3) = 0; // Shadowing flag
   
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
@@ -284,6 +286,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   surface_params(0) = 1.0e-6;
   surface_params(1) = 1.334;
   surface_params(2) = 0.5;
+  surface_params(3) = 0; // Shadowing flag
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
