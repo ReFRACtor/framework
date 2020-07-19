@@ -148,6 +148,7 @@ BOOST_AUTO_TEST_CASE(radiance_and_jacobian)
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
+  is_long_test();                // Skip unless we are running long tests.
   if(!have_serialize_supported())
     return;
   ArrayWithUnit<double, 3> swind;
@@ -209,7 +210,6 @@ BOOST_AUTO_TEST_CASE(serialization)
     std::cerr << d;
   boost::shared_ptr<StandardForwardModel> fmr =
     boost::dynamic_pointer_cast<StandardForwardModel>(serialize_read_binary(d));
-  return;
   turn_on_logger();                // Have log output show up.
   Array<double, 1> rad(fmr->radiance_all(true).spectral_range().data());
   BOOST_CHECK_MATRIX_CLOSE_TOL(rad, rad_expect, 1e-7);

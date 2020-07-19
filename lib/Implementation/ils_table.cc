@@ -7,14 +7,29 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template <class Lint> template<class Archive>
 void IlsTable<Lint>::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IlsFunction)
-    & FP_NVP(delta_lambda_to_response)
+    // Rather than saving this, we recreate it.    
+    // & FP_NVP(delta_lambda_to_response)
     & FP_NVP_(wavenumber) & FP_NVP_(delta_lambda) & FP_NVP_(response)
     & FP_NVP_(band_name) & FP_NVP_(hdf_band_name)
     & FP_NVP(interpolate_wavenumber)
     & FP_NVP(from_hdf_file) & FP_NVP(hdf_file_name) & FP_NVP(hdf_group);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template <class Lint>  template<class Archive>
+void IlsTable<Lint>::save(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version)) const
+{
+  // Nothing more to do
+}
+template <class Lint>   template<class Archive>
+void IlsTable<Lint>::load(Archive & UNUSED(ar),
+			  const unsigned int UNUSED(version))
+{
+  create_delta_lambda_to_response(wavenumber_, delta_lambda_, response_);
 }
 
 FP_IMPLEMENT(IlsTableLinear);
@@ -104,9 +119,9 @@ void IlsTable<Lint>::create_delta_lambda_to_response
  const blitz::Array<double, 2>& Delta_lambda, 
  const blitz::Array<double, 2>& Response)
 {
-  wavenumber_.reference(Wavenumber);
-  delta_lambda_.reference(Delta_lambda);
-  response_.reference(Response);
+  wavenumber_.reference(Wavenumber.copy());
+  delta_lambda_.reference(Delta_lambda.copy());
+  response_.reference(Response.copy());
 
   delta_lambda_to_response.clear();
   for(int i = 0; i < Wavenumber.rows(); ++i) {
