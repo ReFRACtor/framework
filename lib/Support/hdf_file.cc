@@ -12,9 +12,8 @@ void HdfFile::serialize(Archive & ar,
 {
   FP_GENERIC_BASE(HdfFile);
   ar & FP_NVP(fname) & FP_NVP_(mode);
-  boost::serialization::split_member(ar, *this, version); \
+  boost::serialization::split_member(ar, *this, version);
 }
-
 template<class Archive>
 void HdfFile::save(Archive & UNUSED(ar),
 		   const unsigned int UNUSED(version)) const

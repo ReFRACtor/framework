@@ -4,13 +4,14 @@
 %{
 #include "twostream_driver.h"
 %}
+%base_import(spurr_driver)
 %import "twostream_interface.i"
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::TwostreamBrdfDriver);
 %fp_shared_ptr(FullPhysics::TwostreamRtDriver);
 
 namespace FullPhysics {
-class TwostreamBrdfDriver {
+class TwostreamBrdfDriver : public SpurrBrdfDriver {
 public:
   TwostreamBrdfDriver(int surface_type);
   virtual ~TwostreamBrdfDriver();
@@ -27,7 +28,7 @@ public:
   %pickle_serialization();
 };
 
-class TwostreamRtDriver {
+class TwostreamRtDriver : public SpurrRtDriver {
 public:
   TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true,
           bool do_solar = true, bool do_thermal = false);

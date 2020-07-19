@@ -51,6 +51,25 @@ public:
   virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
 
+  //-----------------------------------------------------------------------
+  /// The various SpurrRtDriver have a very large state. Most of this
+  /// is just internal to the RT code (e.g, LIDORT), and we don't normally
+  /// save all this. Instead, we save the little bit at the SpurrRt
+  /// and derived class level, and then recreate the SpurrRtDriver
+  /// when we load the serialization.
+  ///
+  /// If you are doing something special where you have directly
+  /// modified the SpurrRtDriver (e.g., directly changed
+  /// LidortBrdfDriver), then you can elect to save the complete state.
+  ///
+  /// Note that this is pretty sizable, something like 80MB, but if
+  /// you need it this can be pretty useful.
+  ///
+  /// By default, we don't save the full state. Change this variable
+  /// to "true" to save the complete state.
+  //-----------------------------------------------------------------------
+
+  static bool serialize_full_state;
 protected:
 
   int surface_type_int;
@@ -58,16 +77,26 @@ protected:
 
   blitz::Array<double, 1> sza, zen, azm;
 
-  boost::shared_ptr<SpurrRtDriver> rt_driver_;
+  //-----------------------------------------------------------------------
+  /// Note for serialization on load if this is null the derived class
+  /// should create this to fill it in.
+  //-----------------------------------------------------------------------
 
+  boost::shared_ptr<SpurrRtDriver> rt_driver_;
+  
   // Last index we updates the altitude/geometry for.
   mutable int alt_spec_index_cache, geo_spec_index_cache;
   virtual void update_altitude(int spec_index) const;
   virtual void update_geometry(int spec_index) const;
   SpurrRt() : alt_spec_index_cache(-1), geo_spec_index_cache(-1) {}
+private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
 

@@ -203,8 +203,9 @@ BOOST_AUTO_TEST_CASE(serialization)
   fm->setup_grid();
   Array<double, 1> rad_expect;
   expected >> rad_expect;
-  // XML is pretty slow for this. We should perhaps figure out why at
-  // some point, but for now just use binary.
+  // XML is a bit larger here, because the particular object has
+  // the solar model as full tables rather than pointing to a
+  // file. Use the binary version here instead.
   std::string d = serialize_write_binary(fm);
   if(false)
     std::cerr << d;

@@ -8,9 +8,35 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void TwostreamRt::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRt);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void TwostreamRt::save(Archive &ar,
+		       const unsigned int UNUSED(version)) const
+{
+  // Save a little extra information if we aren't already saving full
+  // state.
+  if(!SpurrRt::serialize_full_state) {
+    bool do_full_quadrature_ = rt_driver()->do_full_quadrature();
+    ar & FP_NVP_(do_full_quadrature);
+  }
+}
+
+template<class Archive>
+void TwostreamRt::load(Archive &ar,
+		       const unsigned int UNUSED(version)) 
+{
+  if(!rt_driver_) {
+    bool do_full_quadrature_;
+    ar & FP_NVP_(do_full_quadrature);
+    rt_driver_.reset(new TwostreamRtDriver
+     (atm->number_layer(), surface_type(), do_full_quadrature_,
+      do_solar_sources, do_thermal_emission));
+  }
 }
 
 FP_IMPLEMENT(TwostreamRt);
@@ -60,7 +86,7 @@ TwostreamRt::TwostreamRt(const boost::shared_ptr<RtAtmosphere>& Atm,
                          bool do_fullquadrature, bool do_solar, bool do_thermal)
 : SpurrRt(Atm, Stokes_coef, Sza, Zen, Azm, do_solar, do_thermal)
 {   
-  rt_driver_.reset(new TwostreamRtDriver(atm->number_layer(), surface_type(), do_fullquadrature, do_solar, do_thermal));
+  rt_driver_.reset(new TwostreamRtDriver(atm->number_layer(), surface_type(), do_fullquadrature, do_solar_sources, do_thermal_emission));
   if(dump_data)
     std::cout << "# Nlayer:\n" << atm->number_layer() << "\n"
               << "# Surface type:\n" << surface_type() << "\n"

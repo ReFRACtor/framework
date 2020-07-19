@@ -1,5 +1,6 @@
 from .test_support import *
 from refractor_swig import *
+import pickle
 import logging
 
 # Note that we test some of the serialization at the C++ level with
@@ -671,7 +672,15 @@ class TestSolarAbsorptionAndContinuum(object):
     def check(self, v1, v2):
         pass
 
-def test_performance(isolated_dir, sample_forward_model):
-    t = serialize_write_string(sample_forward_model)
-    print(len(t))
-    f2 = serialize_read_generic_string(t)
+def test_forward_model(isolated_dir, sample_forward_model):
+    t = serialize_write_binary(sample_forward_model)
+    print('{:,}'.format(len(t)))
+    f2 = serialize_read_binary(t)
+    # Repeat with full RT state
+    SpurrRt.serialize_full_state_set(True)
+    t = serialize_write_binary(sample_forward_model)
+    SpurrRt.serialize_full_state_set(False)
+    print('{:,}'.format(len(t)))
+    f2 = serialize_read_binary(t)
+    
+    

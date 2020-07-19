@@ -10,26 +10,36 @@ void IlsTable<Lint>::serialize(Archive & ar,
 			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IlsFunction)
-    // Rather than saving this, we recreate it.    
-    // & FP_NVP(delta_lambda_to_response)
-    & FP_NVP_(wavenumber) & FP_NVP_(delta_lambda) & FP_NVP_(response)
     & FP_NVP_(band_name) & FP_NVP_(hdf_band_name)
-    & FP_NVP(interpolate_wavenumber)
     & FP_NVP(from_hdf_file) & FP_NVP(hdf_file_name) & FP_NVP(hdf_group);
   boost::serialization::split_member(ar, *this, version);
 }
 
 template <class Lint>  template<class Archive>
-void IlsTable<Lint>::save(Archive & UNUSED(ar),
+void IlsTable<Lint>::save(Archive &ar,
 			  const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  // This is pretty sizable to write and read. If we got the data from
+  // an HdfFile then skip this and we'll reread on load. Otherwise,
+  // save the data.
+  if(!from_hdf_file)
+    ar & FP_NVP(interpolate_wavenumber)
+      & FP_NVP_(wavenumber) & FP_NVP_(delta_lambda) & FP_NVP_(response);
+    // Rather than saving this, we recreate it.    
+    // & FP_NVP(delta_lambda_to_response)
 }
 template <class Lint>   template<class Archive>
-void IlsTable<Lint>::load(Archive & UNUSED(ar),
+void IlsTable<Lint>::load(Archive &ar,
 			  const unsigned int UNUSED(version))
 {
-  create_delta_lambda_to_response(wavenumber_, delta_lambda_, response_);
+  if(!from_hdf_file) {
+    ar & FP_NVP(interpolate_wavenumber)
+      & FP_NVP_(wavenumber) & FP_NVP_(delta_lambda) & FP_NVP_(response);
+    create_delta_lambda_to_response(wavenumber_, delta_lambda_, response_);
+  } else {
+    HdfFile f(hdf_file_name);
+    init_from_file(f);
+  }
 }
 
 FP_IMPLEMENT(IlsTableLinear);
@@ -90,6 +100,12 @@ IlsTable<Lint>::IlsTable(const HdfFile& Hdf_static_input, int Spec_index,
 {
   hdf_group = Hdf_group + "/ILS_" + 
     boost::lexical_cast<std::string>(Spec_index + 1);
+  init_from_file(Hdf_static_input);
+}
+
+template<class Lint>
+void IlsTable<Lint>::init_from_file(const HdfFile& Hdf_static_input)
+{
   Array<double, 1> wavenumber
     (Hdf_static_input.read_field<double, 1>(hdf_group + "/wavenumber"));
   Array<double, 2> delta_lambda

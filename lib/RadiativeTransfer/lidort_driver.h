@@ -84,6 +84,7 @@ public:
   bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
 
   bool pure_nadir() const { return pure_nadir_; }
+  bool do_thermal_scattering() const { return do_thermal_scattering_;}
 
   /// Access to BRDF driver
   const boost::shared_ptr<LidortBrdfDriver> lidort_brdf_driver() const

@@ -45,6 +45,7 @@ public:
 
   %python_attribute(do_multi_scatt_only, bool)
   %python_attribute(pure_nadir, bool)
+  %python_attribute(do_thermal_scattering, bool)
 
   /// Access to BRDF driver
   %python_attribute(lidort_brdf_driver, boost::shared_ptr<LidortBrdfDriver>)

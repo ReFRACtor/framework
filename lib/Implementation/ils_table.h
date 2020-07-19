@@ -85,6 +85,7 @@ public:
                                        const blitz::Array<double, 2>& Delta_lambda, 
                                        const blitz::Array<double, 2>& Response);
 private:
+  void init_from_file(const HdfFile& Hdf_static_input);
   // Save some typing by giving these typedefs
   typedef ArrayAd<double, 1> arrad;
   typedef AutoDerivative<double> ad;
