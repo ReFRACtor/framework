@@ -69,7 +69,10 @@ class MUSES_File(object):
     def _read_ascii_data(self, muses_file, skip_lines=0):
 
         # Skip column unit labels, then read data
-        data = np.genfromtxt(muses_file, names=self.column_names, skip_header=skip_lines)
+        # Setting dtype=None ensures that data types are determined by column names
+        # Numpy at some point stop letting the default value be None, so we specify it to make sure
+        # we get the desired result
+        data = np.genfromtxt(muses_file, dtype=None, names=self.column_names, skip_header=skip_lines)
         
         if self.as_struct:
             self.data = data
