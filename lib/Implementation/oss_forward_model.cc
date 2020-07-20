@@ -132,13 +132,49 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
 
         res.resize(rad.rows(), num_state_variables);
         /* Second pass fill in jacobian */
+        int sv_idx = 0;
         for (const int& temp_level : retrieval_flags->temp_levels) {
-                std::cout << "testing temp_level" << temp_level << '\n';
+            // std::cout << "Retrieving temp level " << temp_level << "\n";
+            res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_temp.value(Range::all(), temp_level);
+            sv_idx++;
         }
+        if (retrieval_flags->skin_temp_flag) {
+            // std::cout << "Retrieving skin temp" << "\n";
+            res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_tskin.value;
+            sv_idx++;
+        }
+
+        int gas_jacob_index = 0;
+        for (const Array<int, 1>& gas_levels_for_gas : retrieval_flags->gas_levels) {
+            if(gas_levels_for_gas.rows()) {
+                for (const int& gas_level : gas_levels_for_gas) {
+                    // std::cout << "Retrieving level " << gas_level << " of gas jacobian " << gas_jacob_index << "\n";
+                    res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_out_gas.value(gas_jacob_index,
+                            Range::all(), gas_level);
+                    sv_idx++;
+                }
+                gas_jacob_index++;
+            }
+        }
+
+        for (const int& surf_point : retrieval_flags->emissivity_flags) {
+            // std::cout << "Retrieving emissivity surface point " << surf_point << "\n";
+            res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_em.value(Range::all(), surf_point);
+            sv_idx++;
+        }
+        for (const int& surf_point : retrieval_flags->reflectivity_flags) {
+            // std::cout << "Retrieving reflectivity surface point " << surf_point << "\n";
+            res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_rf.value(Range::all(), surf_point);
+            sv_idx++;
+        }
+
+        if (sv_idx != num_state_variables) {
+            throw Exception("Number of counted SV elements and actually assigned elements did not match");
+        }
+
     }
     res.value() = rad;
-    /* TODO: Add jacobian to SpectralRange */
-    return Spectrum(spectral_domain(channel_index), SpectralRange(rad, Unit("W / cm^2 / sr / cm^-1")));
+    return Spectrum(spectral_domain(channel_index), SpectralRange(res, Unit("W / cm^2 / sr / cm^-1")));
 }
 
 void OssForwardModel::setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {

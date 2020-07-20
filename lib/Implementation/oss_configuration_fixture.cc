@@ -41,7 +41,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     blitz::Array<bool, 1> retrieve_skin_temp(1);
     retrieve_skin_temp = true;
     config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit, retrieve_skin_temp);
-    retrieval_skin_temperature_flag = false;
+    retrieval_skin_temperature_flag = true;
 
     Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
     Array<double, 1> temp(temp_nc.rows());
@@ -52,7 +52,8 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     Array<bool, 1> temp_flag(temp_nc.rows());
     temp_flag = true;
     config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
-    retrieval_temperature_levels = Array<int, 1>();
+    retrieval_temperature_levels.resize(1);
+    retrieval_temperature_levels(0) = 0; // config to retrieve only 0-th temperature level
 
     /* AbsorberVmrs */
     Array<float, 2> vmr_gas = Array<float, 2>(input_data->read_field<float, 2>("/vmrGas")(Range::all()));
@@ -111,7 +112,10 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     // OSS always returns emissivity jacobians
     blitz::Array<bool, 1> retrieve_emiss(spectral_points_nc.rows());
     retrieve_emiss = true;
-    retrieval_emissivity_flags = Array<int, 1>();
+    retrieval_emissivity_flags.resize(1);
+    retrieval_emissivity_flags(0) = 5; // retrieve only the 5th surface point emissivity jacobian
+    retrieval_reflectivity_flags.resize(1);
+    retrieval_reflectivity_flags(0) = 10; // retrieve only the 10th surface point reflectivity jacobian
 
     config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val, retrieve_emiss);
 
