@@ -426,7 +426,7 @@ public:
   $1 = iterator != NULL;
 }
 
-%typemap(in) std::vector<blitz::Array<TYPE, DIM> >, const std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
+%typemap(in) std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec), const std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
 { 
   try {
     iter_to_vector_of_arrays<TYPE, DIM>($input, arr_vec);
@@ -437,7 +437,7 @@ public:
   $1 = arr_vec;
 }
 
-%typemap(in) std::vector<blitz::Array<TYPE, DIM> >&, const std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
+%typemap(in) std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec), const std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
 { 
   try {
     iter_to_vector_of_arrays<TYPE, DIM>($input, arr_vec);
