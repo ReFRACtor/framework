@@ -261,3 +261,5 @@ def __call__(self):
 #endif
 };
 }
+
+%template(vector_Time) std::vector<boost::shared_ptr<FullPhysics::Time> >;
