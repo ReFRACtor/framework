@@ -672,6 +672,9 @@ class TestSolarAbsorptionAndContinuum(object):
     def check(self, v1, v2):
         pass
 
+def test_pickle(sample_forward_model):
+    pickle.dump(sample_forward_model, open("fmodel.pkl", "wb"))
+    
 def test_forward_model(isolated_dir, sample_forward_model):
     t = serialize_write_binary(sample_forward_model)
     print('{:,}'.format(len(t)))
