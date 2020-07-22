@@ -42,7 +42,7 @@ public:
         return SpectralDomain::PREFER_WAVENUMBER;
     }
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
-    virtual void setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
+    virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;

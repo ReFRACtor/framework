@@ -12,6 +12,7 @@
 %import "spectral_domain.i"
 %import "spectrum.i"
 %import "oss_interface.i"
+%import "oss_retrieval_flags.i"
 
 %fp_shared_ptr(FullPhysics::OssForwardModel);
 %fp_shared_ptr(FullPhysics::OssFixedInputs);
@@ -31,7 +32,8 @@ public:
             DoubleWithUnit Lat, DoubleWithUnit Surf_alt, bool Lambertian,
             const std::string& Sel_file, const std::string& Od_file, const std::string& Sol_file,
             const std::string& Fix_file, const std::string& Ch_sel_file,
-			std::vector<boost::shared_ptr<SpectralDomain>> Channel_domains,
+            std::vector<boost::shared_ptr<SpectralDomain>> channel_domains =
+                    std::vector<boost::shared_ptr<SpectralDomain>>(),
             int Max_chans = 20000);
     virtual ~OssForwardModel();
     virtual void setup_grid();
@@ -39,7 +41,7 @@ public:
     virtual SpectralDomain spectral_domain(int Spec_index) const;
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
-    virtual void setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
+    virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const;
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;

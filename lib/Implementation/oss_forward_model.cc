@@ -27,12 +27,13 @@ OssForwardModel::OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vm
 }
 
 void OssForwardModel::setup_grid() {
+
     std::vector<std::string> gas_names;
     std::vector<std::string> gas_jacobian_names;
 
     for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
         gas_names.push_back(vmr[gas_index]->gas_name());
-        if (retrieval_flags->gas_levels[gas_index].rows()) {
+        if (retrieval_flags && retrieval_flags->gas_levels()[gas_index].rows()) {
             gas_jacobian_names.push_back(vmr[gas_index]->gas_name());
         }
     }
@@ -51,6 +52,7 @@ void OssForwardModel::setup_grid() {
     center_spectral_point.value.resize(oss_master->fixed_outputs->center_spectral_point.value.rows());
     center_spectral_point.value = cast<double>(oss_master->fixed_outputs->center_spectral_point.value);
     is_setup = true;
+
 }
 
 Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const {
@@ -113,39 +115,24 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
     int num_state_variables = 0;
     ArrayAd<double, 1> res(rad.rows(), num_state_variables);
     if (retrieval_flags) {
-        /* First pass count only - for allocation */
-        num_state_variables += retrieval_flags->temp_levels.rows();
-        if (retrieval_flags->skin_temp_flag) {
-            num_state_variables++;
-        }
-
-        int gas_index = 0;
-        for (const Array<int, 1>& gas_level : retrieval_flags->gas_levels) {
-            if(gas_level.rows()) {
-                num_state_variables += gas_level.rows();
-            }
-            gas_index++;
-        }
-
-        num_state_variables += retrieval_flags->emissivity_flags.rows();
-        num_state_variables += retrieval_flags->reflectivity_flags.rows();
+        num_state_variables += retrieval_flags->num_total_flags();
 
         res.resize(rad.rows(), num_state_variables);
-        /* Second pass fill in jacobian */
+        /* Fill in jacobians according to retrieval flags */
         int sv_idx = 0;
-        for (const int& temp_level : retrieval_flags->temp_levels) {
+        for (const int& temp_level : retrieval_flags->temp_levels()) {
             // std::cout << "Retrieving temp level " << temp_level << "\n";
             res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_temp.value(Range::all(), temp_level);
             sv_idx++;
         }
-        if (retrieval_flags->skin_temp_flag) {
+        if (retrieval_flags->skin_temp_flag()) {
             // std::cout << "Retrieving skin temp" << "\n";
             res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_tskin.value;
             sv_idx++;
         }
 
         int gas_jacob_index = 0;
-        for (const Array<int, 1>& gas_levels_for_gas : retrieval_flags->gas_levels) {
+        for (const Array<int, 1>& gas_levels_for_gas : retrieval_flags->gas_levels()) {
             if(gas_levels_for_gas.rows()) {
                 for (const int& gas_level : gas_levels_for_gas) {
                     // std::cout << "Retrieving level " << gas_level << " of gas jacobian " << gas_jacob_index << "\n";
@@ -157,12 +144,12 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
             }
         }
 
-        for (const int& surf_point : retrieval_flags->emissivity_flags) {
+        for (const int& surf_point : retrieval_flags->emissivity_flags()) {
             // std::cout << "Retrieving emissivity surface point " << surf_point << "\n";
             res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_em.value(Range::all(), surf_point);
             sv_idx++;
         }
-        for (const int& surf_point : retrieval_flags->reflectivity_flags) {
+        for (const int& surf_point : retrieval_flags->reflectivity_flags()) {
             // std::cout << "Retrieving reflectivity surface point " << surf_point << "\n";
             res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_rf.value(Range::all(), surf_point);
             sv_idx++;
@@ -177,7 +164,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
     return Spectrum(spectral_domain(channel_index), SpectralRange(res, Unit("W / cm^2 / sr / cm^-1")));
 }
 
-void OssForwardModel::setup_retrieval(boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {
+void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {
     if (is_setup) {
         throw Exception("Too late to setup retrieval. setup_retrieval() first then setup_grid()");
     }
