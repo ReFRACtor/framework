@@ -4,13 +4,10 @@ from collections import OrderedDict
 import numpy as np
 
 from .base import Creator
+from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
-
-# Class allow capturing the list of retrieval components from the configuration system elsewhere
-class RetrievalComponents(OrderedDict):
-    pass
 
 class RetrievalBaseCreator(Creator):
 

@@ -1,7 +1,10 @@
+from bisect import bisect
+
 import numpy as np
 
 from .base import Creator
 from .value import CreatorFlaggedValue
+from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
@@ -280,7 +283,7 @@ class OssForwardModel(Creator):
     sol_file = param.Scalar(str)
     fix_file = param.Scalar(str)
     ch_sel_file = param.Scalar(str)
-    max_chans =  param.Scalar(int, default=20000)
+    #max_chans =  param.Scalar(int, default=20000)
 
     ## TEMP ##
     # Temporary to attach a ForwardModelSpectralGrid until changes are made
@@ -290,6 +293,71 @@ class OssForwardModel(Creator):
     spec_win = param.InstanceOf(rf.SpectralWindow)
     spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
     ## TEMP ##
+
+    def __init__(self, *vargs, **kwargs):
+        super().__init__(*vargs, **kwargs)
+
+        self.register_to_receive(RetrievalComponents, deregister_after_create=False)
+
+        self.fm = None
+
+    def receive(self, rec_obj):
+
+        self.setup_retrieval_levels(rec_obj.values())
+
+    def setup_retrieval_levels(self, retrieval_components):
+
+        pressure = self.pressure()
+        temperature = self.temperature()
+        surface_temperature = self.surface_temperature()
+        absorber = self.absorber()
+        ground = self.ground()
+
+        fm_press = pressure.pressure_grid.value.value
+
+        # Set up temperature jacobian levels
+        if temperature in retrieval_components:
+            temp_press = temperature.pressure_profile()
+            temp_ret_levels = np.empty(temp_press.shape, dtype=int)
+
+            # TODO also check used_flag_value
+            for ret_idx, press in enumerate(temp_press):
+                temp_ret_levels[ret_idx] = bisect(fm_press, press)
+        else:
+            temp_ret_levels = np.zeros(0, dtype=int)
+
+        # Surface temp
+        if surface_temperature in retrieval_components:
+            surf_temp_flag = np.any(surface_temperature.used_flag_value)
+
+        # Gases
+        gas_ret_levels = []
+        for vmr_obj in self.absorber():
+            vmr_press = vmr_obj.pressure.pressure_grid.value.value
+
+            if vmr_obj in retrieval_components and np.any(vmr_obj.used_flag_value):
+                vmr_levels = np.empty(vmr_press.shape, dtype=int)
+
+                # TODO also check used_flag_value
+                for ret_idx, press in enumerate(vmr_press):
+                    vmr_levels[ret_idx] = bisect(fm_press, press)
+                gas_ret_levels.append(vmr_levels)
+            else:
+                gas_ret_levels.append( np.zeros(0, dtype=int) )
+
+        # Ground
+        emiss_flags = np.zeros(0, dtype=int)
+        refl_flags = np.zeros(0, dtype=int)
+
+        if ground in retrieval_components:
+            if isinstance(ground, rf.GroundEmissivityPiecewise):
+                emiss_flags = np.where(ground.used_flag_value)[0]
+
+        # Create retrieval flags object and set up forward model object
+        ret_flags = rf.OssRetrievalFlags(temp_ret_levels, bool(surf_temp_flag), gas_ret_levels, emiss_flags, refl_flags)
+
+        self.fm.setup_retrieval(ret_flags)
+        self.fm.setup_grid()
 
     def create(self, **kwargs):
 
@@ -303,19 +371,18 @@ class OssForwardModel(Creator):
         sol_zen = rf.DoubleWithUnit(self.solar_zenith().value[chan_idx], self.solar_zenith().units)
         latitude = rf.DoubleWithUnit(self.latitude().value[chan_idx], self.latitude().units)
         surf_alt = rf.DoubleWithUnit(self.altitude().value[chan_idx], self.altitude().units)
-        fm = rf.OssForwardModel(vmrs, self.pressure(), self.temperature(),
-                                self.surface_temperature(), self.ground(),
-                                obs_zen, sol_zen, latitude, surf_alt, self.lambertian(),
-                                self.sel_file(), self.od_file(), self.sol_file(), self.fix_file(),
-                                self.ch_sel_file(), self.max_chans())
+        self.fm = rf.OssForwardModel(vmrs, self.pressure(), self.temperature(),
+                                     self.surface_temperature(), self.ground(),
+                                     obs_zen, sol_zen, latitude, surf_alt, self.lambertian(),
+                                     self.sel_file(), self.od_file(), self.sol_file(), self.fix_file(),
+                                     self.ch_sel_file())
 
-        fm.setup_grid()
 
         ## TEMP ##
         # Temporary to attach a ForwardModelSpectralGrid until changes are made
         # to fix the requirement of a ForwardModelSpectralGrid object to create a retrieval
         # TODO: Remove this
-        fm.spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
+        self.fm.spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
         ## TEMP ##
 
-        return fm
+        return self.fm
