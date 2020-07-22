@@ -83,6 +83,12 @@ class Creator(object):
         self.parameters = {}
         self._load_parameters()
 
+        # Whether to deregister listening for objects upon calling of the create routine
+        # This would be the case for objects that listen for object before create is called
+        # But some Creators may choose to modify their created objects upon recieving certain
+        # other objects
+        self.deregister_after_create = True
+
         logger.debug("Initialized creator %s with parameters: %s" % (self.__class__.__name__, self.parameters.keys()))
 
     def _process_config(self, in_config_def):
@@ -91,12 +97,15 @@ class Creator(object):
         out_config_def = ConfigDict()
 
         for config_name, config_val in in_config_def.items():
+
             if isinstance(config_val, dict) and "creator" in config_val:
                 # Creator in a dictionary block
                 logger.debug("Initializing nested creator %s for %s" % (config_name, self.__class__.__name__))
                 out_config_def[config_name] = config_val["creator"](config_val, common_store=self.common_store)
-            elif inspect.isclass(config_val) and issubclass(config_val, Creator):
+            elif inspect.isclass(config_val) and issubclass(config_val, Creator) and config_name != "creator":
                 # Creator by itself with no arguments from a dictionary block, all arguments from common store
+                # Make sure we only do this if the config_name is not "creator" or else all creators will get called
+                # twice, once for the outside block containing the creator and once inside the creator itself
                 logger.debug("Initializing nested creator %s for %s" % (config_name, self.__class__.__name__))
                 out_config_def[config_name] = config_val({}, common_store=self.common_store)
             else:
@@ -142,10 +151,12 @@ class Creator(object):
         else:
             return param_proxy.value(**kwargs)
 
-    def register_to_receive(self, RfType):
+    def register_to_receive(self, RfType, deregister_after_create=True):
         dispatch_list = subscribed_observers.get(RfType, [])
         dispatch_list.append(self)
         subscribed_observers[RfType] = dispatch_list
+
+        self.deregister_after_create = deregister_after_create
 
     def deregister_to_receive(self, RfType=None):
 
@@ -203,7 +214,8 @@ class Creator(object):
         self._dispatch(result)
 
         # Remove this class from the subscribed observers once its create routine has run
-        self.deregister_to_receive()
+        if self.deregister_after_create:
+            self.deregister_to_receive()
 
         return result
 
