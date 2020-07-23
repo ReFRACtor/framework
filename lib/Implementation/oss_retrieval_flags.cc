@@ -1,14 +1,15 @@
 #include "oss_retrieval_flags.h"
 
+using namespace FullPhysics;
+using namespace blitz;
+
 int OssRetrievalFlags::num_total_flags() const
 {
     int num_flags =  0;
 
     num_flags += temp_levels_.rows();
 
-    if (skin_temp_flag_) {
-        num_flags++;
-    }
+    num_flags += blitz::sum(skin_temp_sensors_);
 
     for (const Array<int, 1>& gas_level : gas_levels_) {
         if(gas_level.rows()) {

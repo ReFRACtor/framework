@@ -350,14 +350,15 @@ class OssForwardModel(Creator):
         else:
             return np.zeros(0, dtype=int)
 
-    def surface_temperature_flag(self, retrieval_components):
+    def surface_temperature_flags(self, retrieval_components):
 
         surface_temperature = self.surface_temperature()
 
         if surface_temperature in retrieval_components:
-            return np.any(surface_temperature.used_flag_value)
+            return np.array(surface_temperature.used_flag_value, dtype=bool)
         else:
-            return False
+            # Jacobian for all sensor channels disabled
+            return np.zeros(self.fm.num_channels, dtype=bool)
 
     def gas_retrieval_levels(self, retrieval_components, fm_press):
 
@@ -407,12 +408,12 @@ class OssForwardModel(Creator):
         self.check_retrieval_order(retrieval_components)
 
         temp_ret_levels = self.temperature_retrieval_levels(retrieval_components, fm_press)
-        surf_temp_flag = self.surface_temperature_flag(retrieval_components)
+        surf_temp_flags = self.surface_temperature_flags(retrieval_components)
         gas_ret_levels = self.gas_retrieval_levels(retrieval_components, fm_press)
         emiss_flags, refl_flags = self.ground_flags(retrieval_components)
 
         # Create retrieval flags object and set up forward model object
-        ret_flags = rf.OssRetrievalFlags(temp_ret_levels, bool(surf_temp_flag), gas_ret_levels, emiss_flags, refl_flags)
+        ret_flags = rf.OssRetrievalFlags(temp_ret_levels, surf_temp_flags, gas_ret_levels, emiss_flags, refl_flags)
 
         self.fm.setup_retrieval(ret_flags)
         self.fm.setup_grid()

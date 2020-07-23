@@ -125,10 +125,20 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
             res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_temp.value(Range::all(), temp_level);
             sv_idx++;
         }
-        if (retrieval_flags->skin_temp_flag()) {
-            // std::cout << "Retrieving skin temp" << "\n";
-            res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_tskin.value;
-            sv_idx++;
+
+        Array<bool, 1> skin_temp_sensors(retrieval_flags->skin_temp_sensors());
+        for(int skin_temp_sensor_idx = 0; skin_temp_sensor_idx < skin_temp_sensors.rows(); skin_temp_sensor_idx++) {
+            if(skin_temp_sensors(skin_temp_sensor_idx)) {
+                // If we are not currently modeling the radiance for a given sensor channel
+                // then set the jacobians to zero since it still is part of the retrieval
+                // vector structure
+                if(channel_index == skin_temp_sensor_idx) {
+                    res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_tskin.value;
+                } else {
+                    res.jacobian()(Range::all(), sv_idx) = 0.0;
+                }
+                sv_idx++;
+            }
         }
 
         int gas_jacob_index = 0;

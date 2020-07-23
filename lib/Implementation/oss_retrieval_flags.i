@@ -10,13 +10,16 @@
 namespace FullPhysics {
 class OssRetrievalFlags : public GenericObject {
 public:
-    OssRetrievalFlags(blitz::Array<int, 1> Temp_levels, bool Skin_temp_flag,
-            std::vector<blitz::Array<int, 1>> Gas_levels, blitz::Array<int, 1> Emissivity_flags,
-            blitz::Array<int, 1> Reflectivity_flags);
+    OssRetrievalFlags(const blitz::Array<int, 1>& Temp_levels, 
+                      const blitz::Array<bool, 1>& Skin_temp_flag,
+                      const std::vector<blitz::Array<int, 1> >& Gas_levels,
+                      const blitz::Array<int, 1>& Emissivity_flags,
+                      const blitz::Array<int, 1>& Reflectivity_flags); 
+
     virtual ~OssRetrievalFlags();
 
     %python_attribute(temp_levels, blitz::Array<int, 1>);
-    %python_attribute(skin_temp_flag, bool);
+    %python_attribute(skin_temp_sensors, blitz::Array<bool, 1>);
     %python_attribute(gas_levels, std::vector<blitz::Array<int, 1>>);
     %python_attribute(emissivity_flags, blitz::Array<int, 1>);
     %python_attribute(reflectivity_flags, blitz::Array<int, 1>); 
