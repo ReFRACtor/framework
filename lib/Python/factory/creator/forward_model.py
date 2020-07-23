@@ -298,37 +298,70 @@ class OssForwardModel(Creator):
         super().__init__(*vargs, **kwargs)
 
         self.register_to_receive(RetrievalComponents, deregister_after_create=False)
+        
+        # Expected order of retrieval components so that they match the order that OssForwardModel provides
+        self.ret_object_order = [ rf.Temperature, 
+                                  rf.SurfaceTemperature, 
+                                  rf.AbsorberVmr, 
+                                  rf.GroundPiecewise ]
 
         self.fm = None
 
     def receive(self, rec_obj):
 
-        self.setup_retrieval_levels(rec_obj.values())
+        self.setup_retrieval_levels(list(rec_obj.values()))
 
-    def setup_retrieval_levels(self, retrieval_components):
+    def check_retrieval_order(self, retrieval_components):
 
-        pressure = self.pressure()
+        # Go through and assign an index to each of the retrieval components based on the above ordering
+        configured_order = []
+        for ret_obj in retrieval_components:
+            found_type = False
+            for idx, obj_type in enumerate(self.ret_object_order):
+                if isinstance(ret_obj, obj_type):
+                    configured_order.append(idx)
+                    found_type = True
+                    break
+
+            if not found_type:
+                raise param.ParamError(f"Retrieval component configured that OssForwardModel can not handle: {ret_obj.__class__.__name__}")
+
+        # Check that the configured order is in increasing order
+        last_idx = -1
+        for pos_idx, config_idx in enumerate(configured_order):
+            if config_idx < last_idx:
+                ret_obj = retrieval_components[pos_idx]
+                raise param.ParamError(f"Retrieval component {ret_obj.__class__.__name__} is in the wrong order.")
+            last_idx = config_idx
+
+    def temperature_retrieval_levels(self, retrieval_components, fm_press):
+
         temperature = self.temperature()
-        surface_temperature = self.surface_temperature()
-        absorber = self.absorber()
-        ground = self.ground()
 
-        fm_press = pressure.pressure_grid.value.value
-
-        # Set up temperature jacobian levels
         if temperature in retrieval_components:
             temp_press = temperature.pressure_profile()
-            temp_ret_levels = np.empty(temp_press.shape, dtype=int)
 
-            # TODO also check used_flag_value
+            temp_ret_levels = []
             for ret_idx, press in enumerate(temp_press):
-                temp_ret_levels[ret_idx] = bisect(fm_press, press)
-        else:
-            temp_ret_levels = np.zeros(0, dtype=int)
+                if temperature.used_flag_value[ret_idx]:
+                    temp_ret_levels.append(bisect(fm_press, press))
 
-        # Surface temp
+            return np.array(temp_ret_levels, dtype=int)
+        else:
+            return np.zeros(0, dtype=int)
+
+    def surface_temperature_flag(self, retrieval_components):
+
+        surface_temperature = self.surface_temperature()
+
         if surface_temperature in retrieval_components:
-            surf_temp_flag = np.any(surface_temperature.used_flag_value)
+            return np.any(surface_temperature.used_flag_value)
+        else:
+            return False
+
+    def gas_retrieval_levels(self, retrieval_components, fm_press):
+
+        absorber = self.absorber()
 
         # Gases
         gas_ret_levels = []
@@ -336,22 +369,47 @@ class OssForwardModel(Creator):
             vmr_press = vmr_obj.pressure.pressure_grid.value.value
 
             if vmr_obj in retrieval_components and np.any(vmr_obj.used_flag_value):
-                vmr_levels = np.empty(vmr_press.shape, dtype=int)
 
-                # TODO also check used_flag_value
+                vmr_levels = []
                 for ret_idx, press in enumerate(vmr_press):
-                    vmr_levels[ret_idx] = bisect(fm_press, press)
-                gas_ret_levels.append(vmr_levels)
+                    if vmr_obj.used_flag_value[ret_idx]:
+                        vmr_levels.append( bisect(fm_press, press) )
+
+                gas_ret_levels.append( np.array(vmr_levels, dtype=int) )
             else:
                 gas_ret_levels.append( np.zeros(0, dtype=int) )
 
-        # Ground
-        emiss_flags = np.zeros(0, dtype=int)
-        refl_flags = np.zeros(0, dtype=int)
+        return gas_ret_levels
+
+    def ground_flags(self, retrieval_components):
+
+        ground = self.ground()
 
         if ground in retrieval_components:
             if isinstance(ground, rf.GroundEmissivityPiecewise):
                 emiss_flags = np.where(ground.used_flag_value)[0]
+            else:
+                emiss_flags = np.zeros(0, dtype=int)
+
+            if isinstance(ground, rf.GroundLambertianPiecewise):
+                refl_flags = np.where(ground.used_flag_value)[0]
+            else:
+                refl_flags = np.zeros(0, dtype=int)
+
+        return emiss_flags, refl_flags
+
+    def setup_retrieval_levels(self, retrieval_components):
+
+        pressure = self.pressure()
+
+        fm_press = pressure.pressure_grid.value.value
+
+        self.check_retrieval_order(retrieval_components)
+
+        temp_ret_levels = self.temperature_retrieval_levels(retrieval_components, fm_press)
+        surf_temp_flag = self.surface_temperature_flag(retrieval_components)
+        gas_ret_levels = self.gas_retrieval_levels(retrieval_components, fm_press)
+        emiss_flags, refl_flags = self.ground_flags(retrieval_components)
 
         # Create retrieval flags object and set up forward model object
         ret_flags = rf.OssRetrievalFlags(temp_ret_levels, bool(surf_temp_flag), gas_ret_levels, emiss_flags, refl_flags)
