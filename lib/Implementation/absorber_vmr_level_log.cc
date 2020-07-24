@@ -1,15 +1,14 @@
 #include <boost/make_shared.hpp>
 #include "absorber_vmr_level_log.h"
 #include "fp_serialize_support.h"
-#include "mapping_log.h"
+#include "state_mapping_log.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void AbsorberVmrLevelLog::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+void AbsorberVmrLevelLog::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrLevel);
 }
@@ -25,7 +24,7 @@ AbsorberVmrLevelLog::AbsorberVmrLevelLog(const boost::shared_ptr<Pressure>& Pres
                                          const blitz::Array<double, 1>& Vmr,
                                          const blitz::Array<bool, 1>& Vmr_flag,
                                          const std::string& Gas_name)
-: AbsorberVmrLevel(Press, Vmr, Vmr_flag, Gas_name, boost::make_shared<MappingLog>())
+: AbsorberVmrLevel(Press, Vmr, Vmr_flag, Gas_name, boost::make_shared<StateMappingLog>())
 {
 }
 

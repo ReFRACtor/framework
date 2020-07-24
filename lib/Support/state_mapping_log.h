@@ -1,11 +1,11 @@
-#ifndef MAPPING_LOG_H
-#define MAPPING_LOG_H
+#ifndef STATE_MAPPING_LOG_H
+#define STATE_MAPPING_LOG_H
 
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "state_mapping.h"
 
 
 namespace FullPhysics {
@@ -13,16 +13,16 @@ namespace FullPhysics {
   This class implements log encoding of coeffs for the retrieval view
   while using the real (linear) values for the forward model view.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for StateMapping class.
 *******************************************************************/
-class MappingLog : public Mapping  {
+class StateMappingLog : public StateMapping  {
 public:
   //-----------------------------------------------------------------------
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  MappingLog() : map_name("log") {};
-  virtual ~MappingLog() {}
+  StateMappingLog() : map_name("log") {};
+  virtual ~StateMappingLog() {}
   
   virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
     const {
@@ -42,8 +42,8 @@ public:
 
   virtual std::string name() const { return map_name; }
 
-  virtual boost::shared_ptr<Mapping> clone() const
-  { return boost::shared_ptr<Mapping>(new MappingLog()); }
+  virtual boost::shared_ptr<StateMapping> clone() const
+  { return boost::shared_ptr<StateMapping>(new StateMappingLog()); }
 
 private:
   std::string map_name;
@@ -53,6 +53,6 @@ private:
 };
 }
 
-FP_EXPORT_KEY(MappingLog);
+FP_EXPORT_KEY(StateMappingLog);
 
 #endif

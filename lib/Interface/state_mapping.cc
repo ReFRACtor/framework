@@ -1,14 +1,13 @@
-#include "mapping.h"
+#include "state_mapping.h"
 #include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void Mapping::serialize(Archive& ar,
-			 const unsigned int UNUSED(version))
+void StateMapping::serialize(Archive& ar, const unsigned int UNUSED(version))
 {
-  FP_GENERIC_BASE(Mapping);
+  FP_GENERIC_BASE(StateMapping);
 
   // Dummy placeholder, just so we can have derived classes call
   // serialization of this. We use to have derived classes "know"
@@ -19,6 +18,5 @@ void Mapping::serialize(Archive& ar,
   ar & FP_NVP2("placeholder", p);
 }
 
-FP_IMPLEMENT(Mapping);
+FP_IMPLEMENT(StateMapping);
 #endif
-

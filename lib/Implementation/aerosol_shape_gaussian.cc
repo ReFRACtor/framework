@@ -1,6 +1,6 @@
 #include "aerosol_shape_gaussian.h"
 #include "fp_serialize_support.h"
-#include "mapping_gaussian.h"
+#include "state_mapping_gaussian.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -8,8 +8,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void AerosolShapeGaussian::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+void AerosolShapeGaussian::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolExtinctionLevel);
 }
@@ -35,12 +34,12 @@ AerosolShapeGaussian::AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Pr
              const blitz::Array<double, 1>& Coeffs,
              const std::string& Aerosol_name,
              const bool Linear_AOD)
-  : AerosolExtinctionLevel(Press, Flag, Coeffs, Aerosol_name, boost::make_shared<MappingGaussian>(Press, Linear_AOD)) {}
+  : AerosolExtinctionLevel(Press, Flag, Coeffs, Aerosol_name, boost::make_shared<StateMappingGaussian>(Press, Linear_AOD)) {}
 
 // See base class for description
 boost::shared_ptr<AerosolExtinction> AerosolShapeGaussian::clone() const
 {
-    boost::shared_ptr<MappingGaussian> gaussian_map = boost::static_pointer_cast<MappingGaussian>(mapping);
+    boost::shared_ptr<StateMappingGaussian> gaussian_map = boost::static_pointer_cast<StateMappingGaussian>(mapping);
     return boost::shared_ptr<AerosolExtinction>
     (new AerosolShapeGaussian(press->clone(), used_flag, coeff.value(),
                               aerosol_name(), gaussian_map->is_linear_total()));

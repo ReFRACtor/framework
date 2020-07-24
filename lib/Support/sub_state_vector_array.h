@@ -1,8 +1,7 @@
 #ifndef SUB_STATE_VECTOR_ARRAY_H
 #define SUB_STATE_VECTOR_ARRAY_H
 #include "sub_state_vector_observer.h"
-#include "mapping.h"
-#include "mapping_linear.h"
+#include "state_mapping_linear.h"
 #include "pressure.h"
 #include <blitz/array.h>
 #include <boost/lexical_cast.hpp>
@@ -61,7 +60,7 @@ public:
    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
    bool Mark_according_to_press = true,
    int Pdep_start = 0,
-   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+   boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     mark_according_to_press = Mark_according_to_press;
     pdep_start = Pdep_start;
@@ -88,7 +87,7 @@ public:
     const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
     bool Mark_according_to_press = true,
     int Pdep_start = 0,
-    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     blitz::Array<double, 1> coeff_t(1);
     blitz::Array<bool, 1> used_t(1);
@@ -247,9 +246,9 @@ protected:
   int pdep_start;
         
   //-----------------------------------------------------------------------
-  /// Mapping from internal coefficients to coefficients exposed to retrieval
+  /// StateMapping from internal coefficients to coefficients exposed to retrieval
   //-----------------------------------------------------------------------
-  boost::shared_ptr<Mapping> mapping;
+  boost::shared_ptr<StateMapping> mapping;
         
   friend class boost::serialization::access;
   template<class Archive>
@@ -260,7 +259,7 @@ protected:
 #define SUB_STATE_VECTOR_ARRAY_SERIALIZE(Base, Type) \
 template<> template<class Archive> \
 void SubStateVectorArray<Base>::serialize(Archive & ar, \
-					  const unsigned int UNUSED(version)) \
+                                          const unsigned int UNUSED(version)) \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Base) \

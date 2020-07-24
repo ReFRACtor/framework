@@ -2,8 +2,7 @@
 #define AEROSOL_EXTINCTION_IMP_BASE_H
 #include "aerosol_extinction.h"
 #include "sub_state_vector_array.h"
-#include "mapping.h"
-#include "mapping_linear.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -109,16 +108,16 @@ protected:
 //-----------------------------------------------------------------------
 
   void init(const std::string Aerosol_name,
-	    const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press,
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0,
-	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+            const blitz::Array<double, 1>& Coeff, 
+            const blitz::Array<bool, 1>& Used_flag,
+            const boost::shared_ptr<Pressure>& Press,
+            bool Mark_according_to_press = true,
+            int Pdep_start = 0,
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   { SubStateVectorArray<AerosolExtinction>::init(Coeff, Used_flag, Press,
-					   Mark_according_to_press,
-					   Pdep_start,
-					   in_map);
+                                                 Mark_according_to_press,
+                                                 Pdep_start,
+                                                 in_map);
     aerosol_name_ = Aerosol_name;
   }
 
@@ -141,11 +140,11 @@ protected:
    const boost::shared_ptr<Pressure>& Press,
    bool Mark_according_to_press = true,
    int Pdep_start = 0,
-   boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
+   boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
     : cache_stale(true)
   {
     init(Aerosol_name, Coeff, Used_flag, Press, Mark_according_to_press,
-	 Pdep_start, in_map);
+         Pdep_start, in_map);
   }
 private:
   void fill_cache() const
