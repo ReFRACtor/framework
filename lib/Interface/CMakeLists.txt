@@ -26,18 +26,16 @@ set(DIR_SOURCES
     ground_imp_base.cc
     ground_piecewise.cc
     ils.cc
-    ils_imp_base.cc
     ils_function.cc
+    ils_imp_base.cc
     initial_guess.cc
     instrument.cc
     instrument_correction.cc
-    observation.cc
-    optical_properties.cc
     iterative_solver.cc
     iterative_solver_der.cc
     level_1b.cc
-    level_1b_sample_coefficient.cc
     level_1b_info.cc
+    level_1b_sample_coefficient.cc
     max_a_posteriori.cc
     max_likelihood.cc
     meteorology.cc
@@ -47,6 +45,8 @@ set(DIR_SOURCES
     nlls_problem_state.cc
     nlls_solver.cc
     noise_model.cc
+    observation.cc
+    optical_properties.cc
     optical_properties_imp_base.cc
     optical_properties_init_base.cc
     output.cc
@@ -66,6 +66,7 @@ set(DIR_SOURCES
     spectrum_effect.cc
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
+    state_mapping.cc
     stokes_coefficient.cc
     stokes_coefficient_imp_base.cc
     surface_temperature.cc

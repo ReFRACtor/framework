@@ -1,57 +1,59 @@
-#ifndef MAPPING_H
-#define MAPPING_H
+#ifndef STATE_MAPPING_LINEAR_H
+#define STATE_MAPPING_LINEAR_H
+
+#include "state_mapping.h"
 #include "array_ad.h"
-#include "pressure.h"
-#include <string>
 
 namespace FullPhysics {
 /****************************************************************//**
-  This class manages mapping between the State Vector and forward
-  model.
+  This class implements linear 1-to-1 mapping and just provides the
+  SubStateVectorArray's coefficients as-is.
 
-  Individual components of the State Vector may have different
-  representations (e.g. to add a scaling factor or log encode the
-  values) when being retrieved/perturbed vs. the representations
-  used in forward model calculations.
-
-  Derived classes capture those different representations.
+  For additional information see docs for StateMapping class.
 *******************************************************************/
-class Mapping : public Printable<Mapping> {
+class StateMappingLinear : public StateMapping {
 public:
-  Mapping() {}
-  virtual ~Mapping() {};
+  virtual ~StateMappingLinear() {}
+
+  //-----------------------------------------------------------------------
+  /// Default Constructor.
+  //-----------------------------------------------------------------------
+
+  StateMappingLinear() : map_name("linear") {}
 
   //-----------------------------------------------------------------------
   /// Calculation of forward model view of coeffs with mapping applied
   //-----------------------------------------------------------------------
+
   virtual ArrayAd<double, 1> fm_view
-  (const ArrayAd<double, 1>& updated_coeff) const = 0;
+  (const ArrayAd<double, 1>& updated_coeff) const
+  { return updated_coeff; }
 
   //-----------------------------------------------------------------------
   /// Calculation of initial retrieval view  of coeffs with mapping applied
   //-----------------------------------------------------------------------
 
   virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const = 0;
+  (const ArrayAd<double, 1>& initial_coeff) const
+  { return initial_coeff; }
 
   //-----------------------------------------------------------------------
   /// Assigned mapping name
   //-----------------------------------------------------------------------
+  
+  virtual std::string name() const { return map_name; }
 
-  virtual std::string name() const = 0;
-
-  virtual boost::shared_ptr<Mapping> clone() const = 0;
-
-  void print(std::ostream& Os) const
-  { Os << "Mapping\n"
-       << "  name: " << name() << "\n";
+  virtual boost::shared_ptr<StateMapping> clone() const
+  {
+    return boost::shared_ptr<StateMapping>(new StateMappingLinear());
   }
 private:
+  std::string map_name;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
 }
 
-FP_EXPORT_KEY(Mapping);
+FP_EXPORT_KEY(StateMappingLinear);
 #endif

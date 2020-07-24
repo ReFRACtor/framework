@@ -1,30 +1,30 @@
-#ifndef MAPPING_OFFSET_H
-#define MAPPING_OFFSET_H
+#ifndef STATE_MAPPING_OFFSET_H
+#define STATE_MAPPING_OFFSET_H
 
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a offset for the retrieval view while
   applying that offset to get the forward model view.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for StateMapping class.
 *******************************************************************/
 
-class MappingOffset : public Mapping {
+class StateMappingOffset : public StateMapping {
 public:
   //-----------------------------------------------------------------------
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  MappingOffset(double Offset, blitz::Array<double, 1> Offsetee)
+  StateMappingOffset(double Offset, blitz::Array<double, 1> Offsetee)
     : map_name("offset"), initial_offset_(Offset), offsetee_(Offsetee) {};
 
-  virtual ~MappingOffset() {};
+  virtual ~StateMappingOffset() {};
 
   double initial_offset() const { return initial_offset_; }
   const blitz::Array<double, 1>& offsetee() const { return offsetee_;}
@@ -45,22 +45,21 @@ public:
 
   virtual std::string name() const { return map_name; }
 
-  virtual boost::shared_ptr<Mapping> clone() const
+  virtual boost::shared_ptr<StateMapping> clone() const
   {
-    return boost::shared_ptr<Mapping>(new MappingOffset(initial_offset_,
-							offsetee_));
+    return boost::shared_ptr<StateMapping>(new StateMappingOffset(initial_offset_, offsetee_));
   }
 
 private:
   std::string map_name;
   double initial_offset_;
   blitz::Array<double, 1> offsetee_; // values being offset
-  MappingOffset() {}
+  StateMappingOffset() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
 }
 
-FP_EXPORT_KEY(MappingOffset);
+FP_EXPORT_KEY(StateMappingOffset);
 #endif

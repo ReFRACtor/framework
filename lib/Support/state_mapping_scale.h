@@ -1,29 +1,29 @@
-#ifndef MAPPING_SCALE_H
-#define MAPPING_SCALE_H
+#ifndef STATE_MAPPING_SCALE_H
+#define STATE_MAPPING_SCALE_H
 
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a scale factor for the retrieval view
   while applying that scale factor to get the forward model view.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for StateMapping class.
 *******************************************************************/
-class MappingScale : public Mapping  {
+class StateMappingScale : public StateMapping  {
 public:
   //-----------------------------------------------------------------------
   /// Constructor.
   //-----------------------------------------------------------------------
 
-  MappingScale(double Scale, blitz::Array<double, 1> Scalee)
+  StateMappingScale(double Scale, blitz::Array<double, 1> Scalee)
     : map_name("scale"), initial_scale_factor_(Scale), scalee_(Scalee) {}
 
-  virtual ~MappingScale() {}
+  virtual ~StateMappingScale() {}
   double initial_scale_factor() const { return initial_scale_factor_; }
   const blitz::Array<double, 1>& scalee() const { return scalee_;}
 
@@ -44,23 +44,21 @@ public:
 
   virtual std::string name() const { return map_name; }
 
-  virtual boost::shared_ptr<Mapping> clone() const
+  virtual boost::shared_ptr<StateMapping> clone() const
   {
-    return boost::shared_ptr<Mapping>(new MappingScale(initial_scale_factor_,
-						       scalee_));
+    return boost::shared_ptr<StateMapping>(new StateMappingScale(initial_scale_factor_, scalee_));
   }
 private:
   std::string map_name;
   double initial_scale_factor_;
-  blitz::Array<double, 1> scalee_; // values being scaled by scale
-				  // factor
-  MappingScale() {}
+  blitz::Array<double, 1> scalee_; // values being scaled by scale factor
+  StateMappingScale() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
 }
 
-FP_EXPORT_KEY(MappingScale);
+FP_EXPORT_KEY(StateMappingScale);
 
 #endif

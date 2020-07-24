@@ -1,22 +1,22 @@
 %include "fp_common.i"
 
 %{
-#include "mapping_gaussian.h"
+#include "state_mapping_gaussian.h"
 %}
 
-%base_import(mapping)
+%base_import(state_mapping)
 %import "array_ad.i"
 %import "pressure.i"
-%fp_shared_ptr(FullPhysics::MappingGaussian);
+%fp_shared_ptr(FullPhysics::StateMappingGaussian);
 
 
 namespace FullPhysics {
 
-class MappingGaussian : public Mapping  {
+class StateMappingGaussian : public StateMapping  {
 public:
-  MappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD,
-		  double Min_Desired = 1e-9);
-  virtual boost::shared_ptr<Mapping> clone();
+  StateMappingGaussian(const boost::shared_ptr<Pressure>& in_press, bool Linear_AOD,
+                       double Min_Desired = 1e-9);
+  virtual boost::shared_ptr<StateMapping> clone();
   %python_attribute(is_linear_total, bool);
   %python_attribute(min_desired, double);
   %python_attribute(pressure, boost::shared_ptr<Pressure>);

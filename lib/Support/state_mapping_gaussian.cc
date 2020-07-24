@@ -1,19 +1,19 @@
-#include "mapping_gaussian.h"
+#include "state_mapping_gaussian.h"
 #include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void MappingGaussian::serialize(Archive& ar,
+void StateMappingGaussian::serialize(Archive& ar,
 			 const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Mapping)
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateMapping)
     & FP_NVP(map_name) & FP_NVP_(min_desired) & FP_NVP(linear_total)
     & FP_NVP(press);
 }
 
-FP_IMPLEMENT(MappingGaussian);
+FP_IMPLEMENT(StateMappingGaussian);
 #endif
 
   
@@ -25,7 +25,7 @@ FP_IMPLEMENT(MappingGaussian);
 ///   logarithmic space if false.
 //-----------------------------------------------------------------------
 
-MappingGaussian::MappingGaussian
+StateMappingGaussian::StateMappingGaussian
 (const boost::shared_ptr<Pressure>& in_press,
  bool Linear_Total,
  double Min_Desired)
@@ -41,7 +41,7 @@ MappingGaussian::MappingGaussian
 /// Total aerosol optical depth of the extinction values in component.
 //-----------------------------------------------------------------------
 
-AutoDerivative<double> MappingGaussian::total_optical_depth
+AutoDerivative<double> StateMappingGaussian::total_optical_depth
 (ArrayAd<double, 1> component) const
 {
   ArrayAd<double, 1> pressure_grid = press->pressure_grid().value;
@@ -59,7 +59,7 @@ AutoDerivative<double> MappingGaussian::total_optical_depth
 /// Calculation of forward model view of coeffs with mapping applied
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> MappingGaussian::fm_view
+ArrayAd<double, 1> StateMappingGaussian::fm_view
 (const ArrayAd<double, 1>& updated_coeff) const
 {
   ArrayAd<double, 1> component(press->number_level(),

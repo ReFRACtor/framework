@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 %include "fp_common.i"
 %{
 #include "sub_state_vector_array.h"
@@ -101,12 +98,12 @@ public:
               const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
               bool Mark_according_to_press = true,
               int Pdep_start = 0,
-              boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+              boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
     void init(double Coeff, bool Used_flag,
-	      const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-	      bool Mark_according_to_press = true,
-	      int Pdep_start = 0,
-	      boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
+              bool Mark_according_to_press = true,
+              int Pdep_start = 0,
+              boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 
   // Functions from Absorber base class, see note above.
   virtual int number_species() const;
@@ -121,23 +118,23 @@ public:
   virtual boost::shared_ptr<Absorber> clone() const = 0;
   virtual void notify_update(const StateVector& Sv);
   virtual void mark_used(const StateVector& Sv, 
-			 blitz::Array<bool, 1>& Used) const;
+                         blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
-			  blitz::Array<std::string, 1>& Sv_name) const;
+                                 blitz::Array<std::string, 1>& Sv_name) const;
   virtual void notify_add(StateVector& Observed_object);
   virtual void notify_remove(StateVector& Observed_object);
 
   void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press =
-	    boost::shared_ptr<Pressure>());
+            const blitz::Array<bool, 1>& Used_flag,
+            const boost::shared_ptr<Pressure>& Press =
+            boost::shared_ptr<Pressure>());
   void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   virtual std::string state_vector_name_i(int i) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) 
     const;
   
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub,
-				const blitz::Array<double, 2>& Cov);
+                                const blitz::Array<double, 2>& Cov);
   virtual void update_sub_state_hook();
   ArrayAd<double, 1> coefficient() const;
   blitz::Array<bool, 1> used_flag_value() const;
