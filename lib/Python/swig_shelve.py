@@ -13,7 +13,7 @@ import sys
 
 # This is python 3 only, but our code already requires that so no problem
 
-from collections import MutableMapping as DictMixin
+from collections.abc import MutableMapping as DictMixin
 
 import pickle
 import sqlite3
@@ -32,8 +32,7 @@ except ImportError:
 def to_db_type(value):
     """If value's type is supported natively in SQLite, return value.
     Otherwise, return a pickled representation. """
-    if value is None or isinstance(value, (int, int, float,
-                                           str, bytes)):
+    if value is None or isinstance(value, (int, int, float, bytes, str)):
         return value
     else:
         # Note the types really are different for python 2 vs. 3. This is 
@@ -56,14 +55,16 @@ def from_db_type(value):
 
 def read_shelve(f):
     '''This handles reading a value from a shelve file. The string f should
-    be of the form file_name:key, file_name.xml, or file_name.json. We 
+    be of the form file_name:key, file_name.xml, file_name.bin, 
+    or file_name.json. We 
     open the given file, and read the value for the given key.
 
     A problem with the python shelve/pickle files is that it can't
     communicate directly with a C++ program, and also the files aren't
     human readable or portable.  So we also support xml files, we key
     off of the file name and if it is something like "foo.xml" we read
-    that rather than a shelve file.
+    that rather than a shelve file. "foo.bin" is the binary version of
+    of the serialized data.
 
     We also support files with the extension "foo.json" as json pickle
     files. This doesn't have any additional functionality over the
@@ -75,7 +76,7 @@ def read_shelve(f):
     a shelve file, e.g., we are using python modules not already 
     included in AFIDS. If the special key "_extra_python_init" is 
     found, we execute the code found there. This can do things like 
-    import modules. For xml and json files, we look for the file 
+    import modules. For xml, bin and json files, we look for the file 
     "extra_python_init.py" found in the same directory.
 
     Because we often use relative names for files, we first chdir to 
@@ -146,7 +147,7 @@ def write_shelve(f, val):
 
     A problem with the shelve files is that it can't communicate directly 
     with a C++ program, and also the files aren't human readable or portable.
-    So we also support xml files, we key off of the file name and if it 
+    So we also support xml and bin files, we key off of the file name and if it 
     is something like "foo.xml" we write that rather than a shelve file.
     '''
     if(os.path.splitext(f)[1] == ".xml"):
