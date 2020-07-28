@@ -77,16 +77,12 @@ protected:
    const blitz::Array<double, 1>& Coeff, 
    const blitz::Array<bool, 1>& Used_flag,
    const boost::shared_ptr<Pressure>& Press,
-   bool Mark_according_to_press = true,
-   int Pdep_start = 0,
    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     cache_stale = true;
     gas_name_ = Gas_name;
-    SubStateVectorArray<AbsorberVmr>::init(Coeff, Used_flag, Press,
-                                           Mark_according_to_press,
-                                           Pdep_start,
-                                           in_map);
+    press = Press;
+    SubStateVectorArray<AbsorberVmr>::init(Coeff, Used_flag, in_map);
   }
 
 //-----------------------------------------------------------------------
@@ -98,21 +94,18 @@ protected:
 
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient() and used_flag() values.
-/// See SubStateVectorArray for a discussion of Mark_according_to_press and
-/// Pdep_start.
 //-----------------------------------------------------------------------
   AbsorberVmrImpBase(const std::string& Gas_name,
                      const blitz::Array<double, 1>& Coeff, 
                      const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<Pressure>& Press,
-                     bool Mark_according_to_press = true,
-                     int Pdep_start = 0,
                      boost::shared_ptr<StateMapping> in_map =
                      boost::make_shared<StateMappingLinear>())
   {
-    init(Gas_name, Coeff, Used_flag, Press, Mark_according_to_press,
-         Pdep_start, in_map);
+    init(Gas_name, Coeff, Used_flag, Press, in_map);
   }
+protected:
+  boost::shared_ptr<Pressure> press;
 private:
   void fill_cache() const
   {

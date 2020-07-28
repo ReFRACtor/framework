@@ -62,8 +62,7 @@ AutoDerivative<double> StateMappingGaussian::total_optical_depth
 ArrayAd<double, 1> StateMappingGaussian::fm_view
 (const ArrayAd<double, 1>& updated_coeff) const
 {
-  ArrayAd<double, 1> component(press->number_level(),
-			       updated_coeff.number_variable());
+  ArrayAd<double, 1> component(press->number_level(), updated_coeff.number_variable());
   AutoDerivative<double> desired_val;
   
   if (linear_total)
@@ -93,13 +92,13 @@ ArrayAd<double, 1> StateMappingGaussian::fm_view
     for(int lev = 0; lev < component.rows(); lev++) {
       AutoDerivative<double> p = pressure_grid(lev) / surface_press;
       AutoDerivative<double> g_eval =
-	std::exp( -1 * (p - p0) * (p - p0) / (2 * sigma * sigma) );
+        std::exp( -1 * (p - p0) * (p - p0) / (2 * sigma * sigma) );
 
       // Because its not that easy to init ArrayAd from python to 0.0
       if (g_idx == 0) {
-	component(lev) = g_eval;
+        component(lev) = g_eval;
       } else {
-	component(lev) = component(lev) + g_eval;
+        component(lev) = component(lev) + g_eval;
       }
     }
   }
@@ -111,12 +110,8 @@ ArrayAd<double, 1> StateMappingGaussian::fm_view
     scaling_N = desired_val / total_optical_depth(component);
   else
     scaling_N = 0.0;
-	
+
   for(int lev = 0; lev < component.rows(); lev++)
     component(lev) = component(lev) * scaling_N;
   return component;
 }
-
-
-
-

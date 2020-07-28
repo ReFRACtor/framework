@@ -227,62 +227,6 @@ class TestStateVector(BaseForTesting):
         assert s1.state == approx(s2.state)
         assert s1.state_covariance == approx(s2.state_covariance)
 
-class TestPressureLevelInput(BaseForTesting):
-    def create(self):
-        return PressureLevelInput([1,2,3])
-
-    def check(self, p1, p2):
-        assert p1.pressure_level == approx(p2.pressure_level)
-
-class TestPressureFixedLevel(BaseForTesting):
-    def create(self):
-        self.t = TestPressureLevelInput()
-        return PressureFixedLevel(True, self.t.create(), 3)
-    
-    def check(self, p1, p2):
-        assert p1.pressure_grid == approx(p2.pressure_grid)
-
-class TestTemperatureFixedLevel(BaseForTesting):
-    def create(self):
-        self.t = TestPressureLevelInput()
-        self.t2 = TestPressureFixedLevel()
-        return TemperatureFixedLevel([True,True,False],False,[10,11,12],
-                                     0, self.t2.create(), self.t.create())
-
-    def check(self, temp1, temp2):
-        pres = self.t2.create()
-        assert temp1.temperature_grid(pres) == approx(temp2.temperature_grid(pres))
-
-class TestAbsorberVmrFixedLevel(BaseForTesting):
-    def create(self):
-        self.t = TestPressureLevelInput()
-        self.t2 = TestPressureFixedLevel()
-        return AbsorberVmrFixedLevel(self.t2.create(),
-                                     self.t.create(),
-                                     [True,True,False],[10,11,12],"Fred")
-
-    def check(self, a1, a2):
-        assert a1.gas_name == a2.gas_name
-        assert (a1.volume_mixing_ratio_level ==
-                approx(a2.volume_mixing_ratio_level))
-        press = self.t2.create()
-        assert a1.vmr_grid(press) == approx(a2.vmr_grid(press))
-
-class TestAbsorberVmrFixedLevelScaled(BaseForTesting):
-    def create(self):
-        self.t = TestPressureLevelInput()
-        self.t2 = TestPressureFixedLevel()
-        return AbsorberVmrFixedLevelScaled(self.t2.create(),
-                                           self.t.create(),
-                                           [10,11,12], True,
-                                           1.5, "Fred")
-
-    def check(self, a1, a2):
-        assert a1.gas_name == a2.gas_name
-        assert a1.scale_factor == approx(a2.scale_factor)
-        press = self.t2.create()
-        assert a1.vmr_grid(press) == approx(a2.vmr_grid(press))
-
 class TestExampleLevelL1b(BaseForTesting):
     def create(self):
         self.t = TestHdfFile()

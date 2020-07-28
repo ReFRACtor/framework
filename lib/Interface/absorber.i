@@ -96,14 +96,8 @@ public:
   SubStateVectorArray<FullPhysics::Absorber>();
     void init(const blitz::Array<double, 1>& Coeff, 
               const blitz::Array<bool, 1>& Used_flag,
-              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-              bool Mark_according_to_press = true,
-              int Pdep_start = 0,
               boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
     void init(double Coeff, bool Used_flag,
-              const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-              bool Mark_according_to_press = true,
-              int Pdep_start = 0,
               boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 
   // Functions from Absorber base class, see note above.
@@ -135,7 +129,6 @@ public:
   virtual void update_sub_state_hook();
   ArrayAd<double, 1> coefficient() const;
   blitz::Array<bool, 1> used_flag_value() const;
-  boost::shared_ptr<Pressure> pressure() const;
 };
 
 }

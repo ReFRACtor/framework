@@ -36,10 +36,7 @@ public:
                          const std::string& Aerosol_name,
                          boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
-    bool Mark_according_to_press = false;
-    int Pdep_start = 0;
-    init(Aerosol_name, Aext, Flag, Press, Mark_according_to_press,
-                               Pdep_start, in_map);
+    init(Aerosol_name, Aext, Flag, Press, in_map);
   }
   virtual ~AerosolExtinctionLevel() {}
 

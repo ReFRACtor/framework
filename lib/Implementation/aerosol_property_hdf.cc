@@ -10,6 +10,7 @@ void AerosolPropertyHdf::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolPropertyImpBase)
+    & FP_NVP(press)
     & FP_NVP(qext) & FP_NVP(qscat) & FP_NVP(pf) & FP_NVP(hdf_file)
     & FP_NVP(hdf_group);
 }
