@@ -8,14 +8,14 @@ class Linear(Creator):
     '''Creator for Linear or "one-to-one" mapping'''
 
     def create(self, **kwargs):
-        return rf.MappingLinear()
+        return rf.StateMappingLinear()
 
 
 class Log(Creator):
     '''Creator for Log mapping'''
 
     def create(self, **kwargs):
-        return rf.MappingLog()
+        return rf.StateMappingLog()
 
 
 class Offset(Creator):
@@ -25,7 +25,7 @@ class Offset(Creator):
     offsetee = param.Array(dims=1)
 
     def create(self, **kwargs):
-        return rf.MappingOffset(self.offset(), self.offsetee())
+        return rf.StateMappingOffset(self.offset(), self.offsetee())
 
 
 class Scale(Creator):
@@ -35,7 +35,7 @@ class Scale(Creator):
     scalee = param.Array(dims=1)
 
     def create(self, **kwargs):
-        return rf.MappingScale(self.scaling(), self.scalee())
+        return rf.StateMappingScale(self.scaling(), self.scalee())
 
 
 class Gaussian(Creator):
@@ -44,5 +44,5 @@ class Gaussian(Creator):
     linear_aod = param.Scalar(bool, default=True)
 
     def create(self, **kwargs):
-        return rf.MappingGaussian(self.pressure(), self.linear_aod())
+        return rf.StateMappingGaussian(self.pressure(), self.linear_aod())
 
