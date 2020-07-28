@@ -65,7 +65,7 @@ class AerosolProfileExtinction(CreatorFlaggedValue):
 
     # Callers should specify either log_retrieval or mapping; not both
     log_retrieval = param.Scalar(bool, required=False)
-    mapping = param.InstanceOf(rf.Mapping, required=False)
+    mapping = param.InstanceOf(rf.StateMapping, required=False)
 
     def create(self, aerosol_name=None, **kwargs):
 
@@ -73,13 +73,13 @@ class AerosolProfileExtinction(CreatorFlaggedValue):
             raise param.ParamError("Specifying both log_retrieval and mapping is ambiguous")
         elif self.log_retrieval() is not None:
             if self.log_retrieval():
-                effective_mapping = rf.MappingLog()
+                effective_mapping = rf.StateMappingLog()
             else:
-                effective_mapping = rf.MappingLinear()
+                effective_mapping = rf.StateMappingLinear()
         elif self.mapping() is not None:
             effective_mapping = self.mapping()
         else:
-            effective_mapping = rf.MappingLinear()
+            effective_mapping = rf.StateMappingLinear()
 
         return rf.AerosolExtinctionLevel(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, effective_mapping)
 
