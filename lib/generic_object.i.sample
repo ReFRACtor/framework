@@ -38,5 +38,7 @@ public:
 };
 }
 
+%template(vector_GenericObject) std::vector<boost::shared_ptr<GeoCal::GenericObject> >;
+
 // List of things "import *" will include
 %python_export("GenericObject")
