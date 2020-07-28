@@ -22,7 +22,7 @@ public:
   %python_attribute(num_channels, virtual int)
   virtual SpectralDomain spectral_domain(int channel_index) const;
   virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;
-  
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
 };
 }
 

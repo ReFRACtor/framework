@@ -126,6 +126,8 @@ public:
 
   void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
 
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const;
 private:
   std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > spec_effect;
   boost::shared_ptr<Instrument> inst;

@@ -142,3 +142,20 @@ void StandardForwardModel::print(std::ostream& Os) const
         opad.strict_sync();
     }
 }
+
+std::vector<boost::shared_ptr<GenericObject> >
+StandardForwardModel::subobject_list() const
+{ std::vector<boost::shared_ptr<GenericObject> > res;
+  BOOST_FOREACH(auto i, spec_effect) {
+    BOOST_FOREACH(auto j, i) {
+      res.push_back(j);
+    }
+  }
+  res.push_back(inst);
+  res.push_back(swin);
+  res.push_back(rt);
+  res.push_back(spectrum_sampling_);
+  res.push_back(g);
+  return res;
+}
+  
