@@ -11,7 +11,8 @@ template<class Archive>
 void TemperatureImpBase::serialize(Archive & ar,
 				const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayTemperature);
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayTemperature)
+    & FP_NVP(press);
 }
 
 FP_IMPLEMENT(TemperatureImpBase);

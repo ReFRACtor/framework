@@ -9,7 +9,7 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void TemperatureOffset::serialize(Archive& ar,
-			 const unsigned int UNUSED(version))
+                                  const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TemperatureImpBase);
 }
@@ -28,14 +28,14 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 TemperatureOffset::TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
-				     double Temp_offset,
-				     bool Temp_flag)
+                                     double Temp_offset,
+                                     bool Temp_flag)
 {
   Array<bool, 1> flag(1);
   Array<double, 1> val(flag.shape());
   flag(0) = Temp_flag;
   val(0) = Temp_offset;
-  init(val, flag, Press, false);
+  init(val, flag, Press);
 }
 
 //-----------------------------------------------------------------------
@@ -52,9 +52,9 @@ void TemperatureOffset::calc_temperature_grid() const
   if (press_profile.rows() != temp_profile.rows()) {
     std::stringstream err_msg;
     err_msg << "Size of pressure grid: "
-	    << press_profile.rows()
-	    << " != size of temperature levels: "
-	    << temp_profile.rows();
+            << press_profile.rows()
+            << " != size of temperature levels: "
+            << temp_profile.rows();
     throw Exception(err_msg.str());
   }
   for(int i = 0; i < press_profile.rows(); ++i) {

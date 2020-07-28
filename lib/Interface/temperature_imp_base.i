@@ -49,10 +49,8 @@ protected:
   mutable boost::function<AutoDerivative<double>(const AutoDerivative<double>&)> tgrid;
   virtual void calc_temperature_grid() const = 0;
   TemperatureImpBase(const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-	             int Pdep_start = 0);
+                     const blitz::Array<bool, 1>& Used_flag,
+                     const boost::shared_ptr<Pressure>& Press);
 };
 }
 

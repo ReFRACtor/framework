@@ -42,7 +42,7 @@ public:
     /// units of Pascals
     //-----------------------------------------------------------------------
     virtual blitz::Array<double, 1> pressure_profile() const
-    { return press->pressure_grid().value.value(); }
+    { return pressure->pressure_grid().value.value(); }
 
     virtual ArrayWithUnit<double, 1> important_pressure_level() const
     {
@@ -51,6 +51,7 @@ public:
 protected:
     void calc_temperature_grid() const;
 private:
+    boost::shared_ptr<Pressure> pressure;
 };
 }
 #endif

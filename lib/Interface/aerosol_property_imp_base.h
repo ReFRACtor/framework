@@ -98,11 +98,9 @@ protected:
 
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient() and used_flag() values.
-/// See SubStateVectorArray for a discussion of Mark_according_to_press and
-/// Pdep_start.
 //-----------------------------------------------------------------------
   AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff, 
-			 const blitz::Array<bool, 1>& Used_flag)
+                         const blitz::Array<bool, 1>& Used_flag)
   {
     SubStateVectorArray<AerosolProperty>::init(Coeff, Used_flag);
   }

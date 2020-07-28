@@ -1784,22 +1784,6 @@ function ConfigCommon.atmosphere_oco:add_to_statevector(sv)
 end
 
 ------------------------------------------------------------
---- Create pressure with the fixed levels, retrieving surface
---- pressure and initial guess.
---- 
---- This also has the side effect of creating config.pinp which
---- can then be used by other classes.
-------------------------------------------------------------
-
-ConfigCommon.pressure_fixed_level = CreatorApriori:new {}
-
-function ConfigCommon.pressure_fixed_level:create()
-   self.config.pinp = PressureLevelInput(self:pressure_levels())
-   return PressureFixedLevel(self:retrieval_flag()(0), self.config.pinp, 
-                             self:apriori()(0))
-end
-
-------------------------------------------------------------
 --- Create pressure with the sigma levels, retrieving surface
 --- pressure and initial guess.
 ------------------------------------------------------------
@@ -1822,46 +1806,6 @@ ConfigCommon.pressure_sigma_profile = CreatorApriori:new {}
 function ConfigCommon.pressure_sigma_profile:create()
    return PressureSigma(self:pressure_levels(), self:apriori()(0),
                         self:retrieval_flag()(0))
-end
-
-------------------------------------------------------------
---- Temperature at fixed levels, where we just fit for the
---- offset.
-------------------------------------------------------------
-
-ConfigCommon.temperature_fixed_level = Creator:new {}
-
-function ConfigCommon.temperature_fixed_level:retrieval_flag()
-   flag = Blitz_bool_array_1d(1)
-
-   if self.retrieved ~= nil then
-      flag:set(Range.all(), self.retrieved)
-   else
-      flag:set(Range.all(), true)
-   end
-
-   return flag
-end
-
-function ConfigCommon.temperature_fixed_level:create()
-   self.levels.config = self.config
-   self.offset.config = self.config
-   local tlev = self.levels:apriori()
-   local toff = self.offset:apriori()(0)
-   local flag_temp = Blitz_bool_array_1d(tlev:rows())
-   flag_temp:set(Range.all(), false)
-   local flag_offset = self:retrieval_flag()(0)
-   return TemperatureFixedLevel(flag_temp, flag_offset, tlev, toff, 
-                                self.config.pressure, self.config.pinp)
-end
-
-function ConfigCommon.temperature_fixed_level:initial_guess()
-   local ig = InitialGuessValue()
-   self.offset.config = self.config
-   ig:apriori_subset(self:retrieval_flag(), self.offset:apriori())
-   ig:apriori_covariance_subset(self:retrieval_flag(), self.offset:covariance())
-
-   return ig
 end
 
 ------------------------------------------------------------
@@ -2713,20 +2657,6 @@ function CreatorVmr:create()
 end
 
 ------------------------------------------------------------
---- Create an absorber fixed level, where we fit for all the
---- VMR levels
-------------------------------------------------------------
-
-ConfigCommon.vmr_fixed_level = CreatorVmr:new()
-
-function ConfigCommon.vmr_fixed_level:create_vmr()
-   self.vmr = AbsorberVmrFixedLevel(self.config.pressure, self.config.pinp,
-                                    self:retrieval_flag(), self:apriori_v(), 
-                                    self.name)
-   return self.vmr
-end
-
-------------------------------------------------------------
 --- Create an absorber level, where we fit for all the
 --- VMR levels
 ------------------------------------------------------------
@@ -2736,34 +2666,6 @@ ConfigCommon.vmr_level = CreatorVmr:new()
 function ConfigCommon.vmr_level:create_vmr()
    self.vmr = AbsorberVmrLevel(self.config.pressure, self:apriori_v(), 
                                self:retrieval_flag(), self.name)
-   return self.vmr
-end
-
-------------------------------------------------------------
---- Create an absorber fixed level, where we hold all the
---- fit for a scale.
-------------------------------------------------------------
-
-ConfigCommon.vmr_fixed_level_scaled = CreatorVmr:new()
-
-function ConfigCommon.vmr_fixed_level_scaled:apriori_v()
-   local r = Blitz_double_array_1d(1)
-   r:set(0, function_or_simple_value(self.scale_apriori, self))
-   return r
-end
-
-function ConfigCommon.vmr_fixed_level_scaled:covariance_v()
-   local r = Blitz_double_array_2d(1, 1)
-   r:set(0, 0, function_or_simple_value(self.scale_cov, self))
-   return r
-end
-
-function ConfigCommon.vmr_fixed_level_scaled:create_vmr()
-   self.vmr = AbsorberVmrFixedLevelScaled(self.config.pressure,
-                                          self.config.pinp, 
-                                          self:apriori(),
-                                          self:retrieval_flag()(0),
-                                          function_or_simple_value(self.scale_apriori, self), self.name)
    return self.vmr
 end
 
@@ -2822,23 +2724,6 @@ function ConfigCommon.vmr_level_scaled:create_vmr()
 end
 
 ------------------------------------------------------------
---- Create an absorber fixed level, where we hold all the
---- VMR levels constant
-------------------------------------------------------------
-
-ConfigCommon.vmr_fixed_level_constant = ConfigCommon.vmr_fixed_level:new()
-
-function ConfigCommon.vmr_fixed_level_constant:retrieval_flag()
-   local res = Blitz_bool_array_1d(self:apriori_v():rows())
-   res:set(Range.all(), false)
-   return res
-end
-
-function ConfigCommon.vmr_fixed_level_constant:initial_guess()
-   return CompositeInitialGuess()
-end
-
-------------------------------------------------------------
 --- Create an absorber level, where we hold all the
 --- VMR levels constant
 ------------------------------------------------------------
@@ -2864,24 +2749,6 @@ end
 ConfigCommon.vmr_level_constant_well_mixed = ConfigCommon.vmr_level_constant:new()
 
 function ConfigCommon.vmr_level_constant_well_mixed:apriori_v()
-   --- It doesn't really matter the size of the profile since
-   --- all levels will have the same value. But just make this
-   --- profile consistent with all others.
-   const_val = self:apriori(self.name)
-   local const_arr = Blitz_double_array_1d(self.config.pressure:max_number_level())
-   const_arr:set(Range(), const_val(0))
-   return const_arr
-end
-
-------------------------------------------------------------
---- Create an absorber fixed level, where we hold all the
---- VMR levels constant AND the gas is well mixed
---- meaning that all levels have the same value
-------------------------------------------------------------
-
-ConfigCommon.vmr_fixed_level_constant_well_mixed = ConfigCommon.vmr_fixed_level_constant:new()
-
-function ConfigCommon.vmr_fixed_level_constant_well_mixed:apriori_v()
    --- It doesn't really matter the size of the profile since
    --- all levels will have the same value. But just make this
    --- profile consistent with all others.

@@ -23,7 +23,7 @@ boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone() const
 {
   return boost::shared_ptr<AerosolExtinction>
     (new AerosolExtinctionLevel(press->clone(), used_flag, coeff.value(),
-				 aerosol_name(), mapping->clone()));
+                                aerosol_name(), mapping->clone()));
 }
 
 void AerosolExtinctionLevel::calc_aerosol_extinction() const

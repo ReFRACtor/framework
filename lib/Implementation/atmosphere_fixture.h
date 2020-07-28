@@ -2,7 +2,6 @@
 #define ATMOSPHERE_FIXTURE_H
 #include "configuration_fixture.h"
 #include "atmosphere_standard.h"
-#include "pressure_level_input.h"
 #include "state_vector.h"
 
 namespace FullPhysics {
@@ -26,9 +25,6 @@ public:
 
   /// Atmosphere read from ConfigurationFixture
   boost::shared_ptr<AtmosphereStandard> atm;
-
-  /// Pressure levels we have input data on.
-  boost::shared_ptr<PressureLevelInput> press_level;
 
   /// Helper routine for initializing an Atmosphere in such a way that jacobians are set up and linked to a StateVector
   void attach_atmosphere_to_sv(boost::shared_ptr<AtmosphereStandard>& atmosphere, boost::shared_ptr<StateVector>& state_vector);
