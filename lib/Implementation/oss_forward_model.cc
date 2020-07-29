@@ -48,9 +48,9 @@ void OssForwardModel::setup_grid() {
             ch_sel_file, num_vert_lev, num_surf_points, min_extinct_cld, channel_domains, max_chans);
     oss_master = boost::make_shared<OssMasters>(fixed_inputs);
     oss_master->init();
-    center_spectral_point.units = oss_master->fixed_outputs->center_spectral_point.units;
-    center_spectral_point.value.resize(oss_master->fixed_outputs->center_spectral_point.value.rows());
-    center_spectral_point.value = cast<double>(oss_master->fixed_outputs->center_spectral_point.value);
+    center_spectral_point.units = oss_master->fixed_outputs->full_spectral_point.units;
+    center_spectral_point.value.resize(oss_master->fixed_outputs->full_spectral_point.value.rows());
+    center_spectral_point.value = cast<double>(oss_master->fixed_outputs->full_spectral_point.value);
     is_setup = true;
 
 }

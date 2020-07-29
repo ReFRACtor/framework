@@ -11,6 +11,7 @@
 #include "array_with_unit.h"
 #include "float_with_unit.h"
 #include "string_vector_to_char.h"
+#include "spectral_domain.h"
 
 extern "C" {
 void cppinitwrapper(int &, int &, char *, int &, int &, char *, const char *,
@@ -18,18 +19,18 @@ void cppinitwrapper(int &, int &, char *, int &, int &, char *, const char *,
         const char *, int &, int &, int &, float &, int &, float *,
         const int &);
 
+void cppdestrwrapper(void);
+
 void cppfwdwrapper(int &, int &, float *, float *, float &, float *, int &,
         float *, float *, float &, float &, int &, float *, float *, float *,
         float &, float &, float &, float &, int &, int &, int &, float *,
         float *, float *, float *, float *, float *, float *, float *);
-}
 
-extern "C" {
-  void cpploadchanselect(int &, int *, int &);
-}
+void cpploadchanselect(int &, int *, int &);
 
-extern "C" {
-  void cppsetchanselect(int &);
+void cppsetchanselect(int &);
+
+void cppgetcountchannel(int &, int &);
 }
 
 namespace FullPhysics {
@@ -73,15 +74,16 @@ public:
 class OssFixedOutputs: public virtual GenericObject {
 public:
     OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point) :
-            num_chan(Num_chan), center_spectral_point(Center_spectral_point, Unit("Wavenumbers")) {
+            num_chan(Num_chan), full_spectral_point(Center_spectral_point, Unit("Wavenumbers")) {
     }
 
     OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point) :
-            num_chan(Num_chan), center_spectral_point(Center_spectral_point) {
+            num_chan(Num_chan), full_spectral_point(Center_spectral_point) {
     }
 
     int num_chan; ///< Number of channels available in OSS RTM
-    ArrayWithUnit<float, 1> center_spectral_point; //< Center spectral points of channels (cm−1)
+    ArrayWithUnit<float, 1> full_spectral_point; //< Full central spectral points across sensors (cm−1)
+    std::vector<ArrayWithUnit<float, 1>> sensor_spectral_point; //< Per sensor spectral points  (cm−1)
 };
 
 /****************************************************************//**
@@ -181,8 +183,8 @@ public:
 class OssMasters: public virtual GenericObject {
 public:
     OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs) : fixed_inputs(Fixed_inputs) {}
-
-    void init();
+    ~OssMasters() { cppdestrwrapper(); }
+    void init(double spec_domain_tolerance=0.001);
     boost::shared_ptr<OssModifiedOutputs> run_fwd_model(int Channel_index,
             boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 

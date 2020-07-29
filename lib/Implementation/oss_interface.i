@@ -113,8 +113,8 @@ public:
 class OssMasters: public virtual GenericObject {
 public:
     OssMasters(boost::shared_ptr<OssFixedInputs> Fixed_inputs);
-
-    void init();
+    ~OssMasters();
+    void init(double spec_domain_tolerance=0.001);
     boost::shared_ptr<OssModifiedOutputs> run_fwd_model(int Channel_index,
         boost::shared_ptr<OssModifiedInputs> Modified_inputs);
 
