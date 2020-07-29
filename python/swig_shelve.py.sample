@@ -98,7 +98,7 @@ def read_shelve(f):
         if(os.path.splitext(f)[1] == ".bin"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
-            return geocal_swig.serialize_read_binary_generic(bytearray(fb.encode("utf-8")))
+            return geocal_swig.serialize_read_binary_generic(fb)
         if(os.path.splitext(f)[1] == ".json"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
@@ -155,7 +155,7 @@ def write_shelve(f, val):
         geocal_swig.serialize_write(f, val)
         return
     if(os.path.splitext(f)[1] == ".bin"):
-        geocal_swig.serialize_write_binary(bytearray(f.encode("utf-8")), val)
+        geocal_swig.serialize_write_binary(f, val)
         return
     if(os.path.splitext(f)[1] == ".json"):
         if(have_jsonpickle):
