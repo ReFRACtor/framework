@@ -126,24 +126,24 @@ class TestHdfFile(BaseForTesting):
         assert (h1.read_double_3d("/Level1b/stokes_coefficient") ==
                 approx(h2.read_double_3d("/Level1b/stokes_coefficient")))
 
-class TestMappingLinear(BaseForTesting):
+class TestStateMappingLinear(BaseForTesting):
     def create(self):
-        return MappingLinear()
+        return StateMappingLinear()
 
     def check(self, m1, m2):
         assert m1.name == m2.name
 
-class TestMappingLog(BaseForTesting):
+class TestStateMappingLog(BaseForTesting):
     def create(self):
-        return MappingLog()
+        return StateMappingLog()
 
     def check(self, m1, m2):
         assert m1.name == m2.name
 
-class TestMappingGaussian(BaseForTesting):
+class TestStateMappingGaussian(BaseForTesting):
     def create(self):
         self.t = TestPressureSigma()
-        return MappingGaussian(self.t.create(), True, 1e-10)
+        return StateMappingGaussian(self.t.create(), True, 1e-10)
 
     def check(self, m1, m2):
         self.t.check(m1.pressure, m2.pressure)
@@ -151,18 +151,18 @@ class TestMappingGaussian(BaseForTesting):
         assert m1.is_linear_total == m2.is_linear_total
         assert m1.min_desired == approx(m2.min_desired)
 
-class TestMappingOffset(BaseForTesting):
+class TestStateMappingOffset(BaseForTesting):
     def create(self):
-        return MappingOffset(1.0, [2, 3, 4])
+        return StateMappingOffset(1.0, [2, 3, 4])
 
     def check(self, m1, m2):
         assert m1.name == m2.name
         assert m1.initial_offset == approx(m2.initial_offset)
         assert m1.offsetee == approx(m2.offsetee)
 
-class TestMappingScale(BaseForTesting):
+class TestStateMappingScale(BaseForTesting):
     def create(self):
-        return MappingScale(1.0, [2, 3, 4])
+        return StateMappingScale(1.0, [2, 3, 4])
 
     def check(self, m1, m2):
         assert m1.name == m2.name
