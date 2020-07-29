@@ -73,12 +73,12 @@ public:
  *******************************************************************/
 class OssFixedOutputs: public virtual GenericObject {
 public:
-    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point) :
-            num_chan(Num_chan), full_spectral_point(Center_spectral_point, Unit("Wavenumbers")) {
+    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Full_spectral_point) :
+            num_chan(Num_chan), full_spectral_point(Full_spectral_point, Unit("Wavenumbers")) {
     }
 
-    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point) :
-            num_chan(Num_chan), full_spectral_point(Center_spectral_point) {
+    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Full_spectral_point) :
+            num_chan(Num_chan), full_spectral_point(Full_spectral_point) {
     }
 
     int num_chan; ///< Number of channels available in OSS RTM

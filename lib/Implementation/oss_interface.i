@@ -41,10 +41,11 @@ public:
 
 class OssFixedOutputs: public virtual GenericObject {
 public:
-    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Center_spectral_point);
-    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Center_spectral_point);
+    OssFixedOutputs(int Num_chan, blitz::Array<float, 1>& Full_spectral_point);
+    OssFixedOutputs(int Num_chan, ArrayWithUnit<float, 1>& Full_spectral_point);
     int num_chan; ///< Number of channels available in OSS RTM
-    ArrayWithUnit<float, 1> center_spectral_point; //< Center spectral point of channels (cm−1)
+    ArrayWithUnit<float, 1> full_spectral_point; //< Center spectral point of channels (cm−1)
+    std::vector<ArrayWithUnit<float, 1>> sensor_spectral_point; //< Per sensor spectral points  (cm−1)
 };
 
 class OssFixedInputs: public virtual GenericObject {
