@@ -107,7 +107,7 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
 
         obs_group = self.output.createGroup("Observation")
 
-        for channel_idx in range(self.l1b.number_spectrometer()):
+        for channel_idx in range(self.l1b.number_spectrometer):
             channel_group = obs_group.createGroup("Channel_{}".format(channel_idx+1))
 
             channel_grid = self.l1b.sample_grid(channel_idx).data
@@ -138,7 +138,7 @@ class ObservationRadianceOutput(rf.ObserverIterativeSolver, OutputBase):
     def write_sample_list(self, spectrum_group):
         "Update sample list for each iteration/step"
 
-        for channel_idx in range(self.l1b.number_spectrometer()):
+        for channel_idx in range(self.l1b.number_spectrometer):
             channel_group = spectrum_group.createGroup("Channel_{}".format(channel_idx+1))
 
             channel_samples = np.array(self.forward_model.spectral_grid.pixel_list(channel_idx))
