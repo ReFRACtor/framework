@@ -1,22 +1,14 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 %include "fp_common.i"
 
 %{
 #include "sub_state_vector_array.h"
-#include "pressure.h"
 %}
 
 %base_import(sub_state_vector_observer)
-%base_import(mapping)
-%base_import(mapping_linear)
-
-%import "pressure.i"
+%base_import(state_mapping)
+%base_import(state_mapping_linear)
 
 namespace FullPhysics {
-
-class Pressure;
 
 template<class Base> class SubStateVectorArray: 
     public Base,
@@ -24,16 +16,10 @@ template<class Base> class SubStateVectorArray:
 public:
   SubStateVectorArray();
   void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0,
-	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+            const blitz::Array<bool, 1>& Used_flag,
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
   void init(double Coeff, bool Used_flag,
-	    const boost::shared_ptr<Pressure>& Press = boost::shared_ptr<Pressure>(),
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0,
-	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
   virtual ~SubStateVectorArray();
   void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   %python_attribute(sub_state_identifier, std::string);
@@ -44,15 +30,11 @@ public:
   %python_attribute(coefficient, ArrayAd<double, 1>);
   %python_attribute(used_flag_value, blitz::Array<bool, 1>);
   %python_attribute(statevector_covariance, blitz::Array<double, 2>);
-  %python_attribute(pressure, boost::shared_ptr<Pressure>);
 protected:
   ArrayAd<double, 1> coeff;
-  boost::shared_ptr<Pressure> press;
   blitz::Array<bool, 1> used_flag;
   blitz::Array<double, 2> cov;
-  bool mark_according_to_press;
-  int pdep_start;
-  boost::shared_ptr<Mapping> mapping;
+  boost::shared_ptr<StateMapping> mapping;
 };
 }
 

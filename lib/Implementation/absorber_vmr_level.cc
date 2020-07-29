@@ -37,24 +37,20 @@ AbsorberVmrLevel::AbsorberVmrLevel
  const blitz::Array<double, 1>& Vmr, 
  const blitz::Array<bool, 1>& Vmr_flag,
  const std::string& Gas_name,
- boost::shared_ptr<Mapping> in_map)
+ boost::shared_ptr<StateMapping> in_map)
 {
-  bool Mark_according_to_press = false;
-  int Pdep_start = 0;
-  init(Gas_name, Vmr, Vmr_flag, Press, Mark_according_to_press, Pdep_start, in_map);
+  init(Gas_name, Vmr, Vmr_flag, Press, in_map);
 }
 
 AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                                    const blitz::Array<double, 1>& Vmr,
                                    const bool Vmr_flag,
                                    const std::string& Gas_name,
-                                   boost::shared_ptr<Mapping> in_map)
+                                   boost::shared_ptr<StateMapping> in_map)
 {
-  bool Mark_according_to_press = false;
-  int Pdep_start = 0;
   blitz::Array<bool, 1> flag(1);
   flag(0) = Vmr_flag;
-  init(Gas_name, Vmr, flag, Press, Mark_according_to_press, Pdep_start, in_map);
+  init(Gas_name, Vmr, flag, Press, in_map);
 }
 
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
@@ -104,7 +100,7 @@ void AbsorberVmrLevel::print(std::ostream& Os) const
   OstreamPad opad(Os, "    ");
   Os << "AbsorberVmrLevel\n"
      << "  Gas name: " << gas_name() << "\n"
-     << "  Mapping:  " << mapping->name() << "\n\n"
+     << "  StateMapping:  " << mapping->name() << "\n\n"
      << "      Pressure          VMR Retrieved\n"
      << "  ------------ ------------ ---------\n";
   for(int coeff_idx = 0; coeff_idx < coeff.rows(); coeff_idx++) {

@@ -122,8 +122,8 @@ void PressureSigma::calc_pressure_grid() const
 }
 
 //-----------------------------------------------------------------------
-/// Clone a PressureFixedLevel object. Note that the cloned version will *not*
-/// be attached to a StateVector or Observer<PressureFixedLevel>, although you
+/// Clone a PressureSigma object. Note that the cloned version will *not*
+/// be attached to a StateVector or Observer<PressureSigma>, although you
 /// can of course attach them after receiving the cloned object.
 //-----------------------------------------------------------------------
 

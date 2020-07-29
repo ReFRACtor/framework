@@ -50,21 +50,16 @@ def test_cast_cpp():
     pwrap = rf.PressureHolder(psigma)
     # Test functions only in PressureSigma
     assert pwrap.p.b == approx([0.3, 0.6, 1.0])
-    pinp = rf.PressureLevelInput([1, 2, 3])
-    plevel = rf.PressureFixedLevel(False, pinp, 2.5)
-    pwrap.p = plevel
-    # Function only in PressureFixedLevel
-    assert pwrap.p.number_active_level == 3
+
+    pwrap.p = rf.PressureSigma([0,0,0], [0.4, 0.7, 1.1], 10, True)
+    assert pwrap.p.b == approx([0.4, 0.7, 1.1])
 
 def test_cast_cpp_excep():
     '''Test returning a C++ class'''
     psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10, True)
     pwrap = rf.PressureHolder(psigma)
-    pinp = rf.PressureLevelInput([1, 2, 3])
-    plevel = rf.PressureFixedLevel(False, pinp, 2.5)
-    pwrap.p = plevel
     with pytest.raises(AttributeError):
-        pwrap.p.b
+        pwrap.p.temperature
 
 def test_cast_python():
     '''Make sure we handle classes that are actually python correctly.'''

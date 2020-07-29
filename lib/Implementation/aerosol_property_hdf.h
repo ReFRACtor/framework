@@ -34,6 +34,7 @@ public:
 				   int nscatt = -1) const;
   virtual void print(std::ostream& Os) const;
 private:
+  boost::shared_ptr<Pressure> press;
   boost::shared_ptr<LinearInterpolate<double, double> > qext;
   boost::shared_ptr<LinearInterpolate<double, double> > qscat;
   boost::shared_ptr<ScatteringMomentInterpolate> pf;

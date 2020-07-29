@@ -10,7 +10,7 @@ using namespace blitz;
 
 template<class Archive>
 void AbsorberVmrScaled::serialize(Archive & ar,
-				const unsigned int UNUSED(version))
+                                  const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrImpBase);
 }
@@ -38,7 +38,7 @@ AbsorberVmrScaled::AbsorberVmrScaled
   Array<double, 1> val(flag.shape());
   flag(0) = Scale_flag;
   val(0) = Scale;
-  init(Gas_name, val, flag, Press, false);
+  init(Gas_name, val, flag, Press);
 }
 
 void AbsorberVmrScaled::calc_vmr() const
@@ -51,9 +51,9 @@ void AbsorberVmrScaled::calc_vmr() const
   if (press_profile.rows() != v_profile.rows()) {
     std::stringstream err_msg;
     err_msg << "Size of pressure grid: "
-	    << press_profile.rows()
-	    << " != size of vmr levels: "
-	    << v_profile.rows();
+            << press_profile.rows()
+            << " != size of vmr levels: "
+            << v_profile.rows();
     throw Exception(err_msg.str());
   }
   for(int i = 0; i < press_profile.rows(); ++i) {

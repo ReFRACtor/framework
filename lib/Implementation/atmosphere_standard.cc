@@ -12,8 +12,6 @@
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
 
-#include "pressure_fixed_level.h"
-
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -558,19 +556,6 @@ void AtmosphereStandard::print(std::ostream& Os) const
         opad << *(alt[i]) << "\n";
         opad.strict_sync();
     }
-}
-
-//-----------------------------------------------------------------------
-/// For unit test purposes, it is useful to be able to directly change
-/// the surface pressure. This is intended just for testing
-/// purposes. This only works if the Pressure is a
-/// PressureFixedLevel, otherwise it will fail.
-//-----------------------------------------------------------------------
-
-void AtmosphereStandard::set_surface_pressure_for_testing(double x)
-{
-    PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
-    p.set_surface_pressure(x);
 }
 
 //-----------------------------------------------------------------------

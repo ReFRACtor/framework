@@ -11,8 +11,8 @@ namespace FullPhysics {
 class TemperatureOffset: virtual public TemperatureImpBase {
 public:
   TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
-		    double Temp_offset,
-		    bool Temp_flag);
+                    double Temp_offset,
+                    bool Temp_flag);
   virtual ~TemperatureOffset() {}
   virtual void print(std::ostream& Os) const;
 

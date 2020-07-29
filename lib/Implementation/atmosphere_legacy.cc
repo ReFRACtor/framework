@@ -1,9 +1,6 @@
-
 #include "atmosphere_legacy.h"
 #include "old_constant.h"
 #include "linear_algebra.h"
-#include "pressure_fixed_level.h"
-#include "temperature_fixed_level.h"
 #include "ground.h"
 #include "planck.h"
 #include "aerosol_optical.h"
@@ -679,19 +676,6 @@ void AtmosphereLegacy::print(std::ostream& Os) const
     opad << *(alt[i]) << "\n";
     opad.strict_sync();
   }
-}
-
-//-----------------------------------------------------------------------
-/// For unit test purposes, it is useful to be able to directly change
-/// the surface pressure. This is intended just for testing
-/// purposes. This only works if the Pressure is a
-/// PressureFixedLevel, otherwise it will fail.
-//-----------------------------------------------------------------------
-
-void AtmosphereLegacy::set_surface_pressure_for_testing(double x)
-{
-  PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
-  p.set_surface_pressure(x);
 }
 
 //-----------------------------------------------------------------------

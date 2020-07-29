@@ -1,6 +1,7 @@
 #include "dispersion_polynomial.h"
 #include "spectral_window_range.h"
 #include <boost/foreach.hpp>
+#include "hdf_file.h"
 #include "unit_test_support.h"
 #include "configuration_fixture.h"
 

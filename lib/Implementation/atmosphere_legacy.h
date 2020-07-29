@@ -239,8 +239,6 @@ public:
       return !aerosol || aerosol->number_particle() == 0;
   }
 
-  void set_surface_pressure_for_testing(double x);
-
   void attach_children_to_sv(StateVector& statev);
   virtual std::vector<boost::shared_ptr<GenericObject> >
   subobject_list() const

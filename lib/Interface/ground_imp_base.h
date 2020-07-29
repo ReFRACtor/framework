@@ -59,15 +59,11 @@ protected:
 /// Pdep_start.
 //-----------------------------------------------------------------------
   GroundImpBase(const blitz::Array<double, 1>& Coeff, 
-		const blitz::Array<bool, 1>& Used_flag,
-		const boost::shared_ptr<Pressure>& Press,
-		bool Mark_according_to_press = true,
-		int Pdep_start = 0,
-		boost::shared_ptr<Mapping> in_map =
-		boost::make_shared<MappingLinear>())
+                const blitz::Array<bool, 1>& Used_flag,
+                boost::shared_ptr<StateMapping> in_map =
+                  boost::make_shared<StateMappingLinear>())
   {
-    init(Coeff, Used_flag, Press, Mark_according_to_press,
-	 Pdep_start, in_map);
+    init(Coeff, Used_flag, in_map);
   }
 private:
   friend class boost::serialization::access;

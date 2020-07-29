@@ -1,10 +1,10 @@
-#ifndef MAPPING_GAUSSIAN_H
-#define MAPPING_GAUSSIAN_H
+#ifndef STATE_MAPPING_GAUSSIAN_H
+#define STATE_MAPPING_GAUSSIAN_H
 
 #include <blitz/array.h>
 
 #include "array_ad.h"
-#include "mapping.h"
+#include "state_mapping.h"
 #include "pressure.h"
 
 namespace FullPhysics {
@@ -16,18 +16,18 @@ namespace FullPhysics {
   Note that due to the scaling by total optical depth performed in
   this class, it is only suitable for Absorbers.
 
-  For additional information see docs for Mapping class.
+  For additional information see docs for StateMapping class.
 *******************************************************************/
-class MappingGaussian : public Mapping  {
+class StateMappingGaussian : public StateMapping  {
 public:
-  MappingGaussian(const boost::shared_ptr<Pressure>& in_press,
-		  bool Linear_Total,
-		  double Min_Desired = 1e-9);
-  virtual ~MappingGaussian() {};
+  StateMappingGaussian(const boost::shared_ptr<Pressure>& in_press,
+                       bool Linear_Total,
+                       double Min_Desired = 1e-9);
+  virtual ~StateMappingGaussian() {};
 
-  virtual boost::shared_ptr<Mapping> clone() const
+  virtual boost::shared_ptr<StateMapping> clone() const
   {
-    return boost::shared_ptr<Mapping>(new MappingGaussian(press, linear_total));
+    return boost::shared_ptr<StateMapping>(new StateMappingGaussian(press, linear_total));
   }
 
   //-----------------------------------------------------------------------
@@ -60,12 +60,12 @@ private:
   /// calculation may vary as we do a retrieval.
   //-----------------------------------------------------------------------
   boost::shared_ptr<Pressure> press;
-  MappingGaussian() {}
+  StateMappingGaussian() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
 }
 
-FP_EXPORT_KEY(MappingGaussian);
+FP_EXPORT_KEY(StateMappingGaussian);
 #endif

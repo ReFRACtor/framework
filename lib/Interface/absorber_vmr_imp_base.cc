@@ -12,6 +12,7 @@ void AbsorberVmrImpBase::serialize(Archive & ar,
 				const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayAbsorberVmr)
+    & FP_NVP(press)
     & FP_NVP_(gas_name);
 }
 

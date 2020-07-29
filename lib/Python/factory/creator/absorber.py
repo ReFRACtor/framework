@@ -102,7 +102,7 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
 
     # Callers should specify either log_retrieval or mapping; not both
     log_retrieval = param.Scalar(bool, required=False)
-    mapping = param.InstanceOf(rf.Mapping, required=False)
+    mapping = param.InstanceOf(rf.StateMapping, required=False)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
     gas_name = param.Scalar(str, required=False)
@@ -118,20 +118,20 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
             raise param.ParamError("Specifying both log_retrieval and mapping is ambiguous")
         elif self.log_retrieval() is not None:
             if self.log_retrieval():
-                effective_mapping = rf.MappingLog()
+                effective_mapping = rf.StateMappingLog()
             else:
-                effective_mapping = rf.MappingLinear()
+                effective_mapping = rf.StateMappingLinear()
         elif self.mapping() is not None:
             effective_mapping = self.mapping()
         else:
-            effective_mapping = rf.MappingLinear()
+            effective_mapping = rf.StateMappingLinear()
 
         vmr_profile = self.value(gas_name=gas_name)
 
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
-        if isinstance(effective_mapping, rf.MappingLog) and np.any(vmr_profile < 0):
+        if isinstance(effective_mapping, rf.StateMappingLog) and np.any(vmr_profile < 0):
             raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
         return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name, effective_mapping)
 

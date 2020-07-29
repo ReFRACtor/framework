@@ -5,37 +5,28 @@ set(DIR_SOURCES
     array_with_unit.cc
     auto_derivative.cc
     auto_derivative_with_unit.cc
-    boost/backtrace.cpp
     blitz_array_serialize_support.cc
+    boost/backtrace.cpp
     boost_rational_serialize_support.cc
-    generic_object.cc
-    generic_object_map.cc
     constant.cc
     constants.F90
     default_constant.cc
     double_with_unit.cc
-    linear_interpolate.cc
-    mapping.cc
-    mapping_gaussian.cc
-    mapping_linear.cc
-    mapping_log.cc
-    mapping_offset.cc
-    mapping_scale.cc
     environment_substitute.cc
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
     fp_time.cc
     fstream_compress.cc
+    generic_object.cc
+    generic_object_map.cc
     hdf_file.cc
     hdf_file_generating.cc
     ifstream_cs.cc
     linear_algebra.cc
+    linear_interpolate.cc
     logger.cc
     logger_f.F90
-    mapping_linear.h
-    mapping_log.h
-    mapping_scale.h
-    mapping_gaussian.h
+    named_spectrum.cc
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc
@@ -44,9 +35,13 @@ set(DIR_SOURCES
     spectral_bound.h
     spectral_domain.cc
     spectral_range.cc
-    named_spectrum.cc
     spectrum.cc
     stacked_radiance_mixin.cc
+    state_mapping_gaussian.cc
+    state_mapping_linear.cc
+    state_mapping_log.cc
+    state_mapping_offset.cc
+    state_mapping_scale.cc
     state_vector.cc
     state_vector_observer.cc
     sub_state_vector_observer.cc

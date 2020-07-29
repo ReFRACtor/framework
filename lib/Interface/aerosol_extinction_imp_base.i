@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
 %{
 #include "aerosol_extinction_imp_base.h"
@@ -8,8 +6,8 @@
 
 %base_import(aerosol_extinction)
 %base_import(sub_state_vector_array)
-%base_import(mapping)
-%base_import(mapping_linear)
+%base_import(state_mapping)
+%base_import(state_mapping_linear)
 
 %fp_shared_ptr(FullPhysics::AerosolExtinctionImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AerosolExtinction>);
@@ -55,12 +53,10 @@ protected:
   virtual void calc_aerosol_extinction() const = 0;
   %python_attribute(total_aod, AutoDerivative<double>);
   AerosolExtinctionImpBase(const std::string& Aerosol_name,
-                    const blitz::Array<double, 1>& Coeff,
-                    const blitz::Array<bool, 1>& Used_flag,
-                    const boost::shared_ptr<Pressure>& Press,
-                    bool Mark_according_to_press = true,
-                    int Pdep_start = 0,
-                    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>());
+                           const blitz::Array<double, 1>& Coeff,
+                           const blitz::Array<bool, 1>& Used_flag,
+                           const boost::shared_ptr<Pressure>& Press,
+                           boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };
 }
 

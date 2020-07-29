@@ -1,7 +1,7 @@
 #include <boost/make_shared.hpp>
 #include "absorber_vmr_level_scaled.h"
 #include "fp_serialize_support.h"
-#include "mapping_scale.h"
+#include "state_mapping_scale.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
@@ -9,8 +9,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void AbsorberVmrLevelScaled::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+void AbsorberVmrLevelScaled::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbsorberVmrLevel);
 }
@@ -22,10 +21,10 @@ FP_IMPLEMENT(AbsorberVmrLevelScaled);
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(AbsorberVmrLevelScaled, AbsorberVmr)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
-			  const blitz::Array<double, 1>&,
-			  double, 
-			  bool,
-			  const std::string&>())
+                          const blitz::Array<double, 1>&,
+                          double, 
+                          bool,
+                          const std::string&>())
 REGISTER_LUA_END()
 #endif
 
@@ -37,7 +36,7 @@ AbsorberVmrLevelScaled::AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>
  double Scale,                         
  bool Scale_flag,
  const std::string& Gas_name)
-: AbsorberVmrLevel(Press, Vmr_profile, Scale_flag, Gas_name, boost::make_shared<MappingScale>(Scale, Vmr_profile.copy()))
+: AbsorberVmrLevel(Press, Vmr_profile, Scale_flag, Gas_name, boost::make_shared<StateMappingScale>(Scale, Vmr_profile.copy()))
 { 
 }
 
