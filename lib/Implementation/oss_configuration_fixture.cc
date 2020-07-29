@@ -41,7 +41,8 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     blitz::Array<bool, 1> retrieve_skin_temp(1);
     retrieve_skin_temp = true;
     config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit, retrieve_skin_temp);
-    retrieval_skin_temperature_flag = true;
+    retrieval_skin_temperature_flag.resize(1);
+    retrieval_skin_temperature_flag(0) = true;
 
     Array<float, 1> temp_nc = input_data->read_field<float, 1>("/Temperature")(Range::all());
     Array<double, 1> temp(temp_nc.rows());
