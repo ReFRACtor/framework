@@ -78,7 +78,15 @@ public:
   const boost::shared_ptr<LRadDriver>& l_rad_driver() const { return driver; };
 
   virtual void print(std::ostream& Os, bool Short_form = false) const;
-
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res =
+      RadiativeTransferSingleWn::subobject_list();
+    res.push_back(rt);
+    res.push_back(driver);
+    return res;
+  }
+  
 private:
 
   void initialize(const SpectralBound& Spec_bound, double Spectrum_spacing);

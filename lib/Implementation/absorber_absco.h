@@ -130,6 +130,21 @@ public:
   optical_depth_each_layer_direct_integrate(double wn, int Spec_index,
 					    double eps_abs = 0,
 					    double eps_rel = 1e-3) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(press);
+    res.push_back(temp);
+    BOOST_FOREACH(auto i, alt)
+      res.push_back(i);
+    BOOST_FOREACH(auto i, vmr)
+      res.push_back(i);
+    BOOST_FOREACH(auto i, gas_absorption)
+      res.push_back(i);
+    res.push_back(c);
+    return res;
+  }
+  
 private:
   // Objects used to calculate the integrand
   boost::shared_ptr<Pressure> press;

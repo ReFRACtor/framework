@@ -54,7 +54,14 @@ public:
 
   virtual void print(std::ostream& Os) const;
   virtual Spectrum solar_spectrum(const SpectralDomain& spec_domain) const;
-
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(ref_spec_orig);
+    res.push_back(doppler_shift_);
+    return res;
+  }
+  
 private:
   boost::shared_ptr<Spectrum> ref_spec_orig; // Stored for cloning
   LinearInterpolate<double, double> ref_spec_interp;

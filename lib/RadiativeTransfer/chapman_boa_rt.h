@@ -48,7 +48,14 @@ public:
   virtual ArrayAd<double, 2> stokes_and_jacobian(const SpectralDomain& Spec_domain, int Spec_index) const;
  
   virtual void print(std::ostream& Os, bool Short_form = false) const;
-
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    BOOST_FOREACH(auto i, chapman_boa)
+      res.push_back(i);
+    res.push_back(atm);
+    return res;
+  }
 private:
   /// Computes Chapman factors on demand
   void compute_chapman_factors(const int Spec_idx) const;

@@ -37,6 +37,14 @@ public:
   virtual void print(std::ostream& Os, bool Short_form = false) const;
   boost::shared_ptr<RadiativeTransfer> low_stream_radiative_transfer() const { return low_stream_rt; }
   boost::shared_ptr<RadiativeTransfer> high_stream_radiative_transfer() const { return high_stream_rt; }
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res
+      = RadiativeTransferFixedStokesCoefficient::subobject_list();
+    res.push_back(low_stream_rt);
+    res.push_back(high_stream_rt);
+    return res;
+  }
 private:
   void calc_correction(const SpectralDomain& Spec_domain, int Spec_index, bool Calc_jacobian, bool Skip_stokes_calc) const;
   boost::shared_ptr<RadiativeTransferSingleWn> low_stream_rt, high_stream_rt;

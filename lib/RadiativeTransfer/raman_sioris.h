@@ -52,6 +52,14 @@ public:
   virtual void print(std::ostream& Os) const;
 
   virtual std::string name() const { return "raman_sioris"; }
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(atmosphere_);
+    res.push_back(solar_model_);
+    res.push_back(absorber_);
+    return res;
+  }
 
 private:
 

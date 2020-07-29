@@ -39,6 +39,7 @@ public:
 
   %python_attribute(number_particle, int)
   boost::shared_ptr<Aerosol> clone() const = 0;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization();
 };
 }

@@ -71,6 +71,7 @@ public:
 			  blitz::Array<std::string, 1>& Sv_name) const;
   virtual void notify_add(StateVector& Observed_object);
   virtual void notify_remove(StateVector& Observed_object);
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization();
 };
 } // Rename below doesn't like being in a namespace

@@ -74,7 +74,16 @@ public:
     virtual void print(std::ostream& Os, bool Short_form = false) const;
 
     void compute_bins(const SpectralDomain& Spec_domain, int Spec_index) const;
-
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res =
+      RadiativeTransferFixedStokesCoefficient::subobject_list();
+    res.push_back(atm);
+    res.push_back(lidort_rt);
+    res.push_back(twostream_rt);
+    res.push_back(first_order_rt);
+    return res;
+  }
 private:
 
     boost::shared_ptr<AtmosphereStandard> atm;

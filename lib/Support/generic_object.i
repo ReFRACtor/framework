@@ -4,6 +4,7 @@
 %include "fp_common.i"
 %{
 #include "generic_object.h"
+#include <cstdint>  
 %}
 
 %shared_ptr(FullPhysics::GenericObject)
@@ -33,7 +34,16 @@ public:
 /// SWIG magic to convert this if needed.
 //-----------------------------------------------------------------------
     static boost::shared_ptr<GenericObject> convert_to_most_specific_class
-      (const boost::shared_ptr<GenericObject> V) { return V; }
+      (const boost::shared_ptr<GenericObject>& V) { return V; }
+
+//-----------------------------------------------------------------------
+/// Because the swig wrapper is different each time we get an object,
+/// it can be hard to tell if two objects are the same. This returns
+/// true if V points to the same object.    
+//-----------------------------------------------------------------------
+    
+    bool is_same_ptr(const boost::shared_ptr<GenericObject>& V) const
+    { return $self == V.get(); }
   }
 };
 }

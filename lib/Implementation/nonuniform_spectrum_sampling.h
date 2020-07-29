@@ -51,6 +51,13 @@ public:
   virtual bool need_interpolation(int Spec_index) const
   { return (spec_domain[Spec_index].data().rows() > 0); }
   virtual void print(std::ostream& Os) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(interpolated_sampling);
+    return res;
+  }
+  
 private:
   SpectralDomain sort_sd(const SpectralDomain& In) const;
   boost::shared_ptr<SpectrumSampling> interpolated_sampling;

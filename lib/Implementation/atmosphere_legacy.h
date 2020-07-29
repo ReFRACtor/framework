@@ -14,6 +14,7 @@
 #include "rayleigh.h"
 #include "rayleigh_greek_moment.h"
 #include "array_ad_cache.h"
+#include "altitude.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -241,6 +242,32 @@ public:
   void set_surface_pressure_for_testing(double x);
 
   void attach_children_to_sv(StateVector& statev);
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    if(absorber)
+      res.push_back(absorber);
+    if(pressure)
+      res.push_back(pressure);
+    if(temperature)
+      res.push_back(temperature);
+    if(aerosol)
+      res.push_back(aerosol);
+    if(rh)
+      res.push_back(rh);
+    if(ground_ptr)
+      res.push_back(ground_ptr);
+    if(rayleigh)
+      res.push_back(rayleigh);
+    if(surface_temp)
+      res.push_back(surface_temp);
+    if(constant)
+      res.push_back(constant);
+    BOOST_FOREACH(auto i, alt)
+      res.push_back(i);
+    return res;
+  }
+  
 private:
 
   boost::shared_ptr<Absorber> absorber;

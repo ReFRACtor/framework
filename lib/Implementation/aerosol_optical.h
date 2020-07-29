@@ -123,6 +123,18 @@ public:
 
   const boost::shared_ptr<Pressure>& pressure() const
   { return press; }
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    BOOST_FOREACH(auto i, aext)
+      res.push_back(i);
+    BOOST_FOREACH(auto i, aprop)
+      res.push_back(i);
+    res.push_back(press);
+    res.push_back(rh);
+    return res;
+  }
+  
 private:
   std::vector<boost::shared_ptr<AerosolExtinction> > aext;
   std::vector<boost::shared_ptr<AerosolProperty> > aprop;

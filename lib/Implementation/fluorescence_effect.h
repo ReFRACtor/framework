@@ -75,6 +75,13 @@ public:
     return (t < 0 ? 0 : sqrt(t)); 
   }
 
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(atm_oco);
+    res.push_back(stokes_coef);
+    return res;
+  }
 private:
   DoubleWithUnit lza;
   DoubleWithUnit reference;

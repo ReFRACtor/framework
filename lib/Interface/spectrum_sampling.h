@@ -60,6 +60,18 @@ public:
 
   virtual void print(std::ostream& Os) const {Os << "SpectrumSampling";}
 
+//-----------------------------------------------------------------------
+/// We have some fairly nested object hierarchies. It can be useful to
+/// be able to search this for things (e.g., which Pressure object is
+/// used by a ForwardModel?). This returns a list of subobjects
+/// "owned" by this object.
+//-----------------------------------------------------------------------
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    return res;
+  }
 protected:
 //-----------------------------------------------------------------------
 /// Constructor.

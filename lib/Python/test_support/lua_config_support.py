@@ -5,6 +5,7 @@
 
 from refractor import framework as rf
 from refractor import read_shelve, write_shelve
+import refractor_swig
 import os
 import sys
 import pytest
@@ -27,13 +28,13 @@ def sample_forward_model(config_ls):
     return config_ls.globals.config.forward_model
 
 @pytest.fixture(scope="function")
-def sample_solar_model(config_ls):
+def sample_solar_model(sample_forward_model):
     '''A forward model example. Currently comes from Lua, but we may
     change the source in the future'''
-    return config_ls.globals.config.forward_model.spectrum_effect[0][0]
+    return sample_forward_model.find_subobject_of_type(refractor_swig.SolarModel)
 
 @pytest.fixture(scope="function")
-def sample_absorber(config_ls):
+def sample_absorber(sample_forward_model):
     '''Sample Absorber, to use in tests that need one. 
 
     We save the data in a serialization file. The file gets regenerated
@@ -44,44 +45,45 @@ def sample_absorber(config_ls):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return config_ls.globals.config.absorber
+    return sample_forward_model.find_subobject_of_type(refractor_swig.Absorber)
 
 @pytest.fixture(scope="function")
-def sample_temperature(config_ls):
+def sample_temperature(sample_forward_model):
     '''Sample temperature, to use in tests that need one. 
 
     This currently comes from the old Lua code, just for convenience. We
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return config_ls.globals.config.temperature
+    return sample_forward_model.find_subobject_of_type(refractor_swig.Temperature)
 
 @pytest.fixture(scope="function")
-def sample_atmosphere(config_ls):
+def sample_atmosphere(sample_forward_model):
     '''Sample atmosphere, to use in tests that need one. 
 
     This currently comes from the old Lua code, just for convenience. We
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return config_ls.globals.config.atmosphere
+    return sample_forward_model.find_subobject_of_type(refractor_swig.RtAtmosphere)
+
 
 @pytest.fixture(scope="function")
-def sample_pressure(config_ls):
+def sample_pressure(sample_forward_model):
     '''Sample pressure, to use in tests that need one. 
 
     This currently comes from the old Lua code, just for convenience. We
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return config_ls.globals.config.pressure
+    return sample_forward_model.find_subobject_of_type(refractor_swig.Pressure)
 
 @pytest.fixture(scope="function")
-def sample_aerosol(config_ls):
+def sample_aerosol(sample_forward_model):
     '''Sample aerosol, to use in tests that need one. 
 
     This currently comes from the old Lua code, just for convenience. We
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return config_ls.globals.config.aerosol
+    return sample_forward_model.find_subobject_of_type(refractor_swig.Aerosol)

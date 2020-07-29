@@ -95,6 +95,15 @@ public:
     const {return continuum_spectrum_;}
   virtual void print(std::ostream& Os) const;
   virtual Spectrum solar_spectrum(const SpectralDomain& Spec_domain) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(doppler_shift_);
+    res.push_back(absorption_spectrum_);
+    res.push_back(continuum_spectrum_);
+    return res;
+  }
+  
 private:
   boost::shared_ptr<SolarDopplerShift> doppler_shift_;
   boost::shared_ptr<SolarAbsorptionSpectrum> absorption_spectrum_;

@@ -70,6 +70,14 @@ public:
   //-----------------------------------------------------------------------
 
   static bool serialize_full_state;
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res =
+      RadiativeTransferSingleWn::subobject_list();
+    res.push_back(rt_driver_);
+    return res;
+  }
 protected:
 
   int surface_type_int;

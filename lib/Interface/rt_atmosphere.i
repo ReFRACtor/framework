@@ -51,6 +51,7 @@ public:
   %python_attribute_abstract(ground, boost::shared_ptr<Ground>)
   virtual void reset_timer();
   std::string print_to_string() const;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization()
 };
 }

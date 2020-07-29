@@ -75,6 +75,15 @@ public:
 
   const boost::shared_ptr<RtAtmosphere>& atmosphere() const
   { return atm; }
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res =
+      RadiativeTransferFixedStokesCoefficient::subobject_list();
+    res.push_back(atm);
+    return res;
+  }
+  
 protected:
 //-----------------------------------------------------------------------
 /// Constructor.

@@ -44,6 +44,13 @@ public:
   virtual void remove_observer(Observer<std::vector<boost::shared_ptr<NamedSpectrum> > >& Obs) 
   { remove_observer_do(Obs); }
 
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(stokes_coef);
+    return res;
+  }
+  
 protected:
 //-----------------------------------------------------------------------
 /// Constructor.
