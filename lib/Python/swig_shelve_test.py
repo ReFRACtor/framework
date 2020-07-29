@@ -55,22 +55,24 @@ def test_read_write_xml(isolated_dir):
 def test_all_formats(isolated_dir):
     psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10, True)
     write_shelve("psigma.xml", psigma)
-    # Need to fix this
-    # write_shelve("psigma.bin", psigma)
-    write_shelve("psigma.json", psigma)
+    write_shelve("psigma.bin", psigma)
+    # Only used in this test, so skip if we don't have the library available
+    if(have_jsonpickle):        
+        write_shelve("psigma.json", psigma)
     write_shelve("data.db:psigma", psigma)
     pickle.dump(psigma, open( "psigma.pkl", "wb" ))
 
     psigma1 = read_shelve("psigma.xml")
-    # Need to fix this
-    # psigma2 = read_shelve("psigma.bin")
-    psigma3 = read_shelve("psigma.json")
+    psigma2 = read_shelve("psigma.bin")
+    if(have_jsonpickle):        
+        psigma3 = read_shelve("psigma.json")
     psigma4 = read_shelve("data.db:psigma")
     psigma5 = pickle.load(open("psigma.pkl", "rb"))
     assert psigma.a == approx(psigma1.a)
     assert psigma.b == approx(psigma1.b)
-    assert psigma.a == approx(psigma3.a)
-    assert psigma.b == approx(psigma3.b)
+    if(have_jsonpickle):        
+        assert psigma.a == approx(psigma3.a)
+        assert psigma.b == approx(psigma3.b)
     assert psigma.a == approx(psigma4.a)
     assert psigma.b == approx(psigma4.b)
     assert psigma.a == approx(psigma5.a)

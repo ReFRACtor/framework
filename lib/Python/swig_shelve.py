@@ -97,7 +97,7 @@ def read_shelve(f):
         if(os.path.splitext(f)[1] == ".bin"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
-            return refractor_swig.serialize_read_binary_generic(bytearray(fb.encode("utf-8")))
+            return refractor_swig.serialize_read_binary_generic(fb)
         if(os.path.splitext(f)[1] == ".json"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
@@ -154,7 +154,7 @@ def write_shelve(f, val):
         refractor_swig.serialize_write(f, val)
         return
     if(os.path.splitext(f)[1] == ".bin"):
-        refractor_swig.serialize_write_binary(bytearray(f.encode("utf-8")), val)
+        refractor_swig.serialize_write_binary(f, val)
         return
     if(os.path.splitext(f)[1] == ".json"):
         if(have_jsonpickle):
@@ -250,5 +250,6 @@ class SQLiteShelf(DictMixin):
     def __iter__(self):
         raise RuntimeError("Not implemented yet")
 
-__all__ = ["read_shelve", "shelve_time_after", "write_shelve", "SQLiteShelf"]
+__all__ = ["read_shelve", "shelve_time_after", "write_shelve", "SQLiteShelf",
+           "have_jsonpickle"]
            
