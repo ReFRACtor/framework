@@ -545,9 +545,11 @@ class TestOpticalPropertiesWrtRt(object):
         wn = 13179.0;
         chan = 0;
         v1 = self.create(sample_atmosphere,wn,chan)
-        t = serialize_write_string(v1)
-        logging.info("Serialization:\n%s" % t)
-        v2 = serialize_read_generic_string(t)
+        t = serialize_write_binary(v1)
+        # Skip this, it takes a good chunk of time to write this out
+        # in xml
+        #logging.info("Serialization:\n%s" % t)
+        v2 = serialize_read_binary(t)
         self.check(v1, v2)
 
     # Have a few closely related classes that start with a
