@@ -9,7 +9,7 @@ from . import atmosphere
 from . import absorber
 from . import retrieval
 
-from refractor.muses_osp import OSP
+from refractor.muses_osp import PressureOSP, SpeciesOSP
 
 class CreatorMUSES(Creator):
 
@@ -40,15 +40,48 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
     pressure_levels = param.Choice(atmosphere.PressureGrid.pressure_levels, param.NoneValue())
     value = param.Choice(atmosphere.PressureGrid.value, param.NoneValue())
 
+    def surface_pressure(self):
+        "Calculate surface pressure from surface altitude using hydrostatic equation"
+
+        l1b_obj = self.l1b()
+
+        # Disable cutoff to get all pressure levels present
+        press_osp = PressureOSP(pressure_cutoff=None, **self.osp_common())
+
+        fm_press = press_osp.fm_pressure_grid
+        press_obj = rf.PressureSigma(fm_press, fm_press[-1], False)
+
+        temp_osp = SpeciesOSP("TATM", pressure_cutoff=None, **self.osp_common())
+        fm_temp = temp_osp.fm_climatology
+        temp_obj = rf.TemperatureLevel(fm_temp, np.zeros(fm_temp.shape, dtype=bool), press_obj)
+
+        sea_level_height = rf.DoubleWithUnit(0, "m")
+        alt_calc = rf.AltitudeHydrostatic(press_obj, temp_obj, l1b_obj.latitude(0), sea_level_height)
+
+        alt_grid = np.zeros(fm_press.shape)
+        for lev_idx in range(fm_press.shape[0]):
+            press_val = rf.AutoDerivativeWithUnitDouble(press_obj.pressure_grid.value[lev_idx], 
+                                                        press_obj.pressure_grid.units)
+            alt_grid[lev_idx] = alt_calc.altitude(press_val).convert("m").value.value
+
+        surf_alt = l1b_obj.altitude(0).convert("m").value
+
+        # Altitude grid must be in increasing order
+        surf_press = np.interp(surf_alt, alt_grid[::-1], fm_press[::-1])
+
+        return surf_press
+
     def create(self, **kwargs):
 
-        psur_osp = OSP("PSUR", **self.osp_common())
-
         if self.pressure_levels() is None:
-            self.config_def["pressure_levels"] = psur_osp.pressure_resampled(self.num_levels())
+            # We do want a cut-off of 1000mb here for the purposes of creating
+            # the sigma levels
+            press_osp = PressureOSP(**self.osp_common())
+
+            self.config_def["pressure_levels"] = press_osp.fm_pressure_grid
 
         if self.value() is None:
-            self.config_def["value"] = psur_osp.climatology_full_grid
+            self.config_def["value"] = np.array([self.surface_pressure()])
 
         return atmosphere.PressureGrid.create(self, **kwargs)
 
@@ -58,20 +91,14 @@ class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
 
     def create(self, **kwargs):
 
-        tatm_osp = OSP("TATM", **self.osp_common())
-
-        ret_levels = tatm_osp.retrieval_levels
-        
         if self.value() is None:
-            self.config_def["value"] = tatm_osp.climatology_full_grid[ret_levels]
-        else:
-            inp_temperature = self.value()
-            inp_pressure = self.pressure().pressure_grid.value.value
-            resamp_temp = np.interp(tatm_osp.pressure_full_grid, inp_pressure, inp_temperature)
+            tatm_osp = SpeciesOSP("TATM", **self.osp_common())
 
-            self.config_def["value"] = resamp_temp[ret_levels]
+            ret_levels = tatm_osp.retrieval_levels
 
-        self.config_def["pressure"] = self.pressure_obj(tatm_osp.pressure_full_grid[ret_levels])
+            self.config_def["value"] = tatm_osp.fm_climatology[ret_levels]
+
+            self.config_def["pressure"] = self.pressure_obj(tatm_osp.fm_pressure_grid[ret_levels])
 
         return atmosphere.TemperatureLevel.create(self, **kwargs)
 
@@ -82,28 +109,27 @@ class SurfaceTemperatureMUSES(CreatorMUSES, atmosphere.SurfaceTemperature):
 
     def create(self, **kwargs):
 
-        tsur_osp = OSP("TSUR", **self.osp_common())
+        tsur_osp = SpeciesOSP("TSUR", **self.osp_common())
 
         if self.value() is None:
-            self.config_def['value'] = rf.ArrayWithUnit_double_1(np.full(self.num_channels(), tsur_osp.climatology_full_grid), "K")
+            self.config_def['value'] = rf.ArrayWithUnit_double_1(np.full(self.num_channels(), tsur_osp.species_climatology), "K")
 
         return atmosphere.SurfaceTemperature.create(self, **kwargs)
 
 class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
 
+    value = param.Choice(absorber.AbsorberVmrLevel.value, param.NoneValue())
+
     def create(self, gas_name, **kwargs):
-        gas_osp = OSP(gas_name, **self.osp_common())
+        gas_osp = SpeciesOSP(gas_name, **self.osp_common())
 
-        ret_levels = gas_osp.retrieval_levels
+        if self.value() is None:
+            ret_levels = gas_osp.retrieval_levels
 
-        self.config_def['log_retrieval'] = gas_osp.use_log 
+            self.config_def['log_retrieval'] = gas_osp.use_log 
 
-        if ret_levels is None:
-            self.config_def['value'] = gas_osp.climatology_full_grid
-            self.config_def['pressure'] = self.pressure_obj(gas_osp.pressure_full_grid)
-        else:
-            self.config_def['value'] = gas_osp.climatology_full_grid[ret_levels]
-            self.config_def['pressure'] = self.pressure_obj(gas_osp.pressure_full_grid[ret_levels])
+            self.config_def['value'] = gas_osp.fm_climatology[ret_levels]
+            self.config_def['pressure'] = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])
 
         return absorber.AbsorberVmrLevel.create(self, gas_name, **kwargs)
 
@@ -112,7 +138,7 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
     num_channels = param.Scalar(int)
 
     def absorber_cov(self, gas_name, ret_type):
-        gas_osp = OSP(gas_name, **self.osp_common())
+        gas_osp = SpeciesOSP(gas_name, **self.osp_common())
 
         if ret_type == "log" and not gas_osp.use_log:
             raise Exception(f"OSP constraint for {gas_name} is for a log retrieval, but gas is not set up for a log retrieval")
@@ -123,15 +149,15 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
             raise param.ParamError(f"No constraint file found for gas: {gas_name}")
 
     def surface_temp_cov(self):
-        tsur_osp = OSP("TSUR", **self.osp_common())
+        tsur_osp = SpeciesOSP("TSUR", **self.osp_common())
         return np.identity(self.num_channels()) * tsur_osp.covariance_matrix
 
     def surface_press_cov(self):
-        psur_osp = OSP("PSUR", **self.osp_common())
+        psur_osp = SpeciesOSP("PSUR", **self.osp_common())
         return psur_osp.covariance_matrix
 
     def temperature_cov(self):
-        temp_osp = OSP("TATM", **self.osp_common())
+        temp_osp = SpeciesOSP("TATM", **self.osp_common())
         return np.linalg.inv(temp_osp.constraint_matrix)
 
     def create(self, **kwargs):
