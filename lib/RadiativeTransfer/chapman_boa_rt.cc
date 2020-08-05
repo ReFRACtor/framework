@@ -8,32 +8,21 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
+void ChapmanBoaRTCache::serialize(Archive & ar,
+				  const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver);
+}
+
+template<class Archive>
 void ChapmanBoaRT::serialize(Archive & ar,
 			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransfer)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
-    & FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
-  boost::serialization::split_member(ar, *this, version);
+    & FP_NVP(cache) & FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
 }
 
-template<class Archive>
-void ChapmanBoaRT::save(Archive & UNUSED(ar),
-			const unsigned int UNUSED(version)) const
-{
-  // Nothing more to do.
-}
-
-template<class Archive> \
-void ChapmanBoaRT::load(Archive & UNUSED(ar),
-			const unsigned int UNUSED(version)) 
-{
-  chapman_cache_stale.resize(sza.rows());
-  chapman_cache_stale = true;
-  chapman_boa.resize(sza.rows());
-}
-
-
+FP_IMPLEMENT(ChapmanBoaRTCache);
 FP_IMPLEMENT(ChapmanBoaRT);
 #endif
 
@@ -60,14 +49,9 @@ ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 			   const blitz::Array<double, 1>& Sza) 
   : atm(Atm), sza(Sza)
 {
-  // Watch atmosphere for changes, so we clear cache if needed.
-  atm->add_observer(*this);
-
-  // Cache is state since we have just been initialized
-  chapman_cache_stale.resize(Sza.rows());
-  chapman_cache_stale = true;
-
-  chapman_boa.resize(Sza.rows());
+  cache.resize(Sza.rows());
+  BOOST_FOREACH(auto i, cache)
+    atm->add_cache_invalidated_observer(i);
 }
 
 ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
@@ -75,70 +59,61 @@ ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 			   const SpectralBound& Spec_bound) 
   : spec_bound(Spec_bound), atm(Atm), sza(Sza)
 {
-  // Watch atmosphere for changes, so we clear cache if needed.
-  atm->add_observer(*this);
-
-  // Cache is state since we have just been initialized
-  chapman_cache_stale.resize(spec_bound.number_spectrometer());
-  chapman_cache_stale = true;
-
-  chapman_boa.resize(spec_bound.number_spectrometer());
+  cache.resize(spec_bound.number_spectrometer());
+  BOOST_FOREACH(auto i, cache)
+    atm->add_cache_invalidated_observer(i);
 }
 
-void ChapmanBoaRT::compute_chapman_factors(const int spec_idx) const {
+void ChapmanBoaRTCache::fill_cache(const ChapmanBoaRT& C, int Spec_index)
+{
+  double rearth = OldConstant::wgs84_a.convert(units::km).value;
+  double rfindex_param = 0.000288;
 
-  if(chapman_cache_stale(spec_idx)) {
-    // Constants needed by ChapmanBoa
-    double rearth = OldConstant::wgs84_a.convert(units::km).value;
-    double rfindex_param = 0.000288;
+  // Can not use OCO refracrive index if CO2 and H2O are not
+  // present in the state structure
+  bool can_use_oco_refr = C.atm->absorber_ptr()->gas_index("CO2") != -1 and 
+    C.atm->absorber_ptr()->gas_index("H2O") != -1;
 
-    // Can not use OCO refracrive index if CO2 and H2O are not
-    // present in the state structure
-    bool can_use_oco_refr = atm->absorber_ptr()->gas_index("CO2") != -1 and 
-      atm->absorber_ptr()->gas_index("H2O") != -1;
-
-    // Atmospheric values
-    Array<AutoDerivative<double>, 1> height_grid( atm->altitude(spec_idx).convert(units::km).value.to_array() );
-    Array<AutoDerivative<double>, 1> press_grid( atm->pressure_ptr()->pressure_grid().convert(units::Pa).value.to_array() );
-    Array<AutoDerivative<double>, 1> temp_grid(press_grid.rows());
-    Array<AutoDerivative<double>, 1> co2_vmr(press_grid.rows());
-    Array<AutoDerivative<double>, 1> h2o_vmr(press_grid.rows());
-    for(int i = 0; i < temp_grid.rows(); ++i) {
-      temp_grid(i) =
-	atm->temperature_ptr()->temperature(AutoDerivativeWithUnit<double>(press_grid(i), units::Pa)).convert(units::K).value;
-      
-      if(can_use_oco_refr) {
-	co2_vmr(i) = atm->absorber_ptr()->absorber_vmr("CO2")->
-	  volume_mixing_ratio(press_grid(i));
-	h2o_vmr(i) = atm->absorber_ptr()->absorber_vmr("H2O")->
-	  volume_mixing_ratio(press_grid(i));
-      }
+  // Atmospheric values
+  Array<AutoDerivative<double>, 1> height_grid( C.atm->altitude(Spec_index).convert(units::km).value.to_array() );
+  Array<AutoDerivative<double>, 1> press_grid( C.atm->pressure_ptr()->pressure_grid().convert(units::Pa).value.to_array() );
+  Array<AutoDerivative<double>, 1> temp_grid(press_grid.rows());
+  Array<AutoDerivative<double>, 1> co2_vmr(press_grid.rows());
+  Array<AutoDerivative<double>, 1> h2o_vmr(press_grid.rows());
+  for(int i = 0; i < temp_grid.rows(); ++i) {
+    temp_grid(i) =
+      C.atm->temperature_ptr()->temperature(AutoDerivativeWithUnit<double>(press_grid(i), units::Pa)).convert(units::K).value;
+    
+    if(can_use_oco_refr) {
+      co2_vmr(i) = C.atm->absorber_ptr()->absorber_vmr("CO2")->
+	volume_mixing_ratio(press_grid(i));
+      h2o_vmr(i) = C.atm->absorber_ptr()->absorber_vmr("H2O")->
+	volume_mixing_ratio(press_grid(i));
     }
-
-    // Calculate reference wavelengths, if we can..
-    double ref_wavelength = -1;
-    if(spec_bound.number_spectrometer() > 0)
-      ref_wavelength = spec_bound.center(spec_idx, units::micron).value;
-
-    Logger::debug() << "Generating Chapman Factors\n";
-    boost::shared_ptr<AtmRefractiveIndex> refr_index;
-    Logger::debug() << "Band " << (spec_idx+1) << " using ";
-    if(can_use_oco_refr && spec_bound.number_spectrometer() > 0 && 
-       OcoRefractiveIndex::wavelength_in_bounds(ref_wavelength)) {
-      Logger::debug() << "OCO";
-      refr_index.reset(new OcoRefractiveIndex(ref_wavelength, press_grid, temp_grid, co2_vmr, h2o_vmr));
-    } else {
-      Logger::debug() << "simple";
-      refr_index.reset(new SimpleRefractiveIndex(rfindex_param, press_grid, temp_grid));
-    }
-    Logger::debug() << " refractive index class.\n";
-
-    chapman_boa[spec_idx].reset( new ChapmanBOA(rearth, sza(spec_idx), height_grid, refr_index) ); 
-
-    // Do not need recomputing until updates from Atmosphere class
-    chapman_cache_stale(spec_idx) = false;
   }
-
+  
+  // Calculate reference wavelengths, if we can..
+  double ref_wavelength = -1;
+  if(C.spec_bound.number_spectrometer() > 0)
+    ref_wavelength = C.spec_bound.center(Spec_index, units::micron).value;
+  
+  Logger::debug() << "Generating Chapman Factors\n";
+  boost::shared_ptr<AtmRefractiveIndex> refr_index;
+  Logger::debug() << "Band " << (Spec_index + 1) << " using ";
+  if(can_use_oco_refr && C.spec_bound.number_spectrometer() > 0 && 
+     OcoRefractiveIndex::wavelength_in_bounds(ref_wavelength)) {
+    Logger::debug() << "OCO";
+    refr_index.reset(new OcoRefractiveIndex(ref_wavelength, press_grid,
+					    temp_grid, co2_vmr, h2o_vmr));
+  } else {
+    Logger::debug() << "simple";
+    refr_index.reset(new SimpleRefractiveIndex(rfindex_param,
+					       press_grid, temp_grid));
+  }
+  Logger::debug() << " refractive index class.\n";
+  
+  chapman_boa = boost::make_shared<ChapmanBOA>
+    (rearth, C.sza(Spec_index), height_grid, refr_index); 
 }
 
 Spectrum ChapmanBoaRT::reflectance(const SpectralDomain& Spec_domain, 
@@ -161,14 +136,14 @@ blitz::Array<double, 2> ChapmanBoaRT::stokes(const SpectralDomain& Spec_domain, 
   /// fails to return the jacobian part and it is computed unncecessarily
 
   // Compute chapman factors if needed
-  compute_chapman_factors(Spec_index);
+  cache[Spec_index].fill_cache_if_needed(*this, Spec_index);
 
   Array<double, 1> wn(Spec_domain.wavenumber());
   Array<double, 2> trans(wn.extent(firstDim), number_stokes());
   boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
 
   for(int i = 0; i < wn.rows(); ++i) {
-    trans(i, 0) = value( chapman_boa[Spec_index]->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0) );
+    trans(i, 0) = value( cache[Spec_index].chapman_boa->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0) );
     if(disp) *disp += 1;
   }
 
@@ -180,14 +155,14 @@ ArrayAd<double, 2> ChapmanBoaRT::stokes_and_jacobian(const SpectralDomain& Spec_
   FunctionTimer ft(timer.function_timer(true));
 
   // Compute chapman factors if needed
-  compute_chapman_factors(Spec_index);
+  cache[Spec_index].fill_cache_if_needed(*this, Spec_index);
 
   Array<double, 1> wn(Spec_domain.wavenumber());
   ArrayAd<double, 2> trans_jac(wn.extent(firstDim), number_stokes(), 1);
   boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
 
   for(int i = 0; i < wn.extent(firstDim); ++i) {
-    AutoDerivative<double> trans_wn = chapman_boa[Spec_index]->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0);
+    AutoDerivative<double> trans_wn = cache[Spec_index].chapman_boa->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0);
     trans_jac.resize_number_variable(trans_wn.number_variable());
     trans_jac(i, 0) = trans_wn;
     if(disp) *disp += 1;
