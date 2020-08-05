@@ -10,7 +10,6 @@ set(DIR_SOURCES
     aerosol_property.cc
     aerosol_property_imp_base.cc
     altitude.cc
-    calculation_cache.cc
     composite_initial_guess.cc
     convergence_check.cc
     cost_func.cc

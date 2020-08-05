@@ -84,7 +84,6 @@ void PressureSigma::set_levels_from_grid(const blitz::Array<double, 1>& Pressure
   b_ = Pressure_grid;
   b_ = b_ / Pressure_grid(Pressure_grid.rows()-1); 
   
-  cache_stale = true;
   Observable<Pressure>::notify_update_do(*this);
 }
 
@@ -95,27 +94,27 @@ void PressureSigma::set_levels_from_grid(const blitz::Array<double, 1>& Pressure
 
 void PressureSigma::calc_pressure_grid() const
 {
-  pgrid.units = units::Pa;
-  pgrid.value.resize(b_.rows(), coeff.number_variable());
+  cache.pgrid.units = units::Pa;
+  cache.pgrid.value.resize(b_.rows(), coeff.number_variable());
   for(int i = 0; i < b_.rows(); ++i) {
-    pgrid.value(i) = b_(i) * coeff(0) + a_(i);
+    cache.pgrid.value(i) = b_(i) * coeff(0) + a_(i);
 
     // Ensure that the pressure grid calculated in increasing
     // Since so many linear interpolations rely on this, this error
     // message will make more sense than what would be throw otherwise:
     // X needs to be sorted
-    if(i > 0 and pgrid.value(i-1).value() > pgrid.value(i).value()) {
+    if(i > 0 and cache.pgrid.value(i-1).value() > cache.pgrid.value(i).value()) {
       stringstream err_msg;
       err_msg << "At level " << i << " pressure is smaller: " 
 	      << "(" 
 	      << b_(i-1) << " * " << coeff(0).value() << " + " << a_(i-1)
 	      << ") = "
-	      << pgrid.value(i).value()
+	      << cache.pgrid.value(i).value()
 	      << " than the value at the previous level: " 
 	      << "(" 
 	      << b_(i) << " * " << coeff(0).value() << " + " << a_(i)
 	      << ") = "
-	      << pgrid.value(i-1).value();
+	      << cache.pgrid.value(i-1).value();
       throw Exception(err_msg.str());
     }
   }
