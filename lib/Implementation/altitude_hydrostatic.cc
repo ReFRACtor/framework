@@ -7,14 +7,23 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
+void AltitudeHydrostaticCache::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver);
+}
+
+template<class Archive>
 void AltitudeHydrostatic::serialize(Archive & ar,
 				    const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Altitude)
     & FP_NVP(latitude) & FP_NVP(surface_height)
+    & FP_NVP(cache)
     & FP_NVP(p) & FP_NVP(t) & FP_NVP(num_sublayer);
 }
 
+FP_IMPLEMENT(AltitudeHydrostaticCache);
 FP_IMPLEMENT(AltitudeHydrostatic);
 #endif
 
@@ -95,7 +104,7 @@ AutoDerivative<double> AltitudeHydrostatic::gravity_calc(double gdlat,
 /// gravitational acceleration at each pressure level.
 ///
 /// Gravity is calculated on a finer grid (sublayers) in order to 
-/// reduce create a smoother gravity profile
+/// create a smoother gravity profile
 ///
 /// Greater accuracy would be obtained by using Tvbar instead of Tbar
 /// in the calculation of dz.
@@ -164,8 +173,10 @@ void AltitudeHydrostatic::altitude_calc
     playlist.push_back(psublayer(i));
     glist.push_back(gravv(i));
   }
-  alt.reset(new lin_type(plevlist.begin(), plevlist.end(), altlist.begin()));
-  grav.reset(new lin_type(playlist.begin(), playlist.end(), glist.begin()));
+  cache.alt = boost::make_shared<AltitudeHydrostaticCache::lin_type>
+    (plevlist.begin(), plevlist.end(), altlist.begin());
+  cache.grav = boost::make_shared<AltitudeHydrostaticCache::lin_type>
+    (playlist.begin(), playlist.end(), glist.begin());
 }
 
 //-----------------------------------------------------------------------
@@ -176,38 +187,24 @@ void AltitudeHydrostatic::altitude_calc
 AltitudeHydrostatic::AltitudeHydrostatic
 (const boost::shared_ptr<Pressure>& P, const boost::shared_ptr<Temperature>& T,
  const DoubleWithUnit& Latitude, const DoubleWithUnit& Surface_height, const int Num_sublayer)
-: cache_is_stale(true),
-  latitude(Latitude),
+: latitude(Latitude),
   surface_height(Surface_height),
   p(P),
   t(T),
   num_sublayer(Num_sublayer)
 {
-  p->add_observer(*this);
-  t->add_observer(*this);
+  p->add_cache_invalidated_observer(cache);
+  t->add_cache_invalidated_observer(cache);
 }
 
-//-----------------------------------------------------------------------
-/// Calculate altitude an gravity by solving hydrostatic
-/// equations. These two parameters need to be calculated at the same
-/// time. 
-///
-/// For performance reasons, we cache the results. We only need to
-/// calculate if the cache is stale.
-//-----------------------------------------------------------------------
-
-void AltitudeHydrostatic::calc_alt_and_grav() const
+void AltitudeHydrostaticCache::fill_cache(const AltitudeHydrostatic& A)
 {
-  if(!cache_is_stale)
-    return;
-
-  ArrayAdWithUnit<double, 1> pgrid(p->pressure_grid());
+  ArrayAdWithUnit<double, 1> pgrid(A.p->pressure_grid());
   Array<AutoDerivative<double>, 1> tgrid(pgrid.rows());
   for(int i = 0; i < tgrid.rows(); ++i)
-    tgrid(i) = t->temperature(pgrid(i)).convert(units::K).value;
-  altitude_calc(pgrid, ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(tgrid),
-                                                  units::K));
-  cache_is_stale = false;
+    tgrid(i) = A.t->temperature(pgrid(i)).convert(units::K).value;
+  A.altitude_calc(pgrid, ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(tgrid),
+						    units::K));
 }
 
 // See base class for description.
