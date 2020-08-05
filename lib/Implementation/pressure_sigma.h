@@ -36,7 +36,7 @@ public:
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure) 
   {
     coeff(0) = Surface_pressure;
-    cache_stale = true;
+    cache.invalidate_cache();
     Observable<Pressure>::notify_update_do(*this);
   }
   

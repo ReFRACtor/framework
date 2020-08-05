@@ -7,17 +7,25 @@
 #include "pressure_imp_base.h"
 %}
 
+%base_import(observer)
 %base_import(pressure)
 %base_import(sub_state_vector_array)
 %base_import(state_vector)
 
 %fp_shared_ptr(FullPhysics::PressureImpBase);
+%fp_shared_ptr(FullPhysics::PressureImpBaseCache);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::Pressure>)
 
 namespace FullPhysics {
 
 %template(SubStateVectorArrayPressure) FullPhysics::SubStateVectorArray<Pressure>;
 
+class PressureImpBaseCache : public CacheInvalidatedObserver {
+public:
+  PressureImpBaseCache();
+  ArrayAdWithUnit<double, 1> pgrid;
+  %pickle_serialization();
+};
 // Allow these classes to be derived from in Python.
 %feature("director") PressureImpBase;
 
@@ -46,8 +54,7 @@ public:
   %sub_state_virtual_func(Pressure);
   %pickle_serialization();
 protected:
-  mutable bool cache_stale;
-  mutable ArrayAdWithUnit<double, 1> pgrid;
+  mutable PressureImpBaseCache cache;
   virtual void calc_pressure_grid() const = 0;
   PressureImpBase();
   PressureImpBase(const blitz::Array<double, 1>& Coeff, 

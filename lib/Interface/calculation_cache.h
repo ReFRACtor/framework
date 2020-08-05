@@ -8,29 +8,22 @@ namespace FullPhysics {
   time a value is needed, if the cache has been marked as invalidated.
 *******************************************************************/
 
-class CalculationCache : public CacheInvalidatedObserver {
+template<class T> class CalculationCache : public CacheInvalidatedObserver {
 public:
   CalculationCache() {}
   virtual ~CalculationCache() {}
-  void fill_cache_if_needed()
+  void fill_cache_if_needed(const T& Owner_Obj)
   {
     if(cache_valid)
       return;
-    fill_cache();
+    fill_cache(Owner_Obj);
     cache_valid = true;
   }
-  virtual void fill_cache() = 0;
-  void print(std::ostream& Os) const
-  {
-    Os << "CalculationCache";
-  }
+  virtual void fill_cache(const T& Owner_Obj) = 0;
 private:
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version);
+  // Derived classes can skip this in serialization, and
+  // go straight to CacheInvalidatedObserver
 };
-
 }
 
-FP_EXPORT_KEY(CalculationCache);
 #endif
