@@ -231,20 +231,155 @@ BOOST_AUTO_TEST_CASE(oss_multiple_sensors)
     boost::shared_ptr<OssModifiedInputs> modified_inputs = boost::make_shared<OssModifiedInputs>(pres, temp, skin_temp, vmr_gas, emis,
             refl, scale_cld, pres_cld, ext_cld, surf_grid, cld_grid, obs_zen_ang, sol_zen_ang,
             lat, surf_alt, lambertian);
+    /*
+    ofstream write_expected(test_data_dir() + "expected/oss_interface/multi_sensor_radiance_and_jacobian");
+    boost::shared_ptr<OssModifiedOutputs> expect_modified_outputs = oss_master.run_fwd_model(0, modified_inputs);
+    write_expected << "# y\n";
+    write_expected << expect_modified_outputs->y.value;
+    write_expected << "# xk_temp\n";
+    write_expected << expect_modified_outputs->xk_temp.value;
+    write_expected << "# xk_tksin\n";
+    write_expected << expect_modified_outputs->xk_tskin.value;
+    write_expected << "# xk_out_gas\n";
+    write_expected << expect_modified_outputs->xk_out_gas.value;
+    write_expected << "# xk_em\n";
+    write_expected << expect_modified_outputs->xk_em.value;
+    write_expected << "# xk_rf\n";
+    write_expected << expect_modified_outputs->xk_rf.value;
+    write_expected << "# xk_cldln_pres\n";
+    write_expected << expect_modified_outputs->xk_cldln_pres.value;
+    write_expected << "# xl_cldln_ext\n";
+    write_expected << expect_modified_outputs->xk_cldln_ext.value;
+
+    expect_modified_outputs = oss_master.run_fwd_model(1, modified_inputs);
+    write_expected << "# y\n";
+    write_expected << expect_modified_outputs->y.value;
+    write_expected << "# xk_temp\n";
+    write_expected << expect_modified_outputs->xk_temp.value;
+    write_expected << "# xk_tksin\n";
+    write_expected << expect_modified_outputs->xk_tskin.value;
+    write_expected << "# xk_out_gas\n";
+    write_expected << expect_modified_outputs->xk_out_gas.value;
+    write_expected << "# xk_em\n";
+    write_expected << expect_modified_outputs->xk_em.value;
+    write_expected << "# xk_rf\n";
+    write_expected << expect_modified_outputs->xk_rf.value;
+    write_expected << "# xk_cldln_pres\n";
+    write_expected << expect_modified_outputs->xk_cldln_pres.value;
+    write_expected << "# xl_cldln_ext\n";
+    write_expected << expect_modified_outputs->xk_cldln_ext.value;
+
+    expect_modified_outputs = oss_master.run_fwd_model(2, modified_inputs);
+    write_expected << "# y\n";
+    write_expected << expect_modified_outputs->y.value;
+    write_expected << "# xk_temp\n";
+    write_expected << expect_modified_outputs->xk_temp.value;
+    write_expected << "# xk_tksin\n";
+    write_expected << expect_modified_outputs->xk_tskin.value;
+    write_expected << "# xk_out_gas\n";
+    write_expected << expect_modified_outputs->xk_out_gas.value;
+    write_expected << "# xk_em\n";
+    write_expected << expect_modified_outputs->xk_em.value;
+    write_expected << "# xk_rf\n";
+    write_expected << expect_modified_outputs->xk_rf.value;
+    write_expected << "# xk_cldln_pres\n";
+    write_expected << expect_modified_outputs->xk_cldln_pres.value;
+    write_expected << "# xl_cldln_ext\n";
+    write_expected << expect_modified_outputs->xk_cldln_ext.value;
+
+    write_expected.close();
+    */
+
+    IfstreamCs expected(test_data_dir() + "expected/oss_interface/multi_sensor_radiance_and_jacobian");
 
     // check radiance for sensor 0 (2B1)
     boost::shared_ptr<OssModifiedOutputs> modified_outputs = oss_master.run_fwd_model(0, modified_inputs);
-
-    // check radiance for sensor 1 (1B2)
-    modified_outputs = oss_master.run_fwd_model(1, modified_inputs);
-    IfstreamCs expected(test_data_dir() + "expected/oss_interface/radiance_and_jacobian");
 
     Array<double, 1> rad_expect;
     expected >> rad_expect;
     BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->y.value, rad_expect, 1e-5);
 
+    Array<double, 2> xk_temp_expect;
+    expected >> xk_temp_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_temp.value, xk_temp_expect, 1e-5);
+
+    Array<double, 1> xk_tskin_expect;
+    expected >> xk_tskin_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_tskin.value, xk_tskin_expect, 1e-5);
+
+    Array<double, 3> xk_out_gas_expect;
+    expected >> xk_out_gas_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_out_gas.value, xk_out_gas_expect, 1e-5);
+
+    Array<double, 2> xk_em_expect;
+    expected >> xk_em_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_em.value, xk_em_expect, 1e-5);
+
+    Array<double, 2> xk_rf_expect;
+    expected >> xk_rf_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_rf.value, xk_rf_expect, 1e-5);
+
+    Array<double, 1> xk_cldln_pres_expect;
+    expected >> xk_cldln_pres_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_pres.value, xk_cldln_pres_expect, 1e-5);
+
+    Array<double, 2> xk_cldln_ext_expect;
+    expected >> xk_cldln_ext_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_ext.value, xk_cldln_ext_expect, 1e-5);
+
+    // check radiance for sensor 1 (1B2)
+    modified_outputs = oss_master.run_fwd_model(1, modified_inputs);
+
+    expected >> rad_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->y.value, rad_expect, 1e-5);
+
+    expected >> xk_temp_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_temp.value, xk_temp_expect, 1e-5);
+
+    expected >> xk_tskin_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_tskin.value, xk_tskin_expect, 1e-5);
+
+    expected >> xk_out_gas_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_out_gas.value, xk_out_gas_expect, 1e-5);
+
+    expected >> xk_em_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_em.value, xk_em_expect, 1e-5);
+
+    expected >> xk_rf_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_rf.value, xk_rf_expect, 1e-5);
+
+    expected >> xk_cldln_pres_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_pres.value, xk_cldln_pres_expect, 1e-5);
+
+    expected >> xk_cldln_ext_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_ext.value, xk_cldln_ext_expect, 1e-5);
+
     // check radiance for sensor 2 (2A1)
     modified_outputs = oss_master.run_fwd_model(2, modified_inputs);
+
+    expected >> rad_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->y.value, rad_expect, 1e-5);
+
+    expected >> xk_temp_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_temp.value, xk_temp_expect, 1e-5);
+
+    expected >> xk_tskin_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_tskin.value, xk_tskin_expect, 1e-5);
+
+    expected >> xk_out_gas_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_out_gas.value, xk_out_gas_expect, 1e-5);
+
+    expected >> xk_em_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_em.value, xk_em_expect, 1e-5);
+
+    expected >> xk_rf_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_rf.value, xk_rf_expect, 1e-5);
+
+    expected >> xk_cldln_pres_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_pres.value, xk_cldln_pres_expect, 1e-5);
+
+    expected >> xk_cldln_ext_expect;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(modified_outputs->xk_cldln_ext.value, xk_cldln_ext_expect, 1e-5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
