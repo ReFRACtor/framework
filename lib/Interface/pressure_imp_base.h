@@ -100,6 +100,7 @@ private:
 typedef SubStateVectorArray<Pressure> SubStateVectorArrayPressure;
 }
 
+FP_EXPORT_KEY(PressureImpBaseCache);
 FP_EXPORT_KEY(PressureImpBase);
 FP_EXPORT_KEY(SubStateVectorArrayPressure);
 #endif
