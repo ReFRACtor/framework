@@ -27,6 +27,7 @@ set(DIR_SOURCES
     logger.cc
     logger_f.F90
     named_spectrum.cc
+    observer.cc
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc
