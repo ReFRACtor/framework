@@ -365,5 +365,5 @@ typedef Observable<NAME> Observable ## NAME; \
 FP_EXPORT_KEY(Observer ## NAME); \
 FP_EXPORT_KEY(Observable ## NAME);
 
+FP_EXPORT_KEY(CacheInvalidatedObserver);
 #endif
-
