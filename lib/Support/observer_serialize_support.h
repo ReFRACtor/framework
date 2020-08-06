@@ -27,7 +27,7 @@ void Observable ## NAME::serialize(Archive& ar, \
 			      const unsigned int) \
 { \
   FP_GENERIC_BASE(Observable ##NAME); \
-  ar & FP_NVP(olist) & FP_NVP(ref_list);	\
+  ar & FP_NVP(olist) & FP_NVP(colist) & FP_NVP(ref_list);	\
 } \
 FP_IMPLEMENT(Observer ## NAME); \
 FP_IMPLEMENT(Observable ## NAME);
