@@ -30,7 +30,7 @@ public:
   virtual SpectralDomain spectral_domain(int Spec_index) const
   {return real_fm->spectral_domain(Spec_index);}
   virtual SpectralDomain::TypePreference spectral_domain_type_preference()
-    const { real_fm->spectral_domain_type_preference(); }
+    const { return real_fm->spectral_domain_type_preference(); }
   virtual void setup_grid() { real_fm->setup_grid(); }
   virtual std::vector<boost::shared_ptr<GenericObject> >
   subobject_list() const
