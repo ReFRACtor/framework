@@ -16,7 +16,7 @@ void ChapmanBoaRTCache::serialize(Archive & ar,
 
 template<class Archive>
 void ChapmanBoaRT::serialize(Archive & ar,
-			const unsigned int version)
+			     const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransfer)
     & FP_NVP(cache) & FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
