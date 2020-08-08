@@ -29,8 +29,9 @@ public:
   NLLSSolverGSLLMDER(const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
                      double dx_tol_abs=0.000001, double dx_tol_rel=0.000001, double g_tol=6.0555e-06, 
                      bool vrbs=false)
-    : NLLSSolverGSL(p, max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol, vrbs)
-  {}
+  {
+    init(p, max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol, vrbs);
+  }
 
   virtual ~NLLSSolverGSLLMDER() {}
 
