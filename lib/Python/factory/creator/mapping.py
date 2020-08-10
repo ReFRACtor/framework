@@ -78,3 +78,18 @@ class InterpolateLinearLog(Creator):
 
     def create(self, **kwargs):
         return rf.StateMappingInerpolateLinearLog(self.pressure_to(), self.pressure_from())
+
+class Composite(Creator):
+    '''Creator for Gaussian mapping'''
+
+    mappings = param.Iterable(rf.StateMapping)
+
+    def create(self, **kwargs):
+
+        mappings_inp = self.mappings()
+        mappings_vec = rf.vector_state_mapping()
+
+        for map_obj in mappings_inp:
+            mappings_vec.push_back(map_obj)
+        
+        return rf.StateMappingComposite(mappings_vec)
