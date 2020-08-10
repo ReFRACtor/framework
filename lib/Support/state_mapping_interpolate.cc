@@ -11,8 +11,8 @@ void StateMappingInterpolate<Interp>::serialize(Archive& ar, const unsigned int 
     & FP_NVP(press_to) & FP_NVP(press_from) & FP_NVP(map_name);
 }
 
-//FP_IMPLEMENT(StateMappingInterpolateLinearLinear);
-//FP_IMPLEMENT(StateMappingInterpolateLogLinear);
-//FP_IMPLEMENT(StateMappingInterpolateLogLog);
-//FP_IMPLEMENT(StateMappingInterpolateLinearLog);
+FP_IMPLEMENT(StateMappingInterpolateLinearLinear);
+FP_IMPLEMENT(StateMappingInterpolateLogLinear);
+FP_IMPLEMENT(StateMappingInterpolateLogLog);
+FP_IMPLEMENT(StateMappingInterpolateLinearLog);
 #endif

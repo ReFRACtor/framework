@@ -96,8 +96,8 @@ private:
     // For use in serialization
     StateMappingInterpolate() { ; }
 
-    const boost::shared_ptr<Pressure> press_to;
-    const boost::shared_ptr<Pressure> press_from;
+    boost::shared_ptr<Pressure> press_to;
+    boost::shared_ptr<Pressure> press_from;
 
     std::string map_name;
 
