@@ -30,8 +30,7 @@ public:
 
     StateMappingInterpolate(const boost::shared_ptr<Pressure>& PressTo,
                             const boost::shared_ptr<Pressure>& PressFrom)
-        : press_to(PressTo), press_from(PressFrom),
-          map_name("interpolate")
+        : press_to(PressTo), press_from(PressFrom)
     {
     }
 
@@ -83,7 +82,7 @@ public:
 
     virtual std::string name() const
     {
-        return map_name;
+        return Interp<AutoDerivative<double>, AutoDerivative<double> >::name() + " interpolate";
     }
 
     virtual boost::shared_ptr<StateMapping> clone() const
@@ -98,8 +97,6 @@ private:
 
     boost::shared_ptr<Pressure> press_to;
     boost::shared_ptr<Pressure> press_from;
-
-    std::string map_name;
 
     friend class boost::serialization::access;
     template<class Archive>

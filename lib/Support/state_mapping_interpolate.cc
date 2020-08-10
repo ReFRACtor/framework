@@ -8,7 +8,7 @@ template<template<class TX, class TY> class Interp> template<class Archive>
 void StateMappingInterpolate<Interp>::serialize(Archive& ar, const unsigned int UNUSED(version))
 {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateMapping)
-    & FP_NVP(press_to) & FP_NVP(press_from) & FP_NVP(map_name);
+    & FP_NVP(press_to) & FP_NVP(press_from);
 }
 
 FP_IMPLEMENT(StateMappingInterpolateLinearLinear);

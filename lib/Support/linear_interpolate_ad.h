@@ -243,6 +243,7 @@ public:
     }
   }
   void print(std::ostream& Os) const { Os << "LinearInterpolate"; }
+  static std::string name() { return "linear linear"; }
 private:
   std::map<AutoDerivative<double>, boost::shared_ptr<InterpolatePoint<AutoDerivative<double>, AutoDerivative<double> > > > inter;
   BehaviorOutOfRange out_of_range;
