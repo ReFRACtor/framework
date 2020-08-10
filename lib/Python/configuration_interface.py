@@ -210,7 +210,7 @@ class ConfigurationCreator(ConfigurationInterface):
             obs_out = ObservationRadianceOutput(output, step_index, self.l1b, self.forward_model)
             self.solver.add_observer_and_keep_reference(obs_out)
 
-        if self.atmosphere is not None:
+        if self.atmosphere is not None and self.solver is not None:
             atm_out = AtmosphereOutput(output, step_index, self.atmosphere)
             self.solver.add_observer_and_keep_reference(atm_out)
 
