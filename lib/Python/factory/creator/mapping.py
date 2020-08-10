@@ -46,3 +46,35 @@ class Gaussian(Creator):
     def create(self, **kwargs):
         return rf.StateMappingGaussian(self.pressure(), self.linear_aod())
 
+
+class InterpolateLinearLinear(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLinearLinear(self.pressure_to(), self.pressure_from())
+
+class InterpolateLogLinear(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLogLinear(self.pressure_to(), self.pressure_from())
+
+class InterpolateLogLog(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLogLog(self.pressure_to(), self.pressure_from())
+
+class InterpolateLinearLog(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLinearLog(self.pressure_to(), self.pressure_from())
