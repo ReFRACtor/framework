@@ -19,7 +19,7 @@ public:
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  StateMappingLinear() : map_name("linear") {}
+  StateMappingLinear() {}
 
   //-----------------------------------------------------------------------
   /// Calculation of forward model view of coeffs with mapping applied
@@ -41,14 +41,13 @@ public:
   /// Assigned mapping name
   //-----------------------------------------------------------------------
   
-  virtual std::string name() const { return map_name; }
+  virtual std::string name() const { return "linear retrieval"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   {
     return boost::shared_ptr<StateMapping>(new StateMappingLinear());
   }
 private:
-  std::string map_name;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

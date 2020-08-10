@@ -7,8 +7,7 @@ using namespace FullPhysics;
 template<class Archive>
 void StateMappingLinear::serialize(Archive& ar, const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateMapping)
-    & FP_NVP(map_name);
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateMapping);
 }
 
 FP_IMPLEMENT(StateMappingLinear);
