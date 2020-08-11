@@ -77,6 +77,7 @@ extern "C" {
 std::string parse_python_exception() {
   PyObject *type = NULL, *value = NULL, *tb = NULL;
   PyErr_Fetch(&type, &value, &tb);
+  PyErr_NormalizeException(&type, &value, &tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
   if(tb)
