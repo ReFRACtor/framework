@@ -40,7 +40,7 @@ public:
     return ArrayAd<double, 1>(res);
   }
 
-  virtual std::string name() const { return "log retrieval"; }
+  virtual std::string name() const { return "log"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   { return boost::shared_ptr<StateMapping>(new StateMappingLog()); }

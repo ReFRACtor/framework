@@ -41,7 +41,7 @@ public:
   /// Assigned mapping name
   //-----------------------------------------------------------------------
   
-  virtual std::string name() const { return "linear retrieval"; }
+  virtual std::string name() const { return "linear"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   {
