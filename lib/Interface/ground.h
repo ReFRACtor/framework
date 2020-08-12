@@ -19,7 +19,7 @@ namespace FullPhysics {
   types and parameters found in the LIDORT and LRAD code, so the hard
   coding is intrinsic. 
  *******************************************************************/
-class Ground : virtual public StateVectorObserver,
+class Ground : public Printable<Ground>, virtual public StateVectorObserver,
                public Observable<Ground> {
 public:
   virtual ~Ground() {}
@@ -48,6 +48,8 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<Ground> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "Ground";}
 protected:
   Ground() {}
 private:

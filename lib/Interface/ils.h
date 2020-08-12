@@ -10,8 +10,9 @@ namespace FullPhysics {
   high resolution data to produce a model of what we expect to observe
   in the Level 1b data.
 *******************************************************************/
-class Ils : virtual public StateVectorObserver,
-		    public Observable<Ils> {
+class Ils : public Printable<Ils>,
+	    virtual public StateVectorObserver,
+	    public Observable<Ils> {
 public:
   virtual ~Ils() {}
 
@@ -90,6 +91,8 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "Ils";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

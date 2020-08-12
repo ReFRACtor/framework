@@ -14,7 +14,8 @@ namespace FullPhysics {
   a description.
 *******************************************************************/
 
-class AbsorberVmr : virtual public StateVectorObserver,
+class AbsorberVmr : public Printable<AbsorberVmr>,
+		    virtual public StateVectorObserver,
 	            public Observable<AbsorberVmr> {
 public:
   virtual ~AbsorberVmr() {}
@@ -58,6 +59,8 @@ public:
 //-----------------------------------------------------------------------
 
   virtual blitz::Array<bool, 1> state_used() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "AbsorberVmr";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

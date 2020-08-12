@@ -21,7 +21,6 @@ public:
     const;
   virtual void notify_add(StateVector& Sv);
   virtual void notify_remove(StateVector& Sv);
-  virtual void print(std::ostream& Os) const = 0;
   %pickle_serialization();
 protected:
   SubStateVectorProxy();

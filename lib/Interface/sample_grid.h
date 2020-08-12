@@ -11,9 +11,9 @@ namespace FullPhysics {
   This class calculates the wavenumber for each sample in a single
   band of an Instrument.
 *******************************************************************/
-class SampleGrid : virtual public StateVectorObserver,
-              public Observable<SampleGrid> {
-
+class SampleGrid : public Printable<SampleGrid>,
+		   virtual public StateVectorObserver,
+		   public Observable<SampleGrid> {
 public:
   virtual ~SampleGrid() {}
   virtual void add_observer(Observer<SampleGrid>& Obs)
@@ -48,6 +48,8 @@ public:
   /// processing.
   //-----------------------------------------------------------------------
   virtual SpectralDomain pixel_grid() const { return this->sample_grid(); }
+  virtual void print(std::ostream& Os) const
+  { Os << "SampleGrid";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

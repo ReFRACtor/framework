@@ -43,7 +43,8 @@ namespace FullPhysics {
   this information for logging if desired.
 *******************************************************************/
 
-class RtAtmosphere : virtual public StateVectorObserver,
+class RtAtmosphere : public Printable<RtAtmosphere>,
+		     virtual public StateVectorObserver,
 		     public Observable<RtAtmosphere> {
 public:
   virtual ~RtAtmosphere() {}
@@ -259,7 +260,8 @@ public:
   { std::vector<boost::shared_ptr<GenericObject> > res;
     return res;
   }
-  
+  virtual void print(std::ostream& Os) const
+  { Os << "RtAtmosphere";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

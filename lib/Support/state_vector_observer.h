@@ -12,8 +12,7 @@ namespace FullPhysics {
   information, but commonly the class will update its internal state
   based on the state vector update.
 *******************************************************************/
-class StateVectorObserver : public Printable<StateVectorObserver>,
-  virtual public Observer<StateVector> {
+class StateVectorObserver : public Observer<StateVector> {
 public:
   StateVectorObserver() {}
   virtual ~StateVectorObserver() {}
@@ -50,8 +49,6 @@ public:
       Sv_name(i) = sv_name_[i];
   }
 			 
-  virtual void print(std::ostream& Os) const { Os << "StateVectorObserver";}
-
 //-----------------------------------------------------------------------
 /// Python doesn't work so well with the mark_used and state_vector_name
 /// interface, so give access to places to set this.
