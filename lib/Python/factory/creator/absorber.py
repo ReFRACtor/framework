@@ -107,6 +107,10 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
     # Normally passed from through the create method from the AbsorberGasDefinition creator
     gas_name = param.Scalar(str, required=False)
 
+    # Optional pressure grid matching the size of the VMR coefficients when
+    # they are different due to StateMapping handling interpolation
+    coeff_pressure = param.InstanceOf(rf.Pressure, required=False, default=None)
+
     def create(self, gas_name=None, **kwargs):
 
         if self.gas_name() is not None:
@@ -133,7 +137,7 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
 
         if isinstance(effective_mapping, rf.StateMappingLog) and np.any(vmr_profile < 0):
             raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
-        return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name, effective_mapping)
+        return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name, effective_mapping, self.coeff_pressure())
 
 
 class AbsorberVmrLevelScaled(CreatorFlaggedValue):

@@ -118,7 +118,8 @@ class SurfaceTemperatureMUSES(CreatorMUSES, atmosphere.SurfaceTemperature):
 
 class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
 
-    value = param.Choice(absorber.AbsorberVmrLevel.value, param.NoneValue())
+    value = param.Choice(absorber.AbsorberVmrLevel.value, param.NoneValue(), required=False)
+    mapping = param.Choice(absorber.AbsorberVmrLevel.mapping, param.NoneValue(), required=False)
 
     def create(self, gas_name, **kwargs):
         gas_osp = SpeciesOSP(gas_name, **self.osp_common())
@@ -126,10 +127,26 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
         if self.value() is None:
             ret_levels = gas_osp.retrieval_levels
 
-            self.config_def['log_retrieval'] = gas_osp.use_log 
-
             self.config_def['value'] = gas_osp.fm_climatology[ret_levels]
-            self.config_def['pressure'] = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])
+
+        if self.mapping() is None:
+            pressure_from = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])
+
+            if gas_osp.use_log:
+                mapping_first = rf.StateMappingLog()
+            else:
+                mapping_first = rf.StateMappingLinear()
+
+            mapping_interp = rf.StateMappingInterpolateLogLog(self.pressure(), pressure_from)
+
+            mappings = rf.vector_state_mapping()
+            mappings.push_back(mapping_first)
+            mappings.push_back(mapping_interp)
+
+            mapping_composite = rf.StateMappingComposite(mappings)
+
+            self.config_def['mapping'] = mapping_composite
+            self.config_def['coeff_pressure'] = pressure_from
 
         return absorber.AbsorberVmrLevel.create(self, gas_name, **kwargs)
 

@@ -76,12 +76,12 @@ protected:
   (const std::string Gas_name,
    const blitz::Array<double, 1>& Coeff, 
    const blitz::Array<bool, 1>& Used_flag,
-   const boost::shared_ptr<Pressure>& Press,
+   const boost::shared_ptr<Pressure>& Mapped_Press,
    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     cache_stale = true;
     gas_name_ = Gas_name;
-    press = Press;
+    mapped_pressure = Mapped_Press;
     SubStateVectorArray<AbsorberVmr>::init(Coeff, Used_flag, in_map);
   }
 
@@ -98,14 +98,13 @@ protected:
   AbsorberVmrImpBase(const std::string& Gas_name,
                      const blitz::Array<double, 1>& Coeff, 
                      const blitz::Array<bool, 1>& Used_flag,
-                     const boost::shared_ptr<Pressure>& Press,
-                     boost::shared_ptr<StateMapping> in_map =
-                     boost::make_shared<StateMappingLinear>())
+                     const boost::shared_ptr<Pressure>& Mapped_Press,
+                     boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
-    init(Gas_name, Coeff, Used_flag, Press, in_map);
+    init(Gas_name, Coeff, Used_flag, Mapped_Press, in_map);
   }
 protected:
-  boost::shared_ptr<Pressure> press;
+  boost::shared_ptr<Pressure> mapped_pressure;
 private:
   void fill_cache() const
   {
