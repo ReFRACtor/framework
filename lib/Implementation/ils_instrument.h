@@ -67,6 +67,8 @@ public:
     range_check(Spec_index, 0, number_spectrometer());
     return inst_corr[Spec_index];
   }
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const;
 private:
   std::vector<boost::shared_ptr<Ils> > ils_;
   std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >

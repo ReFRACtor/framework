@@ -12,8 +12,9 @@ namespace FullPhysics {
   has finished its work.
 *******************************************************************/
 
-class SpectrumEffect : virtual public StateVectorObserver,
-                               public Observable<SpectrumEffect> {
+class SpectrumEffect : public Printable<SpectrumEffect>,
+		       virtual public StateVectorObserver,
+		       public Observable<SpectrumEffect> {
 public:
   virtual ~SpectrumEffect() {}
 
@@ -61,6 +62,8 @@ public:
   { std::vector<boost::shared_ptr<GenericObject> > res;
     return res;
   }
+  virtual void print(std::ostream& Os) const
+  { Os << "SpectrumEffect";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

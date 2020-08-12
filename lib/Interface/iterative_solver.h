@@ -269,7 +269,7 @@ protected:
   void record_cost_at_accepted_point(double cost)
   { Cost_at_accepted_points.push_back(cost); }
 
-  IterativeSolver() {}
+  IterativeSolver() : stat(UNTRIED) {}
 private:
 
   std::vector< blitz::Array<double, 1> > Accepted_points;

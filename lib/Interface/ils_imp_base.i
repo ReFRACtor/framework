@@ -41,5 +41,69 @@ public:
   boost::shared_ptr<SampleGrid> sample_grid() const {return sample_grid_; }
     virtual boost::shared_ptr<Ils> clone() const = 0;
   %pickle_serialization();
+protected:
+  IlsImpBase();
 };
 }
+
+// We may well move this into a central macro. But haven't worked out
+// yet exactly what we want here, so we'll do all of this inline for now.
+%{
+#include "ils_imp_basePYTHON_wrap.h"
+#include "fp_serialize_support.h"
+  
+namespace boost {
+   namespace serialization {
+     template<class Archive>
+     void serialize(Archive & ar, SwigDirector_IlsImpBase & t, 
+		    const unsigned int UNUSED(version))
+     {
+       ar &  boost::serialization::make_nvp(BOOST_PP_STRINGIZE(IlsImpBase), 
+	    boost::serialization::base_object<FullPhysics::IlsImpBase>(t));
+     }
+     template<class Archive>
+     void save_construct_data(Archive & ar, const SwigDirector_IlsImpBase* t, 
+			      const unsigned int UNUSED(version))
+     {
+       // PyObject* obj = PyObject_CallMethodObjArgs(d->swig_get_self(),
+       // 			PyString_FromString("__boost_serialize_save__"),
+       // 			NULL);
+       // if(PyErr_Occurred()) {
+       // 	GeoCal::Exception e;
+       // 	e << "Python error occurred:\n"
+       // 	  << parse_python_exception();
+       // 	throw e;
+       // }
+       //std::string python_object = PyString_AsString(obj);
+       std::string python_object = "hi there";
+       ar & FP_NVP(python_object);
+     }
+     template<class Archive>
+     void load_construct_data(Archive & ar, SwigDirector_IlsImpBase* t,
+			      const unsigned int UNUSED(version))
+     {
+       throw FullPhysics::Exception("Don't have this working yet");
+     }
+   }
+}
+
+BOOST_CLASS_EXPORT_KEY(SwigDirector_IlsImpBase);
+BOOST_CLASS_EXPORT_IMPLEMENT(SwigDirector_IlsImpBase);
+
+template void boost::serialization::serialize
+(boost::archive::polymorphic_oarchive& ar, SwigDirector_IlsImpBase& t,
+ const unsigned int version);
+template void boost::serialization::serialize
+ (boost::archive::polymorphic_iarchive& ar, SwigDirector_IlsImpBase& t,
+  const unsigned int version);
+
+template void boost::serialization::save_construct_data
+(boost::archive::polymorphic_oarchive & ar, const SwigDirector_IlsImpBase* t,
+ const unsigned int version);
+
+template void boost::serialization::load_construct_data
+(boost::archive::polymorphic_iarchive & ar, SwigDirector_IlsImpBase* t,
+ const unsigned int version);
+ 
+%}
+  

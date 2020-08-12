@@ -33,6 +33,7 @@ public:
   boost::shared_ptr<Ils> ils(int Spec_index) const;
   const std::vector<boost::shared_ptr<InstrumentCorrection> >&
   instrument_correction(int Spec_index) const;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization();
 };
 }

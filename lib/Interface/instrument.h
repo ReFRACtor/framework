@@ -14,7 +14,8 @@ namespace FullPhysics {
   This applies a instrument model to radiances.
 *******************************************************************/
 
-class Instrument : virtual public StateVectorObserver, 
+class Instrument : public Printable<Instrument>,
+		   virtual public StateVectorObserver, 
 		   public Observable<Instrument> {
 public:
   virtual ~Instrument() {}

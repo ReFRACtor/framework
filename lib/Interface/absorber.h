@@ -24,8 +24,9 @@ namespace FullPhysics {
   the optical_depth_each_layer function. Other classes can make use of
   this information for logging if desired.
 *******************************************************************/
-class Absorber : virtual public StateVectorObserver,
-		    public Observable<Absorber> {
+class Absorber : public Printable<Absorber>,
+		 virtual public StateVectorObserver,
+		 public Observable<Absorber> {
 public:
   virtual ~Absorber() {}
   static AccumulatedTimer timer;
@@ -107,6 +108,8 @@ public:
   { std::vector<boost::shared_ptr<GenericObject> > res;
     return res;
   }
+  virtual void print(std::ostream& Os) const
+  { Os << "Absorber";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

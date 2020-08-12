@@ -19,7 +19,8 @@ namespace FullPhysics {
   from TemperatureImpBase rather than from this class. See that class for
   a description.
 *******************************************************************/
-class Temperature : virtual public StateVectorObserver,
+class Temperature : public Printable<Temperature>,
+		    virtual public StateVectorObserver,
 		    public Observable<Temperature> {
 public:
   virtual ~Temperature() {}
@@ -70,6 +71,8 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<Temperature> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "Temperature";}
 private:
   friend class boost::serialization::access;
   template<class Archive>

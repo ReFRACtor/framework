@@ -125,3 +125,16 @@ void IlsInstrument::print(std::ostream& Os) const
     opad.strict_sync();
   }
 }
+
+std::vector<boost::shared_ptr<GenericObject> >
+IlsInstrument::subobject_list() const
+{
+  std::vector<boost::shared_ptr<GenericObject> > res;
+  BOOST_FOREACH(auto i, ils_)
+    res.push_back(i);
+  BOOST_FOREACH(auto i, inst_corr) {
+    BOOST_FOREACH(auto j, i)
+      res.push_back(j);
+  }
+  return res;
+}

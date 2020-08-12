@@ -21,7 +21,6 @@ public:
   virtual void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name)
     const;
-  virtual void print(std::ostream& Os) const;
 protected:
   // Ensure that class can only be inherited
   SubStateVectorProxy() {}

@@ -21,7 +21,8 @@ namespace FullPhysics {
   more general. 
 *******************************************************************/
 
-class Aerosol: virtual public StateVectorObserver,
+class Aerosol: public Printable<Aerosol>,
+	       virtual public StateVectorObserver,
 	       public Observable<Aerosol> {
 public:
   virtual ~Aerosol() {}
@@ -110,6 +111,8 @@ public:
   { std::vector<boost::shared_ptr<GenericObject> > res;
     return res;
   }
+  virtual void print(std::ostream& Os) const
+  { Os << "Aerosol";}
 private:
   friend class boost::serialization::access;
   template<class Archive>
