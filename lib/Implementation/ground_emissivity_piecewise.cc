@@ -18,15 +18,14 @@ FP_IMPLEMENT(GroundEmissivityPiecewise);
 #endif
 
 GroundEmissivityPiecewise::GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                                                     const blitz::Array<double, 1>& emissivity_values,
-                                                     const blitz::Array<bool, 1>& retrieval_flag)
-: GroundPiecewise(spectral_points, emissivity_values, retrieval_flag)
+                                                     const blitz::Array<double, 1>& emissivity_values)
+: GroundPiecewise(spectral_points, emissivity_values)
 {
 }
 
 boost::shared_ptr<Ground> GroundEmissivityPiecewise::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundEmissivityPiecewise(spectral_points_, coefficient().value(), used_flag));
+    return boost::shared_ptr<Ground>(new GroundEmissivityPiecewise(spectral_points_, coefficient().value()));
 }
 
 std::string GroundEmissivityPiecewise::sub_state_identifier() const {

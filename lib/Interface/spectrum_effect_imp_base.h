@@ -42,20 +42,19 @@ protected:
   SpectrumEffectImpBase() {}
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, 
-                        const blitz::Array<bool, 1>& Used_flag)
+  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff)
   {
-    init(Coeff, Used_flag);
+    init(Coeff);
   }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient and used_flag values when
+/// Constructor that sets the coefficient values when
 /// they are scalar values
 //-----------------------------------------------------------------------
-  SpectrumEffectImpBase(double Coeff, bool Used_flag)
-  { init(Coeff, Used_flag); }
+  SpectrumEffectImpBase(double Coeff)
+  { init(Coeff); }
 private:
   friend class boost::serialization::access;
   template<class Archive>

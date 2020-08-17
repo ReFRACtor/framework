@@ -14,11 +14,9 @@ namespace FullPhysics {
 *******************************************************************/
 class InstrumentDoppler : virtual public SpectrumEffectImpBase {
 public:
-  InstrumentDoppler(const DoubleWithUnit& Relative_velocity, 
-                    const bool Used_flag = false);
+  InstrumentDoppler(const DoubleWithUnit& Relative_velocity);
   InstrumentDoppler(const double Relative_velocity_value,
-                    const std::string& Relative_velocity_units,
-                    const bool Used_flag = false);
+                    const std::string& Relative_velocity_units);
 
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 

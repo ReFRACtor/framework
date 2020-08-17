@@ -29,7 +29,6 @@ public:
   };
 
   GroundBrdf(const blitz::Array<double, 2>& Coeffs,
-	     const blitz::Array<bool, 2>& Flag,
 	     const ArrayWithUnit<double, 1>& Ref_points,
 	     const std::vector<std::string>& Desc_band_names);
 
@@ -86,7 +85,6 @@ public:
 protected:
 
   GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
-	     const blitz::Array<bool, 1>& Flag, 
 	     const ArrayWithUnit<double, 1>& Ref_points,
 	     const std::vector<std::string>& Desc_band_names);
   GroundBrdf() {}
@@ -107,10 +105,9 @@ private:
 class GroundBrdfVeg: virtual public GroundBrdf {
 public:
   GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
-		const blitz::Array<bool, 2>& Flag,
 		const ArrayWithUnit<double, 1>& Ref_points,
 		const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
+    GroundBrdf(Coeffs, Ref_points, Desc_band_names) {}
 
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
@@ -120,14 +117,13 @@ public:
   virtual const std::string breon_type() const { return "Vegetative"; }
 
   virtual boost::shared_ptr<Ground> clone() const {
-    return boost::shared_ptr<Ground>(new GroundBrdfVeg(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundBrdfVeg(coefficient().value(), reference_points, desc_band_names));
   }
 private:
   GroundBrdfVeg(const blitz::Array<double, 1>& Spec_coeffs,
-		const blitz::Array<bool, 1>& Flag, 
 		const ArrayWithUnit<double, 1>& Ref_points,
 		const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Spec_coeffs, Flag, Ref_points, Desc_band_names) {}
+    GroundBrdf(Spec_coeffs, Ref_points, Desc_band_names) {}
   GroundBrdfVeg() {}
   friend class boost::serialization::access;
   template<class Archive>
@@ -137,10 +133,9 @@ private:
 class GroundBrdfSoil: virtual public GroundBrdf {
 public:
   GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
-		 const blitz::Array<bool, 2>& Flag,
 		 const ArrayWithUnit<double, 1>& Ref_points,
 		 const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
+    GroundBrdf(Coeffs, Ref_points, Desc_band_names) {}
 
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
@@ -150,14 +145,13 @@ public:
   virtual const std::string breon_type() const { return "Soil"; }
 
   virtual boost::shared_ptr<Ground> clone() const {
-    return boost::shared_ptr<Ground>(new GroundBrdfSoil(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundBrdfSoil(coefficient().value(), reference_points, desc_band_names));
   }
 private:
   GroundBrdfSoil(const blitz::Array<double, 1>& Spec_coeffs,
-		 const blitz::Array<bool, 1>& Flag, 
 		 const ArrayWithUnit<double, 1>& Ref_points,
 		 const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Spec_coeffs, Flag, Ref_points, Desc_band_names) {}
+    GroundBrdf(Spec_coeffs, Ref_points, Desc_band_names) {}
   GroundBrdfSoil() {}
   friend class boost::serialization::access;
   template<class Archive>

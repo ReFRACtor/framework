@@ -14,10 +14,6 @@ public:
     : SubStateVectorObserver(3)
   {
   }
-  virtual void mark_used_sub(blitz::Array<bool, 1>& Used) const
-  {
-    Used(1) = true; Used(2) = true;
-  }
   virtual ~StateVectorTest() {}
   virtual void update_sub_state
   (const ArrayAd<double, 1>& Sv_sub,

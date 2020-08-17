@@ -67,7 +67,7 @@ double exact_brdf_value_simple_soil(const blitz::Array<double, 1>& params, doubl
 }
 
 REGISTER_LUA_DERIVED_CLASS(GroundBrdfVeg, Ground)
-.def(luabind::constructor<const blitz::Array<double, 2>&, const blitz::Array<bool, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
+.def(luabind::constructor<const blitz::Array<double, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
 .scope
 [
     luabind::def("black_sky_albedo", &black_sky_albedo_simple_veg)
@@ -79,7 +79,7 @@ REGISTER_LUA_DERIVED_CLASS(GroundBrdfVeg, Ground)
 REGISTER_LUA_END()
 
 REGISTER_LUA_DERIVED_CLASS(GroundBrdfSoil, Ground)
-.def(luabind::constructor<const blitz::Array<double, 2>&, const blitz::Array<bool, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
+.def(luabind::constructor<const blitz::Array<double, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
 .scope
 [
     luabind::def("black_sky_albedo", &black_sky_albedo_simple_soil)
@@ -106,7 +106,6 @@ REGISTER_LUA_END()
  *******************************************************************/
 
 GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
-                       const blitz::Array<bool, 2>& Flag,
                        const ArrayWithUnit<double, 1>& Ref_points,
                        const std::vector<std::string>& Desc_band_names) 
 : reference_points(Ref_points), desc_band_names(Desc_band_names)
@@ -114,18 +113,6 @@ GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
     if(Coeffs.cols() != NUM_COEFF) {
         Exception err_msg;
         err_msg << "Number of parameters in Coeffs: " << Coeffs.cols() << " is not " << NUM_COEFF << " as expected";
-        throw err_msg;
-    }
-
-    if(Coeffs.rows() != Flag.rows()) {
-        Exception err_msg;
-        err_msg << "Number of spectrometers in Coeffs: " << Coeffs.rows() << " does not match the number in Flag: " << Flag.rows();
-        throw err_msg;
-    }
-
-    if(Coeffs.cols() != Flag.cols()) {
-        Exception err_msg;
-        err_msg << "Number of parameters in Coeffs: " << Coeffs.cols() << " does not match the number in Flag: " << Flag.cols();
         throw err_msg;
     }
 
@@ -143,21 +130,18 @@ GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
 
     // Make local arrays to deal with const issues on call to init. The init routine copies the data
     Array<double, 2> coeffs(Coeffs);
-    Array<bool, 2> flags(Flag);
 
     // Flatten arrays for state vector
-    init(Array<double, 1>(coeffs.dataFirst(), TinyVector<int, 1>(Coeffs.rows() * Coeffs.cols()), blitz::neverDeleteData),
-         Array<bool, 1>(flags.dataFirst(), TinyVector<int, 1>(Flag.rows() * Flag.cols()), blitz::neverDeleteData));
+    init(Array<double, 1>(coeffs.dataFirst(), TinyVector<int, 1>(Coeffs.rows() * Coeffs.cols()), blitz::neverDeleteData));
 }
 
-/// Protected constructor that matches the dimensionality of coeff and flag arrays
+/// Protected constructor that matches the dimensionality of the coeff array
 GroundBrdf::GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
-                       const blitz::Array<bool, 1>& Flag, 
                        const ArrayWithUnit<double, 1>& Ref_points,
                        const std::vector<std::string>& Desc_band_names)
   : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
-  SubStateVectorArray<Ground>::init(Spec_coeffs, Flag);
+  SubStateVectorArray<Ground>::init(Spec_coeffs);
 }
 
 ArrayAd<double, 1> GroundBrdf::surface_parameter(double wn, int spec_index) const
@@ -303,15 +287,11 @@ const blitz::Array<double, 2> GroundBrdf::brdf_covariance(int spec_index) const
     // zeros for non retrieved elements
     int in_idx_a = ret_cov_offset;
     for (int out_idx_a = 0; out_idx_a < NUM_COEFF; out_idx_a++) {
-        if (used_flag_value()(out_idx_a)) {
-            int in_idx_b = ret_cov_offset;
-            for (int out_idx_b = 0; out_idx_b < NUM_COEFF; out_idx_b++) {
-                if (used_flag_value()(out_idx_b)) {
-                    cov(out_idx_a, out_idx_b) = statevector_covariance()(in_idx_a, in_idx_b++);
-                }
-            }
-            in_idx_a++;
+        int in_idx_b = ret_cov_offset;
+        for (int out_idx_b = 0; out_idx_b < NUM_COEFF; out_idx_b++) {
+            cov(out_idx_a, out_idx_b) = statevector_covariance()(in_idx_a, in_idx_b++);
         }
+        in_idx_a++;
     }
 
     return cov;

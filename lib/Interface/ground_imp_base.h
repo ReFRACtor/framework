@@ -54,16 +54,15 @@ protected:
   GroundImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 /// See SubStateVectorArray for a discussion of Mark_according_to_press and
 /// Pdep_start.
 //-----------------------------------------------------------------------
   GroundImpBase(const blitz::Array<double, 1>& Coeff, 
-                const blitz::Array<bool, 1>& Used_flag,
                 boost::shared_ptr<StateMapping> in_map =
                   boost::make_shared<StateMappingLinear>())
   {
-    init(Coeff, Used_flag, in_map);
+    init(Coeff, in_map);
   }
 private:
   friend class boost::serialization::access;

@@ -15,16 +15,10 @@ class AbsorberVmrLevel : virtual public AbsorberVmrImpBase {
 public:
     AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Press,
                      const blitz::Array<double, 1>& Vmr,
-                     const blitz::Array<bool, 1>& Vmr_flag,
                      const std::string& Gas_name,
                      boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>(),
                      const boost::shared_ptr<Pressure>& Coeff_Press = NULL);
-    AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Press,
-                     const blitz::Array<double, 1>& Vmr,
-                     const bool Vmr_flag,
-                     const std::string& Gas_name,
-                     boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>(),
-                     const boost::shared_ptr<Pressure>& Coeff_Press = NULL);
+
     virtual ~AbsorberVmrLevel() {}
     virtual void print(std::ostream& Os) const;
     virtual std::string sub_state_identifier() const

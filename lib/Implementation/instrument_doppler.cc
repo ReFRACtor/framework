@@ -20,34 +20,26 @@ FP_IMPLEMENT(InstrumentDoppler);
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(InstrumentDoppler, SpectrumEffect)
-.def(luabind::constructor<const DoubleWithUnit&, const bool>())
 .def(luabind::constructor<const DoubleWithUnit&>())
-.def(luabind::constructor<const double, const std::string&, const bool>())
 .def(luabind::constructor<const double, const std::string&>())
 REGISTER_LUA_END()
 #endif
  
-InstrumentDoppler::InstrumentDoppler(const DoubleWithUnit& Relative_velocity, 
-                                     const bool Used_flag)
+InstrumentDoppler::InstrumentDoppler(const DoubleWithUnit& Relative_velocity)
   : vel_units(Relative_velocity.units)
 {
   Array<double, 1> c(1);
   c = Relative_velocity.value;
-  Array<bool, 1> f(1);
-  f = Used_flag;
-  init(c, f);
+  init(c);
 }
 
 InstrumentDoppler::InstrumentDoppler(const double Relative_velocity_value,
-                                     const std::string& Relative_velocity_units,
-                                     const bool Used_flag) 
+                                     const std::string& Relative_velocity_units) 
   : vel_units(Relative_velocity_units)
 {
   Array<double, 1> c(1);
   c = Relative_velocity_value;
-  Array<bool, 1> f(1);
-  f = Used_flag;
-  init(c, f);
+  init(c);
 }
 
 void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)) const
@@ -74,7 +66,7 @@ void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
 
 boost::shared_ptr<SpectrumEffect> InstrumentDoppler::clone() const
 {
-  return boost::shared_ptr<SpectrumEffect>(new InstrumentDoppler(DoubleWithUnit(coeff.value()(0), vel_units), used_flag(0)));
+  return boost::shared_ptr<SpectrumEffect>(new InstrumentDoppler(DoubleWithUnit(coeff.value()(0), vel_units)));
 }
 
 void InstrumentDoppler::print(std::ostream& Os) const

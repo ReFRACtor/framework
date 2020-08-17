@@ -15,9 +15,6 @@ public:
 //-----------------------------------------------------------------------
 /// Constructor.
 /// \param Press Pressure object used for defining pressure levels
-/// \param Flag Boolean flag indicating which coefficients are to be set by
-///   the state vector. A value of false means it is held fixed
-///   when the state vector changes.
 /// \param Coeffs The total aerosol optical depth, center pressure
 ///   and pressure width coefficients. The total optical depth is
 ///   defined in linear or log terms. The pressure coefficents are relative
@@ -30,7 +27,6 @@ public:
 //-----------------------------------------------------------------------
 
 AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
-		     const blitz::Array<bool, 1>& Flag, 
 		     const blitz::Array<double, 1>& Coeffs,
 		     const std::string& Aerosol_name,
 		     const bool Linear_AOD);

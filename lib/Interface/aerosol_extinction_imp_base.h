@@ -109,11 +109,10 @@ protected:
 
   void init(const std::string Aerosol_name,
             const blitz::Array<double, 1>& Coeff, 
-            const blitz::Array<bool, 1>& Used_flag,
             const boost::shared_ptr<Pressure>& Press,
             boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   { 
-    SubStateVectorArray<AerosolExtinction>::init(Coeff, Used_flag, in_map);
+    SubStateVectorArray<AerosolExtinction>::init(Coeff, in_map);
     aerosol_name_ = Aerosol_name;
     press = Press;
   }
@@ -126,17 +125,16 @@ protected:
   AerosolExtinctionImpBase() : cache_stale(true) { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
   AerosolExtinctionImpBase
   (const std::string& Aerosol_name,
    const blitz::Array<double, 1>& Coeff, 
-   const blitz::Array<bool, 1>& Used_flag,
    const boost::shared_ptr<Pressure>& Press,
    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
     : cache_stale(true)
   {
-    init(Aerosol_name, Coeff, Used_flag, Press, in_map);
+    init(Aerosol_name, Coeff, Press, in_map);
   }
 protected:
   boost::shared_ptr<Pressure> press;

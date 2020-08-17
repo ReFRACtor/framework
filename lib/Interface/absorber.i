@@ -62,8 +62,6 @@ public:
 
   // Functions so StateVectorObserver base class, see note above
   virtual void notify_update(const StateVector& Sv);
-  virtual void mark_used(const StateVector& Sv, 
-			 blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
 			  blitz::Array<std::string, 1>& Sv_name) const;
   virtual void notify_add(StateVector& Observed_object);
@@ -95,9 +93,8 @@ class FullPhysics::SubStateVectorArray<FullPhysics::Absorber>:
 public:
   SubStateVectorArray<FullPhysics::Absorber>();
     void init(const blitz::Array<double, 1>& Coeff, 
-              const blitz::Array<bool, 1>& Used_flag,
               boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
-    void init(double Coeff, bool Used_flag,
+    void init(double Coeff,
               boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 
   // Functions from Absorber base class, see note above.
@@ -112,14 +109,11 @@ public:
   virtual void remove_observer(Observer<Absorber>& Obs);
   virtual boost::shared_ptr<Absorber> clone() const = 0;
   virtual void notify_update(const StateVector& Sv);
-  virtual void mark_used(const StateVector& Sv, 
-                         blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
                                  blitz::Array<std::string, 1>& Sv_name) const;
   virtual void notify_add(StateVector& Observed_object);
   virtual void notify_remove(StateVector& Observed_object);
 
-  void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   virtual std::string state_vector_name_i(int i) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) 
     const;
@@ -128,7 +122,6 @@ public:
                                 const blitz::Array<double, 2>& Cov);
   virtual void update_sub_state_hook();
   ArrayAd<double, 1> coefficient() const;
-  blitz::Array<bool, 1> used_flag_value() const;
 };
 
 }

@@ -65,23 +65,6 @@ void SubStateVectorObserver::notify_update(const StateVector& Sv)
     update_sub_state(sv_sub, sv_cov_sub);
 }
 
-void SubStateVectorObserver::mark_used(const StateVector& UNUSED(Sv),
-                                       blitz::Array<bool, 1>& Used) const
-{
-    if(Used.rows() < pstart + plen) {
-        throw Exception("StateVector not the expected size");
-    }
-
-    if(pstart < 0) {
-        throw Exception("pstart < 0");
-    }
-
-    if(plen > 0) {
-        Array<bool, 1> used_sub(Used(blitz::Range(pstart, pstart + plen - 1)));
-        mark_used_sub(used_sub);
-    }
-}
-
 void SubStateVectorObserver::state_vector_name(const StateVector& UNUSED(Sv),
         blitz::Array<std::string, 1>& Sv_name) const
 {

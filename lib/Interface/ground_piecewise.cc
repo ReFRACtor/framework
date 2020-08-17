@@ -34,11 +34,10 @@ FP_IMPLEMENT(GroundPiecewise);
 #endif
 
 GroundPiecewise::GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                                 const blitz::Array<double, 1>& point_values,
-                                 const blitz::Array<bool, 1>& retrieval_flag)
+                                 const blitz::Array<double, 1>& point_values)
 {
   spectral_points_ = spectral_points;
-  init(point_values, retrieval_flag);
+  init(point_values);
   update_sub_state_hook();
 }
 

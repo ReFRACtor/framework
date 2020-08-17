@@ -20,10 +20,10 @@ FP_IMPLEMENT(PressureSigma);
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(PressureSigma, Pressure)
 .def(luabind::constructor<const blitz::Array<double, 1>&,
-			  const blitz::Array<double, 1>&,
-			  double, bool>())
+                          const blitz::Array<double, 1>&,
+                          double>())
 .def(luabind::constructor<const blitz::Array<double, 1>&,
-			  double, bool>())
+                          double>())
 REGISTER_LUA_END()
 #endif
 
@@ -32,18 +32,16 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 PressureSigma::PressureSigma(const blitz::Array<double, 1>& A,
-			     const blitz::Array<double, 1>& B,
-			     double Surface_pressure, bool Pressure_flag)
+                             const blitz::Array<double, 1>& B,
+                             double Surface_pressure)
 : a_(A.copy()), b_(B.copy())
 {
   if(A.rows() != B.rows())
     throw Exception("A and B need to be the same size in PressureSigma constructor");
 
   blitz::Array<double, 1> val(1);
-  blitz::Array<bool, 1> flag(1);
   val(0) = Surface_pressure;
-  flag(0) = Pressure_flag;
-  init(val, flag);
+  init(val);
   cov.resize(1, 1);
   cov(0,0) = 1;
 }
@@ -56,15 +54,13 @@ PressureSigma::PressureSigma(const blitz::Array<double, 1>& A,
 //-----------------------------------------------------------------------
 
 PressureSigma::PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
-                             double Surface_pressure, bool Pressure_flag)
+                             double Surface_pressure)
 {
   set_levels_from_grid(Pressure_grid);
 
   blitz::Array<double, 1> val(1);
-  blitz::Array<bool, 1> flag(1);
   val(0) = Surface_pressure;
-  flag(0) = Pressure_flag;
-  init(val, flag);
+  init(val);
   cov.resize(1, 1);
   cov(0,0) = 1;
 }
@@ -129,8 +125,7 @@ void PressureSigma::calc_pressure_grid() const
 boost::shared_ptr<Pressure> PressureSigma::clone() const
 {
   boost::shared_ptr<Pressure> res
-    (new PressureSigma(a_, b_, coefficient()(0).value(), 
-		       used_flag_value()(0)));
+    (new PressureSigma(a_, b_, coefficient()(0).value()));
   return res;
 }
 
@@ -139,8 +134,6 @@ void PressureSigma::print(std::ostream& Os) const
   OstreamPad opad(Os, "  ");
   Os << "PressureSigma:\n"
      << "  Surface pressure:    " << surface_pressure().value.value() << "\n"
-     << "  Retrieval Flag:      " << (used_flag_value()(0) ? "True\n": 
-				      "False\n")
      << "  a: \n";
   opad << a() << "\n";
   opad.strict_sync();

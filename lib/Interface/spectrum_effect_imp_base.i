@@ -48,8 +48,8 @@ public:
   %pickle_serialization();
 protected:
   SpectrumEffectImpBase();
-  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, const blitz::Array<bool, 1>& Used_flag);
-  SpectrumEffectImpBase(double Coeff, bool Used_flag);
+  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff);
+  SpectrumEffectImpBase(double Coeff);
 };
 }
 

@@ -23,30 +23,16 @@ FP_IMPLEMENT(GroundLambertian);
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(GroundLambertian, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&,
-                          const blitz::Array<bool, 2>&, 
                           const ArrayWithUnit<double, 1>&,
                           const std::vector<std::string>&>())
 REGISTER_LUA_END()
 #endif
 
 GroundLambertian::GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
-                                   const blitz::Array<bool, 2>& Flag, 
                                    const ArrayWithUnit<double, 1>& Ref_points,
                                    const std::vector<std::string>& Desc_band_names) 
 : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
-    if(Spec_coeffs.rows() != Flag.rows()) {
-        Exception err_msg;
-        err_msg << "Number of spectrometers in Spec_coeffs: " << Spec_coeffs.rows() << " does not match the number in Flag: " << Flag.rows();
-        throw err_msg;
-    }
-
-    if(Spec_coeffs.cols() != Flag.cols()) {
-        Exception err_msg;
-        err_msg << "Number of parameters in Spec_coeffs: " << Spec_coeffs.cols() << " does not match the number in Flag: " << Flag.cols();
-        throw err_msg;
-    }
-
     if(Spec_coeffs.rows() != Ref_points.rows()) {
         Exception err_msg;
         err_msg << "Number of spectrometers in Spec_coeffs: " << Spec_coeffs.rows() << " does not match the number in Ref_points: " << Ref_points.rows();
@@ -61,21 +47,18 @@ GroundLambertian::GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
 
     // Make local arrays to deal with const issues on call to init. The init routine copies the data
     Array<double, 2> spec_coeffs(Spec_coeffs);
-    Array<bool, 2> flags(Flag);
 
     // Flatten arrays for state vector
-    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData),
-         Array<bool, 1>(flags.dataFirst(), TinyVector<int, 1>(Flag.rows() * Flag.cols()), blitz::neverDeleteData));
+    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData));
 }
 
-// Protected constructor that matches the dimensionality of coeff and flag arrays
+// Protected constructor that matches the dimensionality of the coeff array
 GroundLambertian::GroundLambertian(const blitz::Array<double, 1>& Spec_coeffs,
-                                   const blitz::Array<bool, 1>& Flag, 
                                    const ArrayWithUnit<double, 1>& Ref_points,
                                    const std::vector<std::string>& Desc_band_names)
   : reference_points(Ref_points), desc_band_names(Desc_band_names) 
 {
-  SubStateVectorArray<Ground>::init(Spec_coeffs, Flag);
+  SubStateVectorArray<Ground>::init(Spec_coeffs);
 }
 
 ArrayAd<double, 1> GroundLambertian::surface_parameter(const double wn, const int spec_index) const
@@ -126,7 +109,7 @@ const blitz::Array<double, 2> GroundLambertian::albedo_covariance(const int spec
 }
 
 boost::shared_ptr<Ground> GroundLambertian::clone() const {
-    return boost::shared_ptr<Ground>(new GroundLambertian(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundLambertian(coefficient().value(), reference_points, desc_band_names));
 }
 
 std::string GroundLambertian::state_vector_name_i(int i) const {
@@ -142,14 +125,7 @@ void GroundLambertian::print(std::ostream& Os) const
     for(int b_idx = 0; b_idx < number_spectrometer(); b_idx++) {
         opad << "Band: " << desc_band_names[b_idx] << std::endl
              << "Coefficient: " << albedo_coefficients(b_idx).value() << std::endl
-             << "Flag: ";
-        for(int c_idx = 0; c_idx < number_params(); c_idx++) {
-            opad << used_flag_value()(number_params() * b_idx + c_idx);
-            if(c_idx < number_params()-1) {
-                opad << ", ";
-            }
-        }
-        opad << std::endl << "Reference Point: " << reference_points(b_idx) << std::endl;
+             << std::endl << "Reference Point: " << reference_points(b_idx) << std::endl;
     }
     opad.strict_sync();
 }

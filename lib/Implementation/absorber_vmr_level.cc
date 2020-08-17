@@ -24,7 +24,6 @@ FP_IMPLEMENT(AbsorberVmrLevel);
 REGISTER_LUA_DERIVED_CLASS(AbsorberVmrLevel, AbsorberVmr)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
      const blitz::Array<double, 1>&,
-     const blitz::Array<bool, 1>&,
      const std::string&>())
 REGISTER_LUA_END()
 #endif
@@ -35,38 +34,11 @@ REGISTER_LUA_END()
 
 AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Press,
                                    const blitz::Array<double, 1>& Vmr,
-                                   const blitz::Array<bool, 1>& Vmr_flag,
                                    const std::string& Gas_name,
                                    boost::shared_ptr<StateMapping> in_map,
                                    const boost::shared_ptr<Pressure>& Coeff_Press)
 {
-    init(Gas_name, Vmr, Vmr_flag, Mapped_Press, in_map);
-
-    if (!Coeff_Press) {
-        coeff_pressure = Mapped_Press;
-    } else {
-        coeff_pressure = Coeff_Press;
-    }
-
-    if (coeff_pressure->pressure_grid().rows() != Vmr.rows()) {
-        Exception err;
-        err << "Coefficient pressure grid size: " << coeff_pressure->pressure_grid().rows()
-            << " does not match VMR size: " << Vmr.rows();
-        throw err;
-    }
-
-}
-
-AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Press,
-                                   const blitz::Array<double, 1>& Vmr,
-                                   const bool Vmr_flag,
-                                   const std::string& Gas_name,
-                                   boost::shared_ptr<StateMapping> in_map,
-                                   const boost::shared_ptr<Pressure>& Coeff_Press)
-{
-    blitz::Array<bool, 1> flag(1);
-    flag(0) = Vmr_flag;
-    init(Gas_name, Vmr, flag, Mapped_Press, in_map);
+    init(Gas_name, Vmr, Mapped_Press, in_map);
 
     if (!Coeff_Press) {
         coeff_pressure = Mapped_Press;
@@ -86,7 +58,7 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Pre
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
     return boost::shared_ptr<AbsorberVmr>
-           (new AbsorberVmrLevel(mapped_pressure->clone(), coeff.value(), used_flag,
+           (new AbsorberVmrLevel(mapped_pressure->clone(), coeff.value(),
                                  gas_name(), mapping->clone(), coeff_pressure->clone()));
 }
 
@@ -156,8 +128,7 @@ void AbsorberVmrLevel::print(std::ostream& Os) const
     for(int coeff_idx = 0; coeff_idx < coeff.rows(); coeff_idx++) {
         Os << "  "
            << std::fixed << std::setprecision(3) << setw(8) << (press_grid(coeff_idx) / 100) << " hPa" << " "
-           << std::scientific << std::setprecision(5) << setw(12) << vmr_grid(coeff_idx) << " "
-           << setw(9) << (used_flag(coeff_idx) ? "true" : "false") << "\n";
+           << std::scientific << std::setprecision(5) << setw(12) << vmr_grid(coeff_idx) << "\n";
     }
 
     opad.strict_sync();

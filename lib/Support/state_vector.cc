@@ -207,29 +207,6 @@ void StateVector::update_state(const ArrayAd<double, 1>& X,
     notify_update_do(*this);
 }
 
-
-//-----------------------------------------------------------------------
-/// Return a Array of boolean values. The value (i) is true if the state
-/// vector element X(i) is being used. This can be used to determine
-/// parameters that are being ignored, e.g. the number of active
-/// levels in an Aerosol is less that the size of the state vector for it.
-//-----------------------------------------------------------------------
-
-blitz::Array<bool, 1> StateVector::used_flag() const
-{
-    blitz::Array<bool, 1> res(state().rows());
-    res = false;
-    BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
-        boost::shared_ptr<StateVectorObserver> t2 =
-            boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
-
-        if(t2) {
-            t2->mark_used(*this, res);
-        }
-    }
-    return res;
-}
-
 //-----------------------------------------------------------------------
 /// Return name of each state vector element.
 //-----------------------------------------------------------------------

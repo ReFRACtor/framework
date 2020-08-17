@@ -17,8 +17,7 @@
 namespace FullPhysics {
 class SurfaceTemperatureDirect : public SubStateVectorArray<SurfaceTemperature> {
 public:
-  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp,
-			   blitz::Array<bool, 1> flag);
+  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp);
   virtual ~SurfaceTemperatureDirect() {}
 
   //-----------------------------------------------------------------------

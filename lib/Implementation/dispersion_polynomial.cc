@@ -22,7 +22,6 @@ FP_IMPLEMENT(DispersionPolynomial);
 
 REGISTER_LUA_DERIVED_CLASS(DispersionPolynomial, SampleGrid)
 .def(luabind::constructor<const blitz::Array<double, 1>&, 
-                          const blitz::Array<bool, 1>&,
                           const std::string&,
                           const blitz::Array<double, 1>&,
                           const std::string&>())
@@ -36,7 +35,6 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const Unit& Coeff_unit,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
@@ -45,7 +43,7 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff);
   initialize();
 }
 
@@ -56,7 +54,6 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const std::string& Coeff_unit_name,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
@@ -65,7 +62,7 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff);
   initialize();
 }
 
@@ -74,7 +71,6 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name)
 : coeff_unit(Coeff.units),
@@ -82,7 +78,7 @@ DispersionPolynomial::DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff.value, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff.value);
   initialize();
 }
 
@@ -120,7 +116,7 @@ DispersionPolynomial::pixel_grid() const
 boost::shared_ptr<SampleGrid> DispersionPolynomial::clone() const
 {
   return boost::shared_ptr<SampleGrid>
-    (new DispersionPolynomial(coeff.value(), used_flag, coeff_unit, variable_values_, band_name_));
+    (new DispersionPolynomial(coeff.value(), coeff_unit, variable_values_, band_name_));
 }
 
 void DispersionPolynomial::print(std::ostream& Os) const 
@@ -129,9 +125,5 @@ void DispersionPolynomial::print(std::ostream& Os) const
      << "  Coeff:    (";
   for(int i = 0; i < coeff.rows() - 1; ++i)
     Os << coeff.value()(i) << ", ";
-  Os << coeff.value()(coeff.rows() - 1) << ")\n"
-     << "  Retrieve: (";
-  for(int i = 0; i < used_flag.rows() - 1; ++i)
-    Os << (used_flag(i) ? "true" : "false") << ", ";
-  Os << (used_flag(used_flag.rows() - 1) ? "true" : "false") << ")";
+  Os << coeff.value()(coeff.rows() - 1) << ")\n";
 }

@@ -35,7 +35,7 @@ class RamanSiorisEffect : public SpectrumEffectImpBase,
                           public Observer<Pressure> {
 
 public:
-    RamanSiorisEffect(double scale_factor, bool used_flag, 
+    RamanSiorisEffect(double scale_factor,
                       int channel_index, 
                       const DoubleWithUnit& solar_zenith, 
                       const DoubleWithUnit& observation_zenith, 

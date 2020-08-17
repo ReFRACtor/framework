@@ -52,7 +52,6 @@ protected:
   virtual void calc_vmr() const = 0;
   AbsorberVmrImpBase(const std::string& Gas_name,
                      const blitz::Array<double, 1>& Coeff,
-                     const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<Pressure>& Press,
                      boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };

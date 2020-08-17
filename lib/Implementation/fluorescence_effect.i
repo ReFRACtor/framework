@@ -18,15 +18,14 @@ namespace FullPhysics {
 class FluorescenceEffect : public SpectrumEffectImpBase {
 public:
   FluorescenceEffect(const blitz::Array<double, 1>& Coeff,
-                     const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<RtAtmosphere>& Atm,
-		     const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+                     const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
                      const DoubleWithUnit& Sza, 
                      const int Spec_index,
                      const DoubleWithUnit& Reference,
                      const Unit& Retrieval_unit);
   virtual void apply_effect(Spectrum& Spec,
-		    const ForwardModelSpectralGrid& Forward_model_grid) const;
+                            const ForwardModelSpectralGrid& Forward_model_grid) const;
   %python_attribute(contribution, ArrayAd<double, 1>)
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
   virtual std::string state_vector_name_i(int i) const;

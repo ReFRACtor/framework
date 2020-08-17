@@ -12,9 +12,8 @@ namespace FullPhysics {
 class TemperatureMet: virtual public TemperatureOffset {
 public:
   TemperatureMet(const boost::shared_ptr<Meteorology>& Met_file,
-		   const boost::shared_ptr<Pressure>& Press,
-		   double Temp_offset,
-		   bool Temp_flag);
+                 const boost::shared_ptr<Pressure>& Press,
+                 double Temp_offset);
   virtual ~TemperatureMet() {}
   virtual void print(std::ostream& Os) const;
 

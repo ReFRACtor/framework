@@ -146,7 +146,7 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
 /// a significant enough effect that an approximate value can suffice.
 //-----------------------------------------------------------------------
 
-RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
+RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
                                      int channel_index,
                                      const DoubleWithUnit& solar_zenith, 
                                      const DoubleWithUnit& observation_zenith, 
@@ -157,7 +157,7 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
                                      double padding_fraction,
                                      bool do_upwelling,
                                      double jac_perturbation)
-: SpectrumEffectImpBase(scale_factor, used_flag),
+: SpectrumEffectImpBase(scale_factor),
   channel_index_(channel_index),
   albedo_(albedo),
   padding_fraction_(padding_fraction),
@@ -286,7 +286,7 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
 {
 
     return boost::shared_ptr<SpectrumEffect>( 
-            new RamanSiorisEffect(coefficient().value()(0), used_flag_value()(0),
+            new RamanSiorisEffect(coefficient().value()(0),
                                   channel_index_,
                                   DoubleWithUnit(solar_zenith_, units::deg),
                                   DoubleWithUnit(obs_zenith_, units::deg),
@@ -305,7 +305,6 @@ void RamanSiorisEffect::print(std::ostream& Os) const
 {
   Os << "RamanSiorisEffect" << std::endl
      << "  Scale Factor:           " << coefficient().value()(0) << "\n"
-     << "  Retrieval flag:         " << used_flag_value()(0) << "\n"
      << "  Solar zenith angle:     " << solar_zenith_ << "\n"
      << "  Observation angle:      " << obs_zenith_ << "\n"
      << "  Relative azimuth angle: " << relative_azimuth_ << "\n"

@@ -16,13 +16,6 @@ class AbsorberVmrLevel : public AbsorberVmrImpBase {
 public:
     AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
                      const blitz::Array<double, 1>& Vmr,
-                     const blitz::Array<bool, 1>& Vmr_flag,
-                     const std::string& Gas_name,
-                     boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>(),
-                     const boost::shared_ptr<Pressure>& Coeff_Press = NULL);
-    AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Press,
-                     const blitz::Array<double, 1>& Vmr,
-                     const bool Vmr_flag,
                      const std::string& Gas_name,
                      boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>(),
                      const boost::shared_ptr<Pressure>& Coeff_Press = NULL);

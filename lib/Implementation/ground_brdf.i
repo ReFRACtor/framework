@@ -34,7 +34,6 @@ public:
   };
 
   GroundBrdf(const blitz::Array<double, 2>& Coeffs,
-	     const blitz::Array<bool, 2>& Flag,
 	     const ArrayWithUnit<double, 1>& Ref_points,
 	     const std::vector<std::string>& Desc_band_names);
   virtual ArrayAd<double, 1> surface_parameter(double wn, int spec_index) const;
@@ -69,7 +68,6 @@ public:
   virtual std::string desc() const;
 protected:
   GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
-	     const blitz::Array<bool, 1>& Flag, 
 	     const ArrayWithUnit<double, 1>& Ref_points,
 	     const std::vector<std::string>& Desc_band_names);
   blitz::Array<double, 1> black_sky_params(int Spec_index);
@@ -79,7 +77,6 @@ protected:
 class GroundBrdfVeg: public GroundBrdf {
 public:
   GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
-                const blitz::Array<bool, 2>& Flag,
                 const ArrayWithUnit<double, 1>& Ref_points, 
                 const std::vector<std::string>& Desc_band_names);
   virtual double black_sky_albedo(int Spec_index, double Sza);
@@ -93,7 +90,6 @@ public:
 class GroundBrdfSoil: public GroundBrdf {
 public:
   GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
-		 const blitz::Array<bool, 2>& Flag,
 		 const ArrayWithUnit<double, 1>& Ref_points,
 		 const std::vector<std::string>& Desc_band_names);
   virtual double black_sky_albedo(int Spec_index, double Sza);
