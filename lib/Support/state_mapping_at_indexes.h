@@ -19,54 +19,30 @@ public:
     virtual ~StateMappingAtIndexes() {}
 
     //-----------------------------------------------------------------------
-    /// Default Constructor.
+    /// Create using an array of indexes into the full state of those locations
+    /// that should be included in the retrieval state
     //-----------------------------------------------------------------------
 
     StateMappingAtIndexes(const blitz::Array<int, 1>& indexes) : retrieval_indexes(indexes) {}
 
     //-----------------------------------------------------------------------
+    /// Create using a boolean array that indicates which indexes should be
+    /// included in the retrieval state
+    //-----------------------------------------------------------------------
+
+    StateMappingAtIndexes(const blitz::Array<bool, 1>& flags);
+
+    //-----------------------------------------------------------------------
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> fm_view
-    (const ArrayAd<double, 1>& updated_coeff) const
-    {
-        if (full_state.rows() == 0) {
-            Exception err;
-            err << "Full state has not yet been intialized.";
-            throw err;
-        }
-
-        int input_idx = 0;
-
-        for (int ret_idx = 0; ret_idx < retrieval_indexes.rows(); ret_idx++) {
-            full_state( retrieval_indexes(ret_idx) ) = updated_coeff(input_idx);
-            input_idx++;
-        }
-
-        return full_state;
-    }
+    virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const;
 
     //-----------------------------------------------------------------------
     /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> retrieval_init
-    (const ArrayAd<double, 1>& initial_coeff) const
-    {
-        full_state.reference(initial_coeff.copy());
-
-        ArrayAd<double, 1> retrieval_subset(retrieval_indexes.rows(), initial_coeff.number_variable());
-        
-        int out_idx = 0;
-
-        for (int ret_idx = 0; ret_idx < retrieval_indexes.rows(); ret_idx++) {
-            retrieval_subset(out_idx) = initial_coeff( retrieval_indexes(ret_idx) );
-            out_idx++;
-        }
-
-        return retrieval_subset;
-    }
+    virtual ArrayAd<double, 1> retrieval_init(const ArrayAd<double, 1>& initial_coeff) const;
 
     //-----------------------------------------------------------------------
     /// Assigned mapping name

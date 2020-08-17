@@ -52,4 +52,23 @@ BOOST_AUTO_TEST_CASE(basic)
 
 }
 
+BOOST_AUTO_TEST_CASE(flags)
+{
+    Array<bool, 1> retrieval_flags(5);
+    retrieval_flags = false, true, false, true, false, true, false, true, false, true;
+
+    ArrayAd<double, 1> initial_state(10, 0);
+    initial_state.value() = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19;
+
+    boost::shared_ptr<StateMappingAtIndexes> at_indexes = 
+        boost::make_shared<StateMappingAtIndexes>(retrieval_flags);
+
+    Array<double, 1> subset_expt(5);
+    subset_expt = 11, 13, 15, 17, 19;
+
+    ArrayAd<double, 1> subset_calc = at_indexes->retrieval_init(initial_state);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(subset_calc.value(), subset_expt, 1e-10);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
