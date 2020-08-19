@@ -41,8 +41,9 @@ FluorescenceEffect::FluorescenceEffect
  const DoubleWithUnit& Lza, 
  const int Spec_index,
  const DoubleWithUnit& Reference,
- const Unit& Retrieval_unit) 
-: SpectrumEffectImpBase(Coeff),
+ const Unit& Retrieval_unit,
+ const boost::shared_ptr<StateMapping> Mapping) 
+: SpectrumEffectImpBase(Coeff, Mapping),
   lza(Lza), reference(Reference), retrieval_unit(Retrieval_unit), 
   spec_index(Spec_index), stokes_coef(Stokes_coef)
 {

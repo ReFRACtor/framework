@@ -7,6 +7,7 @@
 #include "spectrum_effect_imp_base.h"
 #include "atmosphere_standard.h"
 #include "stokes_coefficient.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -22,7 +23,8 @@ public:
                      const DoubleWithUnit& Lza, 
                      const int Spec_index,
                      const DoubleWithUnit& Reference,
-                     const Unit& Retrieval_unit);
+                     const Unit& Retrieval_unit,
+                     const boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual void apply_effect(Spectrum& Spec,
 		    const ForwardModelSpectralGrid& Forward_model_grid) const;

@@ -19,8 +19,6 @@ BOOST_AUTO_TEST_CASE(basic)
 
   HdfFile hf_ils(test_data_dir() + "in/ils/ils_linear_table.h5");
   HdfFile hf_eof(test_data_dir() + "in/eof/eof.h5");
-  Array<bool, 1> flag(2);
-  flag = true, false;
   Array<double, 1> disp_coeff(2);
 
   boost::shared_ptr<IlsTableLinear> ils_tab(new IlsTableLinear(hf_ils, 0, "A-Band", "o2"));
@@ -31,12 +29,12 @@ BOOST_AUTO_TEST_CASE(basic)
   disp_var_1 = i1 + 1;
 
   boost::shared_ptr<DispersionPolynomial>
-    d(new DispersionPolynomial(disp_coeff, flag, units::inv_cm, disp_var_1, ils_tab->band_name()));
+    d(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_1, ils_tab->band_name()));
 
   std::vector<boost::shared_ptr<Ils> > ils;
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
   boost::shared_ptr<EmpiricalOrthogonalFunction> 
-    eof(new EmpiricalOrthogonalFunction(1.0, true, *d, hf_eof, 0, 0, 1, ils_tab->band_name()));
+    eof(new EmpiricalOrthogonalFunction(1.0, *d, hf_eof, 0, 0, 1, ils_tab->band_name()));
   corr[0].push_back(eof);
 
   ils_tab.reset(new IlsTableLinear(hf_ils, 1, "WC-Band", "weak_co2"));
@@ -45,7 +43,7 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> disp_var_2(3508);
   disp_var_2 = i1 + 1;
 
-  d.reset(new DispersionPolynomial(disp_coeff, flag, units::inv_cm, disp_var_2, ils_tab->band_name()));
+  d.reset(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_2, ils_tab->band_name()));
 
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
@@ -55,7 +53,7 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> disp_var_3(2005);
   disp_var_3 = i1 + 1;
 
-  d.reset(new DispersionPolynomial(disp_coeff, flag, units::inv_cm, disp_var_3, ils_tab->band_name()));
+  d.reset(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_3, ils_tab->band_name()));
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   IlsInstrument inst(ils, corr);

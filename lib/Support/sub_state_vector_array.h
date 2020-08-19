@@ -96,6 +96,15 @@ public:
   {
     return "Coeff" + boost::lexical_cast<std::string>(i + 1);
   }
+
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
+  {
+    int si = 0;
+
+    for (int i = 0; i < coeff.rows(); ++i) {
+      Sv_name(i) = state_vector_name_i(i);
+    }
+  }
   
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov)
   {

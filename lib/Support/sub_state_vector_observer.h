@@ -45,6 +45,7 @@ public:
 
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& UNUSED(Sv_name)) 
     const {}
+  virtual void print(std::ostream& Os) const {Os << "SubStateVectorObserver";}
   virtual void notify_add(StateVector& Sv)
   { 
     if(pstart != -1)

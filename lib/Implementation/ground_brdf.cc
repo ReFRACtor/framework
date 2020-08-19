@@ -9,7 +9,7 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void GroundBrdf::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+                           const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
     & FP_NVP(reference_points) & FP_NVP(desc_band_names);
@@ -17,14 +17,14 @@ void GroundBrdf::serialize(Archive & ar,
 
 template<class Archive>
 void GroundBrdfVeg::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+                              const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundBrdf);
 }
 
 template<class Archive>
 void GroundBrdfSoil::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+                               const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundBrdf);
 }
@@ -49,6 +49,43 @@ extern "C" {
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
+#include "state_mapping_at_indexes.h"
+
+boost::shared_ptr<Ground> ground_brdf_veg_create(const blitz::Array<double, 2>& Coeffs,
+                                                 const blitz::Array<bool, 2>& Flag,
+                                                 const ArrayWithUnit<double, 1>& Ref_points,
+                                                 const std::vector<std::string>& Desc_band_names)
+{
+    // Save to local variable so we can perform the flattening below without a const issue
+    Array<bool, 2> flags_lcl(Flag);
+    Array<bool, 1> flags_flat(flags_lcl.dataFirst(), TinyVector<int, 1>(Flag.rows() * Flag.cols()), blitz::neverDeleteData);
+
+    boost::shared_ptr<StateMapping> mapping =
+        boost::make_shared<StateMappingAtIndexes>(flags_flat.copy());
+
+    boost::shared_ptr<GroundBrdfVeg> ground_brdf =
+        boost::make_shared<GroundBrdfVeg>(Coeffs, Ref_points, Desc_band_names, mapping);
+
+    return ground_brdf;
+}
+
+boost::shared_ptr<Ground> ground_brdf_soil_create(const blitz::Array<double, 2>& Coeffs,
+                                                  const blitz::Array<bool, 2>& Flag,
+                                                  const ArrayWithUnit<double, 1>& Ref_points,
+                                                  const std::vector<std::string>& Desc_band_names)
+{
+    // Save to local variable so we can perform the flattening below without a const issue
+    Array<bool, 2> flags_lcl(Flag);
+    Array<bool, 1> flags_flat(flags_lcl.dataFirst(), TinyVector<int, 1>(Flag.rows() * Flag.cols()), blitz::neverDeleteData);
+
+    boost::shared_ptr<StateMapping> mapping =
+        boost::make_shared<StateMappingAtIndexes>(flags_flat.copy());
+
+    boost::shared_ptr<GroundBrdfSoil> ground_brdf =
+        boost::make_shared<GroundBrdfSoil>(Coeffs, Ref_points, Desc_band_names, mapping);
+
+    return ground_brdf;
+}
 
 double black_sky_albedo_simple_veg(const blitz::Array<double, 1>& params, double sza) {
     return black_sky_albedo_veg_f(params.dataFirst(), &sza);
@@ -70,6 +107,10 @@ REGISTER_LUA_DERIVED_CLASS(GroundBrdfVeg, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
 .scope
 [
+    luabind::def("create", &ground_brdf_veg_create)
+]
+.scope
+[
     luabind::def("black_sky_albedo", &black_sky_albedo_simple_veg)
 ]
 .scope
@@ -80,6 +121,10 @@ REGISTER_LUA_END()
 
 REGISTER_LUA_DERIVED_CLASS(GroundBrdfSoil, Ground)
 .def(luabind::constructor<const blitz::Array<double, 2>&, const ArrayWithUnit<double, 1>&, const std::vector<std::string>&>())
+.scope
+[
+    luabind::def("create", &ground_brdf_soil_create)
+]
 .scope
 [
     luabind::def("black_sky_albedo", &black_sky_albedo_simple_soil)
@@ -107,7 +152,8 @@ REGISTER_LUA_END()
 
 GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
                        const ArrayWithUnit<double, 1>& Ref_points,
-                       const std::vector<std::string>& Desc_band_names) 
+                       const std::vector<std::string>& Desc_band_names,
+                       boost::shared_ptr<StateMapping> Mapping)
 : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
     if(Coeffs.cols() != NUM_COEFF) {
@@ -132,23 +178,30 @@ GroundBrdf::GroundBrdf(const blitz::Array<double, 2>& Coeffs,
     Array<double, 2> coeffs(Coeffs);
 
     // Flatten arrays for state vector
-    init(Array<double, 1>(coeffs.dataFirst(), TinyVector<int, 1>(Coeffs.rows() * Coeffs.cols()), blitz::neverDeleteData));
+    init(Array<double, 1>(coeffs.dataFirst(), TinyVector<int, 1>(Coeffs.rows() * Coeffs.cols()), blitz::neverDeleteData), Mapping);
 }
 
 /// Protected constructor that matches the dimensionality of the coeff array
 GroundBrdf::GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
                        const ArrayWithUnit<double, 1>& Ref_points,
-                       const std::vector<std::string>& Desc_band_names)
+                       const std::vector<std::string>& Desc_band_names,
+                       boost::shared_ptr<StateMapping> Mapping)
   : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
-  SubStateVectorArray<Ground>::init(Spec_coeffs);
+  SubStateVectorArray<Ground>::init(Spec_coeffs, Mapping);
+}
+
+/// A flattened view of the parameters describing the BRDF
+ArrayAd<double, 1> GroundBrdf::brdf_parameters_flat() const
+{
+    return mapping->fm_view(coeff);
 }
 
 ArrayAd<double, 1> GroundBrdf::surface_parameter(double wn, int spec_index) const
 {
     AutoDerivative<double> w = weight(wn, spec_index);
     ArrayAd<double, 1> spars;
-    spars.resize(NUM_PARAMS, coefficient().number_variable());
+    spars.resize(NUM_PARAMS, brdf_parameters_flat().number_variable());
     spars(0) = w * rahman_factor(spec_index);
     spars(1) = hotspot_parameter(spec_index);
     spars(2) = asymmetry_parameter(spec_index);
@@ -172,100 +225,49 @@ const AutoDerivative<double> GroundBrdf::weight_intercept(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + BRDF_WEIGHT_INTERCEPT_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + BRDF_WEIGHT_INTERCEPT_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::weight_slope(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + BRDF_WEIGHT_SLOPE_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + BRDF_WEIGHT_SLOPE_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::rahman_factor(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + RAHMAN_KERNEL_FACTOR_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + RAHMAN_KERNEL_FACTOR_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::hotspot_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + RAHMAN_OVERALL_AMPLITUDE_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + RAHMAN_OVERALL_AMPLITUDE_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::asymmetry_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + RAHMAN_ASYMMETRY_FACTOR_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + RAHMAN_ASYMMETRY_FACTOR_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::anisotropy_parameter(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + RAHMAN_GEOMETRIC_FACTOR_INDEX);
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + RAHMAN_GEOMETRIC_FACTOR_INDEX);
 }
 
 const AutoDerivative<double> GroundBrdf::breon_factor(int spec_index) const
 {
     range_check(spec_index, 0, number_spectrometer());
 
-    return coefficient()(NUM_COEFF * spec_index + BREON_KERNEL_FACTOR_INDEX);
-}
-
-//----
-
-void GroundBrdf::weight_intercept(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + BRDF_WEIGHT_INTERCEPT_INDEX) = val;
-}
-
-void GroundBrdf::weight_slope(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + BRDF_WEIGHT_SLOPE_INDEX) = val;
-}
-
-void GroundBrdf::rahman_factor(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + RAHMAN_KERNEL_FACTOR_INDEX) = val;
-}
-
-void GroundBrdf::hotspot_parameter(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + RAHMAN_OVERALL_AMPLITUDE_INDEX) = val;
-}
-
-void GroundBrdf::asymmetry_parameter(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + RAHMAN_ASYMMETRY_FACTOR_INDEX) = val;
-}
-
-void GroundBrdf::anisotropy_parameter(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + RAHMAN_GEOMETRIC_FACTOR_INDEX) = val;
-}
-
-void GroundBrdf::breon_factor(int spec_index, const AutoDerivative<double>& val)
-{
-    range_check(spec_index, 0, number_spectrometer());
-
-    coeff(NUM_COEFF * spec_index + BREON_KERNEL_FACTOR_INDEX) = val;
+    return brdf_parameters_flat()(NUM_COEFF * spec_index + BREON_KERNEL_FACTOR_INDEX);
 }
 
 const blitz::Array<double, 2> GroundBrdf::brdf_covariance(int spec_index) const

@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(basic)
     4.66057518e-04, 5.48717085e-04, 5.73098800e-04, 6.15544205e-04, 7.41377218e-04, 
     9.09569234e-04, 1.30658765e-03, 1.46738835e-03;
 
-  AbsorberVmrLevelScaled avmr(pressure, grid_expect, 1.0, true, "H2O");
+  AbsorberVmrLevelScaled avmr(pressure, grid_expect, 1.0, "H2O");
 
   for(int i = 0; i < grid_expect.rows(); ++i)
     BOOST_CHECK_CLOSE(avmr.volume_mixing_ratio(pressure->pressure_grid()(i).value).value(), grid_expect(i), 1e-3);

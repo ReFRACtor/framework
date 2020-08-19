@@ -23,6 +23,7 @@ public:
     const blitz::Array<double, 2>& Cov_sub) = 0;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name)
     const;
+  virtual void print(std::ostream& Os) const;
   virtual void notify_add(StateVector& Sv);
   virtual void notify_remove(StateVector& Sv);
   %pickle_serialization();

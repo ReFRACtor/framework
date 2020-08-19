@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  PressureSigma p(a,b, psurf, true);
+  PressureSigma p(a,b, psurf);
   Array<double, 1> press_grid_expect(3);
   press_grid_expect = 3, 6, 10;
   BOOST_CHECK_CLOSE(p.surface_pressure().value.value(), psurf, 1e-4);
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(serialization)
   Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<PressureSigma> p = boost::make_shared<PressureSigma>(a,b, psurf, true);
+  boost::shared_ptr<PressureSigma> p = boost::make_shared<PressureSigma>(a,b, psurf);
   boost::shared_ptr<TestObserver> pobs = boost::make_shared<TestObserver>();
   p->add_observer(*pobs);
   std::string d = serialize_write_string(p);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(serialization2)
   double psurf = 10;
   boost::shared_ptr<GenericObjectMap> m =
     boost::make_shared<GenericObjectMap>();
-  (*m)["p"] = boost::make_shared<PressureSigma>(a, b, psurf, true);
+  (*m)["p"] = boost::make_shared<PressureSigma>(a, b, psurf);
   (*m)["pobs"] = boost::make_shared<TestObserver>();
   m->get<PressureSigma>("p")->add_observer(*m->get<TestObserver>("pobs"));
   std::string d = serialize_write_string(m);

@@ -35,6 +35,19 @@ ArrayAd<double, 1> StateMappingAtIndexes::fm_view(const ArrayAd<double, 1>& upda
 
     int input_idx = 0;
 
+    if(updated_coeff.number_variable() != full_state.number_variable()) {
+        if (full_state.number_variable() == 0) {
+            full_state.resize_number_variable(updated_coeff.number_variable());
+        } else {
+            Exception err;
+            err << "Number of jacobian variables for full state: "
+                << full_state.number_variable()
+                << " is inconsistent with the number of variables for the updated values: "
+                << updated_coeff.number_variable();
+            throw err;
+        }
+    }
+
     for (int ret_idx = 0; ret_idx < retrieval_indexes.rows(); ret_idx++) {
         full_state( retrieval_indexes(ret_idx) ) = updated_coeff(input_idx);
         input_idx++;

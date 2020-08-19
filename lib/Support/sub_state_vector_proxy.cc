@@ -66,3 +66,16 @@ void SubStateVectorProxy::state_vector_name_sub(blitz::Array<std::string, 1>& Sv
     }
 }
 
+//-----------------------------------------------------------------------
+/// Output the print results from the proxied classes
+//-----------------------------------------------------------------------
+
+void SubStateVectorProxy::print(std::ostream& Os) const
+{
+    OstreamPad opad(Os, "    ");
+    Os << "SubStateVectorProxy";
+    BOOST_FOREACH(boost::shared_ptr<SubStateVectorObserver> curr_obs, proxied_observers) {
+        curr_obs->print(opad);
+    }
+    opad.strict_sync();
+}

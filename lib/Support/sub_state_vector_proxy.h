@@ -20,6 +20,7 @@ public:
 				const blitz::Array<double, 2>& Cov_sub);
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name)
     const;
+  virtual void print(std::ostream& Os) const;
 protected:
   // Ensure that class can only be inherited
   SubStateVectorProxy() {}

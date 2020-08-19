@@ -44,9 +44,9 @@ protected:
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff)
+  SpectrumEffectImpBase(const blitz::Array<double, 1>& Coeff, boost::shared_ptr<StateMapping> Mapping)
   {
-    init(Coeff);
+    init(Coeff, Mapping);
   }
 
 //-----------------------------------------------------------------------

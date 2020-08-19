@@ -111,6 +111,12 @@ void state_vector_print_names(StateVector& Sv)
     BOOST_FOREACH(const std::string & s, Sv.state_vector_name())
     std::cout << s << "\n";
 }
+
+int state_vector_observer_claimed_size(StateVector& Sv)
+{
+    return Sv.observer_claimed_size();
+}
+
 typedef void (StateVector::*us1)(const blitz::Array<double, 1>&);
 typedef void (StateVector::*us2)(const blitz::Array<double, 1>&, const blitz::Array<double, 2>&);
 REGISTER_LUA_CLASS(StateVector)
@@ -133,6 +139,7 @@ REGISTER_LUA_CLASS(StateVector)
 .def("print_names", &state_vector_print_names)
 .def("state", &StateVector::state)
 .def("state_covariance", &StateVector::state_covariance)
+.def("observer_claimed_size", &state_vector_observer_claimed_size)
 REGISTER_LUA_END()
 #endif
 

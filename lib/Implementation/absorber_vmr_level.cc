@@ -21,10 +21,30 @@ FP_IMPLEMENT(AbsorberVmrLevel);
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
+#include "state_mapping_at_indexes.h"
+
+boost::shared_ptr<AbsorberVmr> absorber_vmr_level_create(const boost::shared_ptr<Pressure>& Mapped_Press,
+                                                         const blitz::Array<double, 1>& Vmr,
+                                                         const blitz::Array<bool, 1>& Flag,
+                                                         const std::string& Gas_name)
+{
+    boost::shared_ptr<StateMapping> mapping =
+        boost::make_shared<StateMappingAtIndexes>(Flag);
+
+    boost::shared_ptr<AbsorberVmrLevel> abs_vmr = 
+        boost::make_shared<AbsorberVmrLevel>(Mapped_Press, Vmr, Gas_name, mapping);
+
+    return abs_vmr;
+}
+
 REGISTER_LUA_DERIVED_CLASS(AbsorberVmrLevel, AbsorberVmr)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
      const blitz::Array<double, 1>&,
      const std::string&>())
+.scope
+[
+ luabind::def("create", &absorber_vmr_level_create)
+]
 REGISTER_LUA_END()
 #endif
 
@@ -49,7 +69,8 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Pre
     if (coeff_pressure->pressure_grid().rows() != Vmr.rows()) {
         Exception err;
         err << "Coefficient pressure grid size: " << coeff_pressure->pressure_grid().rows()
-            << " does not match VMR size: " << Vmr.rows();
+            << " does not match VMR size: " << Vmr.rows()
+            << " for gas: " << Gas_name;
         throw err;
     }
 
@@ -58,7 +79,7 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Pre
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
     return boost::shared_ptr<AbsorberVmr>
-           (new AbsorberVmrLevel(mapped_pressure->clone(), coeff.value(),
+           (new AbsorberVmrLevel(mapped_pressure->clone(), mapping->fm_view(coeff.value()).value(),
                                  gas_name(), mapping->clone(), coeff_pressure->clone()));
 }
 
@@ -122,8 +143,8 @@ void AbsorberVmrLevel::print(std::ostream& Os) const
     Os << "AbsorberVmrLevel\n"
        << "  Gas name: " << gas_name() << "\n"
        << "  StateMapping:  " << mapping->name() << "\n\n"
-       << "      Pressure          VMR Retrieved\n"
-       << "  ------------ ------------ ---------\n";
+       << "      Pressure          VMR\n"
+       << "  ------------ ------------\n";
 
     for(int coeff_idx = 0; coeff_idx < coeff.rows(); coeff_idx++) {
         Os << "  "

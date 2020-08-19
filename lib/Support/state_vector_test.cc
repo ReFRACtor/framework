@@ -47,12 +47,6 @@ BOOST_AUTO_TEST_CASE(basic)
   xexpect = 4, 5, 6;
   BOOST_CHECK_MATRIX_CLOSE(t2.x, xexpect);
   BOOST_CHECK_MATRIX_CLOSE(sv.state(), x);
-  BOOST_CHECK_EQUAL(sv.used_flag()(0), false);
-  BOOST_CHECK_EQUAL(sv.used_flag()(1), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(2), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(3), false);
-  BOOST_CHECK_EQUAL(sv.used_flag()(4), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(5), true);
 }
 
 BOOST_AUTO_TEST_CASE(bad_data)
