@@ -23,7 +23,7 @@ public:
     /// that should be included in the retrieval state
     //-----------------------------------------------------------------------
 
-    StateMappingAtIndexes(const blitz::Array<int, 1>& indexes) : retrieval_indexes(indexes) {}
+    StateMappingAtIndexes(const blitz::Array<int, 1>& indexes) : retrieval_indexes_(indexes) {}
 
     //-----------------------------------------------------------------------
     /// Create using a boolean array that indicates which indexes should be
@@ -45,29 +45,35 @@ public:
     virtual ArrayAd<double, 1> retrieval_init(const ArrayAd<double, 1>& initial_coeff) const;
 
     //-----------------------------------------------------------------------
+    /// Return the indexes used for the mapping
+    //-----------------------------------------------------------------------
+    
+    virtual const blitz::Array<int, 1> retrieval_indexes() const { return retrieval_indexes_; }
+
+    //-----------------------------------------------------------------------
     /// Assigned mapping name
     //-----------------------------------------------------------------------
 
     virtual std::string name() const
     {
-        return "linear";
+        return "at_indexes";
     }
 
     virtual boost::shared_ptr<StateMapping> clone() const
     {
-        return boost::shared_ptr<StateMapping>(new StateMappingAtIndexes(retrieval_indexes, full_state));
+        return boost::shared_ptr<StateMapping>(new StateMappingAtIndexes(retrieval_indexes_, full_state));
     }
 private:
     // For serialization
     StateMappingAtIndexes() {}
 
-    StateMappingAtIndexes(const blitz::Array<int, 1>& indexes, const ArrayAd<double, 1> internal_state) : retrieval_indexes(indexes), full_state(internal_state) {}
+    StateMappingAtIndexes(const blitz::Array<int, 1>& indexes, const ArrayAd<double, 1> internal_state) : retrieval_indexes_(indexes), full_state(internal_state) {}
 
     // Original full set of cofficients before subsetting
     mutable ArrayAd<double, 1> full_state;
 
     // Which indexes to include in the retrieval
-    blitz::Array<int, 1> retrieval_indexes;
+    blitz::Array<int, 1> retrieval_indexes_;
 
     friend class boost::serialization::access;
     template<class Archive>

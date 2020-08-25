@@ -45,14 +45,6 @@ public:
   virtual const AutoDerivative<double> anisotropy_parameter(int spec_index) const;
   virtual const AutoDerivative<double> breon_factor(int spec_index) const;
 
-  virtual void weight_intercept(int spec_index, const AutoDerivative<double>& val);
-  virtual void weight_slope(int spec_index, const AutoDerivative<double>& val);
-  virtual void rahman_factor(int spec_index, const AutoDerivative<double>& val);
-  virtual void hotspot_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void asymmetry_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void anisotropy_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void breon_factor(int spec_index, const AutoDerivative<double>& val);
-
   const blitz::Array<double, 2> brdf_covariance(int spec_index) const;
   virtual double refractive_index(int Spec_idx) const;
   virtual double black_sky_albedo(int Spec_index, double Sza) = 0;

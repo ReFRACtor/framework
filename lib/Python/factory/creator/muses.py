@@ -38,7 +38,7 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
 
     num_levels = param.Scalar(int, default=48)
     pressure_levels = param.Choice(atmosphere.PressureGrid.pressure_levels, param.NoneValue())
-    value = param.Choice(atmosphere.PressureGrid.value, param.NoneValue())
+    surface_pressure = param.Choice(atmosphere.PressureGrid.surface_pressure, param.NoneValue())
 
     def surface_pressure(self):
         "Calculate surface pressure from surface altitude using hydrostatic equation"
@@ -80,23 +80,23 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
 
             self.config_def["pressure_levels"] = press_osp.fm_pressure_grid
 
-        if self.value() is None:
-            self.config_def["value"] = np.array([self.surface_pressure()])
+        if self.surface_pressure() is None:
+            self.config_def["surface_pressure"] = np.array([self.surface_pressure()])
 
         return atmosphere.PressureGrid.create(self, **kwargs)
 
 class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
 
-    value = param.Choice(atmosphere.TemperatureLevel.value, param.NoneValue())
+    temperature_profile = param.Choice(atmosphere.TemperatureLevel.temperature_profile, param.NoneValue())
 
     def create(self, **kwargs):
 
-        if self.value() is None:
+        if self.temperature_profile() is None:
             tatm_osp = SpeciesOSP("TATM", **self.osp_common())
 
             ret_levels = tatm_osp.retrieval_levels
 
-            self.config_def["value"] = tatm_osp.fm_climatology[ret_levels]
+            self.config_def["temperature_profile"] = tatm_osp.fm_climatology[ret_levels]
 
             self.config_def["pressure"] = self.pressure_obj(tatm_osp.fm_pressure_grid[ret_levels])
 
@@ -105,29 +105,29 @@ class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
 class SurfaceTemperatureMUSES(CreatorMUSES, atmosphere.SurfaceTemperature):
 
     num_channels = param.Scalar(int)
-    value = param.Choice(atmosphere.SurfaceTemperature.value, param.NoneValue())
+    surface_temperature = param.Choice(atmosphere.SurfaceTemperature.surface_temperature, param.NoneValue())
 
     def create(self, **kwargs):
 
         tsur_osp = SpeciesOSP("TSUR", **self.osp_common())
 
-        if self.value() is None:
-            self.config_def['value'] = rf.ArrayWithUnit_double_1(np.full(self.num_channels(), tsur_osp.species_climatology), "K")
+        if self.surface_temperature() is None:
+            self.config_def['surface_temperature'] = rf.ArrayWithUnit_double_1(np.full(self.num_channels(), tsur_osp.species_climatology), "K")
 
         return atmosphere.SurfaceTemperature.create(self, **kwargs)
 
 class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
 
-    value = param.Choice(absorber.AbsorberVmrLevel.value, param.NoneValue(), required=False)
+    vmr_profile = param.Choice(absorber.AbsorberVmrLevel.vmr_profile, param.NoneValue(), required=False)
     mapping = param.Choice(absorber.AbsorberVmrLevel.mapping, param.NoneValue(), required=False)
 
     def create(self, gas_name, **kwargs):
         gas_osp = SpeciesOSP(gas_name, **self.osp_common())
 
-        if self.value() is None:
+        if self.vmr_profile() is None:
             ret_levels = gas_osp.retrieval_levels
 
-            self.config_def['value'] = gas_osp.fm_climatology[ret_levels]
+            self.config_def['vmr_profile'] = gas_osp.fm_climatology[ret_levels]
 
         if self.mapping() is None:
             pressure_from = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])

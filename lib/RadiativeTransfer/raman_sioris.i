@@ -43,6 +43,7 @@ public:
                       const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                       const boost::shared_ptr<SolarModel>& solar_model,
                       double albedo,
+                      const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
                       double padding_fraction = 0.10,
                       bool do_upwelling = true,
                       double jac_perturbation = 0.001);

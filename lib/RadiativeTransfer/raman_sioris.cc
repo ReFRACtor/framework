@@ -154,10 +154,11 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
                                      const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                                      const boost::shared_ptr<SolarModel>& solar_model,
                                      double albedo,
+                                     const boost::shared_ptr<StateMapping> mapping,
                                      double padding_fraction,
                                      bool do_upwelling,
                                      double jac_perturbation)
-: SpectrumEffectImpBase(scale_factor),
+: SpectrumEffectImpBase(scale_factor, mapping),
   channel_index_(channel_index),
   albedo_(albedo),
   padding_fraction_(padding_fraction),
@@ -294,7 +295,10 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
                                   atmosphere_,
                                   solar_model_,
                                   albedo_,
-                                  do_upwelling_));
+                                  mapping,
+                                  padding_fraction_,
+                                  do_upwelling_,
+                                  jac_perturbation_));
 }
 
 //-----------------------------------------------------------------------

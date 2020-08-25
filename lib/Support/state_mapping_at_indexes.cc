@@ -8,18 +8,18 @@ template<class Archive>
 void StateMappingAtIndexes::serialize(Archive& ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateMapping) &
-      FP_NVP(full_state) & FP_NVP(retrieval_indexes);
+      FP_NVP(full_state) & FP_NVP_(retrieval_indexes);
 }
 
 FP_IMPLEMENT(StateMappingAtIndexes);
 
 StateMappingAtIndexes::StateMappingAtIndexes(const blitz::Array<bool, 1>& flags)
 {
-    retrieval_indexes.resize(count(flags));
+    retrieval_indexes_.resize(count(flags));
     int ret_idx = 0;
     for(int flag_idx = 0; flag_idx < flags.rows(); flag_idx++) {
         if(flags(flag_idx)) {
-            retrieval_indexes(ret_idx) = flag_idx;
+            retrieval_indexes_(ret_idx) = flag_idx;
             ret_idx++;
         }
     }
@@ -48,8 +48,8 @@ ArrayAd<double, 1> StateMappingAtIndexes::fm_view(const ArrayAd<double, 1>& upda
         }
     }
 
-    for (int ret_idx = 0; ret_idx < retrieval_indexes.rows(); ret_idx++) {
-        full_state( retrieval_indexes(ret_idx) ) = updated_coeff(input_idx);
+    for (int ret_idx = 0; ret_idx < retrieval_indexes_.rows(); ret_idx++) {
+        full_state( retrieval_indexes_(ret_idx) ) = updated_coeff(input_idx);
         input_idx++;
     }
 
@@ -64,12 +64,12 @@ ArrayAd<double, 1> StateMappingAtIndexes::retrieval_init(const ArrayAd<double, 1
 {
     full_state.reference(initial_coeff.copy());
 
-    ArrayAd<double, 1> retrieval_subset(retrieval_indexes.rows(), initial_coeff.number_variable());
+    ArrayAd<double, 1> retrieval_subset(retrieval_indexes_.rows(), initial_coeff.number_variable());
     
     int out_idx = 0;
 
-    for (int ret_idx = 0; ret_idx < retrieval_indexes.rows(); ret_idx++) {
-        retrieval_subset(out_idx) = initial_coeff( retrieval_indexes(ret_idx) );
+    for (int ret_idx = 0; ret_idx < retrieval_indexes_.rows(); ret_idx++) {
+        retrieval_subset(out_idx) = initial_coeff( retrieval_indexes_(ret_idx) );
         out_idx++;
     }
 

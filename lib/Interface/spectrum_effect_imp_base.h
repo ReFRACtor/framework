@@ -53,8 +53,8 @@ protected:
 /// Constructor that sets the coefficient values when
 /// they are scalar values
 //-----------------------------------------------------------------------
-  SpectrumEffectImpBase(double Coeff)
-  { init(Coeff); }
+  SpectrumEffectImpBase(double Coeff, boost::shared_ptr<StateMapping> Mapping)
+  { init(Coeff, Mapping); }
 private:
   friend class boost::serialization::access;
   template<class Archive>

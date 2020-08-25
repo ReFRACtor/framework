@@ -1,7 +1,6 @@
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -172,8 +171,9 @@ class SpectrumEffectList(Creator):
 
         return spec_eff
 
-class FluorescenceEffect(CreatorFlaggedValue):
+class FluorescenceEffect(Creator):
     
+      coefficients = param.Array(dims=1)
       reference_point = param.ArrayWithUnit(dims=1)
       cov_unit = param.InstanceOf(rf.Unit)
       which_channels = param.Iterable()
@@ -188,8 +188,7 @@ class FluorescenceEffect(CreatorFlaggedValue):
           atm = self.atmosphere()
           lza = self.observation_zenith()
           ref_point = self.reference_point()[0]
-          coeff = self.value()
-          used_flag = self.retrieval_flag()
+          coeff = self.coefficients()
           stokes_coeff = rf.StokesCoefficientConstant(self.stokes_coefficient())
           cov_unit = self.cov_unit()
           num_channels = self.num_channels()
@@ -203,14 +202,15 @@ class FluorescenceEffect(CreatorFlaggedValue):
               if chan_idx >= num_channels:
                   raise ParamError("Channel index {} exceeds number of channels {}".format(chan_idx, num_channels))
 
-              fluoresence[chan_idx] = rf.FluorescenceEffect(coeff, used_flag, atm, stokes_coeff, lza[chan_idx], chan_idx, ref_point, cov_unit)
+              fluoresence[chan_idx] = rf.FluorescenceEffect(coeff, atm, stokes_coeff, lza[chan_idx], chan_idx, ref_point, cov_unit)
 
           return fluoresence
 
-class RamanSiorisEffect(CreatorFlaggedValue):
+class RamanSiorisEffect(Creator):
 
     albedo = param.Array(dims=1)
 
+    scale_factors = param.Array(dims=1)
     solar_zenith = param.ArrayWithUnit(dims=1)
     observation_zenith = param.ArrayWithUnit(dims=1)
     relative_azimuth = param.ArrayWithUnit(dims=1)
@@ -224,8 +224,7 @@ class RamanSiorisEffect(CreatorFlaggedValue):
 
     def create(self, solar_model=None, **kwargs):
 
-        scale_factor = self.value()
-        used_flag = self.retrieval_flag()
+        scale_factor = self.scale_factors()
 
         albedo = self.albedo()
 
@@ -244,7 +243,7 @@ class RamanSiorisEffect(CreatorFlaggedValue):
 
         raman_effect = []
         for chan_index in range(self.num_channels()):
-            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], bool(used_flag[chan_index]), chan_index,
+            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], chan_index,
                                  solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
                                  atmosphere, solar_model[chan_index], albedo[chan_index], 
                                  padding_fraction, do_upwelling, jac_perturb) )

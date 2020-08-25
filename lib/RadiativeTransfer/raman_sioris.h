@@ -10,6 +10,7 @@
 #include "solar_model.h"
 #include "absorber_absco.h"
 #include "forward_model_spectral_grid.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 
@@ -26,16 +27,17 @@ class RamanSiorisEffect : virtual public SpectrumEffectImpBase,
 
 public:
   RamanSiorisEffect(double scale_factor,
-		    int channel_index, 
-		    const DoubleWithUnit& solar_zenith, 
-		    const DoubleWithUnit& observation_zenith, 
-		    const DoubleWithUnit& relative_azimuth,
-		    const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
-		    const boost::shared_ptr<SolarModel>& solar_model,
-		    double albedo,
-		    double padding_fraction = 0.10,
-		    bool do_upwelling = true,
-		    double jac_perturbation = 0.001);
+                    int channel_index, 
+                    const DoubleWithUnit& solar_zenith, 
+                    const DoubleWithUnit& observation_zenith, 
+                    const DoubleWithUnit& relative_azimuth,
+                    const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
+                    const boost::shared_ptr<SolarModel>& solar_model,
+                    double albedo,
+                    const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
+                    double padding_fraction = 0.10,
+                    bool do_upwelling = true,
+                    double jac_perturbation = 0.001);
 
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 

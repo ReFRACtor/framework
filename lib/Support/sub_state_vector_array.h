@@ -137,6 +137,11 @@ public:
   {
     return coeff;
   }
+
+  const boost::shared_ptr<StateMapping> state_mapping() const
+  {
+    return mapping;
+  }
   
   const blitz::Array<double, 2>& statevector_covariance() const
   {
