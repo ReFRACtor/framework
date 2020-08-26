@@ -241,11 +241,14 @@ class RamanSiorisEffect(Creator):
         do_upwelling = self.do_upwelling()
         jac_perturb = self.jacobian_perturbation()
 
+        mapping = rf.StateMappingLinear()
+
         raman_effect = []
         for chan_index in range(self.num_channels()):
             raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], chan_index,
                                  solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
                                  atmosphere, solar_model[chan_index], albedo[chan_index], 
+                                 mapping,
                                  padding_fraction, do_upwelling, jac_perturb) )
 
         return raman_effect
