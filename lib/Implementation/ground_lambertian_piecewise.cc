@@ -18,8 +18,9 @@ FP_IMPLEMENT(GroundLambertianPiecewise);
 #endif
 
 GroundLambertianPiecewise::GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                                                     const blitz::Array<double, 1>& lambertian_values)
-: GroundPiecewise(spectral_points, lambertian_values)
+                                                     const blitz::Array<double, 1>& lambertian_values,
+                                                     const boost::shared_ptr<StateMapping>& mapping)
+: GroundPiecewise(spectral_points, lambertian_values, mapping)
 {
 }
 

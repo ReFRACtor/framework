@@ -12,7 +12,8 @@ namespace FullPhysics {
 class GroundLambertianPiecewise: public GroundPiecewise {
 public:
   GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                            const blitz::Array<double, 1>& point_values);
+                            const blitz::Array<double, 1>& point_values,
+                            const boost::shared_ptr<StateMapping>& in_map = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 

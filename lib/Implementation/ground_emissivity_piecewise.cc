@@ -18,8 +18,9 @@ FP_IMPLEMENT(GroundEmissivityPiecewise);
 #endif
 
 GroundEmissivityPiecewise::GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                                                     const blitz::Array<double, 1>& emissivity_values)
-: GroundPiecewise(spectral_points, emissivity_values)
+                                                     const blitz::Array<double, 1>& emissivity_values,
+                                                     const boost::shared_ptr<StateMapping>& mapping)
+: GroundPiecewise(spectral_points, emissivity_values, mapping)
 {
 }
 

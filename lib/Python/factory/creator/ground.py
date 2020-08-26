@@ -67,7 +67,6 @@ class GroundPiecewise(Creator):
 
     def retrieved_indexes(self, point_values):
         grid = self.grid()
-        point_values = self.value()
         spec_win = self.spec_win()
 
         ret_indexes = []
@@ -128,7 +127,7 @@ class GroundLambertianPiecewise(GroundPiecewise):
 
         mapping = rf.StateMappingAtIndexes(self.retrieved_indexes(albedo))
 
-        return rf.GroundLambertianPiecewise(self.grid(), reflectivity, mapping)
+        return rf.GroundLambertianPiecewise(self.grid(), albedo, mapping)
 
 class BrdfTypeOption(Enum):
     soil = 0

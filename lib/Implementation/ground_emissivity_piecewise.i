@@ -12,8 +12,8 @@ namespace FullPhysics {
 class GroundEmissivityPiecewise: public GroundPiecewise {
 public:
   GroundEmissivityPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                            const blitz::Array<double, 1>& point_values);
-
+                            const blitz::Array<double, 1>& point_values,
+                            const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
   virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;

@@ -14,7 +14,8 @@ class GroundLambertianPiecewise: virtual public GroundPiecewise {
 
 public:
   GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                            const blitz::Array<double, 1>& point_values);
+                            const blitz::Array<double, 1>& point_values,
+                            const boost::shared_ptr<StateMapping>& in_map = boost::make_shared<StateMappingLinear>());
 
   virtual boost::shared_ptr<Ground> clone() const;
 
