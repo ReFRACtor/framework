@@ -32,7 +32,7 @@ class CreatorMUSES(Creator):
         return osp_common
 
     def pressure_obj(self, pressure_levels):
-        return rf.PressureSigma(pressure_levels, pressure_levels[-1], False)
+        return rf.PressureSigma(pressure_levels, pressure_levels[-1])
 
 class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
 
@@ -49,11 +49,11 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
         press_osp = PressureOSP(pressure_cutoff=None, **self.osp_common())
 
         fm_press = press_osp.fm_pressure_grid
-        press_obj = rf.PressureSigma(fm_press, fm_press[-1], False)
+        press_obj = rf.PressureSigma(fm_press, fm_press[-1])
 
         temp_osp = SpeciesOSP("TATM", pressure_cutoff=None, **self.osp_common())
         fm_temp = temp_osp.fm_climatology
-        temp_obj = rf.TemperatureLevel(fm_temp, np.zeros(fm_temp.shape, dtype=bool), press_obj)
+        temp_obj = rf.TemperatureLevel(fm_temp, press_obj)
 
         sea_level_height = rf.DoubleWithUnit(0, "m")
         alt_calc = rf.AltitudeHydrostatic(press_obj, temp_obj, l1b_obj.latitude(0), sea_level_height)
