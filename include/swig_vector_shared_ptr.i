@@ -1,6 +1,6 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
-
+%fragment("StdVectorSharedTraits","header",fragment="StdSequenceTraits")
 %{
 
 //--------------------------------------------------------------
