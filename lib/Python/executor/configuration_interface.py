@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from refractor_swig import (SolverIterationLog, RtAtmosphere, ForwardModel, IterativeSolver,
                             StateVector, Level1b)
 from .config import find_config_function
-from .factory import process_config, creator
-from .output.atmosphere import AtmosphereOutput
-from .output.radiance import (ForwardModelRadianceOutput,
+from ..factory import process_config, creator
+from ..output.atmosphere import AtmosphereOutput
+from ..output.radiance import (ForwardModelRadianceOutput,
                               ObservationRadianceOutput)
-from .output.solver import SolverIterationOutput
-from .output.state_vector import (StateVectorOutputRetrieval,
+from ..output.solver import SolverIterationOutput
+from ..output.state_vector import (StateVectorOutputRetrieval,
                                   StateVectorOutputSimulation)
 
 
