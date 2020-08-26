@@ -40,7 +40,6 @@ endif()
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 OLD)
 endif()
-
 # Include SWIG macros
 include(UseSWIG)
 
@@ -67,7 +66,7 @@ foreach(input_swig_file ${SWIG_INTERFACE_FILES})
     endif()
 
     list(APPEND BUILD_USED_SWIG_FILES ${build_swig_file})
-    set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn")
+    set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-interface;_${module_name};-module;${module_name};-cpperraswarn")
 endforeach()
 
 # Use C++ mode for SWIG
