@@ -44,6 +44,7 @@ include_directories(${FP_INCLUDES})
 add_subdirectory(swig_rules)
 
 install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
+find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization)
 add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
 target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
 target_compile_definitions(refractor PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
