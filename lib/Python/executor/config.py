@@ -14,6 +14,9 @@ def load_config_module(filename):
     If filename is a directory, we assume we are actually loading __init__.py
     found in that directory'''
 
+    # Fully expand filename to avoid problems introduced by relative paths
+    filename = os.path.realpath(filename)
+
     # Add some random characters to the module name to make each read instance unique
     uniq_module_name = "config_" + ''.join([ random.choice(string.ascii_lowercase) for i in range(5) ])
 
