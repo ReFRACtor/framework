@@ -28,6 +28,7 @@ add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDO
 
 #####
 # Create unit test binary, do not include it in the make all target
+find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization)
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
 target_link_libraries(test_all refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 target_include_directories(test_all PRIVATE ${SWIG_INCLUDE_DIR})
