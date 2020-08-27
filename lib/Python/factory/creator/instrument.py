@@ -96,7 +96,7 @@ class DispersionPolynomial(Creator):
 
 class SampleGridSpectralDomain(Creator):
 
-    spectral_domains = param.Array(dims=2)
+    spectral_domains = param.Iterable(rf.SpectralDomain)
     num_channels = param.Scalar(int)
     desc_band_name = param.Iterable(str)
 
