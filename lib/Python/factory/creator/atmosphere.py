@@ -91,7 +91,7 @@ class TemperatureMet(Creator):
 class SurfaceTemperature(Creator):
     "Creates a SurfaceTemperature object for use by AtmospherCreator"
 
-    surface_temperature = param.Scalar(float)
+    surface_temperature = param.ArrayWithUnit(dims=1)
 
     def create(self, **kwargs):
 
