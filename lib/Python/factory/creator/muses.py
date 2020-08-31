@@ -91,14 +91,19 @@ class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
 
     def create(self, **kwargs):
 
+        tatm_osp = SpeciesOSP("TATM", **self.osp_common())
+        ret_levels = tatm_osp.retrieval_levels
+        osp_pressure_grid = tatm_osp.fm_pressure_grid[ret_levels]
+
         if self.temperature_profile() is None:
-            tatm_osp = SpeciesOSP("TATM", **self.osp_common())
-
-            ret_levels = tatm_osp.retrieval_levels
-
             self.config_def["temperature_profile"] = tatm_osp.fm_climatology[ret_levels]
 
-            self.config_def["pressure"] = self.pressure_obj(tatm_osp.fm_pressure_grid[ret_levels])
+        else:
+            # Resample supplied value so that covariance from MUSES can be used
+            inp_pressure_grid = self.pressure().pressure_grid.value.value
+            self.config_def["temperature_profile"] = np.interp(osp_pressure_grid, inp_pressure_grid, self.temperature_profile())
+
+        self.config_def["pressure"] = self.pressure_obj(osp_pressure_grid)
 
         return atmosphere.TemperatureLevel.create(self, **kwargs)
 
@@ -127,10 +132,16 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
         if self.vmr_profile() is None:
             ret_levels = gas_osp.retrieval_levels
 
-            self.config_def['vmr_profile'] = gas_osp.fm_climatology[ret_levels]
+            if ret_levels is not None:
+                self.config_def['vmr_profile'] = gas_osp.fm_climatology[ret_levels]
+            else:
+                self.config_def['vmr_profile'] = gas_osp.fm_climatology
 
         if self.mapping() is None:
-            pressure_from = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])
+            if ret_levels is not None:
+                pressure_from = self.pressure_obj(gas_osp.fm_pressure_grid[ret_levels])
+            else:
+                pressure_from = self.pressure_obj(gas_osp.fm_pressure_grid)
 
             if gas_osp.use_log:
                 mapping_first = rf.StateMappingLog()
