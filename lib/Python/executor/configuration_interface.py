@@ -2,12 +2,12 @@ from abc import ABC, abstractmethod
 from refractor_swig import (SolverIterationLog, RtAtmosphere, ForwardModel, IterativeSolver,
                             StateVector, Level1b)
 from .config import find_config_function
-from .factory import process_config, creator
-from .output.atmosphere import AtmosphereOutput
-from .output.radiance import (ForwardModelRadianceOutput,
+from ..factory import process_config, creator
+from ..output.atmosphere import AtmosphereOutput
+from ..output.radiance import (ForwardModelRadianceOutput,
                               ObservationRadianceOutput)
-from .output.solver import SolverIterationOutput
-from .output.state_vector import (StateVectorOutputRetrieval,
+from ..output.solver import SolverIterationOutput
+from ..output.state_vector import (StateVectorOutputRetrieval,
                                   StateVectorOutputSimulation)
 
 
@@ -190,7 +190,8 @@ class ConfigurationCreator(ConfigurationInterface):
         
     def set_initial_guess(self):
         '''Set the state vector to the initial guess.'''
-        self.state_vector.update_state(self.file_config.retrieval.initial_guess)
+        if self.state_vector is not None:
+            self.state_vector.update_state(self.file_config.retrieval.initial_guess)
 
     def radiance_all(self):
         '''Calculate all the radiances. This doesn't really do anything on
@@ -210,7 +211,7 @@ class ConfigurationCreator(ConfigurationInterface):
             obs_out = ObservationRadianceOutput(output, step_index, self.l1b, self.forward_model)
             self.solver.add_observer_and_keep_reference(obs_out)
 
-        if self.atmosphere is not None:
+        if self.atmosphere is not None and self.solver is not None:
             atm_out = AtmosphereOutput(output, step_index, self.atmosphere)
             self.solver.add_observer_and_keep_reference(atm_out)
 

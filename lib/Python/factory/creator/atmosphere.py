@@ -4,7 +4,6 @@ import warnings
 import numpy as np
 
 from .base import Creator, ParamPassThru, CreatorError
-from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -57,70 +56,67 @@ class AtmosphereCreator(Creator):
             return rf.AtmosphereStandard(absorber, pressure, temperature, rayleigh, relative_humidity, altitude, constants)
 
 
-class PressureSigma(CreatorFlaggedValue):
+class PressureSigma(Creator):
     "Creates a PressureSigma object statisfying the AtmosphereCreator's pressure parameter"
 
+    surface_pressure = param.Scalar(float)
     a_coeff = param.Array(dims=1)
     b_coeff = param.Array(dims=1)
 
     def create(self, **kwargs):
-        # value and flag loaded as arrays, so just get first value
-        psurf = self.value()[0]
-        ret_flag = bool(self.retrieval_flag()[0])
 
-        return rf.PressureSigma(self.a_coeff(), self.b_coeff(), psurf, ret_flag)
+        return rf.PressureSigma(self.a_coeff(), self.b_coeff(), self.surface_pressure())
 
-class PressureGrid(CreatorFlaggedValue):
+class PressureGrid(Creator):
     "Creates a PressureSigma object statisfying the AtmosphereCreator's pressure parameter"
 
+    surface_pressure = param.Scalar(float)
     pressure_levels = param.Array(dims=1)
 
     def create(self, **kwargs):
-        # ap and flag loaded as arrays, so just get first value
-        psurf = self.value()[0]
-        ret_flag = bool(self.retrieval_flag()[0])
 
-        return rf.PressureSigma(self.pressure_levels(), psurf, ret_flag)
+        return rf.PressureSigma(self.pressure_levels(), self.surface_pressure())
 
-class TemperatureMet(CreatorFlaggedValue):
+class TemperatureMet(Creator):
     "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"
     
+    offset = param.Scalar(float)
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
 
     def create(self, **kwargs):
-        offset = self.value()[0]
-        ret_flag = bool(self.retrieval_flag()[0])
 
-        return rf.TemperatureMet(self.met(), self.pressure(), offset, ret_flag)
+        return rf.TemperatureMet(self.met(), self.pressure(), self.offset())
 
-class SurfaceTemperature(CreatorFlaggedValue):
+class SurfaceTemperature(Creator):
     "Creates a SurfaceTemperature object for use by AtmospherCreator"
+
+    surface_temperature = param.ArrayWithUnit(dims=1)
 
     def create(self, **kwargs):
 
-        return rf.SurfaceTemperatureDirect(self.value(), self.retrieval_flag())
+        return rf.SurfaceTemperatureDirect(self.surface_temperature())
 
-class TemperatureLevel(CreatorFlaggedValue):
+class TemperatureLevel(Creator):
     "Creates a TemperatureLevel object statisfying the AtmosphereCreator's temperature parameter"
     
+    temperature_profile = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
 
     def create(self, **kwargs):
-        return rf.TemperatureLevel(self.value(), self.retrieval_flag(), self.pressure())
+        return rf.TemperatureLevel(self.temperature_profile(), self.pressure())
 
-class TemperatureLevelOffset(CreatorFlaggedValue):
+class TemperatureLevelOffset(Creator):
     """Creates a TemperatureLevel object statisfying the AtmosphereCreator's temperature parameter. 
     Instead of all temperature levels only an offset is retrieved."""
     
-    temperature_levels = param.Array(dims=1)
+    offset = param.Scalar(float)
+    temperature_profile = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
 
     def create(self, **kwargs):
-        offset = self.value()[0]
-        ret_flag = bool(self.retrieval_flag()[0])
 
-        return rf.TemperatureLevelOffset(self.pressure(), self.temperature_levels(), offset, ret_flag)
+        return rf.TemperatureLevelOffset(self.pressure(), self.temperature_profile(), self.offset())
 
 class AltitudeHydrostatic(Creator):
     "Creates a AltitudeHydrostatic object statisfying the AtmosphereCreator's altitude parameter"

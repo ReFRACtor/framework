@@ -54,22 +54,6 @@ void SubStateVectorProxy::update_sub_state(const ArrayAd<double, 1>& Sv_sub, con
 /// them to the proxied objects
 //-----------------------------------------------------------------------
 
-void SubStateVectorProxy::mark_used_sub(blitz::Array<bool, 1>& Used) const
-{
-    int offset = 0;
-    BOOST_FOREACH(boost::shared_ptr<SubStateVectorObserver> curr_obs, proxied_observers) {
-        Range prox_range(offset, offset + curr_obs->sub_vector_size() - 1);
-        Array<bool, 1> prox_used(Used(prox_range));
-        curr_obs->mark_used_sub(prox_used);
-        offset += curr_obs->sub_vector_size();
-    }
-}
-
-//-----------------------------------------------------------------------
-/// Extracts the relevant portions of the passed arrays and passes
-/// them to the proxied objects
-//-----------------------------------------------------------------------
-
 
 void SubStateVectorProxy::state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
 {

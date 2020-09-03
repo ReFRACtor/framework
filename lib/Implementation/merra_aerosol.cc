@@ -135,16 +135,14 @@ MerraAerosol::MerraAerosol
       if(aod > Max_aod)
 	aod = Max_aod;
       std::string aname = comp_name(i);
-      Array<bool, 1> flag(3);
       Array<double, 1> coeff(3);
-      flag = true, true, true;
       if(linear_aod)
 	coeff = aod, peak_height, peak_width;
       else
 	coeff = log(aod), peak_height, peak_width;
       aext.push_back
 	(boost::shared_ptr<AerosolExtinction>
-	 (new AerosolShapeGaussian(press, flag, coeff, aname, linear_aod)));
+	 (new AerosolShapeGaussian(press, coeff, aname, linear_aod)));
       if(rh_aerosol) 
 	aprop.push_back
 	  (boost::shared_ptr<AerosolProperty>

@@ -16,10 +16,7 @@ BOOST_AUTO_TEST_CASE(basic)
     233.493, 239.376, 244.52, 248.708, 251.979, 254.537, 256.655, 258.521,
     260.155, 261.747, 261.732, 258.598;
 
-  Array<bool, 1> temp_flag(temp_expect.rows());
-  temp_flag = true;
-
-  TemperatureLevel temp_lev(temp_expect, temp_flag, pressure);
+  TemperatureLevel temp_lev(temp_expect, pressure);
   sv.add_observer(temp_lev);
 
   for(int i = 0; i < temp_expect.rows(); ++i) {

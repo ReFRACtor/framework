@@ -83,10 +83,9 @@ protected:
 /// Initialize object.
 //-----------------------------------------------------------------------
 
-  void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag)
+  void init(const blitz::Array<double, 1>& Coeff)
   { 
-    SubStateVectorArray<AerosolProperty>::init(Coeff, Used_flag);
+    SubStateVectorArray<AerosolProperty>::init(Coeff);
   }
 
 //-----------------------------------------------------------------------
@@ -97,12 +96,11 @@ protected:
   AerosolPropertyImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff, 
-                         const blitz::Array<bool, 1>& Used_flag)
+  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff)
   {
-    SubStateVectorArray<AerosolProperty>::init(Coeff, Used_flag);
+    SubStateVectorArray<AerosolProperty>::init(Coeff);
   }
 private:
   friend class boost::serialization::access;

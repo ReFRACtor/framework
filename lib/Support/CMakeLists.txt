@@ -38,7 +38,10 @@ set(DIR_SOURCES
     spectral_range.cc
     spectrum.cc
     stacked_radiance_mixin.cc
+    state_mapping_at_indexes.cc
+    state_mapping_composite.cc
     state_mapping_gaussian.cc
+    state_mapping_interpolate.cc
     state_mapping_linear.cc
     state_mapping_log.cc
     state_mapping_offset.cc
@@ -77,6 +80,9 @@ set(TEST_SOURCES
     rayleigh_greek_moment_test.cc
     spectral_bound_test.cc
     spectral_domain_test.cc
+    state_mapping_at_indexes_test.cc
+    state_mapping_interpolate_test.cc
+    state_mapping_composite_test.cc
     state_vector_test.cc
     unit_test.cc
 )

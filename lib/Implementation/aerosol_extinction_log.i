@@ -15,7 +15,6 @@ namespace FullPhysics {
 class AerosolExtinctionLog : public AerosolExtinctionLevel {
 public:
   AerosolExtinctionLog(const boost::shared_ptr<Pressure>& Press,
-			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name);
 

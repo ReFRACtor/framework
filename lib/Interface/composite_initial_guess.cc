@@ -57,6 +57,7 @@ REGISTER_LUA_DERIVED_CLASS(CompositeInitialGuess, InitialGuess)
 .def("add_builder", &CompositeInitialGuess::add_builder)
 .def("add_builder", &composite_initial_guess_add_builder) 
 .def("add_builder", &composite_initial_guess_add_builder2) 
+.def("number_element", &CompositeInitialGuess::number_element)
 REGISTER_LUA_END()
 #endif
 

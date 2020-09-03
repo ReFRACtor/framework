@@ -22,7 +22,7 @@ FP_IMPLEMENT(AerosolExtinctionLevel);
 boost::shared_ptr<AerosolExtinction> AerosolExtinctionLevel::clone() const
 {
   return boost::shared_ptr<AerosolExtinction>
-    (new AerosolExtinctionLevel(press->clone(), used_flag, coeff.value(),
+    (new AerosolExtinctionLevel(press->clone(), coeff.value(),
                                 aerosol_name(), mapping->clone()));
 }
 
@@ -38,8 +38,5 @@ void AerosolExtinctionLevel::print(std::ostream& Os) const
      << "  Aerosol name:       " << aerosol_name() << "\n"
      << "  Coefficient:\n";
   opad << coeff.value() << "\n";
-  opad.strict_sync();
-  Os << "  Retrieval flag:\n";
-  opad << used_flag << "\n";
   opad.strict_sync();
 }

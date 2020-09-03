@@ -10,7 +10,6 @@ using namespace blitz;
 // constructor for EmpiricalOrthogonalFunction takes too many. As an easy
 // workaround, just stuff a number of the values into an array.
 boost::shared_ptr<InstrumentCorrection> eof_create(
-bool Used_flag,
 const HdfFile& Hdf_static_input,
 const ArrayWithUnit<double, 1>& Uncertainty,
 const std::string& Band_name,
@@ -18,15 +17,15 @@ const std::string& Hdf_group,
 const blitz::Array<double, 1>& Val)
 {
   return boost::make_shared<EmpiricalOrthogonalFunction>
-    (Val(0), Used_flag, Hdf_static_input, Uncertainty,
+    (Val(0), Hdf_static_input, Uncertainty,
      static_cast<int>(Val(1)), static_cast<int>(Val(2)),
      static_cast<int>(Val(3)),
      Band_name, Hdf_group, Val(4));
 }
 REGISTER_LUA_DERIVED_CLASS(EmpiricalOrthogonalFunction, InstrumentCorrection)
-.def(luabind::constructor<double, bool, const SampleGrid&, const HdfFile&,
+.def(luabind::constructor<double, const SampleGrid&, const HdfFile&,
      int, int, int, const std::string&, const std::string&>())
-.def(luabind::constructor<double, bool, const HdfFile&,
+.def(luabind::constructor<double, const HdfFile&,
      int, int, int, const std::string&, const std::string&>())
 .scope
 [
@@ -39,9 +38,6 @@ REGISTER_LUA_END()
 /// Constructor.
 ///
 /// \param Coeff - Initial value of scale factor
-/// \param Used_flag - If true, we update scale factor by values in
-///    StateVector. If false, we hold this fixed and just used the
-///    initial value.
 /// \param Disp - Dispersion.
 /// \param Hdf_static_input - File to read data from.
 /// \param Spec_index - Spectral index number to for
@@ -69,7 +65,6 @@ REGISTER_LUA_END()
   
 EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 (double Coeff, 
- bool Used_flag,
  const SampleGrid& Disp,
  const HdfFile& Hdf_static_input,
  int Spec_index,
@@ -85,7 +80,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(false),
   scale_to_stddev_(-1)
 {
-  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +
@@ -148,9 +143,6 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 /// sample_index. 
 ///
 /// \param Coeff - Initial value of scale factor
-/// \param Used_flag - If true, we update scale factor by values in
-///    StateVector. If false, we hold this fixed and just used the
-///    initial value.
 /// \param Hdf_static_input - File to read data from.
 /// \param Spec_index - Spectral index number to for
 /// \param Sounding_number - The footprint index (e.g., 0 to 7 for
@@ -177,7 +169,6 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   
 EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 (double Coeff, 
- bool Used_flag,
  const HdfFile& Hdf_static_input,
  int Spec_index,
  int Sounding_number,
@@ -192,7 +183,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(false),
   scale_to_stddev_(-1)
 {
-  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +
@@ -236,9 +227,6 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 /// units from the uncertainty.
 ///
 /// \param Coeff - Initial value of scale factor
-/// \param Used_flag - If true, we update scale factor by values in
-///    StateVector. If false, we hold this fixed and just used the
-///    initial value.
 /// \param Hdf_static_input - File to read data from.
 /// \param Uncertainty - The uncertainty to scale EOF by. This
 ///    contains units.
@@ -267,7 +255,6 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   
 EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
 (double Coeff, 
- bool Used_flag,
  const HdfFile& Hdf_static_input,
  const ArrayWithUnit<double, 1>& Uncertainty,
  int Spec_index,
@@ -284,7 +271,7 @@ EmpiricalOrthogonalFunction::EmpiricalOrthogonalFunction
   eof_scale_uncertainty_(true),
   scale_to_stddev_(Scale_to_stddev)
 {
-  SubStateVectorArray<InstrumentCorrection>::init(Coeff, Used_flag);
+  SubStateVectorArray<InstrumentCorrection>::init(Coeff);
   using namespace H5;
   std::string fldname = hdf_group + "/EOF_"
     + boost::lexical_cast<std::string>(Order) +
@@ -331,7 +318,7 @@ boost::shared_ptr<InstrumentCorrection> EmpiricalOrthogonalFunction::clone()
   const
 {
   return boost::shared_ptr<InstrumentCorrection>
-    (new EmpiricalOrthogonalFunction(coeff.value()(0), used_flag(0), 
+    (new EmpiricalOrthogonalFunction(coeff.value()(0),
 				     eof_, order_,band_name, hdf_group,
 				     sounding_number_, 
 				     eof_depend_on_sounding_number_));
@@ -368,9 +355,7 @@ void EmpiricalOrthogonalFunction::print(std::ostream& Os) const
      << (eof_depend_on_sounding_number_ ? "yes" : "no") << "\n"
      << "  Scale by uncertainty:      "
      << (eof_scale_uncertainty_ ? "yes" : "no") << "\n"
-     << "  Scale:                     " << coeff(0).value() << "\n"
-     << "  Fit:                       " 
-     << (used_flag(0) ? "True\n" : "False\n");
+     << "  Scale:                     " << coeff(0).value() << "\n";
   if(eof_scale_uncertainty_)
     Os << "  Scale to stddev:           " << scale_to_stddev_ << "\n";
 }

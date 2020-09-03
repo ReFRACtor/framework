@@ -24,10 +24,6 @@ public:
   %pickle_serialization();
 protected:
   GroundImpBase(const blitz::Array<double, 1>& Coeff,
-                const blitz::Array<bool, 1>& Used_flag,
-                const boost::shared_ptr<Pressure>& Press,
-                bool Mark_according_to_press = true,
-                int Pdep_start = 0,
                 boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };
 }

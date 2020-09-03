@@ -23,3 +23,5 @@ public:
   %pickle_serialization();
 };
 }
+
+%template(vector_state_mapping) std::vector<boost::shared_ptr<FullPhysics::StateMapping> >;

@@ -21,7 +21,7 @@ public:
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  StateMappingLog() : map_name("log") {};
+  StateMappingLog() {};
   virtual ~StateMappingLog() {}
   
   virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
@@ -40,13 +40,12 @@ public:
     return ArrayAd<double, 1>(res);
   }
 
-  virtual std::string name() const { return map_name; }
+  virtual std::string name() const { return "log"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   { return boost::shared_ptr<StateMapping>(new StateMappingLog()); }
 
 private:
-  std::string map_name;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

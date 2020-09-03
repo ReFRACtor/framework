@@ -79,7 +79,7 @@ class MusesSimConfig(object):
         # Use sample grid from scenario
         self.config_def['instrument']['dispersion'] = {
             'creator': creator.instrument.SampleGridSpectralDomain,
-            'value': {
+            'spectral_domains': {
                 'creator': creator.value.NamedCommonValue,
                 'name': 'sample_grid',
             },
@@ -89,10 +89,10 @@ class MusesSimConfig(object):
 
         # Set pressure grid, reverse and convert mb -> Pa
         self.config_def['atmosphere']['pressure']['pressure_levels'] =  profile_getter("pressure") * 100
-        self.config_def['atmosphere']['pressure']['value'] = np.array([profile_getter("pressure")[-1] * 100])
+        self.config_def['atmosphere']['pressure']['surface_pressure'] = profile_getter("pressure")[-1] * 100
 
         # Set temperature values
-        self.config_def['atmosphere']['temperature']['temperature_levels'] = profile_getter("TATM")
+        self.config_def['atmosphere']['temperature']['temperature_profile'] = profile_getter("TATM")
 
         # Set absorbers
 
@@ -120,17 +120,17 @@ class MusesSimConfig(object):
 
             if absco_gas_name in self.config_def['atmosphere']['absorber']:
                 gas_def = self.config_def['atmosphere']['absorber'][absco_gas_name]
-                if gas_def['vmr']['value'] is not None:
+                if gas_def['vmr']['vmr_profile'] is not None:
                     print("Adding {} to existing gas {}".format(in_gas_name, absco_gas_name))
-                    gas_def['vmr']['value'] = gas_def['vmr']['value'] + profile_getter(in_gas_name)
+                    gas_def['vmr']['vmr_profile'] = gas_def['vmr']['vmr_profile'] + profile_getter(in_gas_name)
                 else:
-                    gas_def['vmr']['value'] = np.copy(profile_getter(in_gas_name)[:])
+                    gas_def['vmr']['vmr_profile'] = np.copy(profile_getter(in_gas_name)[:])
 
             else:
                 # Must make a deepcopy so we are not giving each gas a reference to the default definition that changing
                 # would make all have the same values
                 gas_def = deepcopy(self.config_def['atmosphere']['absorber']['default_gas_definition'])
-                gas_def['vmr']['value'] = profile_getter(in_gas_name)
+                gas_def['vmr']['vmr_profile'] = profile_getter(in_gas_name)
                 self.config_def['atmosphere']['absorber'][absco_gas_name] = gas_def
 
         self.config_def['atmosphere']['absorber']['gases'] = used_gas_list
@@ -139,15 +139,15 @@ class MusesSimConfig(object):
 
         # Setup emissivity values using the picewise method
         self.config_def['atmosphere']['ground']['grid'] = rf.ArrayWithUnit(emiss_grid, "cm^-1")
-        self.config_def['atmosphere']['ground']['value'] = emiss_values
+        self.config_def['atmosphere']['ground']['emissivity'] = emiss_values
 
     def setup_surface_temperature(self, surface_temp):
 
-        self.config_def['atmosphere']['surface_temperature']['value'] = rf.ArrayWithUnit(np.full(self.num_channels, surface_temp, dtype=float), "K")
+        self.config_def['atmosphere']['surface_temperature']['surface_temperature'] = rf.ArrayWithUnit(np.full(self.num_channels, surface_temp, dtype=float), "K")
 
     def setup_surface_albedo(self, albedo_values):
 
-        self.config_def['atmosphere']['ground']['lambertian']['value'] = albedo_values
+        self.config_def['atmosphere']['ground']['lambertian']['polynomial_coeffs'] = albedo_values
 
     def configure_scenario(self, sample_grid):
         # Instruments must define the way they configure the scenario, they can use setup_scenario

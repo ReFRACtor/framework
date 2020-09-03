@@ -4,6 +4,7 @@
 #include "ground_imp_base.h"
 #include "array_with_unit.h"
 #include "linear_interpolate.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 
@@ -17,8 +18,8 @@ namespace FullPhysics {
 class GroundPiecewise: virtual public GroundImpBase {
 public:
   GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-		  const blitz::Array<double, 1>& point_values,
-		  const blitz::Array<bool, 1>& retrieval_flag);
+                  const blitz::Array<double, 1>& point_values,
+                  const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
@@ -40,7 +41,7 @@ protected:
   GroundPiecewise() {};
 private:
   // Interpolation object is update for each state vector update
-  boost::shared_ptr<LinearInterpolate<double, AutoDerivative<double> > > ground_interp;
+  boost::shared_ptr<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > > ground_interp;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

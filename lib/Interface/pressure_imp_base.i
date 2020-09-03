@@ -57,8 +57,7 @@ protected:
   mutable PressureImpBaseCache cache;
   virtual void calc_pressure_grid() const = 0;
   PressureImpBase();
-  PressureImpBase(const blitz::Array<double, 1>& Coeff, 
-		  const blitz::Array<bool, 1>& Used_flag);
+  PressureImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
 

@@ -19,7 +19,7 @@ public:
           const blitz::Array<double, 2> a_priori_cov);
 
   MaxAPosterioriStandard(const std::vector<boost::shared_ptr<ForwardModel> >& fm,
- 	  const std::vector<boost::shared_ptr<Observation> >& observation, 
+          const std::vector<boost::shared_ptr<Observation> >& observation, 
           const boost::shared_ptr<StateVector>& state_vector,
           const blitz::Array<double, 1> a_priori_params,
           const blitz::Array<double, 2> a_priori_cov);
@@ -33,13 +33,6 @@ public:
   virtual void print(std::ostream& Os) const 
   { Os << "MaxAPosterioriStandard"; }
 
-protected:
-
-  //  TEMPORARY
-  //
-  // Should go away after we end support for 
-  // fixed pressure level grid.
-  virtual void vanishing_params_update();
 private:
   MaxAPosterioriStandard() {}
   friend class boost::serialization::access;

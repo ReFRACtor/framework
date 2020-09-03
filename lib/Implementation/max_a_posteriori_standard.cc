@@ -62,31 +62,3 @@ MaxAPosterioriStandard::MaxAPosterioriStandard
   if(Xa.rows() != sv->observer_claimed_size())
     throw Exception("A priori state vector size and state vector size expected by the model are not equal. :( ");
 }
-
-
-//  TEMPORARY
-//
-// Should go away after we end support for 
-// fixed pressure level grid. 
-// Not implemented efficiently.
-#include <linear_algebra.h>
-void MaxAPosterioriStandard::vanishing_params_update()
-{
-  ModelMeasureStandard::vanishing_params_update();
-  Array<bool, 1> used(sv->used_flag());
-  if(used.rows() != Sa_chol.rows())
-    throw Exception("Size of a-priori cov. matrix and the number of the elements of used-flag inconsistent! :( ");
-  if(!all(used)) {
-//    throw Exception("Handling vanishing parameters is not supported yet! :( ");
-    Sa_chol.reference(cholesky_decomposition(Sa));
-    for(int i=0; i<used.rows(); i++)
-      if(!used(i))
-        Sa_chol(i,Range::all()) = 0.0;
-    Sa_chol_inv.reference(generalized_inverse(Sa_chol,1e-20));
-    // Theoretically the selected columns of Sa_chol_inv should
-    // be zero; however, they may have very small nonzero values.
-    for(int i=0; i<used.rows(); i++)
-      if(!used(i))
-        Sa_chol_inv(Range::all(),i) = 0.0;
-  }
-}

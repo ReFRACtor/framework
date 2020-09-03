@@ -74,6 +74,7 @@ REGISTER_LUA_DERIVED_CLASS(InitialGuessValue, InitialGuessBuilder)
 .property("apriori_covariance_double", 
 	  &initial_guess_value_apriori_cov_double_get,
 	  &initial_guess_value_apriori_cov_double_set)
+.def("number_element", &InitialGuessValue::number_element)
 REGISTER_LUA_END()
 #endif
 

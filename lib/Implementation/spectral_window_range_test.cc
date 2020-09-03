@@ -46,6 +46,8 @@ BOOST_AUTO_TEST_CASE(apply_multi)
                              ("Spectral_Window/microwindow"));
     std::vector<int> pix =
         swin.grid_indexes(config_instrument->pixel_spectral_domain(0), 0);
+
+    std::cerr << std::endl << *config_instrument << std::endl;
     BOOST_CHECK_EQUAL((int) pix.size(), 880);
     BOOST_CHECK_EQUAL(pix.front(), 29);
     BOOST_CHECK_EQUAL(pix.back(), 984);
@@ -223,8 +225,6 @@ BOOST_AUTO_TEST_CASE(empty_spectral_bounds)
 
   // Create dispersion vector
   std::vector<boost::shared_ptr<SampleGrid> > spec_disp;
-  Array<bool, 1> disp_flag(2);
-  disp_flag = true, false;
   Array<double, 1> disp_coeff(2);
 
   Array<double, 1> disp_var(1016);
@@ -232,13 +232,13 @@ BOOST_AUTO_TEST_CASE(empty_spectral_bounds)
   disp_var = i1 + 1;
 
   disp_coeff = 0.757691, 1.74757e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "ABO2")));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, units::micron, disp_var, "ABO2")));
 
   disp_coeff = 1.59071, 3.62647e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "WCO2")));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, units::micron, disp_var, "WCO2")));
 
   disp_coeff = 2.04325, 4.69383e-05;
-  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, disp_flag, units::micron, disp_var, "SCO2")));
+  spec_disp.push_back(boost::shared_ptr<DispersionPolynomial>(new DispersionPolynomial(disp_coeff, units::micron, disp_var, "SCO2")));
 
 
   SpectralWindowRange spec_win = SpectralWindowRange(ArrayWithUnit<double, 3>(win_range, units::sample_index));

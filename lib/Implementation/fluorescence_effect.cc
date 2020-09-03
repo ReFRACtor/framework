@@ -25,7 +25,6 @@ FP_IMPLEMENT(FluorescenceEffect);
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(FluorescenceEffect, SpectrumEffect)
 .def(luabind::constructor<const blitz::Array<double, 1>&,
-                          const blitz::Array<bool, 1>&,
                           const boost::shared_ptr<RtAtmosphere>&,
                           const boost::shared_ptr<StokesCoefficient>&,
                           const DoubleWithUnit&, 
@@ -37,14 +36,14 @@ REGISTER_LUA_END()
   
 FluorescenceEffect::FluorescenceEffect
 (const blitz::Array<double, 1>& Coeff,
- const blitz::Array<bool, 1>& Used_flag,
  const boost::shared_ptr<RtAtmosphere>& Atm,
  const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
  const DoubleWithUnit& Lza, 
  const int Spec_index,
  const DoubleWithUnit& Reference,
- const Unit& Retrieval_unit) 
-: SpectrumEffectImpBase(Coeff, Used_flag),
+ const Unit& Retrieval_unit,
+ const boost::shared_ptr<StateMapping> Mapping) 
+: SpectrumEffectImpBase(Coeff, Mapping),
   lza(Lza), reference(Reference), retrieval_unit(Retrieval_unit), 
   spec_index(Spec_index), stokes_coef(Stokes_coef)
 {
@@ -123,7 +122,7 @@ void FluorescenceEffect::apply_effect(Spectrum& Spec,
 
 boost::shared_ptr<SpectrumEffect> FluorescenceEffect::clone() const
 {
-  return boost::shared_ptr<SpectrumEffect>(new FluorescenceEffect(coeff.value(), used_flag,
+  return boost::shared_ptr<SpectrumEffect>(new FluorescenceEffect(coeff.value(),
                                            atm_oco, stokes_coef, lza, spec_index,
                                            reference, retrieval_unit));
 }
@@ -133,7 +132,6 @@ void FluorescenceEffect::print(std::ostream& Os) const
   OstreamPad opad(Os, "  ");
   Os << "FluorescenceEffect" << std::endl
      << "  Coefficient:     " << coefficient().value() << "\n"
-     << "  Retrieval flag:  " << used_flag_value() << "\n"
      << "  Zenith angle:    " << lza << "\n"
      << "  Reference point: " << reference << "\n";
   opad << *stokes_coef;

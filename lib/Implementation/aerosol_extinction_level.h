@@ -18,9 +18,6 @@ public:
 //-----------------------------------------------------------------------
 /// Constructor.
 /// \param Press The pressure to use
-/// \param Flag Boolean flag indicating which levels are to be set by
-///   the state vector. A value of false means the level is held fixed
-///   when the state vector changes.
 /// \param Aext The aerosol extinction value.
 /// \param Aerosol_name The name of the aerosol. This is used to
 ///   generate the state vector name metadata, so it should be
@@ -31,12 +28,11 @@ public:
 //-----------------------------------------------------------------------
 
   AerosolExtinctionLevel(const boost::shared_ptr<Pressure>& Press,
-                         const blitz::Array<bool, 1>& Flag, 
                          const blitz::Array<double, 1>& Aext,
                          const std::string& Aerosol_name,
                          boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
-    init(Aerosol_name, Aext, Flag, Press, in_map);
+    init(Aerosol_name, Aext, Press, in_map);
   }
   virtual ~AerosolExtinctionLevel() {}
 

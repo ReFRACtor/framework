@@ -15,10 +15,8 @@ BOOST_AUTO_TEST_CASE(basic)
 
     ArrayWithUnit<double, 1> grid(emiss_data(Range::all(), 0), units::inv_cm);
     Array<double, 1> values(emiss_data(Range::all(), 1));
-    Array<bool, 1> flag(values.shape());
-    flag = true;
 
-    auto emiss = GroundEmissivityPiecewise(grid, values, flag);
+    auto emiss = GroundEmissivityPiecewise(grid, values);
 
     // Test mid point between each pair of wavenumbers
     for (int tst_idx = 0; tst_idx < values.rows() - 1; tst_idx++) {

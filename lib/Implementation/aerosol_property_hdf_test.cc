@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> a1(3), b(3);
   a1 = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<Pressure> p(new PressureSigma(a1,b, psurf, true));
+  boost::shared_ptr<Pressure> p(new PressureSigma(a1,b, psurf));
   AerosolPropertyHdf a(h, "strat/Properties", p);
   BOOST_CHECK_CLOSE(a.extinction_coefficient_each_layer(13000).value()(0), 1.1098061278226254, 1e-8);
   BOOST_CHECK_CLOSE(a.scattering_coefficient_each_layer(13000).value()(0), 1.1098055466725245, 1e-8);

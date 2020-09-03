@@ -200,6 +200,7 @@ public:
     }
   }
   void print(std::ostream& Os) const { Os << "LinearInterpolate"; }
+  static std::string name() { return "linear linear"; }
 private:
   std::map<TX, boost::shared_ptr<InterpolatePoint<TX, TY> > > inter;
   BehaviorOutOfRange out_of_range;

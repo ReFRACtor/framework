@@ -9,7 +9,7 @@ BOOST_FIXTURE_TEST_SUITE(temperature_met, MetDataFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-    TemperatureMet t1(met_data, pressure, 0, true);
+    TemperatureMet t1(met_data, pressure, 0);
     Array<double, 1> temp_expect(19);
     temp_expect = 244.2, 214.553, 218.029, 222.544, 218.341, 221.37, 227.38,
         233.493, 239.376, 244.52, 248.708, 251.979, 254.537, 256.655, 258.521,

@@ -13,12 +13,11 @@ using namespace blitz;
 //-----------------------------------------------------------------------
 
 TemperatureLevel::TemperatureLevel(const blitz::Array<double, 1> Temp,
-                                   const blitz::Array<bool, 1> Temp_flag,
                                    const boost::shared_ptr<Pressure>& Press,
                                    boost::shared_ptr<StateMapping> Map)
 : pressure(Press)
 {
-    init(Temp, Temp_flag, Press, Map);
+    init(Temp, Press, Map);
 }
 
 //-----------------------------------------------------------------------
@@ -63,7 +62,7 @@ std::string TemperatureLevel::state_vector_name_i(int i) const
 boost::shared_ptr<Temperature> TemperatureLevel::clone() const
 {
     return boost::shared_ptr<TemperatureLevel>
-        (new TemperatureLevel(coeff.value(), used_flag, pressure->clone(), mapping->clone()));
+        (new TemperatureLevel(coeff.value(), pressure->clone(), mapping->clone()));
 }
 
 void TemperatureLevel::print(std::ostream& Os) const

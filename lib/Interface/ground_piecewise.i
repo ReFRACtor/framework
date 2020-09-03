@@ -18,8 +18,8 @@ namespace FullPhysics {
 class GroundPiecewise: public GroundImpBase {
 public:
   GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-		  const blitz::Array<double, 1>& point_values,
-		  const blitz::Array<bool, 1>& retrieval_flag);
+                  const blitz::Array<double, 1>& point_values,
+                  const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 

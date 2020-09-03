@@ -16,13 +16,11 @@ class EmpiricalOrthogonalFunction:
   public SubStateVectorArray<InstrumentCorrection> {
 public:
   EmpiricalOrthogonalFunction(double Coeff, 
-                              bool Used_flag,
                               const ArrayWithUnit<double, 1>& Eof_waveform,
                               int Order,
                               const std::string& Band_name,
                               const std::string& Hdf_group = "N/A");
   EmpiricalOrthogonalFunction(double Coeff, 
-                              bool Used_flag,
                               const SampleGrid& Disp,
                               const HdfFile& Hdf_static_input,
                               int Spec_index,
@@ -32,7 +30,6 @@ public:
                               const std::string& Hdf_group = 
                               "Instrument/EmpiricalOrthogonalFunction_1");
   EmpiricalOrthogonalFunction(double Coeff, 
-                              bool Used_flag,
                               const HdfFile& Hdf_static_input,
                               int Spec_index,
                               int Sounding_number,
@@ -41,7 +38,6 @@ public:
                               const std::string& Hdf_group = 
                               "Instrument/EmpiricalOrthogonalFunction_1");
   EmpiricalOrthogonalFunction(double Coeff, 
-                              bool Used_flag,
                               const HdfFile& Hdf_static_input,
                               const ArrayWithUnit<double, 1>& Uncertainty,
                               int Spec_index,

@@ -13,8 +13,7 @@ namespace FullPhysics {
 class StokesCoefficientFraction : virtual public StokesCoefficientImpBase {
 public:
   StokesCoefficientFraction(const blitz::Array<double, 2>& Stokes_coeff_parallel,
-			    const blitz::Array<double, 1>& Coeffs,
-			    const blitz::Array<bool, 1>& Flag);
+                            const blitz::Array<double, 1>& Coeffs);
   virtual ~StokesCoefficientFraction() {}
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<StokesCoefficient> clone() const;

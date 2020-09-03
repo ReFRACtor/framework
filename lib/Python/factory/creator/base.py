@@ -14,6 +14,13 @@ logger = logging.getLogger('factory.creator.base')
 # Maintain this once in the module so the reference to it contained in every single creator
 subscribed_observers = OrderedDict()
 
+# Name that an not be used for Creator parameters or else they conflict with class internals
+RESERVED_PARAM_NAMES = [
+    "parameters",
+    "common_store",
+    "create",
+]
+
 class CreatorError(Exception):
     pass
 
@@ -53,6 +60,10 @@ class Creator(object):
     "Base creator object that handles ensuring the contract of creators parameters is kept and type checking parameters requested"
 
     def __init__(self, config_def, common_store=None):
+
+        # Check that no parameters have been defined that will conflict with class internals
+        # Do this check before we shadow any of these definitions below
+        self._check_parameter_defs()
 
         # Create a new common store if none are passed
         if common_store is not None:
@@ -94,10 +105,21 @@ class Creator(object):
         return out_config_def
 
     def register_parameter(self, param_name, param_def):
+
+        if param_name in RESERVED_PARAM_NAMES:
+            raise ParamError(f"Can not use '{attr_name}' as a parameter name in the {self.__class__.__name__} creator class as it is a reserved name used internally")
+
         param_proxy = ParameterAccessor(param_name, param_def, self)
         self.parameters[param_name] = param_proxy
         setattr(self, param_name, param_proxy)
 
+    def _check_parameter_defs(self):
+        
+         for attr_name in dir(self):
+            attr_val = getattr(self, attr_name)
+            if isinstance(attr_val, ConfigParam) and attr_name in RESERVED_PARAM_NAMES:
+                raise ParamError(f"Can not use '{attr_name}' as a parameter name in the {self.__class__.__name__} creator class as it is a reserved name used internally")
+        
     def _load_parameters(self):
         "Gather class parameter types and ensure config_def has necessary items"
 

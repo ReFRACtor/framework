@@ -57,7 +57,6 @@ protected:
   mutable TemperatureImpBaseCache cache;
   virtual void calc_temperature_grid() const = 0;
   TemperatureImpBase(const blitz::Array<double, 1>& Coeff, 
-                     const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<Pressure>& Press);
 };
 }

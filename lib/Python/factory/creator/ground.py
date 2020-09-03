@@ -4,7 +4,6 @@ import numpy as np
 from enum import Enum
 
 from .base import Creator
-from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel
 from .. import param
 from .util import as_vector_string
 
@@ -43,33 +42,34 @@ class AlbedoFromSignalLevel(Creator):
 
         return albedo_val
 
-class GroundLambertian(CreatorFlaggedValueMultiChannel):
+class GroundLambertian(Creator):
 
+    polynomial_coeffs = param.Array(dims=2)
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
 
     def create(self, **kwargs):
-        return rf.GroundLambertian(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        return rf.GroundLambertian(self.polynomial_coeffs(), self.band_reference(), as_vector_string(self.desc_band_name()))
 
-class GroundEmissivityPolynomial(CreatorFlaggedValueMultiChannel):
+class GroundEmissivityPolynomial(Creator):
 
+    polynomial_coeffs = param.Array(dims=2)
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
 
     def create(self, **kwargs):
-        return rf.GroundEmissivityPolynomial(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+        return rf.GroundEmissivityPolynomial(self.polynomial_coeffs(), self.band_reference(), as_vector_string(self.desc_band_name()))
 
-class GroundPiecewise(CreatorFlaggedValue):
+class GroundPiecewise(Creator):
 
     grid = param.ArrayWithUnit(dims=1)
     spec_win = param.InstanceOf(rf.SpectralWindowRange)
 
-    def retrieval_flag(self):
+    def retrieved_indexes(self, point_values):
         grid = self.grid()
-        point_values = self.value()
         spec_win = self.spec_win()
 
-        ret_flag_compute = np.zeros(point_values.shape[0], dtype=bool)
+        ret_indexes = []
 
         for channel_idx in range(spec_win.range_array.value.shape[0]):
             for mw_idx in range(spec_win.range_array.value.shape[1]):
@@ -101,33 +101,41 @@ class GroundPiecewise(CreatorFlaggedValue):
                 index_beg = max(index_beg-1, 0)
 
                 for idx in range(index_beg, index_end+1):
-                    ret_flag_compute[idx] = True
+                    ret_indexes.append(idx)
+
+        return ret_indexes
  
-        # Combine flags if the original retrieval flag was not all True, meaning it was the default one
-        ret_flag_user = super().retrieval_flag()
-        if not np.all(ret_flag_user):
-            ret_flag = ret_flag_compute and ret_flag_user
-        else:
-            ret_flag = ret_flag_compute
-
-        return ret_flag
-
 class GroundEmissivityPiecewise(GroundPiecewise):
 
+    emissivity = param.Array(dims=1)
+
     def create(self, **kwargs):
-        return rf.GroundEmissivityPiecewise(self.grid(), self.value(), self.retrieval_flag())
+
+        emissivity = self.emissivity()
+
+        mapping = rf.StateMappingAtIndexes(self.retrieved_indexes(emissivity))
+
+        return rf.GroundEmissivityPiecewise(self.grid(), emissivity, mapping)
 
 class GroundLambertianPiecewise(GroundPiecewise):
 
+    albedo = param.Array(dims=1)
+
     def create(self, **kwargs):
-        return rf.GroundLambertianPiecewise(self.grid(), self.value(), self.retrieval_flag())
+
+        albedo = self.albedo()
+
+        mapping = rf.StateMappingAtIndexes(self.retrieved_indexes(albedo))
+
+        return rf.GroundLambertianPiecewise(self.grid(), albedo, mapping)
 
 class BrdfTypeOption(Enum):
     soil = 0
     vegetation = 1
 
-class GroundBrdf(CreatorFlaggedValueMultiChannel):
+class GroundBrdf(Creator):
 
+    brdf_parameters = param.Array(dims=2)
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
     brdf_type = param.Choice(param.Scalar(int), param.InstanceOf(BrdfTypeOption), default=0)
@@ -135,13 +143,14 @@ class GroundBrdf(CreatorFlaggedValueMultiChannel):
     retrieve_kernel_params = param.Scalar(bool, default=False)
 
     def retrieval_flag(self):
-        ret_flag = super().retrieval_flag()
+        ret_flag = np.ones(self.brdf_parameters().shape, dtype=bool)
 
         # Turn off all but weight offset and slope
         if not self.retrieve_kernel_params():
             ret_flag[:, 2:] = False
 
-        return ret_flag
+        # Flatten to shape as it would appear in the retrieval vector
+        return ret_flag.ravel()
 
     def create(self, **kwargs):
 
@@ -149,10 +158,12 @@ class GroundBrdf(CreatorFlaggedValueMultiChannel):
         if isinstance(brdf_type, BrdfTypeOption):
             brdf_type = brdf_type.value
 
+        mapping = rf.StateMappingAtIndexes(self.retrieval_flag())
+
         if brdf_type == BrdfTypeOption.soil.value:
-            return rf.GroundBrdfSoil(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+            return rf.GroundBrdfSoil(self.brdf_parameters(), self.band_reference(), as_vector_string(self.desc_band_name()), mapping)
         elif brdf_type == BrdfTypeOption.vegetation.value:
-            return rf.GroundBrdfVeg(self.value(), self.retrieval_flag(), self.band_reference(), as_vector_string(self.desc_band_name()))
+            return rf.GroundBrdfVeg(self.brdf_parameters(), self.band_reference(), as_vector_string(self.desc_band_name()), mapping)
         else:
             raise param.ParamError("Unknown BRDF type option: {}".format(brdf_type))
 

@@ -16,23 +16,20 @@ template<class Base> class SubStateVectorArray:
 public:
   SubStateVectorArray();
   void init(const blitz::Array<double, 1>& Coeff, 
-            const blitz::Array<bool, 1>& Used_flag,
             boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
-  void init(double Coeff, bool Used_flag,
+  void init(double Coeff,
             boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
   virtual ~SubStateVectorArray();
-  void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
   virtual void update_sub_state_hook();
   %python_attribute(coefficient, ArrayAd<double, 1>);
-  %python_attribute(used_flag_value, blitz::Array<bool, 1>);
+  %python_attribute(state_mapping, const boost::shared_ptr<StateMapping>);
   %python_attribute(statevector_covariance, blitz::Array<double, 2>);
 protected:
   ArrayAd<double, 1> coeff;
-  blitz::Array<bool, 1> used_flag;
   blitz::Array<double, 2> cov;
   boost::shared_ptr<StateMapping> mapping;
 };
@@ -47,7 +44,6 @@ protected:
     virtual void remove_observer(Observer<TYPE>& Obs);
     virtual void update_sub_state_hook();
     virtual void print(std::ostream& Os) const;
-    virtual void mark_used(const StateVector& Sv, blitz::Array<bool, 1>& Used) const;
     virtual void state_vector_name(const StateVector& Sv, blitz::Array<std::string, 1>& Sv_name) const;
     virtual void notify_update(const StateVector& Observed_object);
     virtual void notify_add(StateVector& Observed_object);

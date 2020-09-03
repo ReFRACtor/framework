@@ -12,11 +12,9 @@ BOOST_AUTO_TEST_CASE(basic)
 {
   blitz::Array<double, 1> coeff(2);
   coeff = 0.5, 0.0;
-  blitz::Array<bool, 1> flag(2);
-  flag = true;
   DoubleWithUnit band_ref(0.77, "cm^-1");
   std::string band_name = "ABand";
-  RadianceScalingSvFit rs1 = RadianceScalingSvFit(coeff, flag, band_ref, band_name);
+  RadianceScalingSvFit rs1 = RadianceScalingSvFit(coeff, band_ref, band_name);
   
   SpectralDomain pixel_grid = config_instrument->pixel_spectral_domain(0);
   std::vector<int> pixel_list;
@@ -40,7 +38,7 @@ BOOST_AUTO_TEST_CASE(basic)
   SpectralRange radiance2(radiance_data2, Unit());
 
   coeff = 0.5, 1e-3;
-  RadianceScalingSvFit rs2 = RadianceScalingSvFit(coeff, flag, band_ref, band_name);
+  RadianceScalingSvFit rs2 = RadianceScalingSvFit(coeff, band_ref, band_name);
 
   // Set up statevector stuff so that we can properly
   // test the jacobians going through radiance scaling

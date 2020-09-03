@@ -34,10 +34,10 @@ BOOST_AUTO_TEST_CASE(apriori_calc)
 
         double surface_pressure = met->surface_pressure();
         boost::shared_ptr<PressureSigma> press
-          (new PressureSigma(sigma_a, sigma_b, surface_pressure, false));
+          (new PressureSigma(sigma_a, sigma_b, surface_pressure));
 
         boost::shared_ptr<TemperatureMet> temp
-          (new TemperatureMet(met, press, 0, false));
+          (new TemperatureMet(met, press, 0));
 
         boost::shared_ptr<Altitude> alt(new AltitudeHydrostatic(press, temp, l1b->latitude(0), l1b->altitude(0)));
 

@@ -17,7 +17,6 @@ namespace FullPhysics {
 class GroundLambertian: public GroundImpBase {
 public:
   GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
-                   const blitz::Array<bool,2>& Flag, 
                    const ArrayWithUnit<double, 1>& Ref_points,
                    const std::vector<std::string>& Desc_band_names);
 

@@ -1,6 +1,7 @@
 #include "dispersion_polynomial.h"
 #include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
+
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -19,13 +20,34 @@ FP_IMPLEMENT(DispersionPolynomial);
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
+#include "state_mapping_at_indexes.h"
+
+// Emulate old constructor that included flags by using a mapping class
+// Return object at most generic level for Lua
+boost::shared_ptr<SampleGrid> disp_poly_flagged_create(const blitz::Array<double, 1>& Coeff, 
+                                                       const blitz::Array<bool, 1> Flag,
+                                                       const std::string& Coeff_unit_name,
+                                                       const blitz::Array<double, 1>& Var_values,
+                                                       const std::string& Band_name)
+{
+    boost::shared_ptr<StateMapping> mapping =
+        boost::make_shared<StateMappingAtIndexes>(Flag);
+
+    boost::shared_ptr<DispersionPolynomial> disp_poly = 
+        boost::make_shared<DispersionPolynomial>(Coeff, Coeff_unit_name, Var_values, Band_name, mapping);
+
+    return disp_poly;
+}
 
 REGISTER_LUA_DERIVED_CLASS(DispersionPolynomial, SampleGrid)
 .def(luabind::constructor<const blitz::Array<double, 1>&, 
-                          const blitz::Array<bool, 1>&,
                           const std::string&,
                           const blitz::Array<double, 1>&,
                           const std::string&>())
+.scope
+[
+ luabind::def("create", &disp_poly_flagged_create)
+]
 REGISTER_LUA_END()
 #endif
 
@@ -36,16 +58,16 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const Unit& Coeff_unit,
                                            const blitz::Array<double, 1>& Var_values,
-                                           const std::string& Band_name)
+                                           const std::string& Band_name,
+                                           boost::shared_ptr<StateMapping> Mapping)
 : coeff_unit(Coeff_unit),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff);
   initialize();
 }
 
@@ -56,16 +78,17 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const std::string& Coeff_unit_name,
                                            const blitz::Array<double, 1>& Var_values,
-                                           const std::string& Band_name)
+                                           const std::string& Band_name,
+                                           boost::shared_ptr<StateMapping> Mapping)
+
 : coeff_unit(Coeff_unit_name),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff, Mapping);
   initialize();
 }
 
@@ -74,15 +97,15 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
 //-----------------------------------------------------------------------
 
 DispersionPolynomial::DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff, 
-                                           const blitz::Array<bool, 1>& Used_flag,
                                            const blitz::Array<double, 1>& Var_values,
-                                           const std::string& Band_name)
+                                           const std::string& Band_name,
+                                           boost::shared_ptr<StateMapping> Mapping)
 : coeff_unit(Coeff.units),
   band_name_(Band_name),
   variable_values_(Var_values),
   spectral_index(Var_values.rows())
 {
-  SubStateVectorArray<SampleGrid>::init(Coeff.value, Used_flag);
+  SubStateVectorArray<SampleGrid>::init(Coeff.value, Mapping);
   initialize();
 }
 
@@ -110,8 +133,9 @@ std::string DispersionPolynomial::state_vector_name_i(int i) const
 SpectralDomain
 DispersionPolynomial::pixel_grid() const
 {
-  Poly1d spectral_poly = Poly1d(coeff, false);
-  ArrayAd<double, 1> index_array_ad(variable_values_, coeff.number_variable());
+  ArrayAd<double, 1> poly_vals = mapping->fm_view(coeff);
+  Poly1d spectral_poly = Poly1d(poly_vals, false);
+  ArrayAd<double, 1> index_array_ad(variable_values_, poly_vals.number_variable());
   index_array_ad.jacobian() = 0;
   SpectralDomain sample_grid = SpectralDomain(spectral_poly(index_array_ad), spectral_index, coeff_unit);
   return sample_grid;
@@ -120,18 +144,15 @@ DispersionPolynomial::pixel_grid() const
 boost::shared_ptr<SampleGrid> DispersionPolynomial::clone() const
 {
   return boost::shared_ptr<SampleGrid>
-    (new DispersionPolynomial(coeff.value(), used_flag, coeff_unit, variable_values_, band_name_));
+    (new DispersionPolynomial(mapping->fm_view(coeff).value(), coeff_unit, variable_values_, band_name_));
 }
 
 void DispersionPolynomial::print(std::ostream& Os) const 
 {
   Os << "DispersionPolynomial for band " << band_name_ << "\n"
      << "  Coeff:    (";
-  for(int i = 0; i < coeff.rows() - 1; ++i)
-    Os << coeff.value()(i) << ", ";
-  Os << coeff.value()(coeff.rows() - 1) << ")\n"
-     << "  Retrieve: (";
-  for(int i = 0; i < used_flag.rows() - 1; ++i)
-    Os << (used_flag(i) ? "true" : "false") << ", ";
-  Os << (used_flag(used_flag.rows() - 1) ? "true" : "false") << ")";
+  ArrayAd<double, 1> poly_vals = mapping->fm_view(coeff);
+  for(int i = 0; i < poly_vals.rows() - 1; ++i)
+    Os << poly_vals.value()(i) << ", ";
+  Os << poly_vals.value()(coeff.rows() - 1) << ")\n";
 }

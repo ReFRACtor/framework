@@ -14,7 +14,4 @@ class ValueFromMet(Creator):
     def create(self, **kwargs):
 
         field_val = getattr(self.met(), self.field())
-        if np.isscalar(field_val):
-            return np.full(1, field_val)
-        else:
-            return field_val
+        return field_val
