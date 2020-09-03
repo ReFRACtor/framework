@@ -190,7 +190,8 @@ class ConfigurationCreator(ConfigurationInterface):
         
     def set_initial_guess(self):
         '''Set the state vector to the initial guess.'''
-        self.state_vector.update_state(self.file_config.retrieval.initial_guess)
+        if self.state_vector is not None:
+            self.state_vector.update_state(self.file_config.retrieval.initial_guess)
 
     def radiance_all(self):
         '''Calculate all the radiances. This doesn't really do anything on
