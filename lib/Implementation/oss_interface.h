@@ -42,12 +42,12 @@ public:
     OssModifiedOutputs(blitz::Array<float, 1>& Y, blitz::Array<float, 2>& Xk_temp, blitz::Array<float, 1>& Xk_tskin,
             blitz::Array<float, 3>& Xk_out_gas, blitz::Array<float, 2>& Xk_em, blitz::Array<float, 2>& Xk_rf,
             blitz::Array<float, 1>& Xk_cldln_pres, blitz::Array<float, 2>& Xk_cldln_ext) :
-            y(Y, Unit("W m^{-2} sr^{-1} cm^{-1}")), xk_temp(Xk_temp, Unit("W m^{-2} sr^{-1} cm^{-1} K^{-1}")),
-			xk_tskin(Xk_tskin, Unit("W m^{-2} sr^{-1} cm^{-1} K^{-1}")),
-			xk_out_gas(Xk_out_gas, Unit("W m^{-2} sr^{-1} cm^{-1}")),
-			xk_em(Xk_em, Unit("W m^{-2} sr^{-1} cm^{-1}")), xk_rf(Xk_rf,Unit("W m^{-2} sr^{-1} cm^{-1}")),
-			xk_cldln_pres(Xk_cldln_pres, Unit("W m^{-2} sr^{-1} cm^{-1}")),
-			xk_cldln_ext(Xk_cldln_ext, Unit("W m^{-2} sr^{-1} cm^{-1}")){
+            y(Y, Unit("W / (m^2 sr cm^{-1})")), xk_temp(Xk_temp, Unit("W / (m^2 sr cm^{-1} K)")),
+			xk_tskin(Xk_tskin, Unit("W / (m^2 sr cm^{-1} K)")),
+			xk_out_gas(Xk_out_gas, Unit("W / (m^2 sr cm^{-1})")),
+			xk_em(Xk_em, Unit("W / (m^2 sr cm^{-1})")), xk_rf(Xk_rf,Unit("W / (m^2 sr cm^{-1})")),
+			xk_cldln_pres(Xk_cldln_pres, Unit("W / (m^2 sr cm^{-1})")),
+			xk_cldln_ext(Xk_cldln_ext, Unit("W / (m^2 sr cm^{-1})")){
     }
 
     OssModifiedOutputs(ArrayWithUnit<float, 1>& Y, ArrayWithUnit<float, 2>& Xk_temp, ArrayWithUnit<float, 1>& Xk_tskin,
@@ -57,14 +57,14 @@ public:
             xk_rf(Xk_rf), xk_cldln_pres(Xk_cldln_pres), xk_cldln_ext(Xk_cldln_ext){
     }
 
-    ArrayWithUnit<float, 1> y; ///< radiance (W m−2 str−1 cm−1)
-    ArrayWithUnit<float, 2> xk_temp; ///< temperature profile Jacobians (W m−2 str−1 cm−1 K−1)
-    ArrayWithUnit<float, 1> xk_tskin; ///< skin temperature Jacobians (W m−2 str−1 cm−1 K−1)
-    ArrayWithUnit<float, 3> xk_out_gas; ///< gas log concentration Jacobians (W m−2 str−1 cm−1)
-    ArrayWithUnit<float, 2> xk_em; ///< emissivity Jacobians (W m−2 str−1 cm−1)
-    ArrayWithUnit<float, 2> xk_rf; ///< reflectivity Jacobians (W m−2 str−1 cm−1)
-    ArrayWithUnit<float, 1> xk_cldln_pres; ///< cloud center log pressure Jacobians  (W m−2 str−1 cm−1)
-    ArrayWithUnit<float, 2> xk_cldln_ext; ///< cloud peak log extinction Jacobians  (W m−2 str−1 cm−1)
+    ArrayWithUnit<float, 1> y; ///< radiance (W m−2 str−1 cm)
+    ArrayWithUnit<float, 2> xk_temp; ///< temperature profile Jacobians (W m−2 str−1 cm K−1)
+    ArrayWithUnit<float, 1> xk_tskin; ///< skin temperature Jacobians (W m−2 str−1 cm K−1)
+    ArrayWithUnit<float, 3> xk_out_gas; ///< gas log concentration Jacobians (W m−2 str−1 cm)
+    ArrayWithUnit<float, 2> xk_em; ///< emissivity Jacobians (W m−2 str−1 cm)
+    ArrayWithUnit<float, 2> xk_rf; ///< reflectivity Jacobians (W m−2 str−1 cm)
+    ArrayWithUnit<float, 1> xk_cldln_pres; ///< cloud center log pressure Jacobians  (W m−2 str−1 cm)
+    ArrayWithUnit<float, 2> xk_cldln_ext; ///< cloud peak log extinction Jacobians  (W m−2 str−1 cm)
 };
 
 
