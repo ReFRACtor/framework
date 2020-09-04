@@ -4,7 +4,7 @@
 #include "oss_forward_model.h"
 %}
 %base_import(forward_model)
-
+%base_import(named_spectrum)
 %import "absorber_vmr.i"
 %import "temperature.i"
 %import "surface_temperature.i"
@@ -13,6 +13,8 @@
 %import "spectrum.i"
 %import "oss_interface.i"
 %import "oss_retrieval_flags.i"
+%import "observer.i"
+
 
 %fp_shared_ptr(FullPhysics::OssForwardModel);
 %fp_shared_ptr(FullPhysics::OssFixedInputs);
@@ -21,7 +23,7 @@
 
 namespace FullPhysics {
 
-class OssForwardModel: public ForwardModel {
+class OssForwardModel: public ForwardModel, public Observable<boost::shared_ptr<NamedSpectrum> >  {
 public:
     OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vmr,
             const boost::shared_ptr<Pressure>& Pressure_,
@@ -43,6 +45,9 @@ public:
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const;
+    virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs);
+    virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs);
+    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;    
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
     mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;

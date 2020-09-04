@@ -171,7 +171,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
 
     }
     res.value() = rad;
-    return Spectrum(spectral_domain(channel_index), SpectralRange(res, Unit("W m^{-2} sr^{-1} cm^{-1}")));
+    return Spectrum(spectral_domain(channel_index), SpectralRange(res, Unit("W / (m^2 sr cm^{-1})")));
 }
 
 void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {
@@ -180,4 +180,12 @@ void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>
     }
     retrieval_flags = Retrieval_flags;
 
+}
+
+
+void OssForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
+{
+    if (olist.size() > 0) {
+        const_cast<OssForwardModel *>(this)->notify_update_do(boost::shared_ptr<NamedSpectrum>(new NamedSpectrum(updated_spec, spec_name, channel_index)));
+    }
 }

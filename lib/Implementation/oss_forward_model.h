@@ -8,6 +8,8 @@
 #include "ground_piecewise.h"
 #include "oss_interface.h"
 #include "oss_retrieval_flags.h"
+#include "observer.h"
+#include "named_spectrum.h"
 
 #include <string>
 
@@ -16,7 +18,7 @@ namespace FullPhysics {
   This a forward model class that wraps the AER OSS Forward Model
 *******************************************************************/
 
-class OssForwardModel : public ForwardModel {
+class OssForwardModel : public ForwardModel, public Observable<boost::shared_ptr<NamedSpectrum> > {
 public:
     OssForwardModel(std::vector<boost::shared_ptr<AbsorberVmr>>& Vmr,
             const boost::shared_ptr<Pressure>& Pressure_,
@@ -44,6 +46,19 @@ public:
     virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
     virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
+
+    /// Required observable functions
+    virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs)
+    {
+        add_observer_do(Obs);
+    }
+
+    virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs)
+    {
+        remove_observer_do(Obs);
+    }
+
+    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
