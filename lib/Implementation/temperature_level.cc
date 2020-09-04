@@ -41,9 +41,9 @@ void TemperatureLevel::calc_temperature_grid() const
         throw Exception(err_msg.str());
     }
 
-    ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
+    ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
     for(int i = 0; i < press_profile.rows(); ++i) {
-        tlist.push_back(fm_view_coeff(i));
+        tlist.push_back(mapped_state_coeff(i));
         plist.push_back(press_profile(i));
     }
 

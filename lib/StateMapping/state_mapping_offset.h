@@ -28,16 +28,16 @@ public:
 
   double initial_offset() const { return initial_offset_; }
   const blitz::Array<double, 1>& offsetee() const { return offsetee_;}
-  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values)
     const {
     blitz::Array<AutoDerivative<double>, 1> res(offsetee_.rows());
     for(int i = 0; i < res.rows(); ++i)
-      res(i) = offsetee_(i) + updated_coeff(0);
+      res(i) = offsetee_(i) + retrieval_values(0);
     return ArrayAd<double,1>(res);
   }
 
-  virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const {
+  virtual ArrayAd<double, 1> retrieval_state
+  (const ArrayAd<double, 1>& initial_values) const {
     blitz::Array<AutoDerivative<double>, 1> val(1);
     val(0) = initial_offset_;
     return ArrayAd<double, 1>(val);

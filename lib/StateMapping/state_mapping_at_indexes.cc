@@ -25,7 +25,7 @@ StateMappingAtIndexes::StateMappingAtIndexes(const blitz::Array<bool, 1>& flags)
     }
 }
 
-ArrayAd<double, 1> StateMappingAtIndexes::fm_view(const ArrayAd<double, 1>& updated_coeff) const
+ArrayAd<double, 1> StateMappingAtIndexes::mapped_state(const ArrayAd<double, 1>& updated_coeff) const
 {
     if (full_state.rows() == 0) {
         Exception err;
@@ -51,16 +51,16 @@ ArrayAd<double, 1> StateMappingAtIndexes::fm_view(const ArrayAd<double, 1>& upda
 /// Calculation of initial retrieval view  of coeffs with mapping applied
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> StateMappingAtIndexes::retrieval_init(const ArrayAd<double, 1>& initial_coeff) const
+ArrayAd<double, 1> StateMappingAtIndexes::retrieval_state(const ArrayAd<double, 1>& initial_values) const
 {
-    full_state.reference(initial_coeff.copy());
+    full_state.reference(initial_values.copy());
 
-    ArrayAd<double, 1> retrieval_subset(retrieval_indexes_.rows(), initial_coeff.number_variable());
+    ArrayAd<double, 1> retrieval_subset(retrieval_indexes_.rows(), initial_values.number_variable());
     
     int out_idx = 0;
 
     for (int ret_idx = 0; ret_idx < retrieval_indexes_.rows(); ret_idx++) {
-        retrieval_subset(out_idx) = initial_coeff( retrieval_indexes_(ret_idx) );
+        retrieval_subset(out_idx) = initial_values( retrieval_indexes_(ret_idx) );
         out_idx++;
     }
 

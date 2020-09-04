@@ -36,13 +36,13 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const;
+    virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const;
 
     //-----------------------------------------------------------------------
     /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> retrieval_init(const ArrayAd<double, 1>& initial_coeff) const;
+    virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const;
 
     //-----------------------------------------------------------------------
     /// Return the indexes used for the mapping

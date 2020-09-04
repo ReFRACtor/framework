@@ -14,9 +14,8 @@ namespace FullPhysics {
 class StateMapping : public GenericObject {
 public:
   virtual ~StateMapping();
-  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const;
-  virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const;
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& updated_coeff) const;
+  virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const;
   %python_attribute(name, std::string);
   virtual boost::shared_ptr<StateMapping> clone() = 0;
   std::string print_to_string();

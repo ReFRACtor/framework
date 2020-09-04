@@ -73,7 +73,7 @@ void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
   //    a) Wavelengths: wl_spacecraft = wl_earth_rest_frame / (1.d0 + v_ei/c)
   //    b) Wavenumbers: wn_spacecraft = wn_earth_rest_frame * (1.d0 + v_ei/c)
   ArrayAd<double, 1> spec_dom_ad(Spec.spectral_domain().data_ad());
-  ArrayAd<double, 1> doppler_val = mapping->fm_view(coefficient());
+  ArrayAd<double, 1> doppler_val = mapping->mapped_state(coefficient());
   if (spec_dom_ad.number_variable() == 0) {
     spec_dom_ad.resize_number_variable(doppler_val.number_variable());
     spec_dom_ad.jacobian() = 0;
@@ -90,7 +90,7 @@ void InstrumentDoppler::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
 
 boost::shared_ptr<SpectrumEffect> InstrumentDoppler::clone() const
 {
-  ArrayAd<double, 1> doppler_val = mapping->fm_view(coefficient());
+  ArrayAd<double, 1> doppler_val = mapping->mapped_state(coefficient());
   return boost::shared_ptr<SpectrumEffect>(new InstrumentDoppler(DoubleWithUnit(doppler_val(0).value(), vel_units)));
 }
 

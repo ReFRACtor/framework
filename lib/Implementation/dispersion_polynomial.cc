@@ -133,7 +133,7 @@ std::string DispersionPolynomial::state_vector_name_i(int i) const
 SpectralDomain
 DispersionPolynomial::pixel_grid() const
 {
-  ArrayAd<double, 1> poly_vals = mapping->fm_view(coeff);
+  ArrayAd<double, 1> poly_vals = mapping->mapped_state(coeff);
   Poly1d spectral_poly = Poly1d(poly_vals, false);
   ArrayAd<double, 1> index_array_ad(variable_values_, poly_vals.number_variable());
   index_array_ad.jacobian() = 0;
@@ -144,14 +144,14 @@ DispersionPolynomial::pixel_grid() const
 boost::shared_ptr<SampleGrid> DispersionPolynomial::clone() const
 {
   return boost::shared_ptr<SampleGrid>
-    (new DispersionPolynomial(mapping->fm_view(coeff).value(), coeff_unit, variable_values_, band_name_));
+    (new DispersionPolynomial(mapping->mapped_state(coeff).value(), coeff_unit, variable_values_, band_name_));
 }
 
 void DispersionPolynomial::print(std::ostream& Os) const 
 {
   Os << "DispersionPolynomial for band " << band_name_ << "\n"
      << "  Coeff:    (";
-  ArrayAd<double, 1> poly_vals = mapping->fm_view(coeff);
+  ArrayAd<double, 1> poly_vals = mapping->mapped_state(coeff);
   for(int i = 0; i < poly_vals.rows() - 1; ++i)
     Os << poly_vals.value()(i) << ", ";
   Os << poly_vals.value()(coeff.rows() - 1) << ")\n";

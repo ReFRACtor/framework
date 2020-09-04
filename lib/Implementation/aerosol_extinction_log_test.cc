@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
   aext = 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20;
 
-  // Check that the fm_view of aext matches what we put in
+  // Check that the mapped_state of aext matches what we put in
   AerosolExtinctionLog aer_water_log = AerosolExtinctionLog(pressure, aext, "Water");
   BOOST_CHECK_MATRIX_CLOSE_TOL(aer_water_log.aerosol_extinction().value(), aext, 1e-14);
 

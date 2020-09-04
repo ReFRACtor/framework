@@ -50,7 +50,7 @@ public:
    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     if(Coeff.rows() != 0)
-      coeff.reference(in_map->retrieval_init(Coeff.copy()));
+      coeff.reference(in_map->retrieval_state(Coeff.copy()));
 
     mapping = in_map;
     

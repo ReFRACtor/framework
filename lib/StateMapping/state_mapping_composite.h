@@ -29,11 +29,11 @@ public:
   /// Apply the mapped state operation from each mapping
   //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const
   {
-      ArrayAd<double, 1> mapped_values = updated_coeff.copy();
+      ArrayAd<double, 1> mapped_values = retrieval_values.copy();
       BOOST_FOREACH(boost::shared_ptr<StateMapping> map, mappings) {
-          mapped_values.reference( map->fm_view(mapped_values) );
+          mapped_values.reference( map->mapped_state(mapped_values) );
       }
       return mapped_values;
   }
@@ -43,11 +43,11 @@ public:
   /// mapping
   //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> retrieval_init(const ArrayAd<double, 1>& initial_coeff) const
+  virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const
   {
-      ArrayAd<double, 1> init_values = initial_coeff.copy();
+      ArrayAd<double, 1> init_values = initial_values.copy();
       BOOST_FOREACH(boost::shared_ptr<StateMapping> map, mappings) {
-          init_values.reference( map->retrieval_init(init_values) );
+          init_values.reference( map->retrieval_state(init_values) );
       }
       return init_values;
   }

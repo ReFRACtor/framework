@@ -59,7 +59,7 @@ AutoDerivative<double> StateMappingGaussian::total_optical_depth
 /// Calculation of forward model view of coeffs with mapping applied
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> StateMappingGaussian::fm_view
+ArrayAd<double, 1> StateMappingGaussian::mapped_state
 (const ArrayAd<double, 1>& updated_coeff) const
 {
   ArrayAd<double, 1> component(press->number_level(), updated_coeff.number_variable());

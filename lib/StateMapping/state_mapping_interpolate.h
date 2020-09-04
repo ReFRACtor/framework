@@ -38,12 +38,12 @@ public:
     /// Calculation of forward model view of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff) const
+    virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const
     {
         blitz::Array<AutoDerivative<double>, 1> press_grid_from = press_from->pressure_grid().value.to_array();
         Unit from_unit = press_from->pressure_grid().units;
 
-        blitz::Array<AutoDerivative<double>, 1> coeff_arr = updated_coeff.to_array();
+        blitz::Array<AutoDerivative<double>, 1> coeff_arr = retrieval_values.to_array();
 
         if (press_grid_from.rows() != coeff_arr.rows()) {
             Exception err;
@@ -71,9 +71,9 @@ public:
     /// Calculation of initial retrieval view  of coeffs with mapping applied
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> retrieval_init(const ArrayAd<double, 1>& initial_coeff) const
+    virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const
     {
-        return initial_coeff;
+        return initial_values;
     }
 
     //-----------------------------------------------------------------------

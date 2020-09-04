@@ -62,13 +62,13 @@ const AutoDerivative<double> GroundPiecewise::value_at_point(const DoubleWithUni
 
 void GroundPiecewise::update_sub_state_hook()
 {
-  ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
+  ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
 
   std::vector<AutoDerivative<double> > points_list;
   std::vector<AutoDerivative<double> > coeff_list;
   for(int idx = 0; idx < coefficient().rows(); idx++) {
     points_list.push_back(spectral_points_.value(idx));
-    coeff_list.push_back(fm_view_coeff(idx));
+    coeff_list.push_back(mapped_state_coeff(idx));
   }
 
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > interp_type;

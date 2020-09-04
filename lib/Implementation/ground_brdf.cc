@@ -194,7 +194,7 @@ GroundBrdf::GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
 /// A flattened view of the parameters describing the BRDF
 ArrayAd<double, 1> GroundBrdf::brdf_parameters_flat() const
 {
-    return mapping->fm_view(coeff);
+    return mapping->mapped_state(coeff);
 }
 
 ArrayAd<double, 1> GroundBrdf::surface_parameter(double wn, int spec_index) const

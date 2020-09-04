@@ -24,19 +24,19 @@ public:
   StateMappingLog() {};
   virtual ~StateMappingLog() {}
   
-  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values)
     const {
-    blitz::Array<AutoDerivative<double>, 1> res(updated_coeff.rows());
+    blitz::Array<AutoDerivative<double>, 1> res(retrieval_values.rows());
     for(int i = 0; i < res.rows(); ++i)
-      res(i) = std::exp(updated_coeff(i));
+      res(i) = std::exp(retrieval_values(i));
     return ArrayAd<double, 1>(res);
   }
   
-  virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const {
-    blitz::Array<AutoDerivative<double>, 1> res(initial_coeff.rows());
+  virtual ArrayAd<double, 1> retrieval_state
+  (const ArrayAd<double, 1>& initial_values) const {
+    blitz::Array<AutoDerivative<double>, 1> res(initial_values.rows());
     for(int i = 0; i < res.rows(); ++i)
-      res(i) = std::log(initial_coeff(i));
+      res(i) = std::log(initial_values(i));
     return ArrayAd<double, 1>(res);
   }
 

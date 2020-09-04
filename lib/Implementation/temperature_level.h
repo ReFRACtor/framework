@@ -34,7 +34,7 @@ public:
     //-----------------------------------------------------------------------
 
     virtual blitz::Array<double, 1> temperature_profile() const
-    { return mapping->fm_view(coeff).value(); }
+    { return mapping->mapped_state(coeff).value(); }
 
     //-----------------------------------------------------------------------
     /// Pressure levels that serve as the grid for the temperature values in

@@ -79,7 +79,7 @@ AbsorberVmrLevel::AbsorberVmrLevel(const boost::shared_ptr<Pressure>& Mapped_Pre
 boost::shared_ptr<AbsorberVmr> AbsorberVmrLevel::clone() const
 {
     return boost::shared_ptr<AbsorberVmr>
-           (new AbsorberVmrLevel(mapped_pressure->clone(), mapping->fm_view(coeff.value()).value(),
+           (new AbsorberVmrLevel(mapped_pressure->clone(), mapping->mapped_state(coeff.value()).value(),
                                  gas_name(), mapping->clone(), coeff_pressure->clone()));
 }
 
@@ -90,7 +90,7 @@ blitz::Array<double, 1> AbsorberVmrLevel::pressure_profile() const
 
 blitz::Array<double, 1> AbsorberVmrLevel::vmr_profile() const
 {
-    return mapping->fm_view(coeff).value();
+    return mapping->mapped_state(coeff).value();
 }
 
 blitz::Array<double, 1> AbsorberVmrLevel::coeff_pressure_profile() const
@@ -102,17 +102,17 @@ void AbsorberVmrLevel::calc_vmr() const
 {
     std::vector<AutoDerivative<double> > plist;
     std::vector<AutoDerivative<double> > vmrlist;
-    ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
+    ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
 
-    if(mapped_pressure->pressure_grid().rows() != fm_view_coeff.rows()) {
+    if(mapped_pressure->pressure_grid().rows() != mapped_state_coeff.rows()) {
         Exception err;
         err << "Mapped pressure grid size: " << mapped_pressure->pressure_grid().rows()
-            << " does not match VMR forward model grid size: " << fm_view_coeff.rows();
+            << " does not match VMR forward model grid size: " << mapped_state_coeff.rows();
         throw err;
     }
 
     for(int i = 0; i < mapped_pressure->pressure_grid().rows(); ++i) {
-        vmrlist.push_back(fm_view_coeff(i));
+        vmrlist.push_back(mapped_state_coeff(i));
         plist.push_back(mapped_pressure->pressure_grid()(i).value);
     }
 

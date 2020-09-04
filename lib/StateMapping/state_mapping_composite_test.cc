@@ -31,11 +31,11 @@ BOOST_AUTO_TEST_CASE(interp_plus_log)
     Array<double, 1> expt_init(5);
     expt_init = log(vals_from_ad.value()(i1));
 
-    ArrayAd<double, 1> init_vals = map_composite->retrieval_init(vals_from_ad);
+    ArrayAd<double, 1> init_vals = map_composite->retrieval_state(vals_from_ad);
 
     // Call with values as they would exist in the state vector which is 
-    // the results of the retrieval_init calls
-    ArrayAd<double, 1> mapped_vals = map_composite->fm_view(expt_init);
+    // the results of the retrieval_state calls
+    ArrayAd<double, 1> mapped_vals = map_composite->mapped_state(expt_init);
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(init_vals.value(), expt_init, 1e-7);
     BOOST_CHECK_MATRIX_CLOSE_TOL(mapped_vals.value(), expt_mapped, 1e-7);
@@ -67,8 +67,8 @@ BOOST_AUTO_TEST_CASE(serialize)
     Array<double, 1> vals_from_log(5);
     vals_from_log = log(vals_from_ad.value()(i1));
  
-    ArrayAd<double, 1> vals_expt = map_comp_orig->fm_view(vals_from_log);
-    ArrayAd<double, 1> vals_restore = map_comp_restore->fm_view(vals_from_log);
+    ArrayAd<double, 1> vals_expt = map_comp_orig->mapped_state(vals_from_log);
+    ArrayAd<double, 1> vals_restore = map_comp_restore->mapped_state(vals_from_log);
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(vals_restore.value(), vals_expt.value(), 1e-7);
  
