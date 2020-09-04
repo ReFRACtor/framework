@@ -306,10 +306,12 @@ class OssForwardModel(Creator):
                                   rf.GroundPiecewise ]
 
         self.fm = None
+        self.receive_is_registered = False
 
     def receive(self, rec_obj):
-
-        self.setup_retrieval_levels(list(rec_obj.values()))
+        if not self.receive_is_registered:
+            self.setup_retrieval_levels(list(rec_obj.values()))
+            self.receive_is_registered = True
 
     def check_retrieval_order(self, retrieval_components):
 
