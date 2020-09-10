@@ -191,11 +191,17 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
     def create(self, **kwargs):
 
         # Get existing covariance values
-        cov_values = self.values()
+        storage = self.interstep_storage()
+        if storage is not None:
+            if len(storage) == 0:
+                storage.update(self.values())
+            cov_values = storage
+        else:
+            cov_values = self.values()
 
         # Add values based on retrieval type
         for rc_name in self.retrieval_components().keys():
-            # Skip existing defined covariuance values
+            # Skip existing defined covariance values
             if rc_name in cov_values:
                 continue
 
