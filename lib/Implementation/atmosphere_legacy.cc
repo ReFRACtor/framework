@@ -593,7 +593,7 @@ AutoDerivative<double> AtmosphereLegacy::surface_blackbody(double wn, int spec_i
 boost::shared_ptr<OpticalProperties> AtmosphereLegacy::optical_properties(double wn, int spec_index) const
 {
     boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop(new OpticalPropertiesWrtRt());
-    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
+    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
 
     return opt_prop;
 }
