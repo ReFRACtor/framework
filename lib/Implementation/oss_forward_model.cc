@@ -171,7 +171,9 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
 
     }
     res.value() = rad;
-    return Spectrum(spectral_domain(channel_index), SpectralRange(res, Unit("W / (m^2 sr cm^{-1})")));
+    Spectrum convolved_spec(spectral_domain(channel_index), SpectralRange(res, Unit("W / (m^2 sr cm^{-1})")));
+    notify_spectrum_update(convolved_spec, "convolved", channel_index);
+    return convolved_spec;
 }
 
 void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags) {
