@@ -127,16 +127,22 @@ class GMAOReader(object):
 
         # Truncate pressure to the same grid as used by the humidity
         with netCDF4.Dataset(self.filename_3d) as gmao_3d:
-            mask = gmao_3d['QV'][0, :, self.idx_lat_3d, self.idx_lon_3d].mask
+
+            press_data = gmao_3d['lev']
+
+            mask = np.squeeze(gmao_3d['QV'][:, :, self.idx_lat_3d, self.idx_lon_3d].mask)
+
+            if mask.ndim > 0:
+                press_data = press_data[mask == False]
 
             # Put in pressure increasing order and convert to Pascals
-            return np.array(gmao_3d['lev'][mask == False][::-1]) * 100
+            return np.array(press_data[::-1]) * 100
 
     @property
     def temperature(self):
 
         # Put in pressure increasing order
-        return self._get_3d_value("T")[::-1] 
+        return np.squeeze(self._get_3d_value("T"))[::-1] 
 
     @property
     def h2o(self):
@@ -147,7 +153,7 @@ class GMAOReader(object):
         qv_2_vmr = Md/Mw
 
         # Put in pressure increasing order
-        return self._get_3d_value("T")[::-1] * qv_2_vmr
+        return np.squeeze(self._get_3d_value("T")[::-1]) * qv_2_vmr
 
     @property
     def surface_pressure(self):
