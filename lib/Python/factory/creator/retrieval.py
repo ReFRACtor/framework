@@ -456,6 +456,8 @@ class NLLSSolverLM(MaxAPosterioriBase):
     tr_rad = param.Scalar(float, required=False)
     cr_ratio_tol = param.Scalar(float, required=False)
 
+    verbose = param.Scalar(bool, required=False, default=False)
+
     def create(self, **kwargs):
 
         # Class comes with defaults, only overwrite the defaults if the config has a value supplied
@@ -473,7 +475,7 @@ class NLLSSolverLM(MaxAPosterioriBase):
         if self.cr_ratio_tol() is not None:
             opts.cr_ratio_tol = self.cr_ratio_tol()
 
-        solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel())
+        solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel(), self.verbose())
 
         self.init_state_vector()
 
