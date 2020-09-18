@@ -216,7 +216,7 @@ class ConfigurationCreator(ConfigurationInterface):
             self.solver.add_observer_and_keep_reference(atm_out)
 
         if self.state_vector is not None and self.solver is not None:
-            solver_out = SolverIterationOutput(output, step_index)
+            solver_out = SolverIterationOutput(output, self.solver, step_index)
             self.solver.add_observer_and_keep_reference(solver_out)
 
             sv_out = StateVectorOutputRetrieval(output, step_index, self.state_vector)
