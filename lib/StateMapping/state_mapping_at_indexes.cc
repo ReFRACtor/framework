@@ -47,10 +47,6 @@ ArrayAd<double, 1> StateMappingAtIndexes::mapped_state(const ArrayAd<double, 1>&
     return full_state;
 }
 
-//-----------------------------------------------------------------------
-/// Calculation of initial retrieval view  of coeffs with mapping applied
-//-----------------------------------------------------------------------
-
 ArrayAd<double, 1> StateMappingAtIndexes::retrieval_state(const ArrayAd<double, 1>& initial_values) const
 {
     full_state.reference(initial_values.copy());
@@ -67,6 +63,10 @@ ArrayAd<double, 1> StateMappingAtIndexes::retrieval_state(const ArrayAd<double, 
     return retrieval_subset;
 }
 
+int StateMappingAtIndexes::initial_values_index(const int retrieval_state_index) const
+{
+    return retrieval_indexes_(retrieval_state_index);
+}
 
 #endif
 

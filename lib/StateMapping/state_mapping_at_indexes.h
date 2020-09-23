@@ -45,6 +45,11 @@ public:
     virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const;
 
     //-----------------------------------------------------------------------
+    /// Index into initial values for each retrieval state entry
+    //-----------------------------------------------------------------------
+    virtual int initial_values_index(const int retrieval_state_index) const;
+
+    //-----------------------------------------------------------------------
     /// Return the indexes used for the mapping
     //-----------------------------------------------------------------------
     

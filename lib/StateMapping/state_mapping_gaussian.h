@@ -48,6 +48,9 @@ public:
   (const ArrayAd<double, 1>& initial_values) const
   { return initial_values;}
 
+  virtual int initial_values_index(const int retrieval_state_index) const
+  { return retrieval_state_index; }
+
   virtual std::string name() const { return map_name; }
 private:
   std::string map_name;

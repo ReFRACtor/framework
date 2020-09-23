@@ -77,6 +77,14 @@ public:
     }
 
     //-----------------------------------------------------------------------
+    /// Index into initial values for each retrieval state entry
+    //-----------------------------------------------------------------------
+    virtual int initial_values_index(const int retrieval_state_index) const
+    { 
+        return retrieval_state_index;
+    }
+
+    //-----------------------------------------------------------------------
     /// Assigned mapping name
     //-----------------------------------------------------------------------
 

@@ -102,7 +102,7 @@ public:
     int si = 0;
 
     for (int i = 0; i < coeff.rows(); ++i) {
-      Sv_name(i) = state_vector_name_i(i);
+      Sv_name(i) = state_vector_name_i(mapping->initial_values_index(i));
     }
   }
   

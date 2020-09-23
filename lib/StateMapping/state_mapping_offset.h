@@ -36,12 +36,14 @@ public:
     return ArrayAd<double,1>(res);
   }
 
-  virtual ArrayAd<double, 1> retrieval_state
-  (const ArrayAd<double, 1>& initial_values) const {
+  virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& UNUSED(initial_values)) const {
     blitz::Array<AutoDerivative<double>, 1> val(1);
     val(0) = initial_offset_;
     return ArrayAd<double, 1>(val);
   }
+
+  virtual int initial_values_index(const int UNUSED(retrieval_state_index)) const
+  { throw Exception("Initial values not used in retrieval vector by this map class"); }
 
   virtual std::string name() const { return map_name; }
 
