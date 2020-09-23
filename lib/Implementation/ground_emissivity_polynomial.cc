@@ -9,8 +9,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void GroundEmissivityPolynomial::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+void GroundEmissivityPolynomial::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
     & FP_NVP(reference_points) & FP_NVP(desc_band_names);
@@ -29,8 +28,9 @@ REGISTER_LUA_END()
 #endif
 
 GroundEmissivityPolynomial::GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
-                                   const ArrayWithUnit<double, 1>& Ref_points,
-                                   const std::vector<std::string>& Desc_band_names)
+                                                       const ArrayWithUnit<double, 1>& Ref_points,
+                                                       const std::vector<std::string>& Desc_band_names,
+                                                       boost::shared_ptr<StateMapping> Mapping)
     : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
     if(Spec_coeffs.rows() != Ref_points.rows()) {
@@ -49,16 +49,17 @@ GroundEmissivityPolynomial::GroundEmissivityPolynomial(const blitz::Array<double
     Array<double, 2> spec_coeffs(Spec_coeffs);
 
     // Flatten arrays for state vector
-    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData));
+    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData), Mapping);
 }
 
 // Protected constructor that matches the dimensionality of coeff arrays
 GroundEmissivityPolynomial::GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,
-                                   const ArrayWithUnit<double, 1>& Ref_points,
-                                   const std::vector<std::string>& Desc_band_names)
+                                                       const ArrayWithUnit<double, 1>& Ref_points,
+                                                       const std::vector<std::string>& Desc_band_names,
+                                                       boost::shared_ptr<StateMapping> Mapping)
   : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
-  SubStateVectorArray<Ground>::init(Spec_coeffs);
+  SubStateVectorArray<Ground>::init(Spec_coeffs, Mapping);
 }
 
 ArrayAd<double, 1> GroundEmissivityPolynomial::surface_parameter(const double wn, const int spec_index) const
@@ -84,7 +85,8 @@ const ArrayAd<double, 1> GroundEmissivityPolynomial::emiss_coefficients(const in
     range_check(spec_index, 0, number_spectrometer());
 
     int offset = number_params() * spec_index;
-    return coefficient()(Range(offset, offset + number_params() - 1));
+    ArrayAd<double, 1> mapped_coeffs = mapping->mapped_state(coeff);
+    return mapped_coeffs(Range(offset, offset + number_params() - 1));
 }
 
 const blitz::Array<double, 2> GroundEmissivityPolynomial::emiss_covariance(const int spec_index) const
@@ -112,7 +114,8 @@ const blitz::Array<double, 2> GroundEmissivityPolynomial::emiss_covariance(const
 
 boost::shared_ptr<Ground> GroundEmissivityPolynomial::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundEmissivityPolynomial(coefficient().value(), reference_points, desc_band_names));
+    ArrayAd<double, 1> mapped_coeffs = mapping->mapped_state(coeff);
+    return boost::shared_ptr<Ground>(new GroundEmissivityPolynomial(mapped_coeffs.value(), reference_points, desc_band_names, mapping));
 }
 
 std::string GroundEmissivityPolynomial::state_vector_name_i(int i) const
