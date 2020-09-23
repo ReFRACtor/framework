@@ -165,6 +165,10 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
 
     num_channels = param.Scalar(int)
 
+    def covariance(self, constraint):
+
+        return np.linalg.inv(constraint)
+
     def absorber_cov(self, gas_name, ret_type):
         gas_osp = SpeciesOSP(gas_name, **self.osp_common())
 
@@ -172,7 +176,7 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
             raise Exception(f"OSP constraint for {gas_name} is for a log retrieval, but gas is not set up for a log retrieval")
 
         if gas_osp.constraint_filename is not None:
-            return np.linalg.inv(gas_osp.constraint_matrix)
+            return self.covariance(gas_osp.constraint_matrix)
         else:
             raise param.ParamError(f"No constraint file found for gas: {gas_name}")
 
@@ -186,7 +190,7 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
 
     def temperature_cov(self):
         temp_osp = SpeciesOSP("TATM", **self.osp_common())
-        return np.linalg.inv(temp_osp.constraint_matrix)
+        return self.covariance(temp_osp.constraint_matrix)
 
     def create(self, **kwargs):
 
