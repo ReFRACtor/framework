@@ -124,6 +124,26 @@ class SolarDopplerShiftPolynomial(Creator):
                                                               do_doppler_shift) )
         return doppler_shift
 
+class SolarDopplerShiftPolynomialFromL1b(Creator):
+
+    l1b = param.InstanceOf(rf.Level1b)
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        l1b = self.l1b()
+
+        doppler_shift = []
+        for chan_idx in range(self.num_channels()):
+            doppler = rf.SolarDopplerShiftPolynomial(l1b.time(chan_idx),
+                                                     l1b.latitude(chan_idx),
+                                                     l1b.solar_zenith(chan_idx),
+                                                     l1b.solar_azimuth(chan_idx),
+                                                     l1b.altitude(chan_idx))
+            doppler_shift.append(doppler)
+
+        return doppler_shift
+
 class SolarAbsorptionTable(Creator):
 
     solar_data_file = param.Scalar(str)
