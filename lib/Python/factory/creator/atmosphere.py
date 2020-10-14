@@ -1,6 +1,8 @@
 import os
+import sys
 import warnings
 
+from attrdict import AttrDict
 import numpy as np
 
 from .base import Creator, ParamPassThru, CreatorError
@@ -171,6 +173,7 @@ class AtmosphereDictCreator(Creator):
     ground = param.InstanceOf(rf.Ground, required=False)
     aerosol = param.InstanceOf(rf.Aerosol, required=False)
     surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
+    altitude = param.ObjectVector("altitude")
 
     def create(self, **kwargs):
 
@@ -180,12 +183,40 @@ class AtmosphereDictCreator(Creator):
         aerosol = self.common_store["aerosol"] = self.aerosol()
         ground = self.common_store["ground"] = self.ground()
         surf_temp = self.common_store["surface_temperature"] = self.surface_temperature()
+        altitude = self.altitude()
 
-        return  {
+        def alt_grid(spec_index):
+            pres_grid = self.pressure().pressure_grid
+            # TODO: swig missing __call__/operator() for ArrayAdWithUnit to get AutoDerivativeWithUnit
+            first_pres = rf.AutoDerivativeWithUnitDouble(pres_grid.value[0], pres_grid.units)
+            alt_unit = self.altitude()[spec_index].altitude(first_pres).units
+            alts = []
+            # Seg fault if we iterate over pres_grid.value!
+#             for (pres_ind, pres_val) in enumerate(pres_grid.value):
+#                 # import pdb; pdb.set_trace()
+#                 # this_pres = rf.AutoDerivativeWithUnitDouble(pres_val, pres_grid.units)
+#                 # alts.append(self.altitude()[spec_index].altitude(this_pres))
+#                 print(f"Pres_ind: {pres_ind}", file=sys.stderr)
+            import pdb; pdb.set_trace()
+            raise RuntimeError(f"Not Implemented {first_pres} and {alt_unit}")
+
+#             ArrayAdWithUnit<double, 1> p = pressure->pressure_grid();
+#             Array<AutoDerivative<double>, 1> res(p.rows());
+#             Unit u = alt[spec_index]->altitude(p(0)).units;
+#
+#             for(int i = 0; i < res.rows(); ++i) {
+#                 res(i) = alt[spec_index]->altitude(p(i)).convert(u).value;
+#             }
+#
+#             return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
+
+        return  AttrDict({
             'pressure': pressure,
             'temperature': temperature,
             'absorber': absorber,
             'aerosol': aerosol,
             'ground': ground,
             'surface_temperature': surf_temp,
-        }
+            'altitude': altitude,
+            'alt_grid': alt_grid
+        })
