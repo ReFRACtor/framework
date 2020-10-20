@@ -36,13 +36,17 @@ class IlsInPython(IlsImpBase):
         return np.array([1.0,2.0,3.0])
 
 # Doesn't work yet    
-@skip    
-def test_director_serialization():
+#@skip    
+def test_director_serialization(isolated_dir):
     '''Test where the ILS is a python derived from director class'''
     ils = IlsInPython()
     res = ils.apply_ils([1,2,3], [4,5,6], [0,1,2])
     assert np.allclose(res, np.array([1.0,2.0,3.0]))
-    t = serialize_write_string(ils)
-    ilsr = serialize_read_generic_string(t)
+    write_shelve("temp.xml", ils)
+    # Note serialize_write_string doesn't work. The pickle object contains
+    # items that aren't utf-8. May be some way to work around this (e.g.,
+    # return bytes instead of string), but it isn't clear that this is all
+    # that important. We can save to a file, and we can save to binary
+    ilsr = read_shelve("temp.xml")
     res = ilsr.apply_ils([1,2,3], [4,5,6], [0,1,2])
     assert np.allclose(res, np.array([1.0,2.0,3.0]))
