@@ -63,8 +63,8 @@ BOOST_AUTO_TEST_CASE(flags)
     boost::shared_ptr<StateMappingAtIndexes> at_indexes = 
         boost::make_shared<StateMappingAtIndexes>(retrieval_flags);
 
-    Array<double, 1> subset_expt(5);
-    subset_expt = 11, 13, 15, 17, 19;
+    Array<double, 1> subset_expt(2);
+    subset_expt = 11, 13;
 
     ArrayAd<double, 1> subset_calc = at_indexes->retrieval_state(initial_state);
 

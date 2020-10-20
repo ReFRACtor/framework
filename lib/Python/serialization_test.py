@@ -51,7 +51,7 @@ class TestPressureSigma(BaseForTesting):
           7.0000000000e+04, 7.5000000000e+04, 8.0000000000e+04,
           8.5000000000e+04, 9.0000000000e+04, 9.5000000000e+04,
           9.6716624900e+04  ]
-        return PressureSigma(pdata, pdata[-1], False)
+        return PressureSigma(pdata, pdata[-1])
 
     def check(self, psigma, psigma2):
         assert psigma.a == approx(psigma2.a)
@@ -292,7 +292,7 @@ class TestTemperatureLevelOffset(BaseForTesting):
                   227.38, 233.493, 239.376, 244.52, 248.708, 251.979,
                   254.537, 256.655, 258.521, 260.155, 261.747,
                   261.732, 258.598]
-        return TemperatureLevelOffset(self.t.create(), temp_d, 0, True)
+        return TemperatureLevelOffset(self.t.create(), temp_d, 0)
 
     def check(self, temp1, temp2):
         pres = self.t.create()
@@ -302,7 +302,7 @@ class TestTemperatureMet(BaseForTesting):
     def create(self):
         self.t = TestPressureSigma()
         self.t2 = TestExampleMetFile()
-        return TemperatureMet(self.t2.create(), self.t.create(), 0, True)
+        return TemperatureMet(self.t2.create(), self.t.create(), 0)
 
     def check(self, temp1, temp2):
         pres = self.t.create()
@@ -327,8 +327,7 @@ class TestAltitudeHydrostatic(BaseForTesting):
         
 class TestSurfaceTemperatureDirect(BaseForTesting):
     def create(self):
-        return SurfaceTemperatureDirect(ArrayWithUnit_double_1([258.598,259.598], "K"),
-                                        [False, False])
+        return SurfaceTemperatureDirect(ArrayWithUnit_double_1([258.598,259.598], "K"))
 
     def check(self, t1, t2):
         t = TestAutoDerivativeWithUnit()
@@ -532,8 +531,7 @@ class TestRelativeHumidity(object):
 class TestAerosolExtinctionLinear(BaseForTesting):
     def create(self):
         self.t = TestPressureSigma()
-        return AerosolExtinctionLinear(self.t.create(), [True, True, True],
-                                       [0.0, 1.0, 0.2], "Kahn")
+        return AerosolExtinctionLinear(self.t.create(), [0.0, 1.0, 0.2], "Kahn")
 
     def check(self, a1, a2):
         assert a1.aerosol_extinction == approx(a2.aerosol_extinction)

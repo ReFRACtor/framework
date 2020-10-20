@@ -45,7 +45,7 @@ def test_read_write_shelf(isolated_dir):
 
 @require_serialize    
 def test_read_write_xml(isolated_dir):
-    psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10, True)
+    psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10)
     write_shelve("sqlite_shelf_test.xml", psigma)
     psigma2 = read_shelve("sqlite_shelf_test.xml")
     assert psigma.a == approx(psigma2.a)
@@ -53,7 +53,7 @@ def test_read_write_xml(isolated_dir):
 
 @require_serialize
 def test_all_formats(isolated_dir):
-    psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10, True)
+    psigma = rf.PressureSigma([0,0,0],[0.3,0.6,1.0], 10)
     write_shelve("psigma.xml", psigma)
     write_shelve("psigma.bin", psigma)
     # Only used in this test, so skip if we don't have the library available

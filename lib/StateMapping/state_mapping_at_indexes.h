@@ -72,7 +72,7 @@ private:
     // For serialization
     StateMappingAtIndexes() {}
 
-    StateMappingAtIndexes(const blitz::Array<int, 1>& indexes, const ArrayAd<double, 1> internal_state) : retrieval_indexes_(indexes), full_state(internal_state) {}
+  StateMappingAtIndexes(const blitz::Array<int, 1>& indexes, const ArrayAd<double, 1> internal_state) : full_state(internal_state), retrieval_indexes_(indexes) {}
 
     // Original full set of cofficients before subsetting
     mutable ArrayAd<double, 1> full_state;

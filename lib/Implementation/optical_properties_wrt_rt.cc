@@ -50,7 +50,7 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
     // If left unspecified try and get number of jacobians from input objects, but
     // will only work if there is pressure based quantity in the state vector
     int num_inp_jac = num_jacobians;
-    if (num_inp_jac < 0) {
+    if (num_inp_jac <= 0) {
         num_inp_jac = rayleigh_od.number_variable();
 
         if(num_gas > 0) {
@@ -77,7 +77,8 @@ void OpticalPropertiesWrtRt::initialize_with_jacobians(const ArrayAd<double, 1>&
 
     int num_interm_jac = 2 + num_aer;
 
-    // Create mapping of intermediate jacobians to input jacobians for each layer
+    // Create mapping of intermediate jacobians to input jacobians for
+    // each layer
     intermediate_jacobian_.resize(num_layers, num_interm_jac, num_inp_jac);
 
     // Gas optical depth per particle ArrayAd will be set to be a constant

@@ -10,17 +10,15 @@ from .test_support import *
 class PythonPressureSigma(rf.PressureImpBase):
     '''This class uses pressure sigma levels to determine the pressure
     levels we do the RT on.'''
-    def __init__(self, a, b, surface_pressure, pressure_flag = True):
+    def __init__(self, a, b, surface_pressure):
         coef = np.array([surface_pressure])
-        flag = np.array([pressure_flag])
-        rf.PressureImpBase.__init__(self,coef, flag)
+        rf.PressureImpBase.__init__(self,coef)
         self.a = a
         self.b = b
 
     def clone(self):
         res = rf.PressureSigma(self.a, self.b,
-                            self.coefficient().value()[0],
-                            self.used_flag_value()[0])
+                               self.coefficient().value()[0])
         return res
     
     def calc_pressure_grid(self):
@@ -38,31 +36,30 @@ class PythonPressureSigma(rf.PressureImpBase):
         return '''
 Pressure Sigma:
   Surface pressure: %f
-  Retrieval flag: %s
   a: %s
   b: %s
-''' %(self.coefficient().value()[0], self.used_flag_value()[0].__str__(),
+''' %(self.coefficient().value()[0],
       self.a.__str__(), self.b.__str__())
 
 def test_cast_cpp():
     '''Test returning a C++ class'''
-    psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10, True)
+    psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10)
     pwrap = rf.PressureHolder(psigma)
     # Test functions only in PressureSigma
     assert pwrap.p.b == approx([0.3, 0.6, 1.0])
 
-    pwrap.p = rf.PressureSigma([0,0,0], [0.4, 0.7, 1.1], 10, True)
+    pwrap.p = rf.PressureSigma([0,0,0], [0.4, 0.7, 1.1], 10)
     assert pwrap.p.b == approx([0.4, 0.7, 1.1])
 
 def test_cast_cpp_excep():
     '''Test returning a C++ class'''
-    psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10, True)
+    psigma = rf.PressureSigma([0,0,0], [0.3, 0.6, 1.0], 10)
     pwrap = rf.PressureHolder(psigma)
     with pytest.raises(AttributeError):
         pwrap.p.temperature
 
 def test_cast_python():
     '''Make sure we handle classes that are actually python correctly.'''
-    psigma = PythonPressureSigma([0,0,0], [0.3, 0.6, 1.0], 10, True)
+    psigma = PythonPressureSigma([0,0,0], [0.3, 0.6, 1.0], 10)
     pwrap = rf.PressureHolder(psigma)
     assert pwrap.p.my_func() == 102
