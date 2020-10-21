@@ -2,6 +2,7 @@
 set(DIR_SOURCES
     chapman_boa.cc
     chapman_boa_rt.cc
+    first_order_debug.f90
     first_order_driver.cc
     first_order_interface.F90
     first_order_interface_serialization.cc
