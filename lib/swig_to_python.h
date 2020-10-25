@@ -95,5 +95,10 @@ swig_to_python_or_none(const boost::shared_ptr<GenericObject>& V)
 template<typename T> inline PyObject* 
 swig_to_python(const boost::shared_ptr<T>* V)
 { return swig_to_python(*V); }
-}
+
+inline PyObject* 
+swig_to_python_or_none(const boost::shared_ptr<GenericObject>* V)
+{ return swig_to_python_or_none(*V); }
+
+} // End namespace
 #endif
