@@ -48,8 +48,18 @@ class GroundLambertian(Creator):
     band_reference = param.ArrayWithUnit(dims=1)
     desc_band_name = param.Iterable()
 
+    which_retrieved = param.Array(dims=2, required=False)
+
     def create(self, **kwargs):
-        return rf.GroundLambertian(self.polynomial_coeffs(), self.band_reference(), as_vector_string(self.desc_band_name()))
+
+        which_retrieved = self.which_retrieved()
+
+        if which_retrieved is not None:
+            mapping = rf.StateMappingAtIndexes(np.ravel(which_retrieved.astype(bool)))
+        else:
+            mapping = rf.StateMappingLinear()
+
+        return rf.GroundLambertian(self.polynomial_coeffs(), self.band_reference(), as_vector_string(self.desc_band_name()), mapping)
 
 class GroundEmissivityPolynomial(Creator):
 
@@ -142,7 +152,7 @@ class GroundBrdf(Creator):
 
     retrieve_kernel_params = param.Scalar(bool, default=False)
 
-    def retrieval_flag(self):
+    def which_retrieved(self):
         ret_flag = np.ones(self.brdf_parameters().shape, dtype=bool)
 
         # Turn off all but weight offset and slope
@@ -158,7 +168,7 @@ class GroundBrdf(Creator):
         if isinstance(brdf_type, BrdfTypeOption):
             brdf_type = brdf_type.value
 
-        mapping = rf.StateMappingAtIndexes(self.retrieval_flag())
+        mapping = rf.StateMappingAtIndexes(self.which_retrieved())
 
         if brdf_type == BrdfTypeOption.soil.value:
             return rf.GroundBrdfSoil(self.brdf_parameters(), self.band_reference(), as_vector_string(self.desc_band_name()), mapping)

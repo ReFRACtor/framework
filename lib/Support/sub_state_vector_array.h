@@ -99,10 +99,8 @@ public:
 
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
-    int si = 0;
-
     for (int i = 0; i < coeff.rows(); ++i) {
-      Sv_name(i) = state_vector_name_i(i);
+      Sv_name(i) = state_vector_name_i(mapping->initial_values_index(i));
     }
   }
   
@@ -110,7 +108,6 @@ public:
   {
     if (Sv_sub.rows() > 0) {
       cov.reference(Cov.copy());
-      int si = 0;
       coeff.resize_number_variable(Sv_sub.number_variable());
       
      for(int i = 0; i < coeff.rows(); ++i) {

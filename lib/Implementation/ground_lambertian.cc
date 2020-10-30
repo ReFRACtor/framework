@@ -30,7 +30,8 @@ REGISTER_LUA_END()
 
 GroundLambertian::GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
                                    const ArrayWithUnit<double, 1>& Ref_points,
-                                   const std::vector<std::string>& Desc_band_names) 
+                                   const std::vector<std::string>& Desc_band_names,
+                                   boost::shared_ptr<StateMapping> Mapping)
 : reference_points(Ref_points), desc_band_names(Desc_band_names)
 {
     if(Spec_coeffs.rows() != Ref_points.rows()) {
@@ -49,16 +50,17 @@ GroundLambertian::GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
     Array<double, 2> spec_coeffs(Spec_coeffs);
 
     // Flatten arrays for state vector
-    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData));
+    init(Array<double, 1>(spec_coeffs.dataFirst(), TinyVector<int, 1>(Spec_coeffs.rows() * Spec_coeffs.cols()), blitz::neverDeleteData), Mapping);
 }
 
 // Protected constructor that matches the dimensionality of the coeff array
 GroundLambertian::GroundLambertian(const blitz::Array<double, 1>& Spec_coeffs,
                                    const ArrayWithUnit<double, 1>& Ref_points,
-                                   const std::vector<std::string>& Desc_band_names)
+                                   const std::vector<std::string>& Desc_band_names,
+                                   boost::shared_ptr<StateMapping> Mapping)
   : reference_points(Ref_points), desc_band_names(Desc_band_names) 
 {
-  SubStateVectorArray<Ground>::init(Spec_coeffs);
+  SubStateVectorArray<Ground>::init(Spec_coeffs, Mapping);
 }
 
 ArrayAd<double, 1> GroundLambertian::surface_parameter(const double wn, const int spec_index) const
@@ -84,7 +86,8 @@ const ArrayAd<double, 1> GroundLambertian::albedo_coefficients(const int spec_in
     range_check(spec_index, 0, number_spectrometer());
 
     int offset = number_params() * spec_index;
-    return coefficient()(Range(offset, offset + number_params() - 1));
+    ArrayAd<double, 1> mapped_coeffs = mapping->mapped_state(coeff);
+    return mapped_coeffs(Range(offset, offset + number_params() - 1));
 }
 
 const blitz::Array<double, 2> GroundLambertian::albedo_covariance(const int spec_index) const
@@ -109,7 +112,8 @@ const blitz::Array<double, 2> GroundLambertian::albedo_covariance(const int spec
 }
 
 boost::shared_ptr<Ground> GroundLambertian::clone() const {
-    return boost::shared_ptr<Ground>(new GroundLambertian(coefficient().value(), reference_points, desc_band_names));
+    ArrayAd<double, 1> mapped_coeffs = mapping->mapped_state(coeff);
+    return boost::shared_ptr<Ground>(new GroundLambertian(mapped_coeffs.value(), reference_points, desc_band_names, mapping));
 }
 
 std::string GroundLambertian::state_vector_name_i(int i) const {

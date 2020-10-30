@@ -77,6 +77,54 @@ class PressureGrid(Creator):
 
         return rf.PressureSigma(self.pressure_levels(), self.surface_pressure())
 
+class SurfacePressureFromAltitude(Creator):
+
+    pressure = param.Choice(param.InstanceOf(rf.Pressure), param.Array(dims=1))
+    temperature_profile = param.Array(dims=1)
+    surface_height = param.Choice(param.ArrayWithUnit(dims=1), param.DoubleWithUnit())
+    latitude = param.Choice(param.ArrayWithUnit(dims=1), param.DoubleWithUnit())
+
+    def create(self, **kwargs):
+        "Calculate surface pressure from surface altitude using hydrostatic equation"
+
+        press_in = self.pressure()
+
+        if isinstance(press_in, rf.Pressure):
+            press_obj = press_in
+            press_levels = press_obj.pressure_grid.value.value
+        else:
+            press_levels = self.pressure()
+            press_obj = rf.PressureSigma(press_levels, press_levels[-1])
+
+        temp_levels = self.temperature_profile()
+        temp_obj = rf.TemperatureLevel(temp_levels, press_obj)
+
+        lat_in = self.latitude()
+        if isinstance(lat_in, rf.DoubleWithUnit):
+            lat_val = lat_in
+        else:
+            lat_val = lat_in[0]
+
+        sea_level_height = rf.DoubleWithUnit(0, "m")
+        alt_calc = rf.AltitudeHydrostatic(press_obj, temp_obj, lat_val, sea_level_height)
+
+        alt_grid = np.zeros(press_levels.shape)
+        for lev_idx in range(press_levels.shape[0]):
+            press_val = rf.AutoDerivativeWithUnitDouble(press_obj.pressure_grid.value[lev_idx], 
+                                                        press_obj.pressure_grid.units)
+            alt_grid[lev_idx] = alt_calc.altitude(press_val).convert("m").value.value
+
+        surf_height_in = self.surface_height()
+        if isinstance(surf_height_in, rf.DoubleWithUnit):
+            surf_height_val = self.surface_height().convert("m").value
+        else:
+            surf_height_val = self.surface_height()[0].convert("m").value
+
+        # Altitude grid must be in increasing order
+        surf_press = np.interp(surf_height_val, alt_grid[::-1], press_levels[::-1])
+
+        return surf_press
+
 class TemperatureMet(Creator):
     "Creates a TemperatureMet object statisfying the AtmosphereCreator's temperature parameter"
     

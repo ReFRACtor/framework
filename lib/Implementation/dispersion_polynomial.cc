@@ -61,7 +61,7 @@ DispersionPolynomial::DispersionPolynomial(const blitz::Array<double, 1>& Coeff,
                                            const Unit& Coeff_unit,
                                            const blitz::Array<double, 1>& Var_values,
                                            const std::string& Band_name,
-                                           boost::shared_ptr<StateMapping> Mapping)
+                                           boost::shared_ptr<StateMapping> UNUSED(Mapping))
 : coeff_unit(Coeff_unit),
   band_name_(Band_name),
   variable_values_(Var_values),

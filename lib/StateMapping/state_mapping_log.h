@@ -40,6 +40,9 @@ public:
     return ArrayAd<double, 1>(res);
   }
 
+  virtual int initial_values_index(const int retrieval_state_index) const
+  { return retrieval_state_index; }
+
   virtual std::string name() const { return "log"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const

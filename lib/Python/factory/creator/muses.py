@@ -40,48 +40,33 @@ class PressureGridMUSES(CreatorMUSES, atmosphere.PressureGrid):
     pressure_levels = param.Choice(atmosphere.PressureGrid.pressure_levels, param.NoneValue())
     surface_pressure = param.Choice(atmosphere.PressureGrid.surface_pressure, param.NoneValue())
 
-    def surface_pressure(self):
-        "Calculate surface pressure from surface altitude using hydrostatic equation"
-
-        l1b_obj = self.l1b()
-
-        # Disable cutoff to get all pressure levels present
-        press_osp = PressureOSP(pressure_cutoff=None, **self.osp_common())
-
-        fm_press = press_osp.fm_pressure_grid
-        press_obj = rf.PressureSigma(fm_press, fm_press[-1])
-
-        temp_osp = SpeciesOSP("TATM", pressure_cutoff=None, **self.osp_common())
-        fm_temp = temp_osp.fm_climatology
-        temp_obj = rf.TemperatureLevel(fm_temp, press_obj)
-
-        sea_level_height = rf.DoubleWithUnit(0, "m")
-        alt_calc = rf.AltitudeHydrostatic(press_obj, temp_obj, l1b_obj.latitude(0), sea_level_height)
-
-        alt_grid = np.zeros(fm_press.shape)
-        for lev_idx in range(fm_press.shape[0]):
-            press_val = rf.AutoDerivativeWithUnitDouble(press_obj.pressure_grid.value[lev_idx], 
-                                                        press_obj.pressure_grid.units)
-            alt_grid[lev_idx] = alt_calc.altitude(press_val).convert("m").value.value
-
-        surf_alt = l1b_obj.altitude(0).convert("m").value
-
-        # Altitude grid must be in increasing order
-        surf_press = np.interp(surf_alt, alt_grid[::-1], fm_press[::-1])
-
-        return surf_press
-
     def create(self, **kwargs):
 
         if self.pressure_levels() is None:
             # We do want a cut-off of 1000mb here for the purposes of creating
-            # the sigma levels
+            # the sigma levels, this happens with the default keyword value for pressure_cutoff
             press_osp = PressureOSP(**self.osp_common())
 
             self.config_def["pressure_levels"] = press_osp.fm_pressure_grid
 
         if self.surface_pressure() is None:
-            self.config_def["surface_pressure"] = np.array([self.surface_pressure()])
+            # Disable cutoff to get all pressure levels present
+            press_osp = PressureOSP(pressure_cutoff=None, **self.osp_common())
+
+            fm_press = press_osp.fm_pressure_grid
+            press_obj = rf.PressureSigma(fm_press, fm_press[-1])
+
+            temp_osp = SpeciesOSP("TATM", pressure_cutoff=None, **self.osp_common())
+            fm_temp = temp_osp.fm_climatology
+            
+            surf_press_def = {
+                'pressure': press_obj,
+                'temperature_profile': fm_temp,
+                'latitude': self.l1b().latitude(0),
+                'surface_height': self.l1b().altitude(0),
+            }
+            surf_press_creator = atmosphere.SurfacePressureFromAltitude(surf_press_def)
+            self.config_def["surface_pressure"] = surf_press_creator.create()
 
         return atmosphere.PressureGrid.create(self, **kwargs)
 
@@ -165,6 +150,10 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
 
     num_channels = param.Scalar(int)
 
+    def covariance(self, constraint):
+
+        return np.linalg.inv(constraint)
+
     def absorber_cov(self, gas_name, ret_type):
         gas_osp = SpeciesOSP(gas_name, **self.osp_common())
 
@@ -172,7 +161,7 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
             raise Exception(f"OSP constraint for {gas_name} is for a log retrieval, but gas is not set up for a log retrieval")
 
         if gas_osp.constraint_filename is not None:
-            return np.linalg.inv(gas_osp.constraint_matrix)
+            return self.covariance(gas_osp.constraint_matrix)
         else:
             raise param.ParamError(f"No constraint file found for gas: {gas_name}")
 
@@ -186,7 +175,7 @@ class CovarianceMUSES(CreatorMUSES, retrieval.CovarianceByComponent):
 
     def temperature_cov(self):
         temp_osp = SpeciesOSP("TATM", **self.osp_common())
-        return np.linalg.inv(temp_osp.constraint_matrix)
+        return self.covariance(temp_osp.constraint_matrix)
 
     def create(self, **kwargs):
 
