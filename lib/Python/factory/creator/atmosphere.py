@@ -174,6 +174,7 @@ class AtmosphereDictCreator(Creator):
     aerosol = param.InstanceOf(rf.Aerosol, required=False)
     surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
     altitude = param.ObjectVector("altitude")
+    cached_alt_grid = None
 
     def create(self, **kwargs):
 
@@ -186,20 +187,20 @@ class AtmosphereDictCreator(Creator):
         altitude = self.altitude()
 
         def alt_grid(spec_index):
-            pres_grid = self.pressure().pressure_grid
-            # TODO: swig missing __call__/operator() for ArrayAdWithUnit to get AutoDerivativeWithUnit
-            first_pres = rf.AutoDerivativeWithUnitDouble(pres_grid.value[0], pres_grid.units)
-            alt_unit = self.altitude()[spec_index].altitude(first_pres).units
-            alts = []
-            # Seg fault if we iterate over pres_grid.value!
-#             for (pres_ind, pres_val) in enumerate(pres_grid.value):
-#                 # import pdb; pdb.set_trace()
-#                 # this_pres = rf.AutoDerivativeWithUnitDouble(pres_val, pres_grid.units)
-#                 # alts.append(self.altitude()[spec_index].altitude(this_pres))
-#                 print(f"Pres_ind: {pres_ind}", file=sys.stderr)
-            import pdb; pdb.set_trace()
-            raise RuntimeError(f"Not Implemented {first_pres} and {alt_unit}")
-
+            # TODO: Check if cache invalidation necessary
+            if not self.cached_alt_grid:
+                pres_grid = self.pressure().pressure_grid
+                # TODO: swig missing __call__/operator() for ArrayAdWithUnit to get AutoDerivativeWithUnit
+                first_pres = rf.AutoDerivativeWithUnitDouble(pres_grid.value[0], pres_grid.units)
+                alt_unit = self.altitude()[spec_index].altitude(first_pres).units
+                alts = []
+                # TODO: Why is this so slow? Actually using cached pressure?
+                for (pres_ind, pres_val) in enumerate(pres_grid.value):
+                    this_pres = rf.AutoDerivativeWithUnitDouble(pres_val, pres_grid.units)
+                    alts.append(self.altitude()[spec_index].altitude(this_pres).value)
+                alt_array_ad = rf.array_ad.np_to_array_ad(np.array(alts))
+                self.cached_alt_grid = rf.ArrayAdWithUnitDouble_1(alt_array_ad, alt_unit)
+            return self.cached_alt_grid
 #             ArrayAdWithUnit<double, 1> p = pressure->pressure_grid();
 #             Array<AutoDerivative<double>, 1> res(p.rows());
 #             Unit u = alt[spec_index]->altitude(p(0)).units;
