@@ -31,14 +31,11 @@ REGISTER_LUA_END()
 AbsorberVmrScaled::AbsorberVmrScaled
 (const boost::shared_ptr<Pressure>& Press,
  double Scale,                         
- bool Scale_flag,
  const std::string& Gas_name)
 {
-  Array<bool, 1> flag(1);
-  Array<double, 1> val(flag.shape());
-  flag(0) = Scale_flag;
+  Array<double, 1> val(1);
   val(0) = Scale;
-  init(Gas_name, val, flag, Press);
+  init(Gas_name, val, Press);
 }
 
 void AbsorberVmrScaled::calc_vmr() const

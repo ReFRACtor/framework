@@ -14,10 +14,6 @@ public:
     : SubStateVectorObserver(3)
   {
   }
-  virtual void mark_used_sub(blitz::Array<bool, 1>& Used) const
-  {
-    Used(1) = true; Used(2) = true;
-  }
   virtual ~StateVectorTest() {}
   virtual void update_sub_state
   (const ArrayAd<double, 1>& Sv_sub,
@@ -51,12 +47,6 @@ BOOST_AUTO_TEST_CASE(basic)
   xexpect = 4, 5, 6;
   BOOST_CHECK_MATRIX_CLOSE(t2.x, xexpect);
   BOOST_CHECK_MATRIX_CLOSE(sv.state(), x);
-  BOOST_CHECK_EQUAL(sv.used_flag()(0), false);
-  BOOST_CHECK_EQUAL(sv.used_flag()(1), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(2), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(3), false);
-  BOOST_CHECK_EQUAL(sv.used_flag()(4), true);
-  BOOST_CHECK_EQUAL(sv.used_flag()(5), true);
 }
 
 BOOST_AUTO_TEST_CASE(bad_data)

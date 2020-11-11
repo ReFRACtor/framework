@@ -6,6 +6,7 @@
 
 #include "fp_exception.h"
 
+#define FIRST_ORDER_DEBUG 0
 
 /* This file was auto-generated */
 
@@ -1611,6 +1612,8 @@ private:
 
 extern "C" {
   void fo_scalarss_rtcalcs_ilps_m_ss_integral_ilps_up_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const bool* do_sleave_in, const bool* do_profilewfs_in, const bool* do_reflecwfs_in, const bool* do_sleavewfs_in, const bool* lvaryflags_in, const int* lvarynums_in, const int* n_reflecwfs_in, const int* n_sleavewfs_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* aclevel_in, const double* reflec_in, const double* slterm_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* flux_in, const double* ls_reflec_in, const double* lssl_slterm_in, const double* l_extinction_in, const double* l_deltaus_in, const double* l_exactscat_up_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpaths_fine_in, const int* ntraverse_fine_in, const double* intensity_up_in, const double* intensity_db_in, const double* lp_jacobians_up_in, const double* lp_jacobians_db_in, const double* ls_jacobians_db_in);
+
+  void first_order_debug_output(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const bool* do_sleave_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* aclevel_in, const double* reflec_in, const double* slterm_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* flux_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in);
 }
 
   // MANUAL CHANGE
@@ -2155,7 +2158,10 @@ public:
 
   
   void ss_integral_ilps_up() {
-    
+
+#if FIRST_ORDER_DEBUG
+    first_order_debug_output(&maxgeoms_, &maxlayers_, &maxfine_, &do_planpar_, &do_regular_ps_, &do_enhanced_ps_, donadir_.dataFirst(), &do_sleave_, &ngeoms_, &nlayers_, nfinedivs_.dataFirst(), &aclevel_, reflec_.dataFirst(), slterm_.dataFirst(), extinction_.dataFirst(), deltaus_.dataFirst(), exactscat_up_.dataFirst(), &flux_, mu0_.dataFirst(), mu1_.dataFirst(), ncrit_.dataFirst(), xfine_.dataFirst(), wfine_.dataFirst(), csqfine_.dataFirst(), cotfine_.dataFirst(), raycon_.dataFirst(), cota_.dataFirst(), sunpaths_.dataFirst(), ntraverse_.dataFirst(), sunpaths_fine_.dataFirst(), ntraverse_fine_.dataFirst());
+#endif
     
     fo_scalarss_rtcalcs_ilps_m_ss_integral_ilps_up_wrap(&maxgeoms_, &maxlayers_, &maxfine_, &max_atmoswfs_, &max_surfacewfs_, &do_planpar_, &do_regular_ps_, &do_enhanced_ps_, donadir_.dataFirst(), &do_sleave_, &do_profilewfs_, &do_reflecwfs_, &do_sleavewfs_, lvaryflags_.dataFirst(), lvarynums_.dataFirst(), &n_reflecwfs_, &n_sleavewfs_, &ngeoms_, &nlayers_, nfinedivs_.dataFirst(), &aclevel_, reflec_.dataFirst(), slterm_.dataFirst(), extinction_.dataFirst(), deltaus_.dataFirst(), exactscat_up_.dataFirst(), &flux_, ls_reflec_.dataFirst(), lssl_slterm_.dataFirst(), l_extinction_.dataFirst(), l_deltaus_.dataFirst(), l_exactscat_up_.dataFirst(), mu0_.dataFirst(), mu1_.dataFirst(), ncrit_.dataFirst(), xfine_.dataFirst(), wfine_.dataFirst(), csqfine_.dataFirst(), cotfine_.dataFirst(), raycon_.dataFirst(), cota_.dataFirst(), sunpaths_.dataFirst(), ntraverse_.dataFirst(), sunpaths_fine_.dataFirst(), ntraverse_fine_.dataFirst(), intensity_up_.dataFirst(), intensity_db_.dataFirst(), lp_jacobians_up_.dataFirst(), lp_jacobians_db_.dataFirst(), ls_jacobians_db_.dataFirst());
     

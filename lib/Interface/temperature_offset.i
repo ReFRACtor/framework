@@ -13,8 +13,7 @@ namespace FullPhysics {
 class TemperatureOffset: public TemperatureImpBase {
 public:
   TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
-		    double Temp_offset,
-		    bool Temp_flag);
+                    double Temp_offset);
   virtual boost::shared_ptr<Temperature> clone() const = 0;
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;

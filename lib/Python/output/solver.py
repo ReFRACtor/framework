@@ -11,16 +11,23 @@ logger = logging.getLogger(__name__)
 class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
     "Notifies output classes the current retrieval iteration number when it changes"
 
-    def __init__(self, output, step_index):
+    def __init__(self, output, config_solver, step_index):
         # Required to initialize director
         rf.ObserverIterativeSolver.__init__(self)
 
         self.output = output
         self.step_index = step_index
+        self.solver = config_solver
 
-    def notify_update(self, solver):
+    def notify_update(self, iter_solver):
 
-        iter_index = solver.num_accepted_steps
+        # We do not use the iter_solver passed when an update
+        # occurs because it will always be a IterSolver object
+        # Instead use the solver object passed in at object
+        # construction so we can use solver implementation
+        # features (after checking for their presence)
+
+        iter_index = self.solver.num_accepted_steps
 
         # Record number of steps encountered
         base_group_name = self.base_group_name(iter_index)
@@ -63,23 +70,23 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
             cost_function = solver_group["cost_function"]
         else:
             cost_function = solver_group.createVariable("cost_function", float)
-        cost_function[...] = solver.cost_at_accepted_points[iter_index]
+        cost_function[...] = self.solver.cost_at_accepted_points[iter_index]
 
         if "status" in solver_group.variables:
             status = solver_group["status"]
         else:
             status = solver_group.createVariable("status", "S1", (status_dim))
-        status_len = len(solver.status_str)
-        status[:] = stringtochar(np.array(solver.status_str, f"S{status_len}"))
+        status_len = len(self.solver.status_str)
+        status[:] = stringtochar(np.array(self.solver.status_str, f"S{status_len}"))
 
         if "num_accepted" in solver_group.variables:
             num_accepted = solver_group["num_accepted"]
         else:
             num_accepted = solver_group.createVariable("iteration_index", int)
-        num_accepted[...] = solver.num_accepted_steps
+        num_accepted[...] = self.solver.num_accepted_steps
 
-        if hasattr(solver, "problem") and hasattr(solver.problem, "max_a_posteriori"):
-            apost_cov = solver.problem.max_a_posteriori.a_posteriori_covariance
+        if hasattr(self.solver, "problem") and hasattr(self.solver.problem, "max_a_posteriori"):
+            apost_cov = self.solver.problem.max_a_posteriori.a_posteriori_covariance
 
             # This should be the same as in StateVectorOutput, since they are sized the same
             sv_dim = "state_vector_s{}".format(self.step_index+1)
@@ -91,3 +98,18 @@ class SolverIterationOutput(rf.ObserverIterativeSolver, OutputBase):
             else:
                 cov = solver_group.createVariable("covariance_a_posteriori", float, (sv_dim, sv_dim))
             cov[:, :] = apost_cov
+
+        if hasattr(self.solver, "gradient_at_accepted_points") and len(self.solver.gradient_at_accepted_points) > 0:
+            grad_at_iter = self.solver.gradient_at_accepted_points[iter_index-1]
+
+            # This should be the same as in StateVectorOutput, since they are sized the same
+            sv_dim = "state_vector_s{}".format(self.step_index+1)
+            if sv_dim not in self.output.dimensions:
+                self.output.createDimension(sv_dim, grad_at_iter.shape[0])
+
+            if "gradient" in solver_group.variables:
+                gradient = solver_group["gradient"]
+            else:
+                gradient = solver_group.createVariable("gradient", float, (sv_dim,))
+
+            gradient[...] = grad_at_iter

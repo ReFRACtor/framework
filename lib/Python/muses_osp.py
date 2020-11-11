@@ -9,7 +9,6 @@ import warnings
 
 import numpy as np
 
-
 class MUSES_File(object):
 
     def __init__(self, filename, as_struct=False, header_only=False):
@@ -106,47 +105,61 @@ class MUSES_File(object):
         raw_doubles = struct.unpack(format_code, raw_bytes)
         self.data = np.array(raw_doubles).reshape(data_size)
 
-def make_resample_map(fine_grid, coarse_grid):
-    # Based on make_map_ret_fm.pro by John Worden
-    ncoarse = coarse_grid.shape[0]
-    nfine = fine_grid.shape[0]
+class PressureOSP(object):
+    def __init__(self, base_dir, pressure_cutoff=100000, **kwargs):
 
-    # set up the variables
-    resamp_map = np.zeros((nfine, ncoarse), dtype=float)
- 
-    for i in range(0, ncoarse-2+1):
-        frange = np.where(np.logical_and(
-            fine_grid >= coarse_grid[i],
-            fine_grid < coarse_grid[i+1]))
-        
-        for j in frange[0]:
-            xdelta_p = np.log(coarse_grid[i+1]) -  np.log(coarse_grid[i])
-            xcoeff = 1.0 - (np.log(fine_grid[j]) -  np.log(coarse_grid[i]))/xdelta_p
-            
-            resamp_map[j,i] = xcoeff
-    
-    for i in range(1, ncoarse-1+1):
-        frange = np.where(np.logical_and(
-            fine_grid > coarse_grid[i-1],
-            fine_grid <= coarse_grid[i]))
-        
-        for j in frange[0]:
-            xdelta_p = np.log(coarse_grid[i]) -  np.log(coarse_grid[i-1])
-            xcoeff = 1.0 - (-np.log(fine_grid[j]) +  np.log(coarse_grid[i]))/xdelta_p
-            resamp_map[j,i] = xcoeff
-    
-    return resamp_map
-
-
-class OSP(object):
-    def __init__(self, species, base_dir, latitude, longitude, obs_time, instrument_name=None, cov_dir="Covariance"):
-        self.species = species
         self.base_dir = base_dir
+        self.pressure_cutoff = pressure_cutoff
+ 
+        # This is really a fixed value for a set of OSP files, but could be changed should a new
+        # set of OSPs be created
+        self.num_fm_levels = 66
+
+    @property
+    def fm_pressure_filename(self):
+        "Filename used for accessing the forward model pressure levels"
+
+        press_file = os.path.join(self.base_dir, f"Strategy_Tables/Defaults/TES_baseline_{self.num_fm_levels}.asc")
+
+        if not os.path.exists(press_file):
+            raise Exception(f"Could not find forward model pressure file: {press_file}")
+
+        return press_file
+
+    @lru_cache()
+    def _fm_pressure_all(self):
+        "Forward model pressure grid"
+
+        press_file = self.fm_pressure_filename
+
+        # Reverse to pressure increasing order, convert hPa -> Pa
+        mf = MUSES_File(press_file)
+        press_data = np.flip(mf.data[:, 0] * 100)
+
+        return press_data
+
+    @property
+    def fm_pressure_grid(self):
+        "Forward model pressure grid"
+
+        press_data = self._fm_pressure_all()
+
+        if self.pressure_cutoff is not None:
+            press_data = press_data[np.where(press_data <= self.pressure_cutoff)]
+
+        return press_data
+
+class SpeciesOSP(PressureOSP):
+
+    def __init__(self, species, base_dir, latitude, longitude, obs_time, instrument_name=None, cov_dir="Covariance", **kwargs):
+        super().__init__(base_dir, **kwargs)
+
+        self.species = species
         self.latitude = latitude
         self.longitude = longitude
 
         if not isinstance(obs_time, dt.datetime):
-            raise Exception("obs_time must be a datetime instance for species: {}".format(self.species))
+            raise Exception("obs_time must be a datetime instance")
 
         self.obs_time = obs_time
 
@@ -174,7 +187,7 @@ class OSP(object):
         return strat_base_dir
  
     @property
-    def pressure_filename(self):
+    def species_pressure_filename(self):
         "Filename used for accessing the pressure grid associated with a species"
 
         # Find the associated pressure file
@@ -185,12 +198,10 @@ class OSP(object):
 
         return press_file
 
-    @property
     @lru_cache()
-    def pressure_full_grid(self):
-        "The pressure grid associated with a species converted into the format acceptable for ReFRACtor"
+    def _species_pressure_all(self):
 
-        press_file = self.pressure_filename
+        press_file = self.species_pressure_filename
     
         # Reverse to pressure increasing order, convert hPa -> Pa
         mf = MUSES_File(press_file)
@@ -198,27 +209,27 @@ class OSP(object):
 
         return press_data
 
-    def coarse_grid_indexes(self, num_levels):
-        "Pick indexes out of the fine grid for resampling data into"
+    def _species_grid_indexes(self):
 
-        fine_grid = self.pressure_full_grid
-        num_fine = fine_grid.shape[0]
-        coarse_indexes = np.round(np.linspace(0, num_fine-1, num_levels)).astype(int)
-        return coarse_indexes
- 
-    @lru_cache()
-    def pressure_resampled(self, num_levels):
-        fine_grid = self.pressure_full_grid
-        return fine_grid[self.coarse_grid_indexes(num_levels)]
+        press_data = self._species_pressure_all()
 
-    @lru_cache()
-    def resample_map(self, num_levels):
-        fine_grid = self.pressure_full_grid
-        coarse_grid = self.pressure_resampled(num_levels)
+        if self.pressure_cutoff is not None:
+            grid_indexes = np.where(press_data <= self.pressure_cutoff)
+        else:
+            grid_indexes = np.arange(press_data.shape[0])
 
-        forward_map = make_resample_map(fine_grid, coarse_grid)
+        return grid_indexes
 
-        return np.linalg.pinv(forward_map)
+    @property
+    def species_pressure_grid(self):
+        "The pressure grid associated with a species converted into the format acceptable for ReFRACtor"
+
+        press_data = self._species_pressure_all()
+
+        if self.pressure_cutoff is not None:
+            press_data = press_data[np.where(press_data <= self.pressure_cutoff)]
+
+        return press_data[self._species_grid_indexes()]
 
     def _pick_long_dir(self, longitude_dirs):
         if len(longitude_dirs) == 1:
@@ -235,7 +246,7 @@ class OSP(object):
                 break
 
         if use_long_dir is None:
-            raise Exception("Could not determine longitude directory for species: {}".format(self.species))
+            raise Exception("Could not determine longitude directoryecies: {}".format(self.species))
 
         return use_long_dir
 
@@ -334,43 +345,37 @@ class OSP(object):
             return self._temporal_clim_filename()
 
     @property
-    def climatology_full_grid(self):
+    def species_climatology(self):
         "Species climatology data matching the object's time and location converted to the format handled by ReFRACtor"
 
         clim_file = self.climatology_filename
 
-        if self.species == 'PSUR':
-            mf = MUSES_File(clim_file, as_struct=True)
+        mf = MUSES_File(clim_file)
 
-            # Extract value and convert to a matrix
-            clim_data = np.array([float(mf.data['PSUR'])])
+        clim_data = mf.data[:, 0]
 
-            # Convert hPa -> Pa
-            clim_data *= 100
+        # Convert to pressure increasing order
+        clim_data = np.flip(clim_data)
+
+        # Only trim by pressure those OSPs that are of the same size
+        # as their associated pressure grid
+        if clim_data.shape[0] == self._species_pressure_all().shape[0]:
+            return clim_data[self._species_grid_indexes()]
         else:
-            mf = MUSES_File(clim_file)
+            return clim_data
 
-            clim_data = mf.data[:, 0]
+    @property
+    def fm_climatology(self):
 
-            # Convert to pressure increasing order
-            clim_data = np.flip(clim_data)
+        fm_press = self.fm_pressure_grid
+        species_press = self.species_pressure_grid
+        species_value = self.species_climatology
 
-        return clim_data
-
-    @lru_cache()
-    def climatology_resampled(self, num_levels):
-        full_grid = self.climatology_full_grid
-
-        inv_map = self.resample_map(num_levels)
-
-        if full_grid.shape[0] != inv_map.shape[1]:
-            raise Exception("Can not resample {} climatology data, data does not match full grid size".format(self.species))
-
-        return inv_map @ full_grid
+        return np.exp(np.interp(np.log(fm_press), np.log(species_press), np.log(species_value)))
 
     @property
     def retrieval_strategy_filename(self):
-        ret_strat_fn = os.path.join(self.strategy_base_dir, "Species-66", f"{self.species}.asc")
+        ret_strat_fn = os.path.join(self.strategy_base_dir, f"Species-{self.num_fm_levels}", f"{self.species}.asc")
         if not os.path.exists(ret_strat_fn):
             return None
         return ret_strat_fn
@@ -403,18 +408,25 @@ class OSP(object):
         if ret_lev == 0:
             return None
         else:
+            fm_press_all = self._fm_pressure_all()
+            num_fm_levels = fm_press_all.shape[0]
+
             # Convert to an array and make zero based indexing
             ret_lev = np.array([ int(l)-1 for l in ret_lev.split(",") ])
 
             # Reverse order and indexes to match pressure increasing order of ReFRACtor
-            num_full_levels = self.pressure_full_grid.shape[0] 
-            ret_lev = np.flip(num_full_levels - ret_lev - 1)
+            ret_lev = np.flip(num_fm_levels - ret_lev - 1)
 
-            # Make sure surface is represented at the end of the array
-            if ret_lev[-1] != num_full_levels - 1:
-                ret_lev = np.append(ret_lev, [num_full_levels -1])
-            
-            return ret_lev
+            if self.pressure_cutoff is not None:
+                # Incorporate the pressure cutoff 
+                ret_flags = np.zeros(num_fm_levels, dtype=bool)
+                ret_flags[ret_lev] = True
+
+                cut_ret_lev = np.where(ret_flags[np.where(fm_press_all <= self.pressure_cutoff)])[0]
+            else:
+                cut_ret_lev = ret_lev
+
+            return cut_ret_lev
 
     def _pick_constraint_levels_file(self, filenames):
 
@@ -430,21 +442,10 @@ class OSP(object):
             for fn in filenames:
                 if re.search(r"_{}.asc".format(num_ret_levels), fn):
                     return fn
-            return None
-        else:
-            # Otherwise sort reverse on number of levels and pick the file with the most number of pressure levels
-            def extract_num_levels(fn):
-                match = re.search(r"_(\d+)(?:_\w+)?.asc", fn)
-                if not match:
-                    raise Exception("Could not parse number of levels from {}".format(fn))
-                return int(match.group(1))
 
-            sorted_filenames = sorted(filenames, key=extract_num_levels, reverse=True)
-    
-            if len(sorted_filenames) > 0:
-                return sorted_filenames[0]
-            else:
-                return None
+            raise Exception(f"Could not find a constraint file with {num_ret_levels} retrieval levels")
+        else:
+            return None
 
     def _co_star_filename(self, co_dir_suffix, constraint=False):
         "Finds filenames for Covariance and Constraint files which have a similar pattern"

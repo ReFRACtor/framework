@@ -2,7 +2,9 @@
 #define GROUND_EMISSIVITY_POLYNOMIAL_H
 
 #include "ground_imp_base.h"
+
 #include "array_with_unit.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -14,9 +16,9 @@ class GroundEmissivityPolynomial: virtual public GroundImpBase {
 public:
 
   GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
-			     const blitz::Array<bool, 2>& Flag,
-			     const ArrayWithUnit<double, 1>& Ref_points,
-			     const std::vector<std::string>& Desc_band_names);
+                             const ArrayWithUnit<double, 1>& Ref_points,
+                             const std::vector<std::string>& Desc_band_names,
+                             boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
@@ -28,7 +30,7 @@ public:
   }
   virtual int number_params() const
   {
-    return coefficient().value().rows() / number_spectrometer();
+    return mapping->mapped_state(coeff).value().rows() / number_spectrometer();
   }
 
   virtual const ArrayAd<double, 1> emiss_coefficients(const int spec_index) const;
@@ -59,9 +61,9 @@ public:
 protected:
 
   GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,
-			     const blitz::Array<bool, 1>& Flag,
-			     const ArrayWithUnit<double, 1>& Ref_points,
-			     const std::vector<std::string>& Desc_band_names);
+                             const ArrayWithUnit<double, 1>& Ref_points,
+                             const std::vector<std::string>& Desc_band_names,
+                             boost::shared_ptr<StateMapping> Mapping);
 
   GroundEmissivityPolynomial() {}
 private:

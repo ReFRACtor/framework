@@ -12,7 +12,6 @@ namespace FullPhysics {
 class TemperatureLevel: public TemperatureImpBase {
 public:
     TemperatureLevel(const blitz::Array<double, 1> Temp,
-                     const blitz::Array<bool, 1> Temp_flag,
                      const boost::shared_ptr<Pressure>& Press,
                      boost::shared_ptr<StateMapping> Map = boost::make_shared<StateMappingLinear>());
 
@@ -35,7 +34,7 @@ public:
     //-----------------------------------------------------------------------
 
     virtual blitz::Array<double, 1> temperature_profile() const
-    { return mapping->fm_view(coeff).value(); }
+    { return mapping->mapped_state(coeff).value(); }
 
     //-----------------------------------------------------------------------
     /// Pressure levels that serve as the grid for the temperature values in

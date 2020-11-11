@@ -23,14 +23,15 @@ FP_IMPLEMENT(OpticalPropertiesInitBase);
 //-----------------------------------------------------------------------
 
 void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od, 
-                                           const ArrayAd<double, 2>& gas_od)
+                                           const ArrayAd<double, 2>& gas_od,
+                                           const int num_jacobians)
 {
     // Empty objects, no aerosols
     ArrayAd<double, 2> aerosol_ext_od;
     ArrayAd<double, 2> aerosol_sca_od;
     boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper;
 
-    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper, num_jacobians);
 
     assert_sizes();
 
@@ -53,11 +54,12 @@ void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od
                                            const ArrayAd<double, 2>& gas_od,
                                            const ArrayAd<double, 2>& aerosol_ext_od,
                                            const ArrayAd<double, 2>& aerosol_sca_od,
-                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments)
+                                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments,
+                                           const int num_jacobians)
 {
     boost::shared_ptr<AerosolPhaseFunctionHelper> aer_pf_helper(new AerosolPhaseFunctionPassThruHelper(aerosol_pf_moments));
 
-    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper, num_jacobians);
 
     assert_sizes();
 
@@ -76,7 +78,8 @@ void OpticalPropertiesInitBase::initialize(const DoubleWithUnit spectral_point,
                                            const int channel_index,
                                            const boost::shared_ptr<Absorber>& absorber,
                                            const boost::shared_ptr<Rayleigh>& rayleigh,
-                                           const boost::shared_ptr<Aerosol>& aerosol)
+                                           const boost::shared_ptr<Aerosol>& aerosol,
+                                           const int num_jacobians)
 {
 
     double wn = spectral_point.convert_wave(units::inv_cm).value;
@@ -98,7 +101,7 @@ void OpticalPropertiesInitBase::initialize(const DoubleWithUnit spectral_point,
         aer_pf_helper.reset(new AerosolPhaseFunctionComputeHelper(spectral_point, aerosol));
     }
 
-    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper);
+    initialize_with_jacobians(rayleigh_od, gas_od, aerosol_ext_od, aerosol_sca_od, aer_pf_helper, num_jacobians);
 
     assert_sizes();
 

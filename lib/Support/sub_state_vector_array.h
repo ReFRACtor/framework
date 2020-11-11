@@ -42,56 +42,34 @@ public:
   {
     // Default to no Coeff.
     blitz::Array<double, 1> no_coeff;
-    blitz::Array<bool, 1> used_flag;
-    init(no_coeff, used_flag);
+    init(no_coeff);
   }
 
   void init
   (const blitz::Array<double, 1>& Coeff,
-   const blitz::Array<bool, 1>& Used_flag,
    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     if(Coeff.rows() != 0)
-      coeff.reference(in_map->retrieval_init(Coeff.copy()));
-
-    if(Used_flag.rows() != 0)
-      used_flag.reference(Used_flag.copy());
+      coeff.reference(in_map->retrieval_state(Coeff.copy()));
 
     mapping = in_map;
     
-    if(coeff.rows() != used_flag.rows()) {
-      throw Exception("Coeff and Used_flag need to be the same size");
-    }
-    
-    state_vector_observer_initialize(count(Used_flag));
+    state_vector_observer_initialize(coeff.rows());
   }
   
   //-----------------------------------------------------------------------
-  /// Special case when Coeff and Used_flag have exactly one row.
+  /// Special case when Coeff has exactly one row.
   //-----------------------------------------------------------------------
-  void init(double Coeff, bool Used_flag,
-    boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
+  void init(double Coeff,
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
   {
     blitz::Array<double, 1> coeff_t(1);
     blitz::Array<bool, 1> used_t(1);
     coeff_t(0) = Coeff;
-    used_t(0) = Used_flag;
-    init(coeff_t, used_t, in_map);
+    init(coeff_t, in_map);
   }  
 
   virtual ~SubStateVectorArray() {}
-  void mark_used_sub(blitz::Array<bool, 1>& Used) const
-  {
-    int si = 0;
-    
-    for(int i = 0; i < used_flag.rows(); ++i) {
-      if(used_flag(i)) {
-        Used(si) = true;
-        ++si;
-      }
-    }
-  }
-
 
   //-----------------------------------------------------------------------
   /// Return a string to identify this part of the state, this name should be
@@ -118,16 +96,11 @@ public:
   {
     return "Coeff" + boost::lexical_cast<std::string>(i + 1);
   }
-  
+
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
-    int si = 0;
-
-    for (int i = 0; i < used_flag.rows(); ++i) {
-      if (used_flag(i)) {
-        Sv_name(si) = state_vector_name_i(i);
-        ++si;
-      }
+    for (int i = 0; i < coeff.rows(); ++i) {
+      Sv_name(i) = state_vector_name_i(mapping->initial_values_index(i));
     }
   }
   
@@ -135,14 +108,10 @@ public:
   {
     if (Sv_sub.rows() > 0) {
       cov.reference(Cov.copy());
-      int si = 0;
       coeff.resize_number_variable(Sv_sub.number_variable());
       
      for(int i = 0; i < coeff.rows(); ++i) {
-        if(used_flag(i)) {
-          coeff(i) = Sv_sub(si);
-          ++si;
-        }
+       coeff(i) = Sv_sub(i);
      }
     } else {
       cov.resize(0,0);
@@ -165,10 +134,10 @@ public:
   {
     return coeff;
   }
-  
-  const blitz::Array<bool, 1>& used_flag_value() const
+
+  const boost::shared_ptr<StateMapping> state_mapping() const
   {
-    return used_flag;
+    return mapping;
   }
   
   const blitz::Array<double, 2>& statevector_covariance() const
@@ -183,13 +152,6 @@ protected:
   //-----------------------------------------------------------------------
   
   ArrayAd<double, 1> coeff;
-  
-  //-----------------------------------------------------------------------
-  /// Flag indicating which of the coefficients gets updated by the
-  /// StateVector.
-  //-----------------------------------------------------------------------
-  
-  blitz::Array<bool, 1> used_flag;
   
   //-----------------------------------------------------------------------
   /// Last covariance matrix updated from the StateVector. If we haven't
@@ -215,7 +177,7 @@ void SubStateVectorArray<Base>::serialize(Archive & ar, \
 { \
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver) \
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Base) \
-    & FP_NVP(coeff) & FP_NVP(used_flag) & FP_NVP(cov) & FP_NVP(mapping); \
+    & FP_NVP(coeff) & FP_NVP(cov) & FP_NVP(mapping); \
 } \
 \
 FP_IMPLEMENT(Type);

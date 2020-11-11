@@ -14,11 +14,11 @@ namespace FullPhysics {
 class PressureSigma : virtual public PressureImpBase {
 public:
   PressureSigma(const blitz::Array<double, 1>& A,
-		const blitz::Array<double, 1>& B,
-		double Surface_pressure, bool Pressure_flag);
+                const blitz::Array<double, 1>& B,
+                double Surface_pressure);
 
   PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
-		double Surface_pressure, bool Pressure_flag);
+                double Surface_pressure);
 
   virtual ~PressureSigma() {}
 

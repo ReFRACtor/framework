@@ -27,10 +27,11 @@ public:
   virtual const std::vector<ArrayAd<double, 3> > aerosol_phase_function_moments_per_particle(int num_moments = -1, int num_scattering = -1) const;
 protected:
   virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-					 const ArrayAd<double, 2>& gas_od,
-					 const ArrayAd<double, 2>& aerosol_ext_od,
-					 const ArrayAd<double, 2>& aerosol_sca_od,
-					 const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper);
+                                         const ArrayAd<double, 2>& gas_od,
+                                         const ArrayAd<double, 2>& aerosol_ext_od,
+                                         const ArrayAd<double, 2>& aerosol_sca_od,
+                                         const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper,
+                                         const int num_jacobians = -1);
 private:
   friend class boost::serialization::access;
   template<class Archive>

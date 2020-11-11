@@ -357,7 +357,7 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
     FunctionTimer ft(timer.function_timer());
 
     opt_prop.reset(new OpticalPropertiesWrtRt());
-    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
+    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
 
     return false;
 }

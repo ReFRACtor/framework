@@ -66,7 +66,6 @@ set(DIR_SOURCES
     spectrum_effect.cc
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
-    state_mapping.cc
     stokes_coefficient.cc
     stokes_coefficient_imp_base.cc
     surface_temperature.cc

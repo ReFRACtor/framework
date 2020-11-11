@@ -42,6 +42,7 @@ public:
     return interp(std::log(x));
   }
   void print(std::ostream& Os) const { Os << "LogLinearInterpolate"; }
+  static std::string name() { return "log linear"; }
 private:
   LinearInterpolate<TX,TY> interp;
 };
@@ -78,6 +79,7 @@ public:
     return std::exp(interp(std::log(x)));
   }
   void print(std::ostream& Os) const { Os << "LogLogInterpolate"; }
+  static std::string name() { return "log log"; }
 private:
   LinearInterpolate<TX,TY> interp;
 };
@@ -120,6 +122,7 @@ public:
   }
 
   void print(std::ostream& Os) const { Os << "LogLogInterpolate"; }
+  static std::string name() { return "log log"; }
 private:
   LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > interp;
 };
@@ -156,6 +159,7 @@ public:
     return std::exp(interp(x));
   }
   void print(std::ostream& Os) const { Os << "LinearLogInterpolate"; }
+  static std::string name() { return "linear log"; }
 private:
   LinearInterpolate<TX,TY> interp;
 };
@@ -198,6 +202,7 @@ public:
   }
 
   void print(std::ostream& Os) const { Os << "LinearLogInterpolate"; }
+  static std::string name() { return "linear log"; }
 private:
   LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > interp;
 };

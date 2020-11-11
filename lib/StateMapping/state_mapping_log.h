@@ -21,32 +21,34 @@ public:
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  StateMappingLog() : map_name("log") {};
+  StateMappingLog() {};
   virtual ~StateMappingLog() {}
   
-  virtual ArrayAd<double, 1> fm_view(const ArrayAd<double, 1>& updated_coeff)
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values)
     const {
-    blitz::Array<AutoDerivative<double>, 1> res(updated_coeff.rows());
+    blitz::Array<AutoDerivative<double>, 1> res(retrieval_values.rows());
     for(int i = 0; i < res.rows(); ++i)
-      res(i) = std::exp(updated_coeff(i));
+      res(i) = std::exp(retrieval_values(i));
     return ArrayAd<double, 1>(res);
   }
   
-  virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const {
-    blitz::Array<AutoDerivative<double>, 1> res(initial_coeff.rows());
+  virtual ArrayAd<double, 1> retrieval_state
+  (const ArrayAd<double, 1>& initial_values) const {
+    blitz::Array<AutoDerivative<double>, 1> res(initial_values.rows());
     for(int i = 0; i < res.rows(); ++i)
-      res(i) = std::log(initial_coeff(i));
+      res(i) = std::log(initial_values(i));
     return ArrayAd<double, 1>(res);
   }
 
-  virtual std::string name() const { return map_name; }
+  virtual int initial_values_index(const int retrieval_state_index) const
+  { return retrieval_state_index; }
+
+  virtual std::string name() const { return "log"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   { return boost::shared_ptr<StateMapping>(new StateMappingLog()); }
 
 private:
-  std::string map_name;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

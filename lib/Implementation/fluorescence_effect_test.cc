@@ -16,8 +16,6 @@ BOOST_AUTO_TEST_CASE(creation)
 
   Array<double, 1> coeff(2);
   coeff = -1.35039e-09, 0.0016;
-  Array<bool, 1> used_flag(2);
-  used_flag = true, true;
   DoubleWithUnit lza(0, units::deg);
   int spec_index = 0;
   DoubleWithUnit reference_wn(13245.0, units::inv_cm);
@@ -29,7 +27,7 @@ BOOST_AUTO_TEST_CASE(creation)
       1, 0, 0, 0;
   boost::shared_ptr<StokesCoefficient> stokes_coeff
     (new StokesCoefficientConstant(stokes_coeff_v));
-  FluorescenceEffect fluor_created(coeff, used_flag, config_atmosphere, stokes_coeff, lza, spec_index, reference_wn, conv_unit);
+  FluorescenceEffect fluor_created(coeff, config_atmosphere, stokes_coeff, lza, spec_index, reference_wn, conv_unit);
 
   BOOST_CHECK_MATRIX_CLOSE(config_fluor->coefficient().value(), fluor_created.coefficient().value());
 }
@@ -38,8 +36,6 @@ BOOST_AUTO_TEST_CASE(small_range)
 {
   Array<double, 1> coeff(2);
   coeff = -1.35039e-09, 0.0016;
-  Array<bool, 1> used_flag(2);
-  used_flag = true, true;
   DoubleWithUnit lza(0, units::deg);
   int spec_index = 0;
   DoubleWithUnit reference_wn(13245.0, units::inv_cm);
@@ -76,7 +72,7 @@ BOOST_AUTO_TEST_CASE(small_range)
   boost::shared_ptr<AtmosphereStandard> config_atm_oco =
     boost::dynamic_pointer_cast<AtmosphereStandard>(config_atmosphere);
   boost::shared_ptr<AtmosphereStandard> atm = config_atm_oco->clone();
-  FluorescenceEffect fluor_created(coeff, used_flag,
+  FluorescenceEffect fluor_created(coeff,
                                    atm, stokes_coeff, lza,
                                    spec_index, reference_wn, conv_unit);
 

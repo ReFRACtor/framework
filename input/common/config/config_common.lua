@@ -184,10 +184,15 @@ function CompositeCreator:initial_guess()
    local res = CompositeInitialGuess()
    local i, k
    for i,k in ipairs(self:sub_initial_guess_key()) do
-      self.config:diagnostic_message("Initial guess " .. k)
       local t = self[k]
       local c = t.creator:new(t, self.config, k)
-      res:add_builder(c:initial_guess())
+      local ig = c:initial_guess()
+      if(c.retrieval_flag) then
+          self.config:diagnostic_message("Initial guess " .. k .. " (#IG: " .. ig:number_element() .. ")")
+      else
+          self.config:diagnostic_message("Initial guess " .. k)
+      end
+      res:add_builder(ig)
    end
    return res
 end
@@ -986,8 +991,8 @@ function ConfigCommon.dispersion_polynomial:create()
       local disp_units = self:units(i)
       local disp_flag = self:retrieval_flag(i)
       local desc_band_name = self.config.common.desc_band_name:value(i-1)
-      res[i] = DispersionPolynomial(disp_coeff, disp_flag, disp_units,
-                                    var_vals, desc_band_name)
+      res[i] = DispersionPolynomial.create(disp_coeff, disp_flag, disp_units,
+                                           var_vals, desc_band_name)
    end
    return res
 end
@@ -1196,8 +1201,8 @@ ConfigCommon.zero_offset_waveform = CreatorMultiSpec:new()
 function ConfigCommon.zero_offset_waveform:create()
    local res = {}
    for i=1,self.config.number_pixel:rows() do
-      local fit_scale = self:retrieval_flag(i)
-      res[i] = ZeroOffsetWaveform(self:apriori(i - 1)(0), fit_scale(0),
+      --local fit_scale = self:retrieval_flag(i)
+      res[i] = ZeroOffsetWaveform(self:apriori(i - 1)(0),
                                   self.config.dispersion[i], self.config:h(),
                                   i - 1, 
                                   self.config.common.desc_band_name:value(i-1),
@@ -1235,7 +1240,7 @@ function ConfigCommon.empirical_orthogonal_function:create()
    end
 
    for i=1,self.config.number_pixel:rows() do
-      local fit_scale = self:retrieval_flag(i)
+      --local fit_scale = self:retrieval_flag(i)
       if(self.eof_used ~= nil and self.eof_used[i] == false) then
 	 res[i] = nil
       elseif(self.by_pixel) then
@@ -1249,7 +1254,6 @@ function ConfigCommon.empirical_orthogonal_function:create()
 	    mq:set(3, self.order)
 	    mq:set(4, self.scale_to_stddev)
 	    res[i] = EmpiricalOrthogonalFunction.create(
-                                  fit_scale(0),
                                   hdf_file,
 				  self.config.l1b:uncertainty_with_unit(i-1),
 				  self.config.common.desc_band_name:value(i-1),
@@ -1257,7 +1261,6 @@ function ConfigCommon.empirical_orthogonal_function:create()
 				  mq)
 	 else
 	    res[i] = EmpiricalOrthogonalFunction(self:apriori(i - 1)(0),
-                                  fit_scale(0),
                                   hdf_file,
                                   i - 1,
                                   self.config.sid:sounding_number(),
@@ -1267,7 +1270,6 @@ function ConfigCommon.empirical_orthogonal_function:create()
 	 end
       else
          res[i] = EmpiricalOrthogonalFunction(self:apriori(i - 1)(0),
-                                  fit_scale(0),
                                   self.config.dispersion[i],
                                   hdf_file,
                                   i - 1,
@@ -1289,6 +1291,7 @@ function ConfigCommon.empirical_orthogonal_function:retrieval_flag(i)
    if(self.eof_used ~= nil and self.eof_used[i] == false) then
       flag:set(Range.all(), false)
    end
+
    return flag
 end
 
@@ -1301,10 +1304,9 @@ ConfigCommon.radiance_scaling_sv_fit = CreatorMultiSpec:new()
 function ConfigCommon.radiance_scaling_sv_fit:create()
    local res = {}
    for i=1,self.config.number_pixel:rows() do
-      local fit_scaling = self:retrieval_flag(i)
+      --local fit_scaling = self:retrieval_flag(i)
       local band_ref = self.config.common.band_reference
       res[i] = RadianceScalingSvFit(self:apriori(i - 1), 
-                                     fit_scaling,
                                      band_ref(i-1),
                                      self.config.common.desc_band_name:value(i-1))
    end
@@ -1384,10 +1386,10 @@ end
 ConfigCommon.fluorescence_effect = CreatorApriori:new()
 
 function ConfigCommon.fluorescence_effect:create()
-   local flag = self:retrieval_flag()
+   --local flag = self:retrieval_flag()
 
    local rad_unit = Unit(self.config.l1b:radiance_with_unit(0).units)
-   self.fluorescence_effect = FluorescenceEffect(self:apriori(), flag,
+   self.fluorescence_effect = FluorescenceEffect(self:apriori(),
                      self.config.atmosphere,
                      self.config.stokes_coefficient,
                      self.config.l1b:zen_with_unit(0),
@@ -1684,7 +1686,7 @@ function ConfigCommon.instrument_doppler:create()
     local rel_vel = self:apriori_v()
     local flag = self:retrieval_flag()
     for i=1,self.config.number_pixel:rows() do
-       res[i] = InstrumentDoppler(rel_vel(i-1), "m / s", flag(i-1)) 
+       res[i] = InstrumentDoppler.create(rel_vel(i-1), "m / s", flag(i-1))
     end
     return res
 end
@@ -1791,8 +1793,7 @@ end
 ConfigCommon.pressure_sigma = CreatorApriori:new {}
 
 function ConfigCommon.pressure_sigma:create()
-   return PressureSigma(self:a(), self:b(), self:apriori()(0),
-                        self:retrieval_flag()(0))
+   return PressureSigma(self:a(), self:b(), self:apriori()(0))
 end
 
 ------------------------------------------------------------
@@ -1804,8 +1805,7 @@ end
 ConfigCommon.pressure_sigma_profile = CreatorApriori:new {}
 
 function ConfigCommon.pressure_sigma_profile:create()
-   return PressureSigma(self:pressure_levels(), self:apriori()(0),
-                        self:retrieval_flag()(0))
+   return PressureSigma(self:pressure_levels(), self:apriori()(0))
 end
 
 ------------------------------------------------------------
@@ -1816,8 +1816,7 @@ end
 ConfigCommon.temperature_met = CreatorApriori:new {}
 
 function ConfigCommon.temperature_met:create()
-   return TemperatureMet(self.config.met, self.config.pressure,
-                         self:apriori()(0), self:retrieval_flag()(0))
+   return TemperatureMet(self.config.met, self.config.pressure, self:apriori()(0))
 end
 
 ------------------------------------------------------------
@@ -1828,8 +1827,7 @@ end
 ConfigCommon.temperature_level_offset = CreatorApriori:new {}
 
 function ConfigCommon.temperature_level_offset:create()
-   return TemperatureLevelOffset(self.config.pressure, self:temperature_levels(),
-                                 self:apriori()(0), self:retrieval_flag()(0))
+   return TemperatureLevelOffset(self.config.pressure, self:temperature_levels(), self:apriori()(0))
 end
 
 ------------------------------------------------------------
@@ -1843,14 +1841,14 @@ function ConfigCommon.lambertian_retrieval:create()
    local num_spec = self.config.number_pixel:rows()
 
    local ap = Blitz_double_array_2d(num_spec, num_coeff)
-   local flag = Blitz_bool_array_2d(num_spec, num_coeff)
+   --local flag = Blitz_bool_array_2d(num_spec, num_coeff)
 
    for i = 1, num_spec do
        ap:set(i-1, Range.all(), self:apriori_v(i - 1))
-       flag:set(i-1, Range.all(), self:retrieval_flag(i))
+       --flag:set(i-1, Range.all(), self:retrieval_flag(i))
    end
 
-   local lambertian = GroundLambertian(ap, flag, 
+   local lambertian = GroundLambertian(ap, 
                                        self.config.common.band_reference,
                                        self.config.common.desc_band_name)
    return lambertian
@@ -1905,8 +1903,7 @@ end
 ConfigCommon.coxmunk_retrieval = CreatorApriori:new {}
 
 function ConfigCommon.coxmunk_retrieval:create()
-   return GroundCoxmunk(self:apriori_v()(0), self:retrieval_flag()(0),
-                        self:refractive_index())
+   return GroundCoxmunk(self:apriori_v()(0), self:refractive_index())
 end
 
 ------------------------------------------------------------
@@ -1953,7 +1950,7 @@ function ConfigCommon.brdf_weight(self, brdf_class, ap, i)
    -- Extract all but the slope portion of the apriori to feed into the
    -- albedo calculation function
    local params = Blitz_double_array_1d(5)
-   params:set(Range.all(), ap(Range(2, 6)))
+   params:set(Range.all(), ap(Range(0, 4)))
 
    local alb_calc = brdf_class.kernel_value(params, sza_d, vza_d, azm_d)
    local weight = alb_cont / alb_calc
@@ -1965,7 +1962,7 @@ function ConfigCommon.brdf_veg_apriori(field)
     return function(self, i)
         local ap = self.config:h():apriori(field, i) 
         local weight = ConfigCommon.brdf_weight(self, GroundBrdfVeg, ap, i)
-        ap:set(0, ap(0) * weight)
+        ap:set(5, ap(5) * weight)
         return ap
     end
 end
@@ -1974,7 +1971,7 @@ function ConfigCommon.brdf_soil_apriori(field)
     return function(self, i)
         local ap = self.config:h():apriori(field, i) 
         local weight = ConfigCommon.brdf_weight(self, GroundBrdfSoil, ap, i)
-        ap:set(0, ap(0) * weight)
+        ap:set(5, ap(5) * weight)
         return ap
     end
 end
@@ -1988,14 +1985,20 @@ ConfigCommon.brdf_retrieval = CreatorMultiSpec:new {}
 function ConfigCommon.brdf_retrieval:retrieval_flag(i)
    local flag = Blitz_bool_array_1d(self:apriori_v(i - 1):rows())
 
+   n_coefs = self:apriori_v(0):rows()
+
    if self.retrieve_bands ~= nil and self.retrieve_bands[i] then
-        flag:set(Range.all(), false)
-        -- BRDF weight intercept
-        flag:set(0, true)
-        -- BRDF weight slope
-        flag:set(1, true)
+       flag:set(Range.all(), false)
+       for i = 5, n_coefs - 1 do
+           flag:set(i, true)
+       end
    else
         flag:set(Range.all(), false)
+   end
+
+   if(self.config.diagnostic) then
+      print("brdf_retrieval:retrieval_flag() =")
+      print(flag)
    end
 
    return flag
@@ -2010,15 +2013,17 @@ ConfigCommon.brdf_veg_retrieval = ConfigCommon.brdf_retrieval:new {}
 function ConfigCommon.brdf_veg_retrieval:create()
    local num_spec = self.config.number_pixel:rows()
 
-   local ap = Blitz_double_array_2d(num_spec, 7)
-   local flag = Blitz_bool_array_2d(num_spec, 7)
+   n_coefs = self:apriori_v(0):rows()
+
+   local ap = Blitz_double_array_2d(num_spec, n_coefs)
+   local flag = Blitz_bool_array_2d(num_spec, n_coefs)
 
    for i = 1, num_spec do
        ap:set(i-1, Range.all(), self:apriori_v(i - 1))
        flag:set(i-1, Range.all(), self:retrieval_flag(i))
    end
 
-   return GroundBrdfVeg(ap, flag, self.config.common.band_reference, self.config.common.desc_band_name)
+   return GroundBrdfVeg.create(ap, flag, self.config.common.band_reference, self.config.common.desc_band_name)
 end
 
 ------------------------------------------------------------
@@ -2044,15 +2049,17 @@ ConfigCommon.brdf_soil_retrieval = ConfigCommon.brdf_retrieval:new {}
 function ConfigCommon.brdf_soil_retrieval:create()
    local num_spec = self.config.number_pixel:rows()
 
-   local ap = Blitz_double_array_2d(num_spec, 7)
-   local flag = Blitz_bool_array_2d(num_spec, 7)
+   n_coefs = self:apriori_v(0):rows()
+
+   local ap = Blitz_double_array_2d(num_spec, n_coefs)
+   local flag = Blitz_bool_array_2d(num_spec, n_coefs)
 
    for i = 1, num_spec do
        ap:set(i-1, Range.all(), self:apriori_v(i - 1))
        flag:set(i-1, Range.all(), self:retrieval_flag(i))
    end
 
-   return GroundBrdfSoil(ap, flag, self.config.common.band_reference, self.config.common.desc_band_name)
+   return GroundBrdfSoil.create(ap, flag, self.config.common.band_reference, self.config.common.desc_band_name)
 end
 
 ------------------------------------------------------------
@@ -2287,8 +2294,7 @@ end
 ConfigCommon.aerosol_log_profile = CreatorAerosol:new()
 
 function ConfigCommon.aerosol_log_profile:extinction()
-   return AerosolExtinctionLog(self.config.pressure, self:retrieval_flag(), 
-                               self:apriori_v(), self.name)
+   return AerosolExtinctionLog(self.config.pressure, self:apriori_v(), self.name)
 end
 
 ------------------------------------------------------------
@@ -2299,8 +2305,7 @@ end
 ConfigCommon.aerosol_linear_profile = CreatorAerosol:new()
 
 function ConfigCommon.aerosol_linear_profile:extinction()
-   return AerosolExtinctionLinear(self.config.pressure, self:retrieval_flag(), 
-                                  self:apriori_v(), self.name)
+   return AerosolExtinctionLinear(self.config.pressure, self:apriori_v(), self.name)
 end
 
 ------------------------------------------------------------
@@ -2311,8 +2316,7 @@ end
 ConfigCommon.aerosol_log_shape_gaussian = CreatorAerosol:new()
 
 function ConfigCommon.aerosol_log_shape_gaussian:extinction()
-   return AerosolShapeGaussian(self.config.pressure, self:retrieval_flag(), 
-                               self:apriori_v(), self.name, false)
+   return AerosolShapeGaussian(self.config.pressure, self:apriori_v(), self.name, false)
 end
 
 ------------------------------------------------------------
@@ -2323,8 +2327,7 @@ end
 ConfigCommon.aerosol_linear_shape_gaussian = CreatorAerosol:new()
 
 function ConfigCommon.aerosol_linear_shape_gaussian:extinction()
-   return AerosolShapeGaussian(self.config.pressure, self:retrieval_flag(), 
-                               self:apriori_v(), self.name, true)
+   return AerosolShapeGaussian(self.config.pressure, self:apriori_v(), self.name, true)
 end
 
 ------------------------------------------------------------
@@ -2664,8 +2667,7 @@ end
 ConfigCommon.vmr_level = CreatorVmr:new()
 
 function ConfigCommon.vmr_level:create_vmr()
-   self.vmr = AbsorberVmrLevel(self.config.pressure, self:apriori_v(), 
-                               self:retrieval_flag(), self.name)
+   self.vmr = AbsorberVmrLevel.create(self.config.pressure, self:apriori_v(), self:retrieval_flag(), self.name)
    return self.vmr
 end
 
@@ -2691,7 +2693,6 @@ function ConfigCommon.vmr_met:create_vmr()
    self.vmr = AbsorberVmrMet(self.config.met,
                              self.config.pressure,
                              function_or_simple_value(self.scale_apriori, self), 
-                             self:retrieval_flag()(0),
                              self.name)
    return self.vmr
 end
@@ -2718,7 +2719,6 @@ function ConfigCommon.vmr_level_scaled:create_vmr()
    self.vmr = AbsorberVmrLevelScaled(self.config.pressure,
                                      self:vmr_profile(), 
                                      function_or_simple_value(self.scale_apriori, self), 
-                                     self:retrieval_flag()(0),
                                      self.name)
    return self.vmr
 end
@@ -2922,8 +2922,7 @@ end
 ConfigCommon.stokes_coefficient_fraction = CreatorApriori:new()
 
 function ConfigCommon.stokes_coefficient_fraction:create()
-   return StokesCoefficientFraction(self:value(), self:apriori_v(), 
-				    self:retrieval_flag())
+   return StokesCoefficientFraction(self:value(), self:apriori_v())
 end
 
 function ConfigCommon.stokes_coefficient_fraction:add_to_statevector(sv)

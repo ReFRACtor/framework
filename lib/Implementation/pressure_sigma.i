@@ -13,10 +13,10 @@ namespace FullPhysics {
 class PressureSigma : public PressureImpBase {
 public:
   PressureSigma(const blitz::Array<double, 1>& A,
-		const blitz::Array<double, 1>& B,
-		double Surface_pressure, bool Pressure_flag);
+                const blitz::Array<double, 1>& B,
+                double Surface_pressure);
   PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
-		double Surface_pressure, bool Pressure_flag);
+                double Surface_pressure);
   %python_attribute(surface_pressure_uncertainty, double)
   %rename(_v_set_surface_pressure) set_surface_pressure;
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure);

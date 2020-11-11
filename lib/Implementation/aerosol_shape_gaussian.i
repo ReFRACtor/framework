@@ -14,7 +14,6 @@ namespace FullPhysics {
 class AerosolShapeGaussian : public AerosolExtinctionImpBase {
 public:
   AerosolShapeGaussian(const boost::shared_ptr<Pressure>& Press,
-		       const blitz::Array<bool, 1>& Flag, 
 		       const blitz::Array<double, 1>& Coeffs,
 		       const std::string& Aerosol_name,
 		       const bool Linear_AOD);

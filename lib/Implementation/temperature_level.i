@@ -9,8 +9,7 @@
 namespace FullPhysics {
 class TemperatureLevel: public TemperatureImpBase {
 public:
-    TemperatureLevel( const blitz::Array<double, 1> Temp,
-                     const blitz::Array<bool, 1> Temp_flag,
+    TemperatureLevel(const blitz::Array<double, 1> Temp,
                      const boost::shared_ptr<Pressure>& Press,
                      boost::shared_ptr<StateMapping> Map = boost::make_shared<StateMappingLinear>());
 

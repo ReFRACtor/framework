@@ -65,7 +65,6 @@ public:
   virtual std::string desc() const { return "PressureImpBase"; }
 
   using SubStateVectorArray<Pressure>::update_sub_state;
-  using SubStateVectorArray<Pressure>::mark_used_sub;
   using SubStateVectorArray<Pressure>::state_vector_name_sub;
 protected:
   mutable PressureImpBaseCache cache;
@@ -84,12 +83,11 @@ protected:
   PressureImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  PressureImpBase(const blitz::Array<double, 1>& Coeff, 
-		  const blitz::Array<bool, 1>& Used_flag)
+  PressureImpBase(const blitz::Array<double, 1>& Coeff)
   {
-    SubStateVectorArray<Pressure>::init(Coeff, Used_flag);
+    SubStateVectorArray<Pressure>::init(Coeff);
   }
 private:
   friend PressureImpBaseCache;

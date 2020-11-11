@@ -12,16 +12,13 @@ BOOST_AUTO_TEST_CASE(basic)
     Array<double, 2> spec_coeffs(num_channels, 2);
     spec_coeffs = 0.95, 1e-4;
     
-    Array<bool, 2> flag(spec_coeffs.shape());
-    flag = true;
-
     Array<double, 1> ref_point_values(num_channels);
     ref_point_values = 900;
     ArrayWithUnit<double, 1> ref_points(ref_point_values, Unit("cm^-1"));
 
     std::vector<std::string> band_names = { "Channel_1" };
 
-    auto emiss = GroundEmissivityPolynomial(spec_coeffs, flag, ref_points, band_names);
+    auto emiss = GroundEmissivityPolynomial(spec_coeffs, ref_points, band_names);
 
     BOOST_CHECK_CLOSE(emiss.emissivity(DoubleWithUnit(655, units::inv_cm), 0).value(), 0.9255, 1e-8);
     BOOST_CHECK_CLOSE(emiss.emissivity(DoubleWithUnit(900, units::inv_cm), 0).value(), 0.95, 1e-8);

@@ -13,9 +13,8 @@ namespace FullPhysics {
 class TemperatureMet: public TemperatureOffset {
 public:
   TemperatureMet(const boost::shared_ptr<Meteorology>& Met_file,
-		   const boost::shared_ptr<Pressure>& Press,
-		   double Temp_offset,
-		   bool Temp_flag);
+                 const boost::shared_ptr<Pressure>& Press,
+                 double Temp_offset);
   virtual boost::shared_ptr<Temperature> clone() const;  
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(temperature_offset, double)

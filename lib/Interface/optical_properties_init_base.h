@@ -21,27 +21,31 @@ public:
   virtual ~OpticalPropertiesInitBase() = default;
 
   virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
-			  const ArrayAd<double, 2>& gas_od);
+                          const ArrayAd<double, 2>& gas_od,
+                          const int num_jacobians = -1);
 
   virtual void initialize(const ArrayAd<double, 1>& rayleigh_od, 
-			  const ArrayAd<double, 2>& gas_od,
-			  const ArrayAd<double, 2>& aerosol_ext_od,
-			  const ArrayAd<double, 2>& aerosol_sca_od,
-			  const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments);
+                          const ArrayAd<double, 2>& gas_od,
+                          const ArrayAd<double, 2>& aerosol_ext_od,
+                          const ArrayAd<double, 2>& aerosol_sca_od,
+                          const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments,
+                          const int num_jacobians = -1);
 
   virtual void initialize(const DoubleWithUnit spectral_point,
-			  const int channel_index,
-			  const boost::shared_ptr<Absorber>& absorber,
-			  const boost::shared_ptr<Rayleigh>& rayleigh,
-			  const boost::shared_ptr<Aerosol>& aerosol);
+                          const int channel_index,
+                          const boost::shared_ptr<Absorber>& absorber,
+                          const boost::shared_ptr<Rayleigh>& rayleigh,
+                          const boost::shared_ptr<Aerosol>& aerosol,
+                          const int num_jacobians = -1);
 
 protected:
 
   virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-					 const ArrayAd<double, 2>& gas_od,
-					 const ArrayAd<double, 2>& aerosol_ext_od,
-					 const ArrayAd<double, 2>& aerosol_sca_od,
-					 const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper) = 0;
+                                         const ArrayAd<double, 2>& gas_od,
+                                         const ArrayAd<double, 2>& aerosol_ext_od,
+                                         const ArrayAd<double, 2>& aerosol_sca_od,
+                                         const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper,
+                                         const int num_jacobians = -1) = 0;
 private:  
   friend class boost::serialization::access;
   template<class Archive>

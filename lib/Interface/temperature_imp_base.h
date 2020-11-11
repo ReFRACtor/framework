@@ -77,12 +77,11 @@ protected:
 //-----------------------------------------------------------------------
 
   void init(const blitz::Array<double, 1>& Coeff, 
-            const blitz::Array<bool, 1>& Used_flag,
             const boost::shared_ptr<Pressure>& Press,
             boost::shared_ptr<StateMapping> Map = boost::make_shared<StateMappingLinear>())
 
   { 
-    SubStateVectorArray<Temperature>::init(Coeff, Used_flag, Map);
+    SubStateVectorArray<Temperature>::init(Coeff, Map);
     press = Press;
   }
 
@@ -94,14 +93,13 @@ protected:
   TemperatureImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
   TemperatureImpBase(const blitz::Array<double, 1>& Coeff, 
-                     const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<Pressure>& Press,
                      boost::shared_ptr<StateMapping> Map = boost::make_shared<StateMappingLinear>())
   {
-    init(Coeff, Used_flag, Press, Map);
+    init(Coeff, Press, Map);
   }
 
   boost::shared_ptr<Pressure> press;

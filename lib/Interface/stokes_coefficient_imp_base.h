@@ -73,12 +73,11 @@ protected:
   StokesCoefficientImpBase() : cache_stale(true) { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag)
+  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff)
     : cache_stale(true)
-  { init(Coeff, Used_flag); }
+  { init(Coeff); }
 private:
   void fill_cache() const
   {

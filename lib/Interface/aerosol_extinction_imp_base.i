@@ -54,7 +54,6 @@ protected:
   %python_attribute(total_aod, AutoDerivative<double>);
   AerosolExtinctionImpBase(const std::string& Aerosol_name,
                            const blitz::Array<double, 1>& Coeff,
-                           const blitz::Array<bool, 1>& Used_flag,
                            const boost::shared_ptr<Pressure>& Press,
                            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };

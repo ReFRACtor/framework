@@ -6,62 +6,6 @@ from .. import param
 
 from refractor import framework as rf
 
-
-class CreatorFlaggedValue(Creator):
-
-    value = param.Choice(param.Array(dims=1), param.ArrayWithUnit(dims=1))
-    retrieved = param.Scalar(bool, required=False)
-    flags = param.Array(dims=1, required=False)
-
-    def retrieval_flag(self, **kwargs):
-        val = self.value(**kwargs)
-        retrieved = self.retrieved()
-
-        if hasattr(val, "value"):
-            # ArrayWithUnit
-            val_shape = val.value.shape
-        else:
-            val_shape = val.shape
-
-        flags = self.flags()
-        if retrieved is None or retrieved or flags is not None:
-            if flags is not None:
-                return flags
-            else:
-                return np.ones(val_shape, dtype=bool)
-        else:
-            return np.zeros(val_shape, dtype=bool)
-
-
-class CreatorFlaggedValueMultiChannel(Creator):
-
-    value = param.Choice(param.Array(dims=2), param.ArrayWithUnit(dims=2))
-    retrieved = param.Iterable(required=False)
-
-    def retrieval_flag(self, **kwargs):
-        val = self.value(**kwargs)
-        retrieved = self.retrieved()
-
-        if hasattr(val, "value"):
-            # ArrayWithUnit
-            val_shape = val.value.shape
-        else:
-            val_shape = val.shape
-
-        if retrieved is None:
-            return np.ones(val_shape, dtype=bool)
-        else:
-            flags = np.empty(val_shape, dtype=bool)
-            for chan_idx, chan_flag in enumerate(retrieved):
-                flags[chan_idx, :] = chan_flag
-            return flags
-
-
-class CreatorValueMultiChannel(Creator):
-
-    value = param.AnyValue()
-
-
 class ArrayWithUnit(Creator):
     "Create an array with unit class from a numpy array and type string"
 

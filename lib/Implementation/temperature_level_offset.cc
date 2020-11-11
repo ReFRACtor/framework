@@ -22,8 +22,8 @@ FP_IMPLEMENT(TemperatureLevelOffset);
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(TemperatureLevelOffset, Temperature)
 .def(luabind::constructor<const boost::shared_ptr<Pressure>&,
-			  const blitz::Array<double, 1>&,
-			  double, bool>())
+                          const blitz::Array<double, 1>&,
+                          double>())
 REGISTER_LUA_END()
 #endif
 
@@ -34,9 +34,8 @@ REGISTER_LUA_END()
 TemperatureLevelOffset::TemperatureLevelOffset
 (const boost::shared_ptr<Pressure>& Press,
  const blitz::Array<double, 1>& Temp_levels,
- double Temp_offset,
- bool Temp_flag)
-: TemperatureOffset(Press, Temp_offset, Temp_flag), temp_levels(Temp_levels)
+ double Temp_offset)
+: TemperatureOffset(Press, Temp_offset), temp_levels(Temp_levels)
 {
 }
 
@@ -45,8 +44,7 @@ TemperatureLevelOffset::TemperatureLevelOffset
 boost::shared_ptr<Temperature> TemperatureLevelOffset::clone() const
 {
   boost::shared_ptr<Temperature> res
-    (new TemperatureLevelOffset(press->clone(), temp_levels, coefficient()(0).value(),
-			  used_flag_value()(0)));
+    (new TemperatureLevelOffset(press->clone(), temp_levels, coefficient()(0).value()));
   return res;
 }
 
@@ -55,8 +53,6 @@ void TemperatureLevelOffset::print(std::ostream& Os) const
   OstreamPad opad(Os, "    ");
   Os << "TemperatureLevelOffset:\n"
      << "  Temperature offset: " << coefficient()(0) << "\n"
-     << "  Retrieval flag:     " << (used_flag_value()(0) ? 
-					"True\n" : "False\n")
      << "  Level Initial Guess:\n";
   opad << temp_levels << "\n";
   opad.strict_sync();

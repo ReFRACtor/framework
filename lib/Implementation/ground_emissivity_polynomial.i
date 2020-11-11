@@ -17,9 +17,9 @@ namespace FullPhysics {
 class GroundEmissivityPolynomial: public GroundImpBase {
 public:
   GroundEmissivityPolynomial(const blitz::Array<double, 2>& Spec_coeffs,
-			     const blitz::Array<bool, 2>& Flag,
-			     const ArrayWithUnit<double, 1>& Ref_points,
-			     const std::vector<std::string>& Desc_band_names);
+                             const ArrayWithUnit<double, 1>& Ref_points,
+                             const std::vector<std::string>& Desc_band_names,
+                             boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
   virtual const AutoDerivative<double> emissivity(const DoubleWithUnit wave_point, const int spec_index) const;

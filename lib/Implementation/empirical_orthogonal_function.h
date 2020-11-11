@@ -26,9 +26,6 @@ public:
 /// Constructor.
 ///
 /// \param Coeff - Initial value of scale factor
-/// \param Used_flag - If true, we update scale factor by values in
-///    StateVector. If false, we hold this fixed and just used the
-///    initial value.
 /// \param Eof_waveform - Offset to add for zero level. This
 ///    is indexed by the instrument pixel.
 /// \param Order - Order of the eigenvector (e.g., first order
@@ -45,7 +42,6 @@ public:
 //-----------------------------------------------------------------------
   
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
 			      const ArrayWithUnit<double, 1>& Eof_waveform,
 			      int Order,
 			      const std::string& Band_name,
@@ -59,11 +55,10 @@ public:
       eof_depend_on_sounding_number_(Eof_depend_on_sounding_number),
       eof_(Eof_waveform)
   {
-    init(Coeff, Used_flag);
+    init(Coeff);
   }
 
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
 			      const SampleGrid& Disp,
 			      const HdfFile& Hdf_static_input,
 			      int Spec_index,
@@ -73,7 +68,6 @@ public:
 			      const std::string& Hdf_group = 
 			      "Instrument/EmpiricalOrthogonalFunction");
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
 			      const HdfFile& Hdf_static_input,
 			      int Spec_index,
 			      int Sounding_number,
@@ -82,7 +76,6 @@ public:
 			      const std::string& Hdf_group = 
 			      "Instrument/EmpiricalOrthogonalFunction");
   EmpiricalOrthogonalFunction(double Coeff, 
-			      bool Used_flag,
 			      const HdfFile& Hdf_static_input,
 			      const ArrayWithUnit<double, 1>& Uncertainty,
 			      int Spec_index,

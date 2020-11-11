@@ -12,9 +12,8 @@ namespace FullPhysics {
 class TemperatureLevelOffset: public TemperatureOffset {
 public:
   TemperatureLevelOffset(const boost::shared_ptr<Pressure>& Press,
-		   const blitz::Array<double, 1>& Temp_levels,
-		   double Temp_offset,
-		   bool Temp_flag);
+                         const blitz::Array<double, 1>& Temp_levels,
+                         double Temp_offset);
   virtual boost::shared_ptr<Temperature> clone() const;
   virtual std::string state_vector_name_i(int i) const;
   %python_attribute(temperature_offset, double)

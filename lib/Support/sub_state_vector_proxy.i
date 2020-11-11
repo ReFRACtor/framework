@@ -16,7 +16,6 @@ class SubStateVectorProxy : public SubStateVectorObserver {
 public:
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub,
 				const blitz::Array<double, 2>& Cov_sub);
-  virtual void mark_used_sub(blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name)
     const;
   virtual void notify_add(StateVector& Sv);

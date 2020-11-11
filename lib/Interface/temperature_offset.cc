@@ -28,14 +28,11 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 TemperatureOffset::TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
-                                     double Temp_offset,
-                                     bool Temp_flag)
+                                     double Temp_offset)
 {
-  Array<bool, 1> flag(1);
-  Array<double, 1> val(flag.shape());
-  flag(0) = Temp_flag;
+  Array<double, 1> val(1);
   val(0) = Temp_offset;
-  init(val, flag, Press);
+  init(val, Press);
 }
 
 //-----------------------------------------------------------------------
@@ -81,8 +78,7 @@ std::string TemperatureOffset::state_vector_name_i(int UNUSED(i)) const
 
 double TemperatureOffset::temperature_offset_uncertainty() const
 {
-  if(!used_flag_value()(0) ||
-     cov.rows() == 0 ||
+  if(cov.rows() == 0 ||
      cov(0,0) < 0)
     return 0.0;
   return sqrt(cov(0,0));

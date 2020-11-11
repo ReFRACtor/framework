@@ -17,7 +17,6 @@ namespace FullPhysics {
 class AerosolExtinctionLevel : public AerosolExtinctionImpBase {
 public:
   AerosolExtinctionLevel(const boost::shared_ptr<Pressure>& Press,
-                         const blitz::Array<bool, 1>& Flag, 
                          const blitz::Array<double, 1>& Aext,
                          const std::string& Aerosol_name,
                          boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());

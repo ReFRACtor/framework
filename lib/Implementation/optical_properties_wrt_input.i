@@ -21,10 +21,11 @@ public:
   %pickle_serialization();
 protected:
   virtual void initialize_with_jacobians(const ArrayAd<double, 1>& rayleigh_od, 
-					 const ArrayAd<double, 2>& gas_od,
-					 const ArrayAd<double, 2>& aerosol_ext_od,
-					 const ArrayAd<double, 2>& aerosol_sca_od,
-					 const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper);
+                                         const ArrayAd<double, 2>& gas_od,
+                                         const ArrayAd<double, 2>& aerosol_ext_od,
+                                         const ArrayAd<double, 2>& aerosol_sca_od,
+                                         const boost::shared_ptr<AerosolPhaseFunctionHelper>& aer_pf_helper,
+                                         const int num_jacobians = -1);
 };
 
 }

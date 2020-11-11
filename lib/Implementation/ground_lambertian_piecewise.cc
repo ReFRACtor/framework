@@ -19,14 +19,14 @@ FP_IMPLEMENT(GroundLambertianPiecewise);
 
 GroundLambertianPiecewise::GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                                                      const blitz::Array<double, 1>& lambertian_values,
-                                                     const blitz::Array<bool, 1>& retrieval_flag)
-: GroundPiecewise(spectral_points, lambertian_values, retrieval_flag)
+                                                     const boost::shared_ptr<StateMapping>& mapping)
+: GroundPiecewise(spectral_points, lambertian_values, mapping)
 {
 }
 
 boost::shared_ptr<Ground> GroundLambertianPiecewise::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(spectral_points_, coefficient().value(), used_flag));
+    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(spectral_points_, coefficient().value()));
 }
 
 std::string GroundLambertianPiecewise::sub_state_identifier() const {

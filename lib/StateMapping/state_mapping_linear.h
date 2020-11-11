@@ -19,36 +19,41 @@ public:
   /// Default Constructor.
   //-----------------------------------------------------------------------
 
-  StateMappingLinear() : map_name("linear") {}
+  StateMappingLinear() {}
 
   //-----------------------------------------------------------------------
   /// Calculation of forward model view of coeffs with mapping applied
   //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> fm_view
-  (const ArrayAd<double, 1>& updated_coeff) const
-  { return updated_coeff; }
+  virtual ArrayAd<double, 1> mapped_state
+  (const ArrayAd<double, 1>& retrieval_values) const
+  { return retrieval_values; }
 
   //-----------------------------------------------------------------------
   /// Calculation of initial retrieval view  of coeffs with mapping applied
   //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> retrieval_init
-  (const ArrayAd<double, 1>& initial_coeff) const
-  { return initial_coeff; }
+  virtual ArrayAd<double, 1> retrieval_state
+  (const ArrayAd<double, 1>& initial_values) const
+  { return initial_values; }
+
+  //-----------------------------------------------------------------------
+  /// Index into initial values for each retrieval state entry
+  //-----------------------------------------------------------------------
+  virtual int initial_values_index(const int retrieval_state_index) const
+  { return retrieval_state_index; }
 
   //-----------------------------------------------------------------------
   /// Assigned mapping name
   //-----------------------------------------------------------------------
   
-  virtual std::string name() const { return map_name; }
+  virtual std::string name() const { return "linear"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const
   {
     return boost::shared_ptr<StateMapping>(new StateMappingLinear());
   }
 private:
-  std::string map_name;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

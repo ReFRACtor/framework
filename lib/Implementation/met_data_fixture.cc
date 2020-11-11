@@ -19,5 +19,5 @@ MetDataFixture::MetDataFixture()
     boost::shared_ptr<HdfFile> met_file(new HdfFile(test_data_dir() + "in/meteorology/example_met_data.h5"));
     met_data.reset(new ExampleMetFile(met_file, "20091009203401"));
 
-    pressure.reset(new PressureSigma(pressure_array, psurf_val, false));
+    pressure.reset(new PressureSigma(pressure_array, psurf_val));
 }

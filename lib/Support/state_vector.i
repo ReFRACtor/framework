@@ -39,7 +39,6 @@ public:
   void update_state(const ArrayAd<double, 1>& X,
 		    const blitz::Array<double, 2>& Cov);
     
-  %python_attribute(used_flag, blitz::Array<bool, 1>);
   %python_attribute_with_set(observer_claimed_size, int);
 
   std::string print_to_string() const;

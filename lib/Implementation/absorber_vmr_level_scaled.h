@@ -15,7 +15,6 @@ public:
   AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
                          const blitz::Array<double, 1>& Vmr_profile,
                          double Scale,                         
-                         bool Scale_flag,
                          const std::string& Gas_name);
   virtual ~AbsorberVmrLevelScaled() {}
   virtual double scale_factor() const;

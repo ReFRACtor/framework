@@ -47,8 +47,6 @@ protected:
   mutable ArrayAd<double, 2> stokes_coeff;
   virtual void calc_stokes_coeff() const = 0;
   StokesCoefficientImpBase();
-  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag);
+  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
-

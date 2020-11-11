@@ -6,6 +6,8 @@ import pprint
 import numpy as np
 from netCDF4 import Dataset
 
+from refractor_swig import StateMappingAtIndexes
+
 from .config import load_config_module, find_strategy_function
 from .configuration_interface import ConfigurationInterface
 
@@ -76,6 +78,17 @@ class StrategyExecutor(object):
         config_inst.attach_output(self.output, step_index)
         config_inst.radiance_all()
 
+    def retrieval_indexes(self, rc_obj):
+
+        # Replicate old behavior of having retrieval flags for certain state
+        # vector parameters where we want to subselect the covariance in case
+        # we turn some of the parameters dynamically during a retrieval but
+        # supply the whole covariance to the config
+        if isinstance(rc_obj.state_mapping, StateMappingAtIndexes):
+            return rc_obj.state_mapping.retrieval_indexes
+        else:
+            return None
+
     def update_covariance(self, config_inst):
         logger.debug("Updating covariances for next step using a posteriori covariance")
         if config_inst.retrieval_components is None:
@@ -115,9 +128,11 @@ class StrategyExecutor(object):
     
             # Use retrieval flag to subset covariance, this should parallel what is done in CovarianceByComponent to 
             # prepare covariances for input
-            if self.covariance_storage[rc_name].shape[0] != rc_obj.statevector_covariance.shape[0]:
-                used_indexes = np.ix_(rc_obj.used_flag_value, rc_obj.used_flag_value)
-                self.covariance_storage[rc_name][used_indexes] = rc_obj.statevector_covariance[:]
+            retrieval_indexes = self.retrieval_indexes(rc_obj)
+
+            if retrieval_indexes is not None:
+                used_indexes = np.ix_(retrieval_indexes, retrieval_indexes)
+                self.covariance_storage[rc_name][used_indexes] = rc_obj.statevector_covariance[:, :]
             else:
                 self.covariance_storage[rc_name][:] = rc_obj.statevector_covariance[:]
 

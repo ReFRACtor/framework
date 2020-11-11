@@ -35,10 +35,10 @@ FP_IMPLEMENT(GroundPiecewise);
 
 GroundPiecewise::GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                                  const blitz::Array<double, 1>& point_values,
-                                 const blitz::Array<bool, 1>& retrieval_flag)
+                                 const boost::shared_ptr<StateMapping>& mapping)
 {
   spectral_points_ = spectral_points;
-  init(point_values, retrieval_flag);
+  init(point_values, mapping);
   update_sub_state_hook();
 }
 
@@ -62,12 +62,15 @@ const AutoDerivative<double> GroundPiecewise::value_at_point(const DoubleWithUni
 
 void GroundPiecewise::update_sub_state_hook()
 {
-  typedef LinearInterpolate<double, AutoDerivative<double> > interp_type;
+  ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
 
+  std::vector<AutoDerivative<double> > points_list;
   std::vector<AutoDerivative<double> > coeff_list;
   for(int idx = 0; idx < coefficient().rows(); idx++) {
-    coeff_list.push_back(coefficient()(idx));
+    points_list.push_back(spectral_points_.value(idx));
+    coeff_list.push_back(mapped_state_coeff(idx));
   }
 
-  ground_interp.reset( new interp_type(spectral_points_.value.begin(), spectral_points_.value.end(), coeff_list.begin()) );
+  typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > interp_type;
+  ground_interp.reset( new interp_type(points_list.begin(), points_list.end(), coeff_list.begin()) );
 }

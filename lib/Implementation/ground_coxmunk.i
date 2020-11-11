@@ -15,7 +15,6 @@ namespace FullPhysics {
 class GroundCoxmunk: public GroundImpBase {
 public:
   GroundCoxmunk(const double Windspeed,
-                const bool& Ws_flag, 
                 const blitz::Array<double, 1>& Refr_index);
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
   virtual const AutoDerivative<double> windspeed() const;

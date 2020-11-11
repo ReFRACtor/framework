@@ -4,7 +4,7 @@
 #include "ground_imp_base.h"
 #include "auto_derivative.h"
 #include "array_with_unit.h"
-
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -18,42 +18,38 @@ namespace FullPhysics {
 *******************************************************************/
 class GroundBrdf: virtual public GroundImpBase {
 public:
-  enum ParamIndex {
-		   BRDF_WEIGHT_INTERCEPT_INDEX, 
-		   BRDF_WEIGHT_SLOPE_INDEX,
-		   RAHMAN_KERNEL_FACTOR_INDEX,
-		   RAHMAN_OVERALL_AMPLITUDE_INDEX,
-		   RAHMAN_ASYMMETRY_FACTOR_INDEX,
-		   RAHMAN_GEOMETRIC_FACTOR_INDEX,
-		   BREON_KERNEL_FACTOR_INDEX
-  };
+    enum ParamIndex {
+        RAHMAN_KERNEL_FACTOR_INDEX = 0,
+        RAHMAN_OVERALL_AMPLITUDE_INDEX = 1,
+        RAHMAN_ASYMMETRY_FACTOR_INDEX = 2,
+        RAHMAN_GEOMETRIC_FACTOR_INDEX = 3,
+        BREON_KERNEL_FACTOR_INDEX = 4,
+        BRDF_WEIGHT_INTERCEPT_INDEX = 5,
+        BRDF_WEIGHT_SLOPE_INDEX = 6
+    };
 
   GroundBrdf(const blitz::Array<double, 2>& Coeffs,
-	     const blitz::Array<bool, 2>& Flag,
-	     const ArrayWithUnit<double, 1>& Ref_points,
-	     const std::vector<std::string>& Desc_band_names);
+             const ArrayWithUnit<double, 1>& Ref_points,
+             const std::vector<std::string>& Desc_band_names,
+             boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
-  virtual ArrayAd<double, 1> surface_parameter(double wn, int spec_index) const;
+  virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
   virtual int number_spectrometer() const { return desc_band_names.size(); }
 
-  // Rahman parameters
+  virtual const int number_weight_parameters() const { return num_weight_params; }
+
   virtual const AutoDerivative<double> weight(double wn, int spec_index) const;
   virtual const AutoDerivative<double> weight_intercept(int spec_index) const;
   virtual const AutoDerivative<double> weight_slope(int spec_index) const;
+  virtual const ArrayAd<double, 1> weight_parameters(const int spec_index) const;
+
+  // Rahman parameters
   virtual const AutoDerivative<double> rahman_factor(int spec_index) const;
   virtual const AutoDerivative<double> hotspot_parameter(int spec_index) const;
   virtual const AutoDerivative<double> asymmetry_parameter(int spec_index) const;
   virtual const AutoDerivative<double> anisotropy_parameter(int spec_index) const;
   virtual const AutoDerivative<double> breon_factor(int spec_index) const;
-
-  virtual void weight_intercept(int spec_index, const AutoDerivative<double>& val);
-  virtual void weight_slope(int spec_index, const AutoDerivative<double>& val);
-  virtual void rahman_factor(int spec_index, const AutoDerivative<double>& val);
-  virtual void hotspot_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void asymmetry_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void anisotropy_parameter(int spec_index, const AutoDerivative<double>& val);
-  virtual void breon_factor(int spec_index, const AutoDerivative<double>& val);
 
   const blitz::Array<double, 2> brdf_covariance(int spec_index) const;
    
@@ -86,10 +82,13 @@ public:
 protected:
 
   GroundBrdf(const blitz::Array<double, 1>& Spec_coeffs,
-	     const blitz::Array<bool, 1>& Flag, 
-	     const ArrayWithUnit<double, 1>& Ref_points,
-	     const std::vector<std::string>& Desc_band_names);
+             const ArrayWithUnit<double, 1>& Ref_points,
+             const std::vector<std::string>& Desc_band_names,
+             boost::shared_ptr<StateMapping> Mapping);
+
   GroundBrdf() {}
+
+  virtual ArrayAd<double, 1> brdf_parameters_flat() const;
 
   ArrayWithUnit<double, 1> reference_points;
   std::vector<std::string> desc_band_names;
@@ -97,6 +96,10 @@ protected:
   // Helper function for routines that call fortran codes
   blitz::Array<double, 1> black_sky_params(int Spec_index);
   blitz::Array<double, 1> kernel_value_params(int Spec_index);
+
+  int num_weight_params;
+  int num_coeff;
+
 private:
   friend class boost::serialization::access;
   template<class Archive>
@@ -107,10 +110,10 @@ private:
 class GroundBrdfVeg: virtual public GroundBrdf {
 public:
   GroundBrdfVeg(const blitz::Array<double, 2>& Coeffs,
-		const blitz::Array<bool, 2>& Flag,
-		const ArrayWithUnit<double, 1>& Ref_points,
-		const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
+                const ArrayWithUnit<double, 1>& Ref_points,
+                const std::vector<std::string>& Desc_band_names,
+                boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()) :
+    GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
@@ -120,14 +123,14 @@ public:
   virtual const std::string breon_type() const { return "Vegetative"; }
 
   virtual boost::shared_ptr<Ground> clone() const {
-    return boost::shared_ptr<Ground>(new GroundBrdfVeg(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundBrdfVeg(brdf_parameters_flat().value(), reference_points, desc_band_names, mapping));
   }
 private:
   GroundBrdfVeg(const blitz::Array<double, 1>& Spec_coeffs,
-		const blitz::Array<bool, 1>& Flag, 
-		const ArrayWithUnit<double, 1>& Ref_points,
-		const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Spec_coeffs, Flag, Ref_points, Desc_band_names) {}
+                const ArrayWithUnit<double, 1>& Ref_points,
+                const std::vector<std::string>& Desc_band_names,
+                boost::shared_ptr<StateMapping> Mapping) :
+    GroundBrdf(Spec_coeffs, Ref_points, Desc_band_names, Mapping) {}
   GroundBrdfVeg() {}
   friend class boost::serialization::access;
   template<class Archive>
@@ -137,10 +140,10 @@ private:
 class GroundBrdfSoil: virtual public GroundBrdf {
 public:
   GroundBrdfSoil(const blitz::Array<double, 2>& Coeffs,
-		 const blitz::Array<bool, 2>& Flag,
-		 const ArrayWithUnit<double, 1>& Ref_points,
-		 const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Coeffs, Flag, Ref_points, Desc_band_names) {}
+                 const ArrayWithUnit<double, 1>& Ref_points,
+                 const std::vector<std::string>& Desc_band_names,
+                 boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()) :
+    GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
@@ -150,14 +153,14 @@ public:
   virtual const std::string breon_type() const { return "Soil"; }
 
   virtual boost::shared_ptr<Ground> clone() const {
-    return boost::shared_ptr<Ground>(new GroundBrdfSoil(coefficient().value(), used_flag_value(), reference_points, desc_band_names));
+    return boost::shared_ptr<Ground>(new GroundBrdfSoil(brdf_parameters_flat().value(), reference_points, desc_band_names, mapping));
   }
 private:
   GroundBrdfSoil(const blitz::Array<double, 1>& Spec_coeffs,
-		 const blitz::Array<bool, 1>& Flag, 
-		 const ArrayWithUnit<double, 1>& Ref_points,
-		 const std::vector<std::string>& Desc_band_names) :
-    GroundBrdf(Spec_coeffs, Flag, Ref_points, Desc_band_names) {}
+                 const ArrayWithUnit<double, 1>& Ref_points,
+                 const std::vector<std::string>& Desc_band_names,
+                 boost::shared_ptr<StateMapping> Mapping) :
+    GroundBrdf(Spec_coeffs, Ref_points, Desc_band_names, Mapping) {}
   GroundBrdfSoil() {}
   friend class boost::serialization::access;
   template<class Archive>

@@ -14,7 +14,6 @@ class AbsorberVmrScaled : virtual public AbsorberVmrImpBase {
 public:
   AbsorberVmrScaled(const boost::shared_ptr<Pressure>& Press,
                     double Scale,                         
-                    bool Scale_flag,
                     const std::string& Gas_name);
 
   virtual ~AbsorberVmrScaled() {}

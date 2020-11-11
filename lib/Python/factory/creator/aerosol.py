@@ -4,7 +4,6 @@ import os
 import numpy as np
 
 from .base import Creator, ParamPassThru
-from .value import CreatorFlaggedValue
 from .. import param
 
 from refractor import framework as rf
@@ -46,8 +45,9 @@ class AerosolOptical(Creator):
         return rf.AerosolOptical(vec_extinction, vec_properties, self.pressure(), self.relative_humidity(), self.reference_wn())
 
 
-class AerosolShapeGaussian(CreatorFlaggedValue):
+class AerosolShapeGaussian(Creator):
 
+    shape_params = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
     log_retrieval = param.Scalar(bool, default=True)
 
@@ -56,11 +56,12 @@ class AerosolShapeGaussian(CreatorFlaggedValue):
         if aerosol_name is None:
             raise param.ParamError("aerosol_name not supplied to creator")
 
-        return rf.AerosolShapeGaussian(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, not self.log_retrieval())
+        return rf.AerosolShapeGaussian(self.pressure(), self.shape_params(), aerosol_name, not self.log_retrieval())
 
 
-class AerosolProfileExtinction(CreatorFlaggedValue):
+class AerosolProfileExtinction(Creator):
 
+    extinction_profile = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
 
     # Callers should specify either log_retrieval or mapping; not both
@@ -81,7 +82,7 @@ class AerosolProfileExtinction(CreatorFlaggedValue):
         else:
             effective_mapping = rf.StateMappingLinear()
 
-        return rf.AerosolExtinctionLevel(self.pressure(), self.retrieval_flag(), self.value(), aerosol_name, effective_mapping)
+        return rf.AerosolExtinctionLevel(self.pressure(), self.extinction_profile(), aerosol_name, effective_mapping)
 
 
 class AerosolPropertyHdf(Creator):

@@ -13,12 +13,11 @@ using namespace blitz;
 //-----------------------------------------------------------------------
 
 TemperatureLevel::TemperatureLevel(const blitz::Array<double, 1> Temp,
-                                   const blitz::Array<bool, 1> Temp_flag,
                                    const boost::shared_ptr<Pressure>& Press,
                                    boost::shared_ptr<StateMapping> Map)
 : pressure(Press)
 {
-    init(Temp, Temp_flag, Press, Map);
+    init(Temp, Press, Map);
 }
 
 //-----------------------------------------------------------------------
@@ -42,9 +41,9 @@ void TemperatureLevel::calc_temperature_grid() const
         throw Exception(err_msg.str());
     }
 
-    ArrayAd<double, 1> fm_view_coeff = mapping->fm_view(coeff);
+    ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
     for(int i = 0; i < press_profile.rows(); ++i) {
-        tlist.push_back(fm_view_coeff(i));
+        tlist.push_back(mapped_state_coeff(i));
         plist.push_back(press_profile(i));
     }
 
@@ -63,7 +62,7 @@ std::string TemperatureLevel::state_vector_name_i(int i) const
 boost::shared_ptr<Temperature> TemperatureLevel::clone() const
 {
     return boost::shared_ptr<TemperatureLevel>
-        (new TemperatureLevel(coeff.value(), used_flag, pressure->clone(), mapping->clone()));
+        (new TemperatureLevel(coeff.value(), pressure->clone(), mapping->clone()));
 }
 
 void TemperatureLevel::print(std::ostream& Os) const

@@ -9,7 +9,6 @@ using namespace blitz;
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(RadianceScalingSvFit, InstrumentCorrection)
 .def(luabind::constructor<const blitz::Array<double, 1>&, 
-                          const blitz::Array<bool, 1>&,
                           const DoubleWithUnit&,
                           const std::string&>())
 REGISTER_LUA_END()
@@ -33,7 +32,7 @@ void RadianceScalingSvFit::apply_correction
 boost::shared_ptr<InstrumentCorrection> RadianceScalingSvFit::clone() const
 {
   return boost::shared_ptr<InstrumentCorrection>
-    (new RadianceScalingSvFit(coeff.value().copy(), used_flag, band_ref, band_name));
+    (new RadianceScalingSvFit(coeff.value().copy(), band_ref, band_name));
 }
 
 std::string RadianceScalingSvFit::state_vector_name_i(int i) const
