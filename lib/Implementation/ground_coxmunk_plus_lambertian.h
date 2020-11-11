@@ -11,7 +11,8 @@ namespace FullPhysics {
   This class implements a Coxmunk plus Lambertian ground type. 
 *******************************************************************/
 
-class GroundCoxmunkPlusLambertian: public Ground, public SubStateVectorProxy {
+class GroundCoxmunkPlusLambertian: virtual public Ground,
+				   virtual public SubStateVectorProxy {
 public:
   GroundCoxmunkPlusLambertian(const boost::shared_ptr<GroundCoxmunk>& Coxmunk, const boost::shared_ptr<GroundLambertian>& Lambertian);
 
@@ -30,6 +31,12 @@ public:
 private:
   boost::shared_ptr<GroundCoxmunk> coxmunk_;
   boost::shared_ptr<GroundLambertian> lambertian_;
+  GroundCoxmunkPlusLambertian() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(GroundCoxmunkPlusLambertian);
 #endif

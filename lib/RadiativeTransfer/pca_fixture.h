@@ -1,4 +1,5 @@
 #include "configuration_fixture.h"
+#include "hdf_file.h"
 #include "unit_test_support.h"
 
 #include "optical_properties_wrt_rt.h"

@@ -6,14 +6,23 @@
 #include "temperature_imp_base.h"
 %}
 
+%base_import(observer)
 %base_import(temperature)
 %base_import(sub_state_vector_array)
 
 %fp_shared_ptr(FullPhysics::TemperatureImpBase);
+%fp_shared_ptr(FullPhysics::TemperatureImpBaseCache);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::Temperature>);
 namespace FullPhysics {
 %template(SubStateVectorArrayTemperature) 
      FullPhysics::SubStateVectorArray<Temperature>;
+
+class TemperatureImpBaseCache : public CacheInvalidatedObserver {
+public:
+  TemperatureImpBaseCache();
+  boost::function<AutoDerivative<double>(AutoDerivative<double>)> tgrid;
+  %pickle_serialization();
+};
 
 // Allow these classes to be derived from in Python.
 %feature("director") TemperatureImpBase;
@@ -43,15 +52,12 @@ public:
   temperature(const AutoDerivativeWithUnit<double>& Press) const;
 
   %sub_state_virtual_func(Temperature);
+  %pickle_serialization();
 protected:
-  mutable bool cache_stale;
-  mutable boost::function<AutoDerivative<double>(const AutoDerivative<double>&)> tgrid;
+  mutable TemperatureImpBaseCache cache;
   virtual void calc_temperature_grid() const = 0;
   TemperatureImpBase(const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-	             int Pdep_start = 0);
+                     const boost::shared_ptr<Pressure>& Press);
 };
 }
 

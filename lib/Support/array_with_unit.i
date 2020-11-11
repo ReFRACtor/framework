@@ -12,8 +12,10 @@
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 1>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 2>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 3>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 4>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 1>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 2>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>)
 
 %pythoncode %{
@@ -92,15 +94,18 @@ public:
             raise NotImplementedError("Setting values not yet implemented as it would require multiple data copies")
 
     }
+  %pickle_serialization();
 };
 }
 
 %template(ArrayWithUnit_double_1) FullPhysics::ArrayWithUnit<double, 1>;
 %template(ArrayWithUnit_double_2) FullPhysics::ArrayWithUnit<double, 2>;
 %template(ArrayWithUnit_double_3) FullPhysics::ArrayWithUnit<double, 3>;
+%template(ArrayWithUnit_double_4) FullPhysics::ArrayWithUnit<double, 4>;
 %template(ArrayWithUnit_float_1) FullPhysics::ArrayWithUnit<float, 1>;
 %template(ArrayWithUnit_float_2) FullPhysics::ArrayWithUnit<float, 2>;
 %template(ArrayWithUnit_float_3) FullPhysics::ArrayWithUnit<float, 3>;
+%template(ArrayWithUnit_float_4) FullPhysics::ArrayWithUnit<float, 4>;
 
 %pythoncode %{
     class ArrayWithUnit(object):
@@ -123,6 +128,8 @@ public:
                 return ArrayWithUnit_double_2(dbl_value, units)
             elif len(dbl_value.shape) == 3:
                 return ArrayWithUnit_double_3(dbl_value, units)
+            elif len(dbl_value.shape) == 4:
+                return ArrayWithUnit_double_4(dbl_value, units)
             else:
                 raise Exception("no template instance implemented for array with {} dimensions".format(len(dbl_value.shape)))
 %}

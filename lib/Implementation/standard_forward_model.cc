@@ -1,7 +1,27 @@
 #include "standard_forward_model.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
+
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void StandardForwardModel::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ForwardModel)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableNamedSpectrumPtr)
+    & FP_NVP(spec_effect)
+    & FP_NVP(inst)
+    & FP_NVP(swin)
+    & FP_NVP(rt)
+    & FP_NVP_(spectrum_sampling)
+    & FP_NVP(g);
+}
+
+FP_IMPLEMENT(StandardForwardModel);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -122,3 +142,20 @@ void StandardForwardModel::print(std::ostream& Os) const
         opad.strict_sync();
     }
 }
+
+std::vector<boost::shared_ptr<GenericObject> >
+StandardForwardModel::subobject_list() const
+{ std::vector<boost::shared_ptr<GenericObject> > res;
+  BOOST_FOREACH(auto i, spec_effect) {
+    BOOST_FOREACH(auto j, i) {
+      res.push_back(j);
+    }
+  }
+  res.push_back(inst);
+  res.push_back(swin);
+  res.push_back(rt);
+  res.push_back(spectrum_sampling_);
+  res.push_back(g);
+  return res;
+}
+  

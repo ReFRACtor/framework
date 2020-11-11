@@ -8,14 +8,14 @@ class Linear(Creator):
     '''Creator for Linear or "one-to-one" mapping'''
 
     def create(self, **kwargs):
-        return rf.MappingLinear()
+        return rf.StateMappingLinear()
 
 
 class Log(Creator):
     '''Creator for Log mapping'''
 
     def create(self, **kwargs):
-        return rf.MappingLog()
+        return rf.StateMappingLog()
 
 
 class Offset(Creator):
@@ -25,7 +25,7 @@ class Offset(Creator):
     offsetee = param.Array(dims=1)
 
     def create(self, **kwargs):
-        return rf.MappingOffset(self.offset(), self.offsetee())
+        return rf.StateMappingOffset(self.offset(), self.offsetee())
 
 
 class Scale(Creator):
@@ -35,7 +35,7 @@ class Scale(Creator):
     scalee = param.Array(dims=1)
 
     def create(self, **kwargs):
-        return rf.MappingScale(self.scaling(), self.scalee())
+        return rf.StateMappingScale(self.scaling(), self.scalee())
 
 
 class Gaussian(Creator):
@@ -44,5 +44,52 @@ class Gaussian(Creator):
     linear_aod = param.Scalar(bool, default=True)
 
     def create(self, **kwargs):
-        return rf.MappingGaussian(self.pressure(), self.linear_aod())
+        return rf.StateMappingGaussian(self.pressure(), self.linear_aod())
 
+
+class InterpolateLinearLinear(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLinearLinear(self.pressure_to(), self.pressure_from())
+
+class InterpolateLogLinear(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLogLinear(self.pressure_to(), self.pressure_from())
+
+class InterpolateLogLog(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLogLog(self.pressure_to(), self.pressure_from())
+
+class InterpolateLinearLog(Creator):
+    '''Creator for Gaussian mapping'''
+    pressure_to = param.InstanceOf(rf.Pressure)
+    pressure_from = param.InstanceOf(rf.Pressure)
+
+    def create(self, **kwargs):
+        return rf.StateMappingInerpolateLinearLog(self.pressure_to(), self.pressure_from())
+
+class Composite(Creator):
+    '''Creator for Gaussian mapping'''
+
+    mappings = param.Iterable(rf.StateMapping)
+
+    def create(self, **kwargs):
+
+        mappings_inp = self.mappings()
+        mappings_vec = rf.vector_state_mapping()
+
+        for map_obj in mappings_inp:
+            mappings_vec.push_back(map_obj)
+        
+        return rf.StateMappingComposite(mappings_vec)

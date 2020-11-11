@@ -16,5 +16,6 @@ public:
   virtual ~Perturbation();
   std::string print_to_string() const;
   %python_attribute_abstract(perturbation, blitz::Array<double, 1>);
+  %pickle_serialization();
 };
 }

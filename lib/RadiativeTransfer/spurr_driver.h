@@ -34,12 +34,12 @@ namespace FullPhysics {
   by the specific incarnation of Spurr BRDF code.
 *******************************************************************/
 
-class SpurrBrdfDriver : public virtual GenericObject {
+class SpurrBrdfDriver : public Printable<SpurrBrdfDriver> {
 
 public:
   virtual void initialize_brdf_inputs(int surface_type);
-  virtual void setup_geometry(double sza, double azm, double zen) const = 0;
-  virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) const;
+  virtual void setup_geometry(double sza, double azm, double zen) = 0;
+  virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters);
 
   virtual int n_brdf_kernels() const = 0;
 
@@ -48,14 +48,14 @@ public:
   virtual int n_surface_wfs() const = 0;
   virtual bool do_kparams_derivs(const int kernel_index) const = 0;
   virtual bool do_shadow_effect() const = 0;
-
+  virtual void print(std::ostream& Os) const {Os << "SpurrBrdfDriver";}
 protected:
   virtual void initialize_brdf_kernel(int kernel_type);
 
-  virtual void setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes) const;
-  virtual void setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes) const;
-  virtual void setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes) const;
-  virtual void setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes) const;
+  virtual void setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes);
+  virtual void setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes);
+  virtual void setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes);
+  virtual void setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const blitz::Array<int, 1>& parameter_indexes);
 
   virtual void calculate_brdf() const = 0;
 
@@ -77,6 +77,10 @@ protected:
   // These are set through attributes linked to a valid array by the implementing class. 
   mutable blitz::Array<double, 1> brdf_factors;
   mutable blitz::Array<double, 2> brdf_params;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -87,7 +91,7 @@ protected:
   class to make unit testing easier.
 *******************************************************************/
 
-class SpurrRtDriver : public virtual GenericObject {
+class SpurrRtDriver : public Printable<SpurrRtDriver> {
 
 public:
 
@@ -126,29 +130,29 @@ public:
 
   /// Setup height grid, should only be called once per instance or if
   /// the height grid changes
-  virtual void setup_height_grid(const blitz::Array<double, 1>& height_grid) const = 0;
+  virtual void setup_height_grid(const blitz::Array<double, 1>& height_grid)  = 0;
 
   /// Setup viewing geometry, should only be called once per instance or if
   /// the viewing geometry changes
-  virtual void setup_geometry(double sza, double azm, double zen) const = 0;
+  virtual void setup_geometry(double sza, double azm, double zen) = 0;
 
   /// Set up thermal emission inputs
-  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const = 0;
+  virtual void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) = 0;
 
   /// Set up optical depth, single scattering albedo and phase function
   /// Should be called per spectral point
   virtual void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                     const blitz::Array<double, 1>& ssa,
-                                    const blitz::Array<double, 2>& pf) const = 0;
+                                    const blitz::Array<double, 2>& pf) = 0;
   
   /// Mark that we are not retrieving weighting functions
-  virtual void clear_linear_inputs() const =  0;
+  virtual void clear_linear_inputs() =  0;
 
   /// Set up linearization, weighting functions
   virtual void setup_linear_inputs(const ArrayAd<double, 1>& od,
                                    const ArrayAd<double, 1>& ssa,
                                    const ArrayAd<double, 2>& pf,
-                                   bool do_surface_linearization) const = 0;
+                                   bool do_surface_linearization) = 0;
 
   /// Perform radiative transfer calculation with the values
   /// setup by setup_optical_inputs and setup_linear_inputs
@@ -159,6 +163,7 @@ public:
 
   /// Copy jacobians out of internal xdata structures
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
+  virtual void print(std::ostream& Os) const {Os << "SpurrRtDriver";}
 
 protected:
 
@@ -166,9 +171,14 @@ protected:
 
   /// Spurr BRDF class interface class to use
   mutable boost::shared_ptr<SpurrBrdfDriver> brdf_driver_;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
 
+FP_EXPORT_KEY(SpurrBrdfDriver);
+FP_EXPORT_KEY(SpurrRtDriver);
 #endif

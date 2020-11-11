@@ -1,8 +1,20 @@
 #include "level_1b_sample_coefficient.h"
+#include "fp_serialize_support.h"
 #include "fe_disable_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Level1bSampleCoefficient::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Level1b);
+}
+
+FP_IMPLEMENT(Level1bSampleCoefficient);
+#endif
 
 #ifdef HAVE_LUA
 
@@ -46,23 +58,12 @@ REGISTER_LUA_END()
 
 #endif
 
-double Level1bSampleCoefficient::calculate_sample_value_from_coeffs(int Spec_index, int sample_index) const {
-    ArrayWithUnit<double, 1> spectral_coefficients = this->spectral_coefficient(Spec_index);
-    ArrayAd<double, 1> spectral_coeff_ad = ArrayAd<double, 1>(spectral_coefficients.value);
-    Poly1d spectral_poly = Poly1d(spectral_coeff_ad, false);
-    return spectral_poly(sample_index);
-}
+SpectralDomain Level1bSampleCoefficient::sample_grid(int channel_index) const {
+    ArrayWithUnit<double, 1> spec_coeffs = this->spectral_coefficient(channel_index);
+    Array<double, 1> var_values = this->spectral_variable(channel_index);
 
-
-SpectralDomain Level1bSampleCoefficient::sample_grid(int Spec_index) const {
-    int num_samples = this->number_sample(Spec_index);
-    int sample_offset = (this->one_based_) ? 1 : 0;
-    Array<double, 1> grid_data = Array<double, 1>(num_samples);
-    for (int sample_index = 0; sample_index < num_samples; sample_index++) {
-        grid_data(sample_index) = this->calculate_sample_value_from_coeffs(Spec_index, sample_index + sample_offset);
-    }
-    ArrayWithUnit<double, 1> sample_grid_data = ArrayWithUnit<double, 1>(grid_data, this->spectral_coefficient(Spec_index).units);
-    SpectralDomain sample_grid = SpectralDomain(sample_grid_data);
+    Poly1d spectral_poly = Poly1d(spec_coeffs.value, false);
+    SpectralDomain sample_grid = SpectralDomain(spectral_poly(var_values), spec_coeffs.units);
     return sample_grid;
 }
 

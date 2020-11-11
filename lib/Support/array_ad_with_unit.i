@@ -10,8 +10,12 @@
 %import "array_ad.i"
 %import "unit.i"
 
+%fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 1>);
+%fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 2>);
+%fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 3>);
+%fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 4>);
 namespace FullPhysics {
-template<class T, int D> class ArrayAdWithUnit
+template<class T, int D> class ArrayAdWithUnit: public GenericObject
 {
 public:
   ArrayAdWithUnit();
@@ -49,11 +53,13 @@ def units(self):
 def units(self,val):
     self._units_set(val)
   }
+  std::string print_to_string() const;
+  %pickle_serialization();
 };
-%template(ArrayAdWithUnitDouble_1) FullPhysics::ArrayAdWithUnit<double, 1>;
-%template(ArrayAdWithUnitDouble_2) FullPhysics::ArrayAdWithUnit<double, 2>;
-%template(ArrayAdWithUnitDouble_3) FullPhysics::ArrayAdWithUnit<double, 3>;
-%template(ArrayAdWithUnitDouble_4) FullPhysics::ArrayAdWithUnit<double, 4>;
+%template(ArrayAdWithUnit_double_1) FullPhysics::ArrayAdWithUnit<double, 1>;
+%template(ArrayAdWithUnit_double_2) FullPhysics::ArrayAdWithUnit<double, 2>;
+%template(ArrayAdWithUnit_double_3) FullPhysics::ArrayAdWithUnit<double, 3>;
+%template(ArrayAdWithUnit_double_4) FullPhysics::ArrayAdWithUnit<double, 4>;
 }
 
 

@@ -1,8 +1,21 @@
 #include "bard_nlls_problem.h"
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void BardNLLSProblem::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblem)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblemState);
+}
+
+FP_IMPLEMENT(BardNLLSProblem);
+#endif
 
 // See base class for description.
 Array<double, 1> BardNLLSProblem::residual()

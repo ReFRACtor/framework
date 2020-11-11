@@ -37,6 +37,7 @@ public:
   (const SpectralDomain& Spec_domain, int Spec_index) const;
   %python_attribute(low_stream_radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
   %python_attribute(high_stream_radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
+  %pickle_serialization();
 };
 }
 

@@ -91,4 +91,31 @@ BOOST_AUTO_TEST_CASE(one_value)
   BOOST_CHECK_CLOSE(i3(2), 1, 1e-8);
 }
 
+BOOST_AUTO_TEST_CASE(serialize)
+{
+  Array<double, 1> y0(3), y1(3), y2(3);
+  y0 = 1,2,3;
+  y1 = 5,7,8;
+  y2 = 20,21,22;
+  std::vector<double> xvec;
+  std::vector<double> yvec;
+  xvec.push_back(0);
+  yvec.push_back(1);
+  xvec.push_back(2);
+  yvec.push_back(5);
+  xvec.push_back(6);
+  yvec.push_back(20);
+  boost::shared_ptr<LinearInterpolate<double, double> > interp =
+    boost::make_shared<LinearInterpolate<double, double> >
+    (xvec.begin(), xvec.end(), yvec.begin());
+  std::string d = serialize_write_string(interp);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<LinearInterpolate<double, double> > interpr =
+    serialize_read_string<LinearInterpolate<double, double>  >(d);
+  BOOST_CHECK_CLOSE((*interp)(1), (*interpr)(1), 1e-8);
+  BOOST_CHECK_CLOSE((*interp)(4), (*interpr)(4), 1e-8);
+  BOOST_CHECK_CLOSE((*interp)(7), (*interpr)(7), 1e-8);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -36,9 +36,6 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   }
   config_atmosphere = lua_config["atmosphere"].value_ptr<RtAtmosphere>();
   config_state_vector = lua_config["state_vector"].value_ptr<StateVector>();
-  if (!lua_config["pinp"].is_nil()) // Not all configs use this
-    config_pressure_level_input = 
-      lua_config["pinp"].value_ptr<PressureLevelInput>();
   config_pressure = lua_config["pressure"].value_ptr<Pressure>();
   config_instrument = lua_config["instrument"].value_ptr<Instrument>();
   config_spectral_window = lua_config["spec_win"].value_ptr<SpectralWindow>();

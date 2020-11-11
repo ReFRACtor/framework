@@ -24,8 +24,9 @@ namespace FullPhysics {
   the optical_depth_each_layer function. Other classes can make use of
   this information for logging if desired.
 *******************************************************************/
-class Absorber : virtual public StateVectorObserver,
-		    public Observable<Absorber> {
+class Absorber : public Printable<Absorber>,
+		 virtual public StateVectorObserver,
+		 public Observable<Absorber> {
 public:
   virtual ~Absorber() {}
   static AccumulatedTimer timer;
@@ -95,8 +96,29 @@ public:
 
   virtual boost::shared_ptr<Absorber> clone() const = 0;
 
+//-----------------------------------------------------------------------
+/// We have some fairly nested object hierarchies. It can be useful to
+/// be able to search this for things (e.g., which Pressure object is
+/// used by a ForwardModel?). This returns a list of subobjects
+/// "owned" by this object.
+//-----------------------------------------------------------------------
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    return res;
+  }
+  virtual void print(std::ostream& Os) const
+  { Os << "Absorber";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Absorber);
+FP_EXPORT_OBSERVER_KEY(Absorber);
 #endif
 
 

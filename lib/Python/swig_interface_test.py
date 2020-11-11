@@ -53,20 +53,19 @@ def test_extend_class_in_python():
 def test_returning_numpy_array():
     '''Test returning a numpy array'''
     f = rf.HeritageFile(unit_test_data + "old_ascii/solar_cont_v1.dat")
-    assert_array_equal(f.data, 
-                       [[  1.00000000e+00,   8.83596000e+21],
-                        [  2.00000000e+00, -9.48206000e+20],
-                        [  3.00000000e+00,  -1.51700000e+22],
-                        [  4.00000000e+00,   1.74114000e+22],
-                        [  5.00000000e+00, -7.73485000e+21],
-                        [  6.00000000e+00,   1.23130000e+21]])
+    assert f.data == approx([[  1.00000000e+00,   8.83596000e+21],
+                             [  2.00000000e+00, -9.48206000e+20],
+                             [  3.00000000e+00,  -1.51700000e+22],
+                             [  4.00000000e+00,   1.74114000e+22],
+                             [  5.00000000e+00, -7.73485000e+21],
+                             [  6.00000000e+00,   1.23130000e+21]])
 
 def test_second_class():
     '''Test is a second class. This makes sure the module initialization etc.
     get handled correctly for multiple classes.'''
     assert rf.conversion(rf.Unit("m"), rf.Unit("cm")) == 100.0
     u = rf.Unit("m")
-    assert_almost_equal(u.conversion_to_si, 1.0)
+    assert u.conversion_to_si == approx(1.0)
     assert u.name == "m"
     # Not working yet
     #print u.base_unit_powers
@@ -84,31 +83,31 @@ def test_class_using_another():
     correctly.'''
     d = rf.DoubleWithUnit(10, "m")
     d2 = d.convert("cm")
-    assert_almost_equal(d2.value, 10 * 100.0)
+    assert d2.value == approx(10 * 100.0)
     d2.value = 4
     d2.units = rf.Unit("m")
-    assert_almost_equal(d2.convert("m").value, 4.0)
+    assert d2.convert("m").value == approx(4.0)
     d2 = d2.convert("cm")
     d3 = d + d2
-    assert_almost_equal(d3.convert("m").value, 14.0)
+    assert d3.convert("m").value == approx(14.0)
     d3 = d - d2
-    assert_almost_equal(d3.convert("m").value, 6.0)
+    assert d3.convert("m").value == approx(6.0)
     d3 = d / d2
-    assert_almost_equal(d3.convert("dimensionless").value, 10.0 / 4)
+    assert d3.convert("dimensionless").value == approx(10.0 / 4)
     d3 = d * d2
-    assert_almost_equal(d3.convert("m^2").value, 40.0)
+    assert d3.convert("m^2").value == approx(40.0)
 
 def test_passing_numpy_array():
     '''Test that passes a numpy array to a function'''
     a = np.array([[1, 2],[3,4],[5,6]])
     t = rf.ArrayWithUnit_double_2(a, "m")
-    assert_almost_equal(t.value, a)
+    assert t.value == approx(a)
     b = np.array([[10, 20],[3,4],[55,66]])
     t.value = b
-    assert_almost_equal(t.value, b)
+    assert t.value == approx(b)
     t = rf.ArrayWithUnit_double_2(a[0:2,:], "m")
-    assert_almost_equal(t.value, [[1,2],[3,4]])
+    assert t.value == approx(np.array([[1,2],[3,4]]))
     t = rf.ArrayWithUnit_double_2(a[0::2,:], "m")
-    assert_almost_equal(t.value, [[1,2],[5,6]])
+    assert t.value == approx(np.array([[1,2],[5,6]]))
     t = rf.ArrayWithUnit_double_1(a[0:2,1], "m")
-    assert_almost_equal(t.value, [2,4])
+    assert t.value == approx(np.array([2,4]))

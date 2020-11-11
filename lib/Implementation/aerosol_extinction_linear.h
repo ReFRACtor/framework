@@ -12,14 +12,11 @@ namespace FullPhysics {
   This implementation just gets the extinction coefficient for each
   level from the state vector.
 *******************************************************************/
-class AerosolExtinctionLinear : public AerosolExtinctionLevel {
+class AerosolExtinctionLinear : virtual public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
 /// \param Press The pressure to use
-/// \param Flag Boolean flag indicating which levels are to be set by
-///   the state vector. A value of false means the level is held fixed
-///   when the state vector changes.
 /// \param Aext The aerosol extinction value.
 /// \param Aerosol_name The name of the aerosol. This is used to
 ///   generate the state vector name metadata, so it should be
@@ -27,13 +24,20 @@ public:
 //-----------------------------------------------------------------------
 
   AerosolExtinctionLinear(const boost::shared_ptr<Pressure>& Press,
-			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name);
 
   virtual ~AerosolExtinctionLinear() = default;
     
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
+protected:
+  AerosolExtinctionLinear() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolExtinctionLinear);
 #endif

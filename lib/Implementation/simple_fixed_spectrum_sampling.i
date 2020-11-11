@@ -18,5 +18,6 @@ public:
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 
 		 const DoubleWithUnit& Edge_extension) const;
+  %pickle_serialization();
 };
 }

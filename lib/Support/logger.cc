@@ -1,5 +1,7 @@
 #include "logger.h"
+#include "accumulated_timer.h"
 #include "fp_exception.h"
+#include <boost/make_shared.hpp>
 
 using namespace FullPhysics;
 
@@ -36,6 +38,15 @@ Logger& Logger::instance()
 {
   static Logger l;
   return l;
+}
+
+//-----------------------------------------------------------------------
+/// Create a new timer
+//-----------------------------------------------------------------------
+
+void Logger::create_timer(const std::string& Desc)
+{
+  instance().timer_ = boost::make_shared<AccumulatedTimer>(Desc);
 }
 
 //-----------------------------------------------------------------------

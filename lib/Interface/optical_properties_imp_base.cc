@@ -1,9 +1,64 @@
 #include "optical_properties_imp_base.h"
-
 #include "rayleigh_greek_moment.h"
+#include "fp_serialize_support.h"
 
 using namespace blitz;
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolPhaseFunctionHelper::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(AerosolPhaseFunctionHelper);
+
+  // Dummy placeholder, just so we can have derived classes call
+  // serialization of this. We use to have derived classes "know"
+  // that the base class doesn't have anything. But seems better to
+  // *always* have base classes do something, so we can add stuff in
+  // the future w/o breaking a bunch of code.
+  std::string p = "empty";
+  ar & FP_NVP2("placeholder", p);
+}
+
+template<class Archive>
+void AerosolPhaseFunctionPassThruHelper::serialize(Archive & ar,
+			   const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolPhaseFunctionHelper)
+    & FP_NVP(aerosol_pf_moments_in);
+}
+
+template<class Archive>
+void AerosolPhaseFunctionComputeHelper::serialize(Archive & ar,
+			   const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AerosolPhaseFunctionHelper)
+    & FP_NVP(wn) & FP_NVP_(aerosol);
+}
+
+template<class Archive>
+void OpticalPropertiesImpBase::serialize(Archive & ar,
+			   const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpticalProperties)
+    & FP_NVP(initialized) & FP_NVP_(gas_optical_depth_per_particle)
+    & FP_NVP_(rayleigh_optical_depth)
+    & FP_NVP_(aerosol_extinction_optical_depth_per_particle)
+    & FP_NVP_(aerosol_scattering_optical_depth_per_particle)
+    & FP_NVP_(aerosol_phase_function_helper)
+    & FP_NVP_(gas_optical_depth_per_layer)
+    & FP_NVP_(intermediate_jacobian)
+    & FP_NVP_(surface_reflective_parameters)
+    & FP_NVP_(atmosphere_blackbody)
+    & FP_NVP_(surface_blackbody);
+}
+
+FP_IMPLEMENT(AerosolPhaseFunctionHelper);
+FP_IMPLEMENT(AerosolPhaseFunctionPassThruHelper);
+FP_IMPLEMENT(AerosolPhaseFunctionComputeHelper);
+FP_IMPLEMENT(OpticalPropertiesImpBase);
+#endif
 
 //-----------------------------------------------------------------------
 /// Protected method that throws an exception if the class has not yet
@@ -326,7 +381,8 @@ const std::vector<ArrayAd<double, 3> > OpticalPropertiesImpBase::aerosol_phase_f
         aerosol_phase_function_moments_per_particle_ = aerosol_phase_function_helper_->phase_function_moments_per_particle(num_moments, num_scattering); 
 
         // Double check that the sizes of the value computed is consistent with other aerosol values
-        if (aerosol_extinction_optical_depth_per_particle_.cols() != aerosol_phase_function_moments_per_particle_.size()) {
+        if (aerosol_extinction_optical_depth_per_particle_.cols() !=
+	    (int) aerosol_phase_function_moments_per_particle_.size()) {
             throw Exception("Aerosol extinction optical depth and aerosol phase function moments have inconsistent number of particles");
         }
 
@@ -351,13 +407,17 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
     firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
     Range ra = Range::all();
 
-    if(number_aerosol_particles() > 0 && (aerosol_phase_function_moments_portion_.rows() == 0 || cached_num_scattering != num_moments || cached_num_scattering != num_scattering && aerosol_phase_function_helper_)) {
+    if(number_aerosol_particles() > 0 &&
+       (aerosol_phase_function_moments_portion_.rows() == 0 ||
+	cached_num_scattering != num_moments ||
+	(cached_num_scattering != num_scattering &&
+	 aerosol_phase_function_helper_))) {
         std::vector<ArrayAd<double, 3> > aer_pf_per_pert = aerosol_phase_function_moments_per_particle(num_moments, num_scattering);
 
         // Gather the maximum number of moments and scattering dimensions
 
         int max_num_moms = 0; int max_num_scatt = 0; int num_var = 0;
-        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+        for(int part_idx = 0; part_idx < (int) aer_pf_per_pert.size(); part_idx++) {
             max_num_moms = std::max(max_num_moms, aer_pf_per_pert[part_idx].rows());
             max_num_scatt = std::max(max_num_scatt, aer_pf_per_pert[part_idx].depth());
 
@@ -380,7 +440,7 @@ ArrayAd<double, 3> OpticalPropertiesImpBase::aerosol_phase_function_moments_port
             aerosol_phase_function_moments_portion_.jacobian() = 0;
         }
 
-        for(int part_idx = 0; part_idx < aer_pf_per_pert.size(); part_idx++) {
+        for(int part_idx = 0; part_idx < (int) aer_pf_per_pert.size(); part_idx++) {
             ArrayAd<double, 3> pf_mom_part(aer_pf_per_pert[part_idx]);
 
             Range r_mom = Range(0, pf_mom_part.rows() - 1);
@@ -545,7 +605,7 @@ const std::vector<ArrayAd<double, 3> > AerosolPhaseFunctionPassThruHelper::phase
         Range ra = Range::all();
 
         std::vector<ArrayAd<double, 3> > aerosol_pf_moments_out;
-        for(int p_idx = 0; p_idx < aerosol_pf_moments_in.size(); ++p_idx) {
+        for(int p_idx = 0; p_idx < (int) aerosol_pf_moments_in.size(); ++p_idx) {
             ArrayAd<double, 3> source_pf(aerosol_pf_moments_in[p_idx]);
 
             int nmom_out;

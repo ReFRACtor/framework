@@ -79,9 +79,11 @@ std::string parse_python_exception() {
   PyErr_Fetch(&type, &value, &tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
-  if(tb)
+  if(tb) {
+    PyErr_NormalizeException(&type, &value, &tb);
     err_str_list = PyObject_CallMethodObjArgs(mod,
 	      Text_FromUTF8("format_exception"), type, value, tb, NULL);
+  }
   std::string ret = "Python error that I can't parse";
   if(err_str_list) {
     PyObject* err_str = 
@@ -91,14 +93,16 @@ std::string parse_python_exception() {
     if(err_str) {
         PyObject * temp_bytes = PyUnicode_AsEncodedString(err_str, "ASCII", 
 	"strict");
-        ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+	if(temp_bytes)
+	  ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
         Py_DECREF(temp_bytes);
     }
     Py_XDECREF(err_str);
   } else if(value) {
     PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
-	"strict");
-    ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+	"ignore");
+    if(temp_bytes)
+      ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
     Py_DECREF(temp_bytes);
   }
   Py_XDECREF(mod);
@@ -177,7 +181,7 @@ error_out(PyObject *m) {
 
 static PyMethodDef wrap_methods[] = {
     {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
-    {NULL, NULL}
+    {NULL, NULL, METH_NOARGS, NULL}
 };
 
 #if PY_MAJOR_VERSION >= 3

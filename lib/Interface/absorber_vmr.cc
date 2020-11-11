@@ -1,5 +1,20 @@
 #include "absorber_vmr.h"
+#include "fp_serialize_support.h"
+
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberVmr::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableAbsorberVmr);
+}
+
+FP_IMPLEMENT(AbsorberVmr);
+FP_OBSERVER_SERIALIZE(AbsorberVmr);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

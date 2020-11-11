@@ -5,7 +5,6 @@ set(DIR_SOURCES
     absco_hdf.cc
     absorber_absco.cc
     absorber_vmr_level.cc
-    absorber_vmr_level_log.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
     aerosol_extinction_level.cc
@@ -103,6 +102,7 @@ set(DIR_SOURCES
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
     sample_grid_spectral_domain.cc
+    scattering_moment_interpolator.cc
     simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
     solar_absorption_gfit_file.cc
@@ -130,7 +130,6 @@ set(TEST_SOURCES
     absco_aer_test.cc
     absco_hdf_test.cc
     absorber_absco_test.cc
-    absorber_vmr_level_log_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc

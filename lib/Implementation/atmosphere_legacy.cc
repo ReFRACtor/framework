@@ -1,9 +1,6 @@
-
 #include "atmosphere_legacy.h"
 #include "old_constant.h"
 #include "linear_algebra.h"
-#include "pressure_fixed_level.h"
-#include "temperature_fixed_level.h"
 #include "ground.h"
 #include "planck.h"
 #include "aerosol_optical.h"
@@ -92,8 +89,10 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev),
+    aerosol(aerosolv), rh(rhv), ground_ptr(groundv),
+    rayleigh(rayleighv),
+    surface_temp(surface_tempv),
     constant(C), alt(altv), 
     sv_jac_size(0),
     wn_tau_cache(-1),
@@ -117,8 +116,8 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<Ground>& groundv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), 
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+    aerosol(aerosolv), rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
     constant(C), alt(altv), 
     sv_jac_size(0),
     wn_tau_cache(-1),
@@ -141,8 +140,8 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<RelativeHumidity>& rhv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    aerosol(aerosolv), rh(rhv), 
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+    aerosol(aerosolv), rh(rhv), rayleigh(rayleighv),
     constant(C), alt(altv), 
     sv_jac_size(0),
     wn_tau_cache(-1),
@@ -166,8 +165,9 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+    rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
+    surface_temp(surface_tempv),
     constant(C), alt(altv), 
     sv_jac_size(0),
     wn_tau_cache(-1),
@@ -190,8 +190,8 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<Ground>& groundv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    rh(rhv), ground_ptr(groundv),
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+    rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
     constant(C), alt(altv), 
     sv_jac_size(0),
     wn_tau_cache(-1),
@@ -213,8 +213,9 @@ AtmosphereLegacy::AtmosphereLegacy(const boost::shared_ptr<Absorber>& absorberv,
                                    const boost::shared_ptr<RelativeHumidity>& rhv,
                                    const std::vector<boost::shared_ptr<Altitude> >& altv,
                                    const boost::shared_ptr<Constant>& C)
-  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-    rh(rhv), constant(C), alt(altv), sv_jac_size(0), wn_tau_cache(-1), 
+  : absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+    rh(rhv), rayleigh(rayleighv), constant(C), alt(altv), sv_jac_size(0),
+    wn_tau_cache(-1), 
     spec_index_tau_cache(-1),
     nlay(-1)
 {
@@ -592,7 +593,7 @@ AutoDerivative<double> AtmosphereLegacy::surface_blackbody(double wn, int spec_i
 boost::shared_ptr<OpticalProperties> AtmosphereLegacy::optical_properties(double wn, int spec_index) const
 {
     boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop(new OpticalPropertiesWrtRt());
-    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
+    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
 
     return opt_prop;
 }
@@ -675,19 +676,6 @@ void AtmosphereLegacy::print(std::ostream& Os) const
     opad << *(alt[i]) << "\n";
     opad.strict_sync();
   }
-}
-
-//-----------------------------------------------------------------------
-/// For unit test purposes, it is useful to be able to directly change
-/// the surface pressure. This is intended just for testing
-/// purposes. This only works if the Pressure is a
-/// PressureFixedLevel, otherwise it will fail.
-//-----------------------------------------------------------------------
-
-void AtmosphereLegacy::set_surface_pressure_for_testing(double x)
-{
-  PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
-  p.set_surface_pressure(x);
 }
 
 //-----------------------------------------------------------------------

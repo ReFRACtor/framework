@@ -17,5 +17,6 @@ public:
   virtual Spectrum solar_absorption_spectrum(
      const SpectralDomain& spec_domain) const;
   %python_attribute(fraction_solar_diameter, double)
+  %pickle_serialization();
 };
 }

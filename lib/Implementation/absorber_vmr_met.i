@@ -17,7 +17,6 @@ public:
   AbsorberVmrMet(const boost::shared_ptr<Meteorology>& Met_file,
 		   const boost::shared_ptr<Pressure>& Press,
 		   double Scale,                         
-		   bool Scale_flag,
 		   const std::string& Gas_name);
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
   %python_attribute(scale_factor, double)

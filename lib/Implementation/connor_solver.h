@@ -332,6 +332,11 @@ protected:
   double gamma_initial;
 
   static double rcond;
+  ConnorSolver() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -394,6 +399,10 @@ private:
   blitz::Array<double, 2> kt_se_m1_k_;
   blitz::Array<double, 1> dx_;
   FitStatistic fstat_;
+  ConnorSolverState() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 inline std::istream& operator>>(std::istream& Is, ConnorSolver& Solve)
@@ -403,4 +412,8 @@ inline std::istream& operator>>(std::istream& Is, ConnorSolver& Solve)
 }
 
 }
+
+FP_EXPORT_KEY(ConnorSolver);
+FP_EXPORT_KEY(ConnorSolverState);
+FP_EXPORT_OBSERVER_KEY(ConnorSolver);
 #endif

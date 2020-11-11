@@ -36,6 +36,7 @@ public:
   void create_delta_lambda_to_response(const blitz::Array<double, 1>& Wavenumber, 
                                        const blitz::Array<double, 2>& Delta_lambda, 
                                        const blitz::Array<double, 2>& Response);
+  %pickle_serialization();
 };
 
 class IlsTableLog : public IlsFunction {
@@ -62,6 +63,7 @@ public:
   void create_delta_lambda_to_response(const blitz::Array<double, 1>& Wavenumber, 
                                        const blitz::Array<double, 2>& Delta_lambda, 
                                        const blitz::Array<double, 2>& Response);
+  %pickle_serialization();
 };
 
 }

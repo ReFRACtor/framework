@@ -1,6 +1,7 @@
 #ifndef BLITZ_ARRAY_SERIALIZE_SUPPORT_H
 #define BLITZ_ARRAY_SERIALIZE_SUPPORT_H
 #include <blitz/array.h>
+#include "auto_derivative.h"
 
 // This contains various support routines for *implementing* the boost
 // serialization (as opposed to *using*  the serialization)
@@ -49,6 +50,16 @@ typedef blitz::Array<double, 2> blitz_double_array_2d;
 typedef blitz::Array<double, 3> blitz_double_array_3d;
 typedef blitz::Array<double, 4> blitz_double_array_4d;
 typedef blitz::Array<double, 5> blitz_double_array_5d;
+typedef blitz::Array<char, 1> blitz_char_array_1d;
+typedef blitz::Array<char, 2> blitz_char_array_2d;
+typedef blitz::Array<char, 3> blitz_char_array_3d;
+typedef blitz::Array<char, 4> blitz_char_array_4d;
+typedef blitz::Array<char, 5> blitz_char_array_5d;
+typedef blitz::Array<FullPhysics::AutoDerivative<double>, 1> blitz_auto_derivative_array_1d;
+typedef blitz::Array<FullPhysics::AutoDerivative<double>, 2> blitz_auto_derivative_array_2d;
+typedef blitz::Array<FullPhysics::AutoDerivative<double>, 3> blitz_auto_derivative_array_3d;
+typedef blitz::Array<FullPhysics::AutoDerivative<double>, 4> blitz_auto_derivative_array_4d;
+typedef blitz::Array<FullPhysics::AutoDerivative<double>, 15> blitz_auto_derivative_array_5d;
 typedef blitz::Array<float, 1> blitz_float_array_1d;
 typedef blitz::Array<float, 2> blitz_float_array_2d;
 typedef blitz::Array<float, 3> blitz_float_array_3d;
@@ -86,6 +97,16 @@ BOOST_SERIALIZATION_SPLIT_FREE(blitz_double_array_2d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_double_array_3d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_double_array_4d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_double_array_5d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_char_array_1d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_char_array_2d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_char_array_3d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_char_array_4d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_char_array_5d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_auto_derivative_array_1d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_auto_derivative_array_2d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_auto_derivative_array_3d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_auto_derivative_array_4d);
+BOOST_SERIALIZATION_SPLIT_FREE(blitz_auto_derivative_array_5d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_string_array_1d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_string_array_2d);
 BOOST_SERIALIZATION_SPLIT_FREE(blitz_int_array_1d);

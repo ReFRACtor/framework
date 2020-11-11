@@ -102,6 +102,11 @@ public:
   virtual void print(std::ostream& Os) const;
 private:
   std::vector<DoubleWithUnit> lower_b, upper_b;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectralBound);
 #endif

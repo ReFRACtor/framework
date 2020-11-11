@@ -1,10 +1,27 @@
 #include "aerosol_optical.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolOptical::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Aerosol)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosolExtinction)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosolProperty)
+    & FP_NVP(aext) & FP_NVP(aprop) & FP_NVP(press) & FP_NVP(rh)
+    & FP_NVP_(reference_wn);
+}
+
+FP_IMPLEMENT(AerosolOptical);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -47,8 +64,8 @@ AerosolOptical::AerosolOptical
   rh(Rh),
   reference_wn_(Reference_wn),
   cache_is_stale(true),
-  nvar(-1),
-  nlay(-1)
+  nlay(-1),
+  nvar(-1)
 {
   if((int) aprop.size() != number_particle())
     throw Exception("aprop needs to be size of number_particle()");

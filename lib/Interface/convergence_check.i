@@ -42,15 +42,12 @@ public:
   double residual_rel_rms(const blitz::Array<double, 1>& Residual,
 			  const blitz::Array<double, 1>& Rad_measure) const;
   std::string print_to_string() const;
-  %pickle_init(1, self.fit_succeeded, self.outcome, self.number_iteration,
-	       self.number_divergent, self.d_sigma_sq,
-	       self.d_sigma_sq_scaled, self.chisq_apriori,
-	       self.chisq_measured, self.chisq_apriori_fc,
-	       self.chisq_measured_fc);
+  %pickle_serialization();
 };
 
 class ConvergenceCheck : public GenericObject {
 public:
+  ConvergenceCheck();
   virtual ~ConvergenceCheck();
   std::string print_to_string() const;
   virtual void initialize_check();
@@ -63,5 +60,6 @@ public:
   virtual void evaluate_quality(FitStatistic& fit_stat,
 		const blitz::Array<double, 1>& Residual,
   	        const blitz::Array<double, 1>& Residual_cov_diag) = 0;
+  %pickle_serialization();
 };
 }

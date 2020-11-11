@@ -12,7 +12,13 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(first_order_driver, GlobalFixture)
 
-void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order
+(boost::shared_ptr<FirstOrderDriver>& fo_driver,
+ int surface_type,
+ ArrayAd<double, 1>& surface_params,
+ ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur,
+ Array<double, 1>& pert_atm, Array<double, 1>& pert_surf,
+ bool do_solar, bool do_thermal, bool debug_output)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
@@ -20,8 +26,6 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   zen = 0.0;
   azm = 0.0;
   bool pure_nadir = false;
-  int nstreams = 1;
-  int nmoms = 2;
 
   int nlayer = taug.rows();
   int nparam = taug.number_variable();
@@ -44,17 +48,13 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   double jac_surf_temp_lid;
   blitz::Array<double, 1> jac_atm_temp_lid;
 
-  FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms);
-
-  // Use plane parallel since it has to be off from LIDORT
-  fo_driver.set_plane_parallel();
-
   // Use LIDORT for comparison
   bool do_multiple_scattering_only = false;
-  LidortRtDriver lidort_driver = LidortRtDriver(nstreams, nmoms, 
-                                                do_multiple_scattering_only,
-                                                surface_type, zen, pure_nadir,
-                                                do_solar, do_thermal);  
+  LidortRtDriver lidort_driver =
+    LidortRtDriver(fo_driver->number_stream(), fo_driver->number_moment(), 
+		   do_multiple_scattering_only,
+		   surface_type, zen, pure_nadir,
+		   do_solar, do_thermal);  
 
   // Plane-parallel
   lidort_driver.set_plane_parallel();
@@ -114,16 +114,18 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   fo_surface_params = surface_params;
 
   // Run lidort and first order to generate values for comparison
-  lidort_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
-                                                   surface_type, lid_surface_params,
-                                                   od, ssa, pf, refl_lid,
-                                                   jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid, jac_atm_temp_lid,
-                                                   bb_surface, bb_atm);
-  fo_driver.reflectance_and_jacobian_calculate(heights, sza(0), zen(0), azm(0),
-                                               surface_type, fo_surface_params,
-                                               od, ssa, pf, refl_fo,
-                                               jac_atm_fo, jac_surf_param_fo, jac_surf_temp_fo, jac_atm_temp_fo,
-                                               bb_surface, bb_atm);
+  lidort_driver.reflectance_and_jacobian_calculate
+    (heights, sza(0), zen(0), azm(0),
+     surface_type, lid_surface_params,
+     od, ssa, pf, refl_lid,
+     jac_atm_lid, jac_surf_param_lid, jac_surf_temp_lid, jac_atm_temp_lid,
+     bb_surface, bb_atm);
+  fo_driver->reflectance_and_jacobian_calculate
+    (heights, sza(0), zen(0), azm(0),
+     surface_type, fo_surface_params,
+     od, ssa, pf, refl_fo,
+     jac_atm_fo, jac_surf_param_fo, jac_surf_temp_fo, jac_atm_temp_fo,
+     bb_surface, bb_atm);
 
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
@@ -157,10 +159,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       od_pert = taur_pert + taug_pert;
       ssa_pert = taur_pert / od_pert;
 
-      refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                surface_type, surface_params.value().copy(),
-                                                od_pert, ssa_pert, pf_pert,
-                                                bb_surface, bb_atm);
+      refl_fd = fo_driver->reflectance_calculate
+	(heights, sza(0), zen(0), azm(0),
+	 surface_type, surface_params.value().copy(),
+	 od_pert, ssa_pert, pf_pert,
+	 bb_surface, bb_atm);
 
       jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_fo) / pert_atm(p_idx);
     }
@@ -186,10 +189,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       surface_params_pert = surface_params.value();
       surface_params_pert(p_idx) += pert_surf(p_idx);
 
-      refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                surface_type, surface_params_pert,
-                                                od.value(), ssa.value(), pf.value(),
-                                                bb_surface, bb_atm);
+      refl_fd = fo_driver->reflectance_calculate
+	(heights, sza(0), zen(0), azm(0),
+	 surface_type, surface_params_pert,
+	 od.value(), ssa.value(), pf.value(),
+	 bb_surface, bb_atm);
 
       jac_surf_param_fd(p_idx) = (refl_fd - refl_fo) / pert_surf(p_idx);
 
@@ -210,16 +214,13 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
 }
 
-void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order_lambertian
+(bool do_solar, bool do_thermal, bool debug_output, int nlayer, int surface_type,
+ int nparam, boost::shared_ptr<FirstOrderDriver>& fo_driver)
 {
-  int nlayer = 2;
-  int nparam = 2;
   ArrayAd<double, 1> surface_params(1, 1);
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
-
-  // Use simple lambertian throughout
-  int surface_type = LAMBERTIAN;
 
   // Check jacobian using finite derivatives
   // od, ssa
@@ -243,7 +244,8 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_first_order(fo_driver, surface_type, surface_params, taug, taur, pert_atm,
+		   pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Rayleigh only
@@ -262,7 +264,8 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-3, -1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_first_order(fo_driver, surface_type, surface_params, taug, taur, pert_atm,
+		   pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Gas + Surface
@@ -278,7 +281,8 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
   pert_atm = 1e-4, 1e-4;
   pert_surf = 1e-8;
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_first_order(fo_driver, surface_type, surface_params, taug, taur, pert_atm,
+		   pert_surf, do_solar, do_thermal, debug_output);
 
 }
 
@@ -288,7 +292,44 @@ BOOST_AUTO_TEST_CASE(lambertian_solar)
   bool do_thermal = false;
   bool debug_output = true;
 
-  test_first_order_lambertian(do_solar, do_thermal, debug_output);
+  int nlayer = 2;
+  int nparam = 2;
+  int nstreams = 1;
+  int nmoms = 2;
+  int surface_type = LAMBERTIAN;
+  boost::shared_ptr<FirstOrderDriver> fo_driver =
+    boost::make_shared<FirstOrderDriver>(nlayer, surface_type, nstreams, nmoms);
+  // Use plane parallel since it has to be off from LIDORT
+  fo_driver->set_plane_parallel();
+  test_first_order_lambertian(do_solar, do_thermal, debug_output, nlayer,
+			      surface_type, nparam, fo_driver);
 }
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  bool do_solar = true;
+  bool do_thermal = false;
+  bool debug_output = true;
+
+  int nlayer = 2;
+  int nparam = 2;
+  int nstreams = 1;
+  int nmoms = 2;
+  int surface_type = LAMBERTIAN;
+  boost::shared_ptr<FirstOrderDriver> fo_driver =
+    boost::make_shared<FirstOrderDriver>(nlayer, surface_type, nstreams, nmoms);
+  // Use plane parallel since it has to be off from LIDORT
+  fo_driver->set_plane_parallel();
+  std::string d = serialize_write_string(fo_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<FirstOrderDriver> fo_driver_r =
+    serialize_read_string<FirstOrderDriver>(d);
+  test_first_order_lambertian(do_solar, do_thermal, debug_output, nlayer,
+			      surface_type, nparam, fo_driver_r);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

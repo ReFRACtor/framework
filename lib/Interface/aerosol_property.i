@@ -44,6 +44,7 @@ public:
   phase_function_moment_each_layer(double wn, int nmom = -1, 
 				   int nscatt = -1) const = 0;
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }
 %template(vector_aerosol_property) std::vector<boost::shared_ptr<FullPhysics::AerosolProperty> >;

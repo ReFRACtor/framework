@@ -40,6 +40,7 @@ endif()
 if(POLICY CMP0078)
   cmake_policy(SET CMP0078 OLD)
 endif()
+
 # Include SWIG macros
 include(UseSWIG)
 
@@ -66,6 +67,9 @@ foreach(input_swig_file ${SWIG_INTERFACE_FILES})
     endif()
 
     list(APPEND BUILD_USED_SWIG_FILES ${build_swig_file})
+    # Note for debugging, can be useful to use -Wall. There is a lot of
+    # noise this this, so we don't have this turned on normally
+    #set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-interface;_${module_name};-module;${module_name};-cpperraswarn;-Wall")
     set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-interface;_${module_name};-module;${module_name};-cpperraswarn")
 endforeach()
 
@@ -129,7 +133,10 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INST
 install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
     FILES_MATCHING PATTERN "*.py")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/swig_rules/python/" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
+    FILES_MATCHING PATTERN "*.py")
 
+  
 install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
 
 # On systems with older cmake, it may try to link against lib_swig_wrap.so

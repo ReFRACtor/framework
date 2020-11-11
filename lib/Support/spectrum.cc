@@ -1,5 +1,18 @@
 #include "spectrum.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Spectrum::serialize(Archive& ar,
+			      const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(Spectrum);
+  ar & FP_NVP_(spec_domain) & FP_NVP_(spec_range);
+}
+
+FP_IMPLEMENT(Spectrum);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

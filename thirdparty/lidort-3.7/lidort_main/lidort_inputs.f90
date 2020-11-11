@@ -2454,8 +2454,9 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 
 !  no Delta-M scaling with Rayleigh only
 !   ---Warning. Turn off delta-M scaling.
+!  4/9/20 added check for NSTREAMS > 1
 
-      IF ( DO_RAYLEIGH_ONLY ) THEN
+      IF ( DO_RAYLEIGH_ONLY .and. NSTREAMS .gt. 1 ) THEN
         IF ( DO_DELTAM_SCALING ) THEN
           NM = NM + 1
           MESSAGES(NM)  = 'Bad input: No delta-M scaling with Rayleigh-only'
@@ -2490,10 +2491,9 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 !  check number of input Legendre moments
 !  ======================================
 
-!  (general scattering case)
+!  (general scattering case). 4/9/20 relax rayleigh
 
-      IF ( .NOT.DO_RAYLEIGH_ONLY.AND..NOT.DO_ISOTROPIC_ONLY &
-             .AND..NOT. DO_SSFULL ) THEN
+      IF ( .NOT.DO_ISOTROPIC_ONLY .AND..NOT. DO_SSFULL ) THEN
 
         IF ( DO_DELTAM_SCALING ) THEN
           IF ( NMOMENTS_INPUT.LT.2*NSTREAMS ) THEN
@@ -2658,7 +2658,6 @@ SUBROUTINE LIDORT_CHECK_INPUT &
           MESSAGES(NM)    = 'Bad input: No SS correction for Rayleigh only'
           ACTIONS(NM)     = 'Warning: DO_SSCORR_NADIR turned off internally'
           STATUS          = LIDORT_WARNING
-          DO_SSCORR_NADIR = .FALSE.
         ENDIF
       ENDIF
 
@@ -2678,16 +2677,17 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 
 !  Full-up single scatter, enabled 25 September 2007.
 !   Diffuse-field Delta-M scaling must be turned off
+!  Turn this off ONLY FOR this special SS-only test
 
-      IF ( DO_SSFULL ) THEN
-        IF ( DO_DELTAM_SCALING ) THEN
-          NM = NM + 1
-          MESSAGES(NM) = 'Bad input: Full SS, diffuse-field delta-M on'
-          ACTIONS(NM)  = 'Full SS: default to deltam_scaling = false'
-          STATUS       = LIDORT_WARNING
-          DO_DELTAM_SCALING   = .FALSE.
-        ENDIF
-      ENDIF
+!      IF ( DO_SSFULL ) THEN
+!        IF ( DO_DELTAM_SCALING ) THEN
+!          NM = NM + 1
+!          MESSAGES(NM) = 'Bad input: Full SS, diffuse-field delta-M on'
+!          ACTIONS(NM)  = 'Full SS: default to deltam_scaling = false'
+!          STATUS       = LIDORT_WARNING
+!          DO_DELTAM_SCALING   = .FALSE.
+!        ENDIF
+!      ENDIF
 
 !  Check thermal inputs
 !  ====================
@@ -3297,10 +3297,10 @@ SUBROUTINE LIDORT_DERIVE_INPUT                                       &
         ENDIF
       ENDIF
 
-!  Number of moments
+!  Number of moments. 4/9/20 Change condition
 
       IF ( DO_RAYLEIGH_ONLY ) THEN
-        NMOMENTS = 2
+        NMOMENTS = MIN ( 2 * NSTREAMS - 1, 2 )
       ENDIF
       IF ( DO_ISOTROPIC_ONLY ) THEN
         NMOMENTS = 0
@@ -3314,8 +3314,13 @@ SUBROUTINE LIDORT_DERIVE_INPUT                                       &
       NSTREAMS_2 = 2*NSTREAMS
 
 !  Set Quadrature abscissae and weights
+!    4/9/20. Set NSTREAMS = 1 case
 
-      CALL GAULEG(ZERO,ONE,QUAD_STREAMS,QUAD_WEIGHTS,NSTREAMS)
+      IF ( NSTREAMS .gt. 1 ) THEN
+         CALL GAULEG(ZERO,ONE,QUAD_STREAMS,QUAD_WEIGHTS,NSTREAMS)
+      else
+         QUAD_WEIGHTS(1) = ONE ; QUAD_STREAMS(1) = HALF
+      ENDIF
 
 !  set auxiliary quantities
 

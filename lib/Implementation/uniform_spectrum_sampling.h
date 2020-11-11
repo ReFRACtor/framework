@@ -18,19 +18,25 @@ namespace FullPhysics {
 *******************************************************************/
 class UniformSpectrumSampling : public SpectrumSampling {
 public:
-    UniformSpectrumSampling(const ArrayWithUnit<double, 1>& Spec_spacing)
-      : SpectrumSampling(Spec_spacing.rows()), spec_spacing(Spec_spacing) { }
+  UniformSpectrumSampling(const ArrayWithUnit<double, 1>& Spec_spacing)
+    : SpectrumSampling(Spec_spacing.rows()), spec_spacing(Spec_spacing) { }
    
-    virtual ~UniformSpectrumSampling() { }
+  virtual ~UniformSpectrumSampling() { }
   
-    virtual SpectralDomain spectral_domain(int spec_index,
-                                           const SpectralDomain& Lowres_grid, 
-                                           const DoubleWithUnit& Edge_extension) const;
+  virtual SpectralDomain spectral_domain(int spec_index,
+					 const SpectralDomain& Lowres_grid, 
+					 const DoubleWithUnit& Edge_extension) const;
 
-    virtual void print(std::ostream& Os) const;
+  virtual void print(std::ostream& Os) const;
    
 private:
-    ArrayWithUnit<double, 1> spec_spacing;
+  ArrayWithUnit<double, 1> spec_spacing;
+  UniformSpectrumSampling() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(UniformSpectrumSampling);
 #endif

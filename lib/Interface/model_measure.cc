@@ -1,10 +1,22 @@
 #include "model_measure.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ModelMeasure::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelState)
+    & FP_NVP(msrmnt) & FP_NVP(Se) & FP_NVP(Se_chol);
+}
+
+FP_IMPLEMENT(ModelMeasure);
+#endif
 
 void ModelMeasure::set_measurement( const blitz::Array<double, 1>& measurement, 
                                     const blitz::Array<double, 1>& measurement_error_cov )

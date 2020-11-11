@@ -1,4 +1,5 @@
 #include "solar_doppler_shift_polynomial.h"
+#include "fp_serialize_support.h"
 #include "old_constant.h"
 #include "wgs84_constant.h"
 #include "fp_exception.h"
@@ -10,6 +11,20 @@ using namespace boost::posix_time;
 using namespace boost::gregorian;
 using namespace units;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarDopplerShiftPolynomial::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarDopplerShift)
+    & FP_NVP_(solar_distance) & FP_NVP_(solar_velocity)
+    & FP_NVP_(doppler_rot_earth_sun) & FP_NVP_(doppler_shift)
+    & FP_NVP_(apply_doppler_shift) & FP_NVP(calculated_doppler_shift);
+}
+
+FP_IMPLEMENT(SolarDopplerShiftPolynomial);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

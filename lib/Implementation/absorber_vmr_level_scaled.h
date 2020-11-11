@@ -10,16 +10,23 @@ namespace FullPhysics {
   This particular implementation uses a passed vmr profile
   (interpolated to the current pressure grid), along with a scale factor.
 *******************************************************************/
-class AbsorberVmrLevelScaled : public AbsorberVmrLevel {
+class AbsorberVmrLevelScaled : virtual public AbsorberVmrLevel {
 public:
   AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
                          const blitz::Array<double, 1>& Vmr_profile,
                          double Scale,                         
-                         bool Scale_flag,
                          const std::string& Gas_name);
   virtual ~AbsorberVmrLevelScaled() {}
   virtual double scale_factor() const;
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
+protected:
+  AbsorberVmrLevelScaled() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmrLevelScaled);
 #endif

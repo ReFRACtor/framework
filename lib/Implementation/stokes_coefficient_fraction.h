@@ -10,11 +10,10 @@ namespace FullPhysics {
   state. This particular implementation uses constant values, combined
   with fitting for the parallel polarization fraction.
 *******************************************************************/
-class StokesCoefficientFraction : public StokesCoefficientImpBase {
+class StokesCoefficientFraction : virtual public StokesCoefficientImpBase {
 public:
   StokesCoefficientFraction(const blitz::Array<double, 2>& Stokes_coeff_parallel,
-			    const blitz::Array<double, 1>& Coeffs,
-			    const blitz::Array<bool, 1>& Flag);
+                            const blitz::Array<double, 1>& Coeffs);
   virtual ~StokesCoefficientFraction() {}
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
@@ -40,7 +39,13 @@ protected:
   virtual void calc_stokes_coeff() const;
 private:
   blitz::Array<double, 2> stokes_coeff_parallel;
+  StokesCoefficientFraction() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(StokesCoefficientFraction);
 #endif
 

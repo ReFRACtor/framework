@@ -1,8 +1,20 @@
 #include "solar_absorption_gfit_file.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarAbsorptionGfitFile::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarAbsorptionSpectrum)
+    & FP_NVP_(line_list_file) & FP_NVP_(fraction_solar_diameter);
+}
+
+FP_IMPLEMENT(SolarAbsorptionGfitFile);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

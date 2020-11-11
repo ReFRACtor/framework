@@ -58,11 +58,12 @@ protected:
   RadiativeTransferImpBase() {}
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<RadiativeTransferRetrievable>(Coeff, Used_flag) {}
+  RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff)
+  {
+    init(Coeff);
+  }
 
 private:
 };

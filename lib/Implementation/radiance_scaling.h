@@ -53,6 +53,7 @@ public:
   { 
   }
 
+
   virtual ~RadianceScaling() {};
 
   virtual void print(std::ostream& Os) const;
@@ -79,6 +80,16 @@ public:
   virtual double radiance_offset() const { return offset.value(); }
 
 protected:
+  RadianceScaling() : offset(0) {}
+  void init(const ArrayAd<double, 1>& Scaling_coeff,
+	    const DoubleWithUnit& Band_ref,
+	    const std::string& Band_name) 
+  {
+    scaling_coeff.reference(Scaling_coeff);
+    band_ref = Band_ref;
+    band_name = Band_name;
+  }
+
   mutable ArrayAd<double, 1> scaling_coeff;
   mutable AutoDerivative<double> offset;
   DoubleWithUnit band_ref;

@@ -4,7 +4,6 @@
 #include "absorber_vmr.h"
 #include "state_vector.h"
 #include "pressure.h"
-#include "pressure_level_input.h"
 #include "absco.h"
 #include "temperature.h"
 #include "altitude.h"
@@ -20,7 +19,7 @@ namespace FullPhysics {
   calculating the gas absorption (e.g, the Absco tables).
 *******************************************************************/
 
-class AbsorberAbsco: public Absorber,
+class AbsorberAbsco: virtual public Absorber,
                      public Observer<AbsorberVmr>,
 		     public Observer<Pressure>,
 		     public Observer<Temperature>, 
@@ -130,6 +129,21 @@ public:
   optical_depth_each_layer_direct_integrate(double wn, int Spec_index,
 					    double eps_abs = 0,
 					    double eps_rel = 1e-3) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(press);
+    res.push_back(temp);
+    BOOST_FOREACH(auto i, alt)
+      res.push_back(i);
+    BOOST_FOREACH(auto i, vmr)
+      res.push_back(i);
+    BOOST_FOREACH(auto i, gas_absorption)
+      res.push_back(i);
+    res.push_back(c);
+    return res;
+  }
+  
 private:
   // Objects used to calculate the integrand
   boost::shared_ptr<Pressure> press;
@@ -241,6 +255,12 @@ private:
   { return alt[Spec_index]->gravity(AutoDerivativeWithUnit<double>(P.value, P.units)); }
   ArrayAdWithUnit<double, 2> subset_broadener(const ArrayAd<double, 2> bvmr,
 					      const Absco& a) const;
+  AbsorberAbsco() :cache_tau_gas_stale(true) {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberAbsco);
 #endif

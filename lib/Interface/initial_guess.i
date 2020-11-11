@@ -18,5 +18,6 @@ public:
   %python_attribute_abstract(initial_guess, blitz::Array<double, 1>)
   %python_attribute(apriori, virtual blitz::Array<double, 1>)
   %python_attribute(apriori_covariance, virtual blitz::Array<double, 2>)
+  %pickle_serialization();
 };
 }

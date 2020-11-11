@@ -12,7 +12,8 @@ namespace FullPhysics {
   correction.
 *******************************************************************/
 
-class InstrumentCorrection : virtual public StateVectorObserver,
+class InstrumentCorrection : public Printable<InstrumentCorrection>,
+			     virtual public StateVectorObserver,
 			     public Observable<InstrumentCorrection> {
 public:
   virtual ~InstrumentCorrection() {}
@@ -53,6 +54,15 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<InstrumentCorrection> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "InstrumentCorrection";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(InstrumentCorrection);
+FP_EXPORT_OBSERVER_KEY(InstrumentCorrection);
 #endif

@@ -1,9 +1,43 @@
 #include "spurr_driver.h"
 #include "spurr_brdf_types.h"
+#include "fp_serialize_support.h"
 #include "ground.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpurrBrdfDriver::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpurrBrdfDriver);
+  // Note we don't actually want to save the brdf_factors and
+  // brdf_params. These are references to arrays internal to the
+  // various drivers (e.g., Twostream_Ls_Brdf_Supplement).
+  // ar & FP_NVP(brdf_factors) & FP_NVP(brdf_params);
+
+  // Dummy placeholder, just so we can have derived classes call
+  // serialization of this. We use to have derived classes "know"
+  // that the base class doesn't have anything. But seems better to
+  // *always* have base classes do something, so we can add stuff in
+  // the future w/o breaking a bunch of code.
+  std::string p = "empty";
+  ar & FP_NVP2("placeholder", p);
+}
+
+template<class Archive>
+void SpurrRtDriver::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpurrRtDriver);
+  ar & FP_NVP(do_solar_sources) & FP_NVP(do_thermal_emission)
+    & FP_NVP_(brdf_driver);
+}
+
+FP_IMPLEMENT(SpurrBrdfDriver);
+FP_IMPLEMENT(SpurrRtDriver);
+#endif
 
 //-----------------------------------------------------------------------
 /// Initializes the BRDF kernels for the given Ground surface type 
@@ -110,7 +144,7 @@ void SpurrBrdfDriver::initialize_brdf_kernel(int which_brdf) {
 /// This routine is intended to be called for each spectral point
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) const
+ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters) 
 {
   // Copy input surface parameters as the returned value may
   // be modified to properly account for changes to parameters
@@ -175,7 +209,7 @@ ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const Ar
   return rt_surf_params;
 }
 
-void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   // brdf_params value only used if do_brdf_surface = True
   // albedo set to brdf weighting function so that weighting function
@@ -188,7 +222,7 @@ void SpurrBrdfDriver::setup_lambertian_inputs(int kernel_index, ArrayAd<double, 
   brdf_params(kernel_index, 0) = 1.0;
 }
 
-void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   brdf_factors(kernel_index) = 1.0;
 
@@ -212,7 +246,7 @@ void SpurrBrdfDriver::setup_coxmunk_inputs(int kernel_index, ArrayAd<double, 1>&
   do_shadow_effect(surface_parameters(shadow_idx).value() > 0.0);
 }
 
-void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   // Modify surface_parameters in place so that jacobians reflect modifications
   int kf_idx   = parameter_indexes(0);
@@ -230,7 +264,7 @@ void SpurrBrdfDriver::setup_rahman_inputs(int kernel_index, ArrayAd<double, 1>& 
   brdf_params(kernel_index, 2) = surface_parameters(geom_idx).value();
 }
 
-void SpurrBrdfDriver::setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) const
+void SpurrBrdfDriver::setup_breon_inputs(int kernel_index, ArrayAd<double, 1>& surface_parameters, const Array<int, 1>& parameter_indexes) 
 {
   int kf_idx = parameter_indexes(0);
   

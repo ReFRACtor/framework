@@ -14,5 +14,6 @@ public:
   IterativeSolverDer(int max_cost_function_calls, bool vrbs);
   virtual ~IterativeSolverDer();
   %python_attribute(gradient_at_accepted_points, std::vector< blitz::Array<double, 1> >)
+  %pickle_serialization();
 };
 }

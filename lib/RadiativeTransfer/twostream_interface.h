@@ -19,7 +19,10 @@ extern "C" {
   void twostream_ls_brdf_supplement_m_twostream_ls_brdfmaster_wrap(const int* maxbeams_in, const int* max_user_streams_in, const int* max_user_obsgeoms_in, const int* maxstreams_brdf_in, const int* max_brdf_kernels_in, const int* max_brdf_parameters_in, const int* max_surfacewfs_in, const bool* do_solar_sources_in, const bool* do_user_obsgeoms_in, const bool* lambertian_kernel_flag_in, const bool* do_shadow_effect_in, const bool* do_surface_emission_in, const int* nbeams_in, const int* n_user_streams_in, const int* n_user_obsgeoms_in, const double* beam_szas_in, const double* user_angles_in, const double* user_obsgeoms_in, const double* stream_value_in, const int* nstreams_brdf_in, const int* n_brdf_kernels_in, const int* which_brdf_in, const double* brdf_factors_in, const int* n_brdf_parameters_in, const double* brdf_parameters_in, const bool* do_kernel_factor_wfs_in, const bool* do_kernel_params_wfs_in, const bool* do_kparams_derivs_in, const int* n_surface_wfs_in, const int* n_kernel_factor_wfs_in, const int* n_kernel_params_wfs_in, const double* brdf_f_0_in, const double* brdf_f_in, const double* ubrdf_f_in, const double* emissivity_in, const double* ls_brdf_f_0_in, const double* ls_brdf_f_in, const double* ls_ubrdf_f_in, const double* ls_emissivity_in, const int* status_brdfsup_in, const int* message_len, const char* message_in, const int* action_len, const char* action_in);
 }
 
-class Twostream_Ls_Brdf_Supplement : public virtual GenericObject {
+  // MANUAL CHANGE
+class Twostream_Ls_Brdf_Supplement :
+    public Printable<Twostream_Ls_Brdf_Supplement> {
+  // MANUAL CHANGE
 
 public:
   Twostream_Ls_Brdf_Supplement(const int& maxbeams_in, const int& max_user_streams_in, const int& max_user_obsgeoms_in, const int& maxstreams_brdf_in, const int& max_brdf_kernels_in, const int& max_brdf_parameters_in, const int& max_surfacewfs_in, const int& nbeams_in, const int& n_user_streams_in, const int& nstreams_brdf_in) : maxbeams_(maxbeams_in), max_user_streams_(max_user_streams_in), max_user_obsgeoms_(max_user_obsgeoms_in), maxstreams_brdf_(maxstreams_brdf_in), max_brdf_kernels_(max_brdf_kernels_in), max_brdf_parameters_(max_brdf_parameters_in), max_surfacewfs_(max_surfacewfs_in), nbeams_(nbeams_in), n_user_streams_(n_user_streams_in), nstreams_brdf_(nstreams_brdf_in) 
@@ -81,13 +84,6 @@ public:
   }
 
   virtual ~Twostream_Ls_Brdf_Supplement() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxbeams() const {
     return maxbeams_;
@@ -422,53 +418,54 @@ public:
     
   }
 
-  friend std::ostream& operator<<(std::ostream &output_stream, const Twostream_Ls_Brdf_Supplement &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Twostream_Ls_Brdf_Supplement:" << std::endl
-      << "              maxbeams: " << obj.maxbeams()  << std::endl
-      << "      max_user_streams: " << obj.max_user_streams()  << std::endl
-      << "     max_user_obsgeoms: " << obj.max_user_obsgeoms()  << std::endl
-      << "       maxstreams_brdf: " << obj.maxstreams_brdf()  << std::endl
-      << "      max_brdf_kernels: " << obj.max_brdf_kernels()  << std::endl
-      << "   max_brdf_parameters: " << obj.max_brdf_parameters()  << std::endl
-      << "        max_surfacewfs: " << obj.max_surfacewfs()  << std::endl
-      << "      do_solar_sources: " << obj.do_solar_sources()  << std::endl
-      << "      do_user_obsgeoms: " << obj.do_user_obsgeoms()  << std::endl
-      << "lambertian_kernel_flag: " << std::endl << obj.lambertian_kernel_flag()  << std::endl
-      << "      do_shadow_effect: " << obj.do_shadow_effect()  << std::endl
-      << "   do_surface_emission: " << obj.do_surface_emission()  << std::endl
-      << "                nbeams: " << obj.nbeams()  << std::endl
-      << "        n_user_streams: " << obj.n_user_streams()  << std::endl
-      << "       n_user_obsgeoms: " << obj.n_user_obsgeoms()  << std::endl
-      << "             beam_szas: " << std::endl << obj.beam_szas()  << std::endl
-      << "           user_angles: " << std::endl << obj.user_angles()  << std::endl
-      << "         user_obsgeoms: " << std::endl << obj.user_obsgeoms()  << std::endl
-      << "          stream_value: " << obj.stream_value()  << std::endl
-      << "         nstreams_brdf: " << obj.nstreams_brdf()  << std::endl
-      << "        n_brdf_kernels: " << obj.n_brdf_kernels()  << std::endl
-      << "            which_brdf: " << std::endl << obj.which_brdf()  << std::endl
-      << "          brdf_factors: " << std::endl << obj.brdf_factors()  << std::endl
-      << "     n_brdf_parameters: " << std::endl << obj.n_brdf_parameters()  << std::endl
-      << "       brdf_parameters: " << std::endl << obj.brdf_parameters()  << std::endl
-      << "  do_kernel_factor_wfs: " << std::endl << obj.do_kernel_factor_wfs()  << std::endl
-      << "  do_kernel_params_wfs: " << std::endl << obj.do_kernel_params_wfs()  << std::endl
-      << "     do_kparams_derivs: " << std::endl << obj.do_kparams_derivs()  << std::endl
-      << "         n_surface_wfs: " << obj.n_surface_wfs()  << std::endl
-      << "   n_kernel_factor_wfs: " << obj.n_kernel_factor_wfs()  << std::endl
-      << "   n_kernel_params_wfs: " << obj.n_kernel_params_wfs()  << std::endl
-      << "              brdf_f_0: " << std::endl << obj.brdf_f_0()  << std::endl
-      << "                brdf_f: " << std::endl << obj.brdf_f()  << std::endl
-      << "               ubrdf_f: " << std::endl << obj.ubrdf_f()  << std::endl
-      << "            emissivity: " << obj.emissivity()  << std::endl
-      << "           ls_brdf_f_0: " << std::endl << obj.ls_brdf_f_0()  << std::endl
-      << "             ls_brdf_f: " << std::endl << obj.ls_brdf_f()  << std::endl
-      << "            ls_ubrdf_f: " << std::endl << obj.ls_ubrdf_f()  << std::endl
-      << "         ls_emissivity: " << std::endl << obj.ls_emissivity()  << std::endl
-      << "        status_brdfsup: " << obj.status_brdfsup()  << std::endl
-      << "               message: " << "\"" << obj.message() << "\"" << std::endl
-      << "                action: " << "\"" << obj.action() << "\"" << std::endl;
-    return output_stream;
+      << "              maxbeams: " << maxbeams()  << std::endl
+      << "      max_user_streams: " << max_user_streams()  << std::endl
+      << "     max_user_obsgeoms: " << max_user_obsgeoms()  << std::endl
+      << "       maxstreams_brdf: " << maxstreams_brdf()  << std::endl
+      << "      max_brdf_kernels: " << max_brdf_kernels()  << std::endl
+      << "   max_brdf_parameters: " << max_brdf_parameters()  << std::endl
+      << "        max_surfacewfs: " << max_surfacewfs()  << std::endl
+      << "      do_solar_sources: " << do_solar_sources()  << std::endl
+      << "      do_user_obsgeoms: " << do_user_obsgeoms()  << std::endl
+      << "lambertian_kernel_flag: " << std::endl << lambertian_kernel_flag()  << std::endl
+      << "      do_shadow_effect: " << do_shadow_effect()  << std::endl
+      << "   do_surface_emission: " << do_surface_emission()  << std::endl
+      << "                nbeams: " << nbeams()  << std::endl
+      << "        n_user_streams: " << n_user_streams()  << std::endl
+      << "       n_user_obsgeoms: " << n_user_obsgeoms()  << std::endl
+      << "             beam_szas: " << std::endl << beam_szas()  << std::endl
+      << "           user_angles: " << std::endl << user_angles()  << std::endl
+      << "         user_obsgeoms: " << std::endl << user_obsgeoms()  << std::endl
+      << "          stream_value: " << stream_value()  << std::endl
+      << "         nstreams_brdf: " << nstreams_brdf()  << std::endl
+      << "        n_brdf_kernels: " << n_brdf_kernels()  << std::endl
+      << "            which_brdf: " << std::endl << which_brdf()  << std::endl
+      << "          brdf_factors: " << std::endl << brdf_factors()  << std::endl
+      << "     n_brdf_parameters: " << std::endl << n_brdf_parameters()  << std::endl
+      << "       brdf_parameters: " << std::endl << brdf_parameters()  << std::endl
+      << "  do_kernel_factor_wfs: " << std::endl << do_kernel_factor_wfs()  << std::endl
+      << "  do_kernel_params_wfs: " << std::endl << do_kernel_params_wfs()  << std::endl
+      << "     do_kparams_derivs: " << std::endl << do_kparams_derivs()  << std::endl
+      << "         n_surface_wfs: " << n_surface_wfs()  << std::endl
+      << "   n_kernel_factor_wfs: " << n_kernel_factor_wfs()  << std::endl
+      << "   n_kernel_params_wfs: " << n_kernel_params_wfs()  << std::endl
+      << "              brdf_f_0: " << std::endl << brdf_f_0()  << std::endl
+      << "                brdf_f: " << std::endl << brdf_f()  << std::endl
+      << "               ubrdf_f: " << std::endl << ubrdf_f()  << std::endl
+      << "            emissivity: " << emissivity()  << std::endl
+      << "           ls_brdf_f_0: " << std::endl << ls_brdf_f_0()  << std::endl
+      << "             ls_brdf_f: " << std::endl << ls_brdf_f()  << std::endl
+      << "            ls_ubrdf_f: " << std::endl << ls_ubrdf_f()  << std::endl
+      << "         ls_emissivity: " << std::endl << ls_emissivity()  << std::endl
+      << "        status_brdfsup: " << status_brdfsup()  << std::endl
+      << "               message: " << "\"" << message() << "\"" << std::endl
+      << "                action: " << "\"" << action() << "\"" << std::endl;
 
   }
+  // MANUAL CHANGE
 
 private:
   int maxbeams_;
@@ -513,6 +510,16 @@ private:
   int status_brdfsup_;
   blitz::Array<char, 1> message_;
   blitz::Array<char, 1> action_;
+  // MANUAL CHANGE
+  Twostream_Ls_Brdf_Supplement() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -523,7 +530,9 @@ extern "C" {
   void twostream_lps_master_m_twostream_lps_master_wrap(const int* maxlayers_in, const int* maxtotal_in, const int* maxmessages_in, const int* maxbeams_in, const int* max_geometries_in, const int* max_user_streams_in, const int* max_user_relazms_in, const int* max_user_obsgeoms_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const int* max_sleavewfs_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_plane_parallel_in, const bool* do_2s_levelout_in, const bool* do_mvout_only_in, const bool* do_additional_mvout_in, const bool* do_solar_sources_in, const bool* do_thermal_emission_in, const bool* do_surface_emission_in, const bool* do_d2s_scaling_in, const bool* do_brdf_surface_in, const bool* do_user_obsgeoms_in, const bool* do_surface_leaving_in, const bool* do_sl_isotropic_in, const bool* do_pentadiag_inverse_in, const int* bvpindex_in, const double* bvpscalefactor_in, const int* taylor_order_in, const double* taylor_small_in, const double* tcutoff_in, const int* nlayers_in, const int* ntotal_in, const double* stream_value_in, const int* n_user_obsgeoms_in, const double* user_obsgeoms_in, const int* n_user_streams_in, const double* user_angles_in, const int* n_user_relazms_in, const double* user_relazms_in, const double* flux_factor_in, const int* nbeams_in, const double* beam_szas_in, const double* earth_radius_in, const double* height_grid_in, const double* deltau_input_in, const double* omega_input_in, const double* asymm_input_in, const double* d2s_scaling_in, const double* thermal_bb_input_in, const double* lambertian_albedo_in, const double* brdf_f_0_in, const double* brdf_f_in, const double* ubrdf_f_in, const double* emissivity_in, const double* surfbb_in, const double* slterm_isotropic_in, const double* slterm_f_0_in, const bool* do_profile_wfs_in, const bool* do_surface_wfs_in, const bool* do_sleave_wfs_in, const bool* layer_vary_flag_in, const int* layer_vary_number_in, const int* n_surface_wfs_in, const int* n_sleave_wfs_in, const double* lssl_slterm_isotropic_in, const double* lssl_slterm_f_0_in, const double* l_deltau_input_in, const double* l_omega_input_in, const double* l_asymm_input_in, const double* l_d2s_scaling_in, const double* ls_brdf_f_0_in, const double* ls_brdf_f_in, const double* ls_ubrdf_f_in, const double* ls_emissivity_in, const double* intensity_toa_in, const double* profilewf_toa_in, const double* surfacewf_toa_in, const double* intensity_boa_in, const double* profilewf_boa_in, const double* surfacewf_boa_in, const double* radlevel_up_in, const double* radlevel_dn_in, const int* n_geometries_in, const double* profjaclevel_up_in, const double* profjaclevel_dn_in, const double* surfjaclevel_up_in, const double* surfjaclevel_dn_in, const double* fluxes_toa_in, const double* profjacfluxes_toa_in, const double* surfjacfluxes_toa_in, const double* fluxes_boa_in, const double* profjacfluxes_boa_in, const double* surfjacfluxes_boa_in, const int* status_inputcheck_in, const int* c_nmessages_in, const int* c_messages_shape_1, const int* c_messages_len, const char* c_messages_in, const int* c_actions_shape_1, const int* c_actions_len, const char* c_actions_in, const int* status_execution_in, const int* e_message_len, const char* e_message_in, const int* e_trace_1_len, const char* e_trace_1_in, const int* e_trace_2_len, const char* e_trace_2_in);
 }
 
-class Twostream_Lps_Master : public virtual GenericObject {
+  // MANUAL CHANGE
+class Twostream_Lps_Master : public Printable<Twostream_Lps_Master> {
+  // MANUAL CHANGE
 
 public:
   Twostream_Lps_Master(const int& maxlayers_in, const int& maxtotal_in, const int& maxmessages_in, const int& maxbeams_in, const int& max_geometries_in, const int& max_user_streams_in, const int& max_user_relazms_in, const int& max_user_obsgeoms_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& nlayers_in, const int& ntotal_in, const int& n_user_streams_in, const int& n_user_relazms_in, const int& nbeams_in, const double& earth_radius_in, const int& n_geometries_in) : maxlayers_(maxlayers_in), maxtotal_(maxtotal_in), maxmessages_(maxmessages_in), maxbeams_(maxbeams_in), max_geometries_(max_geometries_in), max_user_streams_(max_user_streams_in), max_user_relazms_(max_user_relazms_in), max_user_obsgeoms_(max_user_obsgeoms_in), max_atmoswfs_(max_atmoswfs_in), max_surfacewfs_(max_surfacewfs_in), max_sleavewfs_(max_sleavewfs_in), nlayers_(nlayers_in), ntotal_(ntotal_in), n_user_streams_(n_user_streams_in), n_user_relazms_(n_user_relazms_in), nbeams_(nbeams_in), earth_radius_(earth_radius_in), n_geometries_(n_geometries_in) 
@@ -667,13 +676,6 @@ public:
   }
 
   virtual ~Twostream_Lps_Master() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxlayers() const {
     return maxlayers_;
@@ -1650,123 +1652,123 @@ public:
     
   }
 
-  friend std::ostream& operator<<(std::ostream &output_stream, const Twostream_Lps_Master &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Twostream_Lps_Master:" << std::endl
-      << "            maxlayers: " << obj.maxlayers()  << std::endl
-      << "             maxtotal: " << obj.maxtotal()  << std::endl
-      << "          maxmessages: " << obj.maxmessages()  << std::endl
-      << "             maxbeams: " << obj.maxbeams()  << std::endl
-      << "       max_geometries: " << obj.max_geometries()  << std::endl
-      << "     max_user_streams: " << obj.max_user_streams()  << std::endl
-      << "     max_user_relazms: " << obj.max_user_relazms()  << std::endl
-      << "    max_user_obsgeoms: " << obj.max_user_obsgeoms()  << std::endl
-      << "         max_atmoswfs: " << obj.max_atmoswfs()  << std::endl
-      << "       max_surfacewfs: " << obj.max_surfacewfs()  << std::endl
-      << "        max_sleavewfs: " << obj.max_sleavewfs()  << std::endl
-      << "         do_upwelling: " << obj.do_upwelling()  << std::endl
-      << "         do_dnwelling: " << obj.do_dnwelling()  << std::endl
-      << "    do_plane_parallel: " << obj.do_plane_parallel()  << std::endl
-      << "       do_2s_levelout: " << obj.do_2s_levelout()  << std::endl
-      << "        do_mvout_only: " << obj.do_mvout_only()  << std::endl
-      << "  do_additional_mvout: " << obj.do_additional_mvout()  << std::endl
-      << "     do_solar_sources: " << obj.do_solar_sources()  << std::endl
-      << "  do_thermal_emission: " << obj.do_thermal_emission()  << std::endl
-      << "  do_surface_emission: " << obj.do_surface_emission()  << std::endl
-      << "       do_d2s_scaling: " << obj.do_d2s_scaling()  << std::endl
-      << "      do_brdf_surface: " << obj.do_brdf_surface()  << std::endl
-      << "     do_user_obsgeoms: " << obj.do_user_obsgeoms()  << std::endl
-      << "   do_surface_leaving: " << obj.do_surface_leaving()  << std::endl
-      << "      do_sl_isotropic: " << obj.do_sl_isotropic()  << std::endl
-      << " do_pentadiag_inverse: " << obj.do_pentadiag_inverse()  << std::endl
-      << "             bvpindex: " << obj.bvpindex()  << std::endl
-      << "       bvpscalefactor: " << obj.bvpscalefactor()  << std::endl
-      << "         taylor_order: " << obj.taylor_order()  << std::endl
-      << "         taylor_small: " << obj.taylor_small()  << std::endl
-      << "              tcutoff: " << obj.tcutoff()  << std::endl
-      << "              nlayers: " << obj.nlayers()  << std::endl
-      << "               ntotal: " << obj.ntotal()  << std::endl
-      << "         stream_value: " << obj.stream_value()  << std::endl
-      << "      n_user_obsgeoms: " << obj.n_user_obsgeoms()  << std::endl
-      << "        user_obsgeoms: " << std::endl << obj.user_obsgeoms()  << std::endl
-      << "       n_user_streams: " << obj.n_user_streams()  << std::endl
-      << "          user_angles: " << std::endl << obj.user_angles()  << std::endl
-      << "       n_user_relazms: " << obj.n_user_relazms()  << std::endl
-      << "         user_relazms: " << std::endl << obj.user_relazms()  << std::endl
-      << "          flux_factor: " << obj.flux_factor()  << std::endl
-      << "               nbeams: " << obj.nbeams()  << std::endl
-      << "            beam_szas: " << std::endl << obj.beam_szas()  << std::endl
-      << "         earth_radius: " << obj.earth_radius()  << std::endl
-      << "          height_grid: " << std::endl << obj.height_grid()  << std::endl
-      << "         deltau_input: " << std::endl << obj.deltau_input()  << std::endl
-      << "          omega_input: " << std::endl << obj.omega_input()  << std::endl
-      << "          asymm_input: " << std::endl << obj.asymm_input()  << std::endl
-      << "          d2s_scaling: " << std::endl << obj.d2s_scaling()  << std::endl
-      << "     thermal_bb_input: " << std::endl << obj.thermal_bb_input()  << std::endl
-      << "    lambertian_albedo: " << obj.lambertian_albedo()  << std::endl
-      << "             brdf_f_0: " << std::endl << obj.brdf_f_0()  << std::endl
-      << "               brdf_f: " << std::endl << obj.brdf_f()  << std::endl
-      << "              ubrdf_f: " << std::endl << obj.ubrdf_f()  << std::endl
-      << "           emissivity: " << obj.emissivity()  << std::endl
-      << "               surfbb: " << obj.surfbb()  << std::endl
-      << "     slterm_isotropic: " << std::endl << obj.slterm_isotropic()  << std::endl
-      << "           slterm_f_0: " << std::endl << obj.slterm_f_0()  << std::endl
-      << "       do_profile_wfs: " << obj.do_profile_wfs()  << std::endl
-      << "       do_surface_wfs: " << obj.do_surface_wfs()  << std::endl
-      << "        do_sleave_wfs: " << obj.do_sleave_wfs()  << std::endl
-      << "      layer_vary_flag: " << std::endl << obj.layer_vary_flag()  << std::endl
-      << "    layer_vary_number: " << std::endl << obj.layer_vary_number()  << std::endl
-      << "        n_surface_wfs: " << obj.n_surface_wfs()  << std::endl
-      << "         n_sleave_wfs: " << obj.n_sleave_wfs()  << std::endl
-      << "lssl_slterm_isotropic: " << std::endl << obj.lssl_slterm_isotropic()  << std::endl
-      << "      lssl_slterm_f_0: " << std::endl << obj.lssl_slterm_f_0()  << std::endl
-      << "       l_deltau_input: " << std::endl << obj.l_deltau_input()  << std::endl
-      << "        l_omega_input: " << std::endl << obj.l_omega_input()  << std::endl
-      << "        l_asymm_input: " << std::endl << obj.l_asymm_input()  << std::endl
-      << "        l_d2s_scaling: " << std::endl << obj.l_d2s_scaling()  << std::endl
-      << "          ls_brdf_f_0: " << std::endl << obj.ls_brdf_f_0()  << std::endl
-      << "            ls_brdf_f: " << std::endl << obj.ls_brdf_f()  << std::endl
-      << "           ls_ubrdf_f: " << std::endl << obj.ls_ubrdf_f()  << std::endl
-      << "        ls_emissivity: " << std::endl << obj.ls_emissivity()  << std::endl
-      << "        intensity_toa: " << std::endl << obj.intensity_toa()  << std::endl
-      << "        profilewf_toa: " << std::endl << obj.profilewf_toa()  << std::endl
-      << "        surfacewf_toa: " << std::endl << obj.surfacewf_toa()  << std::endl
-      << "        intensity_boa: " << std::endl << obj.intensity_boa()  << std::endl
-      << "        profilewf_boa: " << std::endl << obj.profilewf_boa()  << std::endl
-      << "        surfacewf_boa: " << std::endl << obj.surfacewf_boa()  << std::endl
-      << "          radlevel_up: " << std::endl << obj.radlevel_up()  << std::endl
-      << "          radlevel_dn: " << std::endl << obj.radlevel_dn()  << std::endl
-      << "         n_geometries: " << obj.n_geometries()  << std::endl
-      << "      profjaclevel_up: " << std::endl << obj.profjaclevel_up()  << std::endl
-      << "      profjaclevel_dn: " << std::endl << obj.profjaclevel_dn()  << std::endl
-      << "      surfjaclevel_up: " << std::endl << obj.surfjaclevel_up()  << std::endl
-      << "      surfjaclevel_dn: " << std::endl << obj.surfjaclevel_dn()  << std::endl
-      << "           fluxes_toa: " << std::endl << obj.fluxes_toa()  << std::endl
-      << "    profjacfluxes_toa: " << std::endl << obj.profjacfluxes_toa()  << std::endl
-      << "    surfjacfluxes_toa: " << std::endl << obj.surfjacfluxes_toa()  << std::endl
-      << "           fluxes_boa: " << std::endl << obj.fluxes_boa()  << std::endl
-      << "    profjacfluxes_boa: " << std::endl << obj.profjacfluxes_boa()  << std::endl
-      << "    surfjacfluxes_boa: " << std::endl << obj.surfjacfluxes_boa()  << std::endl
-      << "    status_inputcheck: " << obj.status_inputcheck()  << std::endl
-      << "          c_nmessages: " << obj.c_nmessages()  << std::endl
+      << "            maxlayers: " << maxlayers()  << std::endl
+      << "             maxtotal: " << maxtotal()  << std::endl
+      << "          maxmessages: " << maxmessages()  << std::endl
+      << "             maxbeams: " << maxbeams()  << std::endl
+      << "       max_geometries: " << max_geometries()  << std::endl
+      << "     max_user_streams: " << max_user_streams()  << std::endl
+      << "     max_user_relazms: " << max_user_relazms()  << std::endl
+      << "    max_user_obsgeoms: " << max_user_obsgeoms()  << std::endl
+      << "         max_atmoswfs: " << max_atmoswfs()  << std::endl
+      << "       max_surfacewfs: " << max_surfacewfs()  << std::endl
+      << "        max_sleavewfs: " << max_sleavewfs()  << std::endl
+      << "         do_upwelling: " << do_upwelling()  << std::endl
+      << "         do_dnwelling: " << do_dnwelling()  << std::endl
+      << "    do_plane_parallel: " << do_plane_parallel()  << std::endl
+      << "       do_2s_levelout: " << do_2s_levelout()  << std::endl
+      << "        do_mvout_only: " << do_mvout_only()  << std::endl
+      << "  do_additional_mvout: " << do_additional_mvout()  << std::endl
+      << "     do_solar_sources: " << do_solar_sources()  << std::endl
+      << "  do_thermal_emission: " << do_thermal_emission()  << std::endl
+      << "  do_surface_emission: " << do_surface_emission()  << std::endl
+      << "       do_d2s_scaling: " << do_d2s_scaling()  << std::endl
+      << "      do_brdf_surface: " << do_brdf_surface()  << std::endl
+      << "     do_user_obsgeoms: " << do_user_obsgeoms()  << std::endl
+      << "   do_surface_leaving: " << do_surface_leaving()  << std::endl
+      << "      do_sl_isotropic: " << do_sl_isotropic()  << std::endl
+      << " do_pentadiag_inverse: " << do_pentadiag_inverse()  << std::endl
+      << "             bvpindex: " << bvpindex()  << std::endl
+      << "       bvpscalefactor: " << bvpscalefactor()  << std::endl
+      << "         taylor_order: " << taylor_order()  << std::endl
+      << "         taylor_small: " << taylor_small()  << std::endl
+      << "              tcutoff: " << tcutoff()  << std::endl
+      << "              nlayers: " << nlayers()  << std::endl
+      << "               ntotal: " << ntotal()  << std::endl
+      << "         stream_value: " << stream_value()  << std::endl
+      << "      n_user_obsgeoms: " << n_user_obsgeoms()  << std::endl
+      << "        user_obsgeoms: " << std::endl << user_obsgeoms()  << std::endl
+      << "       n_user_streams: " << n_user_streams()  << std::endl
+      << "          user_angles: " << std::endl << user_angles()  << std::endl
+      << "       n_user_relazms: " << n_user_relazms()  << std::endl
+      << "         user_relazms: " << std::endl << user_relazms()  << std::endl
+      << "          flux_factor: " << flux_factor()  << std::endl
+      << "               nbeams: " << nbeams()  << std::endl
+      << "            beam_szas: " << std::endl << beam_szas()  << std::endl
+      << "         earth_radius: " << earth_radius()  << std::endl
+      << "          height_grid: " << std::endl << height_grid()  << std::endl
+      << "         deltau_input: " << std::endl << deltau_input()  << std::endl
+      << "          omega_input: " << std::endl << omega_input()  << std::endl
+      << "          asymm_input: " << std::endl << asymm_input()  << std::endl
+      << "          d2s_scaling: " << std::endl << d2s_scaling()  << std::endl
+      << "     thermal_bb_input: " << std::endl << thermal_bb_input()  << std::endl
+      << "    lambertian_albedo: " << lambertian_albedo()  << std::endl
+      << "             brdf_f_0: " << std::endl << brdf_f_0()  << std::endl
+      << "               brdf_f: " << std::endl << brdf_f()  << std::endl
+      << "              ubrdf_f: " << std::endl << ubrdf_f()  << std::endl
+      << "           emissivity: " << emissivity()  << std::endl
+      << "               surfbb: " << surfbb()  << std::endl
+      << "     slterm_isotropic: " << std::endl << slterm_isotropic()  << std::endl
+      << "           slterm_f_0: " << std::endl << slterm_f_0()  << std::endl
+      << "       do_profile_wfs: " << do_profile_wfs()  << std::endl
+      << "       do_surface_wfs: " << do_surface_wfs()  << std::endl
+      << "        do_sleave_wfs: " << do_sleave_wfs()  << std::endl
+      << "      layer_vary_flag: " << std::endl << layer_vary_flag()  << std::endl
+      << "    layer_vary_number: " << std::endl << layer_vary_number()  << std::endl
+      << "        n_surface_wfs: " << n_surface_wfs()  << std::endl
+      << "         n_sleave_wfs: " << n_sleave_wfs()  << std::endl
+      << "lssl_slterm_isotropic: " << std::endl << lssl_slterm_isotropic()  << std::endl
+      << "      lssl_slterm_f_0: " << std::endl << lssl_slterm_f_0()  << std::endl
+      << "       l_deltau_input: " << std::endl << l_deltau_input()  << std::endl
+      << "        l_omega_input: " << std::endl << l_omega_input()  << std::endl
+      << "        l_asymm_input: " << std::endl << l_asymm_input()  << std::endl
+      << "        l_d2s_scaling: " << std::endl << l_d2s_scaling()  << std::endl
+      << "          ls_brdf_f_0: " << std::endl << ls_brdf_f_0()  << std::endl
+      << "            ls_brdf_f: " << std::endl << ls_brdf_f()  << std::endl
+      << "           ls_ubrdf_f: " << std::endl << ls_ubrdf_f()  << std::endl
+      << "        ls_emissivity: " << std::endl << ls_emissivity()  << std::endl
+      << "        intensity_toa: " << std::endl << intensity_toa()  << std::endl
+      << "        profilewf_toa: " << std::endl << profilewf_toa()  << std::endl
+      << "        surfacewf_toa: " << std::endl << surfacewf_toa()  << std::endl
+      << "        intensity_boa: " << std::endl << intensity_boa()  << std::endl
+      << "        profilewf_boa: " << std::endl << profilewf_boa()  << std::endl
+      << "        surfacewf_boa: " << std::endl << surfacewf_boa()  << std::endl
+      << "          radlevel_up: " << std::endl << radlevel_up()  << std::endl
+      << "          radlevel_dn: " << std::endl << radlevel_dn()  << std::endl
+      << "         n_geometries: " << n_geometries()  << std::endl
+      << "      profjaclevel_up: " << std::endl << profjaclevel_up()  << std::endl
+      << "      profjaclevel_dn: " << std::endl << profjaclevel_dn()  << std::endl
+      << "      surfjaclevel_up: " << std::endl << surfjaclevel_up()  << std::endl
+      << "      surfjaclevel_dn: " << std::endl << surfjaclevel_dn()  << std::endl
+      << "           fluxes_toa: " << std::endl << fluxes_toa()  << std::endl
+      << "    profjacfluxes_toa: " << std::endl << profjacfluxes_toa()  << std::endl
+      << "    surfjacfluxes_toa: " << std::endl << surfjacfluxes_toa()  << std::endl
+      << "           fluxes_boa: " << std::endl << fluxes_boa()  << std::endl
+      << "    profjacfluxes_boa: " << std::endl << profjacfluxes_boa()  << std::endl
+      << "    surfjacfluxes_boa: " << std::endl << surfjacfluxes_boa()  << std::endl
+      << "    status_inputcheck: " << status_inputcheck()  << std::endl
+      << "          c_nmessages: " << c_nmessages()  << std::endl
       << "           c_messages: " << std::endl;
-    std::vector< std::string > c_messages_lcl = obj.c_messages();
+    std::vector< std::string > c_messages_lcl = c_messages();
     for(unsigned int idx = 0; idx < c_messages_lcl.size(); idx++)
       if ( c_messages_lcl[idx].length() > 0 )
         output_stream << "  [" << idx << "]: \"" << c_messages_lcl[idx] << "\"" << std::endl;
     output_stream
       << "            c_actions: " << std::endl;
-    std::vector< std::string > c_actions_lcl = obj.c_actions();
+    std::vector< std::string > c_actions_lcl = c_actions();
     for(unsigned int idx = 0; idx < c_actions_lcl.size(); idx++)
       if ( c_actions_lcl[idx].length() > 0 )
         output_stream << "  [" << idx << "]: \"" << c_actions_lcl[idx] << "\"" << std::endl;
     output_stream
-      << "     status_execution: " << obj.status_execution()  << std::endl
-      << "            e_message: " << "\"" << obj.e_message() << "\"" << std::endl
-      << "            e_trace_1: " << "\"" << obj.e_trace_1() << "\"" << std::endl
-      << "            e_trace_2: " << "\"" << obj.e_trace_2() << "\"" << std::endl;
-    return output_stream;
-
+      << "     status_execution: " << status_execution()  << std::endl
+      << "            e_message: " << "\"" << e_message() << "\"" << std::endl
+      << "            e_trace_1: " << "\"" << e_trace_1() << "\"" << std::endl
+      << "            e_trace_2: " << "\"" << e_trace_2() << "\"" << std::endl;
   }
+  // MANUAL CHANGE
 
 private:
   int maxlayers_;
@@ -1871,9 +1873,24 @@ private:
   blitz::Array<char, 1> e_message_;
   blitz::Array<char, 1> e_trace_1_;
   blitz::Array<char, 1> e_trace_2_;
+  // MANUAL CHANGE
+  Twostream_Lps_Master() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 
 
 }
+
+  // MANUAL CHANGE
+FP_EXPORT_KEY(Twostream_Ls_Brdf_Supplement);
+FP_EXPORT_KEY(Twostream_Lps_Master);
+  // MANUAL CHANGE
 #endif

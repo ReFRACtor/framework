@@ -110,7 +110,6 @@ public:
   %python_attribute2(altitude_obj, altitude_ptr, std::vector<boost::shared_ptr<Altitude> >)
   boost::shared_ptr<AtmosphereLegacy> clone() const;
   %python_attribute(rayleigh_only_atmosphere, bool)
-  void set_surface_pressure_for_testing(double x);
 };
 
 }

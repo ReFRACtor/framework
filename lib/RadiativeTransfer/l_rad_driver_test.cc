@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(lambertian_first_order)
     Array<double, 1> a1(3), b(3);
     a1 = 0; b = 0.3, 0.6, 1.0;
     double psurf = 10;
-    boost::shared_ptr<Pressure> p(new PressureSigma(a1,b, psurf, true));
+    boost::shared_ptr<Pressure> p(new PressureSigma(a1, b, psurf));
     std::vector< boost::shared_ptr<AerosolProperty> > aer_properties;
     std::vector<Array<double, 2> > aer_pf;
     int s1 = 0;

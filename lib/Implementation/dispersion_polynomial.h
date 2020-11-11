@@ -4,6 +4,7 @@
 #include "unit.h"
 #include "sub_state_vector_array.h"
 #include "polynomial_eval.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -16,20 +17,22 @@ namespace FullPhysics {
   convention, the polynomial is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class DispersionPolynomial: public SubStateVectorArray<SampleGrid> {
+class DispersionPolynomial: virtual public SubStateVectorArray<SampleGrid> {
 public:
   DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-		       const blitz::Array<bool, 1>& Used_flag,
-		       const Unit& Coeff_unit,
-		       const std::string& Band_name,
-		       int Number_pixel,
-		       bool Is_one_based);
+                       const Unit& Coeff_unit,
+                       const blitz::Array<double, 1>& Var_values,
+                       const std::string& Band_name,
+                       boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
   DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
-		       const blitz::Array<bool, 1>& Used_flag,
-		       const std::string& Coeff_unit_name,
-		       const std::string& Band_name,
-		       int Number_pixel, 
-		       bool Is_one_based);
+                       const std::string& Coeff_unit_name,
+                       const blitz::Array<double, 1>& Var_values,
+                       const std::string& Band_name,
+                       boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
+  DispersionPolynomial(const ArrayWithUnit<double, 1>& Coeff, 
+                       const blitz::Array<double, 1>& Var_values,
+                       const std::string& Band_name,
+                       boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
   virtual ~DispersionPolynomial() {}
 
 //-----------------------------------------------------------------------
@@ -82,14 +85,20 @@ public:
   virtual void print(std::ostream& Os) const;
 private:
   void initialize();
-  bool is_one_based;
+
   Unit coeff_unit;
   std::string band_name_;
-  /// This is an array like 1,2,3 ... number_pixel. This is used by 
-  /// pixel_grid
-  blitz::Array<double, 1> index_array;
+  /// This is an array like 0,1,2,3 ... number_sample. This is used by 
+  /// sample_grid.
+  blitz::Array<double, 1> variable_values_;
   // Very similar to index_array, but always 1 based.
   blitz::Array<int, 1> spectral_index;
+  DispersionPolynomial() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(DispersionPolynomial);
 #endif

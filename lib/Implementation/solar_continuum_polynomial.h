@@ -23,6 +23,12 @@ public:
 private:
   ArrayWithUnit<double, 1> param;
   bool convert_from_photon;
+  SolarContinuumPolynomial() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarContinuumPolynomial);
 #endif

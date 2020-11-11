@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
 // This file was auto-generated
 
 %include "fp_common.i"
@@ -5,6 +7,10 @@
 %{
 #include "lidort_interface_masters.h"
 %}
+
+  // MANUAL CHANGE
+%base_import(generic_object)
+  // MANUAL CHANGE
 
 %import "lidort_interface_types.i"
 
@@ -20,7 +26,9 @@ namespace FullPhysics {
 
 
 
-class Brdf_Linsup_Masters {
+  // MANUAL CHANGE
+class Brdf_Linsup_Masters : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Brdf_Linsup_Masters();
@@ -36,6 +44,9 @@ public:
   
   void read_config(const std::string& filnam_in);
   void run(const bool& do_debug_restoration_in, const int& nmoments_input_in);
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 
@@ -76,7 +87,9 @@ public:
 };
 
 
-class Lidort_Lps_Masters {
+  // MANUAL CHANGE
+class Lidort_Lps_Masters : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Lidort_Lps_Masters();
@@ -93,6 +106,9 @@ public:
   %python_attribute(lidort_linout, Lidort_Linoutputs&)
   
   void run();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 

@@ -1,7 +1,20 @@
 #include "spectrum_sampling_fixed_spacing.h"
+#include "fp_serialize_support.h"
 #include <fstream>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectrumSamplingFixedSpacing::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling)
+    & FP_NVP(spec_spacing);
+}
+
+FP_IMPLEMENT(SpectrumSamplingFixedSpacing);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -64,11 +77,11 @@ SpectralDomain SpectrumSamplingFixedSpacing::spectral_domain
          (lres_conv[0].convert_wave(u_orig) + Edge_extension).
          convert_wave(u_comp) );
 
-    DoubleWithUnit fpoint = floor(begval / sp) * sp;   
-    hres.push_back(fpoint.convert_wave(u_orig).value);
-
     // Value for for first iteration of loop
-    int smax = (int) round(fpoint.value / sp).value;
+    int smax = (int) floor(begval / sp).value;
+
+    DoubleWithUnit fpoint = smax * sp;   
+    hres.push_back(fpoint.convert_wave(u_orig).value);
 
     BOOST_FOREACH(DoubleWithUnit v, lres_conv) {
       DoubleWithUnit minusval = (v.convert_wave(u_orig) - Edge_extension).

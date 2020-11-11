@@ -13,6 +13,7 @@ namespace FullPhysics {
 
 class InitialGuessValue : public InitialGuessBuilder {
 public:
+  InitialGuessValue() {}
   virtual ~InitialGuessValue() {}
   virtual int number_element() const { return apriori_.rows(); }
   virtual void build_initial_value(blitz::Array<double, 1>& v, int index) 
@@ -78,6 +79,10 @@ public:
 private:
   blitz::Array<double, 1> apriori_, initial_guess_;
   blitz::Array<double, 2> apriori_covariance_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(InitialGuessValue);
 #endif

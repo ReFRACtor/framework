@@ -1,4 +1,5 @@
 #include "absco.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
 #include <algorithm>
@@ -6,6 +7,17 @@
 #include <cmath>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Absco::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GasAbsorption);
+}
+
+FP_IMPLEMENT(Absco);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

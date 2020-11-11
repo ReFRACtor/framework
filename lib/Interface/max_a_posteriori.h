@@ -449,8 +449,13 @@ protected:
   // For convenience
   blitz::Array<double, 2> Sa_chol;
   blitz::Array<double, 2> Sa_chol_inv;
-
-
+  MaxAPosteriori() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(MaxAPosteriori);
 #endif

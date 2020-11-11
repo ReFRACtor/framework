@@ -5,11 +5,10 @@ using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void StateVectorObserver::serialize(Archive & ar, const unsigned int version)
+void StateVectorObserver::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
 {
-  FP_GENERIC_BASE(StateVectorObserver);
-  // Leave out the Observer<StateVector> part, I'm not sure if we
-  // want to serialize that or not
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverStateVector);
 }
 
 FP_IMPLEMENT(StateVectorObserver);

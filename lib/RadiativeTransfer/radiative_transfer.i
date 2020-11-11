@@ -23,5 +23,7 @@ public:
 					 int Spec_index) const = 0;
   virtual ArrayAd<double, 2> stokes_and_jacobian
   (const FullPhysics::SpectralDomain& Spec_domain, int Spec_index) const = 0;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
+  %pickle_serialization();
 };
 }

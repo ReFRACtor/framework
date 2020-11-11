@@ -1,10 +1,6 @@
-from bisect import bisect
-
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValue
-from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
@@ -22,7 +18,9 @@ class PerChannelMixin(object):
 class SpectralWindowRange(Creator):
     
     window_ranges = param.ArrayWithUnit(dims=3)
-    bad_sample_mask = param.Array(dims=2, required=False)
+    # Mask of instrument samples that should not be included in spectral regions
+    bad_sample_mask = param.Choice(param.Array(dims=2),
+                                   param.Iterable(np.ndarray), required=False)
     
     def create(self, **kwargs):
 
@@ -47,10 +45,16 @@ class MicroWindowRanges(Creator):
     # Defaults to full_ranges if not supplied or equal to None
     micro_windows = param.Choice(param.ArrayWithUnit(dims=2), param.NoneValue(), required=False)
 
+    # Mask of instrument samples that should not be included in spectral regions
+    bad_sample_mask = param.Choice(param.Array(dims=2),
+                                   param.Iterable(np.ndarray), required=False)
+
     def create(self, **kwargs):
 
         full_ranges = self.full_ranges()
         micro_windows = self.micro_windows()
+        bad_sample_mask = self.bad_sample_mask()
+
         num_channels = full_ranges.rows
 
         # If micro_windows are not supplied use the full_ranges as the
@@ -86,7 +90,12 @@ class MicroWindowRanges(Creator):
                 win_ranges[chan_idx, mw_idx, :] = mw_range
 
         # Assign to configuration
-        return rf.SpectralWindowRange(rf.ArrayWithUnit_double_3(win_ranges, full_ranges.units))
+        win_ranges = rf.ArrayWithUnit(win_ranges, full_ranges.units)
+
+        if bad_sample_mask is not None:
+            return rf.SpectralWindowRange(win_ranges, bad_sample_mask)
+        else:
+            return rf.SpectralWindowRange(win_ranges)
 
 class SpectrumSamplingBase(Creator, PerChannelMixin):
 
@@ -162,8 +171,9 @@ class SpectrumEffectList(Creator):
 
         return spec_eff
 
-class FluorescenceEffect(CreatorFlaggedValue):
+class FluorescenceEffect(Creator):
     
+      coefficients = param.Array(dims=1)
       reference_point = param.ArrayWithUnit(dims=1)
       cov_unit = param.InstanceOf(rf.Unit)
       which_channels = param.Iterable()
@@ -178,8 +188,7 @@ class FluorescenceEffect(CreatorFlaggedValue):
           atm = self.atmosphere()
           lza = self.observation_zenith()
           ref_point = self.reference_point()[0]
-          coeff = self.value()
-          used_flag = self.retrieval_flag()
+          coeff = self.coefficients()
           stokes_coeff = rf.StokesCoefficientConstant(self.stokes_coefficient())
           cov_unit = self.cov_unit()
           num_channels = self.num_channels()
@@ -193,14 +202,15 @@ class FluorescenceEffect(CreatorFlaggedValue):
               if chan_idx >= num_channels:
                   raise ParamError("Channel index {} exceeds number of channels {}".format(chan_idx, num_channels))
 
-              fluoresence[chan_idx] = rf.FluorescenceEffect(coeff, used_flag, atm, stokes_coeff, lza[chan_idx], chan_idx, ref_point, cov_unit)
+              fluoresence[chan_idx] = rf.FluorescenceEffect(coeff, atm, stokes_coeff, lza[chan_idx], chan_idx, ref_point, cov_unit)
 
           return fluoresence
 
-class RamanSiorisEffect(CreatorFlaggedValue):
+class RamanSiorisEffect(Creator):
 
     albedo = param.Array(dims=1)
 
+    scale_factors = param.Array(dims=1)
     solar_zenith = param.ArrayWithUnit(dims=1)
     observation_zenith = param.ArrayWithUnit(dims=1)
     relative_azimuth = param.ArrayWithUnit(dims=1)
@@ -214,8 +224,7 @@ class RamanSiorisEffect(CreatorFlaggedValue):
 
     def create(self, solar_model=None, **kwargs):
 
-        scale_factor = self.value()
-        used_flag = self.retrieval_flag()
+        scale_factor = self.scale_factors()
 
         albedo = self.albedo()
 
@@ -232,11 +241,14 @@ class RamanSiorisEffect(CreatorFlaggedValue):
         do_upwelling = self.do_upwelling()
         jac_perturb = self.jacobian_perturbation()
 
+        mapping = rf.StateMappingLinear()
+
         raman_effect = []
         for chan_index in range(self.num_channels()):
-            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], bool(used_flag[chan_index]), chan_index,
+            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], chan_index,
                                  solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
                                  atmosphere, solar_model[chan_index], albedo[chan_index], 
+                                 mapping,
                                  padding_fraction, do_upwelling, jac_perturb) )
 
         return raman_effect
@@ -259,191 +271,3 @@ class ForwardModel(Creator):
         fm.setup_grid()
 
         return fm
-
-class OssForwardModel(Creator):
-    absorber = param.Iterable(rf.AbsorberVmr)
-    pressure = param.InstanceOf(rf.Pressure)
-    temperature = param.InstanceOf(rf.Temperature)
-    surface_temperature = param.InstanceOf(rf.SurfaceTemperature)
-    ground = param.InstanceOf(rf.GroundPiecewise)
-    # TODO: Discuss below with respect to channels
-    # observation_zenith = param.DoubleWithUnit()
-    # solar_zenith = param.DoubleWithUnit()
-    # latitude = param.DoubleWithUnit()
-    # altitude = param.DoubleWithUnit()
-    observation_zenith = param.ArrayWithUnit()
-    solar_zenith = param.ArrayWithUnit()
-    latitude = param.ArrayWithUnit()
-    altitude = param.ArrayWithUnit()
-    # TODO: some configs set this up at vector of altitude instead of ArrayWithUnit from L1B
-    # altitude = param.ObjectVector("altitude")
-    lambertian = param.Scalar(bool, default=True)
-    sel_file = param.Scalar(str)
-    od_file = param.Scalar(str)
-    sol_file = param.Scalar(str)
-    fix_file = param.Scalar(str)
-    ch_sel_file = param.Scalar(str)
-    #max_chans =  param.Scalar(int, default=20000)
-
-    ## TEMP ##
-    # Temporary to attach a ForwardModelSpectralGrid until changes are made
-    # to fix the requirement of a ForwardModelSpectralGrid object to create a retrieval
-    # TODO: Remove this
-    instrument = param.InstanceOf(rf.Instrument)
-    spec_win = param.InstanceOf(rf.SpectralWindow)
-    spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
-    ## TEMP ##
-
-    def __init__(self, *vargs, **kwargs):
-        super().__init__(*vargs, **kwargs)
-
-        self.register_to_receive(RetrievalComponents, deregister_after_create=False)
-        
-        # Expected order of retrieval components so that they match the order that OssForwardModel provides
-        self.ret_object_order = [ rf.Temperature, 
-                                  rf.SurfaceTemperature, 
-                                  rf.AbsorberVmr, 
-                                  rf.GroundPiecewise ]
-
-        self.fm = None
-        self.receive_is_registered = False
-
-    def receive(self, rec_obj):
-        if not self.receive_is_registered:
-            self.setup_retrieval_levels(list(rec_obj.values()))
-            self.receive_is_registered = True
-
-    def check_retrieval_order(self, retrieval_components):
-
-        # Go through and assign an index to each of the retrieval components based on the above ordering
-        configured_order = []
-        for ret_obj in retrieval_components:
-            found_type = False
-            for idx, obj_type in enumerate(self.ret_object_order):
-                if isinstance(ret_obj, obj_type):
-                    configured_order.append(idx)
-                    found_type = True
-                    break
-
-            if not found_type:
-                raise param.ParamError(f"Retrieval component configured that OssForwardModel can not handle: {ret_obj.__class__.__name__}")
-
-        # Check that the configured order is in increasing order
-        last_idx = -1
-        for pos_idx, config_idx in enumerate(configured_order):
-            if config_idx < last_idx:
-                ret_obj = retrieval_components[pos_idx]
-                raise param.ParamError(f"Retrieval component {ret_obj.__class__.__name__} is in the wrong order.")
-            last_idx = config_idx
-
-    def temperature_retrieval_levels(self, retrieval_components, fm_press):
-
-        temperature = self.temperature()
-
-        if temperature in retrieval_components:
-            temp_press = temperature.pressure_profile()
-
-            temp_ret_levels = []
-            for ret_idx, press in enumerate(temp_press):
-                if temperature.used_flag_value[ret_idx]:
-                    temp_ret_levels.append(bisect(fm_press, press))
-
-            return np.array(temp_ret_levels, dtype=int)
-        else:
-            return np.zeros(0, dtype=int)
-
-    def surface_temperature_flags(self, retrieval_components):
-
-        surface_temperature = self.surface_temperature()
-
-        if surface_temperature in retrieval_components:
-            return np.array(surface_temperature.used_flag_value, dtype=bool)
-        else:
-            # Jacobian for all sensor channels disabled
-            return np.zeros(self.fm.num_channels, dtype=bool)
-
-    def gas_retrieval_levels(self, retrieval_components, fm_press):
-
-        absorber = self.absorber()
-
-        # Gases
-        gas_ret_levels = []
-        for vmr_obj in self.absorber():
-            vmr_press = vmr_obj.pressure.pressure_grid.value.value
-
-            if vmr_obj in retrieval_components and np.any(vmr_obj.used_flag_value):
-
-                vmr_levels = []
-                for ret_idx, press in enumerate(vmr_press):
-                    if vmr_obj.used_flag_value[ret_idx]:
-                        vmr_levels.append( bisect(fm_press, press) )
-
-                gas_ret_levels.append( np.array(vmr_levels, dtype=int) )
-            else:
-                gas_ret_levels.append( np.zeros(0, dtype=int) )
-
-        return gas_ret_levels
-
-    def ground_flags(self, retrieval_components):
-
-        ground = self.ground()
-
-        if ground in retrieval_components:
-            if isinstance(ground, rf.GroundEmissivityPiecewise):
-                emiss_flags = np.where(ground.used_flag_value)[0]
-            else:
-                emiss_flags = np.zeros(0, dtype=int)
-
-            if isinstance(ground, rf.GroundLambertianPiecewise):
-                refl_flags = np.where(ground.used_flag_value)[0]
-            else:
-                refl_flags = np.zeros(0, dtype=int)
-
-        return emiss_flags, refl_flags
-
-    def setup_retrieval_levels(self, retrieval_components):
-
-        pressure = self.pressure()
-
-        fm_press = pressure.pressure_grid.value.value
-
-        self.check_retrieval_order(retrieval_components)
-
-        temp_ret_levels = self.temperature_retrieval_levels(retrieval_components, fm_press)
-        surf_temp_flags = self.surface_temperature_flags(retrieval_components)
-        gas_ret_levels = self.gas_retrieval_levels(retrieval_components, fm_press)
-        emiss_flags, refl_flags = self.ground_flags(retrieval_components)
-
-        # Create retrieval flags object and set up forward model object
-        ret_flags = rf.OssRetrievalFlags(temp_ret_levels, surf_temp_flags, gas_ret_levels, emiss_flags, refl_flags)
-
-        self.fm.setup_retrieval(ret_flags)
-        self.fm.setup_grid()
-
-    def create(self, **kwargs):
-
-        vmrs = rf.vector_absorber_vmr()
-        for vmr_obj in self.absorber():
-            vmrs.push_back(vmr_obj)
-
-        # TODO: discuss support for multiple channels/bands
-        chan_idx = 0
-        obs_zen = rf.DoubleWithUnit(self.observation_zenith().value[chan_idx], self.observation_zenith().units)
-        sol_zen = rf.DoubleWithUnit(self.solar_zenith().value[chan_idx], self.solar_zenith().units)
-        latitude = rf.DoubleWithUnit(self.latitude().value[chan_idx], self.latitude().units)
-        surf_alt = rf.DoubleWithUnit(self.altitude().value[chan_idx], self.altitude().units)
-        self.fm = rf.OssForwardModel(vmrs, self.pressure(), self.temperature(),
-                                     self.surface_temperature(), self.ground(),
-                                     obs_zen, sol_zen, latitude, surf_alt, self.lambertian(),
-                                     self.sel_file(), self.od_file(), self.sol_file(), self.fix_file(),
-                                     self.ch_sel_file())
-
-
-        ## TEMP ##
-        # Temporary to attach a ForwardModelSpectralGrid until changes are made
-        # to fix the requirement of a ForwardModelSpectralGrid object to create a retrieval
-        # TODO: Remove this
-        self.fm.spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
-        ## TEMP ##
-
-        return self.fm

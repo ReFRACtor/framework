@@ -43,3 +43,4 @@
 %import "swig_iostream.i"
 %import "swig_rational.i"
 %include "swig_vector_shared_ptr.i"
+%include "swig_director_serialization.i"

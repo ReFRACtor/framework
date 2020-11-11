@@ -13,12 +13,10 @@
 namespace FullPhysics {
 class InstrumentDoppler : public SpectrumEffectImpBase {
 public:
-  InstrumentDoppler(const DoubleWithUnit& Relative_velocity, 
-                    const bool Used_flag = false);
+  InstrumentDoppler(const DoubleWithUnit& Relative_velocity);
 
   InstrumentDoppler(const double Relative_velocity_value,
-                    const std::string& Relative_velocity_units,
-                    const bool Used_flag = false);
+                    const std::string& Relative_velocity_units);
 
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
@@ -30,5 +28,6 @@ public:
   virtual void print(std::ostream& Os) const;
 
   virtual std::string name() const;
+  %pickle_serialization();
 };
 }

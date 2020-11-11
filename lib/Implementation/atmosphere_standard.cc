@@ -1,4 +1,5 @@
 #include "atmosphere_standard.h"
+#include "fp_serialize_support.h"
 
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -11,10 +12,33 @@
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
 
-#include "pressure_fixed_level.h"
-
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AtmosphereStandard::serialize(Archive & ar,
+				   const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RtAtmosphere)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosol)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & FP_NVP(absorber)
+    & FP_NVP(pressure)
+    & FP_NVP(temperature)
+    & FP_NVP(aerosol)
+    & FP_NVP(rh)
+    & FP_NVP(ground_ptr)
+    & FP_NVP(rayleigh)
+    & FP_NVP(surface_temp)
+    & FP_NVP(constant)
+    & FP_NVP(alt)
+    & FP_NVP(sv_jac_size)
+    & FP_NVP(can_cache_channel);
+}
+
+FP_IMPLEMENT(AtmosphereStandard);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -83,13 +107,12 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      aerosol(aerosolv), rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
-      constant(C), alt(altv),
-      sv_jac_size(0),
-      wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  aerosol(aerosolv), rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
+  surface_temp(surface_tempv),
+  constant(C), alt(altv),
+  sv_jac_size(0),
+  nlay(-1)
 {
     initialize();
 }
@@ -108,13 +131,11 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<Ground>& groundv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      aerosol(aerosolv), rh(rhv), ground_ptr(groundv),
-      constant(C), alt(altv),
-      sv_jac_size(0),
-      wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  aerosol(aerosolv), rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
+  constant(C), alt(altv),
+  sv_jac_size(0),
+  nlay(-1)
 {
     initialize();
 }
@@ -132,13 +153,11 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      aerosol(aerosolv), rh(rhv),
-      constant(C), alt(altv),
-      sv_jac_size(0),
-      wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  aerosol(aerosolv), rh(rhv), rayleigh(rayleighv),
+  constant(C), alt(altv),
+  sv_jac_size(0),
+  nlay(-1)
 {
     initialize();
 }
@@ -157,13 +176,12 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<SurfaceTemperature>& surface_tempv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      rh(rhv), ground_ptr(groundv), surface_temp(surface_tempv),
-      constant(C), alt(altv),
-      sv_jac_size(0),
-      wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  rh(rhv), ground_ptr(groundv), rayleigh(rayleighv),
+  surface_temp(surface_tempv),
+  constant(C), alt(altv),
+  sv_jac_size(0),
+  nlay(-1)
 {
     initialize();
 }
@@ -181,13 +199,11 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<Ground>& groundv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      rh(rhv), ground_ptr(groundv),
-      constant(C), alt(altv),
-      sv_jac_size(0),
-      wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  rh(rhv), ground_ptr(groundv),rayleigh(rayleighv),
+  constant(C), alt(altv),
+  sv_jac_size(0),
+  nlay(-1)
 {
     initialize();
 }
@@ -204,10 +220,8 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
                                        const boost::shared_ptr<RelativeHumidity>& rhv,
                                        const std::vector<boost::shared_ptr<Altitude> >& altv,
                                        const boost::shared_ptr<Constant>& C)
-    : absorber(absorberv), pressure(pressurev), temperature(temperaturev), rayleigh(rayleighv),
-      rh(rhv), constant(C), alt(altv), sv_jac_size(0), wn_tau_cache(-1),
-      spec_index_tau_cache(-1),
-      nlay(-1)
+: absorber(absorberv), pressure(pressurev), temperature(temperaturev), 
+  rh(rhv), rayleigh(rayleighv), constant(C), alt(altv), sv_jac_size(0), nlay(-1)
 {
     initialize();
 }
@@ -243,6 +257,30 @@ void AtmosphereStandard::initialize()
     column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
     total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
 
+    // Initially can not use the above two caches unless a StateVector gets attached
+    // to handle invalidating these caches
+    can_cache_channel = false;
+
+    // Make sure caches are in a consistent state
+    invalidate_cache();
+}
+
+AtmosphereStandard::AtmosphereStandard()
+{
+  // Set up cache as empty, but don't do any other initialization.
+ 
+  // Use a map caches, to allow the reuse of values needed outside of the
+  // main spectral grid loops
+  column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+  total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+
+  // Initially can not use the above two caches unless a
+  /// StateVector gets attached
+  // to handle invalidating these caches
+  can_cache_channel = false;
+
+  // Make sure caches are in a consistent state
+  invalidate_cache();
 }
 
 //-----------------------------------------------------------------------
@@ -265,8 +303,7 @@ void AtmosphereStandard::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, St
     aerosol->notify_update(Sv);
 
     // Invalidate caches
-    wn_tau_cache = -1;
-    spec_index_tau_cache = -1;
+    invalidate_cache();
 }
 
 void AtmosphereStandard::reset_timer()
@@ -293,7 +330,7 @@ std::string AtmosphereStandard::timer_info() const
 
 void AtmosphereStandard::notify_update(const Aerosol& UNUSED(A))
 {
-    wn_tau_cache = -1;
+    invalidate_cache();
     notify_update_do(*this);
 }
 
@@ -306,22 +343,13 @@ void AtmosphereStandard::notify_update(const Aerosol& UNUSED(A))
 
 bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 {
-    if(fabs(wn - wn_tau_cache) < 1e-6 &&
-            spec_index == spec_index_tau_cache) {
+    if(fabs(wn - wn_tau_cache) < 1e-6 && spec_index == spec_index_tau_cache) {
         return true;
     }
 
-    // If spectrometer changes then reset caches ensuring that the cache
-    // is instantiated first
+    // If spectrometer changes then reset caches 
     if(spec_index != spec_index_tau_cache) {
-        if (column_od_cache) {
-            column_od_cache->clear();
-        }
-
-        if(total_od_cache) {
-            total_od_cache->clear();
-        }
-
+        invalidate_cache();
         spec_index_tau_cache = spec_index;
     }
 
@@ -329,9 +357,23 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
     FunctionTimer ft(timer.function_timer());
 
     opt_prop.reset(new OpticalPropertiesWrtRt());
-    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol);
+    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
 
     return false;
+}
+
+//-----------------------------------------------------------------------
+/// Reset cache flags so that cached values are recomputed upon next
+/// query
+//-----------------------------------------------------------------------
+
+void AtmosphereStandard::invalidate_cache() const
+{
+    wn_tau_cache = -1;
+    spec_index_tau_cache = -1;
+
+    column_od_cache->clear();
+    total_od_cache->clear();
 }
 
 //
@@ -352,7 +394,7 @@ ArrayAdWithUnit<double, 1> AtmosphereStandard::altitude(int spec_index) const
 
 ArrayAd<double, 1> AtmosphereStandard::optical_depth_wrt_rt(double wn, int spec_index) const
 {
-    if (!total_od_cache->is_valid(wn)) {
+    if (!can_cache_channel || !total_od_cache->is_valid(wn)) {
         fill_cache(wn, spec_index);
 
         total_od_cache->insert(wn, opt_prop->total_optical_depth());
@@ -363,8 +405,8 @@ ArrayAd<double, 1> AtmosphereStandard::optical_depth_wrt_rt(double wn, int spec_
 
 AutoDerivative<double> AtmosphereStandard::column_optical_depth(double wn, int spec_index, const std::string& Gas_name) const
 {
-    
-    if (!column_od_cache->is_valid(wn)) {
+
+    if (!can_cache_channel || !column_od_cache->is_valid(wn)) {
         firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
 
         // It is easier to go back to the absorber object to compute the jacobians correctly since
@@ -380,11 +422,9 @@ AutoDerivative<double> AtmosphereStandard::column_optical_depth(double wn, int s
             totaltaug.jacobian() = 0;
         }
 
-        // Store the computed value
         column_od_cache->insert(wn, totaltaug);
     }
 
-    // Value will be computed above if not present
     return (*column_od_cache)[wn](absorber->gas_index(Gas_name));
 }
 
@@ -516,19 +556,6 @@ void AtmosphereStandard::print(std::ostream& Os) const
         opad << *(alt[i]) << "\n";
         opad.strict_sync();
     }
-}
-
-//-----------------------------------------------------------------------
-/// For unit test purposes, it is useful to be able to directly change
-/// the surface pressure. This is intended just for testing
-/// purposes. This only works if the Pressure is a
-/// PressureFixedLevel, otherwise it will fail.
-//-----------------------------------------------------------------------
-
-void AtmosphereStandard::set_surface_pressure_for_testing(double x)
-{
-    PressureFixedLevel& p = dynamic_cast<PressureFixedLevel&>(*pressure);
-    p.set_surface_pressure(x);
 }
 
 //-----------------------------------------------------------------------

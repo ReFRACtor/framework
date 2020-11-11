@@ -6,7 +6,8 @@
 
 namespace FullPhysics {
 
-class Rosenbrock2NLLSProblem : public NLLSProblem, public NLLSProblemState {
+class Rosenbrock2NLLSProblem : virtual public NLLSProblem,
+			       virtual public NLLSProblemState {
 public:
   Rosenbrock2NLLSProblem()
     : NLLSProblem()

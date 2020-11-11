@@ -18,5 +18,6 @@ public:
 			 const std::string& Hdf_group);
   virtual Spectrum solar_absorption_spectrum(
      const SpectralDomain& spec_domain) const;
+  %pickle_serialization();
 };
 }

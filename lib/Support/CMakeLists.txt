@@ -1,10 +1,13 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
     array_ad.cc
+    array_ad_with_unit.cc
     array_with_unit.cc
-    boost/backtrace.cpp
+    auto_derivative.cc
+    auto_derivative_with_unit.cc
     blitz_array_serialize_support.cc
-    generic_object.cc
+    boost/backtrace.cpp
+    boost_rational_serialize_support.cc
     constant.cc
     constants.F90
     default_constant.cc
@@ -15,21 +18,21 @@ set(DIR_SOURCES
     fp_gsl_matrix.cc
     fp_time.cc
     fstream_compress.cc
+    generic_object.cc
+    generic_object_map.cc
     hdf_file.cc
     hdf_file_generating.cc
     ifstream_cs.cc
     linear_algebra.cc
+    linear_interpolate.cc
     logger.cc
     logger_f.F90
-    mapping_linear.h
-    mapping_log.h
-    mapping_scale.h
-    mapping_gaussian.h
+    named_spectrum.cc
+    observer.cc
     old_constant.cc
     polynomial_eval.cc
     rayleigh_greek_moment.cc
     rf_gauleg.cc
-    scalar_with_unit.cc
     spectral_bound.cc
     spectral_bound.h
     spectral_domain.cc
@@ -38,7 +41,6 @@ set(DIR_SOURCES
     stacked_radiance_mixin.cc
     state_vector.cc
     state_vector_observer.cc
-    string_vector_to_char.cc
     sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc
@@ -71,8 +73,6 @@ set(TEST_SOURCES
     rayleigh_greek_moment_test.cc
     spectral_bound_test.cc
     spectral_domain_test.cc
-    state_vector_test.cc
-    string_vector_to_char_test.cc
     unit_test.cc
 )
 

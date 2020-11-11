@@ -47,7 +47,13 @@ protected:
 
   double Size_tol;
   blitz::Array<double, 1> Initial_step_size;
-
+  CostMinimizerGSL() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(CostMinimizerGSL);
 #endif

@@ -15,5 +15,6 @@ public:
   virtual ~NLLSProblemState();
   virtual void set(const NLLSProblemState& s);
   virtual void clear();
+  %pickle_serialization();
 };
 }

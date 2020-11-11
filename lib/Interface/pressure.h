@@ -29,7 +29,8 @@ namespace FullPhysics {
   a description.
 *******************************************************************/
 
-class Pressure : virtual public StateVectorObserver, 
+class Pressure : public Printable<Pressure>,
+		 virtual public StateVectorObserver, 
 		 public Observable<Pressure> {
 public:
   virtual ~Pressure() {}
@@ -88,6 +89,8 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<Pressure> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "Pressure";}
 private:
   friend class boost::serialization::access;
   template<class Archive>
@@ -96,4 +99,5 @@ private:
 }
 
 FP_EXPORT_KEY(Pressure);
+FP_EXPORT_OBSERVER_KEY(Pressure);
 #endif

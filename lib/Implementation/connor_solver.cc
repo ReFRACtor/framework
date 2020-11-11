@@ -3,10 +3,51 @@
 #include "fp_exception.h"
 #include "logger.h"
 #include "ifstream_cs.h"
+#include "fp_serialize_support.h"
 #include <fstream>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ConnorSolver::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableConnorSolver)
+    & FP_NVP(se) & FP_NVP(k) & FP_NVP(kt_se_m1_k) & FP_NVP(gamma)
+    & FP_NVP_(gamma_last_step) & FP_NVP(fstat) & FP_NVP(apriori_cov_scaled)
+    & FP_NVP(sa_m1_scaled) & FP_NVP(sigma_ap) & FP_NVP(x_a)
+    & FP_NVP(x_i) & FP_NVP_(residual) & FP_NVP(dx)
+    & FP_NVP_(cost_function) & FP_NVP_(convergence_check)
+    & FP_NVP(gamma_initial);
+}
+
+template<class Archive>
+void ConnorSolverState::serialize(Archive& ar,
+				  const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(ConnorSolverState);
+  ar & FP_NVP_(x_i)
+    & FP_NVP_(x_a)
+    & FP_NVP_(apriori_cov_scaled)
+    & FP_NVP_(sa_m1_scaled)
+    & FP_NVP_(sigma_ap)
+    & FP_NVP_(gamma)
+    & FP_NVP_(gamma_last_step)
+    & FP_NVP_(gamma_initial)
+    & FP_NVP_(residual)
+    & FP_NVP_(se)
+    & FP_NVP_(k)
+    & FP_NVP_(kt_se_m1_k)
+    & FP_NVP_(dx)
+    & FP_NVP_(fstat);
+}
+
+FP_IMPLEMENT(ConnorSolver);
+FP_IMPLEMENT(ConnorSolverState);
+FP_OBSERVER_SERIALIZE(ConnorSolver);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

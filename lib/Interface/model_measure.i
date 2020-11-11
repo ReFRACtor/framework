@@ -42,5 +42,6 @@ public:
 			     blitz::Array<double, 2>)
   %python_attribute_nonconst(uncert_weighted_jac_inner_product,
 			     blitz::Array<double, 2>)
+  %pickle_serialization();
 };
 }

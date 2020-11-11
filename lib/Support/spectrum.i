@@ -19,6 +19,7 @@ public:
 	   const SpectralRange& Spec_range);
   %python_attribute(spectral_domain, SpectralDomain)
   %python_attribute(spectral_range, SpectralRange)
+  %pickle_serialization();
   %pythoncode {
 @property
 def wavenumber(self):

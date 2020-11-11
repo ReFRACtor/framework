@@ -88,6 +88,12 @@ protected:
 //-----------------------------------------------------------------------
   blitz::Array<double, 1> C;
 
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(CostFuncState);
 #endif

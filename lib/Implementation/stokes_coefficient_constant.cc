@@ -1,7 +1,21 @@
 #include "stokes_coefficient_constant.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void StokesCoefficientConstant::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StokesCoefficient)
+    & FP_NVP(stokes_coeff);
+}
+
+FP_IMPLEMENT(StokesCoefficientConstant);
+#endif
+
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(StokesCoefficientConstant, StokesCoefficient)

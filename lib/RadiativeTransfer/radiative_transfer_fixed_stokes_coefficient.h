@@ -44,6 +44,13 @@ public:
   virtual void remove_observer(Observer<std::vector<boost::shared_ptr<NamedSpectrum> > >& Obs) 
   { remove_observer_do(Obs); }
 
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(stokes_coef);
+    return res;
+  }
+  
 protected:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -63,6 +70,12 @@ protected:
 
   /// Object to go from stokes vector to reflectance. 
   boost::shared_ptr<StokesCoefficient> stokes_coef;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(RadiativeTransferFixedStokesCoefficient);
 #endif

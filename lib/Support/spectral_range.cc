@@ -1,7 +1,20 @@
 #include "spectral_range.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpectralRange::serialize(Archive& ar,
+			      const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(SpectralRange);
+  ar & FP_NVP_(data) & FP_NVP_(units) & FP_NVP_(uncertainty);
+}
+
+FP_IMPLEMENT(SpectralRange);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

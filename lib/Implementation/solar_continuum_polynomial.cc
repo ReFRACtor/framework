@@ -1,10 +1,23 @@
 #include "solar_continuum_polynomial.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "ostream_pad.h"
 #include <boost/foreach.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarContinuumPolynomial::serialize(Archive & ar,
+					 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarContinuumSpectrum)
+    & FP_NVP(param) & FP_NVP(convert_from_photon);
+}
+
+FP_IMPLEMENT(SolarContinuumPolynomial);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

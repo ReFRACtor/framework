@@ -144,6 +144,11 @@ private:
   ArrayAd<double, 1> data_;
   blitz::Array<int, 1> sindex_;
   Unit units_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectralDomain);
 #endif

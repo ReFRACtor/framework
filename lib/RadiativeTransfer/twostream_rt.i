@@ -31,5 +31,6 @@ public:
   %python_attribute(brdf_driver, boost::shared_ptr<TwostreamBrdfDriver>)
   %python_attribute(rt_driver, boost::shared_ptr<TwostreamRtDriver>)
   virtual void print(std::ostream& Os, bool Short_form = false) const;
+  %pickle_serialization();
 };
 }

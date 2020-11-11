@@ -1,3 +1,6 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+
 %include "fp_common.i"
 %{
 #include "absorber_vmr_level_scaled.h"
@@ -13,7 +16,6 @@ public:
   AbsorberVmrLevelScaled(const boost::shared_ptr<Pressure>& Press,
                          const blitz::Array<double, 1>& Vmr_profile,
                          double Scale,                         
-                         bool Scale_flag,
                          const std::string& Gas_name);
 
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
@@ -21,7 +23,7 @@ public:
   %python_attribute(scale_factor, double)
   %python_attribute(vmr_profile, blitz::Array<double, 1>)
   %python_attribute(pressure_profile, blitz::Array<double, 1>)
-
+  %pickle_serialization();
 };
 }
 

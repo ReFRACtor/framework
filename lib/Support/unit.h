@@ -95,6 +95,9 @@ private:
   boost::array<boost::rational<int>, number_base_unit> base_unit_powers_;
   double conversion_to_si_;
   std::string name_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 Unit pow(const Unit& Dunit, const boost::rational<int>& Exponent);
@@ -157,4 +160,7 @@ inline Unit operator/(double Scale_factor, const Unit& Unit)
     const Unit kW("kW", 1e3 * W);
   }
 }
+
+FP_EXPORT_KEY(Unit);
+
 #endif

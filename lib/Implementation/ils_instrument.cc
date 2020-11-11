@@ -1,9 +1,24 @@
 #include "ils_instrument.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <boost/foreach.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void IlsInstrument::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Instrument)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverIls)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverInstrumentCorrection)
+    & FP_NVP_(ils) & FP_NVP(inst_corr);
+}
+
+FP_IMPLEMENT(IlsInstrument);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -109,4 +124,17 @@ void IlsInstrument::print(std::ostream& Os) const
     }
     opad.strict_sync();
   }
+}
+
+std::vector<boost::shared_ptr<GenericObject> >
+IlsInstrument::subobject_list() const
+{
+  std::vector<boost::shared_ptr<GenericObject> > res;
+  BOOST_FOREACH(auto i, ils_)
+    res.push_back(i);
+  BOOST_FOREACH(auto i, inst_corr) {
+    BOOST_FOREACH(auto j, i)
+      res.push_back(j);
+  }
+  return res;
 }

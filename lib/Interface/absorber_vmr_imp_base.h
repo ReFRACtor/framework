@@ -2,8 +2,7 @@
 #define ABSORBER_VMR_IMP_BASE_H
 #include "absorber_vmr.h"
 #include "sub_state_vector_array.h"
-#include "mapping.h"
-#include "mapping_linear.h"
+#include "state_mapping_linear.h"
 #include <boost/function.hpp>
 
 namespace FullPhysics {
@@ -16,7 +15,7 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class AbsorberVmrImpBase: public SubStateVectorArray<AbsorberVmr> {
+class AbsorberVmrImpBase: virtual public SubStateVectorArray<AbsorberVmr> {
 public:
   virtual ~AbsorberVmrImpBase() {}
   virtual std::string gas_name() const {return gas_name_;}
@@ -76,18 +75,16 @@ protected:
 /// Initialize object.
 //-----------------------------------------------------------------------
 
-  void init(const std::string Gas_name,
-	    const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag,
-	    const boost::shared_ptr<Pressure>& Press,
-	    bool Mark_according_to_press = true,
-	    int Pdep_start = 0,
-	    boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-  { SubStateVectorArray<AbsorberVmr>::init(Coeff, Used_flag, Press,
-					   Mark_according_to_press,
-					   Pdep_start,
-					   in_map);
+  void init
+  (const std::string Gas_name,
+   const blitz::Array<double, 1>& Coeff, 
+   const boost::shared_ptr<Pressure>& Mapped_Press,
+   boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
+  {
+    cache_stale = true;
     gas_name_ = Gas_name;
+    mapped_pressure = Mapped_Press;
+    SubStateVectorArray<AbsorberVmr>::init(Coeff, in_map);
   }
 
 //-----------------------------------------------------------------------
@@ -98,20 +95,17 @@ protected:
   AbsorberVmrImpBase() : cache_stale(true) { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
-/// See SubStateVectorArray for a discussion of Mark_according_to_press and
-/// Pdep_start.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
   AbsorberVmrImpBase(const std::string& Gas_name,
-		     const blitz::Array<double, 1>& Coeff, 
-		     const blitz::Array<bool, 1>& Used_flag,
-		     const boost::shared_ptr<Pressure>& Press,
-		     bool Mark_according_to_press = true,
-		     int Pdep_start = 0,
-		     boost::shared_ptr<Mapping> in_map = boost::make_shared<MappingLinear>())
-    : SubStateVectorArray<AbsorberVmr>(Coeff, Used_flag, Press,
-				       Mark_according_to_press, Pdep_start, in_map),
-      cache_stale(true), gas_name_(Gas_name) { }
+                     const blitz::Array<double, 1>& Coeff, 
+                     const boost::shared_ptr<Pressure>& Mapped_Press,
+                     boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>())
+  {
+    init(Gas_name, Coeff, Mapped_Press, in_map);
+  }
+protected:
+  boost::shared_ptr<Pressure> mapped_pressure;
 private:
   void fill_cache() const
   {
@@ -120,6 +114,13 @@ private:
     cache_stale = false;
   }
   std::string gas_name_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<AbsorberVmr> SubStateVectorArrayAbsorberVmr;
 }
+
+FP_EXPORT_KEY(AbsorberVmrImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayAbsorberVmr);
 #endif

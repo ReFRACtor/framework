@@ -1,4 +1,5 @@
 #include "first_order_driver.h"
+#include "fp_serialize_support.h"
 #include "wgs84_constant.h"
 
 // Include to use consistent jacobian sizes
@@ -6,6 +7,21 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void FirstOrderDriver::serialize(Archive & ar,
+				 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
+    & FP_NVP_(num_moments) & FP_NVP_(num_streams)
+    & FP_NVP(height_diffs)
+    & FP_NVP(geometry) & FP_NVP(legendre) & FP_NVP_(solar_interface)
+    & FP_NVP(l_brdf_driver);
+}
+
+FP_IMPLEMENT(FirstOrderDriver);
+#endif
 
 //-----------------------------------------------------------------------
 /// Construct FirstOrderDriver
@@ -15,9 +31,9 @@ FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int numb
   : SpurrRtDriver(do_solar, do_thermal),
     num_moments_(number_moments), num_streams_(number_streams)
 {
-    init_interfaces(number_layers, surface_type);
-    // Use pseudo spherical correction by default
-    set_pseudo_spherical();
+  init_interfaces(number_layers, surface_type);
+  // Use pseudo spherical correction by default
+  set_pseudo_spherical();
 }
 
 
@@ -117,7 +133,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 }
 
 /// Set plane parallel sphericity
-void FirstOrderDriver::set_plane_parallel() const
+void FirstOrderDriver::set_plane_parallel()
 {
     geometry->do_planpar(true);
     geometry->do_enhanced_ps(false);
@@ -126,7 +142,7 @@ void FirstOrderDriver::set_plane_parallel() const
 }
 
 /// Set pseudo spherical sphericity
-void FirstOrderDriver::set_pseudo_spherical() const
+void FirstOrderDriver::set_pseudo_spherical()
 {
     geometry->do_planpar(false);
     geometry->do_enhanced_ps(true);
@@ -135,7 +151,7 @@ void FirstOrderDriver::set_pseudo_spherical() const
 }
 
 /// Copy flags for sphericity calculations from geometry object
-void FirstOrderDriver::copy_geometry_flags() const
+void FirstOrderDriver::copy_geometry_flags()
 {
     // Flags copied from geometry object
     solar_interface_->do_planpar(geometry->do_planpar());
@@ -143,7 +159,7 @@ void FirstOrderDriver::copy_geometry_flags() const
     solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
-void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid) const
+void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid)
 {
     int nlayers = height_grid.rows() - 1;
 
@@ -156,7 +172,7 @@ void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_g
     }
 }
 
-void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
+void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
 {
     Array<double, 1> alpha_boa(geometry->alpha_boa());
     alpha_boa(0) = zen;
@@ -224,7 +240,7 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen) const
     }
 }
 
-void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb)) const
+void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb))
 {
     // Nothing for now, in future use DT geometry and DT RT
 }
@@ -232,7 +248,7 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
 
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
-                                            const blitz::Array<double, 2>& pf) const
+                                            const blitz::Array<double, 2>& pf) 
 {
     if (pf.rows() != (num_moments_+1)) {
         // By definition num_moments should be one less than the size of pf array
@@ -262,7 +278,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
-void FirstOrderDriver::clear_linear_inputs() const
+void FirstOrderDriver::clear_linear_inputs() 
 {
     solar_interface_->do_profilewfs(false);
     solar_interface_->do_reflecwfs(false); 
@@ -273,7 +289,7 @@ void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
  const ArrayAd<double, 2>& pf,
- bool do_surface_linearization) const
+ bool do_surface_linearization) 
 {
     // Set which profile layer jacobians are computed
     int natm_jac = od.number_variable();

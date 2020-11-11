@@ -1,6 +1,23 @@
 #include "array_with_unit.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class T, int D> template<class Archive>
+void ArrayWithUnit<T, D>::serialize(Archive & ar,
+			      const unsigned int UNUSED(version))
+{
+  boost::serialization::void_cast_register<ArrayWithUnit<T, D>,
+					   GenericObject>();
+  ar & FP_NVP(value) & FP_NVP(units);
+}
+
+FP_IMPLEMENT(ArrayWithUnit_double_1);
+FP_IMPLEMENT(ArrayWithUnit_double_2);
+FP_IMPLEMENT(ArrayWithUnit_double_3);
+FP_IMPLEMENT(ArrayWithUnit_double_4);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

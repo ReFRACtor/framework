@@ -1,5 +1,20 @@
 #include "ils.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void Ils::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableIls);
+    
+}
+
+FP_IMPLEMENT(Ils);
+FP_OBSERVER_SERIALIZE(Ils);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

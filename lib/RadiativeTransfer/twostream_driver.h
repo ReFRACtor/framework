@@ -15,7 +15,7 @@ public:
   TwostreamBrdfDriver(int surface_type);
   virtual ~TwostreamBrdfDriver() {}
 
-  virtual void setup_geometry(double sza, double azm, double zen) const;
+  virtual void setup_geometry(double sza, double azm, double zen);
 
   virtual int n_brdf_kernels() const;
 
@@ -45,6 +45,14 @@ protected:
                                             const blitz::Array<bool, 1>& do_params_wfs);
 
   boost::shared_ptr<Twostream_Ls_Brdf_Supplement> twostream_brdf_;
+  TwostreamBrdfDriver() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -56,20 +64,20 @@ public:
   TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true,
           bool do_solar = true, bool do_thermal = false);
 
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
-  void setup_geometry(double sza, double azm, double zen) const;
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
 
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb) const;
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf) const;
+                            const blitz::Array<double, 2>& pf);
 
-  void clear_linear_inputs() const;
+  void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
                            const ArrayAd<double, 2>& pf,
-                           bool do_surface_linearization) const;
+                           bool do_surface_linearization);
 
   void calculate_rt() const;
   double get_intensity() const;
@@ -84,7 +92,7 @@ public:
   boost::shared_ptr<Twostream_Lps_Master> twostream_interface() const { return twostream_interface_; }
   
   bool do_full_quadrature() const { return do_fullquadrature_; };
-
+  int surface_type() const { return surface_type_; }
 protected:
   void initialize_rt();
 
@@ -92,7 +100,18 @@ protected:
   bool do_fullquadrature_;
 
   boost::shared_ptr<Twostream_Lps_Master> twostream_interface_;
+  TwostreamRtDriver() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(TwostreamBrdfDriver);
+FP_EXPORT_KEY(TwostreamRtDriver);
 #endif

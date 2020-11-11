@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "spectrum_effect_imp_base.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -12,13 +13,13 @@ namespace FullPhysics {
  due to the relative velocity between earth and the instrument.
  This value is retrievable due to the way the class is structured.
 *******************************************************************/
-class InstrumentDoppler : public SpectrumEffectImpBase {
+class InstrumentDoppler : virtual public SpectrumEffectImpBase {
 public:
   InstrumentDoppler(const DoubleWithUnit& Relative_velocity, 
-                    const bool Used_flag = false);
+                    boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
   InstrumentDoppler(const double Relative_velocity_value,
                     const std::string& Relative_velocity_units,
-                    const bool Used_flag = false);
+                    boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
@@ -34,6 +35,12 @@ public:
 
 private:
   Unit vel_units;
+  InstrumentDoppler() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(InstrumentDoppler);
 #endif

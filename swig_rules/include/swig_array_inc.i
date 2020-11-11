@@ -172,14 +172,14 @@ inline char* npy_type_str(int type_enum)
 
 struct ArrayConversionException : public std::exception
 {
-    ArrayConversionException(const std::string& msg) : message(msg) {}
+  ArrayConversionException(const std::string& msg) : message(msg) {}
+  virtual ~ArrayConversionException() throw() {}
+  const char * what () const throw ()
+  {
+    return message.c_str();
+  }
 
-    const char * what () const throw ()
-    {
-        return message.c_str();
-    }
-
-    std::string message;
+  std::string message;
 };
 
 //--------------------------------------------------------------
@@ -338,7 +338,7 @@ inline void iter_to_vector_of_arrays(PyObject *sequence, std::vector<blitz::Arra
   }
 
   int iter_index = 0;
-  while (item = PyIter_Next(iterator)) {
+  while ((item = PyIter_Next(iterator))) {
     PythonObject numpy;
     numpy.obj = to_numpy<TYPE>(item);
     if(!numpy.obj) {

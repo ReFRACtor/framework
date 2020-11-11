@@ -19,9 +19,9 @@ BOOST_AUTO_TEST_CASE(basic)
 
     DoubleWithUnit high_res_extension(0.5, Unit("cm^-1"));
 
-    Array<double, 1> expect(10);
-    expect = 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5;
- 
+    Array<double, 1> expect(11);
+    expect = 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5;
+
     BOOST_CHECK_EQUAL(uniform_samp.number_spectrometer(), 1);
     BOOST_CHECK_MATRIX_CLOSE(uniform_samp.spectral_domain(0, low_res_sd, high_res_extension).wavenumber(), expect);
 }

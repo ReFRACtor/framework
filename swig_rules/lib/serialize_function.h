@@ -5,6 +5,8 @@
 #include <boost/shared_ptr.hpp>
 
 namespace SWIG_MAPPER_NAMESPACE {
+bool skip_weak_ptr_handling();
+void skip_weak_ptr_handling(bool Skip);
 bool have_serialize_supported();
 void serialize_write(const std::string& Fname, 
 		     const boost::shared_ptr<GenericObject>& Obj);
@@ -42,6 +44,12 @@ template<class T> inline boost::shared_ptr<T>
 serialize_read_string(const std::string& Data)
 {
   return boost::dynamic_pointer_cast<T>(serialize_read_generic_string(Data));
+}
+
+template<class T> inline boost::shared_ptr<T> 
+serialize_read_binary_string(const std::string& Data)
+{
+  return boost::dynamic_pointer_cast<T>(serialize_read_binary(Data));
 }
 }
 #endif

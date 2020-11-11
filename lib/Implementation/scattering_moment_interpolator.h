@@ -2,6 +2,7 @@
 #define SCATTER_MOMENT_INTERPOLATOR_H
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
+#include <map>
 #include "auto_derivative.h"
 
 namespace FullPhysics {
@@ -67,6 +68,10 @@ private:
   double wn0;
   blitz::Array<double, 2> pf0;
   blitz::Array<double, 2> delta_pf0;
+  ScatteringMomentInterpolate2Point() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 class ScatteringMomentInterpolate {
@@ -101,7 +106,13 @@ public:
   }
 private:
   std::map<double, boost::shared_ptr<ScatteringMomentInterpolate2Point> > inter;
+  ScatteringMomentInterpolate() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };  
-
 }
+
+FP_EXPORT_KEY(ScatteringMomentInterpolate2Point);
+FP_EXPORT_KEY(ScatteringMomentInterpolate);
 #endif

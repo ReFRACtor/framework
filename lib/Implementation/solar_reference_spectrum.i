@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
 
 %{
@@ -16,16 +18,17 @@
 namespace FullPhysics {
 class SolarReferenceSpectrum : public SolarModel {
 public:
-    SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& reference_spectrum,
-                           const boost::shared_ptr<SolarDopplerShift>& doppler_shift = NULL);
+  SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& reference_spectrum,
+			 const boost::shared_ptr<SolarDopplerShift>& doppler_shift = NULL);
 
-    virtual ~SolarReferenceSpectrum() = default;
+  virtual ~SolarReferenceSpectrum() = default;
 
-    virtual boost::shared_ptr<SpectrumEffect> clone() const;
+  virtual boost::shared_ptr<SpectrumEffect> clone() const;
 
-    virtual const boost::shared_ptr<SolarDopplerShift>& doppler_shift() const;
+  virtual const boost::shared_ptr<SolarDopplerShift>& doppler_shift() const;
 
-    virtual void print(std::ostream& Os) const;
-    virtual Spectrum solar_spectrum(const SpectralDomain& spec_domain) const;
+  virtual void print(std::ostream& Os) const;
+  virtual Spectrum solar_spectrum(const SpectralDomain& spec_domain) const;
+  %pickle_serialization();
 };
 }

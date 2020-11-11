@@ -1,4 +1,5 @@
 #include <gsl/gsl_blas.h>
+#include "fp_serialize_support.h"
 #include <fp_gsl_matrix.h>
 #include <gsl_sm_lsp.h>
 #include <nlls_solver_gsl_sm.h>
@@ -7,6 +8,23 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSSolverGSLSM::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSSolver)
+    & FP_NVP(X_tol) & FP_NVP(G_tol) & FP_NVP(F_tol);
+  // Note that we can't easily serialize FDF_params. Because this
+  // contains function pointers, I don't even think we could serialize
+  // this even in princple. We could pull out a number of the non function
+  // parameters. But for now, just punt. The default constructor sets
+  // these to the default values, and we just leave these unchanged.
+  // ar & FP_NVP(FDF_params);
+}
+
+FP_IMPLEMENT(NLLSSolverGSLSM);
+#endif
 
 void print_state( uint32_t iter,  gsl_multifit_nlinear_workspace* s, int status )
 {

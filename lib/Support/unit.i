@@ -35,6 +35,7 @@ public:
   Unit operator*=(const Unit& Dunit);
   Unit operator*=(double Scale_factor);
   Unit operator/=(const Unit& Dunit);
+  bool operator==(const Unit& U) const;
   %extend {
     Unit __mul__(const Unit& Y) 
     { return *$self * Y; }
@@ -53,10 +54,7 @@ public:
     Unit __pow__(int X) 
     { return FullPhysics::pow(*$self,  X);}
   }
-
-  // 1 here is the pickle format version, so we can tell if we try to
-  // read data with a different format version than the code here.
-  %pickle_init(1, self.name)
+  %pickle_serialization();
 };
 
 double conversion(const Unit& Dunit_from, const Unit& Dunit_to);

@@ -27,5 +27,6 @@ public:
   DoubleWithUnit lower_bound(int Spec_index, const Unit& U) const;
   DoubleWithUnit upper_bound(int Spec_index, const Unit& U) const;
   int spectral_index(const DoubleWithUnit& W) const;
+  %pickle_serialization();
 };
 }

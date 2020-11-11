@@ -25,7 +25,14 @@ public:
   //-----------------------------------------------------------------------
 
   virtual void print(std::ostream& Os) const {Os << "NoiseModel";}
-
+protected:
+  NoiseModel() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NoiseModel);
 #endif

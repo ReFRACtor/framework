@@ -16,27 +16,37 @@ BOOST_FIXTURE_TEST_SUITE(ils_instrument, GlobalFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   HdfFile hf(test_data_dir() + "in/ils/ils_linear_table.h5");
-  Array<bool, 1> flag(2);
-  flag = true, false;
-  Array<double, 1> coeff(2);
-  coeff = 1.28695614e+04, 1.99492886e-01;
+  Array<double, 1> disp_coeff(2);
   boost::shared_ptr<IlsTableLinear> ils_tab(new IlsTableLinear(hf, 0, "A-Band", "o2"));
+
+  disp_coeff = 1.28695614e+04, 1.99492886e-01;
+  firstIndex i1;
+  Array<double, 1> disp_var_1(1805);
+  disp_var_1 = i1 + 1;
+
   boost::shared_ptr<DispersionPolynomial>
-    d(new DispersionPolynomial(coeff, flag, units::inv_cm, ils_tab->band_name(),
-                               1805, true));
+    d(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_1, ils_tab->band_name()));
+
   std::vector<boost::shared_ptr<Ils> > ils;
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
   
-  coeff = 5.74982835e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 1, "WC-Band", "weak_co2"));
-  d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
-                                   ils_tab->band_name(), 3508, true));
+
+  disp_coeff = 5.74982835e+03, 1.99492886e-01;
+  Array<double, 1> disp_var_2(3508);
+  disp_var_2 = i1 + 1;
+
+  d.reset(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_2, ils_tab->band_name()));
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
-  coeff = 4.74980283e+03, 1.99492886e-01;
   ils_tab.reset(new IlsTableLinear(hf, 2, "SC-Band", "strong_co2"));
-  d.reset(new DispersionPolynomial(coeff, flag, units::inv_cm, 
-                                   ils_tab->band_name(), 2005, true));
+
+  disp_coeff = 4.74980283e+03, 1.99492886e-01;
+  Array<double, 1> disp_var_3(2005);
+  disp_var_3 = i1 + 1;
+
+  d.reset(new DispersionPolynomial(disp_coeff, units::inv_cm, disp_var_3, ils_tab->band_name()));
+
   ils.push_back(boost::shared_ptr<Ils>(new IlsGrating(d, ils_tab)));
 
   IlsInstrument inst(ils);

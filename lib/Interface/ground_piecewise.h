@@ -1,10 +1,10 @@
 #ifndef GROUND_PIECEWISE_H
 #define GROUND_PIECEWISE_H
 
-#include "ground.h"
+#include "ground_imp_base.h"
 #include "array_with_unit.h"
-#include "sub_state_vector_array.h"
 #include "linear_interpolate.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 
@@ -15,41 +15,42 @@ namespace FullPhysics {
   identifcation information for the type of ground information it
   represents. This class is absctract.
 *******************************************************************/
-class GroundPiecewise: public SubStateVectorArray<Ground> {
-
+class GroundPiecewise: virtual public GroundImpBase {
 public:
+  GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
+                  const blitz::Array<double, 1>& point_values,
+                  const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
 
-    GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
-                    const blitz::Array<double, 1>& point_values,
-                    const blitz::Array<bool, 1>& retrieval_flag);
+  virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
-    virtual const ArrayWithUnit<double, 1>& spectral_points() const;
+  virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
 
-    virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
+  virtual void update_sub_state_hook();
 
-    virtual const AutoDerivative<double> value_at_point(const DoubleWithUnit wave_point) const;
+  virtual boost::shared_ptr<Ground> clone() const = 0;
 
-    virtual void update_sub_state_hook();
+  virtual std::string sub_state_identifier() const = 0;
+  virtual std::string state_vector_name_i(int i) const = 0;
 
-    virtual boost::shared_ptr<Ground> clone() const = 0;
+  virtual void print(std::ostream& Os) const = 0;
 
-    virtual std::string sub_state_identifier() const = 0;
-    virtual std::string state_vector_name_i(int i) const = 0;
-
-    virtual void print(std::ostream& Os) const = 0;
-
-    virtual std::string desc() const = 0;
-
+  virtual std::string desc() const = 0;
+  GroundPiecewise(const GroundPiecewise& V) = default;
 protected:
-
-    ArrayWithUnit<double, 1> spectral_points_;
-
+  ArrayWithUnit<double, 1> spectral_points_;
+  GroundPiecewise() {};
 private:
-
-    // Interpolation object is update for each state vector update
-    boost::shared_ptr<LinearInterpolate<double, AutoDerivative<double> > > ground_interp;
-
-
+  // Interpolation object is update for each state vector update
+  boost::shared_ptr<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > > ground_interp;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(GroundPiecewise);
 #endif

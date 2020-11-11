@@ -1,5 +1,20 @@
 #include "instrument_correction.h"
+#include "fp_serialize_support.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void InstrumentCorrection::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableInstrumentCorrection);
+    
+}
+
+FP_IMPLEMENT(InstrumentCorrection);
+FP_OBSERVER_SERIALIZE(InstrumentCorrection);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

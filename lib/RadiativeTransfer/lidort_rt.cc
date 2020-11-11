@@ -1,8 +1,57 @@
 #include "lidort_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LidortRt::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRt);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void LidortRt::save(Archive &ar,
+		   const unsigned int UNUSED(version)) const
+{
+  // Save a little extra information if we aren't already saving full
+  // state.
+  if(!SpurrRt::serialize_full_state) {
+    int number_stream_ = number_stream();
+    int number_moment_ = number_moment();
+    bool pure_nadir_ = rt_driver()->pure_nadir();
+    bool do_multi_scatt_only_ = rt_driver()->do_multi_scatt_only();
+    bool do_thermal_scattering_ = rt_driver()->do_thermal_scattering();
+    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment)
+      & FP_NVP_(pure_nadir) & FP_NVP_(do_multi_scatt_only)
+      & FP_NVP_(do_thermal_scattering);
+  }
+}
+
+template<class Archive>
+void LidortRt::load(Archive &ar,
+		   const unsigned int UNUSED(version)) 
+{
+  if(!rt_driver_) {
+    int number_stream_;
+    int number_moment_;
+    bool pure_nadir_, do_multi_scatt_only_, do_thermal_scattering_;
+    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment)
+      & FP_NVP_(pure_nadir) & FP_NVP_(do_multi_scatt_only)
+      & FP_NVP_(do_thermal_scattering);
+    rt_driver_.reset(new LidortRtDriver
+       (number_stream_, number_moment_, do_multi_scatt_only_, surface_type(),
+	zen, pure_nadir_, do_solar_sources, do_thermal_emission,
+	do_thermal_scattering_));
+  }
+}
+
+FP_IMPLEMENT(LidortRt);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

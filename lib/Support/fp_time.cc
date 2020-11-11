@@ -1,9 +1,22 @@
 #include "fp_time.h"
 #include <cmath>
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace boost::posix_time;
 using namespace boost::gregorian;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void Time::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(Time);
+  ar & FP_NVP_(unix_time);
+}
+
+FP_IMPLEMENT(Time);
+#endif
 
 //-----------------------------------------------------------------------
 /// Create from a boost posix time.

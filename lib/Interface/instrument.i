@@ -40,5 +40,6 @@ public:
   virtual SpectralDomain pixel_spectral_domain(int Spec_index) const = 0;
   virtual DoubleWithUnit high_res_extension(int Spec_index) const;
   virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension);
+  %pickle_serialization();
 };
 }

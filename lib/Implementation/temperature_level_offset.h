@@ -8,12 +8,11 @@ namespace FullPhysics {
   particular implementation uses the temperature from LEVEL file
   (interpolated to the current pressure grid), along with an offset.
 *******************************************************************/
-class TemperatureLevelOffset: public TemperatureOffset {
+class TemperatureLevelOffset: virtual public TemperatureOffset {
 public:
   TemperatureLevelOffset(const boost::shared_ptr<Pressure>& Press,
-			 const blitz::Array<double, 1>& Temp_levels,
-			 double Temp_offset,
-			 bool Temp_flag);
+                         const blitz::Array<double, 1>& Temp_levels,
+                         double Temp_offset);
   virtual ~TemperatureLevelOffset() {}
   virtual void print(std::ostream& Os) const;
 
@@ -27,6 +26,11 @@ public:
 
 private:
   blitz::Array<double, 1> temp_levels;
+  TemperatureLevelOffset() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(TemperatureLevelOffset);
 #endif

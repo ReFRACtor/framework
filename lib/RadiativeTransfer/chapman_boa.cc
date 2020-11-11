@@ -2,9 +2,23 @@
 #include "rf_gauleg.h"
 #include "refractive_index.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ChapmanBOA::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(ChapmanBOA);
+  ar & FP_NVP_(chapmanfactors) & FP_NVP_(toa_nadir_szangles)
+    & FP_NVP_(toa_entry_szangles);
+}
+
+FP_IMPLEMENT(ChapmanBOA);
+#endif
 
 /// Straight line geometry constructor
 ChapmanBOA::ChapmanBOA(double rearth,

@@ -1701,14 +1701,14 @@ SUBROUTINE LIDORT_master ( &
         DO_PROCESS_FOURIER  = .TRUE.
       ENDIF
 
-!  set Fourier number (2 for Rayleigh only, otherwise 2*Nstreams))
-!    Local do no azimuth skips convergence
+!  set Fourier number (1 or 2 for Rayleigh only, otherwise 2*Nstreams-1))
+!    Local do no azimuth skips convergence. 4/9/20 Change number of Fouriers
 
       IF ( LOCAL_DO_NO_AZIMUTH .OR. DO_SSFULL ) THEN
         N_FOURIER_COMPONENTS = 0
       ELSE
         IF ( DO_RAYLEIGH_ONLY  ) THEN
-          N_FOURIER_COMPONENTS = 2
+          N_FOURIER_COMPONENTS = min(2,NMOMENTS)
         ELSE
           N_FOURIER_COMPONENTS = NMOMENTS
         ENDIF

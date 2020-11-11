@@ -18,7 +18,8 @@ namespace FullPhysics {
   from AerosolExtinctionImpBase rather than from this class. See that
   class for a description.
 *******************************************************************/
-class AerosolExtinction : virtual public StateVectorObserver,
+class AerosolExtinction : public Printable<AerosolExtinction>,
+			  virtual public StateVectorObserver,
 			  public Observable<AerosolExtinction> {
 public:
   virtual ~AerosolExtinction() {}
@@ -48,6 +49,18 @@ public:
 /// Name of aerosol. 
 //-----------------------------------------------------------------------
   virtual std::string aerosol_name() const = 0;
+
+  virtual void print(std::ostream& Os) const
+  { Os << "AerosolExtinction";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolExtinction);
+FP_EXPORT_OBSERVER_KEY(AerosolExtinction);
+
 #endif
+

@@ -63,8 +63,14 @@ private:
   double doppler_shift_;         ///< Doppler shift factor.
   bool apply_doppler_shift_;         ///< If true, apply doppler shift.
   bool calculated_doppler_shift;
-  void calc_solar_distance(const Constant& constant, const Time& t);        
+  void calc_solar_distance(const Constant& constant, const Time& t);
+  SolarDopplerShiftPolynomial() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(SolarDopplerShiftPolynomial);
 #endif

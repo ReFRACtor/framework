@@ -10,7 +10,7 @@ namespace FullPhysics {
   diagonal scaling matrix is supported.
 *******************************************************************/
 class NLLSProblemScaled : 
-    public NLLSProblem {
+    virtual public NLLSProblem {
 
 public:
 
@@ -116,7 +116,12 @@ protected:
 
   blitz::Array<double, 1> S;
   boost::shared_ptr<NLLSProblem> P;
-
+private:
+  NLLSProblemScaled() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(NLLSProblemScaled);
 #endif

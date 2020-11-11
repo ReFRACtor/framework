@@ -473,7 +473,9 @@ public:
 private:
   T val;
   blitz::Array<T, 1> grad;
-  bool keep_grad;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 //-----------------------------------------------------------------------
@@ -620,6 +622,7 @@ inline blitz::Array<AutoDerivative<double>, 3> auto_derivative
       }
   return res;
 }
+typedef AutoDerivative<double>  AutoDerivativeDouble;
 }
 
 //-----------------------------------------------------------------------
@@ -794,5 +797,9 @@ pow2(const FullPhysics::AutoDerivative<double>& base)
        blitz::Array<double, 1>( base.gradient() * 2 * base.value()));
   }
 }
+
 }
+
+FP_EXPORT_KEY(AutoDerivativeDouble);
+
 #endif

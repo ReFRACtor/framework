@@ -1,4 +1,5 @@
 #include "solar_reference_spectrum.h"
+#include "fp_serialize_support.h"
 
 // For to_c_order routine
 #include "linear_algebra.h"
@@ -7,6 +8,19 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarReferenceSpectrum::serialize(Archive & ar,
+				       const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarModel)
+    & FP_NVP(ref_spec_orig) & FP_NVP(ref_spec_interp)
+    & FP_NVP_(doppler_shift);
+}
+
+FP_IMPLEMENT(SolarReferenceSpectrum);
+#endif
 
 SolarReferenceSpectrum::SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& ref_spectrum_in,
                                                const boost::shared_ptr<SolarDopplerShift>& doppler_shift_in) 

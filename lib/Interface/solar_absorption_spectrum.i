@@ -20,5 +20,6 @@ public:
   std::string print_to_string() const;
   virtual Spectrum solar_absorption_spectrum(
      const SpectralDomain& spec_domain) const = 0;
+  %pickle_serialization();
 };
 }

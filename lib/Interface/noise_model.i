@@ -13,8 +13,8 @@
 namespace FullPhysics {
 class NoiseModel : public GenericObject {
 public:
-  virtual ~NoiseModel() {}
   virtual blitz::Array<double, 1> uncertainty(int Spec_index, const blitz::Array<double, 1>& Radiance) const = 0;
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }

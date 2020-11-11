@@ -34,6 +34,7 @@ public:
     blitz::Array<float, 3> read_float(double wn) const 
     { return $self->read<float, 3>(wn); }
   }
+  %pickle_serialization();
 };
 }
 

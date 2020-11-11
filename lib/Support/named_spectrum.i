@@ -52,5 +52,6 @@ public:
   %python_attribute(name, virtual const std::string&);
   %python_attribute(index, virtual int);
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }

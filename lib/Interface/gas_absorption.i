@@ -32,6 +32,7 @@ public:
     const DoubleWithUnit& press, 
     const AutoDerivativeWithUnit<double>& temp,
     const ArrayAdWithUnit<double, 1>& Broadener_vmr) const = 0;
+  %pickle_serialization();
 };
 }
 

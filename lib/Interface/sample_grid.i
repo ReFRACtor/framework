@@ -37,6 +37,7 @@ namespace FullPhysics {
         virtual boost::shared_ptr<SampleGrid> clone() const = 0;
         %python_attribute(sample_grid, virtual SpectralDomain);
         %python_attribute(pixel_grid, virtual SpectralDomain);
+      %pickle_serialization();
     };
     
     %template(SubStateVectorArraySampleGrid) FullPhysics::SubStateVectorArray<FullPhysics::SampleGrid>;

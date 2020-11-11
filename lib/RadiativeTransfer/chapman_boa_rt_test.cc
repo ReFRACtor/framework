@@ -1,6 +1,7 @@
 #include "chapman_boa_rt.h"
 #include "unit.h"
 #include "unit_test_support.h"
+#include "fp_serialize_support.h"
 
 #include "configuration_fixture.h"
 
@@ -139,6 +140,30 @@ BOOST_AUTO_TEST_CASE(generate_finite_diff_jac)
               << "# jacobian" << std::endl
               << jac_fd << std::endl;
   
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  
+  std::string d = serialize_write_string(boa_rt);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<ChapmanBoaRT> boa_rtr =
+    serialize_read_string<ChapmanBoaRT>(d);
+
+  // Run reflectance only routine and due to how class is designed also the stokes routine
+  ArrayAd<double, 1> refl_jac_high = 
+    boa_rt->reflectance(*spec_domain, 0).spectral_range().data_ad();
+  ArrayAd<double, 1> refl_jac_high2 = 
+    boa_rtr->reflectance(*spec_domain, 0).spectral_range().data_ad();
+
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_jac_high.value(), refl_jac_high2.value(),
+			       1e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_jac_high.jacobian(),
+			       refl_jac_high2.jacobian(),
+			       1e-6);
 }
 
 

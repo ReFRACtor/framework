@@ -5,6 +5,7 @@
 #include <sstream>
 
 namespace FullPhysics {
+  class AccumulatedTimer;
 /****************************************************************//**
   The actual implementation of the Logger.
 *******************************************************************/
@@ -111,10 +112,19 @@ public:
   static LogHelper error() {return log(LogImp::ERROR);}
   static LogHelper fatal() {return log(LogImp::FATAL);}
   void print(std::ostream& Os) {Os << "Logger";}
+//-----------------------------------------------------------------------
+/// Place to stash a timer, if you don't otherwise have an easy place
+/// to create and pass this around. Mostly used for internal
+/// debugging/timing  
+//-----------------------------------------------------------------------
+  static const boost::shared_ptr<AccumulatedTimer>& timer()
+  { return instance().timer_; }
+  static void create_timer(const std::string& Desc);
 private:
   Logger() {}
   Logger(const Logger&) {}
   boost::shared_ptr<LogImp> imp_;
+  boost::shared_ptr<AccumulatedTimer> timer_;
 };
 
 }

@@ -10,11 +10,10 @@ namespace FullPhysics {
   This interface encapsulates the usage of a vmr profile along
   along with a scale factor which is retrieved.
 *******************************************************************/
-class AbsorberVmrScaled : public AbsorberVmrImpBase {
+class AbsorberVmrScaled : virtual public AbsorberVmrImpBase {
 public:
   AbsorberVmrScaled(const boost::shared_ptr<Pressure>& Press,
                     double Scale,                         
-                    bool Scale_flag,
                     const std::string& Gas_name);
 
   virtual ~AbsorberVmrScaled() {}
@@ -55,6 +54,13 @@ public:
 
 protected:
   virtual void calc_vmr() const;
+  AbsorberVmrScaled() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmrScaled);
 #endif

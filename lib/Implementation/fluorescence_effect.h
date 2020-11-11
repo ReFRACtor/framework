@@ -7,6 +7,7 @@
 #include "spectrum_effect_imp_base.h"
 #include "atmosphere_standard.h"
 #include "stokes_coefficient.h"
+#include "state_mapping.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -14,16 +15,16 @@ namespace FullPhysics {
  by using a retrievable across the band parametrization of the
  effect.
 *******************************************************************/
-class FluorescenceEffect : public SpectrumEffectImpBase {
+class FluorescenceEffect : virtual public SpectrumEffectImpBase {
 public:
   FluorescenceEffect(const blitz::Array<double, 1>& Coeff,
-                     const blitz::Array<bool, 1>& Used_flag,
                      const boost::shared_ptr<RtAtmosphere>& Atm,
-		     const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+                     const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
                      const DoubleWithUnit& Lza, 
                      const int Spec_index,
                      const DoubleWithUnit& Reference,
-                     const Unit& Retrieval_unit);
+                     const Unit& Retrieval_unit,
+                     const boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual void apply_effect(Spectrum& Spec,
 		    const ForwardModelSpectralGrid& Forward_model_grid) const;
@@ -75,6 +76,13 @@ public:
     return (t < 0 ? 0 : sqrt(t)); 
   }
 
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(atm_oco);
+    res.push_back(stokes_coef);
+    return res;
+  }
 private:
   DoubleWithUnit lza;
   DoubleWithUnit reference;
@@ -90,6 +98,13 @@ private:
   // The fluorescence contribution needs to be
   // scaled by the stokes value
   boost::shared_ptr<StokesCoefficient> stokes_coef;
+
+  FluorescenceEffect() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(FluorescenceEffect);
 #endif

@@ -31,7 +31,7 @@ namespace FullPhysics {
 *******************************************************************/
 
 template <class Lint>
-class IlsTable : public IlsFunction {
+class IlsTable : virtual public IlsFunction {
 public:
 //-----------------------------------------------------------------------
 /// Constructor where we just supply the wavenumber, delta_lambda and
@@ -85,6 +85,7 @@ public:
                                        const blitz::Array<double, 2>& Delta_lambda, 
                                        const blitz::Array<double, 2>& Response);
 private:
+  void init_from_file(const HdfFile& Hdf_static_input);
   // Save some typing by giving these typedefs
   typedef ArrayAd<double, 1> arrad;
   typedef AutoDerivative<double> ad;
@@ -108,10 +109,21 @@ private:
   bool from_hdf_file;
   std::string hdf_file_name;
   std::string hdf_group;
+  IlsTable() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 typedef IlsTable<LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLinear;
 typedef IlsTable<LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > > IlsTableLog;
 
 }
+
+FP_EXPORT_KEY(IlsTableLinear);
+FP_EXPORT_KEY(IlsTableLog);
 #endif

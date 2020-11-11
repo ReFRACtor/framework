@@ -7,18 +7,17 @@
 %import "hdf_file.i"
 %import "level_1b.i"
 
-
 %fp_shared_ptr(FullPhysics::ExampleLevel1bInfo);
 
 namespace FullPhysics {
 
-%feature("notabstract") ExampleLevel1bInfo;
-
 class ExampleLevel1bInfo: public Level1bInfo {
 public:
-    ExampleLevel1bInfo(const boost::shared_ptr<HdfFile>& input_file);
-    ExampleLevel1bInfo(const std::string& input_filename);
+  ExampleLevel1bInfo(const boost::shared_ptr<HdfFile>& input_file);
+  ExampleLevel1bInfo(const std::string& input_filename);
     
-    std::vector<boost::shared_ptr<Level1b>> level1b_list();
+  virtual std::vector<boost::shared_ptr<Level1b>> level1b_list();
+  %python_attribute(input, boost::shared_ptr<HdfFile>);
+  %pickle_serialization();
 };
 }

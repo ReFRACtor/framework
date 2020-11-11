@@ -15,69 +15,75 @@ namespace FullPhysics {
 
 class IlsImpBase : public Ils, public Observer<SampleGrid> {
 public:
-    //-----------------------------------------------------------------------
-    /// Constructor.
-    //-----------------------------------------------------------------------
-    IlsImpBase(const boost::shared_ptr<SampleGrid>& Sample_grid, const DoubleWithUnit& High_res_extension)
+  //-----------------------------------------------------------------------
+  /// Constructor.
+  //-----------------------------------------------------------------------
+  IlsImpBase(const boost::shared_ptr<SampleGrid>& Sample_grid, const DoubleWithUnit& High_res_extension)
     : sample_grid_(Sample_grid), high_res_extension_(High_res_extension)
-    {
-        sample_grid_->add_observer(*this);
-    }
+  {
+    sample_grid_->add_observer(*this);
+  }
 
-    virtual ~IlsImpBase() = default;
+  virtual ~IlsImpBase() = default;
 
   virtual void notify_update(const SampleGrid& UNUSED(D))
-    {
-        notify_update_do(*this);
-    }
+  {
+    notify_update_do(*this);
+  }
 
-    virtual blitz::Array<double, 1> apply_ils
-    (const blitz::Array<double, 1>& High_resolution_wave_number,
-     const blitz::Array<double, 1>& High_resolution_radiance,
-     const std::vector<int>& Pixel_list) const = 0;
+  virtual blitz::Array<double, 1> apply_ils
+  (const blitz::Array<double, 1>& High_resolution_wave_number,
+   const blitz::Array<double, 1>& High_resolution_radiance,
+   const std::vector<int>& Pixel_list) const = 0;
 
-    virtual ArrayAd<double, 1> apply_ils
-    (const blitz::Array<double, 1>& High_resolution_wave_number,
-     const ArrayAd<double, 1>& High_resolution_radiance,
-     const std::vector<int>& Pixel_list) const = 0;
+  virtual ArrayAd<double, 1> apply_ils
+  (const blitz::Array<double, 1>& High_resolution_wave_number,
+   const ArrayAd<double, 1>& High_resolution_radiance,
+   const std::vector<int>& Pixel_list) const = 0;
 
-    virtual void print(std::ostream& Os) const
-    {
-        Os << "IlsImpBase";
-    }
+  virtual void print(std::ostream& Os) const
+  {
+    Os << "IlsImpBase";
+  }
 
-    virtual std::string band_name() const
-    {
-        return desc_band_name_;
-    }
-    virtual std::string hdf_band_name() const
-    {
-        return hdf_band_name_;
-    }
-    virtual SpectralDomain pixel_grid() const
-    {
-        return sample_grid_->pixel_grid();
-    }
-    virtual DoubleWithUnit high_res_extension() const
-    {
-        return high_res_extension_;
-    }
-    virtual void high_res_extension(const DoubleWithUnit& extension)
-    {
-        high_res_extension_ = extension;
-    }
+  virtual std::string band_name() const
+  {
+    return desc_band_name_;
+  }
+  virtual std::string hdf_band_name() const
+  {
+    return hdf_band_name_;
+  }
+  virtual SpectralDomain pixel_grid() const
+  {
+    return sample_grid_->pixel_grid();
+  }
+  virtual DoubleWithUnit high_res_extension() const
+  {
+    return high_res_extension_;
+  }
+  virtual void high_res_extension(const DoubleWithUnit& extension)
+  {
+    high_res_extension_ = extension;
+  }
 
-    //-----------------------------------------------------------------------
-    /// Underlying SampleGrid object
-    //-----------------------------------------------------------------------
-    boost::shared_ptr<SampleGrid> sample_grid() const {return sample_grid_; }
+  //-----------------------------------------------------------------------
+  /// Underlying SampleGrid object
+  //-----------------------------------------------------------------------
+  boost::shared_ptr<SampleGrid> sample_grid() const {return sample_grid_; }
 
-    virtual boost::shared_ptr<Ils> clone() const = 0;
+  virtual boost::shared_ptr<Ils> clone() const = 0;
 
+protected:
+  IlsImpBase() {}
 private:
-    boost::shared_ptr<SampleGrid> sample_grid_;
-    DoubleWithUnit high_res_extension_;
-    std::string desc_band_name_, hdf_band_name_;
+  boost::shared_ptr<SampleGrid> sample_grid_;
+  DoubleWithUnit high_res_extension_;
+  std::string desc_band_name_, hdf_band_name_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(IlsImpBase);
 #endif

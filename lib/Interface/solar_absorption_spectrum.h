@@ -27,7 +27,12 @@ public:
   virtual Spectrum solar_absorption_spectrum(
      const SpectralDomain& Spec_domain) const = 0;
   virtual void print(std::ostream& Os) const {Os << "SolarAbsorptionSpectrum";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(SolarAbsorptionSpectrum);
 #endif

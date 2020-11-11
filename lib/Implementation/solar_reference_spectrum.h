@@ -20,47 +20,58 @@ namespace FullPhysics {
   the distance from the sun.
 *******************************************************************/
 
-class SolarReferenceSpectrum : public SolarModel {
+class SolarReferenceSpectrum : public virtual SolarModel {
 public:
 
-    //-----------------------------------------------------------------------
-    /// Uses the supplied Spectrum object as the reference spectrum along
-    /// along with an optional SolarDopplerShift object
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Uses the supplied Spectrum object as the reference spectrum along
+  /// along with an optional SolarDopplerShift object
+  //-----------------------------------------------------------------------
 
-    SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& reference_spectrum,
-                           const boost::shared_ptr<SolarDopplerShift>& doppler_shift = NULL);
+  SolarReferenceSpectrum(const boost::shared_ptr<Spectrum>& reference_spectrum,
+			 const boost::shared_ptr<SolarDopplerShift>& doppler_shift = NULL);
 
-    virtual ~SolarReferenceSpectrum() = default;
+  virtual ~SolarReferenceSpectrum() = default;
 
-    //-----------------------------------------------------------------------
-    /// Clone a SolarReferenceSpectrum object
-    //----------------------------------------------------------------------- 
+  //-----------------------------------------------------------------------
+  /// Clone a SolarReferenceSpectrum object
+  //----------------------------------------------------------------------- 
 
-    virtual boost::shared_ptr<SpectrumEffect> clone() const {
-        boost::shared_ptr<SpectrumEffect> res (new SolarReferenceSpectrum(ref_spec_orig, doppler_shift_));
-        return res;
-    }
+  virtual boost::shared_ptr<SpectrumEffect> clone() const {
+    boost::shared_ptr<SpectrumEffect> res (new SolarReferenceSpectrum(ref_spec_orig, doppler_shift_));
+    return res;
+  }
  
-    //-----------------------------------------------------------------------
-    /// The SolarDopplerShift object used by this class.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// The SolarDopplerShift object used by this class.
+  //-----------------------------------------------------------------------
 
-    virtual const boost::shared_ptr<SolarDopplerShift>& doppler_shift() const { return doppler_shift_; }
+  virtual const boost::shared_ptr<SolarDopplerShift>& doppler_shift() const { return doppler_shift_; }
 
-    //-----------------------------------------------------------------------
-    /// The SolarContinuumSpectrum object used by this class, as a ptr.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// The SolarContinuumSpectrum object used by this class, as a ptr.
+  //-----------------------------------------------------------------------
 
-    virtual void print(std::ostream& Os) const;
-    virtual Spectrum solar_spectrum(const SpectralDomain& spec_domain) const;
-
+  virtual void print(std::ostream& Os) const;
+  virtual Spectrum solar_spectrum(const SpectralDomain& spec_domain) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(ref_spec_orig);
+    res.push_back(doppler_shift_);
+    return res;
+  }
+  
 private:
-
-    boost::shared_ptr<Spectrum> ref_spec_orig; // Stored for cloning
-    LinearInterpolate<double, double> ref_spec_interp;
-    boost::shared_ptr<SolarDopplerShift> doppler_shift_;
-
+  boost::shared_ptr<Spectrum> ref_spec_orig; // Stored for cloning
+  LinearInterpolate<double, double> ref_spec_interp;
+  boost::shared_ptr<SolarDopplerShift> doppler_shift_;
+  SolarReferenceSpectrum() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarReferenceSpectrum);
 #endif

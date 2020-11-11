@@ -13,11 +13,13 @@ class ValueFromLevel1b(Creator):
 
     list_fields = [
         'time',
-        'sample_grid'
+        'sample_grid',
+        'spectral_variable',
     ]
 
     array_fields = [
         'stokes_coefficient',
+        'number_sample',
     ]
 
     # Fields that can become ArrayWithUnit if no channel_index supplied
@@ -56,7 +58,7 @@ class ValueFromLevel1b(Creator):
             chan_val = accessor(chan_idx)
             vals.append(chan_val.value)
             new_units = chan_val.units
-            if units != None and new_units.name != units.name:
+            if units is not None and new_units.name != units.name:
                 raise param.ParamError("All units for L1B values must be the same to compact as an array")
             else:
                 units = new_units

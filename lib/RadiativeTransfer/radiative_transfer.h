@@ -88,11 +88,30 @@ public:
 
   virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const 
   { Os << "RadiativeTransfer";}
+
+//-----------------------------------------------------------------------
+/// We have some fairly nested object hierarchies. It can be useful to
+/// be able to search this for things (e.g., which Pressure object is
+/// used by a ForwardModel?). This returns a list of subobjects
+/// "owned" by this object.
+//-----------------------------------------------------------------------
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    return res;
+  }
 protected:
   static AccumulatedTimer timer;
   boost::shared_ptr<boost::progress_display> progress_display(const 
 		   blitz::Array<double, 1>& wn) const;
+private:  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(RadiativeTransfer);
 #endif

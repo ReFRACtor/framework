@@ -21,9 +21,8 @@ public:
   altitude(const AutoDerivativeWithUnit<double>& P) const;
   virtual AutoDerivativeWithUnit<double> 
   gravity(const AutoDerivativeWithUnit<double>& P) const;
-  virtual void notify_update(const Pressure& P);
-  virtual void notify_update(const Temperature& T);
   boost::shared_ptr<Altitude> clone() const;
+  %pickle_serialization();
 };
 
 }

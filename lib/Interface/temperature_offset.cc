@@ -1,9 +1,21 @@
 #include <boost/bind.hpp>
 #include "temperature_offset.h"
 #include "linear_interpolate.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void TemperatureOffset::serialize(Archive& ar,
+                                  const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TemperatureImpBase);
+}
+
+FP_IMPLEMENT(TemperatureOffset);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -16,14 +28,11 @@ REGISTER_LUA_END()
 //-----------------------------------------------------------------------
 
 TemperatureOffset::TemperatureOffset(const boost::shared_ptr<Pressure>& Press,
-				     double Temp_offset,
-				     bool Temp_flag)
+                                     double Temp_offset)
 {
-  Array<bool, 1> flag(1);
-  Array<double, 1> val(flag.shape());
-  flag(0) = Temp_flag;
+  Array<double, 1> val(1);
   val(0) = Temp_offset;
-  init(val, flag, Press, false);
+  init(val, Press);
 }
 
 //-----------------------------------------------------------------------
@@ -40,9 +49,9 @@ void TemperatureOffset::calc_temperature_grid() const
   if (press_profile.rows() != temp_profile.rows()) {
     std::stringstream err_msg;
     err_msg << "Size of pressure grid: "
-	    << press_profile.rows()
-	    << " != size of temperature levels: "
-	    << temp_profile.rows();
+            << press_profile.rows()
+            << " != size of temperature levels: "
+            << temp_profile.rows();
     throw Exception(err_msg.str());
   }
   for(int i = 0; i < press_profile.rows(); ++i) {
@@ -54,7 +63,7 @@ void TemperatureOffset::calc_temperature_grid() const
     lin_type;
   boost::shared_ptr<lin_type> lin
     (new lin_type(plist.begin(), plist.end(), tlist.begin()));
-  tgrid = boost::bind(&lin_type::operator(), lin, _1);
+  cache.tgrid = boost::bind(&lin_type::operator(), lin, _1);
 }
 
 // See base class for description of this function.
@@ -69,8 +78,7 @@ std::string TemperatureOffset::state_vector_name_i(int UNUSED(i)) const
 
 double TemperatureOffset::temperature_offset_uncertainty() const
 {
-  if(!used_flag_value()(0) ||
-     cov.rows() == 0 ||
+  if(cov.rows() == 0 ||
      cov(0,0) < 0)
     return 0.0;
   return sqrt(cov(0,0));

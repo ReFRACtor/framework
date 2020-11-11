@@ -13,8 +13,6 @@ class SubStateVectorObserver : virtual public StateVectorObserver {
 public:
   virtual ~SubStateVectorObserver() {}
   virtual void notify_update(const StateVector& Sv);
-  virtual void mark_used(const StateVector& Sv, 
-			 blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
 			  blitz::Array<std::string, 1>& Sv_name) const;
 
@@ -40,15 +38,6 @@ public:
     const blitz::Array<double, 2>& Cov_sub) = 0;
 
 //-----------------------------------------------------------------------
-/// Called by mark_used with the subset of the state vector used by
-/// this class. The default marks everything as used, but derived
-/// classes can override this.
-//-----------------------------------------------------------------------
-
-  virtual void mark_used_sub(blitz::Array<bool, 1>& Used) const
-  { Used = true; }
-
-//-----------------------------------------------------------------------
 /// Called by state_vector_name with the subset of the Sv_name used by
 /// this class. The default function doesn't change anything, but
 /// derived classes can ovveride this.
@@ -56,7 +45,6 @@ public:
 
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& UNUSED(Sv_name)) 
     const {}
-  virtual void print(std::ostream& Os) const {Os << "SubStateVectorObserver";}
   virtual void notify_add(StateVector& Sv)
   { 
     if(pstart != -1)
@@ -132,6 +120,10 @@ private:
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
 

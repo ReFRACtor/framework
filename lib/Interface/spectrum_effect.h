@@ -12,8 +12,9 @@ namespace FullPhysics {
   has finished its work.
 *******************************************************************/
 
-class SpectrumEffect : virtual public StateVectorObserver,
-                               public Observable<SpectrumEffect> {
+class SpectrumEffect : public Printable<SpectrumEffect>,
+		       virtual public StateVectorObserver,
+		       public Observable<SpectrumEffect> {
 public:
   virtual ~SpectrumEffect() {}
 
@@ -49,6 +50,27 @@ public:
 
   virtual std::string name() const = 0;
 
+//-----------------------------------------------------------------------
+/// We have some fairly nested object hierarchies. It can be useful to
+/// be able to search this for things (e.g., which Pressure object is
+/// used by a ForwardModel?). This returns a list of subobjects
+/// "owned" by this object.
+//-----------------------------------------------------------------------
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    return res;
+  }
+  virtual void print(std::ostream& Os) const
+  { Os << "SpectrumEffect";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectrumEffect);
+FP_EXPORT_OBSERVER_KEY(SpectrumEffect);
 #endif

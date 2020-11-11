@@ -10,7 +10,7 @@ namespace FullPhysics {
   This is the forward model cost function, rewritten to match the
   standard format used in nonlinear least squares solvers.
 *******************************************************************/
-class FmNLLSProblem : public NLLSProblem {
+class FmNLLSProblem : virtual public NLLSProblem {
 public:
   FmNLLSProblem(const boost::shared_ptr<ForwardModel>& Fm,
    const boost::shared_ptr<StateVector>& Sv,
@@ -32,7 +32,12 @@ private:
   blitz::Array<double, 1> x_a;
   blitz::Array<double, 1> se_sqrt_inv;
   blitz::Array<double, 2> sa_sqrt_inv;
+  FmNLLSProblem() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
+FP_EXPORT_KEY(FmNLLSProblem);
 #endif

@@ -97,7 +97,12 @@ protected:
 
   blitz::Array<double, 1> M;
   blitz::Array<double, 2> K;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ModelState);
 #endif

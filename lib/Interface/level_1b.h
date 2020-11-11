@@ -151,7 +151,12 @@ public:
 //-----------------------------------------------------------------------
 
   virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 } // End of FullPhysics namespace
+
+FP_EXPORT_KEY(Level1b);
 #endif

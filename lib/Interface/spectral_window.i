@@ -24,5 +24,6 @@ public:
 					int Spec_index) const = 0;
   %python_attribute(number_spectrometer, virtual int);
   %python_attribute(spectral_bound, virtual SpectralBound);
+  %pickle_serialization();
 };
 }

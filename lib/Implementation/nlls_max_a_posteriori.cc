@@ -1,9 +1,22 @@
 #include <nlls_max_a_posteriori.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSMaxAPosteriori::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblem)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblemState)
+    & FP_NVP(MAP);
+}
+
+FP_IMPLEMENT(NLLSMaxAPosteriori);
+#endif
 
 
 #ifdef HAVE_LUA

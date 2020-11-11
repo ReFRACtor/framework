@@ -15,34 +15,44 @@ namespace FullPhysics {
   calculations in thermal infrared bands. Therefore it is 
   unnecessay when doing near infrared or ultraviolet computations.
 *******************************************************************/
-class SurfaceTemperature : virtual public StateVectorObserver, public Observable<SurfaceTemperature> {
+class SurfaceTemperature : public Printable<SurfaceTemperature>,
+			   virtual public StateVectorObserver,
+			   public Observable<SurfaceTemperature> {
 public:
-    virtual ~SurfaceTemperature() {}
+  virtual ~SurfaceTemperature() {}
 
-    virtual void add_observer(Observer<SurfaceTemperature>& Obs) 
-    { add_observer_do(Obs, *this);}
+  virtual void add_observer(Observer<SurfaceTemperature>& Obs) 
+  { add_observer_do(Obs, *this);}
 
-    virtual void remove_observer(Observer<SurfaceTemperature>& Obs) 
-    { remove_observer_do(Obs, *this);}
+  virtual void remove_observer(Observer<SurfaceTemperature>& Obs) 
+  { remove_observer_do(Obs, *this);}
 
-    //-----------------------------------------------------------------------
-    /// Return the temperature of the surface. This is different than the
-    /// temperature near the surface which would be the lowest level of
-    /// the temperature grid.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Return the temperature of the surface. This is different than the
+  /// temperature near the surface which would be the lowest level of
+  /// the temperature grid.
+  //-----------------------------------------------------------------------
 
-    virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const = 0;
+  virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const = 0;
 
-    //-----------------------------------------------------------------------
-    /// Clone a SurfaceTemperature object. Note that the cloned version will *not*
-    /// be attached to a StateVector or Observer<SurfaceTemperature>, although you
-    /// can of course attach them after receiving the cloned object.
-    ///
-    /// Because this isn't attached to the StateVector, one use of the
-    /// clone operator is to create a "frozen" SurfaceTemperature object.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Clone a SurfaceTemperature object. Note that the cloned version will *not*
+  /// be attached to a StateVector or Observer<SurfaceTemperature>, although you
+  /// can of course attach them after receiving the cloned object.
+  ///
+  /// Because this isn't attached to the StateVector, one use of the
+  /// clone operator is to create a "frozen" SurfaceTemperature object.
+  //-----------------------------------------------------------------------
 
-    virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
+  virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "SurfaceTemperature";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(SurfaceTemperature);
+FP_EXPORT_OBSERVER_KEY(SurfaceTemperature);
 #endif

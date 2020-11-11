@@ -14,15 +14,16 @@
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::RelativeHumidity);
 namespace FullPhysics {
-class RelativeHumidity {
+class RelativeHumidity  : public GenericObject {
 public:
   RelativeHumidity(const boost::shared_ptr<Absorber>& Abs, 
 		   const boost::shared_ptr<Temperature>& Temp,
 		   const boost::shared_ptr<Pressure>& Press);
   virtual boost::shared_ptr<RelativeHumidity> clone() const;
-  ArrayAd<double, 1> relative_humidity_grid() const;
-  ArrayAd<double, 1> relative_humidity_layer() const;
-  ArrayAd<double, 1> specific_humidity_grid() const;
+  %python_attribute(relative_humidity_grid, ArrayAd<double, 1>);
+  %python_attribute(relative_humidity_layer, ArrayAd<double, 1>);
+  %python_attribute(specific_humidity_grid, ArrayAd<double, 1>);
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }

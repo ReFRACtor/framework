@@ -2,7 +2,6 @@
 // (Not really c++, but closest emacs mode)
 
 %include "fp_common.i"
-
 %{
 #include "level_1b.h"
 %}
@@ -37,6 +36,8 @@ public:
   virtual Time time(int Spec_index) const = 0;
   virtual SpectralRange radiance(int Spec_index) const = 0;
   virtual DoubleWithUnit relative_azimuth(int i) const;
-  virtual DoubleWithUnit signal(int Spec_index, const std::vector<int>& Sample_indexes = std::vector<int>()) const;
+  virtual DoubleWithUnit signal(int Spec_index,
+	const std::vector<int>& Sample_indexes = std::vector<int>()) const;
+  %pickle_serialization();
 };
 }

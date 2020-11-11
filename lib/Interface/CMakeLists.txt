@@ -2,10 +2,13 @@
 set(DIR_SOURCES
     absorber.cc
     absorber_vmr.cc
+    absorber_vmr_imp_base.cc
     absorber_vmr_scaled.cc
     aerosol.cc
     aerosol_extinction.cc
+    aerosol_extinction_imp_base.cc
     aerosol_property.cc
+    aerosol_property_imp_base.cc
     altitude.cc
     composite_initial_guess.cc
     convergence_check.cc
@@ -20,18 +23,19 @@ set(DIR_SOURCES
     forward_model_spectral_grid.cc
     gas_absorption.cc
     ground.cc
+    ground_imp_base.cc
     ground_piecewise.cc
     ils.cc
     ils_function.cc
+    ils_imp_base.cc
     initial_guess.cc
     instrument.cc
     instrument_correction.cc
-    observation.cc
     iterative_solver.cc
     iterative_solver_der.cc
     level_1b.cc
-    level_1b_sample_coefficient.cc
     level_1b_info.cc
+    level_1b_sample_coefficient.cc
     max_a_posteriori.cc
     max_likelihood.cc
     meteorology.cc
@@ -41,9 +45,12 @@ set(DIR_SOURCES
     nlls_problem_state.cc
     nlls_solver.cc
     noise_model.cc
+    observation.cc
+    optical_properties.cc
     optical_properties_imp_base.cc
     optical_properties_init_base.cc
     output.cc
+    perturbation.cc
     pressure.cc
     pressure_imp_base.cc
     problem_state.cc
@@ -60,7 +67,10 @@ set(DIR_SOURCES
     spectrum_effect_imp_base.cc
     spectrum_sampling.cc
     stokes_coefficient.cc
+    stokes_coefficient_imp_base.cc
+    surface_temperature.cc
     temperature.cc
+    temperature_imp_base.cc
     temperature_offset.cc
 )
 
