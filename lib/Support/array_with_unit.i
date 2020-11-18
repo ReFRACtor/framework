@@ -16,7 +16,7 @@
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 1>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 2>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>)
-%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 4>)
 
 %pythoncode %{
     import numpy as np

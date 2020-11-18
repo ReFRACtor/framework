@@ -30,17 +30,14 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     }
     ArrayWithUnit<double,1> fm_pressure(pressure_top_bottom, units::mbar);
     fm_pressure = fm_pressure.convert(units::Pa);
-    config_pressure = boost::make_shared<PressureSigma>(fm_pressure.value, surface_pressure.value, true);
+    config_pressure = boost::make_shared<PressureSigma>(fm_pressure.value, surface_pressure.value);
 
     /* Temperature */
     float skin_temp_nc = input_data->read_field<float>("/SkinTemperature");
     Array<double, 1> skin_temp(1);
     skin_temp = static_cast<double>(skin_temp_nc);
     ArrayWithUnit<double, 1> skin_temp_with_unit(skin_temp, units::K);
-    // OSS always returns skin temp jacobians
-    blitz::Array<bool, 1> retrieve_skin_temp(1);
-    retrieve_skin_temp = true;
-    config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit, retrieve_skin_temp);
+    config_skin_temperature = boost::make_shared<SurfaceTemperatureDirect>(skin_temp_with_unit);
     retrieval_skin_temperature_flag.resize(1);
     retrieval_skin_temperature_flag(0) = true;
 
@@ -50,9 +47,7 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         int level_index = (temp_nc.rows() - 1) - i;
         temp(i) = static_cast<double>(temp_nc(level_index));
     }
-    Array<bool, 1> temp_flag(temp_nc.rows());
-    temp_flag = true;
-    config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0, true);
+    config_temperature = boost::make_shared<TemperatureLevelOffset>(config_pressure, temp, 0.0);
     retrieval_temperature_levels.resize(1);
     retrieval_temperature_levels(0) = 0; // config to retrieve only 0-th temperature level
 
@@ -84,20 +79,16 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
         gas_names.push_back(gas_name);
 
         Array<double, 1> vmr_curr_gas = Array<double, 1>(cast<double>(vmr_gas(gas_index, Range::all())));
-        blitz::Array<bool, 1> vmr_curr_flag = blitz::Array<bool, 1>(vmr_curr_gas.rows());
         Array<int, 1> gas_levels;
         if (find(gas_jacob_names.begin(), gas_jacob_names.end(), gas_name) != gas_jacob_names.end()) {
             gas_levels.resize(vmr_curr_gas.rows());
             for (int gas_level_index = 0; gas_level_index < vmr_curr_gas.rows(); gas_level_index++) {
                 gas_levels(gas_level_index) = gas_level_index;
             }
-            vmr_curr_flag = true;
-        } else {
-            vmr_curr_flag = false;
         }
         retrieval_gas_levels.push_back(gas_levels);
         boost::shared_ptr<AbsorberVmrLevel> current_gas = boost::make_shared<AbsorberVmrLevel>(config_pressure,
-                vmr_curr_gas, vmr_curr_flag, gas_name);
+                vmr_curr_gas, gas_name);
         vmr.push_back(current_gas);
     }
     config_vmr = vmr;
@@ -111,14 +102,12 @@ OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
     Array<double, 1> emissivity_val = Array<double, 1>(cast<double>(emissivity_val_nc(Range::all())));
 
     // OSS always returns emissivity jacobians
-    blitz::Array<bool, 1> retrieve_emiss(spectral_points_nc.rows());
-    retrieve_emiss = true;
     retrieval_emissivity_flags.resize(1);
     retrieval_emissivity_flags(0) = 5; // retrieve only the 5th surface point emissivity jacobian
     retrieval_reflectivity_flags.resize(1);
     retrieval_reflectivity_flags(0) = 10; // retrieve only the 10th surface point reflectivity jacobian
 
-    config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val, retrieve_emiss);
+    config_ground = boost::make_shared<GroundEmissivityPiecewise>(spectral_points, emissivity_val);
 
     config_obs_zen_ang = DoubleWithUnit(1.45646667, units::deg);
     config_sol_zen_ang = DoubleWithUnit(90.0, units::deg);

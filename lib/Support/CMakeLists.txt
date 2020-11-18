@@ -41,6 +41,7 @@ set(DIR_SOURCES
     stacked_radiance_mixin.cc
     state_vector.cc
     state_vector_observer.cc
+    string_vector_to_char.cc
     sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc
