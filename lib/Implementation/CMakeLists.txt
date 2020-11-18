@@ -229,7 +229,7 @@ set(TEST_SOURCES
 
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
-# TODO: Remove OSS interface file if NOT OSS_FOUND
+# We remove globbed OSS files below if not building OSS
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
 if(OSS_FOUND)
@@ -240,6 +240,13 @@ if(OSS_FOUND)
     list(APPEND TEST_SOURCES oss_configuration_fixture.cc)
     list(APPEND TEST_SOURCES oss_forward_model_test.cc)
     list(APPEND TEST_SOURCES oss_interface_test.cc)
+else()
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES oss_forward_model.i)
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES oss_interface.i)
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES oss_retrieval_flags.i)
+    list(REMOVE_ITEM SWIG_SOURCES oss_forward_model.i)
+    list(REMOVE_ITEM SWIG_SOURCES oss_interface.i)
+    list(REMOVE_ITEM SWIG_SOURCES oss_retrieval_flags.i)
 endif()
 
 # Add current source directory to source file names
