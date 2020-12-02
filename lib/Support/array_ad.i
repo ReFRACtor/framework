@@ -115,6 +115,8 @@ def __getitem__(self, index):
     if type(index) is slice:
       return self.slice_data(index)
     else:
+      if index >= self.rows:
+        raise IndexError("Index out of range: %d. Length: %d" % (index, self.rows))
       return self.read(index)
   else:
     if any(type(x) is slice for x in index):

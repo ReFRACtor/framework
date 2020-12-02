@@ -103,12 +103,12 @@ void PressureSigma::calc_pressure_grid() const
       stringstream err_msg;
       err_msg << "At level " << i << " pressure is smaller: " 
 	      << "(" 
-	      << b_(i-1) << " * " << coeff(0).value() << " + " << a_(i-1)
+	      << b_(i) << " * " << coeff(0).value() << " + " << a_(i)
 	      << ") = "
 	      << cache.pgrid.value(i).value()
 	      << " than the value at the previous level: " 
 	      << "(" 
-	      << b_(i) << " * " << coeff(0).value() << " + " << a_(i)
+	      << b_(i-1) << " * " << coeff(0).value() << " + " << a_(i-1)
 	      << ") = "
 	      << cache.pgrid.value(i-1).value();
       throw Exception(err_msg.str());

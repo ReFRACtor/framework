@@ -13,6 +13,10 @@
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 2>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 3>)
 %fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 4>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 1>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 2>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>)
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 4>)
 
 %pythoncode %{
     import numpy as np
@@ -98,6 +102,10 @@ public:
 %template(ArrayWithUnit_double_2) FullPhysics::ArrayWithUnit<double, 2>;
 %template(ArrayWithUnit_double_3) FullPhysics::ArrayWithUnit<double, 3>;
 %template(ArrayWithUnit_double_4) FullPhysics::ArrayWithUnit<double, 4>;
+%template(ArrayWithUnit_float_1) FullPhysics::ArrayWithUnit<float, 1>;
+%template(ArrayWithUnit_float_2) FullPhysics::ArrayWithUnit<float, 2>;
+%template(ArrayWithUnit_float_3) FullPhysics::ArrayWithUnit<float, 3>;
+%template(ArrayWithUnit_float_4) FullPhysics::ArrayWithUnit<float, 4>;
 
 %pythoncode %{
     class ArrayWithUnit(object):
