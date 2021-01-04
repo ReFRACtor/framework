@@ -157,7 +157,7 @@ class GroundBrdf(Creator):
 
         # Turn off all but weight offset and slope
         if not self.retrieve_kernel_params():
-            ret_flag[:, 2:] = False
+            ret_flag[:, :-2] = False
 
         # Flatten to shape as it would appear in the retrieval vector
         return ret_flag.ravel()
