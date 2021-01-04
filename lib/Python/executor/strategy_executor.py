@@ -165,6 +165,11 @@ class StrategyExecutor(object):
 
             config_inst = self.config_instance(**step_keywords)
 
+            if config_inst.state_vector is not None:
+                logger.debug("Initial State Vector:")
+                logger.debug("---------------------")
+                logger.debug(f"{config_inst.state_vector}")
+
             self.run_solver(config_inst, step_index)
 
             if len(step_indexes) > 1:
