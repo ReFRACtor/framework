@@ -147,9 +147,9 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
 
     def create(self, gas_name, **kwargs):
         gas_osp = SpeciesOSP(gas_name, **self.osp_common())
+        ret_levels = gas_osp.retrieval_levels
 
         if self.vmr_profile() is None:
-            ret_levels = gas_osp.retrieval_levels
 
             if ret_levels is not None:
                 logger.debug(f"Loading {len(ret_levels)} retrieval levels for {gas_name} from {gas_osp.climatology_filename}")
