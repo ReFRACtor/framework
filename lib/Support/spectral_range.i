@@ -40,6 +40,12 @@ public:
   SpectralRange convert(const std::string& R) const;
   std::string print_to_string() const;
   %pickle_serialization();
+
+  %pythoncode {
+def copy(self):
+    return self.__class__(self.data_ad, self.units)
+  }
+
 };
 }
 

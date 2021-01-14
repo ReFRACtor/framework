@@ -16,7 +16,7 @@ class Spectrum : public GenericObject {
 public:
   std::string print_to_string() const;
   Spectrum(const SpectralDomain& Spec_domain, 
-	   const SpectralRange& Spec_range);
+           const SpectralRange& Spec_range);
   %python_attribute(spectral_domain, SpectralDomain)
   %python_attribute(spectral_range, SpectralRange)
   %pickle_serialization();
@@ -37,7 +37,11 @@ def value(self):
 def units(self):
     return self.spectral_range.units
 
+
+def copy(self):
+    return self.__class__(self.spectral_domain.copy(), self.spectral_range.copy())
 }
+
 };
 }
 

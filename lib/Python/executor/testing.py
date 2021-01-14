@@ -5,14 +5,17 @@ from refractor_swig import ObserverPtrNamedSpectrum
 class CaptureRadiance(ObserverPtrNamedSpectrum, OutputBase):
 
     def __init__(self):
+        # Required to initialize director
+        ObserverPtrNamedSpectrum.__init__(self)
+
         self.convolved_spectrum = []
         self.high_res_spectrum = []
 
     def notify_update(self, named_spectrum):
         if named_spectrum.name == "convolved":
-            self.convolved_spectrum.append(named_specrum)
+            self.convolved_spectrum.append(named_spectrum.copy())
         elif named_spectrum.name == "high_res_rt":
-            self.high_res_spectrum.append(named_specrum)
+            self.high_res_spectrum.append(named_spectrum.copy())
 
 class ComparisonExecutor(StrategyExecutor):
     "Executor that will store produced radiances internally for later comparison against offline values"
