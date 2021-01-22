@@ -216,7 +216,7 @@ class BrdfWeightFromContinuum(Creator):
             alb_calc = brdf_class.kernel_value_at_params(kernel_params, sza[chan_idx].value, vza[chan_idx].value, azm[chan_idx].value)
             weight = alb_cont[chan_idx, 0] / alb_calc
             
-            # Replace first parameter with new weight
-            params[chan_idx, 0] = weight
+            # Replace correct parameter index with new weight
+            params[chan_idx, 5] = weight
 
         return params
