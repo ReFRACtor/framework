@@ -1,6 +1,7 @@
 import os
 import warnings
 
+from attrdict import AttrDict
 import numpy as np
 
 from .base import Creator, ParamPassThru, CreatorError
@@ -205,3 +206,54 @@ class RelativeHumidity(Creator):
 
     def create(self, **kwargs):
         return rf.RelativeHumidity(self.absorber(), self.temperature(), self.pressure())
+
+class AtmosphereDictCreator(Creator):
+    "Creates a dictionary of atmosphere components in the correct order"
+
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    absorber = param.Iterable(rf.AbsorberVmr)
+    ground = param.InstanceOf(rf.Ground, required=False)
+    aerosol = param.InstanceOf(rf.Aerosol, required=False)
+    surface_temperature = param.InstanceOf(rf.SurfaceTemperature, required=False)
+    altitude = param.ObjectVector("altitude")
+    cached_alt_grid = None
+
+    def create(self, **kwargs):
+
+        pressure = self.common_store["pressure"] = self.pressure()
+        temperature = self.common_store["temperature"] = self.temperature()
+        absorber = self.common_store["absorber"] = self.absorber()
+        aerosol = self.common_store["aerosol"] = self.aerosol()
+        ground = self.common_store["ground"] = self.ground()
+        surf_temp = self.common_store["surface_temperature"] = self.surface_temperature()
+        altitude = self.altitude()
+
+        def alt_grid(spec_index):
+            # TODO: Check if cache invalidation necessary
+            if not self.cached_alt_grid:
+                # Direct translation from C++
+                pres_grid = self.pressure().pressure_grid
+                # TODO: swig missing __call__/operator() for ArrayAdWithUnit to get AutoDerivativeWithUnit
+                first_pres = rf.AutoDerivativeWithUnitDouble(pres_grid.value[0], pres_grid.units)
+                alt_unit = self.altitude()[spec_index].altitude(first_pres).units
+                alts = []
+                # TODO: Why is this so slow? Actually using cached pressure?
+                for (pres_ind, pres_val) in enumerate(pres_grid.value):
+                    this_pres = rf.AutoDerivativeWithUnitDouble(pres_val, pres_grid.units)
+                    alts.append(self.altitude()[spec_index].altitude(this_pres).value)
+                alt_array_ad = rf.array_ad.np_to_array_ad(np.array(alts))
+                self.cached_alt_grid = rf.ArrayAdWithUnit_double_1(alt_array_ad, alt_unit)
+            return self.cached_alt_grid
+
+
+        return  AttrDict({
+            'pressure': pressure,
+            'temperature': temperature,
+            'absorber': absorber,
+            'aerosol': aerosol,
+            'ground': ground,
+            'surface_temperature': surf_temp,
+            'altitude': altitude,
+            'alt_grid': alt_grid
+        })
