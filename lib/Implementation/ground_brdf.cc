@@ -408,7 +408,7 @@ void GroundBrdf::print(std::ostream& Os) const
              ArrayAd<double, 1> weight_params(weight_parameters(spec_idx));
 
              for(int i = 0; i < num_weight_params; i++)
-                  opad << "BRDF Weight Coefficent " << i << ": " << weight_params(i).value() << std::endl;
+                  opad << "BRDF Weight Coefficient " << i << ": " << weight_params(i).value() << std::endl;
 
         opad.strict_sync();
     }
