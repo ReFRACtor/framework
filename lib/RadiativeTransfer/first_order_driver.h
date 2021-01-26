@@ -21,9 +21,9 @@ public:
   int number_moment() const { return num_moments_; }
   int number_stream() const { return num_streams_; }
 
-  void set_plane_parallel() const;
-  void set_pseudo_spherical() const;
-  void set_line_of_sight() const;
+  void set_plane_parallel();
+  void set_pseudo_spherical();
+  void set_line_of_sight();
   
   void setup_height_grid(const blitz::Array<double, 1>& height_grid);
   void setup_geometry(double sza, double azm, double zen);

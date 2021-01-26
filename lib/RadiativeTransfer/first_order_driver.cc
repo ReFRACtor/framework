@@ -159,7 +159,7 @@ void FirstOrderDriver::set_pseudo_spherical()
 }
 
 /// Set pseudo spherical sphericity
-void FirstOrderDriver::set_line_of_sight() const
+void FirstOrderDriver::set_line_of_sight()
 {
     // Matches LIDORT ts_do_sscorr_outgoing(true)
     geometry->do_planpar(false);
