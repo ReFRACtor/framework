@@ -28,6 +28,12 @@ private:
   bool convert_from_photon;
   std::string hdf_file_name;
   std::string hdf_group;
+  SolarContinuumTable() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarContinuumTable);
 #endif

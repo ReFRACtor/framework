@@ -11,7 +11,8 @@ namespace FullPhysics {
   together. 
 *******************************************************************/
 
-template<class T, int D> class ArrayAdWithUnit
+template<class T, int D> class ArrayAdWithUnit :
+    public Printable<ArrayAdWithUnit<T, D> >
 {
 public:
   ArrayAdWithUnit() {}
@@ -21,6 +22,9 @@ public:
     : value(V), units(U) {}
   ArrayAdWithUnit(const ArrayAd<T, D>& V)
     : value(V), units(units::dimensionless) {}
+  virtual ~ArrayAdWithUnit() {}
+  void print(std::ostream& Os) const 
+  { Os << "ArrayAdWithUnit"; }
   ArrayAd<T, D> value;
   Unit units;
 
@@ -56,6 +60,20 @@ public:
     value.reference(V.value);
     units = V.units;
   }
+private:  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef ArrayAdWithUnit<double, 1>  ArrayAdWithUnit_double_1;
+typedef ArrayAdWithUnit<double, 2>  ArrayAdWithUnit_double_2;
+typedef ArrayAdWithUnit<double, 3>  ArrayAdWithUnit_double_3;
+typedef ArrayAdWithUnit<double, 4>  ArrayAdWithUnit_double_4;
 }
+
+FP_EXPORT_KEY(ArrayAdWithUnit_double_1);
+FP_EXPORT_KEY(ArrayAdWithUnit_double_2);
+FP_EXPORT_KEY(ArrayAdWithUnit_double_3);
+FP_EXPORT_KEY(ArrayAdWithUnit_double_4);
 #endif

@@ -21,7 +21,9 @@ namespace FullPhysics {
   more general. 
 *******************************************************************/
 
-class Aerosol: public StateVectorObserver, public Observable<Aerosol> {
+class Aerosol: public Printable<Aerosol>,
+	       virtual public StateVectorObserver,
+	       public Observable<Aerosol> {
 public:
   virtual ~Aerosol() {}
   // Used as a convenience to collect timing information to report in 
@@ -39,7 +41,7 @@ public:
 /// Returns the portion of the phase function moments that come from 
 /// a specific aerosol partiicle.
 /// \param wn The wave number.
-/// \param pidx Aerosol particle index
+/// \param pindex Aerosol particle index
 /// \param nummom Number of moments to fill in
 /// \param numscat Number of scatters to fill in
 //-----------------------------------------------------------------------
@@ -96,6 +98,28 @@ public:
 //-----------------------------------------------------------------------
 
   virtual ArrayAd<double, 2> scattering_optical_depth_each_layer(double wn) const = 0;
+
+//-----------------------------------------------------------------------
+/// We have some fairly nested object hierarchies. It can be useful to
+/// be able to search this for things (e.g., which Pressure object is
+/// used by a ForwardModel?). This returns a list of subobjects
+/// "owned" by this object.
+//-----------------------------------------------------------------------
+
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    return res;
+  }
+  virtual void print(std::ostream& Os) const
+  { Os << "Aerosol";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Aerosol);
+FP_EXPORT_OBSERVER_KEY(Aerosol);
 #endif

@@ -1,9 +1,23 @@
 #include "ils_grating.h"
+#include "fp_serialize_support.h"
 #include "hdf_file.h"
 #include "ostream_pad.h"
+#include "fp_logger.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void IlsGrating::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(IlsImpBase)
+    & FP_NVP(ils_func);
+}
+
+FP_IMPLEMENT(IlsGrating);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -133,14 +147,35 @@ ArrayAd<double, 1> IlsGrating::apply_ils
         // wn_center +- high_res_extension
 
         AutoDerivative<double> wn_center = disp_wn(Pixel_list[i]);
+        double wn_center_left = wn_center.value() - high_res_extension().value;
+        double wn_center_right = wn_center.value() + high_res_extension().value;
+
+        if (wn_center_left < Hres_wn.data()[0] || wn_center_right > Hres_wn.data()[Hres_wn.rows() - 1]) {
+            Logger::warning() << "At sample grid index: " << i << ", ILS center range: [" 
+                << wn_center_left << ", " << wn_center_right << "]"
+                << " exceeds the bounds of the high resolution grid range: ["
+                << Hres_wn.data()[0] << ", " << Hres_wn.data()[Hres_wn.rows() - 1] << "]\n";
+        }
+
         Array<double, 1>::const_iterator itmin =
-            std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center.value() - high_res_extension().value);
+            std::lower_bound(Hres_wn.begin(), Hres_wn.end(), wn_center_left);
         Array<double, 1>::const_iterator itmax =
-            std::lower_bound(Hres_wn.begin(), Hres_wn.end(),
-                             wn_center.value() + high_res_extension().value);
+            std::lower_bound(Hres_wn.begin(), Hres_wn.end(), wn_center_right);
+
         int jmin = (itmin == Hres_wn.end() ? Hres_wn.rows() - 1 : itmin.position()(0));
         int jmax = (itmax == Hres_wn.end() ? Hres_wn.rows() - 1 : itmax.position()(0));
+
+        if (jmax - jmin <= 1) {
+            Exception err;
+            err << "Only " << (jmax - jmin) << " high resolution grid points available "
+                << "from high resolution grid range: ["
+                << Hres_wn.data()[0] << ", " << Hres_wn.data()[Hres_wn.rows() - 1] << "]"
+                << "for sample grid index: " << i << " using ILS center range: [" 
+                << wn_center_left << ", " << wn_center_right << "]."
+                << "At least two needed.";
+            throw err;
+        }
+          
         Range r(jmin, jmax);
 
         // Convolve with response

@@ -12,5 +12,6 @@ class ModelMeasureMeyer : virtual public ModelMeasure {
 public:
   virtual void model_eval();
   virtual void jacobian_eval();
+  %pickle_serialization();
 };
 }

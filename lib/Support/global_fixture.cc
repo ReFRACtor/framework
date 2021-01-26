@@ -161,4 +161,43 @@ std::string GlobalFixture::absco_4d_dir() const
   return std::string(srcdir) + "/v4.2.0_unscaled";
 }
 
+//-----------------------------------------------------------------------
+/// Location of OSS run data. In particular, the input tape5_nc4.nc used
+/// to read test data for OssConfigurationFixture
+//-----------------------------------------------------------------------
+
+std::string GlobalFixture::oss_run_dir() const
+{
+  char* srcdir = getenv("ossdir");
+  // This should get set in set_default_value, but just in case
+  // something odd happens print an error message.
+  if(!srcdir)
+    BOOST_FAIL("To run this test, you must set the 'ossdir' environment\n"
+         "variable to the top of the source tree. This is automatically\n"
+         "done if you are running 'make check', but you need to\n"
+         "manually set this if you are running outside of make (e.g.,\n"
+         "running in a debugger");
+  return std::string(srcdir) + "/run/";
+}
+
+//-----------------------------------------------------------------------
+/// Location of OSS input data. In particular, the OSS nodes file,
+/// the optical properties LUT, solar radiances, default profiles for
+/// variables gases and information on channels used.
+//-----------------------------------------------------------------------
+
+std::string GlobalFixture::oss_data_dir() const
+{
+  char* srcdir = getenv("oss_data_dir");
+  // This should get set in set_default_value, but just in case
+  // something odd happens print an error message.
+  if(!srcdir)
+    BOOST_FAIL("To run this test, you must set the 'oss_data_dir' environment\n"
+         "variable to the top of the source tree. This is automatically\n"
+         "done if you are running 'make check', but you need to\n"
+         "manually set this if you are running outside of make (e.g.,\n"
+         "running in a debugger");
+  return std::string(srcdir) + "/";
+}
+
 

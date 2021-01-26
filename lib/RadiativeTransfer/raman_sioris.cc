@@ -1,4 +1,5 @@
 #include "raman_sioris.h"
+#include "fp_serialize_support.h"
 
 #include "unit.h"
 
@@ -9,6 +10,24 @@
 
 using namespace blitz;
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RamanSiorisEffect::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & FP_NVP_(channel_index) & FP_NVP_(albedo) & FP_NVP_(padding_fraction)
+    & FP_NVP_(do_upwelling) & FP_NVP_(jac_perturbation) & FP_NVP_(solar_zenith)
+    & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth) & FP_NVP_(scattering_angle)
+    & FP_NVP_(temperature_layers) & FP_NVP_(atmosphere)
+    & FP_NVP_(solar_model) & FP_NVP_(absorber);
+}
+
+FP_IMPLEMENT(RamanSiorisEffect);
+#endif
+
 
 extern "C" {
     void get_raman(int *nz, int *nw, int* maxnu, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, const double *sol, const double *taus, double *rspec, bool *problems);
@@ -127,7 +146,7 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
 /// a significant enough effect that an approximate value can suffice.
 //-----------------------------------------------------------------------
 
-RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
+RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
                                      int channel_index,
                                      const DoubleWithUnit& solar_zenith, 
                                      const DoubleWithUnit& observation_zenith, 
@@ -135,11 +154,18 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
                                      const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                                      const boost::shared_ptr<SolarModel>& solar_model,
                                      double albedo,
+                                     const boost::shared_ptr<StateMapping> mapping,
                                      double padding_fraction,
                                      bool do_upwelling,
                                      double jac_perturbation)
-: SpectrumEffectImpBase(scale_factor, used_flag),
-  atmosphere_(atmosphere), solar_model_(solar_model), channel_index_(channel_index), albedo_(albedo), padding_fraction_(padding_fraction), do_upwelling_(do_upwelling), jac_perturbation_(jac_perturbation)
+: SpectrumEffectImpBase(scale_factor, mapping),
+  channel_index_(channel_index),
+  albedo_(albedo),
+  padding_fraction_(padding_fraction),
+  do_upwelling_(do_upwelling),
+  jac_perturbation_(jac_perturbation),
+  atmosphere_(atmosphere),
+  solar_model_(solar_model)
 {
     // Convert angles to degrees since these should not change
     solar_zenith_ = solar_zenith.convert(units::deg).value;
@@ -170,7 +196,10 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor, bool used_flag,
 /// the cut-off region in the Fortran model.
 ///-----------------------------------------------------------------------
 
-void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const
+void RamanSiorisEffect::apply_effect
+(Spectrum& Spec,
+ const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)
+) const
 {
     Range ra = Range::all();
 
@@ -258,7 +287,7 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
 {
 
     return boost::shared_ptr<SpectrumEffect>( 
-            new RamanSiorisEffect(coefficient().value()(0), used_flag_value()(0),
+            new RamanSiorisEffect(coefficient().value()(0),
                                   channel_index_,
                                   DoubleWithUnit(solar_zenith_, units::deg),
                                   DoubleWithUnit(obs_zenith_, units::deg),
@@ -266,7 +295,10 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
                                   atmosphere_,
                                   solar_model_,
                                   albedo_,
-                                  do_upwelling_));
+                                  mapping,
+                                  padding_fraction_,
+                                  do_upwelling_,
+                                  jac_perturbation_));
 }
 
 //-----------------------------------------------------------------------
@@ -277,7 +309,6 @@ void RamanSiorisEffect::print(std::ostream& Os) const
 {
   Os << "RamanSiorisEffect" << std::endl
      << "  Scale Factor:           " << coefficient().value()(0) << "\n"
-     << "  Retrieval flag:         " << used_flag_value()(0) << "\n"
      << "  Solar zenith angle:     " << solar_zenith_ << "\n"
      << "  Observation angle:      " << obs_zenith_ << "\n"
      << "  Relative azimuth angle: " << relative_azimuth_ << "\n"

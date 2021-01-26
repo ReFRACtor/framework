@@ -52,5 +52,12 @@ public:
   %python_attribute(name, virtual const std::string&);
   %python_attribute(index, virtual int);
   std::string print_to_string() const;
+  %pickle_serialization();
+  %pythoncode {
+
+def copy(self):
+    return self.__class__(self.spectral_domain.copy(), self.spectral_range.copy(), self.name, self.index)
+
+  }
 };
 }

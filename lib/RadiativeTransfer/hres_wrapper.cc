@@ -1,6 +1,19 @@
 #include "hres_wrapper.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void HresWrapper::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & FP_NVP_(rt);
+}
+
+FP_IMPLEMENT(HresWrapper);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

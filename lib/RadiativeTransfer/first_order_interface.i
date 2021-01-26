@@ -1,3 +1,7 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
+// This file was auto-generated
+
 // This file was auto-generated
 
 %include "fp_common.i"
@@ -6,6 +10,9 @@
 #include "first_order_interface.h"
 %}
 
+  // MANUAL CHANGE
+%base_import(generic_object)
+  // MANUAL CHANGE
 
 
 %fp_shared_ptr(FullPhysics::Fo_Dtgeometry_Master);
@@ -66,7 +73,9 @@ public:
 };
 
 
-class Fo_Ssgeometry_Master {
+  // MANUAL CHANGE
+class Fo_Ssgeometry_Master : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Fo_Ssgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in);
@@ -129,6 +138,9 @@ public:
   std::string trace() const;
   
   void run();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 
@@ -178,7 +190,9 @@ public:
 };
 
 
-class Fo_Scalarss_Rtcalcs_Ilps {
+  // MANUAL CHANGE
+class Fo_Scalarss_Rtcalcs_Ilps : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& ngeoms_in, const int& nlayers_in);
@@ -237,10 +251,15 @@ public:
   %python_attribute(ls_jacobians_db, blitz::Array<double, 2>&)
   
   void ss_integral_ilps_up();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 
-class Fo_Scalarss_Spherfuncs {
+  // MANUAL CHANGE
+class Fo_Scalarss_Spherfuncs : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in);
@@ -258,6 +277,9 @@ public:
   %python_attribute(ss_pleg, blitz::Array<double, 2>&)
   
   void run();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 

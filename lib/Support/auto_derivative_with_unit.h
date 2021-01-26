@@ -57,6 +57,12 @@ public:
 
   void print(std::ostream& Os) const 
   { Os << value << " " << units.name(); }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef AutoDerivativeWithUnit<double>  AutoDerivativeWithUnitDouble;
 }
+FP_EXPORT_KEY(AutoDerivativeWithUnitDouble);
 #endif

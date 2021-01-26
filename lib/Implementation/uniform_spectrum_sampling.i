@@ -13,12 +13,13 @@ namespace FullPhysics {
 
 class UniformSpectrumSampling : public SpectrumSampling {
 public:
-    UniformSpectrumSampling(const ArrayWithUnit<double, 1>& Spec_spacing);
+  UniformSpectrumSampling(const ArrayWithUnit<double, 1>& Spec_spacing);
 
-    virtual SpectralDomain spectral_domain(int spec_index,
-                                           const SpectralDomain& Lowres_grid, 
-                                           const DoubleWithUnit& Edge_extension) const;
+  virtual SpectralDomain spectral_domain(int spec_index,
+					 const SpectralDomain& Lowres_grid, 
+					 const DoubleWithUnit& Edge_extension) const;
 
-    virtual void print(std::ostream& Os) const;
+  virtual void print(std::ostream& Os) const;
+  %pickle_serialization();
 };
 }

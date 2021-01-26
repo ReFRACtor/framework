@@ -1,8 +1,21 @@
 #include "solar_absorption_gfit_file.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
+#include "linear_interpolate.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarAbsorptionGfitFile::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarAbsorptionSpectrum)
+    & FP_NVP_(line_list_file) & FP_NVP_(fraction_solar_diameter);
+}
+
+FP_IMPLEMENT(SolarAbsorptionGfitFile);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -43,15 +56,40 @@ void SolarAbsorptionGfitFile::print(std::ostream& Os) const
 // See base class for description.
 Spectrum SolarAbsorptionGfitFile::solar_absorption_spectrum( const SpectralDomain& spec_domain) const
 {
-  int lunr = 99;
   // Set up inputs to match our grid
+  // Convert to wavenumber regardless of the input grid units,
+  // Find the mean spacing which might vary if converted from wavenumbers
+  // As long as we abs the difference it should not matter the order
+  // Grid used inside of routine is computed as:
   //  V(i) = fzero + i * grid       i = 1,NCP
-  double grid = spec_domain.data()(1) - spec_domain.data()(0);
-  double fzero = spec_domain.data()(0) - grid;
-  int ncp = spec_domain.data().rows();
-  Array<double, 1> spts(ncp);
-  int file_len = line_list_file_.length();
-  solar_pts(&lunr, line_list_file_.c_str(), &file_len, &fzero, &grid, &fraction_solar_diameter_, spts.dataFirst(), &ncp);
+  Array<double, 1> wavenumbers = spec_domain.wavenumber();
 
-  return Spectrum(spec_domain, SpectralRange(spts, units::dimensionless));
+  Array<double, 1> wn_1 = wavenumbers(Range(1, wavenumbers.rows()-1));
+  Array<double, 1> wn_0 = wavenumbers(Range(0, wavenumbers.rows()-2));
+
+  double grid = mean(abs(wn_1 - wn_0));
+  double fzero = min(wavenumbers);
+  int ncp = spec_domain.data().rows();
+
+  int lunr = 99;
+  int file_len = line_list_file_.length();
+
+  Array<double, 1> spts_calc(ncp); // output array
+  solar_pts(&lunr, line_list_file_.c_str(), &file_len, &fzero, &grid, &fraction_solar_diameter_, spts_calc.dataFirst(), &ncp);
+
+  // Interpolate back to input grid
+  Array<double, 1> spts_grid(ncp);
+  for (int wn_idx = 0; wn_idx < ncp; wn_idx++) {
+      spts_grid(wn_idx) = fzero + wn_idx * grid;
+  }
+
+  LinearInterpolate<double, double> spts_interp
+    (spts_grid.dataFirst(), spts_grid.dataFirst() + spts_grid.rows(), spts_calc.dataFirst());
+
+  Array<double, 1> spts_out(spec_domain.data().rows());
+  for (int wn_idx = 0; wn_idx < spec_domain.data().rows(); wn_idx++) {
+    spts_out(wn_idx) = spts_interp(wavenumbers(wn_idx));
+  }
+
+  return Spectrum(spec_domain, SpectralRange(spts_out, units::dimensionless));
 }

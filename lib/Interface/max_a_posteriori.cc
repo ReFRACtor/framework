@@ -1,11 +1,23 @@
 #include <max_a_posteriori.h>
 #include <fp_exception.h>
 #include <linear_algebra.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void MaxAPosteriori::serialize(Archive & ar,
+			       const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasure)
+    & FP_NVP(Xa) & FP_NVP(Sa) & FP_NVP(Sa_chol) & FP_NVP(Sa_chol_inv);
+}
+
+FP_IMPLEMENT(MaxAPosteriori);
+#endif
 
 
 #ifdef HAVE_LUA

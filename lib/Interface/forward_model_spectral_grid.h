@@ -68,11 +68,24 @@ public:
   /// Pixel indexes to use for low resolution grid.
   //-----------------------------------------------------------------------
   std::vector<int> pixel_list(int Spec_index) const;
-
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(inst);
+    res.push_back(spectral_window);
+    res.push_back(spectrum_sampling);
+    return res;
+  }
+  
 private:
   boost::shared_ptr<Instrument> inst;
   boost::shared_ptr<SpectralWindow> spectral_window;
   boost::shared_ptr<SpectrumSampling> spectrum_sampling;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ForwardModelSpectralGrid);
 #endif

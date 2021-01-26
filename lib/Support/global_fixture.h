@@ -17,6 +17,8 @@ public:
   std::string absco_aer_data_dir() const;
   std::string merra_data_dir() const;
   std::string absco_4d_dir() const;
+  std::string oss_run_dir() const;
+  std::string oss_data_dir() const;
   void turn_on_logger() const;
   // Add file to be removed at end of unit test. Ok if file doesn't
   // actually exist (i.e., no special handling needed for error

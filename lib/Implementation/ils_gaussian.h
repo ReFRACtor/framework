@@ -6,7 +6,7 @@ namespace FullPhysics {
 /****************************************************************//**
   This is an ILS function that is a Gaussian.
 *******************************************************************/
-class IlsGaussian : public IlsFunction {
+class IlsGaussian : virtual public IlsFunction {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -26,6 +26,10 @@ public:
 private:
   double gamma;
   std::string band_name_, hdf_band_name_;
+  IlsGaussian() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 
@@ -160,4 +164,5 @@ void ils_coefs(double wn_center, Array<double,1> wn,
 }
 */
 
+FP_EXPORT_KEY(IlsGaussian);
 #endif

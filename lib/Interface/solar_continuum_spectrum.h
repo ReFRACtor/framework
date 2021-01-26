@@ -28,6 +28,12 @@ public:
   virtual Spectrum solar_continuum_spectrum(
      const SpectralDomain& Spec_domain) const = 0;
   virtual void print(std::ostream& Os) const {Os << "SolarContinuumSpectrum";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarContinuumSpectrum);
 #endif

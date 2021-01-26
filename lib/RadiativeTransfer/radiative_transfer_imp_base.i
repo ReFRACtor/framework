@@ -59,8 +59,7 @@ public:
   %sub_state_virtual_func(RadiativeTransferRetrievable);
 protected:
   RadiativeTransferImpBase();
-  RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag);
+  RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
 

@@ -26,5 +26,6 @@ public:
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn
   (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   %python_attribute(rt, boost::shared_ptr<RadiativeTransfer>)
+  %pickle_serialization();
 };
 }

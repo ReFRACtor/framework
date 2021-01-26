@@ -45,6 +45,7 @@ def units(self):
 def units(self,val):
     self._units_set(val)
   }
+  %pickle_serialization();
 };
 }
 %fp_shared_ptr(FullPhysics::AutoDerivativeWithUnit<double>)

@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
 
 %{
@@ -15,4 +17,13 @@
 
 %template (vector_optical_properties_lsi) std::vector<boost::shared_ptr<FullPhysics::OpticalPropertiesLsi> >;
 
-%include "optical_properties_lsi.h"
+namespace FullPhysics {
+class OpticalPropertiesLsi : public OpticalPropertiesImpBase {
+public:
+  OpticalPropertiesLsi(const ArrayAd<double, 2>& packed_properties, double wavenumber, const boost::shared_ptr<AerosolOptical>& aerosol, int num_gas, int num_aerosol);
+  static ArrayAd<double, 2> pack(const boost::shared_ptr<OpticalPropertiesWrtRt>& source_properties);
+  %pickle_serialization();
+};
+
+}
+

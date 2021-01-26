@@ -44,9 +44,10 @@ def np_to_array_ad(a):
     return res
 %}
 %define %array_ad_template(NAME, TYPE, DIM, DIMP1)
+%fp_shared_ptr(FullPhysics::ArrayAd<TYPE, DIM>);
 
 namespace FullPhysics {
-template<> class ArrayAd<TYPE, DIM>
+template<> class ArrayAd<TYPE, DIM>: public GenericObject
 {
 public:
   ArrayAd<TYPE, DIM>(const blitz::Array<AutoDerivative<TYPE>, DIM>& V);
@@ -65,7 +66,6 @@ public:
   void resize(int n1, int n2, int n3, int nvar);
   void resize(int n1, int n2, int n3, int n4, int nvar);
   void resize(int n1, int n2, int n3, int n4, int n5, int nvar);
-  std::string print_to_string() const;
   %python_attribute(value, blitz::Array<TYPE, DIM>)
   %python_attribute(jacobian, blitz::Array<TYPE, DIMP1>)
   %python_attribute(rows, int)
@@ -115,6 +115,8 @@ def __getitem__(self, index):
     if type(index) is slice:
       return self.slice_data(index)
     else:
+      if index >= self.rows:
+        raise IndexError("Index out of range: %d. Length: %d" % (index, self.rows))
       return self.read(index)
   else:
     if any(type(x) is slice for x in index):
@@ -162,6 +164,7 @@ def to_list(self):
     void write(int i1, int i2, int i3, int i4, const AutoDerivative<TYPE>& V)
     { (*$self)(i1, i2, i3, i4) = V; }
   }
+  std::string print_to_string() const;
   %pickle_serialization();
  };
  

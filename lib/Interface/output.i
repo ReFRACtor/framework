@@ -93,6 +93,7 @@ def register_array_1d(self, nm, f):
 def register_array_2d(self, nm, f):
     self._register_data_source(nm, OutputBlitz2dWrap(f))
   }
+  %pickle_serialization();
 };
 
 

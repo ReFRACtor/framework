@@ -220,12 +220,9 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(Meteorology);
   REGISTER_LUA_LIST(HdfFile);
   REGISTER_LUA_LIST(HdfConstant);
-  REGISTER_LUA_LIST(PressureLevelInput);
-  REGISTER_LUA_LIST(PressureFixedLevel);
   REGISTER_LUA_LIST(PressureSigma);
   REGISTER_LUA_LIST(StokesCoefficientConstant);
   REGISTER_LUA_LIST(StokesCoefficientFraction);
-  REGISTER_LUA_LIST(TemperatureFixedLevel);
   REGISTER_LUA_LIST(TemperatureMet);
   REGISTER_LUA_LIST(TemperatureLevelOffset);
   REGISTER_LUA_LIST(RelativeHumidity);
@@ -244,8 +241,6 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(GroundBrdfVeg);
   REGISTER_LUA_LIST(GroundBrdfSoil);
   REGISTER_LUA_LIST(AltitudeHydrostatic);
-  REGISTER_LUA_LIST(AbsorberVmrFixedLevel);
-  REGISTER_LUA_LIST(AbsorberVmrFixedLevelScaled);
   REGISTER_LUA_LIST(AbsorberVmrMet);
   REGISTER_LUA_LIST(AbsorberVmrLevel);
   REGISTER_LUA_LIST(AbsorberVmrLevelScaled);

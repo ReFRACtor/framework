@@ -412,7 +412,21 @@ public:
 // Convert a list of numpy arrays into a vector of blitz arrays
 //--------------------------------------------------------------
 
-%typemap(in) std::vector<blitz::Array<TYPE, DIM> >, const std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
+%typecheck(PRECEDENCE) std::vector<blitz::Array<TYPE, DIM> >, const std::vector<blitz::Array<TYPE, DIM> > {
+  // Here we are just checking that the item is an iterable, we are not checking that
+  // each element can be converted to a blitz array. Leave that as a failure during the typemap conversion
+  PyObject *iterator = PyObject_GetIter($input);
+  $1 = iterator != NULL;
+}
+
+%typecheck(PRECEDENCE) std::vector<blitz::Array<TYPE, DIM> >&, const std::vector<blitz::Array<TYPE, DIM> >& {
+  // Here we are just checking that the item is an iterable, we are not checking that
+  // each element can be converted to a blitz array. Leave that as a failure during the typemap conversion
+  PyObject *iterator = PyObject_GetIter($input);
+  $1 = iterator != NULL;
+}
+
+%typemap(in) std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec), const std::vector<blitz::Array<TYPE, DIM> > (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
 { 
   try {
     iter_to_vector_of_arrays<TYPE, DIM>($input, arr_vec);
@@ -423,7 +437,7 @@ public:
   $1 = arr_vec;
 }
 
-%typemap(in) std::vector<blitz::Array<TYPE, DIM> >&, const std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
+%typemap(in) std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec), const std::vector<blitz::Array<TYPE, DIM> >& (std::vector<blitz::Array<TYPE, DIM> > arr_vec)
 { 
   try {
     iter_to_vector_of_arrays<TYPE, DIM>($input, arr_vec);

@@ -33,7 +33,7 @@ public:
   %python_attribute_abstract(aerosol_name, std::string)
   std::string print_to_string() const;
   virtual void print(std::ostream& Os) const;
-
+  %pickle_serialization();
 };
 }
 

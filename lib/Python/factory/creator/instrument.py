@@ -1,7 +1,8 @@
+from warnings import warn
+
 import numpy as np
 
 from .base import Creator
-from .value import CreatorFlaggedValue, CreatorFlaggedValueMultiChannel, CreatorValueMultiChannel
 from .. import param
 
 from refractor import framework as rf
@@ -26,10 +27,12 @@ class IlsGratingInstrument(Creator):
         return rf.IlsInstrument(ils_vec, instrument_correction)
 
 
-class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
+class DispersionPolynomial(Creator):
 
+    polynomial_coeffs = param.ArrayWithUnit(dims=2)
     number_samples = param.Array(dims=1)
-    is_one_based = param.Scalar(bool, default=False)
+    is_one_based = param.Scalar(bool, required=False)
+    spectral_variable = param.Iterable(np.ndarray, required=False)
     num_parameters = param.Scalar(int, default=2)
     desc_band_name = param.Iterable(str)
     num_channels = param.Scalar(int)
@@ -37,24 +40,44 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
 
     def retrieval_flag(self):
         # Mask out non retrieved parameters
-        ret_flag = super().retrieval_flag()
+        ret_flag = np.ones(self.polynomial_coeffs().value.shape, dtype=bool)
         ret_flag[:, slice(self.num_parameters(), ret_flag.shape[1])] = False
         return ret_flag
 
     def create(self, **kwargs):
 
-        disp_coeffs = self.value()
+        disp_coeffs = self.polynomial_coeffs()
         retrieval_flag = self.retrieval_flag()
 
         desc_band_name = self.desc_band_name()
         number_samples = self.number_samples()
+
         is_one_based = self.is_one_based()
+        spec_var = self.spectral_variable()
+
+        if is_one_based is not None and spec_var is not None:
+            raise param.ParamError("is_one_based and spectral_variable cannot be defined at the same time")
+        elif is_one_based is not None:
+            warn("is_one_based is deprecated, instead use the spectral_variable parameter")
+
+            if is_one_based:
+                offset = 1
+            else:
+               offset = 0
+
+            spec_var = [ np.arange(0, number_samples[c]) + offset for c in range(self.num_channels()) ]
+
+        elif spec_var is None:
+            raise param.ParamError("spectral_variable is a required parameter")
 
         disp = []
         vec_disp = rf.vector_sample_grid()
         for chan_idx in range(self.num_channels()):
-            chan_disp = rf.DispersionPolynomial(disp_coeffs.value[chan_idx, :], retrieval_flag[chan_idx, :], disp_coeffs.units,
-                                                desc_band_name[chan_idx], int(number_samples[chan_idx]), is_one_based)
+
+            mapping = rf.StateMappingAtIndexes(retrieval_flag[chan_idx, :])
+
+            chan_disp = rf.DispersionPolynomial(disp_coeffs[chan_idx, :], spec_var[chan_idx], desc_band_name[chan_idx], mapping)
+
             disp.append(chan_disp)
             vec_disp.push_back(chan_disp)
 
@@ -71,14 +94,15 @@ class DispersionPolynomial(CreatorFlaggedValueMultiChannel):
         return disp
 
 
-class SampleGridSpectralDomain(CreatorValueMultiChannel):
+class SampleGridSpectralDomain(Creator):
 
+    spectral_domains = param.Iterable(rf.SpectralDomain)
     num_channels = param.Scalar(int)
     desc_band_name = param.Iterable(str)
 
     def create(self, **kwargs):
 
-        spectral_domains = self.value()
+        spectral_domains = self.spectral_domains()
         desc_band_name = self.desc_band_name()
 
         sample_grid = []
@@ -167,18 +191,18 @@ class IlsGaussian(Creator):
         return ils_func
 
 
-class InstrumentDoppler(CreatorFlaggedValue):
+class InstrumentDoppler(Creator):
 
+    relative_velocity = param.ArrayWithUnit(dims=1)
     num_channels = param.Scalar(int)
 
     def create(self, **kwargs):
 
-        rel_vel = self.value()
-        ret_flag = self.retrieval_flag()
+        rel_vel = self.relative_velocity()
 
         inst_doppler = []
         for chan_idx in range(self.num_channels()):
-            inst_doppler.append(rf.InstrumentDoppler(rel_vel[chan_idx], bool(ret_flag[chan_idx])))
+            inst_doppler.append(rf.InstrumentDoppler(rel_vel[chan_idx]))
 
         return inst_doppler
 
@@ -207,9 +231,10 @@ class InstrumentCorrectionList(Creator):
 
         return inst_corr
 
-class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
+class EmpiricalOrthogonalFunction(Creator):
 
     # Required
+    scale_factors = param.Array(dims=1)
     eof_file = param.Scalar(str)
     hdf_group = param.Scalar(str)
     sounding_number = param.Scalar(int)
@@ -223,8 +248,7 @@ class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
 
     def create(self, channel_index=None, channel_name=None, **kwargs):
 
-        coeffs = self.value()
-        flags = self.retrieval_flag()
+        scale_factors = self.scale_factors()
         sounding_number = self.sounding_number()
         order = self.order()
 
@@ -243,27 +267,27 @@ class EmpiricalOrthogonalFunction(CreatorFlaggedValue):
         eof_hdf = rf.HdfFile(self.eof_file())
         
         if (scale_uncertainty):
-            return rf.EmpiricalOrthogonalFunction(coeffs[channel_index], bool(flags[channel_index]), eof_hdf, uncertainty[channel_index],
+            return rf.EmpiricalOrthogonalFunction(scale_factors[channel_index], eof_hdf, uncertainty[channel_index],
                     channel_index, sounding_number, order, channel_name, hdf_group, scale_to_stddev)
         else:
-            eof_obj = rf.EmpiricalOrthogonalFunction(coeffs[channel_index], bool(flags[channel_index]),
+            eof_obj = rf.EmpiricalOrthogonalFunction(scale_factors[channel_index], 
                 eof_hdf, channel_index, sounding_number, order, channel_name, hdf_group)
 
-class RadianceScaling(CreatorFlaggedValueMultiChannel):
+class RadianceScaling(Creator):
 
+    scaling_params = param.Array(dims=2)
     band_reference = param.ArrayWithUnit(dims=1)
 
     def create(self, channel_index=None, channel_name=None, **kwargs):
 
-        params = self.value()
+        params = self.scaling_params()
         band_ref = self.band_reference()
-        retrieval_flag = self.retrieval_flag()
         band_name = self.desc_band_name()
 
-        return rf.RadianceScalingSvFit(params[channel_index, :], retrieval_flag[channel_index, :], band_ref[channel_index], channel_name)
+        return rf.RadianceScalingSvFit(params[channel_index, :], band_ref[channel_index], channel_name)
 
 
-class ApplyInstrumentUnits(CreatorFlaggedValueMultiChannel):
+class ApplyInstrumentUnits(Creator):
 
     units = param.InstanceOf(rf.Unit)
     scale_factor = param.Scalar(float)

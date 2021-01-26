@@ -1,10 +1,21 @@
 #include "nlls_problem.h"
 #include "fp_exception.h"
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void NLLSProblem::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CostFuncDiff);
+}
+
+FP_IMPLEMENT(NLLSProblem);
+#endif
 
 
 #ifdef HAVE_LUA

@@ -1,4 +1,5 @@
 #include "spurr_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <cmath>
 
@@ -14,10 +15,48 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SpurrRt::serialize(Archive & ar,
+			const unsigned int version)
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & FP_NVP(surface_type_int) & FP_NVP(do_solar_sources)
+    & FP_NVP(do_thermal_emission) & FP_NVP(sza) & FP_NVP(zen)
+    & FP_NVP(azm);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void SpurrRt::save(Archive &ar,
+		   const unsigned int UNUSED(version)) const
+{
+  bool rt_serialized = SpurrRt::serialize_full_state;
+  ar & FP_NVP(rt_serialized);
+  if(rt_serialized)
+    ar & FP_NVP_(rt_driver);
+}
+
+template<class Archive>
+void SpurrRt::load(Archive &ar,
+		   const unsigned int UNUSED(version)) 
+{
+  bool rt_serialized;
+  ar & FP_NVP(rt_serialized);
+  if(rt_serialized)
+    ar & FP_NVP_(rt_driver);
+}
+
+FP_IMPLEMENT(SpurrRt);
+#endif
+
 // For debugging purposes, it can be useful to dump out the input
 // used by this class. We'll leave this code in place, in case we
 // need it again, but normally this turned off.
 const bool dump_data = false;
+
+bool SpurrRt::serialize_full_state = false;
 
 //-----------------------------------------------------------------------
 /// Constructor.

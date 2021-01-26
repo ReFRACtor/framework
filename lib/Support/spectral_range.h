@@ -52,6 +52,8 @@ public:
     : data_(Data), units_(U), 
       uncertainty_(Uncertainty) {}
 
+  SpectralRange(const SpectralRange&) = default;
+  
 //-----------------------------------------------------------------------
 /// Assignment operator so internals are correctly set 
 //-----------------------------------------------------------------------
@@ -118,6 +120,11 @@ private:
   ArrayAd<double, 1> data_;
   Unit units_;
   blitz::Array<double, 1> uncertainty_;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SpectralRange);
 #endif

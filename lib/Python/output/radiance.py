@@ -52,21 +52,33 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
 
         dim_name = self.dimension_names[named_spectrum.name].format(self.step_index+1, named_spectrum.index+1)
         if not dim_name in self.output.dimensions:
-            self.output.createDimension(dim_name, named_spectrum.spectral_domain.data.shape[0])
+            # Make radiance dimension unitless because the size could change between iterations due
+            # to sample_grid retrieval
+            self.output.createDimension(dim_name, None)
 
         grid_name = "grid"
         if grid_name in group.variables:
             grid_data = group[grid_name]
+
+            # Populate with fill value for the case where data size changes when overwriting
+            grid_data[:] = grid_data[:].fill_value
         else:
             grid_data = group.createVariable(grid_name, float, (dim_name,))
-        grid_data[:] = named_spectrum.spectral_domain.data
+
+        npoints = named_spectrum.spectral_domain.data.shape[0]
+        grid_data[:npoints] = named_spectrum.spectral_domain.data
 
         radiance_name = "radiance"
         if radiance_name in group.variables:
             radiance_data = group[radiance_name]
+
+            # Populate with fill value for the case where data size changes when overwriting
+            radiance_data[:] = radiance_data[:].fill_value
         else:
             radiance_data = group.createVariable(radiance_name, float, (dim_name,))
-        radiance_data[:] = named_spectrum.spectral_range.data
+
+        npoints = named_spectrum.spectral_range.data.shape[0]
+        radiance_data[:npoints] = named_spectrum.spectral_range.data
         radiance_data.units = named_spectrum.spectral_range.units.name
 
         rad_ad = named_spectrum.spectral_range.data_ad

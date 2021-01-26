@@ -23,6 +23,7 @@ public:
   virtual void build_apriori_covariance(blitz::Array<double, 2>& m, 
 					int index) const = 0;
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 
 class CompositeInitialGuess : public InitialGuess,
@@ -35,5 +36,6 @@ public:
   %python_attribute(initial_guess, virtual blitz::Array<double, 1>);
   void add_builder(const boost::shared_ptr<InitialGuessBuilder>& B);
   void remove_builder(const boost::shared_ptr<InitialGuessBuilder>& B);
+  %pickle_serialization();
 };
 }

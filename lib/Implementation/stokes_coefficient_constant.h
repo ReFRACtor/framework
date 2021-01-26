@@ -25,7 +25,14 @@ public:
   }
 protected:
   ArrayAd<double, 2> stokes_coeff;
+private:
+  StokesCoefficientConstant() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(StokesCoefficientConstant);
 #endif
 

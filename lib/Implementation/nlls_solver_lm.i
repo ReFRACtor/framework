@@ -9,6 +9,7 @@
 
 %fp_shared_ptr(FullPhysics::NLLSSolverLM);
 %fp_shared_ptr(FullPhysics::NLLSSolverLMOptions);
+%fp_shared_ptr(FullPhysics::NLLSSolverLMAlgParams);
 
 namespace FullPhysics {
 
@@ -22,6 +23,16 @@ class NLLSSolverLMOptions {
     double cr_ratio_tol;
 };
 
+// Pull AlgParams out of NLLSolver so its not a nested class and SWIG will create wrapper code
+class NLLSSolverLMAlgParams {
+    public:
+    NLLSSolverLMAlgParams();
+    double cr_ratio;
+    double lambda;
+    double tr_rad;
+    double scaled_step_norm;
+};
+
 class NLLSSolverLM : public NLLSSolver {
   public:
   NLLSSolverLM( const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
@@ -31,6 +42,7 @@ class NLLSSolverLM : public NLLSSolver {
                 bool vrbs=false );
   virtual ~NLLSSolverLM();
   virtual void solve();
+  virtual const std::vector<NLLSSolverLMAlgParams>& algorithm_parameters() const;
 };
 
 }
@@ -39,5 +51,7 @@ class NLLSSolverLM : public NLLSSolver {
 namespace FullPhysics {
     // Make C++ think that NLLSSolver::Options is a global class
     typedef NLLSSolverLM::Options NLLSSolverLMOptions;
+    // Make C++ think that NLLSSolver::AlgParams is a global class
+    typedef NLLSSolverLM::AlgParams NLLSSolverLMAlgParams;
 }
 %}

@@ -25,9 +25,8 @@ class RadianceScalingSvFit : public RadianceScaling,
                              public SubStateVectorArray<InstrumentCorrection> {
 public:
   RadianceScalingSvFit(const blitz::Array<double, 1>& Coeff, 
-                        const blitz::Array<bool, 1>& Used_flag,
-                        const DoubleWithUnit& Band_ref,
-                        const std::string& Band_name);
+                       const DoubleWithUnit& Band_ref,
+                       const std::string& Band_name);
   virtual ~RadianceScalingSvFit();
   %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;

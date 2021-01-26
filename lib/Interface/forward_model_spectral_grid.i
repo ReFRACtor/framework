@@ -33,5 +33,7 @@ public:
   SpectralDomain high_resolution_interpolated_grid(int Spec_index) const;
   Spectrum interpolate_spectrum(const Spectrum& Spec_in, int Spec_index) const;
   const std::vector<int> pixel_list(int Spec_index) const;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
+  %pickle_serialization();
 };
 }

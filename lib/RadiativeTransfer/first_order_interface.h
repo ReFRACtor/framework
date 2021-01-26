@@ -6,6 +6,7 @@
 
 #include "fp_exception.h"
 
+#define FIRST_ORDER_DEBUG 0
 
 /* This file was auto-generated */
 
@@ -472,7 +473,9 @@ extern "C" {
   void fo_ssgeometry_master_m_fo_ssgeometry_master_wrap(const int* maxgeoms_in, const int* maxszas_in, const int* maxvzas_in, const int* maxazms_in, const int* maxlayers_in, const int* maxfine_in, const bool* do_obsgeom_in, const bool* do_chapman_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const int* ngeoms_in, const int* nszas_in, const int* nvzas_in, const int* nazms_in, const int* nlayers_in, const int* nfine_in, const double* dtr_in, const double* pie_in, const double* vsign_in, const double* eradius_in, const double* heights_in, const double* obsgeom_boa_in, const double* alpha_boa_in, const double* theta_boa_in, const double* phi_boa_in, const bool* donadir_in, const bool* docrit_in, const double* acrit_in, const double* extinc_in, const double* raycon_in, const double* radii_in, const double* alpha_in, const double* cota_in, const int* nfinedivs_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* alphafine_in, const double* radiifine_in, const int* ncrit_in, const double* radcrit_in, const double* cotcrit_in, const double* mu0_in, const double* mu1_in, const double* cosscat_in, const double* chapfacs_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in, const bool* fail_in, const int* message_len, const char* message_in, const int* trace_len, const char* trace_in);
 }
 
-class Fo_Ssgeometry_Master : public virtual GenericObject {
+  // MANUAL CHANGE
+class Fo_Ssgeometry_Master : public Printable<Fo_Ssgeometry_Master> {
+  // MANUAL CHANGE
 
 public:
   Fo_Ssgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in) : maxgeoms_(maxgeoms_in), maxszas_(maxszas_in), maxvzas_(maxvzas_in), maxazms_(maxazms_in), maxlayers_(maxlayers_in), maxfine_(maxfine_in), ngeoms_(ngeoms_in), nszas_(nszas_in), nvzas_(nvzas_in), nazms_(nazms_in), nlayers_(nlayers_in), nfine_(nfine_in) 
@@ -555,13 +558,6 @@ public:
   }
 
   virtual ~Fo_Ssgeometry_Master() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -1012,65 +1008,65 @@ public:
     
   }
 
-  friend std::ostream& operator<<(std::ostream &output_stream, const Fo_Ssgeometry_Master &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Fo_Ssgeometry_Master:" << std::endl
-      << "      maxgeoms: " << obj.maxgeoms()  << std::endl
-      << "       maxszas: " << obj.maxszas()  << std::endl
-      << "       maxvzas: " << obj.maxvzas()  << std::endl
-      << "       maxazms: " << obj.maxazms()  << std::endl
-      << "     maxlayers: " << obj.maxlayers()  << std::endl
-      << "       maxfine: " << obj.maxfine()  << std::endl
-      << "    do_obsgeom: " << obj.do_obsgeom()  << std::endl
-      << "    do_chapman: " << obj.do_chapman()  << std::endl
-      << "    do_planpar: " << obj.do_planpar()  << std::endl
-      << "do_enhanced_ps: " << obj.do_enhanced_ps()  << std::endl
-      << "        ngeoms: " << obj.ngeoms()  << std::endl
-      << "         nszas: " << obj.nszas()  << std::endl
-      << "         nvzas: " << obj.nvzas()  << std::endl
-      << "         nazms: " << obj.nazms()  << std::endl
-      << "       nlayers: " << obj.nlayers()  << std::endl
-      << "         nfine: " << obj.nfine()  << std::endl
-      << "           dtr: " << obj.dtr()  << std::endl
-      << "           pie: " << obj.pie()  << std::endl
-      << "         vsign: " << obj.vsign()  << std::endl
-      << "       eradius: " << obj.eradius()  << std::endl
-      << "       heights: " << std::endl << obj.heights()  << std::endl
-      << "   obsgeom_boa: " << std::endl << obj.obsgeom_boa()  << std::endl
-      << "     alpha_boa: " << std::endl << obj.alpha_boa()  << std::endl
-      << "     theta_boa: " << std::endl << obj.theta_boa()  << std::endl
-      << "       phi_boa: " << std::endl << obj.phi_boa()  << std::endl
-      << "       donadir: " << std::endl << obj.donadir()  << std::endl
-      << "        docrit: " << obj.docrit()  << std::endl
-      << "         acrit: " << obj.acrit()  << std::endl
-      << "        extinc: " << std::endl << obj.extinc()  << std::endl
-      << "        raycon: " << std::endl << obj.raycon()  << std::endl
-      << "         radii: " << std::endl << obj.radii()  << std::endl
-      << "         alpha: " << std::endl << obj.alpha()  << std::endl
-      << "          cota: " << std::endl << obj.cota()  << std::endl
-      << "     nfinedivs: " << std::endl << obj.nfinedivs()  << std::endl
-      << "         xfine: " << std::endl << obj.xfine()  << std::endl
-      << "         wfine: " << std::endl << obj.wfine()  << std::endl
-      << "       csqfine: " << std::endl << obj.csqfine()  << std::endl
-      << "       cotfine: " << std::endl << obj.cotfine()  << std::endl
-      << "     alphafine: " << std::endl << obj.alphafine()  << std::endl
-      << "     radiifine: " << std::endl << obj.radiifine()  << std::endl
-      << "         ncrit: " << std::endl << obj.ncrit()  << std::endl
-      << "       radcrit: " << std::endl << obj.radcrit()  << std::endl
-      << "       cotcrit: " << std::endl << obj.cotcrit()  << std::endl
-      << "           mu0: " << std::endl << obj.mu0()  << std::endl
-      << "           mu1: " << std::endl << obj.mu1()  << std::endl
-      << "       cosscat: " << std::endl << obj.cosscat()  << std::endl
-      << "      chapfacs: " << std::endl << obj.chapfacs()  << std::endl
-      << "      sunpaths: " << std::endl << obj.sunpaths()  << std::endl
-      << "     ntraverse: " << std::endl << obj.ntraverse()  << std::endl
-      << "  sunpathsfine: " << std::endl << obj.sunpathsfine()  << std::endl
-      << " ntraversefine: " << std::endl << obj.ntraversefine()  << std::endl
-      << "          fail: " << obj.fail()  << std::endl
-      << "       message: " << "\"" << obj.message() << "\"" << std::endl
-      << "         trace: " << "\"" << obj.trace() << "\"" << std::endl;
-    return output_stream;
-
+      << "      maxgeoms: " << maxgeoms()  << std::endl
+      << "       maxszas: " << maxszas()  << std::endl
+      << "       maxvzas: " << maxvzas()  << std::endl
+      << "       maxazms: " << maxazms()  << std::endl
+      << "     maxlayers: " << maxlayers()  << std::endl
+      << "       maxfine: " << maxfine()  << std::endl
+      << "    do_obsgeom: " << do_obsgeom()  << std::endl
+      << "    do_chapman: " << do_chapman()  << std::endl
+      << "    do_planpar: " << do_planpar()  << std::endl
+      << "do_enhanced_ps: " << do_enhanced_ps()  << std::endl
+      << "        ngeoms: " << ngeoms()  << std::endl
+      << "         nszas: " << nszas()  << std::endl
+      << "         nvzas: " << nvzas()  << std::endl
+      << "         nazms: " << nazms()  << std::endl
+      << "       nlayers: " << nlayers()  << std::endl
+      << "         nfine: " << nfine()  << std::endl
+      << "           dtr: " << dtr()  << std::endl
+      << "           pie: " << pie()  << std::endl
+      << "         vsign: " << vsign()  << std::endl
+      << "       eradius: " << eradius()  << std::endl
+      << "       heights: " << std::endl << heights()  << std::endl
+      << "   obsgeom_boa: " << std::endl << obsgeom_boa()  << std::endl
+      << "     alpha_boa: " << std::endl << alpha_boa()  << std::endl
+      << "     theta_boa: " << std::endl << theta_boa()  << std::endl
+      << "       phi_boa: " << std::endl << phi_boa()  << std::endl
+      << "       donadir: " << std::endl << donadir()  << std::endl
+      << "        docrit: " << docrit()  << std::endl
+      << "         acrit: " << acrit()  << std::endl
+      << "        extinc: " << std::endl << extinc()  << std::endl
+      << "        raycon: " << std::endl << raycon()  << std::endl
+      << "         radii: " << std::endl << radii()  << std::endl
+      << "         alpha: " << std::endl << alpha()  << std::endl
+      << "          cota: " << std::endl << cota()  << std::endl
+      << "     nfinedivs: " << std::endl << nfinedivs()  << std::endl
+      << "         xfine: " << std::endl << xfine()  << std::endl
+      << "         wfine: " << std::endl << wfine()  << std::endl
+      << "       csqfine: " << std::endl << csqfine()  << std::endl
+      << "       cotfine: " << std::endl << cotfine()  << std::endl
+      << "     alphafine: " << std::endl << alphafine()  << std::endl
+      << "     radiifine: " << std::endl << radiifine()  << std::endl
+      << "         ncrit: " << std::endl << ncrit()  << std::endl
+      << "       radcrit: " << std::endl << radcrit()  << std::endl
+      << "       cotcrit: " << std::endl << cotcrit()  << std::endl
+      << "           mu0: " << std::endl << mu0()  << std::endl
+      << "           mu1: " << std::endl << mu1()  << std::endl
+      << "       cosscat: " << std::endl << cosscat()  << std::endl
+      << "      chapfacs: " << std::endl << chapfacs()  << std::endl
+      << "      sunpaths: " << std::endl << sunpaths()  << std::endl
+      << "     ntraverse: " << std::endl << ntraverse()  << std::endl
+      << "  sunpathsfine: " << std::endl << sunpathsfine()  << std::endl
+      << " ntraversefine: " << std::endl << ntraversefine()  << std::endl
+      << "          fail: " << fail()  << std::endl
+      << "       message: " << "\"" << message() << "\"" << std::endl
+      << "         trace: " << "\"" << trace() << "\"" << std::endl;
   }
+  // MANUAL CHANGE
 
 private:
   int maxgeoms_;
@@ -1127,6 +1123,16 @@ private:
   bool fail_;
   blitz::Array<char, 1> message_;
   blitz::Array<char, 1> trace_;
+  // MANUAL CHANGE
+  Fo_Ssgeometry_Master() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -1606,9 +1612,13 @@ private:
 
 extern "C" {
   void fo_scalarss_rtcalcs_ilps_m_ss_integral_ilps_up_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const bool* do_sleave_in, const bool* do_profilewfs_in, const bool* do_reflecwfs_in, const bool* do_sleavewfs_in, const bool* lvaryflags_in, const int* lvarynums_in, const int* n_reflecwfs_in, const int* n_sleavewfs_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* aclevel_in, const double* reflec_in, const double* slterm_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* flux_in, const double* ls_reflec_in, const double* lssl_slterm_in, const double* l_extinction_in, const double* l_deltaus_in, const double* l_exactscat_up_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpaths_fine_in, const int* ntraverse_fine_in, const double* intensity_up_in, const double* intensity_db_in, const double* lp_jacobians_up_in, const double* lp_jacobians_db_in, const double* ls_jacobians_db_in);
+
+  void first_order_debug_output(const int* maxgeoms_in, const int* maxlayers_in, const int* maxfine_in, const bool* do_planpar_in, const bool* do_regular_ps_in, const bool* do_enhanced_ps_in, const bool* donadir_in, const bool* do_sleave_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* aclevel_in, const double* reflec_in, const double* slterm_in, const double* extinction_in, const double* deltaus_in, const double* exactscat_up_in, const double* flux_in, const double* mu0_in, const double* mu1_in, const int* ncrit_in, const double* xfine_in, const double* wfine_in, const double* csqfine_in, const double* cotfine_in, const double* raycon_in, const double* cota_in, const double* sunpaths_in, const int* ntraverse_in, const double* sunpathsfine_in, const int* ntraversefine_in);
 }
 
-class Fo_Scalarss_Rtcalcs_Ilps : public virtual GenericObject {
+  // MANUAL CHANGE
+class Fo_Scalarss_Rtcalcs_Ilps : public Printable<Fo_Scalarss_Rtcalcs_Ilps> {
+  // MANUAL CHANGE
 
 public:
   Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxfine_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& ngeoms_in, const int& nlayers_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxfine_(maxfine_in), max_atmoswfs_(max_atmoswfs_in), max_surfacewfs_(max_surfacewfs_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in) 
@@ -1693,13 +1703,6 @@ public:
   }
 
   virtual ~Fo_Scalarss_Rtcalcs_Ilps() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -2155,67 +2158,70 @@ public:
 
   
   void ss_integral_ilps_up() {
-    
+
+#if FIRST_ORDER_DEBUG
+    first_order_debug_output(&maxgeoms_, &maxlayers_, &maxfine_, &do_planpar_, &do_regular_ps_, &do_enhanced_ps_, donadir_.dataFirst(), &do_sleave_, &ngeoms_, &nlayers_, nfinedivs_.dataFirst(), &aclevel_, reflec_.dataFirst(), slterm_.dataFirst(), extinction_.dataFirst(), deltaus_.dataFirst(), exactscat_up_.dataFirst(), &flux_, mu0_.dataFirst(), mu1_.dataFirst(), ncrit_.dataFirst(), xfine_.dataFirst(), wfine_.dataFirst(), csqfine_.dataFirst(), cotfine_.dataFirst(), raycon_.dataFirst(), cota_.dataFirst(), sunpaths_.dataFirst(), ntraverse_.dataFirst(), sunpaths_fine_.dataFirst(), ntraverse_fine_.dataFirst());
+#endif
     
     fo_scalarss_rtcalcs_ilps_m_ss_integral_ilps_up_wrap(&maxgeoms_, &maxlayers_, &maxfine_, &max_atmoswfs_, &max_surfacewfs_, &do_planpar_, &do_regular_ps_, &do_enhanced_ps_, donadir_.dataFirst(), &do_sleave_, &do_profilewfs_, &do_reflecwfs_, &do_sleavewfs_, lvaryflags_.dataFirst(), lvarynums_.dataFirst(), &n_reflecwfs_, &n_sleavewfs_, &ngeoms_, &nlayers_, nfinedivs_.dataFirst(), &aclevel_, reflec_.dataFirst(), slterm_.dataFirst(), extinction_.dataFirst(), deltaus_.dataFirst(), exactscat_up_.dataFirst(), &flux_, ls_reflec_.dataFirst(), lssl_slterm_.dataFirst(), l_extinction_.dataFirst(), l_deltaus_.dataFirst(), l_exactscat_up_.dataFirst(), mu0_.dataFirst(), mu1_.dataFirst(), ncrit_.dataFirst(), xfine_.dataFirst(), wfine_.dataFirst(), csqfine_.dataFirst(), cotfine_.dataFirst(), raycon_.dataFirst(), cota_.dataFirst(), sunpaths_.dataFirst(), ntraverse_.dataFirst(), sunpaths_fine_.dataFirst(), ntraverse_fine_.dataFirst(), intensity_up_.dataFirst(), intensity_db_.dataFirst(), lp_jacobians_up_.dataFirst(), lp_jacobians_db_.dataFirst(), ls_jacobians_db_.dataFirst());
     
   }
 
-  friend std::ostream& operator<<(std::ostream &output_stream, const Fo_Scalarss_Rtcalcs_Ilps &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Fo_Scalarss_Rtcalcs_Ilps:" << std::endl
-      << "       maxgeoms: " << obj.maxgeoms()  << std::endl
-      << "      maxlayers: " << obj.maxlayers()  << std::endl
-      << "        maxfine: " << obj.maxfine()  << std::endl
-      << "   max_atmoswfs: " << obj.max_atmoswfs()  << std::endl
-      << " max_surfacewfs: " << obj.max_surfacewfs()  << std::endl
-      << "     do_planpar: " << obj.do_planpar()  << std::endl
-      << "  do_regular_ps: " << obj.do_regular_ps()  << std::endl
-      << " do_enhanced_ps: " << obj.do_enhanced_ps()  << std::endl
-      << "        donadir: " << std::endl << obj.donadir()  << std::endl
-      << "      do_sleave: " << obj.do_sleave()  << std::endl
-      << "  do_profilewfs: " << obj.do_profilewfs()  << std::endl
-      << "   do_reflecwfs: " << obj.do_reflecwfs()  << std::endl
-      << "   do_sleavewfs: " << obj.do_sleavewfs()  << std::endl
-      << "     lvaryflags: " << std::endl << obj.lvaryflags()  << std::endl
-      << "      lvarynums: " << std::endl << obj.lvarynums()  << std::endl
-      << "    n_reflecwfs: " << obj.n_reflecwfs()  << std::endl
-      << "    n_sleavewfs: " << obj.n_sleavewfs()  << std::endl
-      << "         ngeoms: " << obj.ngeoms()  << std::endl
-      << "        nlayers: " << obj.nlayers()  << std::endl
-      << "      nfinedivs: " << std::endl << obj.nfinedivs()  << std::endl
-      << "        aclevel: " << obj.aclevel()  << std::endl
-      << "         reflec: " << std::endl << obj.reflec()  << std::endl
-      << "         slterm: " << std::endl << obj.slterm()  << std::endl
-      << "     extinction: " << std::endl << obj.extinction()  << std::endl
-      << "        deltaus: " << std::endl << obj.deltaus()  << std::endl
-      << "   exactscat_up: " << std::endl << obj.exactscat_up()  << std::endl
-      << "           flux: " << obj.flux()  << std::endl
-      << "      ls_reflec: " << std::endl << obj.ls_reflec()  << std::endl
-      << "    lssl_slterm: " << std::endl << obj.lssl_slterm()  << std::endl
-      << "   l_extinction: " << std::endl << obj.l_extinction()  << std::endl
-      << "      l_deltaus: " << std::endl << obj.l_deltaus()  << std::endl
-      << " l_exactscat_up: " << std::endl << obj.l_exactscat_up()  << std::endl
-      << "            mu0: " << std::endl << obj.mu0()  << std::endl
-      << "            mu1: " << std::endl << obj.mu1()  << std::endl
-      << "          ncrit: " << std::endl << obj.ncrit()  << std::endl
-      << "          xfine: " << std::endl << obj.xfine()  << std::endl
-      << "          wfine: " << std::endl << obj.wfine()  << std::endl
-      << "        csqfine: " << std::endl << obj.csqfine()  << std::endl
-      << "        cotfine: " << std::endl << obj.cotfine()  << std::endl
-      << "         raycon: " << std::endl << obj.raycon()  << std::endl
-      << "           cota: " << std::endl << obj.cota()  << std::endl
-      << "       sunpaths: " << std::endl << obj.sunpaths()  << std::endl
-      << "      ntraverse: " << std::endl << obj.ntraverse()  << std::endl
-      << "  sunpaths_fine: " << std::endl << obj.sunpaths_fine()  << std::endl
-      << " ntraverse_fine: " << std::endl << obj.ntraverse_fine()  << std::endl
-      << "   intensity_up: " << std::endl << obj.intensity_up()  << std::endl
-      << "   intensity_db: " << std::endl << obj.intensity_db()  << std::endl
-      << "lp_jacobians_up: " << std::endl << obj.lp_jacobians_up()  << std::endl
-      << "lp_jacobians_db: " << std::endl << obj.lp_jacobians_db()  << std::endl
-      << "ls_jacobians_db: " << std::endl << obj.ls_jacobians_db()  << std::endl;
-    return output_stream;
-
+      << "       maxgeoms: " << maxgeoms()  << std::endl
+      << "      maxlayers: " << maxlayers()  << std::endl
+      << "        maxfine: " << maxfine()  << std::endl
+      << "   max_atmoswfs: " << max_atmoswfs()  << std::endl
+      << " max_surfacewfs: " << max_surfacewfs()  << std::endl
+      << "     do_planpar: " << do_planpar()  << std::endl
+      << "  do_regular_ps: " << do_regular_ps()  << std::endl
+      << " do_enhanced_ps: " << do_enhanced_ps()  << std::endl
+      << "        donadir: " << std::endl << donadir()  << std::endl
+      << "      do_sleave: " << do_sleave()  << std::endl
+      << "  do_profilewfs: " << do_profilewfs()  << std::endl
+      << "   do_reflecwfs: " << do_reflecwfs()  << std::endl
+      << "   do_sleavewfs: " << do_sleavewfs()  << std::endl
+      << "     lvaryflags: " << std::endl << lvaryflags()  << std::endl
+      << "      lvarynums: " << std::endl << lvarynums()  << std::endl
+      << "    n_reflecwfs: " << n_reflecwfs()  << std::endl
+      << "    n_sleavewfs: " << n_sleavewfs()  << std::endl
+      << "         ngeoms: " << ngeoms()  << std::endl
+      << "        nlayers: " << nlayers()  << std::endl
+      << "      nfinedivs: " << std::endl << nfinedivs()  << std::endl
+      << "        aclevel: " << aclevel()  << std::endl
+      << "         reflec: " << std::endl << reflec()  << std::endl
+      << "         slterm: " << std::endl << slterm()  << std::endl
+      << "     extinction: " << std::endl << extinction()  << std::endl
+      << "        deltaus: " << std::endl << deltaus()  << std::endl
+      << "   exactscat_up: " << std::endl << exactscat_up()  << std::endl
+      << "           flux: " << flux()  << std::endl
+      << "      ls_reflec: " << std::endl << ls_reflec()  << std::endl
+      << "    lssl_slterm: " << std::endl << lssl_slterm()  << std::endl
+      << "   l_extinction: " << std::endl << l_extinction()  << std::endl
+      << "      l_deltaus: " << std::endl << l_deltaus()  << std::endl
+      << " l_exactscat_up: " << std::endl << l_exactscat_up()  << std::endl
+      << "            mu0: " << std::endl << mu0()  << std::endl
+      << "            mu1: " << std::endl << mu1()  << std::endl
+      << "          ncrit: " << std::endl << ncrit()  << std::endl
+      << "          xfine: " << std::endl << xfine()  << std::endl
+      << "          wfine: " << std::endl << wfine()  << std::endl
+      << "        csqfine: " << std::endl << csqfine()  << std::endl
+      << "        cotfine: " << std::endl << cotfine()  << std::endl
+      << "         raycon: " << std::endl << raycon()  << std::endl
+      << "           cota: " << std::endl << cota()  << std::endl
+      << "       sunpaths: " << std::endl << sunpaths()  << std::endl
+      << "      ntraverse: " << std::endl << ntraverse()  << std::endl
+      << "  sunpaths_fine: " << std::endl << sunpaths_fine()  << std::endl
+      << " ntraverse_fine: " << std::endl << ntraverse_fine()  << std::endl
+      << "   intensity_up: " << std::endl << intensity_up()  << std::endl
+      << "   intensity_db: " << std::endl << intensity_db()  << std::endl
+      << "lp_jacobians_up: " << std::endl << lp_jacobians_up()  << std::endl
+      << "lp_jacobians_db: " << std::endl << lp_jacobians_db()  << std::endl
+      << "ls_jacobians_db: " << std::endl << ls_jacobians_db()  << std::endl;
   }
+  // MANUAL CHANGE
 
 private:
   int maxgeoms_;
@@ -2268,6 +2274,16 @@ private:
   blitz::Array<double, 3> lp_jacobians_up_;
   blitz::Array<double, 3> lp_jacobians_db_;
   blitz::Array<double, 2> ls_jacobians_db_;
+  // MANUAL CHANGE
+  Fo_Scalarss_Rtcalcs_Ilps() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -2278,7 +2294,9 @@ extern "C" {
   void fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap(const bool* starter_in, const int* maxmoms_in, const int* maxgeoms_in, const int* nmoms_in, const int* ngeoms_in, const double* df1_in, const double* df2_in, const double* cosscat_in, const double* ss_pleg_in);
 }
 
-class Fo_Scalarss_Spherfuncs : public virtual GenericObject {
+  // MANUAL CHANGE
+class Fo_Scalarss_Spherfuncs : public Printable<Fo_Scalarss_Spherfuncs> {
+  // MANUAL CHANGE
 
 public:
   Fo_Scalarss_Spherfuncs(const bool& starter_in, const int& maxmoms_in, const int& maxgeoms_in, const int& nmoms_in, const int& ngeoms_in) : starter_(starter_in), maxmoms_(maxmoms_in), maxgeoms_(maxgeoms_in), nmoms_(nmoms_in), ngeoms_(ngeoms_in) 
@@ -2296,13 +2314,6 @@ public:
   }
 
   virtual ~Fo_Scalarss_Spherfuncs() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const bool& starter() const {
     return starter_;
@@ -2378,20 +2389,20 @@ public:
     
   }
 
-  friend std::ostream& operator<<(std::ostream &output_stream, const Fo_Scalarss_Spherfuncs &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Fo_Scalarss_Spherfuncs:" << std::endl
-      << " starter: " << obj.starter()  << std::endl
-      << " maxmoms: " << obj.maxmoms()  << std::endl
-      << "maxgeoms: " << obj.maxgeoms()  << std::endl
-      << "   nmoms: " << obj.nmoms()  << std::endl
-      << "  ngeoms: " << obj.ngeoms()  << std::endl
-      << "     df1: " << std::endl << obj.df1()  << std::endl
-      << "     df2: " << std::endl << obj.df2()  << std::endl
-      << " cosscat: " << std::endl << obj.cosscat()  << std::endl
-      << " ss_pleg: " << std::endl << obj.ss_pleg()  << std::endl;
-    return output_stream;
-
+      << " starter: " << starter()  << std::endl
+      << " maxmoms: " << maxmoms()  << std::endl
+      << "maxgeoms: " << maxgeoms()  << std::endl
+      << "   nmoms: " << nmoms()  << std::endl
+      << "  ngeoms: " << ngeoms()  << std::endl
+      << "     df1: " << std::endl << df1()  << std::endl
+      << "     df2: " << std::endl << df2()  << std::endl
+      << " cosscat: " << std::endl << cosscat()  << std::endl
+      << " ss_pleg: " << std::endl << ss_pleg()  << std::endl;
   }
+  // MANUAL CHANGE
 
 private:
   bool starter_;
@@ -2403,6 +2414,16 @@ private:
   blitz::Array<double, 1> df2_;
   blitz::Array<double, 1> cosscat_;
   blitz::Array<double, 2> ss_pleg_;
+  // MANUAL CHANGE
+  Fo_Scalarss_Spherfuncs() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -3801,4 +3822,9 @@ private:
 
 
 }
+  // MANUAL CHANGE
+FP_EXPORT_KEY(Fo_Ssgeometry_Master)
+FP_EXPORT_KEY(Fo_Scalarss_Spherfuncs)
+FP_EXPORT_KEY(Fo_Scalarss_Rtcalcs_Ilps)
+  // MANUAL CHANGE
 #endif

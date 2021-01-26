@@ -11,26 +11,37 @@ namespace FullPhysics {
  Implements a direct representation of the surface temperature
  in the atmospheric state from the supplied value.
 *******************************************************************/
-class SurfaceTemperatureDirect : public SubStateVectorArray<SurfaceTemperature> {
+class SurfaceTemperatureDirect :
+    virtual public SubStateVectorArray<SurfaceTemperature> {
 public:
-    SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp, blitz::Array<bool, 1> flag);
-    virtual ~SurfaceTemperatureDirect() {}
+  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp);
+  virtual ~SurfaceTemperatureDirect() {}
 
-    //-----------------------------------------------------------------------
-    /// Return the temperature of the surface. This is different than the
-    /// temperature near the surface which would be the lowest level of
-    /// the temperature grid.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Return the temperature of the surface. This is different than the
+  /// temperature near the surface which would be the lowest level of
+  /// the temperature grid.
+  //-----------------------------------------------------------------------
 
-    virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const;
-    virtual boost::shared_ptr<SurfaceTemperature> clone() const;
+  virtual AutoDerivativeWithUnit<double>
+  surface_temperature(int channel_index) const;
+  virtual boost::shared_ptr<SurfaceTemperature> clone() const;
 
-    virtual std::string sub_state_identifier() const { return "surface_temperature"; }
+  virtual std::string sub_state_identifier() const
+  { return "surface_temperature"; }
 
-    std::string state_vector_name_i(int i) const;
+  std::string state_vector_name_i(int i) const;
 
 private:
-    Unit units;
+  Unit units;
+  SurfaceTemperatureDirect() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<SurfaceTemperature> SubStateVectorArraySurfaceTemperature;
 }
+
+FP_EXPORT_KEY(SurfaceTemperatureDirect)
+FP_EXPORT_KEY(SubStateVectorArraySurfaceTemperature);
 #endif

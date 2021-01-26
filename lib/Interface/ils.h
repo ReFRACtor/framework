@@ -10,8 +10,9 @@ namespace FullPhysics {
   high resolution data to produce a model of what we expect to observe
   in the Level 1b data.
 *******************************************************************/
-class Ils : virtual public StateVectorObserver,
-		    public Observable<Ils> {
+class Ils : public Printable<Ils>,
+	    virtual public StateVectorObserver,
+	    public Observable<Ils> {
 public:
   virtual ~Ils() {}
 
@@ -73,7 +74,7 @@ public:
   virtual boost::shared_ptr<Ils> clone() const = 0;
 
 //-----------------------------------------------------------------------
-/// This is the pixel grid for each pixel.
+/// This is the spectral grid for each instrument sample point.
 //-----------------------------------------------------------------------
 
   virtual SpectralDomain pixel_grid() const = 0;
@@ -90,7 +91,16 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void high_res_extension(const DoubleWithUnit& extension) = 0;
-
+  virtual void print(std::ostream& Os) const
+  { Os << "Ils";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Ils);
+FP_EXPORT_OBSERVER_KEY(Ils);
+
 #endif

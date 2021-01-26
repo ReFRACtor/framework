@@ -15,10 +15,8 @@ BOOST_AUTO_TEST_CASE(basic)
     5, 6, 7, 8,
     9, 10, 11, 12;
   Array<double, 1> f(3);
-  Array<bool, 1> used(3);
   f = 0.1, 0.2, 0.3;
-  used = true, true, true;
-  StokesCoefficientFraction s(coeff, f, used);
+  StokesCoefficientFraction s(coeff, f);
   Array<double, 2> coeff_expect(3, 4);
   coeff_expect = 
     1, (1-2 * 0.1) *2, (1-2 * 0.1) *3, 4,

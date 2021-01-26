@@ -7,7 +7,6 @@
 
 namespace FullPhysics {
 
-
 /******************************************************************
   This class is the base class for the solvers of the NLLS
   problem that are small-to-medium is size.  It requires the 
@@ -15,8 +14,7 @@ namespace FullPhysics {
   large problem.
 *******************************************************************/
 class NLLSSolverGSLSM :
-    public NLLSSolver {
-
+    virtual public NLLSSolver {
 public:
 
 //-----------------------------------------------------------------------
@@ -29,7 +27,7 @@ public:
 ///            read comments on NLLSSolver::NLLSSolver(int32_t,bool)
 ///
 /// \param[in] fdf_params
-///            .
+///            GSL parameters
 ///
 /// \param[in] x_tol
 ///            Used in testing for a small step size relative to the 
@@ -41,12 +39,12 @@ public:
 ///            Used in testing for a small gradient.
 ///
 /// \param[in] f_tol
-///            .
+///            Used in testing
 ///
 /// \param[in] vrbs
 ///            read comments on NLLSSolver::NLLSSolver(int32_t,bool)
 //-----------------------------------------------------------------------
-  NLLSSolverGSLSM( const boost::shared_ptr<NLLSProblem>& p, int32_t max_cost_function_calls, 
+  NLLSSolverGSLSM( const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
                    gsl_multifit_nlinear_parameters fdf_params=gsl_multifit_nlinear_default_parameters(),
                    double x_tol=1.0e-6, double g_tol=6.0555e-06, double f_tol=0.0, bool vrbs=false )
     : NLLSSolver(p,max_cost_function_calls,vrbs),
@@ -82,11 +80,14 @@ protected:
 
   virtual const gsl_multifit_nlinear_type* get_gsl_multifit_nlinear_solver()
   { return gsl_multifit_nlinear_trust; /*default*/ }
-
-
+  NLLSSolverGSLSM() : FDF_params(gsl_multifit_nlinear_default_parameters()) {}
+private:  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };  // class NLLSProblemGSLSM
 
 }
 
-
+FP_EXPORT_KEY(NLLSSolverGSLSM);
 #endif

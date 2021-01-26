@@ -43,7 +43,7 @@ namespace FullPhysics {
 /// it is assumed to be a diagonal matrix.
 //-----------------------------------------------------------------------
 
-class ModelMeasure : public ModelState {
+class ModelMeasure : virtual public ModelState {
 
 public:
 
@@ -514,7 +514,12 @@ protected:
 
   // For convenience
   blitz::Array<double, 1> Se_chol;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ModelMeasure);
 #endif

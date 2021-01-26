@@ -5,7 +5,6 @@ set(DIR_SOURCES
     absco_hdf.cc
     absorber_absco.cc
     absorber_vmr_level.cc
-    absorber_vmr_level_log.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
     aerosol_extinction_level.cc
@@ -103,6 +102,7 @@ set(DIR_SOURCES
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
     sample_grid_spectral_domain.cc
+    scattering_moment_interpolator.cc
     simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
     solar_absorption_gfit_file.cc
@@ -120,6 +120,7 @@ set(DIR_SOURCES
     stokes_coefficient_constant.cc
     stokes_coefficient_fraction.cc
     surface_temperature_direct.cc
+    temperature_level.cc
     temperature_level_offset.cc
     temperature_met.cc
     uniform_spectrum_sampling.cc
@@ -129,7 +130,6 @@ set(TEST_SOURCES
     absco_aer_test.cc
     absco_hdf_test.cc
     absorber_absco_test.cc
-    absorber_vmr_level_log_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc
@@ -221,6 +221,7 @@ set(TEST_SOURCES
     standard_forward_model_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
+    temperature_level_test.cc
     temperature_level_offset_test.cc
     temperature_met_test.cc
     uniform_spectrum_sampling_test.cc
@@ -228,14 +229,24 @@ set(TEST_SOURCES
 
 # Full path already included
 file(GLOB_RECURSE SWIG_SOURCES *.i)
+# We remove globbed OSS files below if not building OSS
 list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
 if(OSS_FOUND)
     message(STATUS "Adding AER OSS FM to sources")
     list(APPEND DIR_SOURCES oss_forward_model.cc)
+    list(APPEND DIR_SOURCES oss_interface.cc)
+    list(APPEND DIR_SOURCES oss_retrieval_flags.cc)
+    list(APPEND TEST_SOURCES oss_configuration_fixture.cc)
     list(APPEND TEST_SOURCES oss_forward_model_test.cc)
+    list(APPEND TEST_SOURCES oss_interface_test.cc)
 else()
-    message(STATUS "In implementation dir, OSS NOT detected.")
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/oss_forward_model.i)
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/oss_interface.i)
+    list(REMOVE_ITEM SWIG_INTERFACE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/oss_retrieval_flags.i)
+    list(REMOVE_ITEM SWIG_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/oss_forward_model.i)
+    list(REMOVE_ITEM SWIG_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/oss_interface.i)
+    list(REMOVE_ITEM SWIG_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/oss_retrieval_flags.i)
 endif()
 
 # Add current source directory to source file names

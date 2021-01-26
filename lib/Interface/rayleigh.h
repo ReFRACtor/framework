@@ -32,7 +32,13 @@ public:
     {
         Os << "Rayleigh";
     }
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Rayleigh);
+
 #endif

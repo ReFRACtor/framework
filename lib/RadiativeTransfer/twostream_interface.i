@@ -1,3 +1,5 @@
+// -*- mode: c++; -*-
+// (Not really c++, but closest emacs mode)
 // This file was auto-generated
 
 %include "fp_common.i"
@@ -7,6 +9,9 @@
 %}
 
 
+  // MANUAL CHANGE
+%base_import(generic_object)
+  // MANUAL CHANGE
 
 %fp_shared_ptr(FullPhysics::Twostream_Lps_Master);
 %fp_shared_ptr(FullPhysics::Twostream_Ls_Brdf_Supplement);
@@ -15,11 +20,12 @@ namespace FullPhysics {
 
 
 
-class Twostream_Ls_Brdf_Supplement {
+  // MANUAL CHANGE
+class Twostream_Ls_Brdf_Supplement : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Twostream_Ls_Brdf_Supplement(const int& maxbeams_in, const int& max_user_streams_in, const int& max_user_obsgeoms_in, const int& maxstreams_brdf_in, const int& max_brdf_kernels_in, const int& max_brdf_parameters_in, const int& max_surfacewfs_in, const int& nbeams_in, const int& n_user_streams_in, const int& nstreams_brdf_in);
-  virtual ~Twostream_Ls_Brdf_Supplement();
   std::string print_to_string() const;
 
   %python_attribute(maxbeams, int&)
@@ -69,10 +75,15 @@ public:
   // MANUAL CHANGE
   
   void run();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 
-class Twostream_Lps_Master {
+  // MANUAL CHANGE
+class Twostream_Lps_Master : public GenericObject {
+  // MANUAL CHANGE
 
 public:
   Twostream_Lps_Master(const int& maxlayers_in, const int& maxtotal_in, const int& maxmessages_in, const int& maxbeams_in, const int& max_geometries_in, const int& max_user_streams_in, const int& max_user_relazms_in, const int& max_user_obsgeoms_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& nlayers_in, const int& ntotal_in, const int& n_user_streams_in, const int& n_user_relazms_in, const int& nbeams_in, const double& earth_radius_in, const int& n_geometries_in);
@@ -186,6 +197,9 @@ public:
   // MANUAL CHANGE
 
   void run();
+  // MANUAL CHANGE
+  %pickle_serialization();
+  // MANUAL CHANGE
 };
 
 }

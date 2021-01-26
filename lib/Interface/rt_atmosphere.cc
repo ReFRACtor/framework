@@ -1,7 +1,22 @@
 #include "rt_atmosphere.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RtAtmosphere::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableRtAtmosphere);
+    
+}
+
+FP_IMPLEMENT(RtAtmosphere);
+FP_OBSERVER_SERIALIZE(RtAtmosphere);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -48,9 +63,12 @@ RtAtmosphere::optical_depth_wrt_state_vector(double wn, int spec_index) const
   Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 1> res(od.rows(), ivjac.depth());
   res.value() = od.value();
-  for(int i = 0; i < res.rows(); ++i)
-    res.jacobian()(i, ra) = 
-      sum(od.jacobian()(i, ra)(i2) * ivjac(i, ra, ra)(i2,i1),i2);
+
+  if (ivjac.depth() > 0) {
+    for(int i = 0; i < res.rows(); ++i) {
+      res.jacobian()(i, ra) = sum(od.jacobian()(i, ra)(i2) * ivjac(i, ra, ra)(i2,i1),i2);
+    }
+  }
   return res;
 }
 
@@ -78,9 +96,13 @@ RtAtmosphere::single_scattering_albedo_wrt_state_vector
   Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 1> res(ss.rows(), ivjac.depth());
   res.value() = ss.value();
-  for(int i = 0; i < res.rows(); ++i)
-    res.jacobian()(i, ra) = 
-      sum(ss.jacobian()(i, ra)(i2) * ivjac(i, ra, ra)(i2,i1),i2);
+
+  if (ivjac.depth() > 0) {
+    for(int i = 0; i < res.rows(); ++i) {
+      res.jacobian()(i, ra) = sum(ss.jacobian()(i, ra)(i2) * ivjac(i, ra, ra)(i2,i1),i2);
+    }
+  }
+
   return res;
 }
 
@@ -117,7 +139,11 @@ ArrayAd<double, 3> RtAtmosphere::phase_function_moments_wrt_state_vector
   Array<double, 3> ivjac(intermediate_jacobian(wn, spec_index));
   ArrayAd<double, 3> res(pf.rows(), pf.cols(), pf.depth(), ivjac.depth());
   res.value() = pf.value();
-  res.jacobian() = sum(pf.jacobian()(i1, i2, i3, i5) * ivjac(i2,i5, i4), i5);
+
+  if (ivjac.depth() > 0) {
+    res.jacobian() = sum(pf.jacobian()(i1, i2, i3, i5) * ivjac(i2,i5, i4), i5);
+  }
+
   return res;
 }
 

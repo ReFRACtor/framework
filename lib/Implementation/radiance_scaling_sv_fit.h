@@ -19,21 +19,18 @@ public:
 /// Constructor.
 ///
 /// \param Coeff - Initial value of scale factor
-/// \param Used_flag - If true, we update scale factor by values in
-///    StateVector. If false, we hold this fixed and just used the
-///    initial value.
 /// \param Band_ref - The wavenumber/wavelength that the scaling
 ///    coefficients are relative to.
 /// \param Band_name - Name of band
 //-----------------------------------------------------------------------
   
   RadianceScalingSvFit(const blitz::Array<double, 1>& Coeff, 
-                        const blitz::Array<bool, 1>& Used_flag,
                         const DoubleWithUnit& Band_ref,
                         const std::string& Band_name)
-    : RadianceScaling(Coeff, Band_ref, Band_name),
-      SubStateVectorArray<InstrumentCorrection>(Coeff, Used_flag)
-  { } 
+  {
+    RadianceScaling::init(Coeff, Band_ref, Band_name);
+    SubStateVectorArray<InstrumentCorrection>::init(Coeff);
+  } 
 
   virtual ~RadianceScalingSvFit() {}
 

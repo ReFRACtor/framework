@@ -4,13 +4,10 @@ from collections import OrderedDict
 import numpy as np
 
 from .base import Creator
+from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
-
-# Class allow capturing the list of retrieval components from the configuration system elsewhere
-class RetrievalComponents(OrderedDict):
-    pass
 
 class RetrievalBaseCreator(Creator):
 
@@ -191,8 +188,7 @@ class InitialGuessFromSV(Creator):
         # Gather initial guess from retrieval components
         ig_values = []
         for ret_component in self.retrieval_components().values():
-            used_indexes = np.nonzero(ret_component.used_flag_value)
-            ig_values.append(ret_component.coefficient.value[used_indexes])
+            ig_values.append(ret_component.coefficient.value)
 
         if len(ig_values) == 0:
             raise param.ParamError("InitialGuessFromSV: No initial guess values available as identified by the retrieval components")
@@ -217,6 +213,17 @@ class CovarianceByComponent(Creator):
     retrieval_components = param.Dict()
     values = param.Dict() 
     interstep_storage = param.Dict(required=False)
+
+    def retrieval_indexes(self, rc_obj):
+
+        # Replicate old behavior of having retrieval flags for certain state
+        # vector parameters where we want to subselect the covariance in case
+        # we turn some of the parameters dynamically during a retrieval but
+        # supply the whole covariance to the config
+        if isinstance(rc_obj.state_mapping, rf.StateMappingAtIndexes):
+            return rc_obj.state_mapping.retrieval_indexes
+        else:
+            return None
 
     def create(self, **kwargs):
 
@@ -246,11 +253,14 @@ class CovarianceByComponent(Creator):
             if rc_cov.shape[0] != rc_cov.shape[1]:
                 raise param.ParamError("CovarianceByComponent: array for retrieval component must be a square matrix: %s" % rc_name)
 
-            # Subset a larger covariances if it is the same size as the flags
-            flag = rc_obj.used_flag_value
-            if flag.shape[0] == rc_cov.shape[0]:
-                used_indexes = np.nonzero(flag)
-                used_cov = rc_cov[np.ix_(used_indexes[0], used_indexes[0])]
+            # Subset a larger covariances if a StateMappingAtIndexes is used
+            # This should probably be replaced by pushing the covariance through the
+            # mapping class as well, since maps have side effects they would need to
+            # be cloned first or a special additional method added to each
+            retrieval_indexes = self.retrieval_indexes(rc_obj)
+
+            if retrieval_indexes is not None:
+                used_cov = rc_cov[np.ix_(retrieval_indexes, retrieval_indexes)]
             else:
                 used_cov = rc_cov
 
@@ -295,12 +305,12 @@ class LegacyConnorSolver(Creator):
         fm = self.forward_model()
 
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
-    
+
         cost_func = rf.ConnorCostFunction(sv, fm, observation)
         conv = rf.ConnorConvergence(fm,
-                                 self.threshold(), 
-                                 self.max_iteration(), 
-                                 self.max_divergence(), 
+                                 self.threshold(),
+                                 self.max_iteration(),
+                                 self.max_divergence(),
                                  self.max_chisq())
 
         # Create wrapper function to make the ConnorSolver interface match that of IterativeSolver
@@ -351,9 +361,16 @@ class MaxAPosterioriBase(Creator):
     def opt_problem(self):
         fm = self.forward_model()
 
+        # TODO: This creator assumes forward models have spectral grids, which is not required by interface
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
-        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), self.a_priori(), self.covariance())
+        apriori = self.a_priori()
+        cov = self.covariance()
+
+        if apriori.shape[0] != cov.shape[0] or apriori.shape[0] != cov.shape[1]:
+            raise param.ParamError(f"The number of rows and columns of a priori covariance matrix: {cov.shape} do not equal the size of the a priori parameter values array: {apriori.shape[0]}")
+
+        stat_method = rf.MaxAPosterioriStandard(fm, observation, self.state_vector(), apriori, cov)
 
         opt_problem = rf.NLLSMaxAPosteriori(stat_method)
 
@@ -437,6 +454,8 @@ class NLLSSolverLM(MaxAPosterioriBase):
     tr_rad = param.Scalar(float, required=False)
     cr_ratio_tol = param.Scalar(float, required=False)
 
+    verbose = param.Scalar(bool, required=False, default=False)
+
     def create(self, **kwargs):
 
         # Class comes with defaults, only overwrite the defaults if the config has a value supplied
@@ -454,7 +473,7 @@ class NLLSSolverLM(MaxAPosterioriBase):
         if self.cr_ratio_tol() is not None:
             opts.cr_ratio_tol = self.cr_ratio_tol()
 
-        solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel())
+        solver = rf.NLLSSolverLM(self.opt_problem(), self.max_iteration(), opts, self.dx_tol_abs(), self.dx_tol_rel(), self.g_tol_abs(), self.g_tol_rel(), self.verbose())
 
         self.init_state_vector()
 

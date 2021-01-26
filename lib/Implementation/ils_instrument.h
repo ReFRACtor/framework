@@ -12,7 +12,7 @@ namespace FullPhysics {
   to model the instrument.
 *******************************************************************/
 
-class IlsInstrument: public Instrument, public Observer<Ils>, 
+class IlsInstrument: virtual public Instrument, public Observer<Ils>, 
 		     public Observer<InstrumentCorrection> {
 public:
   IlsInstrument(const std::vector<boost::shared_ptr<Ils> >& Ils_list,
@@ -67,10 +67,18 @@ public:
     range_check(Spec_index, 0, number_spectrometer());
     return inst_corr[Spec_index];
   }
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const;
 private:
   std::vector<boost::shared_ptr<Ils> > ils_;
   std::vector<std::vector<boost::shared_ptr<InstrumentCorrection> > >
   inst_corr;
+  IlsInstrument() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(IlsInstrument);
 #endif

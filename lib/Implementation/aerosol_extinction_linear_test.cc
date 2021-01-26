@@ -10,8 +10,6 @@ BOOST_FIXTURE_TEST_SUITE(aerosol_extinction_linear, MetDataFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   // Arrays defining coeffs
-  blitz::Array<bool, 1> ret_flag(3);
-  ret_flag = true;
   blitz::Array<double, 1> coeffs(3);
 
   // Kahn
@@ -19,7 +17,7 @@ BOOST_AUTO_TEST_CASE(basic)
   coeffs = 0.0, 1.0, 0.2;
   kahn_linear = coeffs;
 
-  AerosolExtinctionLinear aer_kahn_lin = AerosolExtinctionLinear(pressure, ret_flag, coeffs, "Kahn");
+  AerosolExtinctionLinear aer_kahn_lin = AerosolExtinctionLinear(pressure, coeffs, "Kahn");
   BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_linear, aer_kahn_lin.aerosol_extinction().value(), 1e-14);
 
   // Water
@@ -27,7 +25,7 @@ BOOST_AUTO_TEST_CASE(basic)
   coeffs = 10.0, 0.75, 0.1;
   water_expt = coeffs;
 
-  AerosolExtinctionLinear aer_water_lin = AerosolExtinctionLinear(pressure, ret_flag, coeffs, "Water");
+  AerosolExtinctionLinear aer_water_lin = AerosolExtinctionLinear(pressure, coeffs, "Water");
   BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt, aer_water_lin.aerosol_extinction().value(), 1e-14);
 
   // Ice
@@ -35,7 +33,7 @@ BOOST_AUTO_TEST_CASE(basic)
   coeffs = 8.0, 0.3, 0.04;
   ice_expt = coeffs;
 
-  AerosolExtinctionLinear aer_ice_lin = AerosolExtinctionLinear(pressure, ret_flag, coeffs, "Ice");
+  AerosolExtinctionLinear aer_ice_lin = AerosolExtinctionLinear(pressure, coeffs, "Ice");
   BOOST_CHECK_MATRIX_CLOSE_TOL(ice_expt, aer_ice_lin.aerosol_extinction().value(), 1e-14);
   
 }

@@ -1,5 +1,6 @@
 #include <fp_gsl_matrix.h>
 #include <fp_exception.h>
+#include "fp_serialize_support.h"
 #include <gsl_mdm.h>
 #include <cost_minimizer_gsl.h>
 #include<cmath>
@@ -8,6 +9,17 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void CostMinimizerGSL::serialize(Archive & ar,
+				 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CostMinimizer)
+    & FP_NVP(Size_tol) & FP_NVP(Initial_step_size);
+}
+
+FP_IMPLEMENT(CostMinimizerGSL);
+#endif
 
 
 

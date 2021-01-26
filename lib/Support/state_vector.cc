@@ -2,9 +2,25 @@
 #include "spectrum_effect.h"
 #include "fp_exception.h"
 #include <boost/lexical_cast.hpp>
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void StateVector::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableStateVector)
+    & FP_NVP_(x) & FP_NVP_(cov) & FP_NVP(pstart);
+  // Not 100% sure we want to keep pstart. For now we'll do that, but
+  // may need to revisit this. Might want it reset to 1?
+}
+
+FP_IMPLEMENT(StateVector);
+FP_OBSERVER_SERIALIZE(StateVector);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -95,6 +111,12 @@ void state_vector_print_names(StateVector& Sv)
     BOOST_FOREACH(const std::string & s, Sv.state_vector_name())
     std::cout << s << "\n";
 }
+
+int state_vector_observer_claimed_size(StateVector& Sv)
+{
+    return Sv.observer_claimed_size();
+}
+
 typedef void (StateVector::*us1)(const blitz::Array<double, 1>&);
 typedef void (StateVector::*us2)(const blitz::Array<double, 1>&, const blitz::Array<double, 2>&);
 REGISTER_LUA_CLASS(StateVector)
@@ -117,6 +139,7 @@ REGISTER_LUA_CLASS(StateVector)
 .def("print_names", &state_vector_print_names)
 .def("state", &StateVector::state)
 .def("state_covariance", &StateVector::state_covariance)
+.def("observer_claimed_size", &state_vector_observer_claimed_size)
 REGISTER_LUA_END()
 #endif
 
@@ -189,29 +212,6 @@ void StateVector::update_state(const ArrayAd<double, 1>& X,
     x_.reference(X.copy());
     cov_.reference(Cov.copy());
     notify_update_do(*this);
-}
-
-
-//-----------------------------------------------------------------------
-/// Return a Array of boolean values. The value (i) is true if the state
-/// vector element X(i) is being used. This can be used to determine
-/// parameters that are being ignored, e.g. the number of active
-/// levels in an Aerosol is less that the size of the state vector for it.
-//-----------------------------------------------------------------------
-
-blitz::Array<bool, 1> StateVector::used_flag() const
-{
-    blitz::Array<bool, 1> res(state().rows());
-    res = false;
-    BOOST_FOREACH(const boost::weak_ptr<Observer<StateVector> >& t, olist) {
-        boost::shared_ptr<StateVectorObserver> t2 =
-            boost::dynamic_pointer_cast<StateVectorObserver>(t.lock());
-
-        if(t2) {
-            t2->mark_used(*this, res);
-        }
-    }
-    return res;
 }
 
 //-----------------------------------------------------------------------

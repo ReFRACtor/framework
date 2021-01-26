@@ -1,8 +1,38 @@
 #include "composite_initial_guess.h"
+#include "fp_serialize_support.h"
 #include <boost/foreach.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void InitialGuessBuilder::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(InitialGuessBuilder);
+
+  // Dummy placeholder, just so we can have derived classes call
+  // serialization of this. We use to have derived classes "know"
+  // that the base class doesn't have anything. But seems better to
+  // *always* have base classes do something, so we can add stuff in
+  // the future w/o breaking a bunch of code.
+  std::string p = "empty";
+  ar & FP_NVP2("placeholder", p);
+}
+
+template<class Archive>
+void CompositeInitialGuess::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(InitialGuessBuilder)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(InitialGuess)
+    & FP_NVP(blist);
+}
+
+FP_IMPLEMENT(InitialGuessBuilder);
+FP_IMPLEMENT(CompositeInitialGuess)
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -27,6 +57,7 @@ REGISTER_LUA_DERIVED_CLASS(CompositeInitialGuess, InitialGuess)
 .def("add_builder", &CompositeInitialGuess::add_builder)
 .def("add_builder", &composite_initial_guess_add_builder) 
 .def("add_builder", &composite_initial_guess_add_builder2) 
+.def("number_element", &CompositeInitialGuess::number_element)
 REGISTER_LUA_END()
 #endif
 

@@ -9,12 +9,11 @@ namespace FullPhysics {
   particular implementation uses the temperature from MET file
   (interpolated to the current pressure grid), along with an offset.
 *******************************************************************/
-class TemperatureMet: public TemperatureOffset {
+class TemperatureMet: virtual public TemperatureOffset {
 public:
   TemperatureMet(const boost::shared_ptr<Meteorology>& Met_file,
-		   const boost::shared_ptr<Pressure>& Press,
-		   double Temp_offset,
-		   bool Temp_flag);
+                 const boost::shared_ptr<Pressure>& Press,
+                 double Temp_offset);
   virtual ~TemperatureMet() {}
   virtual void print(std::ostream& Os) const;
 
@@ -37,6 +36,11 @@ public:
 
 private:
   boost::shared_ptr<Meteorology> met;
+  TemperatureMet() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(TemperatureMet);
 #endif

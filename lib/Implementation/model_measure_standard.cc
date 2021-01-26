@@ -1,8 +1,21 @@
 #include <model_measure_standard.h>
+#include "fp_serialize_support.h"
 
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ModelMeasureStandard::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasure)
+    & FP_NVP(fm) & FP_NVP(obs) & FP_NVP(sv);
+}
+
+FP_IMPLEMENT(ModelMeasureStandard);
+#endif
 
 
 // Function to append a second array at the bottom of an existing
@@ -121,42 +134,11 @@ void ModelMeasureStandard::radiance_from_fm()
   if( sum(abs(temp_msrmnt-msrmnt))/msrmnt_L1_norm > 0.0000001 )
     throw Exception("Measurement has changed during the retrieval. :( ");
 
-  //  TEMPORARY
-  //
-  // Should go away after we end support for 
-  // fixed pressure level grid.
-  vanishing_params_update();
-
   assert_model_correct(M);
   M.makeUnique();
   assert_jacobian_correct(K);
   K.makeUnique();
 }
-
-
-
-
-//  TEMPORARY
-//
-// Should go away after we end support for 
-// fixed pressure level grid.
-void ModelMeasureStandard::vanishing_params_update()
-{
-  if(K.size() <= 0) return;
-
-  //  Even with fixed-pressure-level the following 
-  //  code block should not be necessary if the
-  //  forward-model class is already setting to zero
-  //  the columns of the Jacobian associated with
-  //  the unused parameters (if any).
-  //
-  Array<bool, 1> used(sv->used_flag());
-  if(used.rows() != K.cols())
-    throw Exception("Columns of Jacobian and elements of used-flag not equal in numbers! :( ");
-  for(int i=0; i<used.rows(); i++)
-    if(!used(i)) K(Range::all(),i) = 0.0;
-}
-
 
 void ModelMeasureStandard::parameters(const blitz::Array<double, 1>& x)
 {

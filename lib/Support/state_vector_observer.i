@@ -15,11 +15,8 @@ namespace FullPhysics {
 
 class StateVectorObserver : public Observer<StateVector> {
 public:
-  virtual void mark_used(const StateVector& Sv, 
-			 blitz::Array<bool, 1>& Used) const;
   virtual void state_vector_name(const StateVector& Sv, 
-			  blitz::Array<std::string, 1>& Sv_name) const;
-  %python_attribute_with_set(used_flag, blitz::Array<bool, 1>);
+                                 blitz::Array<std::string, 1>& Sv_name) const;
   %python_attribute_with_set(sv_name, std::vector<std::string>);
   %pickle_serialization();
 };

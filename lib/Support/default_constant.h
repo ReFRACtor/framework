@@ -92,6 +92,12 @@ class DefaultConstant : public Constant {
       return DoubleWithUnit(6378206.4, "m");
     }
 
-  };
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+};
 }
+
+FP_EXPORT_KEY(DefaultConstant);
 #endif

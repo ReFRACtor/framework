@@ -16,7 +16,7 @@ namespace FullPhysics {
 //-----------------------------------------------------------------------
 
 class CostFuncDiffState : 
-    public CostFuncState {
+    virtual public CostFuncState {
 
 public:
 
@@ -80,6 +80,12 @@ protected:
 
   blitz::Array<double, 1> G;
 
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(CostFuncDiffState);
 #endif

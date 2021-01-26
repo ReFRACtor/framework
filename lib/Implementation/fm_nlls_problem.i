@@ -22,5 +22,6 @@ public:
   %python_attribute(parameter_size, int)
   %python_attribute_nonconst(residual, blitz::Array<double, 1>)
   %python_attribute_nonconst(jacobian, blitz::Array<double, 2>)
+  %pickle_serialization();
 };
 }

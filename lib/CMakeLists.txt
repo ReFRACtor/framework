@@ -16,7 +16,7 @@ file(GLOB SWIG_INCLUDE_FILES_ADD ${CMAKE_CURRENT_SOURCE_DIR}/*.i)
 list(APPEND SWIG_INCLUDE_FILES ${SWIG_INCLUDE_FILES_ADD})
 install(FILES ${LIB_INCLUDE_FILES} DESTINATION include/refractor)
 
-foreach(sub_dir FixedLevel RadiativeTransfer Implementation Interface Lua Support Example)
+foreach(sub_dir RadiativeTransfer Implementation Interface Lua Support StateMapping Example)
     list(APPEND FP_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}/${sub_dir})
     add_subdirectory(${sub_dir})
 
@@ -42,8 +42,10 @@ include_directories(${FP_INCLUDES})
 
 # Set up the swig_rules
 add_subdirectory(swig_rules)
+include_directories(${SWIG_INCLUDE_DIR})
 
 install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
+find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization)
 add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
 target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
 target_compile_definitions(refractor PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)

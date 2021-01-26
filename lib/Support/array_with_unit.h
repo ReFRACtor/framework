@@ -137,12 +137,24 @@ public:
   int cols() const {return value.cols();}
   int depth() const {return value.depth();}
 
-  void print(std::ostream& Os) const {
+  void print(std::ostream& Os) const
+  {
     Os << "ArrayWithUnit:\n"
        << "Value: " << value << "\n"
        << units << "\n";
   }
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef ArrayWithUnit<double, 1>  ArrayWithUnit_double_1;
+typedef ArrayWithUnit<double, 2>  ArrayWithUnit_double_2;
+typedef ArrayWithUnit<double, 3>  ArrayWithUnit_double_3;
+typedef ArrayWithUnit<double, 4>  ArrayWithUnit_double_4;
 }
+FP_EXPORT_KEY(ArrayWithUnit_double_1);
+FP_EXPORT_KEY(ArrayWithUnit_double_2);
+FP_EXPORT_KEY(ArrayWithUnit_double_3);
+FP_EXPORT_KEY(ArrayWithUnit_double_4);
 #endif

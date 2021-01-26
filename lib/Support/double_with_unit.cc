@@ -1,7 +1,20 @@
 #include "double_with_unit.h"
 #include "spectral_domain.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void DoubleWithUnit::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(DoubleWithUnit);
+  ar & FP_NVP(value) & FP_NVP(units);
+}
+
+FP_IMPLEMENT(DoubleWithUnit);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -31,5 +31,6 @@ protected:
      const blitz::Array<double, 2>& Stokes_coef);
   RadiativeTransferFixedStokesCoefficient();
   blitz::Array<double, 2> stokes_coef;
+  %pickle_serialization();
 };
 }

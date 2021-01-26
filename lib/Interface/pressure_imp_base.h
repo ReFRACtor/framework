@@ -2,8 +2,26 @@
 #define PRESSURE_IMP_BASE_H
 #include "pressure.h"
 #include "sub_state_vector_array.h"
+#include "calculation_cache.h"
 
 namespace FullPhysics {
+class PressureImpBase;
+  
+/****************************************************************//**
+  Cache used by PressureImpBase
+*******************************************************************/
+class PressureImpBaseCache : public CalculationCache<PressureImpBase> {
+public:
+  PressureImpBaseCache() {}
+  virtual ~PressureImpBaseCache() {}
+  virtual void fill_cache(const PressureImpBase& P);
+  ArrayAdWithUnit<double, 1> pgrid;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+};
+  
 /****************************************************************//**
   As a design principle, we have each base class with the absolutely
   minimum interface needed for use from the rest of the system. This
@@ -27,10 +45,10 @@ class PressureImpBase: virtual public SubStateVectorArray<Pressure> {
 public:
   virtual ~PressureImpBase() {}
   virtual ArrayAdWithUnit<double, 1> pressure_grid() const
-  { fill_cache(); return pgrid; }
+  { cache.fill_cache_if_needed(*this); return cache.pgrid; }
   virtual boost::shared_ptr<Pressure> clone() const = 0;
   virtual void update_sub_state_hook() 
-  { cache_stale = true; }
+  { cache.invalidate_cache(); }
 
 //-----------------------------------------------------------------------
 /// Print to stream. The default calls the function "desc" that returns
@@ -47,20 +65,9 @@ public:
   virtual std::string desc() const { return "PressureImpBase"; }
 
   using SubStateVectorArray<Pressure>::update_sub_state;
-  using SubStateVectorArray<Pressure>::mark_used_sub;
   using SubStateVectorArray<Pressure>::state_vector_name_sub;
 protected:
-//-----------------------------------------------------------------------
-/// If this is true, the recalculate the pressure_grid the next time we
-/// need it.
-//-----------------------------------------------------------------------
-  mutable bool cache_stale;
-
-//-----------------------------------------------------------------------
-/// The cached pressure grid. This should be filled in by derived classes
-/// when calc_pressure_grid() is called.
-//-----------------------------------------------------------------------
-  mutable ArrayAdWithUnit<double, 1> pgrid;
+  mutable PressureImpBaseCache cache;
 
 //-----------------------------------------------------------------------
 /// Derived classes should provide a function to fill in pgrid when this is 
@@ -73,25 +80,17 @@ protected:
 /// constructor.
 //-----------------------------------------------------------------------
 
-  PressureImpBase() : cache_stale(true) { }
+  PressureImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  PressureImpBase(const blitz::Array<double, 1>& Coeff, 
-		  const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<Pressure>(Coeff, Used_flag),
-      cache_stale(true) {}
-private:
-  void fill_cache() const
+  PressureImpBase(const blitz::Array<double, 1>& Coeff)
   {
-    if(cache_stale) {
-      pgrid.value.resize_number_variable(coeff.number_variable());
-      pgrid.value.jacobian() = 0;
-      calc_pressure_grid();
-    }
-    cache_stale = false;
+    SubStateVectorArray<Pressure>::init(Coeff);
   }
+private:
+  friend PressureImpBaseCache;
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
@@ -99,6 +98,7 @@ private:
 typedef SubStateVectorArray<Pressure> SubStateVectorArrayPressure;
 }
 
+FP_EXPORT_KEY(PressureImpBaseCache);
 FP_EXPORT_KEY(PressureImpBase);
 FP_EXPORT_KEY(SubStateVectorArrayPressure);
 #endif

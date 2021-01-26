@@ -4,16 +4,16 @@
 #include "state_vector_observer.h"
 #include "observer.h"
 #include "spectral_domain.h"
+#include "sub_state_vector_array.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class calculates the wavenumber for each sample in a single
   band of an Instrument.
-
 *******************************************************************/
-class SampleGrid : virtual public StateVectorObserver,
-              public Observable<SampleGrid> {
-
+class SampleGrid : public Printable<SampleGrid>,
+		   virtual public StateVectorObserver,
+		   public Observable<SampleGrid> {
 public:
   virtual ~SampleGrid() {}
   virtual void add_observer(Observer<SampleGrid>& Obs)
@@ -48,6 +48,17 @@ public:
   /// processing.
   //-----------------------------------------------------------------------
   virtual SpectralDomain pixel_grid() const { return this->sample_grid(); }
+  virtual void print(std::ostream& Os) const
+  { Os << "SampleGrid";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<SampleGrid> SubStateVectorArraySampleGrid;
 }
+
+FP_EXPORT_KEY(SampleGrid);
+FP_EXPORT_OBSERVER_KEY(SampleGrid);
+FP_EXPORT_KEY(SubStateVectorArraySampleGrid);
 #endif

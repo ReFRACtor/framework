@@ -11,12 +11,11 @@ namespace FullPhysics {
   This particular implementation uses the value from MET file
   (interpolated to the current pressure grid), along with a scale factor.
 *******************************************************************/
-class AbsorberVmrMet : public AbsorberVmrScaled {
+class AbsorberVmrMet : virtual public AbsorberVmrScaled {
 public:
   AbsorberVmrMet(const boost::shared_ptr<Meteorology>& Met_file,
 		   const boost::shared_ptr<Pressure>& Press,
 		   double Scale,                         
-		   bool Scale_flag,
 		   const std::string& Gas_name);
   virtual ~AbsorberVmrMet() {}
 
@@ -40,8 +39,15 @@ public:
   //-----------------------------------------------------------------------
   virtual blitz::Array<double, 1> pressure_profile() const;
 
+protected:
+  AbsorberVmrMet() {}
 private:
   boost::shared_ptr<Meteorology> met;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AbsorberVmrMet);
 #endif

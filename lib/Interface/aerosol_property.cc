@@ -1,8 +1,23 @@
 #include "aerosol_property.h"
+#include "fp_serialize_support.h"
 #include <vector>
 #include <boost/shared_ptr.hpp>
 
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AerosolProperty::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableAerosolProperty);
+    
+}
+
+FP_IMPLEMENT(AerosolProperty);
+FP_OBSERVER_SERIALIZE(AerosolProperty);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

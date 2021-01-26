@@ -23,7 +23,8 @@ public:
     %python_attribute(surface_pressure, double);
     %python_attribute(windspeed, double); 
     %python_attribute(windspeed_u, double); 
-    %python_attribute(windspeed_v, double); 
+    %python_attribute(windspeed_v, double);
+    %pickle_serialization();
 };
 }
 

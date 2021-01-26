@@ -20,5 +20,6 @@ public:
   %python_attribute(expected_parameter_size, int)
   %python_attribute_with_set(parameters, blitz::Array<double, 1>)
   %python_attribute_nonconst(max_likelihood, boost::shared_ptr<MaxLikelihood>)
+  %pickle_serialization();
 };
 }

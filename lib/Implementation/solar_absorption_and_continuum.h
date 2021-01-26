@@ -22,7 +22,7 @@ namespace FullPhysics {
   class stitches these objects together to create the full spectrum.
 *******************************************************************/
 
-class SolarAbsorptionAndContinuum : public SolarModel {
+class SolarAbsorptionAndContinuum : public virtual SolarModel {
 public:
 //-----------------------------------------------------------------------
 /// Create a SolarModel that uses the given doppler shift, absorption
@@ -95,10 +95,25 @@ public:
     const {return continuum_spectrum_;}
   virtual void print(std::ostream& Os) const;
   virtual Spectrum solar_spectrum(const SpectralDomain& Spec_domain) const;
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(doppler_shift_);
+    res.push_back(absorption_spectrum_);
+    res.push_back(continuum_spectrum_);
+    return res;
+  }
+  
 private:
   boost::shared_ptr<SolarDopplerShift> doppler_shift_;
   boost::shared_ptr<SolarAbsorptionSpectrum> absorption_spectrum_;
   boost::shared_ptr<SolarContinuumSpectrum> continuum_spectrum_;
+  SolarAbsorptionAndContinuum() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(SolarAbsorptionAndContinuum);
 #endif

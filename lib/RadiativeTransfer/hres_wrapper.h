@@ -31,8 +31,20 @@ public:
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn
   (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual boost::shared_ptr<RadiativeTransfer> rt() const {return rt_;}
+  virtual std::vector<boost::shared_ptr<GenericObject> >
+  subobject_list() const
+  { std::vector<boost::shared_ptr<GenericObject> > res;
+    res.push_back(rt_);
+    return res;
+  }
 private:
   boost::shared_ptr<RadiativeTransferSingleWn> rt_;
+  HresWrapper() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(HresWrapper)
 #endif

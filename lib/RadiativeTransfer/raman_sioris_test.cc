@@ -22,8 +22,8 @@ BOOST_AUTO_TEST_CASE(offline_data)
     // that was originally provided by Xiong Liu
     HdfFile offline_data(test_data_dir() + "/in/raman_sioris/offline_test_data.h5");
 
-    int nw = offline_data.read_field<int>("/nw");
-    int nz = offline_data.read_field<int>("/nz");
+    int UNUSED(nw) = offline_data.read_field<int>("/nw");
+    int UNUSED(nz) = offline_data.read_field<int>("/nz");
     double sza = offline_data.read_field<double>("/sza");
     double vza = offline_data.read_field<double>("/vza");
     double sca = offline_data.read_field<double>("/sca");
@@ -53,7 +53,6 @@ BOOST_AUTO_TEST_CASE(effect)
 {
     int channel_idx = 0;
     double scale_factor = 1.9;
-    bool used_flag = true;
     double albedo = 1.0;
 
     // Convert this so we can access ->spectrum_effect
@@ -81,7 +80,7 @@ BOOST_AUTO_TEST_CASE(effect)
     DoubleWithUnit observation_zenith = config_level_1b->sounding_zenith(channel_idx);
     DoubleWithUnit relative_azimuth = config_level_1b->relative_azimuth(channel_idx);
 
-    RamanSiorisEffect raman = RamanSiorisEffect(scale_factor, used_flag, 
+    RamanSiorisEffect raman = RamanSiorisEffect(scale_factor,
                                                 channel_idx, 
                                                 solar_zenith, observation_zenith, relative_azimuth,
                                                 atm_rayleigh, solar_model, albedo);

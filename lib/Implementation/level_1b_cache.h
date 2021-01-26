@@ -5,13 +5,26 @@
 namespace FullPhysics {
 /****************************************************************//**
   This is a Level1b implementation that just saves the data read from
-  another Level1b object. We then allow these values to be changed if
+  another Level1b object, or the data can be directly passed in.
+  We then allow these values to be changed if
   desired. This can be useful when setting up special run in Python, 
   among other uses.
 *******************************************************************/
 class Level1bCache: public Level1b {
 public:
   Level1bCache(const Level1b& L1_in);
+  Level1bCache(const blitz::Array<double, 1>& Lat,
+	       const blitz::Array<double, 1>& Lon,
+	       const blitz::Array<double, 1>& Sounding_zenith,	       
+	       const blitz::Array<double, 1>& Sounding_azimuth,
+	       const blitz::Array<double, 1>& Solar_zenith,	       
+	       const blitz::Array<double, 1>& Solar_azimuth,
+	       const blitz::Array<double, 1>& Altitude,
+	       const blitz::Array<double, 1>& Relative_velocity,
+	       const blitz::Array<double, 2>& Stokes_coeff,
+	       const std::vector<boost::shared_ptr<SpectralDomain> >& Samp_grid,
+	       const std::vector<boost::shared_ptr<Time> >& Tm,
+	       const std::vector<boost::shared_ptr<SpectralRange> >& Rad);
   virtual ~Level1bCache() {}
   virtual void print(std::ostream& Os) const {Os << "Level1bCache";}
   virtual int number_spectrometer() const { return (int) lat.size(); }
@@ -225,6 +238,12 @@ private:
   std::vector<SpectralDomain> samp_grid;
   std::vector<Time> tm;
   std::vector<SpectralRange> rad;
+  Level1bCache() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Level1bCache);
 #endif

@@ -2,7 +2,6 @@
 #define CONFIGURATION_FIXTURE_H
 #include "absorber.h"
 #include "aerosol_optical.h"
-#include "pressure_level_input.h"
 #include "error_analysis.h"
 #include "connor_solver.h"
 #include "spectral_window.h"
@@ -41,7 +40,6 @@ public:
   boost::shared_ptr<Aerosol> config_aerosol;
   boost::shared_ptr<RtAtmosphere> config_atmosphere;
   boost::shared_ptr<StateVector> config_state_vector;
-  boost::shared_ptr<PressureLevelInput> config_pressure_level_input;
   boost::shared_ptr<ErrorAnalysis> config_error_analysis;
   boost::shared_ptr<ConnorSolver> config_solver;
   boost::shared_ptr<SpectralWindow> config_spectral_window;

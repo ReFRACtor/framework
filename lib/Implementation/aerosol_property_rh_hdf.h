@@ -45,6 +45,7 @@ public:
 					    int nscatt = -1) const;
   virtual void print(std::ostream& Os) const;
 private:
+  boost::shared_ptr<Pressure> press;
   boost::shared_ptr<RelativeHumidity> rh;
   std::vector<AutoDerivative<double> > rh_val;
   std::vector<double> rh_val_d; // Temporary

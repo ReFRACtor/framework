@@ -73,7 +73,7 @@ void full_gridding( // Inputs
   This class computes Bottom of the Atmosphere radiance
 *******************************************************************/
 
-class ChapmanBOA { 
+class ChapmanBOA : public Printable<ChapmanBOA> { 
 
 public:
 
@@ -100,13 +100,24 @@ public:
   /// Compute transmittance using molecular extinction and pre-computed angles
   const blitz::Array<AutoDerivative<double>, 1> transmittance(const blitz::Array<AutoDerivative<double>, 1>& extinction) const;
   const AutoDerivative<double> transmittance(const blitz::Array<AutoDerivative<double>, 1>& extinction, int beam_index) const;
+
+//-----------------------------------------------------------------------
+/// Print description of object.
+//-----------------------------------------------------------------------
+
+  virtual void print(std::ostream& Os) const {Os << "ChapmanBOA";}
+
     
 private:
-
   blitz::Array<AutoDerivative<double>, 2> chapmanfactors_;
   blitz::Array<AutoDerivative<double>, 1> toa_nadir_szangles_;
   blitz::Array<AutoDerivative<double>, 1> toa_entry_szangles_;
-
+  ChapmanBOA() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ChapmanBOA);
 #endif

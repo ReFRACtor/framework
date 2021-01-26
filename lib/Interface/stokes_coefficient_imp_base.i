@@ -41,13 +41,12 @@ public:
   virtual boost::shared_ptr<StokesCoefficient> clone() const = 0;
   %python_attribute_derived(stokes_coefficient, ArrayAd<double, 2>);
   %sub_state_virtual_func(StokesCoefficient);
+  %pickle_serialization();
 protected:
   mutable bool cache_stale;
   mutable ArrayAd<double, 2> stokes_coeff;
   virtual void calc_stokes_coeff() const = 0;
   StokesCoefficientImpBase();
-  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag);
+  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
-

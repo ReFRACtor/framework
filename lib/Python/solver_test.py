@@ -13,11 +13,11 @@ def test_gsl_bard():
     pt = solver.accepted_points
     assert len(pt) > 3
 
-def test_fm(config_forward_model):
+def test_fm(sample_forward_model):
     '''This illustrates our previous lack of support of 
     boost::optional<blitz::Range> - fixed now'''
-    assert config_forward_model.stacked_pixel_range(0).first() == 0
-    assert config_forward_model.stacked_pixel_range(0).last() == 835
+    assert sample_forward_model.stacked_pixel_range(0).first() == 0
+    assert sample_forward_model.stacked_pixel_range(0).last() == 835
 
 def test_to_list():
     '''This ensures there are no problems with ArrayAd::to_list'''

@@ -22,5 +22,6 @@ public:
   %python_attribute(num_der1_evaluations, int);
   virtual void zero_num_evaluations();
   %python_attribute(gradient_size, int);
+  %pickle_serialization();
 };
 }

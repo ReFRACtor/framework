@@ -69,5 +69,6 @@ def spectrum_effect(self):
      res.append(res2)
   return res
   }
+  %pickle_serialization();
 };
 }

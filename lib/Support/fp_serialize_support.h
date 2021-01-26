@@ -3,17 +3,20 @@
 // This contains various support routines for *implementing* the boost
 // serialization (as opposed to *using*  the serialization
 #include "refractor_config.h"
+#include "weak_ptr_serialize_support.h"
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
 #include <boost/serialization/optional.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/list.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
 // At boost 1.64, the header file to include for boost::array changed
 // names. Pretty annoying, but select the right file to include
-#ifdef HAVE_BOOST_SERIALIZATION_BOOST_ARRAY_HPP
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 106400
 #include <boost/serialization/boost_array.hpp>
 #else
 #include <boost/serialization/array.hpp>
@@ -47,4 +50,5 @@ using boost::archive::polymorphic_oarchive;
 #endif
 
 #include "blitz_array_serialize_support.h"
+#include "observer_serialize_support.h"
 #endif

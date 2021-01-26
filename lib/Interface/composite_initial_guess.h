@@ -77,6 +77,10 @@ public:
   virtual void build_apriori_covariance(blitz::Array<double, 2>& m, 
 					int index) const = 0;
   virtual void print(std::ostream& Os) const {Os << "InitialGuessBuilder";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -133,8 +137,15 @@ public:
   {
     blist.remove(B);
   }
+  CompositeInitialGuess() {}
 private:
   std::list<boost::shared_ptr<InitialGuessBuilder> > blist;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(InitialGuessBuilder);
+FP_EXPORT_KEY(CompositeInitialGuess);
 #endif

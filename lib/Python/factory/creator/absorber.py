@@ -5,7 +5,6 @@ from enum import Enum
 import numpy as np
 
 from .base import Creator, ParamPassThru
-from .value import CreatorFlaggedValue
 from .util import ExtendedFormatter
 from .. import param
 
@@ -95,17 +94,22 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
         return vmr_profile
 
 
-class AbsorberVmrLevel(CreatorFlaggedValue):
+class AbsorberVmrLevel(Creator):
     "Creates a AbsorberVmrLevel that supplies a AbsorberVmr class for use in an creating an Atmosphere"
 
+    vmr_profile = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
 
     # Callers should specify either log_retrieval or mapping; not both
     log_retrieval = param.Scalar(bool, required=False)
-    mapping = param.InstanceOf(rf.Mapping, required=False)
+    mapping = param.InstanceOf(rf.StateMapping, required=False)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
     gas_name = param.Scalar(str, required=False)
+
+    # Optional pressure grid matching the size of the VMR coefficients when
+    # they are different due to StateMapping handling interpolation
+    coeff_pressure = param.InstanceOf(rf.Pressure, required=False, default=None)
 
     def create(self, gas_name=None, **kwargs):
 
@@ -118,27 +122,28 @@ class AbsorberVmrLevel(CreatorFlaggedValue):
             raise param.ParamError("Specifying both log_retrieval and mapping is ambiguous")
         elif self.log_retrieval() is not None:
             if self.log_retrieval():
-                effective_mapping = rf.MappingLog()
+                effective_mapping = rf.StateMappingLog()
             else:
-                effective_mapping = rf.MappingLinear()
+                effective_mapping = rf.StateMappingLinear()
         elif self.mapping() is not None:
             effective_mapping = self.mapping()
         else:
-            effective_mapping = rf.MappingLinear()
+            effective_mapping = rf.StateMappingLinear()
 
-        vmr_profile = self.value(gas_name=gas_name)
+        vmr_profile = self.vmr_profile(gas_name=gas_name)
 
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
-        if isinstance(effective_mapping, rf.MappingLog) and np.any(vmr_profile < 0):
+        if isinstance(effective_mapping, rf.StateMappingLog) and np.any(vmr_profile < 0):
             raise param.ParamError("Log retrieval selected and negative values in VMR profile for {}".format(gas_name))
-        return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, self.retrieval_flag(gas_name=gas_name), gas_name, effective_mapping)
+        return rf.AbsorberVmrLevel(self.pressure(), vmr_profile, gas_name, effective_mapping, self.coeff_pressure())
 
 
-class AbsorberVmrLevelScaled(CreatorFlaggedValue):
+class AbsorberVmrLevelScaled(Creator):
     "Creates a AbsorberVmrLevelScaled that supplies a AbsorberVmr class for use in an creating an Atmosphere"
 
+    vmr_profile = param.Array(dims=1)
     pressure = param.InstanceOf(rf.Pressure)
 
     # Normally passed from through the create method from the AbsorberGasDefinition creator
@@ -152,17 +157,17 @@ class AbsorberVmrLevelScaled(CreatorFlaggedValue):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        vmr_profile = self.value(gas_name=gas_name)
+        vmr_profile = self.vmr_profile(gas_name=gas_name)
 
         if np.any(np.isnan(vmr_profile)):
             raise param.ParamError("NaN values detected in VMR profile supplied for {}".format(gas_name))
 
-        ret_flag = bool(self.retrieval_flag(gas_name=gas_name)[0])
-        return rf.AbsorberVmrLevelScaled(self.pressure(), vmr_profile, self.scaling(), ret_flag, gas_name)
+        return rf.AbsorberVmrLevelScaled(self.pressure(), vmr_profile, self.scaling(), gas_name)
 
 
-class AbsorberVmrMet(CreatorFlaggedValue):
+class AbsorberVmrMet(Creator):
 
+    vmr_profile = param.Array(dims=1)
     met = param.InstanceOf(rf.Meteorology)
     pressure = param.InstanceOf(rf.Pressure)
 
@@ -171,7 +176,7 @@ class AbsorberVmrMet(CreatorFlaggedValue):
         if gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.value(gas_name=gas_name)[0], bool(self.retrieval_flag(gas_name=gas_name)[0]), gas_name)
+        return rf.AbsorberVmrMet(self.met(), self.pressure(), self.vmr_profile(gas_name=gas_name)[0], gas_name)
 
 
 class AbscoInterpolationOption(Enum):
@@ -289,12 +294,11 @@ class AbscoAer(AbscoCreator):
 class AbsorberGasDefinition(ParamPassThru):
     "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
 
-    vmr = param.InstanceOf(rf.AbsorberVmr)
+    vmr_profile = param.InstanceOf(rf.AbsorberVmr)
     absorption = param.InstanceOf(rf.GasAbsorption)
 
-
 class AbsorberAbsco(Creator):
-    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
+    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreators absorber value"
 
     gases = param.Iterable()
     pressure = param.InstanceOf(rf.Pressure)
@@ -333,3 +337,34 @@ class AbsorberAbsco(Creator):
         else:
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
 
+class AbsorberVmrOnly(Creator):
+    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
+
+    gases = param.Iterable()
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    altitude = param.ObjectVector("altitude")
+    num_sub_layers = param.Scalar(int, required=False)
+    constants = param.InstanceOf(rf.Constant)
+    default_gas_definition = param.Dict(required=False)
+
+    def create(self, **kwargs):
+
+        vmrs = []
+
+        for gas_name in self.gases():
+            if gas_name in self.config_def:
+                self.register_parameter(gas_name, param.Dict())
+                gas_def = self.param(gas_name, gas_name=gas_name)
+            else:
+                gas_def = self.default_gas_definition(gas_name=gas_name)
+
+            if gas_def is None:
+                raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
+
+            if not "vmr" in gas_def:
+                raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
+
+            vmrs.append(gas_def['vmr'])
+
+        return vmrs

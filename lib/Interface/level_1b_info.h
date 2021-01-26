@@ -11,7 +11,7 @@ namespace FullPhysics {
   Used to get observation information from L1B readers
 *******************************************************************/
 
-class Level1bInfo {
+class Level1bInfo : public Printable<GenericObject> {
 public:
 
 //-----------------------------------------------------------------------
@@ -77,7 +77,19 @@ private:
 //-----------------------------------------------------------------------
     static bool compare_level1b_time(const boost::shared_ptr<Level1b>& level1b_1, const boost::shared_ptr<Level1b>& level1b_2, Time search_time, int spec_index=0);
 
+//-----------------------------------------------------------------------
+/// Print description of object.
+//-----------------------------------------------------------------------
+
+  virtual void print(std::ostream& Os) const {Os << "Level1bInfo";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(Level1bInfo);
+
 #endif

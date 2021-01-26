@@ -36,6 +36,7 @@ public:
   virtual ArrayAd<double, 1> vmr_grid(const Pressure& P) const;
   %python_attribute(state_used, virtual blitz::Array<bool, 1>);
   std::string print_to_string() const;
+  %pickle_serialization();
 };
 }
 

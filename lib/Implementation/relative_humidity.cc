@@ -1,7 +1,20 @@
 #include "relative_humidity.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include "default_constant.h"
 using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RelativeHumidity::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  FP_GENERIC_BASE(RelativeHumidity);
+  ar & FP_NVP(absorber) & FP_NVP(temp) & FP_NVP(press) & FP_NVP(c);
+}
+
+FP_IMPLEMENT(RelativeHumidity);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

@@ -17,20 +17,22 @@ namespace FullPhysics {
   f(x) = x*(coeff[0]^0) + x*(coeff[1]^1) ... + x*(coeff[n]^n)
   Where n is spectral_coefficient length.
 
-  one_based_ describes whether the first index at which the
-  polynomial is evaluted is index 0 or 1 (one-based).
+  The x values for the evaluated polynomical ranges from 0 to the
+  number of samples. The offset constructor argument is a number
+  added to each x value. Hence, x becomes x + offset.
 *******************************************************************/
 class Level1bSampleCoefficient: public Level1b {
+
 public:
-  Level1bSampleCoefficient(const bool One_based = true) : one_based_(One_based) { };
-  virtual ~Level1bSampleCoefficient() { };
+
+  virtual ~Level1bSampleCoefficient() = default;
 
 //-----------------------------------------------------------------------
 /// Number of samples of data corresponding to the sample_grid size for
 //  a given instrument channel
 //-----------------------------------------------------------------------
 
-  virtual int number_sample(int Spec_index) const = 0;
+  virtual int number_sample(int channel_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Returns coefficients for an equation describing the special domain
@@ -40,7 +42,15 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int Spec_index) const = 0;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int channel_index) const = 0;
+
+//-----------------------------------------------------------------------
+/// Return the spectral coefficient variable values that should be 
+/// evaluated at each sample index. In a simple case this might just be 
+/// a zero based or one based indexing of the samples.
+//-----------------------------------------------------------------------
+
+  virtual blitz::Array<double, 1> spectral_variable(int channel_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Returns the sample grid (ie wavenumber, wavelength, etc) for the
@@ -49,17 +59,20 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain sample_grid(int Spec_index) const;
+  virtual SpectralDomain sample_grid(int channel_index) const;
 
 //-----------------------------------------------------------------------
 /// Print description of object.
 //-----------------------------------------------------------------------
 
   virtual void print(std::ostream& Os) const {Os << "Level1bSampleCoefficient";}
-
 private:
-  bool one_based_;
-  virtual double calculate_sample_value_from_coeffs(int Spec_index, int sample_idx) const;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 } // End of FullPhysics namespace
+
+FP_EXPORT_KEY(Level1bSampleCoefficient);
+
 #endif

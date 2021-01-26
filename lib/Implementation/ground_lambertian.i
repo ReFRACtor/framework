@@ -8,19 +8,18 @@
 #include "sub_state_vector_array.h"
 %}
 
-%base_import(ground)
-%base_import(sub_state_vector_array)
+%base_import(ground_imp_base)
 %import "double_with_unit.i"
 %import "array_with_unit.i"
 
 %fp_shared_ptr(FullPhysics::GroundLambertian);
 namespace FullPhysics {
-class GroundLambertian: public SubStateVectorArray<Ground> {
+class GroundLambertian: public GroundImpBase {
 public:
   GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
-                   const blitz::Array<bool,2>& Flag, 
                    const ArrayWithUnit<double, 1>& Ref_points,
-                   const std::vector<std::string>& Desc_band_names);
+                   const std::vector<std::string>& Desc_band_names,
+                   boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
   virtual const AutoDerivative<double> albedo(const DoubleWithUnit wave_point, const int spec_index) const;
@@ -34,5 +33,6 @@ public:
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
   virtual std::string desc() const;
+  %pickle_serialization();
 };
 }

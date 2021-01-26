@@ -22,7 +22,7 @@ public:
   virtual ArrayAd<double, 3> 
   phase_function_moment_each_layer(double wn, int nmom = -1, 
 				   int nscatt = -1) const;
-
+  %pickle_serialization();
 };
 }
 

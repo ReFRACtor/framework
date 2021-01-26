@@ -54,12 +54,11 @@ public:
   %sub_state_virtual_func(AerosolProperty);
   %python_attribute(aerosol_parameter, blitz::Array<double, 1>);
   %python_attribute(aerosol_parameter_uncertainty, blitz::Array<double, 1>);
+  %pickle_serialization();
 protected:
-  void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag);
+  void init(const blitz::Array<double, 1>& Coeff);
   AerosolPropertyImpBase();
-  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff, 
-			 const blitz::Array<bool, 1>& Used_flag);
+  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
 

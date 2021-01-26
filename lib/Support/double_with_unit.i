@@ -26,6 +26,7 @@ public:
   DoubleWithUnit convert(const std::string& R) const;
   DoubleWithUnit convert_wave(const Unit& R) const;
   DoubleWithUnit convert_wave(const std::string& R) const;
+  %pickle_serialization();
   // There is a cyclic dependency here. Go ahead and just leave this
   // out for now, we can come up with a solution if we need to.
   // DoubleWithUnit convert_wave(const Unit& R, const SpectralDomain& Sd) const;

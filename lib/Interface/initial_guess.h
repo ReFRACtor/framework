@@ -36,6 +36,12 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void print(std::ostream& Os) const {Os << "InitialGuess";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(InitialGuess);
 #endif

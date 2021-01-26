@@ -18,7 +18,7 @@ public:
 
   %python_attribute(brdf_interface, boost::shared_ptr<Brdf_Linsup_Masters>)
 
-  virtual void setup_geometry(double sza, double azm, double zen) const;
+  virtual void setup_geometry(double sza, double azm, double zen);
 
   %python_attribute(n_brdf_kernels, int)
   %python_attribute(n_kernel_factor_wfs, int)
@@ -26,6 +26,7 @@ public:
   %python_attribute(n_surface_wfs, int)
   %python_attribute(do_shadow_effect, bool)
   virtual bool do_kparams_derivs(const int kernel_index) const;
+  %pickle_serialization();
 };
 
 class LidortRtDriver : public SpurrRtDriver {
@@ -36,33 +37,35 @@ public:
 
   %python_attribute(number_moment, int)
   %python_attribute(number_stream, int)
-  void setup_sphericity(double zen) const;
-  void set_plane_parallel() const;
-  void set_pseudo_spherical() const;
-  void set_plane_parallel_plus_ss_correction() const;
-  void set_line_of_sight() const;
+  void setup_sphericity(double zen);
+  void set_plane_parallel();
+  void set_pseudo_spherical();
+  void set_plane_parallel_plus_ss_correction();
+  void set_line_of_sight();
 
   %python_attribute(do_multi_scatt_only, bool)
   %python_attribute(pure_nadir, bool)
+  %python_attribute(do_thermal_scattering, bool)
 
   /// Access to BRDF driver
   %python_attribute(lidort_brdf_driver, boost::shared_ptr<LidortBrdfDriver>)
   %python_attribute(brdf_interface, boost::shared_ptr<Brdf_Linsup_Masters>)
   %python_attribute(lidort_interface, boost::shared_ptr<Lidort_Lps_Masters>)
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid) const;
-  void setup_geometry(double sza, double azm, double zen) const;
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb) const;
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb);
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf) const;
-  void clear_linear_inputs() const;
+                            const blitz::Array<double, 2>& pf);
+  void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
                            const ArrayAd<double, 2>& pf,
-                           bool do_surface_linearization) const;
+                           bool do_surface_linearization);
   void calculate_rt() const;
   double get_intensity() const;
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  %pickle_serialization();
 };
 
 }

@@ -1,18 +1,16 @@
 #ifndef GROUND_COXMUNK_H
 #define GROUND_COXMUNK_H
 
-#include "ground.h"
+#include "ground_imp_base.h"
 #include "auto_derivative.h"
-#include "sub_state_vector_array.h"
 
 namespace FullPhysics {
 /****************************************************************//**
   This class implements a Coxmunk ground type. 
 *******************************************************************/
-class GroundCoxmunk: public SubStateVectorArray<Ground> {
+class GroundCoxmunk: virtual public GroundImpBase {
 public:
   GroundCoxmunk(const double Windspeed,
-                const bool& Ws_flag, 
                 const blitz::Array<double, 1>& Refr_index);
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
@@ -36,7 +34,12 @@ public:
 private:
 
   blitz::Array<double, 1> refractive_index_;
-
+  GroundCoxmunk() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(GroundCoxmunk);
 #endif

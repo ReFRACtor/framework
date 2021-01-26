@@ -51,7 +51,13 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<Altitude> clone() const = 0;
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(Altitude);
+FP_EXPORT_OBSERVER_KEY(Altitude);
 #endif

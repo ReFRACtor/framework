@@ -36,6 +36,17 @@ public:
   { return boost::shared_ptr<TwostreamRtDriver>(boost::dynamic_pointer_cast<TwostreamRtDriver>(rt_driver_)); }
 
   virtual void print(std::ostream& Os, bool Short_form = false) const;
+private:
+  TwostreamRt() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(TwostreamRt);
 #endif

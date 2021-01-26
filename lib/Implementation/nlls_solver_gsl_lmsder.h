@@ -8,7 +8,7 @@ namespace FullPhysics {
   version of the Levenberg-Marquardt NLLS solver.
 *******************************************************************/
 class NLLSSolverGSLLMSDER : 
-    public NLLSSolverGSL {
+    virtual public NLLSSolverGSL {
 
 public:
 
@@ -26,8 +26,9 @@ public:
   NLLSSolverGSLLMSDER(const boost::shared_ptr<NLLSProblem>& p, int max_cost_function_calls, 
                       double dx_tol_abs=0.000001, double dx_tol_rel=0.000001, double g_tol=6.0555e-06, 
                       bool vrbs=false)
-    : NLLSSolverGSL(p, max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol, vrbs)
-  {}
+  {
+    init(p, max_cost_function_calls, dx_tol_abs, dx_tol_rel, g_tol, vrbs);
+  }
 
   virtual ~NLLSSolverGSLLMSDER() {}
 
@@ -42,7 +43,13 @@ protected:
 
   virtual const gsl_multifit_fdfsolver_type* get_gsl_multifit_fdfsolver()
   { return gsl_multifit_fdfsolver_lmsder; /*same as the base class*/ }
-
+  NLLSSolverGSLLMSDER() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NLLSSolverGSLLMSDER);
 #endif

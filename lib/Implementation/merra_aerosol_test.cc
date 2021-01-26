@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(basic)
   blitz::Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
+  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf));
   // Dummy RelativeHumidity, we need to create Aerosol but not
   // actually used.
   boost::shared_ptr<RelativeHumidity> rh_dummy;
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(dateline)
   blitz::Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
+  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
   HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(dateline2)
   blitz::Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
+  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
   HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(dejian_example)
   blitz::Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
-  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf, true));
+  boost::shared_ptr<Pressure> p (new PressureSigma(a,b, psurf));
   boost::shared_ptr<RelativeHumidity> rh_dummy;
   HdfFile aprop(test_data_dir() + "in/aerosol/l2_merra_aerosol.h5");
   boost::shared_ptr<HdfFile> mclimate;

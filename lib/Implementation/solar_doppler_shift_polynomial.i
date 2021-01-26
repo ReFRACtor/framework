@@ -39,5 +39,6 @@ public:
   %python_attribute(solar_distance, DoubleWithUnit)
   virtual SpectralDomain doppler_stretch(
      const SpectralDomain& Spec_domain) const;
+  %pickle_serialization();
 };
 }

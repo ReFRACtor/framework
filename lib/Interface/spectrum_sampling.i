@@ -26,5 +26,7 @@ public:
 		 const SpectralDomain& Lowres_grid, 
 	         const DoubleWithUnit& Edge_extension) const;
   virtual bool need_interpolation(int Spec_index) const;
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
+  %pickle_serialization();
 };
 }

@@ -1,4 +1,5 @@
 #include "lsi_rt.h"
+#include "fp_serialize_support.h"
 #include "ifstream_cs.h"
 #include "bin_map.h"
 #include "ostream_pad.h"
@@ -10,6 +11,20 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LsiRt::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferFixedStokesCoefficient)
+    & FP_NVP(low_stream_rt) & FP_NVP(high_stream_rt)
+    & FP_NVP(optical_depth_boundary) & FP_NVP(main_gas)
+    & FP_NVP(wv_threshold);
+}
+
+FP_IMPLEMENT(LsiRt);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

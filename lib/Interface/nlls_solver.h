@@ -62,7 +62,13 @@ public:
 protected:
 
   boost::shared_ptr<NLLSProblem> P;
-
+  NLLSSolver() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(NLLSSolver);
 #endif

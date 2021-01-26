@@ -22,7 +22,9 @@ extern "C" {
   void brdf_linsup_masters_m_brdf_lin_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_linsup_in_in, void** brdf_sup_out_in, void** brdf_linsup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Linsup_Masters : public virtual GenericObject {
+  // MANUAL CHANGE
+class Brdf_Linsup_Masters : public Printable<Brdf_Linsup_Masters> {
+  // MANUAL CHANGE
 
 public:
   Brdf_Linsup_Masters() 
@@ -39,13 +41,6 @@ public:
   }
 
   virtual ~Brdf_Linsup_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
@@ -173,7 +168,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* brdf_sup_in_lcl = brdf_sup_in_->fortran_type_ptr();
@@ -187,16 +182,15 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     
   }
   
-  friend std::ostream& operator<<(std::ostream &output_stream, const Brdf_Linsup_Masters &obj) {
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
     output_stream << "Brdf_Linsup_Masters:" << std::endl
-      << "          brdf_sup_in: " << obj.brdf_sup_in()  << std::endl
-      << "       brdf_linsup_in: " << obj.brdf_linsup_in()  << std::endl
-      << " brdf_sup_inputstatus: " << obj.brdf_sup_inputstatus()  << std::endl
-      << "         brdf_sup_out: " << obj.brdf_sup_out()  << std::endl
-      << "      brdf_linsup_out: " << obj.brdf_linsup_out()  << std::endl
-      << "brdf_sup_outputstatus: " << obj.brdf_sup_outputstatus()  << std::endl;
-    return output_stream;
-
+      << "          brdf_sup_in: " << brdf_sup_in()  << std::endl
+      << "       brdf_linsup_in: " << brdf_linsup_in()  << std::endl
+      << " brdf_sup_inputstatus: " << brdf_sup_inputstatus()  << std::endl
+      << "         brdf_sup_out: " << brdf_sup_out()  << std::endl
+      << "      brdf_linsup_out: " << brdf_linsup_out()  << std::endl
+      << "brdf_sup_outputstatus: " << brdf_sup_outputstatus()  << std::endl;
   }
 
 private:
@@ -206,6 +200,15 @@ private:
   boost::shared_ptr<Brdf_Sup_Outputs> brdf_sup_out_;
   boost::shared_ptr<Brdf_Linsup_Outputs> brdf_linsup_out_;
   boost::shared_ptr<Brdf_Output_Exception_Handling> brdf_sup_outputstatus_;
+  // MANUAL CHANGE
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -335,7 +338,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* brdf_sup_in_lcl = brdf_sup_in_->fortran_type_ptr();
@@ -596,7 +599,7 @@ public:
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -646,8 +649,9 @@ extern "C" {
   void lps_masters_write_wrap(const char* filename, const int* filename_len, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
   void lps_masters_lps_master_wrap(void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
-
-class Lidort_Lps_Masters : public virtual GenericObject {
+  // MANUAL CHANGE
+class Lidort_Lps_Masters : public Printable<Lidort_Lps_Masters> {
+  // MANUAL CHANGE
 
 public:
   Lidort_Lps_Masters() 
@@ -666,13 +670,6 @@ public:
   }
 
   virtual ~Lidort_Lps_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -869,7 +866,7 @@ public:
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -884,19 +881,19 @@ public:
     lps_masters_write_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
   }
-  
-  friend std::ostream& operator<<(std::ostream &output_stream, const Lidort_Lps_Masters &obj) {
-    output_stream << "Lidort_Lps_Masters:" << std::endl
-      << "   lidort_fixin: " << obj.lidort_fixin()  << std::endl
-      << "   lidort_modin: " << obj.lidort_modin()  << std::endl
-      << "     lidort_sup: " << obj.lidort_sup()  << std::endl
-      << "     lidort_out: " << obj.lidort_out()  << std::endl
-      << "lidort_linfixin: " << obj.lidort_linfixin()  << std::endl
-      << "lidort_linmodin: " << obj.lidort_linmodin()  << std::endl
-      << "  lidort_linsup: " << obj.lidort_linsup()  << std::endl
-      << "  lidort_linout: " << obj.lidort_linout()  << std::endl;
-    return output_stream;
 
+  // MANUAL CHANGE
+  void print(std::ostream &output_stream) const {
+  // MANUAL CHANGE
+    output_stream << "Lidort_Lps_Masters:" << std::endl
+      << "   lidort_fixin: " << lidort_fixin()  << std::endl
+      << "   lidort_modin: " << lidort_modin()  << std::endl
+      << "     lidort_sup: " << lidort_sup()  << std::endl
+      << "     lidort_out: " << lidort_out()  << std::endl
+      << "lidort_linfixin: " << lidort_linfixin()  << std::endl
+      << "lidort_linmodin: " << lidort_linmodin()  << std::endl
+      << "  lidort_linsup: " << lidort_linsup()  << std::endl
+      << "  lidort_linout: " << lidort_linout()  << std::endl;
   }
 
 private:
@@ -908,6 +905,15 @@ private:
   boost::shared_ptr<Lidort_Modified_Lininputs> lidort_linmodin_;
   boost::shared_ptr<Lidort_Linsup_Inout> lidort_linsup_;
   boost::shared_ptr<Lidort_Linoutputs> lidort_linout_;
+  // MANUAL CHANGE
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
+  // MANUAL CHANGE
 };
 
 //-----------------------------------------------------------------------
@@ -1012,7 +1018,7 @@ public:
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -1184,7 +1190,7 @@ public:
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -1375,7 +1381,7 @@ void brdf_input_checker() {
    
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
-  void write_fortran_file(const std::string& filename_in) {
+  void write_fortran_file(const std::string& filename_in) const {
     const char* filename_lcl = filename_in.c_str();
     int filename_in_len = (int) filename_in.size();
     void* sleave_sup_in_lcl = sleave_sup_in_->fortran_type_ptr();
@@ -1413,4 +1419,9 @@ private:
 
 
 }
+
+  // MANUAL CHANGE
+FP_EXPORT_KEY(Brdf_Linsup_Masters);
+FP_EXPORT_KEY(Lidort_Lps_Masters);
+  // MANUAL CHANGE
 #endif

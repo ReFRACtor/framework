@@ -33,5 +33,6 @@ public:
   %python_attribute2(continuum_spectrum, continuum_spectrum_ptr, 
 		     boost::shared_ptr<SolarContinuumSpectrum>)
   virtual Spectrum solar_spectrum(const SpectralDomain& Spec_domain) const;
+  %pickle_serialization();
 };
 }

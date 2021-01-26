@@ -17,21 +17,20 @@
 namespace FullPhysics {
 class SurfaceTemperatureDirect : public SubStateVectorArray<SurfaceTemperature> {
 public:
-    SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp, blitz::Array<bool, 1> flag);
-    virtual ~SurfaceTemperatureDirect() {}
+  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp);
+  virtual ~SurfaceTemperatureDirect() {}
 
-    //-----------------------------------------------------------------------
-    /// Return the temperature of the surface. This is different than the
-    /// temperature near the surface which would be the lowest level of
-    /// the temperature grid.
-    //-----------------------------------------------------------------------
+  //-----------------------------------------------------------------------
+  /// Return the temperature of the surface. This is different than the
+  /// temperature near the surface which would be the lowest level of
+  /// the temperature grid.
+  //-----------------------------------------------------------------------
 
-    virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const;
-    virtual boost::shared_ptr<SurfaceTemperature> clone() const;
+  virtual AutoDerivativeWithUnit<double>
+    surface_temperature(int channel_index) const;
+  virtual boost::shared_ptr<SurfaceTemperature> clone() const;
 
-    std::string state_vector_name_i(int i) const;
-
-private:
-    Unit units;
+  std::string state_vector_name_i(int i) const;
+  %pickle_serialization();
 };
 }

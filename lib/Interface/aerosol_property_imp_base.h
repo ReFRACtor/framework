@@ -15,7 +15,9 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class AerosolPropertyImpBase: public SubStateVectorArray<AerosolProperty> {
+class AerosolPropertyImpBase:
+    virtual public SubStateVectorArray<AerosolProperty>
+{
 public:
   virtual ~AerosolPropertyImpBase() {}
   virtual boost::shared_ptr<AerosolProperty> clone() const = 0;
@@ -81,10 +83,9 @@ protected:
 /// Initialize object.
 //-----------------------------------------------------------------------
 
-  void init(const blitz::Array<double, 1>& Coeff, 
-	    const blitz::Array<bool, 1>& Used_flag)
+  void init(const blitz::Array<double, 1>& Coeff)
   { 
-    SubStateVectorArray<AerosolProperty>::init(Coeff, Used_flag);
+    SubStateVectorArray<AerosolProperty>::init(Coeff);
   }
 
 //-----------------------------------------------------------------------
@@ -95,14 +96,21 @@ protected:
   AerosolPropertyImpBase() { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
-/// See SubStateVectorArray for a discussion of Mark_according_to_press and
-/// Pdep_start.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff, 
-			 const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<AerosolProperty>(Coeff, Used_flag)
-      { }
+  AerosolPropertyImpBase(const blitz::Array<double, 1>& Coeff)
+  {
+    SubStateVectorArray<AerosolProperty>::init(Coeff);
+  }
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<AerosolProperty> SubStateVectorArrayAerosolProperty;
 }
+
+FP_EXPORT_KEY(AerosolPropertyImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayAerosolProperty);
+
 #endif

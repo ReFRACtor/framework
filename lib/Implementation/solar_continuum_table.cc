@@ -1,10 +1,25 @@
 #include "solar_continuum_table.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
 #include <boost/foreach.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SolarContinuumTable::serialize(Archive & ar,
+				    const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SolarContinuumSpectrum)
+    & FP_NVP(domain_unit) & FP_NVP(range_unit)
+    & FP_NVP(table) & FP_NVP(convert_from_photon) & FP_NVP(hdf_file_name)
+    & FP_NVP(hdf_group);
+}
+
+FP_IMPLEMENT(SolarContinuumTable);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

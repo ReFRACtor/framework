@@ -53,6 +53,13 @@ class Constant : public Printable<Constant> {
     //-----------------------------------------------------------------------
     virtual boost::array<double, 7> solar_distance_param() const = 0;
 
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
   };
 }
+
+FP_EXPORT_KEY(Constant);
+
 #endif

@@ -36,5 +36,6 @@ public:
   %python_attribute(rt_driver, boost::shared_ptr<FirstOrderDriver>)
   
   virtual void print(std::ostream& Os, bool Short_form = false) const;
+  %pickle_serialization();
 };
 }

@@ -155,6 +155,7 @@ public:
   H5::H5File& h5_file() { return *h; };
   const H5::H5File& h5_file() const { return *h; };
 private:
+  void init();
   boost::shared_ptr<H5::H5File> h;
   std::string fname;
   Mode mode_;
@@ -179,6 +180,14 @@ private:
 		  const H5::CommonFG& Parent) const;
 #endif
   void write_type(const std::string& Dataname, const H5::DataType& P);
+  HdfFile() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 
 template<> inline H5::PredType HdfFile::pred_arr<int>() const 
@@ -1016,4 +1025,6 @@ template<class T> inline void HdfFile::write_field(const std::string& Dataname,
 }
 
 }
+
+FP_EXPORT_KEY(HdfFile);
 #endif

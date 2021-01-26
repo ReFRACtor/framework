@@ -1,8 +1,22 @@
 #include "fm_nlls_problem.h"
 #include "linear_algebra.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void FmNLLSProblem::serialize(Archive & ar,
+			      const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(NLLSProblem)
+    & FP_NVP(fm) & FP_NVP(statev) & FP_NVP(rad) & FP_NVP(x_a)
+    & FP_NVP(se_sqrt_inv) & FP_NVP(sa_sqrt_inv);
+}
+
+FP_IMPLEMENT(FmNLLSProblem);
+#endif
 
 //-----------------------------------------------------------------------
 /// Constructor.

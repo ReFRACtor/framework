@@ -1,20 +1,32 @@
 #include "ground_lambertian_piecewise.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
 
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void GroundLambertianPiecewise::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundPiecewise);
+}
+
+FP_IMPLEMENT(GroundLambertianPiecewise);
+#endif
+
 GroundLambertianPiecewise::GroundLambertianPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                                                      const blitz::Array<double, 1>& lambertian_values,
-                                                     const blitz::Array<bool, 1>& retrieval_flag)
-: GroundPiecewise(spectral_points, lambertian_values, retrieval_flag)
+                                                     const boost::shared_ptr<StateMapping>& mapping)
+: GroundPiecewise(spectral_points, lambertian_values, mapping)
 {
 }
 
 boost::shared_ptr<Ground> GroundLambertianPiecewise::clone() const
 {
-    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(spectral_points_, coefficient().value(), used_flag));
+    return boost::shared_ptr<Ground>(new GroundLambertianPiecewise(spectral_points_, coefficient().value()));
 }
 
 std::string GroundLambertianPiecewise::sub_state_identifier() const {

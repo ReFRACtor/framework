@@ -13,7 +13,7 @@ namespace FullPhysics {
   This implementation just gets the log of the extinction coefficient
   for each level from the state vector.
 *******************************************************************/
-class AerosolExtinctionLog : public AerosolExtinctionLevel {
+class AerosolExtinctionLog : virtual public AerosolExtinctionLevel {
 public:
 //-----------------------------------------------------------------------
 /// Constructor.
@@ -28,14 +28,20 @@ public:
 //-----------------------------------------------------------------------
 
   AerosolExtinctionLog(const boost::shared_ptr<Pressure>& Press,
-			  const blitz::Array<bool, 1>& Flag, 
 			  const blitz::Array<double, 1>& Aext,
 			  const std::string& Aerosol_name);
 
   virtual ~AerosolExtinctionLog() = default;
 
   virtual boost::shared_ptr<AerosolExtinction> clone() const;
-    
+protected:
+  AerosolExtinctionLog() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(AerosolExtinctionLog);
 #endif

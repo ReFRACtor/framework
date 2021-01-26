@@ -1,4 +1,5 @@
 #include "absorber_absco.h"
+#include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
 #include "old_constant.h"
@@ -9,6 +10,24 @@
 using namespace FullPhysics;
 using namespace blitz;
 inline double sqr(double x) {return x * x;}
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberAbsco::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Absorber)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAbsorberVmr)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverTemperature)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAltitude)
+    & FP_NVP(press) & FP_NVP(temp) & FP_NVP(alt) & FP_NVP(vmr)
+    & FP_NVP(gas_absorption) & FP_NVP(h2o_index) & FP_NVP(o2_index)
+    & FP_NVP(c) & FP_NVP(nsub);
+}
+
+FP_IMPLEMENT(AbsorberAbsco);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

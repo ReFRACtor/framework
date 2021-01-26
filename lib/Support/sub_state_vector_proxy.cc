@@ -1,8 +1,21 @@
 #include "sub_state_vector_proxy.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void SubStateVectorProxy::serialize(Archive & ar,
+				       const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorObserver)
+    & FP_NVP(proxied_observers);
+}
+
+FP_IMPLEMENT(SubStateVectorProxy);
+#endif
 
 //-----------------------------------------------------------------------
 /// Registers the classes that will be proxied. Must be called from
@@ -41,22 +54,6 @@ void SubStateVectorProxy::update_sub_state(const ArrayAd<double, 1>& Sv_sub, con
 /// them to the proxied objects
 //-----------------------------------------------------------------------
 
-void SubStateVectorProxy::mark_used_sub(blitz::Array<bool, 1>& Used) const
-{
-    int offset = 0;
-    BOOST_FOREACH(boost::shared_ptr<SubStateVectorObserver> curr_obs, proxied_observers) {
-        Range prox_range(offset, offset + curr_obs->sub_vector_size() - 1);
-        Array<bool, 1> prox_used(Used(prox_range));
-        curr_obs->mark_used_sub(prox_used);
-        offset += curr_obs->sub_vector_size();
-    }
-}
-
-//-----------------------------------------------------------------------
-/// Extracts the relevant portions of the passed arrays and passes
-/// them to the proxied objects
-//-----------------------------------------------------------------------
-
 
 void SubStateVectorProxy::state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
 {
@@ -69,16 +66,3 @@ void SubStateVectorProxy::state_vector_name_sub(blitz::Array<std::string, 1>& Sv
     }
 }
 
-//-----------------------------------------------------------------------
-/// Output the print results from the proxied classes
-//-----------------------------------------------------------------------
-
-void SubStateVectorProxy::print(std::ostream& Os) const
-{
-    OstreamPad opad(Os, "    ");
-    Os << "SubStateVectorProxy";
-    BOOST_FOREACH(boost::shared_ptr<SubStateVectorObserver> curr_obs, proxied_observers) {
-        curr_obs->print(opad);
-    }
-    opad.strict_sync();
-}

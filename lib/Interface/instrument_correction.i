@@ -38,6 +38,7 @@ public:
    const std::vector<int>& Pixel_list,
    SpectralRange& Radiance) const = 0;
   virtual boost::shared_ptr<InstrumentCorrection> clone() const = 0;
+  %pickle_serialization();
 };
 
 %template(SubStateVectorArrayInstrumentCorrection) FullPhysics::SubStateVectorArray<InstrumentCorrection>;

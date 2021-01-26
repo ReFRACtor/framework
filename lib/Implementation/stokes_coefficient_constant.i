@@ -16,5 +16,6 @@ public:
   virtual boost::shared_ptr<StokesCoefficient> clone() const;
   %python_attribute(stokes_coefficient, ArrayAd<double, 2>)
   void set_stokes_coefficient(const blitz::Array<double, 2> Stokes_coeff);
+  %pickle_serialization();
 };
 }

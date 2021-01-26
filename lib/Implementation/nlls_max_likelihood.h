@@ -11,7 +11,7 @@ namespace FullPhysics {
   Nonlinear Least Squares problem.
 *******************************************************************/
 class NLLSMaxLikelihood : 
-    public NLLSProblem, public NLLSProblemState {
+    virtual public NLLSProblem, virtual public NLLSProblemState {
 
 public:
 
@@ -97,9 +97,13 @@ public:
 
 
 protected:
-
-  const boost::shared_ptr<MaxLikelihood> ML;
-
+  boost::shared_ptr<MaxLikelihood> ML;
+  NLLSMaxLikelihood() {}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(NLLSMaxLikelihood);
 #endif

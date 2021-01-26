@@ -183,7 +183,10 @@ private:
   mutable std::vector<std::vector<double> > tgrid;
   mutable std::vector<int> tstart_offset;
   mutable std::vector<std::vector<double> > bgrid;
-  void fill_pgrid_tgrid_and_bgrid() const;
+  void fill_pgrid_tgrid_and_bgrid() const;  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 template <> inline blitz::Array<double, 3> Absco::read<double, 3>(double wn) const
@@ -212,5 +215,6 @@ inline bool AbscoInterpolator::have_no_broadner() const { return absco->bgrid.si
   
 }
 
+FP_EXPORT_KEY(Absco);
 #endif
 

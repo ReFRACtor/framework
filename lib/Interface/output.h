@@ -264,6 +264,9 @@ private:
   void pass_to_write_t(const std::string& Dataset_name, boost::any* D);
   void pass_to_write(const std::string& Dataset_name, boost::any* D);
   std::map<std::string, boost::any> func;
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 /****************************************************************//**
@@ -349,5 +352,6 @@ public:
   virtual blitz::Array<double,2> f() const = 0;
 };
 }
-  
+
+FP_EXPORT_KEY(Output);
 #endif

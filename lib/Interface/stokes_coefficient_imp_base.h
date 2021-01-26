@@ -23,7 +23,8 @@ namespace FullPhysics {
   PressureImpBase sets things up. But most of the time, you'll want
   to derive from this class.
 *******************************************************************/
-class StokesCoefficientImpBase: public SubStateVectorArray<StokesCoefficient> {
+class StokesCoefficientImpBase:
+    virtual public SubStateVectorArray<StokesCoefficient> {
 public:
   virtual ~StokesCoefficientImpBase() {}
   virtual ArrayAd<double, 2> stokes_coefficient() const
@@ -72,12 +73,11 @@ protected:
   StokesCoefficientImpBase() : cache_stale(true) { }
 
 //-----------------------------------------------------------------------
-/// Constructor that sets the coefficient() and used_flag() values.
+/// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff, 
-			   const blitz::Array<bool, 1>& Used_flag)
-    : SubStateVectorArray<StokesCoefficient>(Coeff, Used_flag),
-      cache_stale(true) {}
+  StokesCoefficientImpBase(const blitz::Array<double, 1>& Coeff)
+    : cache_stale(true)
+  { init(Coeff); }
 private:
   void fill_cache() const
   {
@@ -88,7 +88,13 @@ private:
     }
     cache_stale = false;
   }
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
-
+typedef SubStateVectorArray<StokesCoefficient> SubStateVectorArrayStokesCoefficient;
 }
+
+FP_EXPORT_KEY(StokesCoefficientImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayStokesCoefficient);
 #endif

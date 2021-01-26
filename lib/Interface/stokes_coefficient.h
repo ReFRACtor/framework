@@ -9,7 +9,8 @@ namespace FullPhysics {
   This class maintains the stokes coefficient portion of the state.
 *******************************************************************/
 
-class StokesCoefficient : virtual public StateVectorObserver, 
+class StokesCoefficient : public Printable<StokesCoefficient>,
+			  virtual public StateVectorObserver, 
 			  public Observable<StokesCoefficient> {
 public:
   virtual ~StokesCoefficient() {}
@@ -40,6 +41,14 @@ public:
 //-----------------------------------------------------------------------
 
   virtual boost::shared_ptr<StokesCoefficient> clone() const = 0;
+  virtual void print(std::ostream& Os) const
+  { Os << "StokesCoefficient";}
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+FP_EXPORT_KEY(StokesCoefficient);
+FP_EXPORT_OBSERVER_KEY(StokesCoefficient);
 #endif

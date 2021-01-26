@@ -1,4 +1,5 @@
 #include "l_rad_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
 #include "ground_lambertian.h"
@@ -8,6 +9,22 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void LRadRt::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & FP_NVP(surface_type_int) & FP_NVP(use_first_order_scatt_calc)
+    & FP_NVP(do_second_order) & FP_NVP(sza) & FP_NVP(zen)
+    & FP_NVP(azm) & FP_NVP(wmin) & FP_NVP(wmax) & FP_NVP(rt)
+    & FP_NVP(driver);
+}
+
+FP_IMPLEMENT(LRadRt);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
@@ -254,7 +271,11 @@ void LRadRt::update_altitude(int spec_index) const
     setup_z_matrix_interpol(wmin[spec_index], pf_min, wmax[spec_index], pf_max);
 }
 
-ArrayAd<double, 2> LRadRt::get_z_matrix(const double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop) const
+ArrayAd<double, 2> LRadRt::get_z_matrix
+(const double Wn,
+ int UNUSED(Spec_index),
+ const boost::shared_ptr<OpticalProperties>& Opt_prop
+) const
 {
     ArrayAd<double, 2> zmat;
 
@@ -515,7 +536,7 @@ void LRadRt::print(std::ostream& Os, bool Short_form) const
     opad.strict_sync();
 
     opad << "Z matrix interp wavenumber ranges:\n";
-    for(int wn_idx = 0; wn_idx < wmin.size(); wn_idx++) {
+    for(int wn_idx = 0; wn_idx < (int) wmin.size(); wn_idx++) {
         opad << "  " << wmin[wn_idx] << ", " << wmax[wn_idx] << "\n";
     }
     opad << "\n";

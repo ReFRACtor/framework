@@ -92,10 +92,15 @@ protected:
   { Gradient_at_accepted_points.push_back(gradient); }
 
 
+  IterativeSolverDer() {}
 private:
 
   std::vector< blitz::Array<double, 1> > Gradient_at_accepted_points;
-
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(IterativeSolverDer);
 #endif

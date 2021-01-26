@@ -1,7 +1,20 @@
 #include "radiative_transfer_single_wn.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RadiativeTransferSingleWn::serialize(Archive & ar,
+					  const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferFixedStokesCoefficient)
+    & FP_NVP(atm);
+}
+
+FP_IMPLEMENT(RadiativeTransferSingleWn);
+#endif
 
 Array<double, 2> 
 RadiativeTransferSingleWn::stokes(const SpectralDomain& Spec_domain,

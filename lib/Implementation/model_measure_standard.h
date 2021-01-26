@@ -92,15 +92,15 @@ protected:
 
   void radiance_from_fm();
 
-  //  TEMPORARY
-  //
-  // Should go away after we end support for 
-  // fixed pressure level grid.
-  virtual void vanishing_params_update();
-
   std::vector<boost::shared_ptr<ForwardModel> > fm;
   std::vector<boost::shared_ptr<Observation> > obs;
   boost::shared_ptr<StateVector> sv;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ModelMeasureStandard);
 #endif
