@@ -21,7 +21,7 @@ The core algorithms are written in C++ and Fortran. C++ interface wrappers have 
 
 The framework also has other unique features. It contains an auto derivative system that allows for easy implementation of Jacobian (derivative of radiance with respect to geophysical or instrument parameters) computations for new components. Jacobians are computed through the use of augmented classes that overload mathematical operations such that the Jacobian values are computed along with radiances. This provides a significant advantage over other codes where Jacobians are hand coded or processed using finite differences. Auto derivatives make the code less prone to implementation errors than hand coded Jacobians and faster than finite difference Jacobian calculations. The software also contains the ability for arrays to have an associated unit attached that can be used for automatic unit conversion operations. Having units attached to data values significantly reduces errors related to assumptions about the units of a software interface.RT Retrieval Framework
 
-The software is a fork of the (RtRetrievalFramework)[https://github.com/nasa/RtRetrievalFramework] originally created for JPL's OCO, ACOS and OCO-2 projects for Level-2 processing (NASA NTR-49044).
+The software is a fork of the [RtRetrievalFramework](https://github.com/nasa/RtRetrievalFramework) originally created for JPL's OCO, ACOS and OCO-2 projects for Level-2 processing (NASA NTR-49044).
 
 Documentation
 -------------
