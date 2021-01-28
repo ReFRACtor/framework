@@ -69,8 +69,8 @@ foreach(input_swig_file ${SWIG_INTERFACE_FILES})
     list(APPEND BUILD_USED_SWIG_FILES ${build_swig_file})
     # Note for debugging, can be useful to use -Wall. There is a lot of
     # noise this this, so we don't have this turned on normally
-    #set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn;-Wall")
-    set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-module;${module_name};-cpperraswarn")
+    #set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-interface;_${module_name};-module;${module_name};-cpperraswarn;-Wall")
+    set_source_files_properties(${build_swig_file} PROPERTIES SWIG_FLAGS "-interface;_${module_name};-module;${module_name};-cpperraswarn")
 endforeach()
 
 # Use C++ mode for SWIG

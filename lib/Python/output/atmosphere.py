@@ -7,11 +7,10 @@ from .base import OutputBase
 
 logger = logging.getLogger(__name__)
 
-class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
+class AtmosphereOutputBase(OutputBase):
 
     def __init__(self, output, step_index, atmosphere):
-        OutputBase.__init__(self, output)
-        rf.ObserverIterativeSolver.__init__(self)
+        super().__init__(output)
 
         self.step_index = step_index
         self.atm = atmosphere
@@ -21,6 +20,7 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
 
         # Dimensions
 
+        layer_dim = self.create_dimension("num_layer", self.atm.number_layer, self.step_index)
         level_dim = self.create_dimension("num_level", self.atm.number_layer+1, self.step_index)
         gas_dim = self.create_dimension("num_gas", self.atm.absorber.number_species, self.step_index)
         if self.atm.aerosol is not None:
@@ -36,10 +36,12 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
 
         pressure_var = self.create_variable("pressure_levels", atm_group, float, (level_dim,))
         pressure_var[:] = self.atm.pressure.pressure_grid.value.value
+        pressure_var.units = self.atm.pressure.pressure_grid.units.name
 
         # Temperature
         temperature_var = self.create_variable("temperature_levels", atm_group, float, (level_dim,))
         temperature_var[:] = self.atm.temperature.temperature_grid(self.atm.pressure).value.value
+        temperature_var.units = self.atm.temperature.temperature_grid(self.atm.pressure).units.name
 
         # Absorber
  
@@ -49,10 +51,18 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
         self.set_string_variable("gas_names", absorber_group, (gas_dim, gas_str_dim), gas_name_list)
 
         vmr_var = self.create_variable("vmr", absorber_group, float, (gas_dim, level_dim))
+        gas_column = self.create_variable("column_thickness", absorber_group, float, (gas_dim, layer_dim))
 
         for gas_idx, gas_name in enumerate(gas_name_list):
             avmr = self.atm.absorber.absorber_vmr(gas_name)
             vmr_var[gas_idx, :] = avmr.vmr_grid(self.atm.pressure).value
+
+            gas_column[gas_idx, :] = self.atm.absorber.gas_column_thickness_layer(gas_name).value.value
+            gas_column.units = self.atm.absorber.gas_column_thickness_layer(gas_name).units.name
+
+        dry_air = self.create_variable("dry_air_molecular_density", absorber_group, float, (layer_dim,))
+        dry_air[:] = self.atm.absorber.dry_air_molecular_density_layer.value.value
+        dry_air.units = self.atm.absorber.dry_air_molecular_density_layer.units.name
     
         # Aerosol 
 
@@ -68,6 +78,13 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
                 aer_obj = self.atm.aerosol.aerosol_extinction(aer_idx)
                 ext_var[aer_idx, :] = aer_obj.aerosol_extinction.value
 
+class AtmosphereOutputRetrieval(rf.ObserverIterativeSolver, AtmosphereOutputBase):
+
+    def __init__(self, output, step_index, atmosphere):
+        rf.ObserverIterativeSolver.__init__(self)
+
+        AtmosphereOutputBase.__init__(self, output, step_index, atmosphere)
+
     def notify_update(self, solver):
         try:
             iter_index = solver.num_accepted_steps
@@ -78,3 +95,10 @@ class AtmosphereOutput(rf.ObserverIterativeSolver, OutputBase):
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_tb(exc_traceback)
             raise exc
+
+class AtmosphereOutputSimulation(AtmosphereOutputBase):
+
+    def __init__(self, output, step_index, atmosphere):
+        super().__init__(output, step_index, atmosphere)
+
+        self.output_atmosphere(None)

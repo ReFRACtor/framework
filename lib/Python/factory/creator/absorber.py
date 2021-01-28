@@ -297,7 +297,6 @@ class AbsorberGasDefinition(ParamPassThru):
     vmr_profile = param.InstanceOf(rf.AbsorberVmr)
     absorption = param.InstanceOf(rf.GasAbsorption)
 
-
 class AbsorberAbsco(Creator):
     "Creates an AbsorberAbsco object that statisfies the AtmosphereCreators absorber value"
 
@@ -338,3 +337,34 @@ class AbsorberAbsco(Creator):
         else:
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
 
+class AbsorberVmrOnly(Creator):
+    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
+
+    gases = param.Iterable()
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    altitude = param.ObjectVector("altitude")
+    num_sub_layers = param.Scalar(int, required=False)
+    constants = param.InstanceOf(rf.Constant)
+    default_gas_definition = param.Dict(required=False)
+
+    def create(self, **kwargs):
+
+        vmrs = []
+
+        for gas_name in self.gases():
+            if gas_name in self.config_def:
+                self.register_parameter(gas_name, param.Dict())
+                gas_def = self.param(gas_name, gas_name=gas_name)
+            else:
+                gas_def = self.default_gas_definition(gas_name=gas_name)
+
+            if gas_def is None:
+                raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
+
+            if not "vmr" in gas_def:
+                raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
+
+            vmrs.append(gas_def['vmr'])
+
+        return vmrs

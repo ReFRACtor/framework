@@ -43,6 +43,11 @@ GroundPiecewise::GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points
 }
 
 
+const ArrayWithUnit<double, 1>& GroundPiecewise::spectral_points() const
+{
+    return spectral_points_;
+}
+
 /// Compute surface parameter array used by radiative transfer
 ArrayAd<double, 1> GroundPiecewise::surface_parameter
 (const double wn, const int UNUSED(spec_index)) const

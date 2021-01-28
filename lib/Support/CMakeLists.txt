@@ -13,6 +13,7 @@ set(DIR_SOURCES
     default_constant.cc
     double_with_unit.cc
     environment_substitute.cc
+    float_with_unit.h
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
     fp_time.cc
@@ -40,6 +41,7 @@ set(DIR_SOURCES
     stacked_radiance_mixin.cc
     state_vector.cc
     state_vector_observer.cc
+    string_vector_to_char.cc
     sub_state_vector_observer.cc
     sub_state_vector_proxy.cc
     unit.cc

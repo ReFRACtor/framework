@@ -15,7 +15,7 @@ class ArrayWithUnit(Creator):
     def create(self, **kwargs):
 
         import warnings
-        warnings.warn("Instead of using this creator use framweork.ArrayWithUnit factory class", DeprecationWarning)
+        warnings.warn("Instead of using this creator use framework.ArrayWithUnit factory class", DeprecationWarning)
 
         value = self.value(**kwargs)
         units = self.units()

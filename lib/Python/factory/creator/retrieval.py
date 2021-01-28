@@ -4,13 +4,10 @@ from collections import OrderedDict
 import numpy as np
 
 from .base import Creator
+from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
-
-# Class allow capturing the list of retrieval components from the configuration system elsewhere
-class RetrievalComponents(OrderedDict):
-    pass
 
 class RetrievalBaseCreator(Creator):
 
@@ -308,12 +305,12 @@ class LegacyConnorSolver(Creator):
         fm = self.forward_model()
 
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
-    
+
         cost_func = rf.ConnorCostFunction(sv, fm, observation)
         conv = rf.ConnorConvergence(fm,
-                                 self.threshold(), 
-                                 self.max_iteration(), 
-                                 self.max_divergence(), 
+                                 self.threshold(),
+                                 self.max_iteration(),
+                                 self.max_divergence(),
                                  self.max_chisq())
 
         # Create wrapper function to make the ConnorSolver interface match that of IterativeSolver
@@ -364,6 +361,7 @@ class MaxAPosterioriBase(Creator):
     def opt_problem(self):
         fm = self.forward_model()
 
+        # TODO: This creator assumes forward models have spectral grids, which is not required by interface
         observation = rf.ObservationLevel1b(self.l1b(), self.instrument(), fm.spectral_grid)
 
         apriori = self.a_priori()

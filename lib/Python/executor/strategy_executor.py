@@ -61,9 +61,19 @@ class StrategyExecutor(object):
 
         return config_inst
 
-    def run_solver(self, config_inst, step_index=None):
+    def attach_logging(self, config_inst):
+        "Instructs the configuration instance to attach logging classes. Present here to be overriden by inheriting classes"
+
         config_inst.attach_logging()
+
+    def attach_output(self, config_inst, step_index=None):
+        "Instructs the configuration instance to attach output classes. Present here to be overriden by inheriting classes"
+
         config_inst.attach_output(self.output, step_index)
+
+    def run_solver(self, config_inst, step_index=None):
+        self.attach_logging(config_inst)
+        self.attach_output(config_inst, step_index)
 
         if config_inst.solver is None:
             raise Exception("Solver object was not defined in configuration")
@@ -75,7 +85,10 @@ class StrategyExecutor(object):
 
     def run_forward_model(self, config_inst, step_index=None):
         config_inst.set_initial_guess()
-        config_inst.attach_output(self.output, step_index)
+
+        self.attach_logging(config_inst)
+        self.attach_output(config_inst, step_index)
+
         config_inst.radiance_all()
 
     def retrieval_indexes(self, rc_obj):
@@ -164,6 +177,11 @@ class StrategyExecutor(object):
                 step_keywords['covariance_storage'] = self.covariance_storage
 
             config_inst = self.config_instance(**step_keywords)
+
+            if config_inst.state_vector is not None:
+                logger.debug("Initial State Vector:")
+                logger.debug("---------------------")
+                logger.debug(f"{config_inst.state_vector}")
 
             self.run_solver(config_inst, step_index)
 

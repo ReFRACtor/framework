@@ -40,8 +40,11 @@ public:
 //-----------------------------------------------------------------------
   virtual std::string desc() const { return "AbsorberVmrImpBase"; }
 
-  virtual blitz::Array<bool, 1> state_used() const
-  {
+  virtual blitz::Array<bool, 1> state_used() const  {
+    if (state_vector_start_index() == -1) {
+      throw Exception("Must attach SubStateVectorObserver to state vector before checking used state.");
+    }
+
     blitz::Array<bool, 1> res(sv_full.rows());
     res = false;
     if(state_vector_start_index() < res.rows())

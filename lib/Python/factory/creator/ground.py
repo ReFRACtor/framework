@@ -143,6 +143,43 @@ class BrdfTypeOption(Enum):
     soil = 0
     vegetation = 1
 
+class BrdfIndexes(object):
+
+    def __init__(self, brdf_type):
+        if isinstance(brdf_type, BrdfTypeOption):
+            brdf_type = brdf_type.value
+
+        self.brdf_type = brdf_type
+
+        if brdf_type == BrdfTypeOption.soil.value:
+            self.brdf_class = rf.GroundBrdfSoil
+        elif brdf_type == BrdfTypeOption.vegetation.value:
+            self.brdf_class = rf.GroundBrdfVeg
+        else:
+            raise param.ParamError("Unknown BRDF type option: {}".format(brdf_type))
+
+    @property
+    def kernel_indexes(self):
+        kernel_indexes = (self.brdf_class.RAHMAN_KERNEL_FACTOR_INDEX,
+                          self.brdf_class.RAHMAN_OVERALL_AMPLITUDE_INDEX,
+                          self.brdf_class.RAHMAN_ASYMMETRY_FACTOR_INDEX,
+                          self.brdf_class.RAHMAN_GEOMETRIC_FACTOR_INDEX,
+                          self.brdf_class.BREON_KERNEL_FACTOR_INDEX)
+
+        return kernel_indexes
+
+    @property
+    def weight_offset_index(self):
+        return self.brdf_class.BRDF_WEIGHT_INTERCEPT_INDEX
+
+    @property
+    def weight_slope_index(self):
+        return self.brdf_class.BRDF_WEIGHT_SLOPE_INDEX
+
+    @classmethod
+    def weight_indexes(cls, brdf_type):
+        return (self.weight_offset_index, self.weight_slope_index)
+
 class GroundBrdf(Creator):
 
     brdf_parameters = param.Array(dims=2)
@@ -155,9 +192,11 @@ class GroundBrdf(Creator):
     def which_retrieved(self):
         ret_flag = np.ones(self.brdf_parameters().shape, dtype=bool)
 
+        brdf_indexes = BrdfIndexes(self.brdf_type())
+
         # Turn off all but weight offset and slope
         if not self.retrieve_kernel_params():
-            ret_flag[:, 2:] = False
+            ret_flag[:, brdf_indexes.kernel_indexes] = False
 
         # Flatten to shape as it would appear in the retrieval vector
         return ret_flag.ravel()
@@ -209,14 +248,16 @@ class BrdfWeightFromContinuum(Creator):
         else:
             raise param.ParamError("Unknown BRDF type option: {}".format(brdf_type))
 
-        # Remove offset and slope parameters when calling kernel_value
+        # Obtain parameter indexing consistent with BRDF class
+        brdf_indexes = BrdfIndexes(self.brdf_type())
+
         for chan_idx in range(num_channels):
-            kernel_params = params[chan_idx, 2:]
+            kernel_params = params[chan_idx, brdf_indexes.kernel_indexes]
 
             alb_calc = brdf_class.kernel_value_at_params(kernel_params, sza[chan_idx].value, vza[chan_idx].value, azm[chan_idx].value)
             weight = alb_cont[chan_idx, 0] / alb_calc
             
-            # Replace first parameter with new weight
-            params[chan_idx, 0] = weight
+            # Replace correct parameter index with new weight
+            params[chan_idx, brdf_indexes.weight_offset_index] = weight
 
         return params

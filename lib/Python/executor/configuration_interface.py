@@ -3,12 +3,10 @@ from refractor_swig import (SolverIterationLog, RtAtmosphere, ForwardModel, Iter
                             StateVector, Level1b)
 from .config import find_config_function
 from ..factory import process_config, creator
-from ..output.atmosphere import AtmosphereOutput
-from ..output.radiance import (ForwardModelRadianceOutput,
-                              ObservationRadianceOutput)
+from ..output.atmosphere import AtmosphereOutputRetrieval, AtmosphereOutputSimulation
+from ..output.radiance import ForwardModelRadianceOutput, ObservationRadianceOutput
 from ..output.solver import SolverIterationOutput
-from ..output.state_vector import (StateVectorOutputRetrieval,
-                                  StateVectorOutputSimulation)
+from ..output.state_vector import StateVectorOutputRetrieval, StateVectorOutputSimulation
 
 
 class ConfigurationInterface(ABC):
@@ -212,8 +210,10 @@ class ConfigurationCreator(ConfigurationInterface):
             self.solver.add_observer_and_keep_reference(obs_out)
 
         if self.atmosphere is not None and self.solver is not None:
-            atm_out = AtmosphereOutput(output, step_index, self.atmosphere)
+            atm_out = AtmosphereOutputRetrieval(output, step_index, self.atmosphere)
             self.solver.add_observer_and_keep_reference(atm_out)
+        elif self.atmosphere is not None and self.solver is None:
+            atm_out = AtmosphereOutputSimulation(output, step_index, self.atmosphere)
 
         if self.state_vector is not None and self.solver is not None:
             solver_out = SolverIterationOutput(output, self.solver, step_index)
