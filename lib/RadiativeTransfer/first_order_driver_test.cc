@@ -11,7 +11,7 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(first_order_driver, GlobalFixture)
 
-void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, int sphericity_mode, bool do_deltam_scaling, bool debug_output)
+void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, ArrayAd<double, 1> taua, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, int sphericity_mode, bool do_deltam_scaling, bool debug_output)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
@@ -21,6 +21,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   bool pure_nadir = false;
   int nstreams = 1;
   int nmoms = 2;
+
+  // Aerosol properties
+  double aer_prop_ssa = 0.9;
+  double aer_prop_asym = 0.7;
+  double depol = 0.0;
 
   int nlayer = taug.rows();
   int nparam = taug.number_variable();
@@ -111,23 +116,48 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   }
 
   // Set up atmosphere jacobians to be one for taug and the other for taur
-  taug.jacobian()(all, 0) = 1;
-  taur.jacobian()(all, 1) = 1;
+  if (pert_atm.rows() > 0) {
+      taug.jacobian()(all, 0) = 1;
+  }
+
+  if (pert_atm.rows() > 1) {
+      taur.jacobian()(all, 1) = 1;
+  }
+
+  if (pert_atm.rows() > 2) {
+      taua.jacobian()(all, 2) = 1;
+  }
 
   ArrayAd<double, 1> od(nlayer, nparam);
   ArrayAd<double, 1> ssa(nlayer, nparam);
 
+  ArrayAd<double,1> ray_wt(nlayer, nparam);
+  ArrayAd<double,1> aer_wt(nlayer, nparam);
+
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
-    od(lay_idx) = taur(lay_idx) + taug(lay_idx);
-    ssa(lay_idx) = taur(lay_idx) / od(lay_idx);
+    od(lay_idx) = taur(lay_idx) + taug(lay_idx) + taua(lay_idx);
+    ssa(lay_idx) = (taur(lay_idx) + taua(lay_idx)) / od(lay_idx);
+
+    ray_wt(lay_idx) = taur(lay_idx) / (taur(lay_idx) + aer_prop_ssa * taua(lay_idx));
+    aer_wt(lay_idx) = 1.0 - ray_wt(lay_idx);
   }
+
+  std::cerr << "od.jacobian() = " << od.jacobian() << std::endl;
+  std::cerr << "ssa.jacobian() = " << ssa.jacobian() << std::endl;
 
   // No aerosols, and depolization factor = 0 
   // so simplified phase function moments:
-  ArrayAd<double, 2> pf(3, nlayer, nparam);
+  ArrayAd<double, 2> pf(nmoms+1, nlayer, nparam);
   pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
+
+  for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
+      pf(0, lay_idx) = 1.0;
+      pf(2, lay_idx) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
+
+      for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
+          pf(mom_idx, lay_idx) = pf(mom_idx, lay_idx) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+      }
+  }
 
   // Set up thermal inputs if enabled
   double bb_surface = 0.0;
@@ -177,6 +207,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
     for(int p_idx = 0; p_idx < nparam; p_idx++) {
       blitz::Array<double,1> taug_pert( taug.value().copy() );
       blitz::Array<double,1> taur_pert( taur.value().copy() );
+      blitz::Array<double,1> taua_pert( taua.value().copy() );
 
       blitz::Array<double,1> od_pert( od.value().shape() );
       blitz::Array<double,1> ssa_pert( ssa.value().shape() );
@@ -189,10 +220,13 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       case 1:
         taur_pert(l_idx) += pert_atm(p_idx);
         break;
+      case 2:
+        taua_pert(l_idx) += pert_atm(p_idx);
+        break;
       }
 
-      od_pert = taur_pert + taug_pert;
-      ssa_pert = taur_pert / od_pert;
+      od_pert = taur_pert + taug_pert + taua_pert;
+      ssa_pert = (taur_pert + taua_pert) / od_pert;
 
       refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                 surface_type, surface_params.value().copy(),
@@ -250,10 +284,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
 {
   int nlayer = 2;
-  int nparam = 2;
+  int nparam = 3;
   ArrayAd<double, 1> surface_params(1, 1);
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Use simple lambertian throughout
   int surface_type = LAMBERTIAN;
@@ -276,6 +311,7 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   if (debug_output) {
     std::cerr << "----------------------------" << std::endl
@@ -286,15 +322,15 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
   ////////////////
   // Rayleigh only
@@ -309,6 +345,7 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
 
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   if (debug_output) {
     std::cerr << "----------------------------" << std::endl
@@ -320,14 +357,14 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
   ////////////////
   // Gas + Surface
@@ -339,6 +376,7 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
 
   taur = 1.0e-6/nlayer;
   taug = 1.0/nlayer;
+  taua = 0.0;
 
   if (debug_output) {
     std::cerr << "----------------------------" << std::endl
@@ -350,15 +388,47 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 
+  //////////////////////////
+  // Gas + Surface + Aerosol
+  if (do_thermal && !do_solar) {
+      surface_params = 1.0e-6;
+  } else {
+      surface_params = 1.0;
+  }
+
+  taur = 1.0e-6/nlayer;
+  taug = 1.0/nlayer;
+  taua = 1.0e-2/nlayer;
+
+  if (debug_output) {
+    std::cerr << "----------------------------" << std::endl
+              << "Gas + Surface + Aerosol" << std::endl 
+              << "----------------------------" << std::endl; 
+  }
+
+  pert_atm.resize(3);
+  pert_atm = 1e-4, 1e-8, 1e-4;
+  pert_surf = 1e-8;
+
+  // Each sphericity option, delta-m = false
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
+  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+
+  // Each sphericity option, delta-m = true
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
+  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+ 
 }
 
 BOOST_AUTO_TEST_CASE(lambertian_solar)
