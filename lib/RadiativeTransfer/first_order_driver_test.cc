@@ -116,16 +116,22 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   }
 
   // Set up atmosphere jacobians to be one for taug and the other for taur
+  Array<double, 2> jac_normalization(nparam, nlayer);
+  jac_normalization = 1;
+
   if (pert_atm.rows() > 0) {
-      taug.jacobian()(all, 0) = 1;
+      taug.jacobian()(all, 0) = taug.value();
+      jac_normalization(0, all) = taug.value();
   }
 
   if (pert_atm.rows() > 1) {
-      taur.jacobian()(all, 1) = 1;
+      taur.jacobian()(all, 1) = taur.value();
+      jac_normalization(1, all) = taur.value();
   }
 
   if (pert_atm.rows() > 2) {
-      taua.jacobian()(all, 2) = 1;
+      taua.jacobian()(all, 2) = taua.value();
+      jac_normalization(2, all) = taua.value();
   }
 
   ArrayAd<double, 1> od(nlayer, nparam);
@@ -136,14 +142,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
     od(lay_idx) = taur(lay_idx) + taug(lay_idx) + taua(lay_idx);
-    ssa(lay_idx) = (taur(lay_idx) + taua(lay_idx)) / od(lay_idx);
+    ssa(lay_idx) = (taur(lay_idx) + aer_prop_ssa*taua(lay_idx)) / od(lay_idx);
 
     ray_wt(lay_idx) = taur(lay_idx) / (taur(lay_idx) + aer_prop_ssa * taua(lay_idx));
     aer_wt(lay_idx) = 1.0 - ray_wt(lay_idx);
   }
-
-  std::cerr << "od.jacobian() = " << od.jacobian() << std::endl;
-  std::cerr << "ssa.jacobian() = " << ssa.jacobian() << std::endl;
 
   // No aerosols, and depolization factor = 0 
   // so simplified phase function moments:
@@ -192,6 +195,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                jac_atm_fo, jac_surf_param_fo, jac_surf_temp_fo, jac_atm_temp_fo,
                                                bb_surface, bb_atm);
 
+  // Unnormalize jacobians
+  firstIndex lay_idx; secondIndex jac_idx;
+  jac_atm_lid(rjac, rlay) /=  jac_normalization;
+  jac_atm_fo(rjac, rlay) /=  jac_normalization;
+
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
               << "refl_fo  = " << refl_fo << std::endl;
@@ -201,10 +209,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   BOOST_CHECK_CLOSE(refl_lid, refl_fo, 6e-3);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
+  jac_atm_fd = 0;
   double refl_fd;
 
   for(int l_idx = 0; l_idx < nlayer; l_idx++) {
-    for(int p_idx = 0; p_idx < nparam; p_idx++) {
+    for(int p_idx = 0; p_idx < pert_atm.rows(); p_idx++) {
       blitz::Array<double,1> taug_pert( taug.value().copy() );
       blitz::Array<double,1> taur_pert( taur.value().copy() );
       blitz::Array<double,1> taua_pert( taua.value().copy() );
@@ -226,7 +235,18 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       }
 
       od_pert = taur_pert + taug_pert + taua_pert;
-      ssa_pert = (taur_pert + taua_pert) / od_pert;
+      ssa_pert = (taur_pert + aer_prop_ssa*taua_pert) / od_pert;
+
+      double ray_wt_pert = taur_pert(l_idx) / (taur_pert(l_idx) + aer_prop_ssa * taua_pert(l_idx));
+      double aer_wt_pert = 1.0 - ray_wt_pert;
+
+      pf_pert(all, l_idx) = 0;
+      pf_pert(0, l_idx) = 1.0;
+      pf_pert(2, l_idx) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
+
+      for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
+          pf_pert(mom_idx, l_idx) = pf_pert(mom_idx, l_idx) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+      }
 
       refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
                                                 surface_type, surface_params.value().copy(),
@@ -281,10 +301,10 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
 }
 
-void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order_surface_only(bool do_solar, bool do_thermal, bool debug_output)
 {
   int nlayer = 2;
-  int nparam = 3;
+  int nparam = 2;
   ArrayAd<double, 1> surface_params(1, 1);
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
@@ -295,7 +315,8 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
 
   // Check jacobian using finite derivatives
   // od, ssa
-  blitz::Array<double, 1> pert_atm(2);
+  blitz::Array<double, 1> pert_atm(nparam);
+  pert_atm = 0;
 
   // Perturbation value for surface fd checking
   Array<double, 1> pert_surf(1);
@@ -327,10 +348,30 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+}
+
+void test_first_order_rayleigh_only(bool do_solar, bool do_thermal, bool debug_output)
+{
+  int nlayer = 3;
+  int nparam = 2;
+  ArrayAd<double, 1> surface_params(1, 1);
+  ArrayAd<double, 1> taug(nlayer, nparam);
+  ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
+
+  // Use simple lambertian throughout
+  int surface_type = LAMBERTIAN;
+
+  // Check jacobian using finite derivatives
+  // od, ssa
+  blitz::Array<double, 1> pert_atm(nparam);
+  pert_atm = 0;
+
+  // Perturbation value for surface fd checking
+  Array<double, 1> pert_surf(1);
 
   ////////////////
   // Rayleigh only
@@ -353,7 +394,7 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
               << "----------------------------" << std::endl; 
   }
 
-  pert_atm = 1e-3, -1e-4;
+  pert_atm = taug.value()(0)*0.01, taur.value()(0) * 0.01;
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
@@ -365,6 +406,27 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+}
+
+void test_first_order_gas_surface(bool do_solar, bool do_thermal, bool debug_output)
+{
+  int nlayer = 2;
+  int nparam = 2;
+  ArrayAd<double, 1> surface_params(1, 1);
+  ArrayAd<double, 1> taug(nlayer, nparam);
+  ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
+
+  // Use simple lambertian throughout
+  int surface_type = LAMBERTIAN;
+
+  // Check jacobian using finite derivatives
+  // od, ssa
+  blitz::Array<double, 1> pert_atm(nparam);
+  pert_atm = 0;
+
+  // Perturbation value for surface fd checking
+  Array<double, 1> pert_surf(1);
 
   ////////////////
   // Gas + Surface
@@ -396,6 +458,27 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+}
+
+void test_first_order_gas_surface_aerosol(bool do_solar, bool do_thermal, bool debug_output)
+{
+  int nlayer = 2;
+  int nparam = 3;
+  ArrayAd<double, 1> surface_params(1, 1);
+  ArrayAd<double, 1> taug(nlayer, nparam);
+  ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
+
+  // Use simple lambertian throughout
+  int surface_type = LAMBERTIAN;
+
+  // Check jacobian using finite derivatives
+  // od, ssa
+  blitz::Array<double, 1> pert_atm(nparam);
+
+  // Perturbation value for surface fd checking
+  Array<double, 1> pert_surf(1);
+
 
   //////////////////////////
   // Gas + Surface + Aerosol
@@ -431,13 +514,40 @@ void test_first_order_lambertian(bool do_solar, bool do_thermal, bool debug_outp
  
 }
 
-BOOST_AUTO_TEST_CASE(lambertian_solar)
+BOOST_AUTO_TEST_CASE(surface_only)
 {
   bool do_solar = true;
   bool do_thermal = false;
   bool debug_output = true;
 
-  test_first_order_lambertian(do_solar, do_thermal, debug_output);
+  test_first_order_surface_only(do_solar, do_thermal, debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(rayleigh_only)
+{
+  bool do_solar = true;
+  bool do_thermal = false;
+  bool debug_output = true;
+
+  test_first_order_rayleigh_only(do_solar, do_thermal, debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(gas_surface)
+{
+  bool do_solar = true;
+  bool do_thermal = false;
+  bool debug_output = true;
+
+  test_first_order_gas_surface(do_solar, do_thermal, debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(gas_surface_aerosol)
+{
+  bool do_solar = true;
+  bool do_thermal = false;
+  bool debug_output = true;
+
+  test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
