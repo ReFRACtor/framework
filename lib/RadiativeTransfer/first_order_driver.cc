@@ -342,8 +342,7 @@ const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const
         double dnm1 = 4 * (num_streams_) + 1;
         firstIndex i1; secondIndex i2;
         Range r_all = Range::all();
-        l_truncfac = pf.jacobian()(2*num_streams_, r_all, r_all)(i1, i2) / dnm1 * 
-            pf.value()(2*num_streams_, r_all)(i1);
+        l_truncfac = pf.jacobian()(2*num_streams_, r_all, r_all)(i1, i2) / dnm1;
     }
 
     return l_truncfac;
@@ -386,6 +385,7 @@ void FirstOrderDriver::setup_linear_inputs
     // Truncate jacobian weights for deltam scaling
     Array<double, 1> tms;
     Array<double, 2> l_tms;
+
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
         Array<double, 2> l_truncfac = deltam_linear_trunc_factor(pf);
@@ -400,14 +400,14 @@ void FirstOrderDriver::setup_linear_inputs
             (od.value()(i1) / height_diffs(i1)) * (l_truncfac(i1, i2) * ssa.value()(i1) + truncfac(i1) * ssa.jacobian()(i1, i2));
 
         Array<double, 2> l_correction_fac(l_truncfac.shape());
-        l_correction_fac = l_truncfac(i1, i2) * ssa.value()(i1) - truncfac(i1) * ssa.jacobian()(i1, i2);
+        l_correction_fac = - l_truncfac(i1, i2) * ssa.value()(i1) - truncfac(i1) * ssa.jacobian()(i1, i2);
 
         tms.resize(ssa.rows());
         tms = ssa.value() / (1 - truncfac * ssa.value());
 
         l_tms.resize(ssa.jacobian().shape());
-        l_tms = (ssa.jacobian()(i1, i2) - ssa.value()(i1) / correction_fac(i1) * l_correction_fac(i1, i2)) / 
-            correction_fac(i1);
+        l_tms = (ssa.jacobian()(i1, i2) - tms(i1) * l_correction_fac(i1, i2)) / correction_fac(i1);
+
     } else {
         tms.reference(ssa.value());
         l_tms.reference(ssa.jacobian());

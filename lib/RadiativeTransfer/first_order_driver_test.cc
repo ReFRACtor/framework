@@ -504,13 +504,13 @@ void test_first_order_gas_surface_aerosol(bool do_solar, bool do_thermal, bool d
 
   // Each sphericity option, delta-m = false
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
 
   // Each sphericity option, delta-m = true
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  //test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
  
 }
 
