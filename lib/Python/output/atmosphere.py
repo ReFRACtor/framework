@@ -51,7 +51,7 @@ class AtmosphereOutputBase(OutputBase):
         self.set_string_variable("gas_names", absorber_group, (gas_dim, gas_str_dim), gas_name_list)
 
         vmr_var = self.create_variable("vmr", absorber_group, float, (gas_dim, level_dim))
-        gas_column = self.create_variable("column_thickness", absorber_group, float, (gas_dim, layer_dim))
+        gas_column = self.create_variable("gas_column_thickness", absorber_group, float, (gas_dim, layer_dim))
 
         for gas_idx, gas_name in enumerate(gas_name_list):
             avmr = self.atm.absorber.absorber_vmr(gas_name)
@@ -60,9 +60,9 @@ class AtmosphereOutputBase(OutputBase):
             gas_column[gas_idx, :] = self.atm.absorber.gas_column_thickness_layer(gas_name).value.value
             gas_column.units = self.atm.absorber.gas_column_thickness_layer(gas_name).units.name
 
-        dry_air = self.create_variable("dry_air_molecular_density", absorber_group, float, (layer_dim,))
-        dry_air[:] = self.atm.absorber.dry_air_molecular_density_layer.value.value
-        dry_air.units = self.atm.absorber.dry_air_molecular_density_layer.units.name
+        dry_air = self.create_variable("dry_air_column_thickness", absorber_group, float, (layer_dim,))
+        dry_air[:] = self.atm.absorber.dry_air_column_thickness_layer.value.value
+        dry_air.units = self.atm.absorber.dry_air_column_thickness_layer.units.name
     
         # Aerosol 
 
