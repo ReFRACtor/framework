@@ -1,6 +1,7 @@
 import logging
 
 import numpy as np
+import netCDF4
 
 from refractor import framework as rf
 from .base import OutputBase
@@ -41,6 +42,8 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
         else:
             iter_index = None
 
+        fill_value = netCDF4.default_fillvals['f8']
+
         group_name = self.iter_step_group_name(self.step_index, iter_index)
         group_name += "Spectrum"
         group_name += "/" + "Channel_{}".format(named_spectrum.index + 1)
@@ -61,9 +64,9 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
             grid_data = group[grid_name]
 
             # Populate with fill value for the case where data size changes when overwriting
-            grid_data[:] = grid_data[:].fill_value
+            grid_data[:] = fill_value
         else:
-            grid_data = group.createVariable(grid_name, float, (dim_name,))
+            grid_data = group.createVariable(grid_name, float, (dim_name,), fill_value=fill_value)
 
         npoints = named_spectrum.spectral_domain.data.shape[0]
         grid_data[:npoints] = named_spectrum.spectral_domain.data
@@ -73,9 +76,9 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
             radiance_data = group[radiance_name]
 
             # Populate with fill value for the case where data size changes when overwriting
-            radiance_data[:] = radiance_data[:].fill_value
+            radiance_data[:] = fill_value
         else:
-            radiance_data = group.createVariable(radiance_name, float, (dim_name,))
+            radiance_data = group.createVariable(radiance_name, float, (dim_name,), fill_value=fill_value)
 
         npoints = named_spectrum.spectral_range.data.shape[0]
         radiance_data[:npoints] = named_spectrum.spectral_range.data
@@ -91,8 +94,10 @@ class ForwardModelRadianceOutput(rf.ObserverPtrNamedSpectrum, OutputBase):
             jacobian_name = "jacobian"
             if jacobian_name in group.variables:
                 jacobian_data = group[jacobian_name]
+
+                jacobian_data[:] = fill_value
             else:
-                jacobian_data = group.createVariable(jacobian_name, float, (dim_name, jac_dim))
+                jacobian_data = group.createVariable(jacobian_name, float, (dim_name, jac_dim), fill_value=fill_value)
 
             jacobian_data[:] = rad_ad.jacobian[:]
 
