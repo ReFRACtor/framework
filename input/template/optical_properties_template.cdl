@@ -1,0 +1,76 @@
+netcdf optical_depth {
+dimensions:
+	n_step = UNLIMITED ;
+	n_grid = UNLIMITED ;
+	n_sensor = UNLIMITED ;
+	n_layer = UNLIMITED ;
+	n_gas = UNLIMITED ;
+	n_aerosol = UNLIMITED ;
+	n_moment = UNLIMITED ;
+	n_scatt = 6 ;
+
+	gas_name_length = UNLIMITED ;
+	id_len = 19;   // Example: 20160414_009_109_35
+
+group: Scenario {
+  variables:
+  	char step_id(n_step, id_len) ;
+		step_id:_DeflateLevel = 9 ;
+		step_id:_Shuffle = "true" ;
+  } // group Scenario
+
+group: OpticalProperties {
+  variables:
+  	char gas_name(n_step, n_gas, gas_name_length) ;
+		gas_name:_DeflateLevel = 9 ;
+		gas_name:_Shuffle = "true" ;
+
+  	double grid(n_step, n_sensor, n_grid) ;
+        grid:units = "nm";
+		grid:_DeflateLevel = 9 ;
+		grid:_Shuffle = "true" ;
+
+		int grid_size(n_step, n_sensor) ;
+		grid:_DeflateLevel = 9 ;
+		grid:_Shuffle = "true" ;
+
+  	double gas_optical_depth_per_particle(n_step, n_sensor, n_grid, n_gas, n_layer) ;
+		gas_optical_depth_per_particle:_DeflateLevel = 4 ;
+		gas_optical_depth_per_particle:_Shuffle = "true" ;
+		gas_optical_depth_per_particle:_Storage = "chunked" ;
+		gas_optical_depth_per_particle:_ChunkSizes = 1, 1, 5000, 1, 20 ;
+
+  	double aerosol_extinction_optical_depth_per_particle(n_step, n_sensor, n_grid, n_aerosol, n_layer) ;
+		aerosol_extinction_optical_depth_per_particle:_DeflateLevel = 4 ;
+		aerosol_extinction_optical_depth_per_particle:_Shuffle = "true" ;
+		aerosol_extinction_optical_depth_per_particle:_Storage = "chunked" ;
+		aerosol_extinction_optical_depth_per_particle:_ChunkSizes = 1, 1, 5000, 1, 20 ;
+
+  	double rayleigh_optical_depth(n_step, n_sensor, n_grid, n_layer) ;
+		rayleigh_optical_depth:_DeflateLevel = 4 ;
+		rayleigh_optical_depth:_Shuffle = "true" ;
+		rayleigh_optical_depth:_Storage = "chunked" ;
+		rayleigh_optical_depth:_ChunkSizes = 1, 1, 5000, 20 ;
+
+  	double total_optical_depth(n_step, n_sensor, n_grid, n_layer) ;
+		total_optical_depth:_DeflateLevel = 4 ;
+		total_optical_depth:_Shuffle = "true" ;
+            	total_optical_depth:_Storage = "chunked" ;
+		total_optical_depth:_ChunkSizes = 1, 1, 5000, 20 ;
+
+  	double total_single_scattering_albedo(n_step, n_sensor, n_grid, n_layer) ;
+		total_single_scattering_albedo:_DeflateLevel = 4 ;
+		total_single_scattering_albedo:_Shuffle = "true" ;
+            	total_single_scattering_albedo:_Storage = "chunked" ;
+		total_single_scattering_albedo:_ChunkSizes = 1, 1, 5000, 20 ;
+
+  	double total_phase_function_moments(n_step, n_sensor, n_grid, n_moment, n_layer, n_scatt) ;
+		total_phase_function_moments:_DeflateLevel = 4 ;
+		total_phase_function_moments:_Shuffle = "true" ;
+            	total_phase_function_moments:_Storage = "chunked" ;
+		total_phase_function_moments:_ChunkSizes = 1, 1, 5000, 10, 20, 6 ;
+
+
+} // group OpticalDepth
+
+}
