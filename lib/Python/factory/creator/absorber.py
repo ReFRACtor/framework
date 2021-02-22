@@ -10,7 +10,7 @@ from .. import param
 
 from refractor import framework as rf
 
-DEFAULT_REFERENCE_ATM_FILENAME = os.path.join(os.environ.get("REFRACTOR_INPUTS", "$ENV{REFRACTOR_INPUTS}"), "reference_atmosphere.h5")
+DEFAULT_REFERENCE_ATM_FILENAME = os.path.join(os.environ.get("REFRACTOR_INPUT_PATH", "$ENV{REFRACTOR_INPUT_PATH}"), "reference_atmosphere.h5")
 
 
 class ReferenceAtmFileMixin(object):

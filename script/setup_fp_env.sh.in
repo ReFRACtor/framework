@@ -1,24 +1,26 @@
-refr_install_path=@CMAKE_INSTALL_PREFIX@
-refr_etc_path=$refr_install_path/etc/refractor
+export REFRACTOR_INSTALL_PATH=@CMAKE_INSTALL_PREFIX@
 
-export REFRACTOR_INPUTS=$refr_etc_path/input
+refr_etc_path=$REFRACTOR_INSTALL_PATH/etc/refractor
+export REFRACTOR_INPUT_PATH=$refr_etc_path/input
+export REFRACTOR_TEMPLATE_PATH=$refr_etc_path/template
+
 export abscodir=@ABSCO_DIR@
 export merradir=@MERRA_DIR@
 
 if [ -n "@PYTHON_INSTALL_DIR@" ]; then
-    refr_python_path=$refr_install_path/@PYTHON_INSTALL_DIR@
+    refr_python_path=$REFRACTOR_INSTALL_PATH/@PYTHON_INSTALL_DIR@
 fi
 
 if [ -n "$PATH" ]; then
-  export PATH=$PATH:$refr_install_path/bin
+  export PATH=$PATH:$REFRACTOR_INSTALL_PATH/bin
 else
-  export PATH=$refr_install_path/bin
+  export PATH=$REFRACTOR_INSTALL_PATH/bin
 fi
 
 if [ -n "$LD_LIBRARY_PATH" ]; then
-  export LD_LIBRARY_PATH=$refr_install_path/lib:$refr_python_path/refractor_swig:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_swig:$LD_LIBRARY_PATH
 else
-  export LD_LIBRARY_PATH=$refr_install_path/lib:$refr_python_path/refractor_swig
+  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_swig
 fi
 
 if [ -n "$PYTHONPATH" ]; then

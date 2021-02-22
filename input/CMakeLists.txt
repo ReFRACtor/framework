@@ -31,3 +31,7 @@ foreach(sub_dir fts gosat oco)
             PATTERN "solar" EXCLUDE
             PATTERN "old" EXCLUDE)
 endforeach()
+
+# Template NetCDF files
+install(DIRECTORY template/ DESTINATION ${INPUT_INSTALL_PREFIX}/template
+    FILES_MATCHING PATTERN "*.nc")

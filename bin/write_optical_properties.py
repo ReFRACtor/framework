@@ -17,9 +17,9 @@ from refractor.executor import StrategyExecutor
 logger = logging.getLogger(__file__)
 
 template_basename = "optical_properties_template.nc"
-if "REFRACTOR_INPUTS" in os.environ and os.path.exists(os.path.join(os.environ["REFRACTOR_INPUTS"], template_basename)):
+if "REFRACTOR_TEMPLATE_PATH" in os.environ and os.path.exists(os.path.join(os.environ["REFRACTOR_TEMPLATE_PATH"], template_basename)):
     # From installed path
-    template_filename = os.path.join(os.environ["REFRACTOR_INPUTS"], template_basename)
+    template_filename = os.path.join(os.environ["REFRACTOR_TEMPLATE_PATH"], template_basename)
 else:
     # From source path
     template_dir = os.path.join(os.path.dirname(__file__), '../input/template')
