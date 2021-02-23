@@ -36,7 +36,8 @@ public:
           int Number_streams, 
           int Number_moments, 
           bool do_solar_sources = true, 
-          bool do_thermal_emission = false);
+          bool do_thermal_emission = false,
+          bool do_3M_correction = false);
 
     virtual ~PCARt() = default;
 

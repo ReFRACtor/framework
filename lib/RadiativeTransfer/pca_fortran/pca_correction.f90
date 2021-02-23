@@ -114,7 +114,7 @@ end subroutine pca_3M_correction
 subroutine pca_2M_correction &
           ( max_eofs_2p1, Max_geoms, n_eofs, npoints, ngeoms, PrinComps, & ! Inputs (control, PCs)
             intensity_LD_bin, intensity_2S_bin,                          & ! Inputs (Bin-Intensities)
-            Intensity_Corrfacs )                                           ! Output (Corrections)
+            Intensity_Corrfacs ) bind(C)                                   ! Output (Corrections)
 
       IMPLICIT NONE
 
@@ -128,24 +128,24 @@ subroutine pca_2M_correction &
 
 !  Dimensioning
 
-      INTEGER      , intent(in) :: max_eofs_2p1, Max_geoms
+      INTEGER(c_int)      , intent(in) :: max_eofs_2p1, Max_geoms
 
 !  Control
 
-      INTEGER      , intent(in) :: n_eofs, npoints, ngeoms
+      INTEGER(c_int)      , intent(in) :: n_eofs, npoints, ngeoms
 
 !  Principal components (Pre-allocated)
 
-      REAL(kind=dp), intent(in) :: PrinComps(n_eofs,npoints)
+      REAL(kind=c_double), intent(in) :: PrinComps(n_eofs,npoints)
 
 !  Bin-Intensities 
 
-      REAL(kind=dp), intent(in) :: INTENSITY_LD_BIN(max_eofs_2p1,max_geoms)
-      REAL(kind=dp), intent(in) :: INTENSITY_2S_BIN(max_eofs_2p1,max_geoms)
+      REAL(kind=c_double), intent(in) :: INTENSITY_LD_BIN(max_eofs_2p1,max_geoms)
+      REAL(kind=c_double), intent(in) :: INTENSITY_2S_BIN(max_eofs_2p1,max_geoms)
 
 !  Correction factors (Pre-allocated)
 
-      REAL(kind=dp), intent(out) :: Intensity_Corrfacs(npoints,ngeoms)
+      REAL(kind=c_double), intent(out) :: Intensity_Corrfacs(npoints,ngeoms)
 
 !  local variables
 

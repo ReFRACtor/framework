@@ -40,15 +40,79 @@ std::vector<blitz::Array<double, 3> > PCAEigenSolver::data_perturbations() const
     return result;
 }
 
-blitz::Array<double, 2> PCAEigenSolver::correction(const blitz::Array<double, 1>& lidort_mean, 
-                                                   const blitz::Array<double, 1>& twostream_mean, 
-                                                   const blitz::Array<double, 1>& first_order_mean,
-                                                   const blitz::Array<double, 2>& lidort_plus,
-                                                   const blitz::Array<double, 2>& twostream_plus,
-                                                   const blitz::Array<double, 2>& first_order_plus,
-                                                   const blitz::Array<double, 2>& lidort_minus,
-                                                   const blitz::Array<double, 2>& twostream_minus,
-                                                   const blitz::Array<double, 2>& first_order_minus)
+blitz::Array<double, 2> PCAEigenSolver::correction_2m(const blitz::Array<double, 1>& lidort_mean, 
+                                                      const blitz::Array<double, 1>& twostream_mean, 
+                                                      const blitz::Array<double, 2>& lidort_plus,
+                                                      const blitz::Array<double, 2>& twostream_plus,
+                                                      const blitz::Array<double, 2>& lidort_minus,
+                                                      const blitz::Array<double, 2>& twostream_minus)
+{
+    Range all = Range::all();
+    int num_eofs = principal_components().rows();
+    int num_points = principal_components().cols();
+    int num_stokes = lidort_mean.rows();
+
+    // Check that plus/minus have appropriate shape
+    if(lidort_plus.rows() != num_eofs || lidort_minus.rows() != num_eofs) {
+        throw Exception("LIDORT radiances values for EOF correction do not match number of EOFs");
+    }
+
+    if(twostream_plus.rows() != num_eofs || twostream_minus.rows() != num_eofs) {
+        throw Exception("2stream radiances values for EOF correction do not match number of EOFs");
+    }
+
+    if(lidort_mean.rows() != num_stokes || lidort_plus.cols() != num_stokes || lidort_minus.cols() != num_stokes) {
+        throw Exception("LIDORT number of stokes is inconsistent");
+    }
+
+    if(twostream_mean.rows() != num_stokes || twostream_plus.cols() != num_stokes || twostream_minus.cols() != num_stokes) {
+        throw Exception("2stream number of stokes is inconsistent");
+    }
+
+    firstIndex i1;
+    Array<double, 1> id_mean( where(twostream_mean(i1) > 0, log( lidort_mean / twostream_mean ), 0.0) );
+
+    Array<double, 2> term_1(num_eofs, num_stokes);
+    Array<double, 2> term_2(num_eofs, num_stokes);
+
+    for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+        Array<double, 1> lidort_plus_eof(lidort_plus(eof_idx, all));
+        Array<double, 1> twostream_plus_eof(twostream_plus(eof_idx, all));
+        Array<double, 1> id_plus( where(twostream_plus_eof(i1) > 0, log(lidort_plus_eof / twostream_plus_eof), 0.0) );
+
+        Array<double, 1> lidort_minus_eof(lidort_minus(eof_idx, all));
+        Array<double, 1> twostream_minus_eof(twostream_minus(eof_idx, all));
+        Array<double, 1> id_minus( where(twostream_minus_eof(i1) > 0, log(lidort_minus_eof / twostream_minus_eof), 0.0) );
+  
+        term_1(eof_idx, all) = (id_plus - id_minus) / 2;
+        term_2(eof_idx, all) = (id_plus + id_minus - 2*id_mean) / 2;
+    }
+
+    Array<double, 2> correction(num_points, num_stokes);
+    for(int point_idx = 0; point_idx < num_points; point_idx++) {
+        Array<double, 1> ieof(num_stokes);
+        ieof = id_mean;
+
+        for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
+            double pc = principal_components()(eof_idx, point_idx);
+            ieof = ieof + term_1(eof_idx, all) * pc + term_2(eof_idx, all) * pc * pc;
+        }
+        correction(point_idx, all) = exp(ieof);
+    }
+
+    return correction;
+}
+
+
+blitz::Array<double, 2> PCAEigenSolver::correction_3m(const blitz::Array<double, 1>& lidort_mean, 
+                                                      const blitz::Array<double, 1>& twostream_mean, 
+                                                      const blitz::Array<double, 1>& first_order_mean,
+                                                      const blitz::Array<double, 2>& lidort_plus,
+                                                      const blitz::Array<double, 2>& twostream_plus,
+                                                      const blitz::Array<double, 2>& first_order_plus,
+                                                      const blitz::Array<double, 2>& lidort_minus,
+                                                      const blitz::Array<double, 2>& twostream_minus,
+                                                      const blitz::Array<double, 2>& first_order_minus)
 {
     Range all = Range::all();
     int num_eofs = principal_components().rows();

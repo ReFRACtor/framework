@@ -1,3 +1,4 @@
+#include <fstream>
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
 
@@ -19,9 +20,10 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
              int Number_streams, 
              int Number_moments, 
              bool do_solar_sources, 
-             bool do_thermal_emission) 
+             bool do_thermal_emission,
+             bool do_3M_correction) 
 : RadiativeTransferFixedStokesCoefficient(Stokes_coef), atm(Atm), primary_absorber(Primary_absorber), 
-  bin_method(Bin_method), num_bins(Num_bins), num_eofs(Num_eofs)
+  bin_method(Bin_method), num_bins(Num_bins), num_eofs(Num_eofs), do_3m_correction(do_3M_correction)
 {
 
     // Need to convert aerosol from atmosphere to AerosolOptical for PCA optical properties packing
@@ -175,17 +177,25 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
 {
     Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
     Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
-    Array<double, 1> first_order_mean(first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
 
     // Compute bin mean plus eof and mean minus eof intensity from each RT
     Array<double, 2> lidort_plus(num_eofs, number_stokes());
     Array<double, 2> twostream_plus(num_eofs, number_stokes());
-    Array<double, 2> first_order_plus(num_eofs, number_stokes());
 
     Array<double, 2> lidort_minus(num_eofs, number_stokes());
     Array<double, 2> twostream_minus(num_eofs, number_stokes());
-    Array<double, 2> first_order_minus(num_eofs, number_stokes());
 
+    Array<double, 1> first_order_mean;
+    Array<double, 2> first_order_plus;
+    Array<double, 2> first_order_minus;
+
+    if (do_3m_correction) { 
+        first_order_mean.reference(first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+        first_order_plus.resize(num_eofs, number_stokes());
+        first_order_minus.resize(num_eofs, number_stokes());
+    }
+
+    bool fo_captured = false;
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
         lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
         lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
@@ -198,10 +208,22 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
     }
 
     // Compute correction factors
-    Array<double, 2> bin_corrections = pca_solver->correction(
-            lidort_mean, twostream_mean, first_order_mean,
-            lidort_plus, twostream_plus, first_order_plus,
-            lidort_minus, twostream_minus, first_order_minus);
+    Array<double, 2> bin_corrections;
+    if (do_3m_correction) {
+        bin_corrections.reference(
+            pca_solver->correction_3m(
+                lidort_mean, twostream_mean, first_order_mean,
+                lidort_plus, twostream_plus, first_order_plus,
+                lidort_minus, twostream_minus, first_order_minus)
+            );
+    } else {
+        bin_corrections.reference(
+            pca_solver->correction_2m(
+                lidort_mean, twostream_mean,
+                lidort_plus, twostream_plus,
+                lidort_minus, twostream_minus)
+            );
+     }
 
     return bin_corrections;
 }
@@ -256,9 +278,14 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
             Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
 
-            stokes_output(grid_idx, Range::all()) = 
-                bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
-
+            // The difference here is the 2M correction only applies to the 2stream values
+            if (do_3m_correction) {
+                stokes_output(grid_idx, Range::all()) = 
+                    bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
+            } else {
+                stokes_output(grid_idx, Range::all()) = 
+                    bin_corrections(dom_idx, Range::all()) * twostream_full(Range::all()) + first_order_full(Range::all());
+            }
 
             if (progress_bar) *progress_bar += 1;
         }
@@ -319,8 +346,14 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
             ArrayAd<double, 1> twostream_full(twostream_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
             ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
 
-            stokes_output.value()(grid_idx, Range::all()) = 
-                bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
+            // The difference here is the 2M correction only applies to the 2stream values
+            if (do_3m_correction) {
+                stokes_output.value()(grid_idx, Range::all()) = 
+                    bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
+            } else {
+                stokes_output.value()(grid_idx, Range::all()) = 
+                    bin_corrections(dom_idx, Range::all()) * twostream_full.value()(Range::all()) + first_order_full.value()(Range::all());
+            }
             
             if (stokes_output.number_variable() == 0) {
                 stokes_output.resize_number_variable(twostream_full.number_variable());
@@ -328,8 +361,13 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
 
             // Corrections can be applied for each jacobian independently according to Vijay
             for (int jac_idx = 0; jac_idx < twostream_full.number_variable(); jac_idx++) {
-                stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
-                    bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
+                if (do_3m_correction) {
+                    stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
+                        bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
+                } else {
+                    stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
+                        bin_corrections(dom_idx, Range::all()) * twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
+                }
             }
 
             if (progress_bar) *progress_bar += 1;

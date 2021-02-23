@@ -7,6 +7,7 @@ using namespace FullPhysics;
 using namespace blitz;
 
 extern "C" {
+    void pca_2m_correction(int *max_eofs_2p1, int *Max_geoms, int *n_eofs, int *npoints, int *ngeoms, double *PrinComps, double *intensity_LD_bin, double *intensity_2S_bin, double *Intensity_Corrfacs);
     void pca_3m_correction(int *max_eofs_2p1, int *Max_geoms, int *n_eofs, int *npoints, int *ngeoms, double *PrinComps, double *intensity_LD_bin, double *intensity_2S_bin, double *intensity_FO_bin, double *Intensity_Corrfacs);
 }
 
@@ -134,15 +135,22 @@ BOOST_AUTO_TEST_CASE(correction)
     Array<double, 2> prin_comps(num_eofs, num_points, ColumnMajorArray<2>());
     prin_comps = eigen_g.principal_components();
 
-    blitz::Array<double, 2> calc_correction(num_points, nstokes);
-    calc_correction = eigen_g.correction(lidort_mean, twostream_mean, first_order_mean, lidort_plus, twostream_plus, first_order_plus, lidort_minus, twostream_minus, first_order_minus);
+    blitz::Array<double, 2> calc_correction_3m(num_points, nstokes);
+    calc_correction_3m = eigen_g.correction_3m(lidort_mean, twostream_mean, first_order_mean, lidort_plus, twostream_plus, first_order_plus, lidort_minus, twostream_minus, first_order_minus);
 
-    blitz::Array<double, 2> expt_correction(num_points, ngeoms, ColumnMajorArray<2>());
+    blitz::Array<double, 2> calc_correction_2m(num_points, nstokes);
+    calc_correction_2m = eigen_g.correction_2m(lidort_mean, twostream_mean, lidort_plus, twostream_plus, lidort_minus, twostream_minus);
+
+    blitz::Array<double, 2> expt_correction_3m(num_points, ngeoms, ColumnMajorArray<2>());
+    blitz::Array<double, 2> expt_correction_2m(num_points, ngeoms, ColumnMajorArray<2>());
 
     int num_eofs_2p1 = num_eofs * 2 + 1;
-    pca_3m_correction(&num_eofs_2p1, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction.dataFirst());
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_correction(Range::all(), 0), calc_correction(Range::all(), 0), 1e-10);
+    pca_3m_correction(&num_eofs_2p1, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), intensity_first_order.dataFirst(), expt_correction_3m.dataFirst());
+    pca_2m_correction(&num_eofs_2p1, &ngeoms, &num_eofs, &num_points, &ngeoms, prin_comps.dataFirst(), intensity_lidort.dataFirst(), intensity_twostream.dataFirst(), expt_correction_2m.dataFirst());
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_correction_3m(Range::all(), 0), calc_correction_3m(Range::all(), 0), 1e-10);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(expt_correction_2m(Range::all(), 0), calc_correction_2m(Range::all(), 0), 1e-10);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

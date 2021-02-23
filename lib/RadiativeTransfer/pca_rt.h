@@ -54,7 +54,8 @@ public:
           int Number_streams, 
           int Number_moments, 
           bool do_solar_sources = true, 
-          bool do_thermal_emission = false);
+          bool do_thermal_emission = false,
+          bool do_3M_correction = false);
 
     virtual ~PCARt() = default;
 
@@ -110,6 +111,10 @@ private:
     int num_aerosol;
     int num_layer;
     int num_packed_var;
+
+    // Whether to use the non-standard 3M correction that also involves using FO in the correction factor.
+    // Typically this should always be disabled
+    bool do_3m_correction;
 
     // This more specific interface is needed vs the abstract Aerosol interface
     boost::shared_ptr<AerosolOptical> aerosol_optical;
