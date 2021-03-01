@@ -65,10 +65,10 @@ def find_marked_uniq_function(module, marker):
                 config_func = mod_item
                 config_found = True
             else:
-                raise Exception("Only one ReFRACtor configuration function should be present in file: {}".format(filename))
+                raise Exception("Only one ReFRACtor configuration function should be present in file: {}".format(module.__file__))
     
     if not config_found:
-        raise Exception("No ReFRACtor configuration found in file: {}".format(filename))
+        raise Exception("No ReFRACtor configuration found in file: {}".format(module.__file__))
 
     return config_func
 
