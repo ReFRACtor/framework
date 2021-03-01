@@ -1,8 +1,7 @@
 #ifndef DISPERSION_POLYNOMIAL_H
 #define DISPERSION_POLYNOMIAL_H
-#include "sample_grid.h"
+#include "sample_grid_imp_base.h"
 #include "unit.h"
-#include "sub_state_vector_array.h"
 #include "polynomial_eval.h"
 #include "state_mapping.h"
 
@@ -17,7 +16,7 @@ namespace FullPhysics {
   convention, the polynomial is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class DispersionPolynomial: virtual public SubStateVectorArray<SampleGrid> {
+class DispersionPolynomial: virtual public SampleGridImpBase {
 public:
   DispersionPolynomial(const blitz::Array<double, 1>& Coeff, 
                        const Unit& Coeff_unit,

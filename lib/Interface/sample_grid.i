@@ -20,8 +20,6 @@ namespace FullPhysics {
 
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::SampleGrid>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::SampleGrid>)
-%fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::SampleGrid>)
-%nodefaultctor FullPhysics::SubStateVectorArray<FullPhysics::SampleGrid>;
 
 namespace FullPhysics {
     
@@ -39,8 +37,6 @@ namespace FullPhysics {
         %python_attribute(pixel_grid, virtual SpectralDomain);
       %pickle_serialization();
     };
-    
-    %template(SubStateVectorArraySampleGrid) FullPhysics::SubStateVectorArray<FullPhysics::SampleGrid>;
 }
 
 %template(vector_sample_grid) std::vector<boost::shared_ptr<FullPhysics::SampleGrid> >;

@@ -4,7 +4,6 @@ using namespace FullPhysics;
 using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
-SUB_STATE_VECTOR_ARRAY_SERIALIZE(SampleGrid, SubStateVectorArraySampleGrid);
 
 template<class Archive>
 void SampleGrid::serialize(Archive& ar,

@@ -58,6 +58,7 @@ set(DIR_SOURCES
     rayleigh_imp_base.cc
     rt_atmosphere.cc
     sample_grid.cc
+    sample_grid_imp_base.cc
     solar_absorption_spectrum.cc
     solar_continuum_spectrum.cc
     solar_doppler_shift.cc
