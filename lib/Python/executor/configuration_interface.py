@@ -41,7 +41,7 @@ class ConfigurationInterface(ABC):
         output. This is used by run_forward_model of StrategyExecutor'''
         pass
 
-    def attach_output(self, output, step_index):
+    def attach_output(self, output, step_index, simulation=False):
         '''Attach output for the given step index. 
 
         Note this typically uses the framework Output class, which allows for
@@ -197,7 +197,7 @@ class ConfigurationCreator(ConfigurationInterface):
         output. This is used by run_forward_model of StrategyExecutor'''
         return self.forward_model.radiance_all()
 
-    def attach_output(self, output, step_index):
+    def attach_output(self, output, step_index, simulation=False):
         '''Attach output for the given step index'''
         if output is None:
             return
@@ -205,22 +205,25 @@ class ConfigurationCreator(ConfigurationInterface):
         rad_out = ForwardModelRadianceOutput(output, step_index, self.solver)
         self.forward_model.add_observer_and_keep_reference(rad_out)
 
-        if(self.l1b is not None and self.solver is not None):
+        if self.l1b is not None and self.solver is not None:
             obs_out = ObservationRadianceOutput(output, step_index, self.l1b, self.forward_model)
             self.solver.add_observer_and_keep_reference(obs_out)
 
-        if self.atmosphere is not None and self.solver is not None:
-            atm_out = AtmosphereOutputRetrieval(output, step_index, self.atmosphere)
-            self.solver.add_observer_and_keep_reference(atm_out)
-        elif self.atmosphere is not None and self.solver is None:
-            atm_out = AtmosphereOutputSimulation(output, step_index, self.atmosphere)
+        if self.atmosphere is not None:
 
-        if self.state_vector is not None and self.solver is not None:
-            solver_out = SolverIterationOutput(output, self.solver, step_index)
-            self.solver.add_observer_and_keep_reference(solver_out)
+            if self.solver is None or simulation:
+                atm_out = AtmosphereOutputSimulation(output, step_index, self.atmosphere)
+            elif self.solver is not None:
+                atm_out = AtmosphereOutputRetrieval(output, step_index, self.atmosphere)
+                self.solver.add_observer_and_keep_reference(atm_out)
 
-            sv_out = StateVectorOutputRetrieval(output, step_index, self.state_vector)
-            self.solver.add_observer_and_keep_reference(sv_out)
+        if self.state_vector is not None:
 
-        elif self.state_vector is not None and self.solver is None:
-            sv_out = StateVectorOutputSimulation(output, step_index, self.state_vector)
+            if self.solver is None or simulation:
+                sv_out = StateVectorOutputSimulation(output, step_index, self.state_vector)
+            elif self.solver is not None:
+                solver_out = SolverIterationOutput(output, self.solver, step_index)
+                self.solver.add_observer_and_keep_reference(solver_out)
+
+                sv_out = StateVectorOutputRetrieval(output, step_index, self.state_vector)
+                self.solver.add_observer_and_keep_reference(sv_out)

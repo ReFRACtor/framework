@@ -66,10 +66,10 @@ class StrategyExecutor(object):
 
         config_inst.attach_logging()
 
-    def attach_output(self, config_inst, step_index=None):
+    def attach_output(self, config_inst, step_index=None, simulation=False):
         "Instructs the configuration instance to attach output classes. Present here to be overriden by inheriting classes"
 
-        config_inst.attach_output(self.output, step_index)
+        config_inst.attach_output(self.output, step_index, simulation)
 
     def run_solver(self, config_inst, step_index=None):
         self.attach_logging(config_inst)
@@ -87,7 +87,7 @@ class StrategyExecutor(object):
         config_inst.set_initial_guess()
 
         self.attach_logging(config_inst)
-        self.attach_output(config_inst, step_index)
+        self.attach_output(config_inst, step_index, simulation=True)
 
         config_inst.radiance_all()
 
