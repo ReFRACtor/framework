@@ -9,18 +9,21 @@ import refractor.factory.param as param
 from refractor.config import refractor_config
 from refractor import framework as rf
 
-static_input_file = os.path.join(os.path.dirname(__file__), "../lua/example_static_input.h5")
-ils_file = os.path.join(os.path.dirname(__file__), "../lua/ils_data.h5")
+unit_test_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../unit/data"))
+common_input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../input/common/input"))
 
-solar_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_solar_model.h5")
-aerosol_prop_file = os.path.join(os.path.dirname(__file__), "../../../../input/common/input/l2_aerosol_combined.h5")
+static_input_file = os.path.join(unit_test_dir, "lua/example_static_input.h5")
+ils_file = os.path.join(unit_test_dir, "lua/ils_data.h5")
+
+solar_file = os.path.join(common_input_dir, "l2_solar_model.h5")
+aerosol_prop_file = os.path.join(common_input_dir, "l2_aerosol_combined.h5")
 covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
-data_dir = os.path.join(os.path.dirname(__file__), '../in/common')
-l1b_file = os.path.join(data_dir, "l1b_example_data.h5")
-met_file = os.path.join(data_dir, "met_example_data.h5")
+l1b_file = os.path.join(unit_test_dir, "in/common/l1b_example_data.h5")
+met_file = os.path.join(unit_test_dir, "in/common/met_example_data.h5")
 
 observation_id = "2014090915251774"
+num_channels = 3
 
 # Helpers to abstract away getting data out of the static input file
 def static_value(dataset, dtype=None):
@@ -49,7 +52,7 @@ def ils_relative_response():
         return ils_input["/InstrumentData/ils_relative_response"][:]
 
 @refractor_config
-def config(**kwargs):
+def base_config(**kwargs):
 
     config_def = {
         'creator': creator.base.SaveToCommon,
@@ -68,7 +71,7 @@ def config(**kwargs):
                 'value': static_value("Common/band_reference_point"),
                 'units': static_units("Common/band_reference_point"),
             },
-            'num_channels': 3,
+            'num_channels': num_channels,
             'absco_base_path': os.environ['ABSCO_PATH'],
             'constants': {
                 'creator': creator.common.DefaultConstants,
