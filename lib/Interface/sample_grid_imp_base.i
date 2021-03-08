@@ -25,7 +25,8 @@ class SampleGridImpBase: public SubStateVectorArray<SampleGrid> {
 public:
   virtual boost::shared_ptr<SampleGrid> clone() const = 0;
 
-  virtual SpectralDomain sample_grid() const = 0;
+  // In Python you need to override the renamed function _v_sample_grid
+  %python_attribute_abstract(sample_grid, SpectralDomain);
 
   %sub_state_virtual_func(SampleGrid);
   %pickle_serialization();

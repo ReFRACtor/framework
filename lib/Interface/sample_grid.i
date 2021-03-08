@@ -25,6 +25,8 @@ namespace FullPhysics {
     
     %template(ObservableSampleGrid) FullPhysics::Observable<SampleGrid>;
     %template(ObserverSampleGrid) FullPhysics::Observer<SampleGrid>;
+
+    %feature("director") SampleGrid;
     
     class SampleGrid: virtual public StateVectorObserver,
     public Observable<SampleGrid> {
@@ -33,8 +35,8 @@ namespace FullPhysics {
         virtual void add_observer(Observer<SampleGrid>& Obs);
         virtual void remove_observer(Observer<SampleGrid>& Obs);
         virtual boost::shared_ptr<SampleGrid> clone() const = 0;
-        %python_attribute(sample_grid, virtual SpectralDomain);
-        %python_attribute(pixel_grid, virtual SpectralDomain);
+        %python_attribute_abstract(sample_grid, SpectralDomain);
+        %python_attribute(pixel_grid, SpectralDomain);
       %pickle_serialization();
     };
 }
