@@ -2,7 +2,6 @@
 %{
 #include "dispersion_polynomial.h"
 %}
-%base_import(sub_state_vector_array)
 %base_import(sample_grid_imp_base)
 %import "spectral_domain.i"
 %fp_shared_ptr(FullPhysics::DispersionPolynomial)

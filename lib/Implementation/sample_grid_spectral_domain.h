@@ -1,6 +1,6 @@
 #ifndef SAMPLE_GRID_SPECTRAL_DOMAIN_H
 #define SAMPLE_GRID_SPECTRAL_DOMAIN_H
-#include "sample_grid.h"
+#include "sample_grid_imp_base.h"
 #include "spectral_domain.h"
 #include "unit.h"
 #include "sub_state_vector_array.h"
@@ -16,7 +16,7 @@ namespace FullPhysics {
   convention, the index is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class SampleGridSpectralDomain: public SubStateVectorArray<SampleGrid> {
+class SampleGridSpectralDomain: public SampleGridImpBase {
 public:
     SampleGridSpectralDomain(const SpectralDomain& Spec_domain, const std::string& Band_name);
 
