@@ -6,7 +6,7 @@ from .base import Creator
 from .. import param
 
 from refractor import framework as rf
-
+from refractor.director.spectral_fit import SpectralFitSampleGrid
 
 class IlsGratingInstrument(Creator):
 
@@ -26,8 +26,29 @@ class IlsGratingInstrument(Creator):
             ils_vec.push_back(rf.IlsGrating(disp, ils_func, half_width))
         return rf.IlsInstrument(ils_vec, instrument_correction)
 
+class SampleGridCreator(Creator):
 
-class DispersionPolynomial(Creator):
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+
+    def register_with_windowing(self, sample_grid_objs):
+
+        # Set dispersion into the spectral window class if it is a SpectralWindowRange
+        # so it can use the dispersion to convert sample_indexes into an actual spectral range
+        # This gets converted in the SpectralWindowRange spectral_bound method. The bounds
+        # get used elsewhere to resolve which channels spectral points belong to. This
+        # should definitely be handled in a better manner somehow since the order that Dispersion
+        # gets sets into the SpectralWindowRange matters.
+
+        # Convert to a vector of SampleGrid objects
+        vec_sample_grid = rf.vector_sample_grid()
+        for obj in sample_grid_objs:
+            vec_sample_grid.push_back(obj)
+
+        spec_win = self.spec_win()
+        if hasattr(spec_win, "dispersion"):
+            self.spec_win().dispersion = vec_sample_grid
+
+class DispersionPolynomial(SampleGridCreator):
 
     polynomial_coeffs = param.ArrayWithUnit(dims=2)
     number_samples = param.Array(dims=1)
@@ -36,7 +57,6 @@ class DispersionPolynomial(Creator):
     num_parameters = param.Scalar(int, default=2)
     desc_band_name = param.Iterable(str)
     num_channels = param.Scalar(int)
-    spec_win = param.InstanceOf(rf.SpectralWindow)
 
     def retrieval_flag(self):
         # Mask out non retrieved parameters
@@ -71,7 +91,6 @@ class DispersionPolynomial(Creator):
             raise param.ParamError("spectral_variable is a required parameter")
 
         disp = []
-        vec_disp = rf.vector_sample_grid()
         for chan_idx in range(self.num_channels()):
 
             mapping = rf.StateMappingAtIndexes(retrieval_flag[chan_idx, :])
@@ -79,22 +98,13 @@ class DispersionPolynomial(Creator):
             chan_disp = rf.DispersionPolynomial(disp_coeffs[chan_idx, :], spec_var[chan_idx], desc_band_name[chan_idx], mapping)
 
             disp.append(chan_disp)
-            vec_disp.push_back(chan_disp)
 
-        # Set dispersion into the spectral window class if it is a SpectralWindowRange
-        # so it can use the dispersion to convert sample_indexes into an actual spectral range
-        # This gets converted in the SpectralWindowRange spectral_bound method. The bounds
-        # get used elsewhere to resolve which channels spectral points belong to. This
-        # should definitely be handled in a better manner somehow since the order that Dispersion
-        # gets sets into the SpectralWindowRange matters.
-        spec_win = self.spec_win()
-        if hasattr(spec_win, "dispersion"):
-            self.spec_win().dispersion = vec_disp
+        self.register_with_windowing(disp)
 
         return disp
 
 
-class SampleGridSpectralDomain(Creator):
+class SampleGridSpectralDomain(SampleGridCreator):
 
     spectral_domains = param.Iterable(rf.SpectralDomain)
     num_channels = param.Scalar(int)
@@ -110,8 +120,29 @@ class SampleGridSpectralDomain(Creator):
             chan_sample_grid = rf.SampleGridSpectralDomain(spectral_domains[chan_idx], desc_band_name[chan_idx])
             sample_grid.append(chan_sample_grid)
 
+        self.register_with_windowing(sample_grid)
+
         return sample_grid
 
+class SpectralFitSampleGridCreator(SampleGridCreator):
+    
+    spectral_domains = param.Iterable(rf.SpectralDomain)
+    shift = param.Array(1)
+    squeeze = param.Array(1)
+    desc_band_name = param.Iterable(str)
+
+    def create(self, **kwargs):
+
+        spectral_domains = self.spectral_domains()
+        desc_band_name = self.desc_band_name()
+
+        per_sensor_obj = []
+        for sensor_idx, sensor_grid in enumerate(spectral_domains):
+            per_sensor_obj.append(SpectralFitSampleGrid(self.shift()[sensor_idx], self.squeeze()[sensor_idx], sensor_grid, desc_band_name[sensor_idx]))
+
+        self.register_with_windowing(per_sensor_obj)
+
+        return per_sensor_obj
 
 class IlsTable(Creator):
 
