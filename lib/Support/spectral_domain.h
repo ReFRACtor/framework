@@ -33,7 +33,7 @@ public:
   enum TypePreference {PREFER_WAVENUMBER, PREFER_WAVELENGTH};
 
   SpectralDomain(const SpectralDomain& sd) 
-  : data_(sd.data().copy()), sindex_(sd.sample_index()), units_(sd.units()) {}
+  : data_(sd.data_ad().copy()), sindex_(sd.sample_index()), units_(sd.units()) {}
 
   ~SpectralDomain() = default;
 
@@ -61,14 +61,14 @@ public:
 /// on modifying this you should make a deep copy.
 //-----------------------------------------------------------------------
 
-  const blitz::Array<double, 1>& data() const { return data_.value();}
+  const blitz::Array<double, 1>& data() const { return data_.value(); }
 
 //-----------------------------------------------------------------------
 /// Underlying data, possibly with a Jacobian. The jacobian may have
 /// size 0. 
 //-----------------------------------------------------------------------
 
-  const ArrayAd<double, 1>& data_ad() const {return data_; }
+  const ArrayAd<double, 1>& data_ad() const { return data_; }
 
 //-----------------------------------------------------------------------
 /// Return sample index. This may be empty if we aren't dealing with
@@ -131,7 +131,7 @@ public:
   // This operator will be used by SWIG when using directors
   SpectralDomain& operator=(const SpectralDomain& sd)
   {
-      data_.reference(sd.data().copy());
+      data_.reference(sd.data_ad().copy());
       sindex_.reference(sd.sample_index().copy());
       units_ = sd.units();
       return *this;
