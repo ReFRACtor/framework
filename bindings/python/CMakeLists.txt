@@ -107,6 +107,13 @@ target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
 # Give namespace information for generic swig_rules code
 target_compile_definitions(_swig_wrap PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
 
+# If GPerftools is in use, add -DGperftools_FOUND to allow conditional compilation
+if(Gperftools_FOUND)
+    message(STATUS "Adding -DGperftools to _swig_wrap target")
+    target_compile_definitions(_swig_wrap PRIVATE Gperftools_FOUND)
+endif()
+
+
 # Ensure module has .so extension (required by python) on all platforms including OS X (where dylib would otherwise be the case)
 set_target_properties(_swig_wrap PROPERTIES SUFFIX ".so")
 

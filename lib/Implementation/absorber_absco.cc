@@ -337,7 +337,11 @@ void AbsorberAbsco::fill_tau_gas_cache() const
   //----------------------------------------------------------------
   // Fill in pressure, temperature, gravity and mixing ratio for
   // the sublayers.
+  // Use 1_over_cm2_Pa to avoid parsing the Unit string many times in loop
+  // The unit string parsing was found to be a bottleneck in profiling
   //----------------------------------------------------------------
+
+  Unit one_over_cm2_Pa("cm^-2 / Pa");
 
   create_sublayer();
   Array<AutoDerivative<double>, 3> 
@@ -348,8 +352,8 @@ void AbsorberAbsco::fill_tau_gas_cache() const
       for(int k = 0; k < integrand_independent_wn_sub_t.depth(); ++k)
 	integrand_independent_wn_sub_t(i, j, k) = 
 	  integrand_independent_wn(i, j, psub(k)).
-	  convert(Unit("cm^-2 / Pa")).value;
-  integrand_independent_wn_sub.units = Unit("cm^-2 / Pa");
+	  convert(one_over_cm2_Pa).value;
+  integrand_independent_wn_sub.units = one_over_cm2_Pa;
   integrand_independent_wn_sub.value.
     reference(ArrayAd<double, 3>(integrand_independent_wn_sub_t));
 
