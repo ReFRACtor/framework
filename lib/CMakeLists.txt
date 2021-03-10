@@ -51,6 +51,13 @@ target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})
 target_compile_definitions(refractor PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
 target_compile_definitions(refractor PRIVATE SWIG_HAVE_BOOST_SERIALIZATION)
 
+# Add -DGperftools_FOUND to compiler flags if Gperftools found.
+if(Gperftools_FOUND)
+    message(STATUS "Adding -DGperftools to refractor target")
+    target_compile_definitions(refractor PRIVATE Gperftools_FOUND)
+endif()
+
+
 # Expose to the parent scope
 set(FP_INCLUDES ${FP_INCLUDES} PARENT_SCOPE)
 set(FP_TEST_FILES ${FP_TEST_FILES} PARENT_SCOPE)

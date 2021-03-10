@@ -92,9 +92,20 @@ if(OSS_FOUND)
 else()
     message(STATUS "Note: NOT building OSS specific modules")
 endif()
-#  Expose whether we found OSS so we can optionally build our OSS FM
+# Expose whether we found OSS so we can optionally build our OSS FM
 set(OSS_FOUND ${OSS_FOUND} PARENT_SCOPE)
 
+# Set up Google Performance Tools (gperftools) if available
+find_package(Gperftools)
+if(Gperftools_FOUND)
+    message(STATUS "Found Gperftools. Adding to libraries and includes.")
+    list(APPEND THIRDPARTY_INCLUDES ${Gperftools_INCLUDE_DIRS})
+    list(APPEND THIRDPARTY_LIBRARIES ${Gperftools_LIBRARIES})
+else()
+    messages(STATUS "Did not find Gperftools. Skipping link.")
+endif()
+# Expose whether we found Gperftools so we can optionally add profiling if present
+set(Gperftools_FOUND ${Gperftools_FOUND} PARENT_SCOPE)
 
 ################################################
 # Configure packages we will possibly build here
