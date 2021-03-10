@@ -102,7 +102,7 @@ if(Gperftools_FOUND)
     list(APPEND THIRDPARTY_INCLUDES ${Gperftools_INCLUDE_DIRS})
     list(APPEND THIRDPARTY_LIBRARIES ${Gperftools_LIBRARIES})
 else()
-    messages(STATUS "Did not find Gperftools. Skipping link.")
+    message(STATUS "Did not find Gperftools. Skipping link.")
 endif()
 # Expose whether we found Gperftools so we can optionally add profiling if present
 set(Gperftools_FOUND ${Gperftools_FOUND} PARENT_SCOPE)
