@@ -20,12 +20,12 @@ class CaptureRadiance(ObserverPtrNamedSpectrum, OutputBase):
 class ComparisonExecutor(StrategyExecutor):
     "Executor that will store produced radiances internally for later comparison against offline values"
 
-    def __init__(self, config_filename):
-        super().__init__(config_filename)
+    def __init__(self, config_filename, **kwargs):
+        super().__init__(config_filename, **kwargs)
 
         self.captured_radiances = CaptureRadiance()
 
-    def attach_output(self, config_inst, step_index=0):
-        super().attach_output(config_inst, step_index)
+    def attach_output(self, config_inst, step_index=0, simulation=False):
+        super().attach_output(config_inst, step_index, simulation)
 
         config_inst.forward_model.add_observer_and_keep_reference(self.captured_radiances)
