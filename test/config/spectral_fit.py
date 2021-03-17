@@ -19,8 +19,8 @@ def spectral_fit_config(**kwargs):
         },
         # Size of shift, squeeze the number of sensors (channels)
         # Create an array with the same value for all sensors
-        'shift': np.full(num_channels, 1),
-        'squeeze': np.full(num_channels, 0),
+        'shift': np.full(num_channels, 0),
+        'squeeze': np.full(num_channels, 1),
     }
 
     return config_def
