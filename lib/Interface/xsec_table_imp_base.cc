@@ -44,7 +44,9 @@ void XSecTableImpBase::init_interpolation(const blitz::Array<double, 2>& xsec_va
     typedef LinearInterpolate<double, double> lin_interp_type;
 
     for(int xsec_values_col = 0; xsec_values_col < xsec_values.cols(); xsec_values_col++) {
-        Array<double, 1> col_values(xsec_values(Range::all(), xsec_values_col));
+        Array<double, 1> col_values(xsec_values.rows());
+        col_values = xsec_values(Range::all(), xsec_values_col);
+        
         boost::shared_ptr<lin_interp_type> col_interp(new lin_interp_type(spectral_grid_values.value.begin(), spectral_grid_values.value.end(), col_values.begin()));
         data_interp.push_back(col_interp);
     }
@@ -70,7 +72,7 @@ const Array<double, 1> XSecTableImpBase::cross_section_coefficients(DoubleWithUn
     Array<double, 1> coeffs(data_interp.size() - 1);
 
     for(int coeff_col = 1; coeff_col < data_interp.size(); coeff_col++) {
-        coeffs[coeff_col - 1] = (*data_interp[coeff_col])(interp_point) / conversion_factor;
+        coeffs(coeff_col - 1) = (*data_interp[coeff_col])(interp_point) / conversion_factor;
     }
 
     return coeffs;

@@ -32,7 +32,7 @@ ArrayAd<double, 1> XSecTableSimple::optical_depth_each_layer_unweighted(DoubleWi
     ArrayAd<double, 1> gas_od(gas_density_levels.rows() - 1, gas_density_levels.number_variable());
 
     for (int lay_idx = 0; lay_idx < gas_od.rows(); lay_idx++) {
-        gas_od(lay_idx) = (gas_density_levels(lay_idx) * xsec_value + gas_density_levels(lay_idx-1) * xsec_value) * 0.5;
+        gas_od(lay_idx) = (gas_density_levels(lay_idx) * xsec_value + gas_density_levels(lay_idx+1) * xsec_value) * 0.5;
     }
 
     return gas_od;
