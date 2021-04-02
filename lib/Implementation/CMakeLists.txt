@@ -125,6 +125,7 @@ set(DIR_SOURCES
     temperature_level_offset.cc
     temperature_met.cc
     uniform_spectrum_sampling.cc
+    xsec_table_simple.cc
 )
 
 set(TEST_SOURCES

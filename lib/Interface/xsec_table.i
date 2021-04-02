@@ -11,13 +11,14 @@
 
 %fp_shared_ptr(FullPhysics::XSecTable);
 
-// Allow these classes to be derived from in Python.
-%feature("director") TemperatureImpBase;
-
 namespace FullPhysics {
+
+// Allow these classes to be derived from in Python.
+%feature("director") XSecTable;
+
 class XSecTable: public GenericObject {
 public:
-    virtual ArrayAd<double, 2> optical_depth_each_layer(DoubleWithUnit grid_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
+    virtual ArrayAd<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
 
     virtual boost::shared_ptr<XSecTable> clone() const = 0;
 

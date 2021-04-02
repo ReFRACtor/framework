@@ -19,7 +19,17 @@ namespace FullPhysics {
 class XSecTable: public Printable<XSecTable> {
 public:
 
-    virtual ArrayAd<double, 2> optical_depth_each_layer(DoubleWithUnit grid_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
+    //-----------------------------------------------------------------------
+    /// Compute the unweighted optical depth for each layer at the given 
+    /// spectral point given density and temperature on levels.
+    ///
+    /// Unweighted here means that it is the average of the two levels, 
+    /// but has not had a height or pressure difference weighting applied.
+    /// 
+    /// Not all implementations may have a temperature dependence.
+    //-----------------------------------------------------------------------
+
+    virtual ArrayAd<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
 
     //-----------------------------------------------------------------------
     /// Clone the object into a new copy
