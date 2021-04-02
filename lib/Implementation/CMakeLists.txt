@@ -4,6 +4,7 @@ set(DIR_SOURCES
     absco_aer.cc
     absco_hdf.cc
     absorber_absco.cc
+    absorber_xsec.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc

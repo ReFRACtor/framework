@@ -73,6 +73,7 @@ set(DIR_SOURCES
     temperature.cc
     temperature_imp_base.cc
     temperature_offset.cc
+    xsec_table.cc
 )
 
 set(TEST_SOURCES

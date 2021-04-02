@@ -71,15 +71,6 @@ public:
   optical_depth_each_layer(double wn, int spec_index) const = 0;
 
 //-----------------------------------------------------------------------
-/// This calculates the gas column, e.g., XCO2. This is the dry air
-/// mole fraction of the gas, see section 3.5.4 of the ATB
-///
-/// We include the derivative of this with respect to the state vector.
-//-----------------------------------------------------------------------
-  
-  virtual AutoDerivative<double> xgas(const std::string& Gas_name) const = 0;
-
-//-----------------------------------------------------------------------
 /// Returns the AbsorberVmr object for a given species index.
 //-----------------------------------------------------------------------
 

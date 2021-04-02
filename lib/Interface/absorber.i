@@ -55,7 +55,6 @@ public:
   
   virtual ArrayAd<double, 2> 
   optical_depth_each_layer(double wn, int spec_index) const = 0;
-  virtual AutoDerivative<double> xgas(const std::string& Gas_name) const = 0;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const = 0;
   virtual boost::shared_ptr<Absorber> clone() const = 0;
   virtual void print(std::ostream& Os) const;
