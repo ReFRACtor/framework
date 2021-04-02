@@ -22,7 +22,7 @@ public:
 private:
     XSecTableSimple(const ArrayWithUnit<double, 1>& Spectral_grid, const std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > Data_interp, double Conversion_factor);
 
-    XSecTableSimple();
+    XSecTableSimple() = default;
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version);

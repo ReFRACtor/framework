@@ -57,6 +57,8 @@ protected:
 
     std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > data_interp;
 
+    XSecTableImpBase() = default;
+
 private:
 
     void init_interpolation(const blitz::Array<double, 2>& xsec_values);
