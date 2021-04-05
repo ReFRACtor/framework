@@ -178,6 +178,7 @@ class AbsorberVmrMet(Creator):
 
         return rf.AbsorberVmrMet(self.met(), self.pressure(), self.vmr_profile(gas_name=gas_name)[0], gas_name)
 
+# ---------------
 
 class AbscoInterpolationOption(Enum):
     error = rf.AbscoAer.THROW_ERROR_IF_NOT_ON_WN_GRID
@@ -260,7 +261,6 @@ class AbscoCreator(Creator):
 
             return self.absco_object(absco_filename, table_scale_vector, hr_sb, cache_size=cache_size, interp_method=interp_method)
 
-
 class AbscoLegacy(AbscoCreator):
     "Legacy HDF format created for OCO"
 
@@ -290,28 +290,38 @@ class AbscoAer(AbscoCreator):
         else:
             return rf.AbscoAer(absco_filename, table_scale, cache_size, interp_method)
 
+# ---------------
 
-class AbsorberGasDefinition(ParamPassThru):
-    "Defines the interface expected for VMR config defnition blocks, values are pass through as a dictionary"
+class CrossSectionTableAscii(Creator):
+    """Loads a cross section table from an ascii file. Assumes first column is the spectral grid.
+    Multiple data columns indicate the use of a temperature dependent table with additional coefficients, such as for O3
+    """
 
-    vmr_profile = param.InstanceOf(rf.AbsorberVmr)
-    absorption = param.InstanceOf(rf.GasAbsorption)
-
-class AbsorberAbsco(Creator):
-    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreators absorber value"
-
-    gases = param.Iterable()
-    pressure = param.InstanceOf(rf.Pressure)
-    temperature = param.InstanceOf(rf.Temperature)
-    altitude = param.ObjectVector("altitude")
-    num_sub_layers = param.Scalar(int, required=False)
-    constants = param.InstanceOf(rf.Constant)
-    default_gas_definition = param.Dict(required=False)
+    filename = param.Scalar(str)
+    conversion_factor = param.Scalar(float, default=1)
+    spectral_unit = param.Scalar(str, default="nm")
 
     def create(self, **kwargs):
 
-        vmrs = rf.vector_absorber_vmr()
-        absorptions = rf.vector_gas_absorption()
+        xsec_data = np.loadtxt(self.filename())
+
+        spec_grid = rf.ArrayWithUnit(xsec_data[:, 0], self.spectral_unit())
+        xsec_values = xsec_data[:, 1:]
+
+        if xsec_values.shape[1] > 1:
+            rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
+        else:
+            rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())
+
+# ---------------
+
+class AbsorberBase(Creator):
+    "Defines the basic shared behavior between Absorber Creators"
+
+    gases = param.Iterable()
+    default_gas_definition = param.Dict(required=False)
+
+    def gas_definitions(self):
 
         for gas_name in self.gases():
             if gas_name in self.config_def:
@@ -323,6 +333,44 @@ class AbsorberAbsco(Creator):
             if gas_def is None:
                 raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
 
+            yield gas_def
+
+class AbsorberVmrOnly(AbsorberBase):
+    "Instead of creating an Absorber object, return only a list of VMR values for instances where a forward model might compute its on optical depths and not need a Absorber object."
+
+    def create(self, **kwargs):
+
+        vmrs = []
+
+        for gas_name, gas_def in zip(self.gases(), self.gas_definitions()):
+            if not "vmr" in gas_def:
+                raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
+
+            vmrs.append(gas_def['vmr'])
+
+        return vmrs
+
+class AbsorberGasDefinition(ParamPassThru):
+    "Defines the interface expected for gas configuration blocks used by the AbsorberAbsco creator"
+
+    vmr_profile = param.InstanceOf(rf.AbsorberVmr)
+    absorption = param.InstanceOf(rf.GasAbsorption)
+
+class AbsorberAbsco(AbsorberBase):
+    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreators absorber value"
+
+    pressure = param.InstanceOf(rf.Pressure)
+    temperature = param.InstanceOf(rf.Temperature)
+    altitude = param.ObjectVector("altitude")
+    num_sub_layers = param.Scalar(int, required=False)
+    constants = param.InstanceOf(rf.Constant)
+
+    def create(self, **kwargs):
+
+        vmrs = rf.vector_absorber_vmr()
+        absorptions = rf.vector_gas_absorption()
+
+        for gas_name, gas_def in zip(self.gases(), self.gas_definitions()):
             if not "vmr" in gas_def:
                 raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
 
@@ -337,34 +385,32 @@ class AbsorberAbsco(Creator):
         else:
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants())
 
-class AbsorberVmrOnly(Creator):
-    "Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber value"
+class CrossSectionGasDefinition(ParamPassThru):
+    "Defines the interface expected for gas configuration blocks for the AbsorberXSec creator"
 
-    gases = param.Iterable()
+    vmr_profile = param.InstanceOf(rf.AbsorberVmr)
+    cross_section = param.InstanceOf(rf.XSecTable)
+
+class AbsorberXSec(AbsorberBase):
+    "Creates an AbsorberXSec object that statisfies the AtmosphereCreators absorber value"
+
     pressure = param.InstanceOf(rf.Pressure)
     temperature = param.InstanceOf(rf.Temperature)
     altitude = param.ObjectVector("altitude")
-    num_sub_layers = param.Scalar(int, required=False)
-    constants = param.InstanceOf(rf.Constant)
-    default_gas_definition = param.Dict(required=False)
 
     def create(self, **kwargs):
 
-        vmrs = []
+        vmrs = rf.vector_absorber_vmr()
+        xsec_tables = rf.vector_xsec_table()
 
-        for gas_name in self.gases():
-            if gas_name in self.config_def:
-                self.register_parameter(gas_name, param.Dict())
-                gas_def = self.param(gas_name, gas_name=gas_name)
-            else:
-                gas_def = self.default_gas_definition(gas_name=gas_name)
-
-            if gas_def is None:
-                raise param.ParamError("No definition for gas %s and no default_gas_defintion block defined" % gas_name)
-
+        for gas_name, gas_def in zip(self.gases(), self.gas_definitions()):
             if not "vmr" in gas_def:
                 raise param.ParamError("vmr value not in gas definition for gas: %s" % gas_name)
 
-            vmrs.append(gas_def['vmr'])
+            if not "cross_section" in gas_def:
+                raise param.ParamError("cross_section value not in gas definition for gas: %s" % gas_name)
 
-        return vmrs
+            vmrs.push_back(gas_def['vmr'])
+            xsec_tables.push_back(gas_def['cross_section'])
+
+        return rf.AbsorberXSec(vmrs, self.pressure(), self.temperature(), self.altitude(), xsec_tables)

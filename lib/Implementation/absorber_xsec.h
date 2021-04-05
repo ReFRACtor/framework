@@ -80,13 +80,13 @@ public:
     virtual void fill_cache(const AbsorberXSec& T);
 
     //-----------------------------------------------------------------------
-    /// Dry air density on each level determined using Loschmidt's constant
+    /// Wet air density at each level boundary determined using Loschmidt's constant
     //-----------------------------------------------------------------------
 
     virtual ArrayAdWithUnit<double, 1> air_density_level() const;
 
     //-----------------------------------------------------------------------
-    /// Number density of the the gas molecule per level
+    /// Number density of the the gas molecule at each level boundary
     //-----------------------------------------------------------------------
 
     virtual ArrayAdWithUnit<double, 2> gas_density_level() const;
