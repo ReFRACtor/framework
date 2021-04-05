@@ -27,3 +27,5 @@ public:
     %pickle_serialization();
 };
 }
+
+%template(vector_xsec_table) std::vector<boost::shared_ptr<FullPhysics::XSecTable> >;

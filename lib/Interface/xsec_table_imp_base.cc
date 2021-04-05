@@ -55,7 +55,7 @@ void XSecTableImpBase::init_interpolation(const blitz::Array<double, 2>& xsec_va
 const double XSecTableImpBase::cross_section_value(DoubleWithUnit& spectral_point) const
 {
     // Convert to grid units
-    double interp_point = spectral_point.convert(spectral_grid_values.units).value;
+    double interp_point = spectral_point.convert_wave(spectral_grid_values.units).value;
 
     return (*data_interp[0])(interp_point) / conversion_factor;
 }
@@ -67,7 +67,7 @@ const Array<double, 1> XSecTableImpBase::cross_section_coefficients(DoubleWithUn
     }
 
     // Convert to grid units
-    double interp_point = spectral_point.convert(spectral_grid_values.units).value;
+    double interp_point = spectral_point.convert_wave(spectral_grid_values.units).value;
 
     Array<double, 1> coeffs(data_interp.size() - 1);
 

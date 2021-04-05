@@ -12,6 +12,8 @@
 #include "constant.h"
 #include "calculation_cache.h"
 
+#include "xsec_table.h"
+
 namespace FullPhysics {
 
 /****************************************************************//**
@@ -30,8 +32,7 @@ public:
                  const boost::shared_ptr<Pressure>& Press,
                  const boost::shared_ptr<Temperature>& Temp,
                  const std::vector<boost::shared_ptr<Altitude> >& Alt,
-                 const std::vector<std::string>& XSec_filenames,
-                 const boost::shared_ptr<Constant>& C);
+                 const std::vector<boost::shared_ptr<XSecTable> >& XSec_tables);
 
     virtual ~AbsorberXSec() = default;
 
@@ -78,6 +79,22 @@ public:
 
     virtual void fill_cache(const AbsorberXSec& T);
 
+    //-----------------------------------------------------------------------
+    /// Dry air density on each level determined using Loschmidt's constant
+    //-----------------------------------------------------------------------
+
+    virtual ArrayAdWithUnit<double, 1> air_density_level() const;
+
+    //-----------------------------------------------------------------------
+    /// Number density of the the gas molecule per level
+    //-----------------------------------------------------------------------
+
+    virtual ArrayAdWithUnit<double, 2> gas_density_level() const;
+
+    //-----------------------------------------------------------------------
+    // See base class description 
+    //-----------------------------------------------------------------------
+
     virtual ArrayAd<double, 2> optical_depth_each_layer(double wn, int spec_index) const;
 
     virtual void print(std::ostream& Os) const;
@@ -97,11 +114,7 @@ private:
     std::vector<boost::shared_ptr<AbsorberVmr> > vmr;
 
     // Filenames contain cross section data
-    std::vector<std::string> xsec_filenames;
-
-    // Constants used to get things like avogadro_constant and
-    // molar_weight_water.
-    boost::shared_ptr<Constant> c;
+    std::vector<boost::shared_ptr<XSecTable> > xsec_tables;
 
     // Scratch variable used to calculate taug. We keep this around so
     // we don't keep recreating the Array (so this is to improve performance)
