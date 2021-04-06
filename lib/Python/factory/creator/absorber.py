@@ -309,9 +309,9 @@ class CrossSectionTableAscii(Creator):
         xsec_values = xsec_data[:, 1:]
 
         if xsec_values.shape[1] > 1:
-            rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
+            return rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
         else:
-            rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())
+            return rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())
 
 # ---------------
 
