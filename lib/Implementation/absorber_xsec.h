@@ -16,17 +16,28 @@
 
 namespace FullPhysics {
 
+class AbsorberXSec;
+class AbsorberXSecCache : public CalculationCache<AbsorberXSec> {
+public:
+    AbsorberXSecCache() = default;
+    ~AbsorberXSecCache() = default;
+
+    virtual void fill_cache(const AbsorberXSec& absorber);
+
+    ArrayAdWithUnit<double, 1> pgrid;
+    ArrayAdWithUnit<double, 1> tgrid;
+
+private:
+    friend class boost::serialization::access;
+    template<class Archive> void serialize(Archive & ar, const unsigned int version);
+};
+
 /****************************************************************//**
   This class maintains the absorber portion of the state. This
   particular implementation uses UV Cross Section (XSec) tables.
 *******************************************************************/
 
-class AbsorberXSec: virtual public Absorber,
-                            public Observer<AbsorberVmr>,
-                            public Observer<Pressure>,
-                            public Observer<Temperature>,
-                            public Observer<Altitude>,
-                            public CalculationCache<AbsorberXSec> {
+class AbsorberXSec: virtual public Absorber {
 public:
     AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vmr,
                  const boost::shared_ptr<Pressure>& Press,
@@ -53,31 +64,6 @@ public:
         range_check(Species_index, 0, number_species());
         return vmr[Species_index]->gas_name();
     }
-
-    //-----------------------------------------------------------------------
-    /// For performance, we cache some data as we calculate it. This
-    /// becomes stale when the pressure is changed, so we observe press
-    /// and mark the cache when it changes.
-    //-----------------------------------------------------------------------
-
-    virtual void notify_update(const Pressure& UNUSED(P) )
-    {
-        invalidate_cache();
-    }
-    virtual void notify_update(const Temperature& UNUSED(T))
-    {
-        invalidate_cache();
-    }
-    virtual void notify_update(const Altitude& UNUSED(A))
-    {
-        invalidate_cache();
-    }
-    virtual void notify_update(const AbsorberVmr& UNUSED(A) )
-    {
-        invalidate_cache();
-    }
-
-    virtual void fill_cache(const AbsorberXSec& T);
 
     //-----------------------------------------------------------------------
     /// Wet air density at each level boundary determined using Loschmidt's constant
@@ -116,9 +102,9 @@ private:
     // Filenames contain cross section data
     std::vector<boost::shared_ptr<XSecTable> > xsec_tables;
 
-    // Scratch variable used to calculate taug. We keep this around so
-    // we don't keep recreating the Array (so this is to improve performance)
-    mutable ArrayAd<double, 2> taug;
+    // Cached values that only get recomputed when the cache is invalidated
+    friend AbsorberXSecCache;
+    mutable AbsorberXSecCache cache;
 
     AbsorberXSec() = default;
 
@@ -128,5 +114,6 @@ private:
 
 } // namespace FullPhysics  
 
+FP_EXPORT_KEY(AbsorberXSecCache);
 FP_EXPORT_KEY(AbsorberXSec);
 #endif

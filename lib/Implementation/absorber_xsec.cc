@@ -1,9 +1,28 @@
-#include "absorber_xsec.h"
-
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
+
+#include "absorber_xsec.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void AbsorberXSecCache::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver);
+}
+
+template<class Archive>
+void AbsorberXSec::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Absorber)
+    & FP_NVP(press) & FP_NVP(temp) & FP_NVP(alt) & FP_NVP(vmr);
+}
+
+FP_IMPLEMENT(AbsorberXSecCache);
+FP_IMPLEMENT(AbsorberXSec);
+#endif
 
 AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vmr,
                            const boost::shared_ptr<Pressure>& Press,
@@ -12,15 +31,20 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
                            const std::vector<boost::shared_ptr<XSecTable> >& XSec_tables)
 : press(Press), temp(Temp), alt(Alt), vmr(Vmr), xsec_tables(XSec_tables)
 {
-
+    press->add_cache_invalidated_observer(cache);
+    temp->add_cache_invalidated_observer(cache);
 }
 
-void AbsorberXSec::fill_cache(const AbsorberXSec& T)
+void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
 {
+    pgrid.reference(absorber.press->pressure_grid().convert(units::Pa));
+    tgrid.reference(absorber.temp->temperature_grid(*(absorber.press)));
 }
 
 ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
 {
+    cache.fill_cache_if_needed(*this);
+
     // Loschmidt's number (particles/cm3), STP parameters
     const DoubleWithUnit rho_stand(2.68675e+19, "cm^-3");
     const DoubleWithUnit pzero(1013.25e2, units::Pa); // Standard presure
@@ -28,19 +52,20 @@ ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
     const DoubleWithUnit rho_zero = rho_stand * tzero / pzero;
     const DoubleWithUnit dens_const = 1.0e+05 * rho_zero;
 
-    ArrayAdWithUnit<double, 1> pgrid(press->pressure_grid().convert(units::Pa));
-    ArrayAdWithUnit<double, 1> tgrid(temp->temperature_grid(*press));
-
-    ArrayAd<double, 1> air_density(press->number_level(), pgrid.number_variable());;
+    ArrayAd<double, 1> air_density(press->number_level(), cache.pgrid.number_variable());;
     for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
-        air_density(lev_idx) = dens_const.value * pgrid.value(lev_idx) / tgrid.value(lev_idx);
+        air_density(lev_idx) = dens_const.value * cache.pgrid.value(lev_idx) / cache.tgrid.value(lev_idx);
     }
 
-    return ArrayAdWithUnit<double, 1>(air_density, dens_const.units * pgrid.units / tgrid.units);
+    // Units here will be cm^-3 since the press/temp ratio cancels out with that in the constant
+    // Set the unit explicitly so there is not "cruft" factors left over from using the Unit class
+    return ArrayAdWithUnit<double, 1>(air_density, "cm^-3");
 }
 
 ArrayAdWithUnit<double, 2> AbsorberXSec::gas_density_level() const
 {
+    cache.fill_cache_if_needed(*this);
+
     ArrayAdWithUnit<double, 1> air_density(air_density_level());
 
     ArrayAd<double, 2> gas_density(air_density.rows(), vmr.size(), air_density.number_variable());
@@ -62,21 +87,22 @@ ArrayAdWithUnit<double, 2> AbsorberXSec::gas_density_level() const
 
 ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_index) const
 {
+    cache.fill_cache_if_needed(*this);
+
+    range_check(spec_index, 0, number_spectrometer());
+
     ArrayAdWithUnit<double, 2> gas_density(gas_density_level());
     DoubleWithUnit spectral_point(wn, units::inv_cm);
-
-    ArrayAdWithUnit<double, 1> pgrid(press->pressure_grid().convert(units::Pa));
-    ArrayAdWithUnit<double, 1> tgrid(temp->temperature_grid(*press));
 
     ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), gas_density.number_variable());
 
     for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
         ArrayAd<double, 1> od_unweighted(
-            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density.value(Range::all(), gas_idx), tgrid.value)
+            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density.value(Range::all(), gas_idx), cache.tgrid.value)
         );
 
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
-            AutoDerivativeWithUnit<double> height_diff(alt[spec_index]->altitude(pgrid(lay_idx)) - alt[spec_index]->altitude(pgrid(lay_idx+1)));
+            AutoDerivativeWithUnit<double> height_diff(alt[spec_index]->altitude(cache.pgrid(lay_idx)) - alt[spec_index]->altitude(cache.pgrid(lay_idx+1)));
             gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted(lay_idx); 
         }
     }

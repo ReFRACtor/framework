@@ -6,12 +6,7 @@
 #include "sub_state_vector_observer.h"
 %}
 
-%base_import(pressure)
-%base_import(temperature)
-%base_import(absorber_vmr)
-%base_import(altitude)
 %base_import(absorber)
-%base_import(observer)
 
 %import "xsec_table.i"
 
@@ -19,11 +14,7 @@
 
 namespace FullPhysics {
 
-class AbsorberXSec: virtual public Absorber,
-                            public Observer<AbsorberVmr>,
-                            public Observer<Pressure>,
-                            public Observer<Temperature>,
-                            public Observer<Altitude> {
+class AbsorberXSec: virtual public Absorber {
  public:
     AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vmr,
                  const boost::shared_ptr<Pressure>& Press,
