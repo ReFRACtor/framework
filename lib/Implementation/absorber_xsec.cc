@@ -39,6 +39,26 @@ void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
 {
     pgrid.reference(absorber.press->pressure_grid().convert(units::Pa));
     tgrid.reference(absorber.temp->temperature_grid(*(absorber.press)));
+
+    // Number of derivative variables for auto derivatives
+    int num_jac_variable = pgrid.number_variable();
+
+    height_delta_layer.clear();
+
+    for(int sensor_idx = 0; sensor_idx < absorber.number_spectrometer(); sensor_idx++) {
+        ArrayAd<double, 1> height_delta_sensor(absorber.press->number_layer(), num_jac_variable);
+
+        Unit height_units;
+        for(int lay_idx = 0; lay_idx < absorber.press->number_layer(); lay_idx++) {
+            AutoDerivativeWithUnit<double> h_lay_top = absorber.alt[sensor_idx]->altitude(pgrid(lay_idx));
+            AutoDerivativeWithUnit<double> h_lay_bottom = absorber.alt[sensor_idx]->altitude(pgrid(lay_idx+1));
+            height_delta_sensor(lay_idx) = h_lay_top.value - h_lay_bottom.value;
+            height_units = h_lay_top.units;
+        }
+
+        height_delta_layer.push_back(ArrayAdWithUnit<double, 1>(height_delta_sensor, height_units));
+    }
+
 }
 
 ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
@@ -102,7 +122,7 @@ ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_in
         );
 
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
-            AutoDerivativeWithUnit<double> height_diff(alt[spec_index]->altitude(cache.pgrid(lay_idx)) - alt[spec_index]->altitude(cache.pgrid(lay_idx+1)));
+            AutoDerivativeWithUnit<double> height_diff(cache.height_delta_layer[spec_index](lay_idx));
             gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted(lay_idx); 
         }
     }

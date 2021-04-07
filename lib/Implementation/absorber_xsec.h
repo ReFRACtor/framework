@@ -24,8 +24,12 @@ public:
 
     virtual void fill_cache(const AbsorberXSec& absorber);
 
+    // pressure / temperature grid computed from Pressure / Temperature objects
     ArrayAdWithUnit<double, 1> pgrid;
     ArrayAdWithUnit<double, 1> tgrid;
+
+    // Height of each layer, the difference in the level altitude values
+    std::vector<ArrayAdWithUnit<double, 1> > height_delta_layer;
 
 private:
     friend class boost::serialization::access;
