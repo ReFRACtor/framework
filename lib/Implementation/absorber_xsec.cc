@@ -38,7 +38,7 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
 void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
 {
     pgrid.reference(absorber.press->pressure_grid().convert(units::Pa));
-    tgrid.reference(absorber.temp->temperature_grid(*(absorber.press)));
+    tgrid.reference(absorber.temp->temperature_grid(*(absorber.press)).convert(units::K));
 
     // Number of derivative variables for auto derivatives
     int num_jac_variable = pgrid.number_variable();
@@ -117,13 +117,13 @@ ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_in
     ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), gas_density.number_variable());
 
     for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
-        ArrayAd<double, 1> od_unweighted(
-            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density.value(Range::all(), gas_idx), cache.tgrid.value)
+        ArrayAdWithUnit<double, 1> od_unweighted(
+            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density.value(Range::all(), gas_idx), cache.tgrid)
         );
 
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
             AutoDerivativeWithUnit<double> height_diff(cache.height_delta_layer[spec_index](lay_idx));
-            gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted(lay_idx); 
+            gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted.value(lay_idx); 
         }
     }
 

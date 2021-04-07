@@ -4,7 +4,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "printable.h"
-#include "array_ad.h"
+#include "array_ad_with_unit.h"
 #include "double_with_unit.h"
 
 namespace FullPhysics {
@@ -29,7 +29,7 @@ public:
     /// Not all implementations may have a temperature dependence.
     //-----------------------------------------------------------------------
 
-    virtual ArrayAd<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
+    virtual ArrayAdWithUnit<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAdWithUnit<double, 1> gas_density_levels, ArrayAdWithUnit<double, 1> temperature_levels) const = 0;
 
     //-----------------------------------------------------------------------
     /// Clone the object into a new copy

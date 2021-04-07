@@ -17,13 +17,13 @@ namespace FullPhysics {
 
 class XSecTableImpBase: public XSecTable {
 public:
-    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const blitz::Array<double, 2>& XSec_values, double Conversion_factor);
+    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const ArrayWithUnit<double, 2>& XSec_values, double Conversion_factor);
     virtual const ArrayWithUnit<double, 1> spectral_grid() const;
-    virtual const double cross_section_value(DoubleWithUnit& spectral_point) const;
-    virtual const blitz::Array<double, 1> cross_section_coefficients(DoubleWithUnit& spectral_point) const;
+    virtual const DoubleWithUnit cross_section_value(DoubleWithUnit& spectral_point) const;
+    virtual const ArrayWithUnit<double, 1> cross_section_coefficients(DoubleWithUnit& spectral_point) const;
 
     // From XSecTable, included for director usage
-    virtual ArrayAd<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
+    virtual ArrayAdWithUnit<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAdWithUnit<double, 1> gas_density_levels, ArrayAdWithUnit<double, 1> temperature_levels) const = 0;
     virtual boost::shared_ptr<XSecTable> clone() const = 0;
 
     virtual void print(std::ostream& Os) const;

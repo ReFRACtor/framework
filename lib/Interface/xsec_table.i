@@ -6,7 +6,7 @@
 
 %base_import(generic_object)
 
-%import "array_ad.i"
+%import "array_ad_with_unit.i"
 %import "double_with_unit.i"
 
 %fp_shared_ptr(FullPhysics::XSecTable);
@@ -18,7 +18,7 @@ namespace FullPhysics {
 
 class XSecTable: public GenericObject {
 public:
-    virtual ArrayAd<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAd<double, 1> gas_density_levels, ArrayAd<double, 1> temperature_levels) const = 0;
+    virtual ArrayAdWithUnit<double, 1> optical_depth_each_layer_unweighted(DoubleWithUnit spectral_point, ArrayAdWithUnit<double, 1> gas_density_levels, ArrayAdWithUnit<double, 1> temperature_levels) const = 0;
 
     virtual boost::shared_ptr<XSecTable> clone() const = 0;
 

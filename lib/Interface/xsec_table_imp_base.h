@@ -23,7 +23,7 @@ public:
     /// The conversion factor is applied after interpolation.
     //-----------------------------------------------------------------------
 
-    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const blitz::Array<double, 2>& XSec_values, double Conversion_factor);
+    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const ArrayWithUnit<double, 2>& XSec_values, double Conversion_factor);
 
     //-----------------------------------------------------------------------
     /// Get the spectral grid associated with the cross section values
@@ -37,7 +37,7 @@ public:
     /// factor is applied.
     //-----------------------------------------------------------------------
 
-    virtual const double cross_section_value(DoubleWithUnit& spectral_point) const;
+    virtual const DoubleWithUnit cross_section_value(DoubleWithUnit& spectral_point) const;
 
     //-----------------------------------------------------------------------
     /// Returns additional coefficients such as temperature dependant
@@ -45,15 +45,16 @@ public:
     /// grid and a conversion factor applied.
     //-----------------------------------------------------------------------
 
-    virtual const blitz::Array<double, 1> cross_section_coefficients(DoubleWithUnit& spectral_point) const;
+    virtual const ArrayWithUnit<double, 1> cross_section_coefficients(DoubleWithUnit& spectral_point) const;
 
 protected:
 
-    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > Data_interp, double Conversion_factor);
+    XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > Data_interp, const Unit& Data_units, double Conversion_factor);
 
     ArrayWithUnit<double, 1> spectral_grid_values;
 
     double conversion_factor;
+    Unit xsec_units;
 
     std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > data_interp;
 
@@ -61,7 +62,7 @@ protected:
 
 private:
 
-    void init_interpolation(const blitz::Array<double, 2>& xsec_values);
+    void init_interpolation(const ArrayWithUnit<double, 2>& xsec_values);
 
     friend class boost::serialization::access;
     template<class Archive>

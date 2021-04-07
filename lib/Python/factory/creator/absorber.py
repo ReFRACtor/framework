@@ -300,15 +300,16 @@ class CrossSectionTableAscii(Creator):
     filename = param.Scalar(str)
     conversion_factor = param.Scalar(float, default=1)
     spectral_unit = param.Scalar(str, default="nm")
+    cross_section_unit = param.Scalar(str, default="cm^2")
 
     def create(self, **kwargs):
 
         xsec_data = np.loadtxt(self.filename())
 
         spec_grid = rf.ArrayWithUnit(xsec_data[:, 0], self.spectral_unit())
-        xsec_values = xsec_data[:, 1:]
+        xsec_values = rf.ArrayWithUnit(xsec_data[:, 1:], self.cross_section_unit())
 
-        if xsec_values.shape[1] > 1:
+        if xsec_data.shape[1] > 2:
             return rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
         else:
             return rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())
