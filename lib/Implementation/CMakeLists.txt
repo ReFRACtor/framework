@@ -228,6 +228,8 @@ set(TEST_SOURCES
     temperature_level_offset_test.cc
     temperature_met_test.cc
     uniform_spectrum_sampling_test.cc
+    xsec_table_simple_test.cc
+    xsec_table_temp_dep_test.cc
 )
 
 # Full path already included
