@@ -3,6 +3,7 @@ set(DIR_SOURCES
     array_ad.cc
     array_ad_with_unit.cc
     array_with_unit.cc
+    ascii_table_file.cc
     auto_derivative.cc
     auto_derivative_with_unit.cc
     blitz_array_serialize_support.cc
@@ -51,6 +52,7 @@ set(TEST_SOURCES
     angle_util_test.cc
     array_ad_cache_test.cc
     array_ad_test.cc
+    ascii_table_file_test.cc
     auto_derivative_test.cc
     bin_map_test.cc
     closest_point_test.cc
