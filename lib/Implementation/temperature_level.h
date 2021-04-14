@@ -9,7 +9,8 @@ namespace FullPhysics {
   temperature is retrieved through a set of levels related to pressures
   on the same grid.
 *******************************************************************/
-class TemperatureLevel: public TemperatureImpBase {
+
+class TemperatureLevel: virtual public TemperatureImpBase {
 public:
     TemperatureLevel(const blitz::Array<double, 1> Temp,
                      const boost::shared_ptr<Pressure>& Press,
@@ -41,7 +42,7 @@ public:
     /// units of Pascals
     //-----------------------------------------------------------------------
     virtual blitz::Array<double, 1> pressure_profile() const
-    { return pressure->pressure_grid().value.value(); }
+    { return press->pressure_grid().value.value(); }
 
     virtual ArrayWithUnit<double, 1> important_pressure_level() const
     {
@@ -50,7 +51,13 @@ public:
 protected:
     void calc_temperature_grid() const;
 private:
-    boost::shared_ptr<Pressure> pressure;
+    TemperatureLevel() = default;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(TemperatureLevel);
+
 #endif

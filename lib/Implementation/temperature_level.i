@@ -21,6 +21,8 @@ public:
     virtual blitz::Array<double, 1> temperature_profile() const;
     virtual blitz::Array<double, 1> pressure_profile() const;
     virtual ArrayWithUnit<double, 1> important_pressure_level() const;
+
+    %pickle_serialization();
 protected:
     void calc_temperature_grid() const;
 };

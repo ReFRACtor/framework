@@ -1,12 +1,25 @@
 #include "temperature_level.h"
 
 #include "linear_interpolate.h"
+#include "fp_serialize_support.h"
 
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void TemperatureLevel::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TemperatureImpBase);
+}
+
+FP_IMPLEMENT(TemperatureLevel);
+
+#endif
 
 //-----------------------------------------------------------------------
 /// Set up Temperature
@@ -15,7 +28,6 @@ using namespace blitz;
 TemperatureLevel::TemperatureLevel(const blitz::Array<double, 1> Temp,
                                    const boost::shared_ptr<Pressure>& Press,
                                    boost::shared_ptr<StateMapping> Map)
-: pressure(Press)
 {
     init(Temp, Press, Map);
 }
@@ -62,7 +74,7 @@ std::string TemperatureLevel::state_vector_name_i(int i) const
 boost::shared_ptr<Temperature> TemperatureLevel::clone() const
 {
     return boost::shared_ptr<TemperatureLevel>
-        (new TemperatureLevel(coeff.value(), pressure->clone(), mapping->clone()));
+        (new TemperatureLevel(coeff.value(), press->clone(), mapping->clone()));
 }
 
 void TemperatureLevel::print(std::ostream& Os) const
