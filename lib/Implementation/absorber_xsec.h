@@ -90,6 +90,7 @@ public:
     virtual void print(std::ostream& Os) const;
     virtual boost::shared_ptr<Absorber> clone() const;
     virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& Gas_name) const;
+    virtual boost::shared_ptr<XSecTable> xsec_table(const std::string& Gas_name) const;
 
     const Pressure& pressure() const
     {

@@ -31,8 +31,13 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
                            const std::vector<boost::shared_ptr<XSecTable> >& XSec_tables)
 : press(Press), temp(Temp), alt(Alt), vmr(Vmr), xsec_tables(XSec_tables)
 {
+    // Ensure that items involved in cache computation trigger a recomputation if updated
     press->add_cache_invalidated_observer(cache);
     temp->add_cache_invalidated_observer(cache);
+
+    for(int alt_idx = 0; alt_idx < alt.size(); alt_idx++) {
+        alt[alt_idx]->add_cache_invalidated_observer(cache);
+    }
 }
 
 void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
@@ -70,11 +75,10 @@ ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
     const DoubleWithUnit pzero(1013.25e2, units::Pa); // Standard presure
     const DoubleWithUnit tzero(273.15e0, units::K);   // Standard temperature 0 degC
     const DoubleWithUnit rho_zero = rho_stand * tzero / pzero;
-    const DoubleWithUnit dens_const = 1.0e+05 * rho_zero;
 
     ArrayAd<double, 1> air_density(press->number_level(), cache.pgrid.number_variable());;
     for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
-        air_density(lev_idx) = dens_const.value * cache.pgrid.value(lev_idx) / cache.tgrid.value(lev_idx);
+        air_density(lev_idx) = rho_zero.value * cache.pgrid.value(lev_idx) / cache.tgrid.value(lev_idx);
     }
 
     // Units here will be cm^-3 since the press/temp ratio cancels out with that in the constant
@@ -118,12 +122,12 @@ ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_in
 
     for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
         ArrayAdWithUnit<double, 1> od_unweighted(
-            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density.value(Range::all(), gas_idx), cache.tgrid)
+            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density(Range::all(), gas_idx), cache.tgrid)
         );
 
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
             AutoDerivativeWithUnit<double> height_diff(cache.height_delta_layer[spec_index](lay_idx));
-            gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted.value(lay_idx); 
+            gas_od(lay_idx, gas_idx) = height_diff.value * od_unweighted(lay_idx).convert(1/height_diff.units).value; 
         }
     }
 
@@ -155,4 +159,15 @@ boost::shared_ptr<AbsorberVmr> AbsorberXSec::absorber_vmr(const std::string& Gas
         throw err;
     }
     return vmr[i];
+}
+
+boost::shared_ptr<XSecTable> AbsorberXSec::xsec_table(const std::string& Gas_name) const
+{
+    int i = gas_index(Gas_name);
+    if(i < 0) {
+        Exception err;
+        err << "Gas named " << Gas_name << " not present in vmr list";
+        throw err;
+    }
+    return xsec_tables[i];
 }
