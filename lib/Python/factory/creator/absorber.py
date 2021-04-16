@@ -309,7 +309,7 @@ class CrossSectionTableAscii(Creator):
         spec_grid = rf.ArrayWithUnit(xsec_data[:, 0], self.spectral_unit())
         xsec_values = rf.ArrayWithUnit(xsec_data[:, 1:], self.cross_section_unit())
 
-        if xsec_data.shape[1] > 2:
+        if xsec_data.shape[1] >= 4:
             return rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
         else:
             return rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())

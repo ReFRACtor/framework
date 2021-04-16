@@ -17,7 +17,7 @@ template<class Archive>
 void AbsorberXSec::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Absorber)
-    & FP_NVP(press) & FP_NVP(temp) & FP_NVP(alt) & FP_NVP(vmr);
+    & FP_NVP(press) & FP_NVP(temp) & FP_NVP(alt) & FP_NVP(vmr) & FP_NVP(xsec_tables);
 }
 
 FP_IMPLEMENT(AbsorberXSecCache);
@@ -31,6 +31,21 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
                            const std::vector<boost::shared_ptr<XSecTable> >& XSec_tables)
 : press(Press), temp(Temp), alt(Alt), vmr(Vmr), xsec_tables(XSec_tables)
 {
+    if(vmr.size() == 0) {
+        throw Exception("No vmr objects passed");
+    }
+
+    if(xsec_tables.size() == 0) {
+        throw Exception("No cross section tables passed");
+    }
+
+    if(vmr.size() != xsec_tables.size()) {
+        Exception err;
+        err << "Number of AbsorberVmr objects: " << vmr.size()
+            << " does not match the number of XSecTable objects: " << xsec_tables.size();
+        throw err;
+    }
+
     // Ensure that items involved in cache computation trigger a recomputation if updated
     press->add_cache_invalidated_observer(cache);
     temp->add_cache_invalidated_observer(cache);
@@ -38,6 +53,7 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
     for(int alt_idx = 0; alt_idx < alt.size(); alt_idx++) {
         alt[alt_idx]->add_cache_invalidated_observer(cache);
     }
+
 }
 
 void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
