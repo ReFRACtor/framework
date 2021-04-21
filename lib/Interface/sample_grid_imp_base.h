@@ -1,5 +1,5 @@
 #ifndef SAMPLE_GRID_IMP_BASE_H
-#define SAMPLE_GRID_BASE_H
+#define SAMPLE_GRID_IMP_BASE_H
 #include "sample_grid.h"
 #include "sub_state_vector_array.h"
 

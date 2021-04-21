@@ -55,7 +55,7 @@ public:
 
     %pythoncode {
 def copy(self):
-    return self.__class__(self.data_ad, self.units)
+    return self.__class__(self.data_ad.copy(), self.units)
     }
 
 };

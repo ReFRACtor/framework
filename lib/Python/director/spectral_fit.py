@@ -18,22 +18,24 @@ class SpectralFitSampleGrid(rf.SampleGridImpBase):
         # Obtain updated coefficeints from retrieval vector
         mapped_coeffs = self.state_mapping.mapped_state(self.coefficient)
 
-        # Combine mapped_coeffs with self.instrtument_grid in some way
-        # implement shift and squeeze
+        if self.instrument_grid.data_ad.number_variable == 0 and mapped_coeffs.number_variable != 0:
+            grid_jac = np.zeros((self.instrument_grid.data.shape[0], mapped_coeffs.number_variable))
+            grid_values_ad = rf.ArrayAd_double_1(self.instrument_grid.data, grid_jac)
+        else:
+            grid_values_ad = self.instrument_grid.data_ad
+
+        # Combine mapped_coeffs with self.instrtument_grid 
 
         retrieved_grid = rf.ArrayAd_double_1(self.instrument_grid.data.shape[0], mapped_coeffs.number_variable)
 
         # Compute at each wavelength to ensure correct auto derivative handling
         for wvl_idx in range(retrieved_grid.rows):
-            retrieved_grid[wvl_idx] = mapped_coeffs[0] * (1 + mapped_coeffs[1]) * self.instrument_grid.data[wvl_idx]
+            retrieved_grid[wvl_idx] = mapped_coeffs[0] + mapped_coeffs[1] * grid_values_ad[wvl_idx]
 
         # We need to add sample index or else the code things the measure radiance is empty
         sample_index = np.arange(retrieved_grid.rows)
 
         return rf.SpectralDomain(retrieved_grid, sample_index, self.instrument_grid.units)
-
-    def _v_pixel_grid(self) -> rf.SpectralDomain:
-        return self._v_sample_grid()
 
     def _v_sub_state_identifier(self) -> str:
         "Defines the name of the group of items this class represents in the retrieval vector, one per sensor"
