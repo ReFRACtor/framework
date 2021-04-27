@@ -727,16 +727,13 @@ ArrayAdWithUnit<double, 1> AbsorberAbsco::specific_humidity_layer() const
 /// It returns dry air molecular density (per square meter) in the case
 /// where there is no water vapor.
 /// Returns units of molecules m^-2
+/// 
+/// Renamed from: dry_air_molecular_density_layer
 //-----------------------------------------------------------------------
 
-ArrayAdWithUnit<double, 1> AbsorberAbsco::dry_air_molecular_density_layer() const
+ArrayAdWithUnit<double, 1> AbsorberAbsco::total_air_number_density_layer(int spec_index) const
 {
   ArrayAdWithUnit<double, 1> pgrid(press->pressure_grid());
-  // We pick the first spectrometer to calculate gravity out. For
-  // GOSAT this doesn't matter since all the spectrometers look at the
-  // same point. For a different instrument, this might matter and
-  // we'll need to revisit this.
-  int spec_index = 0;
   ArrayAdWithUnit<double, 1> mol_dens;
   mol_dens.units = Unit("m^-2");
   Array<AutoDerivative<double>, 1> mol_dens_t(pgrid.rows() - 1);
@@ -754,12 +751,14 @@ ArrayAdWithUnit<double, 1> AbsorberAbsco::dry_air_molecular_density_layer() cons
 //-----------------------------------------------------------------------
 /// This is the dry air column thickness by layer. This is the size
 /// of pressure_grid() - 1.
+///
+/// Renamed from: dry_air_column_thickness_layer
 //-----------------------------------------------------------------------
 
-ArrayAdWithUnit<double, 1> AbsorberAbsco::dry_air_column_thickness_layer() const
+ArrayAdWithUnit<double, 1> AbsorberAbsco::dry_air_number_density_layer(int spec_index) const
 {
   ArrayAdWithUnit<double, 1> spec_hum(specific_humidity_layer());
-  ArrayAdWithUnit<double, 1> mol_dens(dry_air_molecular_density_layer());
+  ArrayAdWithUnit<double, 1> mol_dens(total_air_number_density_layer(spec_index));
   ArrayAdWithUnit<double, 1> dry_am;
   dry_am.units = mol_dens.units;
   Array<AutoDerivative<double>, 1> dry_am_t(mol_dens.rows());
@@ -772,13 +771,15 @@ ArrayAdWithUnit<double, 1> AbsorberAbsco::dry_air_column_thickness_layer() const
 //-----------------------------------------------------------------------
 /// This is the wet air column thickness by layer. This is the size
 /// of pressure_grid() - 1.
+//
+// Rename from: wet_air_column_thickness_layer
 //-----------------------------------------------------------------------
 
 ArrayAdWithUnit<double, 1> 
-AbsorberAbsco::wet_air_column_thickness_layer() const
+AbsorberAbsco::wet_air_number_density_layer(int spec_index) const
 {
   ArrayAdWithUnit<double, 1> spec_hum(specific_humidity_layer());
-  ArrayAdWithUnit<double, 1> mol_dens(dry_air_molecular_density_layer());
+  ArrayAdWithUnit<double, 1> mol_dens(total_air_number_density_layer(spec_index));
   DoubleWithUnit epsilon = c->molar_weight_water() / c->molar_weight_dry_air();
   ArrayAdWithUnit<double, 1> wet_am;
   wet_am.units = mol_dens.units;
@@ -796,10 +797,9 @@ AbsorberAbsco::wet_air_column_thickness_layer() const
 /// of pressure_grid() - 1.
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_layer() const
+ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_layer(int spec_index) const
 {
-  Array<AutoDerivative<double>, 1> dry_am(dry_air_column_thickness_layer().
-					  value.to_array());
+  Array<AutoDerivative<double>, 1> dry_am(dry_air_number_density_layer(spec_index).value.to_array());
   Array<AutoDerivative<double>, 1> pwf(dry_am.rows());
   pwf = dry_am / sum(dry_am);
   return ArrayAd<double, 1>(pwf);
@@ -811,10 +811,10 @@ ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_layer() const
 /// XCO2 = (co2 on grid levels) dot (press_wf_lev)
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_grid() const
+ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_grid(int spec_index) const
 {
   // Note assumption here that pressure varies linearly over layer
-  ArrayAd<double, 1> pwlay = pressure_weighting_function_layer();
+  ArrayAd<double, 1> pwlay = pressure_weighting_function_layer(spec_index);
   int nactive = press->number_level();
   Array<AutoDerivative<double>, 1> pwlev(nactive);
   pwlev(0) = pwlay(0) / 2;
@@ -830,10 +830,10 @@ ArrayAd<double, 1> AbsorberAbsco::pressure_weighting_function_grid() const
 //-----------------------------------------------------------------------
 
 ArrayAdWithUnit<double, 1> 
-AbsorberAbsco::gas_column_thickness_layer(const std::string& Gas_name) const
+AbsorberAbsco::gas_column_thickness_layer(int spec_index, const std::string& Gas_name) const
 {
   ArrayAdWithUnit<double, 1> pgrid(press->pressure_grid());
-  ArrayAdWithUnit<double, 1> dry_am = dry_air_column_thickness_layer();
+  ArrayAdWithUnit<double, 1> dry_am = dry_air_number_density_layer(spec_index);
   ArrayAdWithUnit<double, 1> gas_thickness;
   gas_thickness.units = dry_am.units;
   Array<AutoDerivative<double>, 1> gas_thickness_t(dry_am.rows());
@@ -853,18 +853,40 @@ AbsorberAbsco::gas_column_thickness_layer(const std::string& Gas_name) const
 //-----------------------------------------------------------------------
 
 AutoDerivativeWithUnit<double> 
-AbsorberAbsco::gas_total_column_thickness(const std::string& Gas_name) const
+AbsorberAbsco::gas_total_column_thickness(int spec_index, const std::string& Gas_name) const
 {
-  ArrayAdWithUnit<double, 1> gas_thickness = 
-    gas_column_thickness_layer(Gas_name);
-  return AutoDerivativeWithUnit<double>(sum(gas_thickness.value.to_array()), 
-					gas_thickness.units);
+  ArrayAdWithUnit<double, 1> gas_thickness = gas_column_thickness_layer(spec_index, Gas_name);
+  return AutoDerivativeWithUnit<double>(sum(gas_thickness.value.to_array()), gas_thickness.units);
+}
+
+//-----------------------------------------------------------------------
+// See base class description
+//-----------------------------------------------------------------------
+
+ArrayAdWithUnit<double, 2> AbsorberAbsco::gas_number_density_layer(int spec_index) const
+{
+  ArrayAd<double, 2> gas_dens_lay(number_layer(), number_species(), 0);
+
+  Unit gas_dens_units;
+  for(int gas_idx = 0; gas_idx < number_species(); gas_idx++) {
+    string name = gas_name(gas_idx);
+    ArrayAdWithUnit<double, 1> gas_thickness = gas_column_thickness_layer(spec_index, name);
+
+    if(gas_dens_lay.number_variable() == 0 and gas_thickness.number_variable() != 0) {
+      gas_dens_lay.resize_number_variable(gas_thickness.number_variable());
+    }
+    gas_dens_units = gas_thickness.units;
+
+    gas_dens_lay(Range::all(), gas_idx) = gas_thickness.value;
+  }
+
+  return ArrayAdWithUnit<double, 2>(gas_dens_lay, gas_dens_units);
 }
 
 // See base class for description
-AutoDerivative<double> AbsorberAbsco::xgas(const std::string& Gas_name) const
+AutoDerivative<double> AbsorberAbsco::xgas(int spec_index, const std::string& Gas_name) const
 { 
-  ArrayAd<double, 1> pwf(pressure_weighting_function_grid());
+  ArrayAd<double, 1> pwf(pressure_weighting_function_grid(spec_index));
   ArrayAdWithUnit<double, 1> pgrid = press->pressure_grid();
   AutoDerivative<double> res;
   res = pwf(0) * absorber_vmr(Gas_name)->volume_mixing_ratio(pgrid(0).convert(units::Pa).value);

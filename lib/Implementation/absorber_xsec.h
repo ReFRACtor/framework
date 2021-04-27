@@ -70,16 +70,28 @@ public:
     }
 
     //-----------------------------------------------------------------------
-    /// Wet air density at each level boundary determined using Loschmidt's constant
+    /// Number density of air at each level boundary 
     //-----------------------------------------------------------------------
 
-    virtual ArrayAdWithUnit<double, 1> air_density_level() const;
+    virtual ArrayAdWithUnit<double, 1> total_air_number_density_level() const;
 
     //-----------------------------------------------------------------------
-    /// Number density of the the gas molecule at each level boundary
+    /// Number density of gas molecules at each level boundary
     //-----------------------------------------------------------------------
 
-    virtual ArrayAdWithUnit<double, 2> gas_density_level() const;
+    virtual ArrayAdWithUnit<double, 2> gas_number_density_level() const;
+
+    //-----------------------------------------------------------------------
+    // See base class description 
+    //-----------------------------------------------------------------------
+
+    virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const;
+
+    //-----------------------------------------------------------------------
+    // See base class description 
+    //-----------------------------------------------------------------------
+
+    virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const;
 
     //-----------------------------------------------------------------------
     // See base class description 

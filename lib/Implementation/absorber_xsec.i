@@ -29,8 +29,11 @@ class AbsorberXSec: virtual public Absorber {
     virtual int number_layer() const;
     virtual std::string gas_name(int Species_index) const;
 
-    virtual ArrayAdWithUnit<double, 1> air_density_level() const;
-    virtual ArrayAdWithUnit<double, 2> gas_density_level() const;
+    %python_attribute(total_air_number_density_level, ArrayAdWithUnit<double, 1>)
+    %python_attribute(gas_number_density_level, ArrayAdWithUnit<double, 2>)
+
+    virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const;
+    virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const;
 
     virtual ArrayAd<double, 2> optical_depth_each_layer(double wn, int spec_index) const;
 

@@ -82,7 +82,7 @@ void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
 
 }
 
-ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
+ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_level() const
 {
     cache.fill_cache_if_needed(*this);
 
@@ -102,11 +102,29 @@ ArrayAdWithUnit<double, 1> AbsorberXSec::air_density_level() const
     return ArrayAdWithUnit<double, 1>(air_density, "cm^-3");
 }
 
-ArrayAdWithUnit<double, 2> AbsorberXSec::gas_density_level() const
+ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_layer(int spec_index) const
 {
     cache.fill_cache_if_needed(*this);
 
-    ArrayAdWithUnit<double, 1> air_density(air_density_level());
+    // Ensure consistency of units of items to be integraded
+    ArrayAdWithUnit<double, 1> height_delta(cache.height_delta_layer[spec_index].convert(Unit("cm")));
+    ArrayAdWithUnit<double, 1> air_dens_lev(total_air_number_density_level().convert(Unit("cm^-3")));
+
+    ArrayAd<double, 1> air_dens_lay(press->number_layer(), air_dens_lev.number_variable());
+   
+    for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
+        air_dens_lay(lay_idx) = height_delta(lay_idx).value * (air_dens_lev(lay_idx).value + air_dens_lev(lay_idx+1).value) * 0.5;
+    }
+
+    // One cm^-1 cancels out with altitude units
+    return ArrayAdWithUnit<double, 1>(air_dens_lay, Unit("cm^-2"));
+}
+
+ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_level() const
+{
+    cache.fill_cache_if_needed(*this);
+
+    ArrayAdWithUnit<double, 1> air_density(total_air_number_density_level());
 
     ArrayAd<double, 2> gas_density(air_density.rows(), vmr.size(), air_density.number_variable());
 
@@ -125,13 +143,33 @@ ArrayAdWithUnit<double, 2> AbsorberXSec::gas_density_level() const
     return ArrayAdWithUnit<double, 2>(gas_density, air_density.units);
 }
 
+ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_layer(int spec_index) const
+{
+    cache.fill_cache_if_needed(*this);
+
+    // Ensure consistency of units of items to be integraded
+    ArrayAdWithUnit<double, 1> height_delta(cache.height_delta_layer[spec_index].convert(Unit("cm")));
+    ArrayAdWithUnit<double, 2> gas_dens_lev(gas_number_density_level().convert(Unit("cm^-3")));
+
+    ArrayAd<double, 2> gas_dens_lay(press->number_layer(), number_species(), gas_dens_lev.number_variable());
+   
+    for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
+        for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
+            gas_dens_lay(lay_idx, gas_idx) = height_delta(lay_idx).value * (gas_dens_lev(lay_idx, gas_idx).value + gas_dens_lev(lay_idx+1, gas_idx).value) * 0.5;
+        }
+    }
+
+    // One cm^-1 cancels out with altitude units
+    return ArrayAdWithUnit<double, 2>(gas_dens_lay, Unit("cm^-2"));
+}
+
 ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_index) const
 {
     cache.fill_cache_if_needed(*this);
 
     range_check(spec_index, 0, number_spectrometer());
 
-    ArrayAdWithUnit<double, 2> gas_density(gas_density_level());
+    ArrayAdWithUnit<double, 2> gas_density(gas_number_density_level());
     DoubleWithUnit spectral_point(wn, units::inv_cm);
 
     ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), gas_density.number_variable());

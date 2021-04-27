@@ -57,6 +57,24 @@ public:
   virtual int gas_index(const std::string& Name) const;
 
 //-----------------------------------------------------------------------
+/// Total number density of air for each layer including dry and water
+/// Units will be in inverse squared distance, for instance cm^-2 or m^-2
+//-----------------------------------------------------------------------
+
+  virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
+/// Per gas number density of air for each layer. This is essentially
+/// the total_air_number_density_layer value multiplied by the gas VMR
+/// giving the proportion of the VMR to total. This is the value multiplied
+/// by cross section value to give optical depth for each molecule.
+/// Dimensioned as: N_Layer x N_Particle
+/// Units will be in inverse squared distance, for instance cm^-2 or m^-2
+//-----------------------------------------------------------------------
+
+  virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
 /// This gives the optical depth for each layer, for the given wave
 /// number. Note this only includes the Absorbers portion of this,
 /// Atmosphere class combines this with Rayleigh and Aerosol

@@ -53,17 +53,17 @@ BOOST_AUTO_TEST_CASE(press_wf)
   AbsorberAbsco& a = dynamic_cast<AbsorberAbsco&>(*config_absorber);
   Array<double, 1> press_wf_lay_expect, press_wf_lev_expect;
   expected_data >> press_wf_lay_expect >> press_wf_lev_expect;
-  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_layer().value(), 
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_layer(0).value(), 
                            press_wf_lay_expect);
-  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_grid().value(), 
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_grid(0).value(), 
                            press_wf_lev_expect);
-  BOOST_CHECK_CLOSE(a.xgas("CO2").value(), 0.00039670981755915669, 1e-4);
+  BOOST_CHECK_CLOSE(a.xgas(0, "CO2").value(), 0.00039670981755915669, 1e-4);
   if (false) {
     std::cerr << setprecision(20) << std::scientific
               << "# Expected pressure weighting function for layers." << std::endl
-              << a.pressure_weighting_function_layer().value() << std::endl
+              << a.pressure_weighting_function_layer(0).value() << std::endl
               << "# Expected pressure weighting function for levels" << std::endl
-              << a.pressure_weighting_function_grid().value() << std::endl;
+              << a.pressure_weighting_function_grid(0).value() << std::endl;
   }    
 }
 
@@ -71,14 +71,14 @@ BOOST_AUTO_TEST_CASE(gas_column_thickness)
 {
   // Make sure that wet - dry column == h2o column as it should
   AbsorberAbsco& a = dynamic_cast<AbsorberAbsco&>(*config_absorber);
-  Array<double, 1> wet_col(a.wet_air_column_thickness_layer().value.value());
-  Array<double, 1> dry_col(a.dry_air_column_thickness_layer().value.value());
-  Array<double, 1> h2o_col(a.gas_column_thickness_layer("H2O").value.value());
+  Array<double, 1> wet_col(a.wet_air_number_density_layer(0).value.value());
+  Array<double, 1> dry_col(a.dry_air_number_density_layer(0).value.value());
+  Array<double, 1> h2o_col(a.gas_column_thickness_layer(0, "H2O").value.value());
   // The two comparison values are on the order of 1e23 so must have a higher tol here
   BOOST_CHECK_MATRIX_CLOSE_TOL(wet_col - dry_col, h2o_col, 1e13);
 
   // Check that dry / column(O2) = vmr
-  Array<double, 1> o2_col(a.gas_column_thickness_layer("O2").value.value());
+  Array<double, 1> o2_col(a.gas_column_thickness_layer(0, "O2").value.value());
   Array<double, 1> o2_vmr(o2_col.rows());
   o2_vmr = a.average_vmr("O2").value();
   BOOST_CHECK_MATRIX_CLOSE(o2_col / dry_col, o2_vmr);
@@ -147,19 +147,21 @@ BOOST_AUTO_TEST_CASE(serialization)
   BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_2, 1e-10);
   BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_3, 1e-10);
   BOOST_CHECK_MATRIX_CLOSE_TOL(od_calc_2_1, od_calc_2_4, 1e-10);
-  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_layer().value(), 
-			   ar->pressure_weighting_function_layer().value());
-  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_grid().value(), 
-			   ar->pressure_weighting_function_grid().value());
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_layer(0).value(), 
+			   ar->pressure_weighting_function_layer(0).value());
+  BOOST_CHECK_MATRIX_CLOSE(a.pressure_weighting_function_grid(0).value(), 
+			   ar->pressure_weighting_function_grid(0).value());
 
-  BOOST_CHECK_MATRIX_CLOSE(a.wet_air_column_thickness_layer().value.value(),
-			   ar->wet_air_column_thickness_layer().value.value());
-  BOOST_CHECK_MATRIX_CLOSE(a.dry_air_column_thickness_layer().value.value(),
-			   ar->dry_air_column_thickness_layer().value.value());
-  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer("H2O").value.value(),
-			   ar->gas_column_thickness_layer("H2O").value.value());
-  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer("O2").value.value(),
-			   ar->gas_column_thickness_layer("O2").value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.wet_air_number_density_layer(0).value.value(),
+			   ar->wet_air_number_density_layer(0).value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.dry_air_number_density_layer(0).value.value(),
+			   ar->dry_air_number_density_layer(0).value.value());
+   BOOST_CHECK_MATRIX_CLOSE(a.total_air_number_density_layer(0).value.value(),
+			   ar->total_air_number_density_layer(0).value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer(0, "H2O").value.value(),
+			   ar->gas_column_thickness_layer(0, "H2O").value.value());
+  BOOST_CHECK_MATRIX_CLOSE(a.gas_column_thickness_layer(0, "O2").value.value(),
+			   ar->gas_column_thickness_layer(0, "O2").value.value());
   // Pick an band where we have some CO2, so varying the VMR of CO2 affects 
   // the results.
   int spec_index = 2;

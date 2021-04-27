@@ -173,11 +173,7 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
     relative_azimuth_ = relative_azimuth.convert(units::deg).value; // stored for use in cloning
     scattering_angle_ = scattering_angle(observation_zenith, solar_zenith, relative_azimuth).convert(units::deg).value;
 
-    absorber_ = boost::dynamic_pointer_cast<AbsorberAbsco>(atmosphere_->absorber_ptr());
-
-    if(!absorber_) {
-        throw Exception("Expected absorber type from AtmosphereStandard to be of type AbsorberAbsco");
-    }
+    absorber_ = atmosphere_->absorber_ptr();
 
     // Initialize the temperature levels
     compute_temp_layers(*atmosphere_->pressure_ptr());
@@ -204,8 +200,7 @@ void RamanSiorisEffect::apply_effect
     Range ra = Range::all();
 
     // Convert dry air number density to the necessary units of molecules/cm^2
-    Array<double, 1> dry_air_density = absorber_->dry_air_molecular_density_layer().value.value();
-    dry_air_density *= 1e-4;
+    Array<double, 1> dry_air_density = absorber_->total_air_number_density_layer(channel_index_).convert(Unit("cm^-2")).value.value();
 
     // Compute a padded grid due to requirements of the fortran code
     // Pad 10% of the size of the input grid

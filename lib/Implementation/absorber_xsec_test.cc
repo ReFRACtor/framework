@@ -11,7 +11,7 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(absorber_xsec, GlobalFixture)
 
-BOOST_AUTO_TEST_CASE(basic)
+BOOST_AUTO_TEST_CASE(optical_depth)
 {
     // This unit test relies upon serialized data created by the Python creator system
     // The serialized data is recreated by this script:
@@ -74,6 +74,21 @@ BOOST_AUTO_TEST_CASE(basic)
     throw Exception("Can not run this unit test without serialization support");
 #endif
 }
+
+BOOST_AUTO_TEST_CASE(density)
+{
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+    std::string atmosphere_serialized_fn = test_data_dir() + "in/uv_atmosphere/uv_atmosphere.xml";
+    boost::shared_ptr<AtmosphereStandard> uv_atmosphere = serialize_read<AtmosphereStandard>(atmosphere_serialized_fn);
+    boost::shared_ptr<AbsorberXSec> abs_xsec = boost::dynamic_pointer_cast<AbsorberXSec>(uv_atmosphere->absorber_ptr());
+
+    //std::cerr << abs_xsec->air_density_layer() << std::endl;
+#else
+    throw Exception("Can not run this unit test without serialization support");
+#endif
+}
+
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

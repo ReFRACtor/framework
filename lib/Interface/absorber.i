@@ -52,9 +52,11 @@ public:
   %python_attribute(number_species, virtual int);
   virtual std::string gas_name(int Species_index) const = 0;
   virtual int gas_index(const std::string& Name) const;
-  
-  virtual ArrayAd<double, 2> 
-  optical_depth_each_layer(double wn, int spec_index) const = 0;
+
+  virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const = 0;
+  virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const = 0;
+ 
+  virtual ArrayAd<double, 2> optical_depth_each_layer(double wn, int spec_index) const = 0;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const = 0;
   virtual boost::shared_ptr<Absorber> clone() const = 0;
   virtual void print(std::ostream& Os) const;

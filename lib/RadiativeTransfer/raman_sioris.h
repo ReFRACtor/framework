@@ -8,7 +8,7 @@
 #include "spectrum_effect_imp_base.h"
 #include "atmosphere_standard.h"
 #include "solar_model.h"
-#include "absorber_absco.h"
+#include "absorber.h"
 #include "forward_model_spectral_grid.h"
 #include "state_mapping_linear.h"
 
@@ -84,7 +84,7 @@ private:
   boost::shared_ptr<AtmosphereStandard> atmosphere_;
   boost::shared_ptr<SolarModel> solar_model_;
 
-  boost::shared_ptr<AbsorberAbsco> absorber_;
+  boost::shared_ptr<Absorber> absorber_;
   RamanSiorisEffect() {}
   friend class boost::serialization::access;
   template<class Archive>
