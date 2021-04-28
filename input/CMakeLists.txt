@@ -32,6 +32,9 @@ foreach(sub_dir fts gosat oco)
             PATTERN "old" EXCLUDE)
 endforeach()
 
+# Cross section directory
+install(DIRECTORY cross_sections/ DESTINATION ${INPUT_INSTALL_PREFIX}/input/cross_sections)
+ 
 # Template NetCDF files
 install(DIRECTORY template/ DESTINATION ${INPUT_INSTALL_PREFIX}/template
     FILES_MATCHING PATTERN "*.nc")

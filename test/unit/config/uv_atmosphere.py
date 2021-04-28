@@ -7,22 +7,9 @@ import numpy as np
 import refractor.factory.creator as creator
 from refractor import framework as rf
 from refractor.config import refractor_config
+from refractor.input.paths import cross_section_filenames
 
-cross_section_dir = os.path.join(os.path.dirname(__file__), '../../../input/cross_sections')
 profile_filename = os.path.join(os.path.dirname(__file__), '../data/in/uv_atmosphere/Profiles_9_2006726_1500.dat')
-
-cross_section_filenames = {
-    'O3': "o3abs_brion_195_660_vacfinal.dat", 
-    'NO2': "no2r_97.nm",
-    'SO2': "SO2_298_BISA.nm",
-    'HCHO': "H2CO_Meller_Moortgat_MPI.txt",
-    'BrO': "228kbro10cm_padded.nm",
-    'CHOCHO': "CHOCHO_Xsections_250-510nm.dat",
-}
-
-# Add path to filenames
-for gas_name, filename in cross_section_filenames.items():
-    cross_section_filenames[gas_name] = os.path.join(cross_section_dir, filename)
  
 class ProfileReader(object):
 
