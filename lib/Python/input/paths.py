@@ -2,8 +2,19 @@ import os
 
 ####
 
-# Make this import to decouple this environment variable from value itself
+# Paths from environment variables
+# Use these to decouple this environment variable from value itself.
+# We can change the variables or do additional work here without breaking
+# usage of the filenames.
+
 refractor_input_path = os.environ['REFRACTOR_INPUT_PATH']
+
+#### 
+
+# General data files
+
+aerosol_properties_filename = os.path.join(refractor_input_path, "l2_aerosol_combined.h5")
+reference_atmosphere_filename = os.path.join(refractor_input_path, "reference_atmosphere.h5")
 
 ####
 
@@ -24,3 +35,9 @@ cross_section_filenames = {
 # Add path to all filenames at once
 for gas_name, base_name in cross_section_filenames.items():
     cross_section_filenames[gas_name] = os.path.join(cross_section_base_path, base_name)
+
+# Conversion factors for the files above, ideally we should test rolling these conversions into the files themselves
+cross_section_file_conversion_factors = {
+    "O3":     1e20,
+    "CHOCHO": 5e18,
+}

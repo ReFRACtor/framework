@@ -12,7 +12,6 @@ from refractor import framework as rf
 
 DEFAULT_REFERENCE_ATM_FILENAME = os.path.join(os.environ.get("REFRACTOR_INPUT_PATH", "$ENV{REFRACTOR_INPUT_PATH}"), "reference_atmosphere.h5")
 
-
 class ReferenceAtmFileMixin(object):
 
     def ref_atm_data(self):
@@ -302,17 +301,17 @@ class CrossSectionTableAscii(Creator):
     spectral_unit = param.Scalar(str, default="nm")
     cross_section_unit = param.Scalar(str, default="cm^2")
 
-    def create(self, **kwargs):
+    def create(self, gas_name=None, **kwargs):
 
-        xsec_data = np.loadtxt(self.filename())
+        xsec_data = np.loadtxt(self.filename(gas_name=gas_name))
 
         spec_grid = rf.ArrayWithUnit(xsec_data[:, 0], self.spectral_unit())
         xsec_values = rf.ArrayWithUnit(xsec_data[:, 1:], self.cross_section_unit())
 
         if xsec_data.shape[1] >= 4:
-            return rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor())
+            return rf.XSecTableTempDep(spec_grid, xsec_values, self.conversion_factor(gas_name=gas_name))
         else:
-            return rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor())
+            return rf.XSecTableSimple(spec_grid, xsec_values, self.conversion_factor(gas_name=gas_name))
 
 # ---------------
 

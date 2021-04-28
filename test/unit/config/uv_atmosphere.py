@@ -7,7 +7,7 @@ import numpy as np
 import refractor.factory.creator as creator
 from refractor import framework as rf
 from refractor.config import refractor_config
-from refractor.input.paths import cross_section_filenames
+from refractor.input.paths import cross_section_filenames, cross_section_file_conversion_factors
 
 profile_filename = os.path.join(os.path.dirname(__file__), '../data/in/uv_atmosphere/Profiles_9_2006726_1500.dat')
  
@@ -50,7 +50,7 @@ def temperature_levels():
     temp_col = profile.column_names.index("TATM")
     return profile.data[::-1, temp_col]
 
-def vmr_profile(gas_name):
+def vmr_profile(gas_name=None):
     if gas_name == "CHOCHO":
         col_name = "CHOHO"
     else:
@@ -104,11 +104,13 @@ def uv_atmosphere_definition():
                     'creator': creator.absorber.CrossSectionGasDefinition,
                     'vmr': {
                         'creator': creator.absorber.AbsorberVmrLevel,
-                        'vmr_profile': None,
+                        'vmr_profile': vmr_profile,
                     },
                     'cross_section': {
                         'creator': creator.absorber.CrossSectionTableAscii,
                         'filename': None,
+                        'filename': lambda gas_name=None: cross_section_filenames[gas_name],
+                        'conversion_factor': lambda gas_name=None: cross_section_file_conversion_factors.get(gas_name, 1.0),
                     },
                 }, 
             },
@@ -125,18 +127,5 @@ def uv_atmosphere_definition():
             },
         },
     }
-
-    # Create cross section table set ups for each gass
-    for gas_name in config_def['atmosphere']['absorber']['gases']:
-        gas_def = deepcopy(config_def['atmosphere']['absorber']['default_gas_definition'])
-
-        gas_def['vmr']['vmr_profile'] = vmr_profile(gas_name)
-        gas_def['cross_section']['filename'] = cross_section_filenames[gas_name]
-
-        config_def['atmosphere']['absorber'][gas_name] = gas_def
-
-    # Set the O3 conversion factor
-    config_def['atmosphere']['absorber']['O3']['cross_section']['conversion_factor'] = 1e20
-    config_def['atmosphere']['absorber']['CHOCHO']['cross_section']['conversion_factor'] = 5e18
 
     return config_def
