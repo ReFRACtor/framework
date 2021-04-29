@@ -25,6 +25,7 @@ cross_section_base_path = os.path.join(refractor_input_path, 'cross_sections')
 # Maps gas species names to cross section filenames
 cross_section_filenames = {
     'O3':     "o3abs_brion_195_660_vacfinal.dat", 
+    'H2O':    "H2O_280K900mb.dat",
     'NO2':    "no2r_97.nm",
     'SO2':    "SO2_298_BISA.nm",
     'HCHO':   "H2CO_Meller_Moortgat_MPI.txt",
