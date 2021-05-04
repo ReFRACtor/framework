@@ -27,6 +27,9 @@ BOOST_AUTO_TEST_CASE(optical_depth)
     boost::shared_ptr<AtmosphereStandard> uv_atmosphere = serialize_read<AtmosphereStandard>(atmosphere_serialized_fn);
     boost::shared_ptr<AbsorberXSec> abs_xsec = boost::dynamic_pointer_cast<AbsorberXSec>(uv_atmosphere->absorber_ptr());
 
+    // Only 1 sensor defined in uv_atmosphere_config.py
+    int sensor_idx = 0;
+
     // Preload the expected data, the first column is the grid, rest of columns are value per layer
     std::vector<Array<double, 2> > expected_data;
 
@@ -56,18 +59,14 @@ BOOST_AUTO_TEST_CASE(optical_depth)
         throw Exception("Error loading expected results data");
     }
 
-    // Only 1 sensor defined in uv_atmosphere_config.py
-    int sensor_idx = 0;
-
-    //for(int grid_idx = 0; grid_idx < grid_nm.rows(); grid_idx++) {
-    { int grid_idx = 0;
+    for(int grid_idx = 0; grid_idx < grid_nm.rows(); grid_idx++) {
         float wn = DoubleWithUnit(grid_nm(grid_idx), Unit("nm")).convert_wave(units::inv_cm).value;
         ArrayAdWithUnit<double, 2> comp_abs_od = abs_xsec->optical_depth_each_layer(wn, sensor_idx);
 
         for(int gas_idx = 0; gas_idx < abs_xsec->number_species(); gas_idx++) {
             Array<double, 1> gas_expt_abs_od(expected_data[gas_idx](grid_idx, expt_data_cols));
             Array<double, 1> gas_comp_abs_od(comp_abs_od.value.value()(Range::all(), gas_idx));
-            BOOST_CHECK_MATRIX_CLOSE_TOL(gas_expt_abs_od, gas_comp_abs_od, 1.5e-5);
+            BOOST_CHECK_MATRIX_CLOSE_TOL(gas_expt_abs_od, gas_comp_abs_od, 6e-5);
         }
     }
 #else
@@ -82,7 +81,43 @@ BOOST_AUTO_TEST_CASE(density)
     boost::shared_ptr<AtmosphereStandard> uv_atmosphere = serialize_read<AtmosphereStandard>(atmosphere_serialized_fn);
     boost::shared_ptr<AbsorberXSec> abs_xsec = boost::dynamic_pointer_cast<AbsorberXSec>(uv_atmosphere->absorber_ptr());
 
-    //std::cerr << abs_xsec->air_density_layer() << std::endl;
+    // Only 1 sensor defined in uv_atmosphere_config.py
+    int sensor_idx = 0;
+
+    // Compare total air density against offline code, make sure we have commensurate units by converting our results
+    // to those of the expected values
+    std::string total_density_expt_fn = test_data_dir() + "expected/cross_section/total_air_density.dat";
+    AsciiTableFile total_air_expt_file(total_density_expt_fn);
+
+    // Comparison data in the second column
+    Array<double, 1> total_air_expt(total_air_expt_file.data()(Range::all(), 1));
+    Array<double, 1> total_air_calc(abs_xsec->total_air_number_density_level().convert(Unit("cm^-3")).value.value());
+
+    // Normalize values so we are not comparing large numbers
+    total_air_expt = total_air_expt / max(total_air_expt);
+    total_air_calc = total_air_calc / max(total_air_calc);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(total_air_expt, total_air_calc, 1e-8);
+
+    // Check per gas density values
+    Array<double, 2> gas_density_expt(abs_xsec->number_layer() + 1, abs_xsec->number_species());
+    for(int gas_idx = 0; gas_idx < abs_xsec->number_species(); gas_idx++) {
+        std::string gas_name = abs_xsec->gas_name(gas_idx);
+        std::string gas_expt_fn = test_data_dir() + "expected/cross_section/gas_air_density_" + gas_name + ".dat";
+        AsciiTableFile expt_file(gas_expt_fn);
+
+        // Expected values in second column
+        gas_density_expt(Range::all(), gas_idx) = expt_file.data()(Range::all(), 1);
+    }
+
+    Array<double, 2> gas_density_calc(abs_xsec->gas_number_density_level().convert(Unit("cm^-3")).value.value());
+
+    // Normalize values so we are not comparing large numbers
+    gas_density_expt = gas_density_expt / max(gas_density_expt);
+    gas_density_calc = gas_density_calc / max(gas_density_calc);
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(gas_density_expt, gas_density_calc, 1e-8);
+
 #else
     throw Exception("Can not run this unit test without serialization support");
 #endif
