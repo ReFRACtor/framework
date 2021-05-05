@@ -61,45 +61,87 @@ void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
     pgrid.reference(absorber.press->pressure_grid().convert(units::Pa));
     tgrid.reference(absorber.temp->temperature_grid(*(absorber.press)).convert(units::K));
 
+    cache_height_delta(absorber.press, absorber.alt);
+    cache_total_air_number_density_level();
+    cache_gas_number_density_level(absorber.press, absorber.vmr);
+}
+
+void AbsorberXSecCache::cache_height_delta(const boost::shared_ptr<Pressure>& press, const std::vector<boost::shared_ptr<Altitude> >& alt)
+{
     // Number of derivative variables for auto derivatives
     int num_jac_variable = pgrid.number_variable();
 
     height_delta_layer.clear();
 
-    for(int sensor_idx = 0; sensor_idx < absorber.number_spectrometer(); sensor_idx++) {
-        ArrayAd<double, 1> height_delta_sensor(absorber.press->number_layer(), num_jac_variable);
+    for(int sensor_idx = 0; sensor_idx < alt.size(); sensor_idx++) {
+        ArrayAd<double, 1> height_delta_sensor(press->number_layer(), num_jac_variable);
 
         Unit height_units;
-        for(int lay_idx = 0; lay_idx < absorber.press->number_layer(); lay_idx++) {
-            AutoDerivativeWithUnit<double> h_lay_top = absorber.alt[sensor_idx]->altitude(pgrid(lay_idx));
-            AutoDerivativeWithUnit<double> h_lay_bottom = absorber.alt[sensor_idx]->altitude(pgrid(lay_idx+1));
+        for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
+            AutoDerivativeWithUnit<double> h_lay_top = alt[sensor_idx]->altitude(pgrid(lay_idx));
+            AutoDerivativeWithUnit<double> h_lay_bottom = alt[sensor_idx]->altitude(pgrid(lay_idx+1));
             height_delta_sensor(lay_idx) = h_lay_top.value - h_lay_bottom.value;
             height_units = h_lay_top.units;
         }
 
         height_delta_layer.push_back(ArrayAdWithUnit<double, 1>(height_delta_sensor, height_units));
     }
-
 }
 
-ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_level() const
+void AbsorberXSecCache::cache_total_air_number_density_level()
 {
-    cache.fill_cache_if_needed(*this);
-
     // Loschmidt's number (particles/cm3), STP parameters
     const DoubleWithUnit rho_stand(2.68675e+19, "cm^-3");
     const DoubleWithUnit pzero(1013.25e2, units::Pa); // Standard presure
     const DoubleWithUnit tzero(273.15e0, units::K);   // Standard temperature 0 degC
     const DoubleWithUnit rho_zero = rho_stand * tzero / pzero;
 
-    ArrayAd<double, 1> air_density(press->number_level(), cache.pgrid.number_variable());;
-    for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
-        air_density(lev_idx) = rho_zero.value * cache.pgrid.value(lev_idx) / cache.tgrid.value(lev_idx);
+    if (pgrid.rows() == 0) {
+        throw Exception("pgrid not yet computed by cache");
     }
 
+    air_density.value.resize(pgrid.rows(), pgrid.number_variable());;
+
     // Units here will be cm^-3 since the press/temp ratio cancels out with that in the constant
-    // Set the unit explicitly so there is not "cruft" factors left over from using the Unit class
-    return ArrayAdWithUnit<double, 1>(air_density, "cm^-3");
+    air_density.units = Unit("cm^-3");
+
+    for(int lev_idx = 0; lev_idx < pgrid.rows(); lev_idx++) {
+        air_density.value(lev_idx) = rho_zero.value * pgrid.value(lev_idx) / tgrid.value(lev_idx);
+    }
+}
+
+void AbsorberXSecCache::cache_gas_number_density_level(const boost::shared_ptr<Pressure>& press, const std::vector<boost::shared_ptr<AbsorberVmr> >& vmr)
+{
+    if(air_density.rows() == 0) {
+        throw Exception("air_density not yet computed by cache");
+    }
+
+    gas_density.value.resize(air_density.rows(), vmr.size(), air_density.number_variable());
+    gas_density.units = air_density.units;
+
+    for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
+        ArrayAd<double, 1> vmr_grid(vmr[gas_idx]->vmr_grid(*press));
+
+        if(gas_density.number_variable() == 0 and vmr_grid.number_variable() > 0) {
+            gas_density.value.resize_number_variable(vmr_grid.number_variable());
+        }
+
+        for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
+            gas_density.value(lev_idx, gas_idx) = air_density.value(lev_idx) * vmr_grid(lev_idx);
+        }
+    }
+}
+
+ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_level() const
+{
+    cache.fill_cache_if_needed(*this);
+    return cache.air_density;
+}
+
+ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_level() const
+{
+    cache.fill_cache_if_needed(*this);
+    return cache.gas_density;
 }
 
 ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_layer(int spec_index) const
@@ -118,29 +160,6 @@ ArrayAdWithUnit<double, 1> AbsorberXSec::total_air_number_density_layer(int spec
 
     // One cm^-1 cancels out with altitude units
     return ArrayAdWithUnit<double, 1>(air_dens_lay, Unit("cm^-2"));
-}
-
-ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_level() const
-{
-    cache.fill_cache_if_needed(*this);
-
-    ArrayAdWithUnit<double, 1> air_density(total_air_number_density_level());
-
-    ArrayAd<double, 2> gas_density(air_density.rows(), vmr.size(), air_density.number_variable());
-
-    for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
-        ArrayAd<double, 1> vmr_grid(vmr[gas_idx]->vmr_grid(*press));
-
-        if(gas_density.number_variable() == 0 and vmr_grid.number_variable() > 0) {
-            gas_density.resize_number_variable(vmr_grid.number_variable());
-        }
-
-        for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
-            gas_density(lev_idx, gas_idx) = air_density.value(lev_idx) * vmr_grid(lev_idx);
-        }
-    }
-
-    return ArrayAdWithUnit<double, 2>(gas_density, air_density.units);
 }
 
 ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_layer(int spec_index) const
@@ -169,14 +188,13 @@ ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_in
 
     range_check(spec_index, 0, number_spectrometer());
 
-    ArrayAdWithUnit<double, 2> gas_density(gas_number_density_level());
     DoubleWithUnit spectral_point(wn, units::inv_cm);
 
-    ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), gas_density.number_variable());
+    ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), cache.gas_density.number_variable());
 
     for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
         ArrayAdWithUnit<double, 1> od_unweighted(
-            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, gas_density(Range::all(), gas_idx), cache.tgrid)
+            xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, cache.gas_density(Range::all(), gas_idx), cache.tgrid)
         );
 
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {

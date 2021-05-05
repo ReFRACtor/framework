@@ -31,7 +31,15 @@ public:
     // Height of each layer, the difference in the level altitude values
     std::vector<ArrayAdWithUnit<double, 1> > height_delta_layer;
 
+    // Density values
+    ArrayAdWithUnit<double, 1> air_density;
+    ArrayAdWithUnit<double, 2> gas_density;
+
 private:
+    void cache_height_delta(const boost::shared_ptr<Pressure>& press, const std::vector<boost::shared_ptr<Altitude> >& alt); 
+    void cache_total_air_number_density_level();
+    void cache_gas_number_density_level(const boost::shared_ptr<Pressure>& press, const std::vector<boost::shared_ptr<AbsorberVmr> >& vmr);
+
     friend class boost::serialization::access;
     template<class Archive> void serialize(Archive & ar, const unsigned int version);
 };
