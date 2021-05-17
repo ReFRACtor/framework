@@ -35,6 +35,9 @@ class ConfigParam(object):
     def check_type(self, value):
         raise NotImplementedError("check_type must be implemented in inheriting class")
 
+    def __str__(self):
+        return self.__class__.__name__ + "()"
+
 class AnyValue(ConfigParam):
     "Bypasses type checking for the parameter"
 
@@ -76,6 +79,9 @@ class Choice(ConfigParam):
         if not valid:
             raise ParamError("Parameter value does not match any of the parameter choices")
 
+    def __str__(self):
+        return self.__class__.__name__ + "([" + ", ".join([ str(c) for c in self.choices ]) + "])"
+
 class Scalar(ConfigParam):
     "Configuration parameter that resolves to a single scalar value"
 
@@ -90,6 +96,12 @@ class Scalar(ConfigParam):
 
         if self.dtype is not None and not isinstance(value, self.dtype):
             raise ParamError("Type of parameter %s does not match expected %s for value: %s" % (type(value), self.dtype, value))
+
+    def __str__(self):
+        if self.dtype is not None:
+            return self.__class__.__name__ + f"(dtype={self.dtype})"
+        else:
+            return self.__class__.__name__ + f"()"
 
 class Array(ConfigParam):
     "Configuration parameter that resolves to a numpy array with optional checking on dimensionality and units"
@@ -111,6 +123,16 @@ class Array(ConfigParam):
         if self.dtype is not None and not isinstance(value.dtype, self.dtype):
             raise ParamError("Type of parameter %s does not match expected %s for value: %s" % (value.dtype, self.dtype, value))
 
+    def __str__(self):
+
+        attr_strs = []
+        for attr_name in ("dims", "dtype"):
+            attr_val = getattr(self, attr_name)
+            if attr_val is not None:
+                attr_strs.append(attr_name + "=" + str(attr_val))
+
+        return self.__class__.__name__ + "(" + ", ".join(attr_strs) + ")"
+
 class Iterable(ConfigParam):
     "Configuration parameter that resolve to an iterable object like a tuple or list, but that is not required to be an array"
 
@@ -131,6 +153,12 @@ class Iterable(ConfigParam):
                 if not isinstance(iter_val, self.val_type):
                     raise ParamError(f"Expected an instance of {self.val_type} for value {iter_val} at index {idx} of iterable")
 
+    def __str__(self):
+        if self.val_type is not None:
+            return self.__class__.__name__ + f"({self.val_type.__name__})"
+        else:
+            return self.__class__.__name__ + f"()"
+
 class InstanceOf(ConfigParam):
     "Configuration parameter that must be an instance of a specific type of class"
 
@@ -143,11 +171,17 @@ class InstanceOf(ConfigParam):
         if not isinstance(value, self.val_type):
             raise ParamError("Expected an instance of %s for value: %s" % (self.val_type, value))
 
+    def __str__(self):
+        return self.__class__.__name__ + f"({self.val_type.__name__})"
+
 class Dict(InstanceOf):
     "Configuration parameter that resolves to a dict"
 
     def __init__(self, **kwargs):
         super().__init__(dict, **kwargs)
+
+    def __str__(self):
+        return self.__class__.__name__ + "()"
 
 class ArrayWithUnit(ConfigParam):
 
@@ -175,6 +209,16 @@ class ArrayWithUnit(ConfigParam):
         if self.dtype is not None and not isinstance(value.value.dtype, self.dtype):
             raise ParamError("Type of parameter %s does not match expected %s for ArrayWithUnit value: %s" % (value.value.dtype, self.dtype, value))
 
+    def __str__(self):
+
+        attr_strs = []
+        for attr_name in ("dims", "dtype"):
+            attr_val = getattr(self, attr_name)
+            if attr_val is not None:
+                attr_strs.append(attr_name + "=" + str(attr_val))
+
+        return self.__class__.__name__ + "(" + ", ".join(attr_strs) + ")"
+
 class DoubleWithUnit(InstanceOf):
     "Short cut for the DoubleWithUnit type to parallel the ArrayWithUnit type parameter"
 
@@ -201,3 +245,6 @@ class ObjectVector(ConfigParam):
 
         if not re.search(check_str, type_str):
             raise ParamError("Value with type string %s is not a C++ vector with type vector_%s" % (type_str, self.vec_type and self.vec_type or ""))
+
+    def __str__(self):
+        return self.__class__.__name__ + f"({self.vec_type})"
