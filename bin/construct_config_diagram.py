@@ -13,15 +13,45 @@ from refractor.factory.creator.base import Creator
 
 logger = logging.getLogger(__file__)
 
-CREATOR_COMMON_ATTRIBUTES = {
-}
+def creator_node_attrs_simple(creator):
+    return {"shape": "box"}
 
-def config_label(cr):
-    pass
+def creator_node_attrs_record(creator):
+    "Node attributes to represent a Creator with the Graphviz record shape"
 
-def create_config_edge(graph, name, cr):
+    # Create a label that shows the Creator type and
+    # includes all parameters and their types
+    label = f"{{\\N\ ::\ {creator.__class__.__name__}|"
+
+    for param_name, param_obj in creator.parameters.items():
+        label += f" | {param_name}\ ::\ {param_obj.param_def}"
+
+    label += "}"
+    
+    return {"shape": "record", "label": label}
+
+def creator_node_attrs_table(creator):
+    "Node attributes to represent a Creator with HTML like tables"
+
+    title = f"\\N :: {creator.__class__.__name__}"
+
+    rows = []
+    for param_name, param_obj in creator.parameters.items():
+        rows.append(f"<TR><TD ALIGN=\"LEFT\">{param_name}</TD><TD ALIGN=\"LEFT\">{param_obj.param_def}</TD></TR>")
+
+    label = """<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="0">
+<TR><TD BORDER="1" COLSPAN="2"><B>{title}</B></TD></TR>
+{rows}
+</TABLE>>""".format(title=title, rows="\n".join(rows))
+
+    return {"shape": "plaintext", "label": label}
+
+
+def add_creator_nodes(graph, name, cr, node_attrs_func):
+    "Recursively connects edges between creators"
+
     if not hasattr(cr, "config_def"):
-        return []
+        return
     
     for sub_name, sub_cr in cr.config_def.items():
         if isinstance(sub_cr, Creator):
@@ -29,39 +59,55 @@ def create_config_edge(graph, name, cr):
             graph.add_edge(name, sub_name)
 
             # Connect all children Creators
-            create_config_edge(graph, sub_name, sub_cr)
+            add_creator_nodes(graph, sub_name, sub_cr, node_attrs_func)
 
-            # Create a label that shows the Creator type and
-            # includes all parameters and their types
-            label = f"{{\\N\ ::\ {sub_cr.__class__.__name__}|"
+            # Add attributes to the node to control it's shape
+            graph.add_node(sub_name, **node_attrs_func(sub_cr))
 
-            for opt_name, opt_obj in sub_cr.parameters.items():
-                label += f" | {opt_name}\ ::\ {opt_obj.param_def}"
+def add_parameter_edges(graph, name, cr):
+    "Add edges to any existing nodes from Creators"
 
-            label += "}"
+    if not hasattr(cr, "config_def"):
+        return
 
-            graph.add_node(sub_name, shape="record", label=label, **CREATOR_COMMON_ATTRIBUTES)
+    for param_name, param_obj in cr.parameters.items():
 
-def write_config_diagram(exc, output_filename, step_index):
+        if param_name in graph.nodes() and not param_name in cr.config_def.keys():
+            graph.add_edge(name, param_name)
+    
+    for sub_name, sub_cr in cr.config_def.items():
+        if isinstance(sub_cr, Creator):
+            add_parameter_edges(graph, sub_name, sub_cr)
+
+def write_config_diagram(exc, output_filename, step_index, node_attrs_func=creator_node_attrs_simple, param_edges=False):
 
     logger.debug("Loading configuration definition")
 
+    # Load configuration definition
     step_keywords = exc.strategy_list[step_index]
     config_func = find_config_function(exc.config_module)
     config_def = config_func(**step_keywords)
 
+    # Instead of running process_config we use the same creator type defined at the 
+    # root level so contain the configuration
     ConfigCreator = config_def['creator']
-
-    c = ConfigCreator(config_def)
+    root_creator = ConfigCreator(config_def)
 
     logger.debug("Creating graph")
 
+    # Recursively descend the configuration gathering edges between Creators
     graph = pgv.AGraph(directed=True,strict=True)
 
-    create_config_edge(graph, "config", c)
+    logger.debug("Adding creator nodes and edges")
+    add_creator_nodes(graph, "config", root_creator, node_attrs_func)
+
+    if param_edges:
+        logger.debug("Adding parameter edges")
+        add_parameter_edges(graph, "config", root_creator)
 
     logger.debug(f"Writing to: {output_filename}")
 
+    # The output filename will determine the file format
     graph.layout("dot")
     graph.draw(output_filename)
 
@@ -82,6 +128,12 @@ def main():
     parser.add_argument("--output_filename", "-o", metavar="FILE", default=None,
         help="File to write results of configuration execution")
 
+    parser.add_argument("--shape", default="simple", choices=["simple", "record", "table"],
+        help="Controls how the graph nodes are displayed. Default = simple")
+
+    parser.add_argument("--param_edges", default=False, action="store_true",
+        help="Add edges from creators for parameters that are named but not present in config definition")
+
     parser.add_argument("--verbose", "-v", action="store_true", default=False,
         help="Increase level of verbosity")
 
@@ -92,12 +144,22 @@ def main():
     else:
         log_level = logging.INFO
 
+    if args.shape == "record":
+        logger.debug("Using record method for node shapes")
+        node_attrs_func = creator_node_attrs_record
+    elif args.shape == "table":
+        logger.debug("Using table method for node shapes")
+        node_attrs_func = creator_node_attrs_table
+    else:
+        logger.debug("Using simple method for node shapes")
+        node_attrs_func = creator_node_attrs_simple
+
     logging.basicConfig(level=log_level, format="%(message)s", stream=sys.stdout)
 
     exc = StrategyExecutor(args.config_filename, 
                            strategy_filename=args.strategy_filename)
 
-    write_config_diagram(exc, args.output_filename, args.step_index)
+    write_config_diagram(exc, args.output_filename, args.step_index, node_attrs_func=node_attrs_func, param_edges=args.param_edges)
 
 if __name__ == "__main__":
     main()

@@ -99,7 +99,7 @@ class Scalar(ConfigParam):
 
     def __str__(self):
         if self.dtype is not None:
-            return self.__class__.__name__ + f"(dtype={self.dtype})"
+            return self.__class__.__name__ + f"(dtype={self.dtype().__class__.__name__})"
         else:
             return self.__class__.__name__ + f"()"
 
