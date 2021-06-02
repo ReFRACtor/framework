@@ -6,7 +6,6 @@ find_program(MAKE_BIN make)
 find_program(RUBY_BIN ruby)
 find_program(H5LS_BIN h5ls)
 get_filename_component(HDF5_BIN ${H5LS_BIN} DIRECTORY)
-set(L2_FP_BIN ${PROJECT_BINARY_DIR}/l2_fp)
 
 set(CTEST_WRAP ${CMAKE_CURRENT_BINARY_DIR}/ctest_wrap.sh)
 configure_file (
@@ -73,7 +72,7 @@ foreach(test_name ${FULL_TEST_REGULAR_LIST})
 endforeach()
 
 # Target to run only regular full tests
-add_custom_target(full_test_regular COMMAND ${CTEST_WRAP} -R ^full/regular DEPENDS l2_fp)
+add_custom_target(full_test_regular COMMAND ${CTEST_WRAP} -R ^full/regular)
 
 # Add full test target that depends on regular and Python tests if Python bindings are built
 add_custom_target(full_test DEPENDS full_test_regular)
