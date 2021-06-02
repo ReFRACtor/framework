@@ -53,7 +53,8 @@ RadiativeTransferSingleWn::stokes_and_jacobian(const SpectralDomain& Spec_domain
   res(0, Range::all()) = t;
 
   // Advance progress bar for first computation used to size the result
-  *disp += 1;
+  if(disp)
+      *disp += 1;
 
   for(int i = 1; i < wn.rows(); ++i) {
     res(i, Range::all()) = stokes_and_jacobian_single_wn(wn(i), Spec_index);
