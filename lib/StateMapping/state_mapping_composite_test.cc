@@ -46,32 +46,31 @@ BOOST_AUTO_TEST_CASE(serialize)
   if(!have_serialize_supported())
     return;
 
-    boost::shared_ptr<StateMappingInterpolateLogLog> map_interp =
-        boost::make_shared<StateMappingInterpolateLogLog>(press_to, press_from);
-    boost::shared_ptr<StateMappingLog> map_log =
-        boost::make_shared<StateMappingLog>();
-
-    std::vector<boost::shared_ptr<StateMapping> > mappings;
-    mappings.push_back(map_log);
-    mappings.push_back(map_interp);
-
-    boost::shared_ptr<StateMappingComposite> map_comp_orig =
-        boost::make_shared<StateMappingComposite>(mappings);
-
-    std::string serial_str = serialize_write_string(map_comp_orig);
-
-    boost::shared_ptr<StateMappingComposite> map_comp_restore =
-        serialize_read_string<StateMappingComposite>(serial_str);
-
-    firstIndex i1;
-    Array<double, 1> vals_from_log(5);
-    vals_from_log = log(vals_from_ad.value()(i1));
- 
-    ArrayAd<double, 1> vals_expt = map_comp_orig->mapped_state(vals_from_log);
-    ArrayAd<double, 1> vals_restore = map_comp_restore->mapped_state(vals_from_log);
-
-    BOOST_CHECK_MATRIX_CLOSE_TOL(vals_restore.value(), vals_expt.value(), 1e-7);
- 
+  boost::shared_ptr<StateMappingInterpolateLogLog> map_interp =
+    boost::make_shared<StateMappingInterpolateLogLog>(press_to, press_from);
+  boost::shared_ptr<StateMappingLog> map_log =
+    boost::make_shared<StateMappingLog>();
+  
+  std::vector<boost::shared_ptr<StateMapping> > mappings;
+  mappings.push_back(map_log);
+  mappings.push_back(map_interp);
+  
+  boost::shared_ptr<StateMappingComposite> map_comp_orig =
+    boost::make_shared<StateMappingComposite>(mappings);
+  
+  std::string serial_str = serialize_write_string(map_comp_orig);
+  
+  boost::shared_ptr<StateMappingComposite> map_comp_restore =
+    serialize_read_string<StateMappingComposite>(serial_str);
+  
+  firstIndex i1;
+  Array<double, 1> vals_from_log(5);
+  vals_from_log = log(vals_from_ad.value()(i1));
+  
+  ArrayAd<double, 1> vals_expt = map_comp_orig->mapped_state(vals_from_log);
+  ArrayAd<double, 1> vals_restore = map_comp_restore->mapped_state(vals_from_log);
+  
+  BOOST_CHECK_MATRIX_CLOSE_TOL(vals_restore.value(), vals_expt.value(), 1e-7);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

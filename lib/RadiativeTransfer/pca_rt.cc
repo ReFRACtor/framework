@@ -158,7 +158,7 @@ const boost::shared_ptr<PCABinOpticalProperties> PCARt::compute_bin_optical_prop
     return bin_opt_props;
 }
 
-const double PCARt::bin_effective_wavenumber(Array<double, 1> &win_wavenumbers, int bin_index) const
+double PCARt::bin_effective_wavenumber(Array<double, 1> &win_wavenumbers, int bin_index) const
 {
     // Create bin averaged spectral point
     int num_bin_points = pca_bin->num_bin_points()(bin_index);
@@ -195,7 +195,6 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
         first_order_minus.resize(num_eofs, number_stokes());
     }
 
-    bool fo_captured = false;
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
         lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
         lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
@@ -250,7 +249,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
-    for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+    for (int bin_idx = 0; bin_idx < (int) bins.size(); bin_idx++) {
         int num_bin_points = pca_bin->num_bin_points()(bin_idx);
 
         // Skip empty bins
@@ -318,7 +317,7 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
     boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
-    for (int bin_idx = 0; bin_idx < bins.size(); bin_idx++) {
+    for (int bin_idx = 0; bin_idx < (int) bins.size(); bin_idx++) {
         int num_bin_points = pca_bin->num_bin_points()(bin_idx);
 
         // Skip empty bins

@@ -47,7 +47,7 @@ public:
   const boost::shared_ptr<Fo_Ssgeometry_Master> geometry_interface() const { return geometry; }
   const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
 
-  const bool do_deltam_scaling() const { return do_deltam_scaling_; }
+  bool do_deltam_scaling() const { return do_deltam_scaling_; }
   void do_deltam_scaling(bool do_scaling) { do_deltam_scaling_ = do_scaling; }
  
 private:

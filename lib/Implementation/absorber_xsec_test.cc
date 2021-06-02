@@ -81,9 +81,6 @@ BOOST_AUTO_TEST_CASE(density)
     boost::shared_ptr<AtmosphereStandard> uv_atmosphere = serialize_read<AtmosphereStandard>(atmosphere_serialized_fn);
     boost::shared_ptr<AbsorberXSec> abs_xsec = boost::dynamic_pointer_cast<AbsorberXSec>(uv_atmosphere->absorber_ptr());
 
-    // Only 1 sensor defined in uv_atmosphere_config.py
-    int sensor_idx = 0;
-
     // Compare total air density against offline code, make sure we have commensurate units by converting our results
     // to those of the expected values
     std::string total_density_expt_fn = test_data_dir() + "expected/cross_section/total_air_density.dat";

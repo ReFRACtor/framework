@@ -24,7 +24,7 @@ XSecTableImpBase::XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid
 }
 
 XSecTableImpBase::XSecTableImpBase(const ArrayWithUnit<double, 1>& Spectral_grid, const std::vector<boost::shared_ptr<LinearInterpolate<double, double> > > Data_interp, const Unit& Data_units, double Conversion_factor)
-: spectral_grid_values(Spectral_grid), data_interp(Data_interp), xsec_units(Data_units), conversion_factor(Conversion_factor)
+  : spectral_grid_values(Spectral_grid), conversion_factor(Conversion_factor), xsec_units(Data_units), data_interp(Data_interp)
 {
 }
 
@@ -73,7 +73,7 @@ const ArrayWithUnit<double, 1> XSecTableImpBase::cross_section_coefficients(Doub
 
     Array<double, 1> coeffs(data_interp.size() - 1);
 
-    for(int coeff_col = 1; coeff_col < data_interp.size(); coeff_col++) {
+    for(int coeff_col = 1; coeff_col < (int) data_interp.size(); coeff_col++) {
         coeffs(coeff_col - 1) = (*data_interp[coeff_col])(interp_point) / conversion_factor;
     }
 

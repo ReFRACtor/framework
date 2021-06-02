@@ -12,9 +12,9 @@ StringVectorToChar::StringVectorToChar(const std::vector<std::string>& Component
 int StringVectorToChar::max_substrlen(std::vector<std::string> names) const {
     int max_sublen = 0;
     for (const auto& name : names) {
-        if (name.length() > max_sublen) {
-            max_sublen = name.length();
-        }
+      if ((int) name.length() > max_sublen) {
+	max_sublen = name.length();
+      }
     }
     return max_sublen;
 }

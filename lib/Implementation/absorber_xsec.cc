@@ -50,9 +50,8 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
     press->add_cache_invalidated_observer(cache);
     temp->add_cache_invalidated_observer(cache);
 
-    for(int alt_idx = 0; alt_idx < alt.size(); alt_idx++) {
-        alt[alt_idx]->add_cache_invalidated_observer(cache);
-    }
+    for(auto& alti : alt)
+      alti->add_cache_invalidated_observer(cache);
 
 }
 
@@ -73,13 +72,13 @@ void AbsorberXSecCache::cache_height_delta(const boost::shared_ptr<Pressure>& pr
 
     height_delta_layer.clear();
 
-    for(int sensor_idx = 0; sensor_idx < alt.size(); sensor_idx++) {
+    for(auto& alti : alt) {
         ArrayAd<double, 1> height_delta_sensor(press->number_layer(), num_jac_variable);
 
         Unit height_units;
         for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
-            AutoDerivativeWithUnit<double> h_lay_top = alt[sensor_idx]->altitude(pgrid(lay_idx));
-            AutoDerivativeWithUnit<double> h_lay_bottom = alt[sensor_idx]->altitude(pgrid(lay_idx+1));
+            AutoDerivativeWithUnit<double> h_lay_top = alti->altitude(pgrid(lay_idx));
+            AutoDerivativeWithUnit<double> h_lay_bottom = alti->altitude(pgrid(lay_idx+1));
             height_delta_sensor(lay_idx) = h_lay_top.value - h_lay_bottom.value;
             height_units = h_lay_top.units;
         }
@@ -119,16 +118,15 @@ void AbsorberXSecCache::cache_gas_number_density_level(const boost::shared_ptr<P
     gas_density.value.resize(air_density.rows(), vmr.size(), air_density.number_variable());
     gas_density.units = air_density.units;
 
-    for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
-        ArrayAd<double, 1> vmr_grid(vmr[gas_idx]->vmr_grid(*press));
+    for(int gas_idx = 0; gas_idx < gas_density.value.cols(); ++gas_idx) {
+      ArrayAd<double, 1> vmr_grid(vmr[gas_idx]->vmr_grid(*press));
+      if(gas_density.number_variable() == 0 and vmr_grid.number_variable() > 0) {
+	gas_density.value.resize_number_variable(vmr_grid.number_variable());
+      }
 
-        if(gas_density.number_variable() == 0 and vmr_grid.number_variable() > 0) {
-            gas_density.value.resize_number_variable(vmr_grid.number_variable());
-        }
-
-        for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
-            gas_density.value(lev_idx, gas_idx) = air_density.value(lev_idx) * vmr_grid(lev_idx);
-        }
+      for(int lev_idx = 0; lev_idx < press->number_level(); lev_idx++) {
+	gas_density.value(lev_idx, gas_idx) = air_density.value(lev_idx) * vmr_grid(lev_idx);
+      }
     }
 }
 
@@ -172,11 +170,10 @@ ArrayAdWithUnit<double, 2> AbsorberXSec::gas_number_density_layer(int spec_index
 
     ArrayAd<double, 2> gas_dens_lay(press->number_layer(), number_species(), gas_dens_lev.number_variable());
    
-    for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++) {
-        for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
-            gas_dens_lay(lay_idx, gas_idx) = height_delta(lay_idx).value * (gas_dens_lev(lay_idx, gas_idx).value + gas_dens_lev(lay_idx+1, gas_idx).value) * 0.5;
-        }
-    }
+    for(int lay_idx = 0; lay_idx < press->number_layer(); lay_idx++)
+      for(int gas_idx = 0; gas_idx < gas_dens_lay.cols(); gas_idx++)
+	gas_dens_lay(lay_idx, gas_idx) = height_delta(lay_idx).value * (gas_dens_lev(lay_idx, gas_idx).value + gas_dens_lev(lay_idx+1, gas_idx).value) * 0.5;
+
 
     // One cm^-1 cancels out with altitude units
     return ArrayAdWithUnit<double, 2>(gas_dens_lay, Unit("cm^-2"));
@@ -192,7 +189,7 @@ ArrayAd<double, 2> AbsorberXSec::optical_depth_each_layer(double wn, int spec_in
 
     ArrayAd<double, 2> gas_od(press->number_layer(), vmr.size(), cache.gas_density.number_variable());
 
-    for(int gas_idx = 0; gas_idx < vmr.size(); gas_idx++) {
+    for(int gas_idx = 0; gas_idx < gas_od.cols(); gas_idx++) {
         ArrayAdWithUnit<double, 1> od_unweighted(
             xsec_tables[gas_idx]->optical_depth_each_layer_unweighted(spectral_point, cache.gas_density(Range::all(), gas_idx), cache.tgrid)
         );

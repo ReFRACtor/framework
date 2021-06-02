@@ -37,7 +37,7 @@ public:
 
   virtual int number_spectrometer() const { return desc_band_names.size(); }
 
-  virtual const int number_weight_parameters() const { return num_weight_params; }
+  virtual int number_weight_parameters() const { return num_weight_params; }
 
   virtual const AutoDerivative<double> weight(double wn, int spec_index) const;
   virtual const AutoDerivative<double> weight_intercept(int spec_index) const;

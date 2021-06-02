@@ -71,7 +71,7 @@ public:
   virtual std::string name() const
   { 
       std::string map_name = "";
-      for(int map_idx = 0; map_idx < mappings.size(); map_idx++) {
+      for(std::size_t map_idx = 0; map_idx < mappings.size(); map_idx++) {
           map_name += mappings[map_idx]->name();
           if (map_idx != mappings.size()-1) {
               map_name += ", ";
