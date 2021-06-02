@@ -57,6 +57,24 @@ public:
   virtual int gas_index(const std::string& Name) const;
 
 //-----------------------------------------------------------------------
+/// Total number density of air for each layer including dry and water
+/// Units will be in inverse squared distance, for instance cm^-2 or m^-2
+//-----------------------------------------------------------------------
+
+  virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
+/// Per gas number density of air for each layer. This is essentially
+/// the total_air_number_density_layer value multiplied by the gas VMR
+/// giving the proportion of the VMR to total. This is the value multiplied
+/// by cross section value to give optical depth for each molecule.
+/// Dimensioned as: N_Layer x N_Particle
+/// Units will be in inverse squared distance, for instance cm^-2 or m^-2
+//-----------------------------------------------------------------------
+
+  virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const = 0;
+
+//-----------------------------------------------------------------------
 /// This gives the optical depth for each layer, for the given wave
 /// number. Note this only includes the Absorbers portion of this,
 /// Atmosphere class combines this with Rayleigh and Aerosol
@@ -69,15 +87,6 @@ public:
 
   virtual ArrayAd<double, 2> 
   optical_depth_each_layer(double wn, int spec_index) const = 0;
-
-//-----------------------------------------------------------------------
-/// This calculates the gas column, e.g., XCO2. This is the dry air
-/// mole fraction of the gas, see section 3.5.4 of the ATB
-///
-/// We include the derivative of this with respect to the state vector.
-//-----------------------------------------------------------------------
-  
-  virtual AutoDerivative<double> xgas(const std::string& Gas_name) const = 0;
 
 //-----------------------------------------------------------------------
 /// Returns the AbsorberVmr object for a given species index.

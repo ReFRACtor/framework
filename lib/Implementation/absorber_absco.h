@@ -78,18 +78,26 @@ public:
     optical_depth_each_layer(double wn, int spec_index) const;
   virtual blitz::Array<double, 2> 
     optical_depth_each_layer_nder(double wn, int spec_index) const;
-  ArrayAdWithUnit<double, 1> specific_humidity_layer() const;
-  ArrayAdWithUnit<double, 1> dry_air_molecular_density_layer() const;
-  ArrayAdWithUnit<double, 1> dry_air_column_thickness_layer() const;
-  ArrayAdWithUnit<double, 1> wet_air_column_thickness_layer() const;
-  ArrayAd<double, 1> pressure_weighting_function_layer() const; 
-  ArrayAd<double, 1> pressure_weighting_function_grid() const;
-  ArrayAdWithUnit<double, 1> 
-  gas_column_thickness_layer(const std::string& Gas_name) const;
-  AutoDerivativeWithUnit<double> 
-  gas_total_column_thickness(const std::string& Gas_name) const;
+  virtual ArrayAdWithUnit<double, 1> specific_humidity_layer() const;
+  virtual ArrayAdWithUnit<double, 1> dry_air_number_density_layer(int spec_index) const;
+  virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const;
+  virtual ArrayAdWithUnit<double, 1> wet_air_number_density_layer(int spec_index) const;
 
-  virtual AutoDerivative<double> xgas(const std::string& Gas_name) const;
+  virtual ArrayAd<double, 1> pressure_weighting_function_layer(int spec_index) const; 
+  virtual ArrayAd<double, 1> pressure_weighting_function_grid(int spec_index) const;
+
+  virtual ArrayAdWithUnit<double, 1> gas_column_thickness_layer(int spec_index, const std::string& Gas_name) const;
+  virtual AutoDerivativeWithUnit<double> gas_total_column_thickness(int spec_index, const std::string& Gas_name) const;
+  virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const;
+
+  //-----------------------------------------------------------------------
+  /// This calculates the gas column, e.g., XCO2. This is the dry air
+  /// mole fraction of the gas, see section 3.5.4 of the ATB
+  ///
+  /// We include the derivative of this with respect to the state vector.
+  //-----------------------------------------------------------------------
+
+  virtual AutoDerivative<double> xgas(int spec_index, const std::string& Gas_name) const;
 
   AutoDerivative<double> total_number_density(const std::string& Gas_name) const;
   AutoDerivative<double> average_vmr(const std::string& Gas_name) const;

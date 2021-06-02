@@ -51,16 +51,15 @@ public:
   virtual ArrayAd<double, 2> 
     optical_depth_each_layer(double wn, int spec_index) const;
   %python_attribute(specific_humidity_layer, ArrayAdWithUnit<double, 1>)
-  %python_attribute(dry_air_molecular_density_layer, ArrayAdWithUnit<double, 1>)
-  %python_attribute(dry_air_column_thickness_layer, ArrayAdWithUnit<double, 1>)
-  %python_attribute(wet_air_column_thickness_layer, ArrayAdWithUnit<double, 1>)
-  %python_attribute(pressure_weighting_function_layer, ArrayAd<double, 1>)
-  %python_attribute(pressure_weighting_function_grid, ArrayAd<double, 1>)
-  ArrayAdWithUnit<double, 1> 
-  gas_column_thickness_layer(const std::string& Gas_name) const;
-  AutoDerivativeWithUnit<double> 
-  gas_total_column_thickness(const std::string& Gas_name) const;
-  virtual AutoDerivative<double> xgas(const std::string& Gas_name) const;
+  virtual ArrayAdWithUnit<double, 1> dry_air_number_density_layer(int spec_index) const;
+  virtual ArrayAdWithUnit<double, 1> total_air_number_density_layer(int spec_index) const;
+  virtual ArrayAdWithUnit<double, 1> wet_air_number_density_layer(int spec_index) const;
+  virtual ArrayAd<double, 1> pressure_weighting_function_layer(int spec_index) const; 
+  virtual ArrayAd<double, 1> pressure_weighting_function_grid(int spec_index) const;
+  virtual ArrayAdWithUnit<double, 1> gas_column_thickness_layer(int spec_index, const std::string& Gas_name) const;
+  virtual AutoDerivativeWithUnit<double> gas_total_column_thickness(int spec_index, const std::string& Gas_name) const;
+  virtual ArrayAdWithUnit<double, 2> gas_number_density_layer(int spec_index) const;
+  virtual AutoDerivative<double> xgas(int spec_index, const std::string& Gas_name) const;
   AutoDerivative<double> average_vmr(const std::string& Gas_name) const;
   virtual boost::shared_ptr<Absorber> clone() const;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const;

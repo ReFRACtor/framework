@@ -252,7 +252,10 @@ class ParamPassThru(ParamIterateCreator):
 
         result = ConfigDict()
         for param_name in self.param_names:
-            logger.debug("Passing through parameter %s" % param_name)
+            if len(kwargs) > 0:
+                logger.debug(f"Passing through parameter {param_name} with arguments: {kwargs}")
+            else:
+                logger.debug(f"Passing through parameter {param_name}")
             ret_obj = self.param(param_name, **kwargs)
             self._dispatch(ret_obj)
             result[param_name] = ret_obj

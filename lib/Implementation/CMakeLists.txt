@@ -4,6 +4,7 @@ set(DIR_SOURCES
     absco_aer.cc
     absco_hdf.cc
     absorber_absco.cc
+    absorber_xsec.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
@@ -124,12 +125,15 @@ set(DIR_SOURCES
     temperature_level_offset.cc
     temperature_met.cc
     uniform_spectrum_sampling.cc
+    xsec_table_simple.cc
+    xsec_table_temp_dep.cc
 )
 
 set(TEST_SOURCES
     absco_aer_test.cc
     absco_hdf_test.cc
     absorber_absco_test.cc
+    absorber_xsec_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc
@@ -225,6 +229,8 @@ set(TEST_SOURCES
     temperature_level_offset_test.cc
     temperature_met_test.cc
     uniform_spectrum_sampling_test.cc
+    xsec_table_simple_test.cc
+    xsec_table_temp_dep_test.cc
 )
 
 # Full path already included
