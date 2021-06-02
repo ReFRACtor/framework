@@ -872,7 +872,7 @@ ArrayAdWithUnit<double, 2> AbsorberAbsco::gas_number_density_layer(int spec_inde
     string name = gas_name(gas_idx);
     ArrayAdWithUnit<double, 1> gas_thickness = gas_column_thickness_layer(spec_index, name);
 
-    if(gas_dens_lay.number_variable() == 0 and gas_thickness.number_variable() != 0) {
+    if(gas_dens_lay.is_constant() && !gas_thickness.is_constant()) {
       gas_dens_lay.resize_number_variable(gas_thickness.number_variable());
     }
     gas_dens_units = gas_thickness.units;
