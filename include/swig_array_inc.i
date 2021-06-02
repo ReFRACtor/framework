@@ -138,7 +138,7 @@ template<> inline int type_to_npy<char>() {return NPY_BYTE;}
 template<> inline int type_to_npy<unsigned char>() {return NPY_UBYTE;}
 template<> inline int type_to_npy<bool>() {return NPY_BOOL;}
 
-inline char* npy_type_str(int type_enum)
+inline const char* npy_type_str(int type_enum)
 {
     switch (type_enum) {
         case NPY_DOUBLE:
