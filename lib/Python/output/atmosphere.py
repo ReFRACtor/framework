@@ -52,23 +52,23 @@ class AtmosphereOutputBase(OutputBase):
 
         vmr_var = self.create_variable("vmr", absorber_group, float, (gas_dim, level_dim))
 
-        # These routines are only available in AbsorberAbsco
-        # TODO: Use more generic routines
+        # Which sensor to use for output of density information
         density_sensor_idx = 0
-        if hasattr(self.atm.absorber, "gas_column_thickness_layer"):
-            gas_column = self.create_variable("gas_column_thickness", absorber_group, float, (gas_dim, layer_dim))
 
-            for gas_idx, gas_name in enumerate(gas_name_list):
-                avmr = self.atm.absorber.absorber_vmr(gas_name)
-                vmr_var[gas_idx, :] = avmr.vmr_grid(self.atm.pressure).value
+        gas_column = self.create_variable("gas_number_density_layer", absorber_group, float, (gas_dim, layer_dim))
 
-                gas_column[gas_idx, :] = self.atm.absorber.gas_column_thickness_layer(density_sensor_idx, gas_name).value.value
-                gas_column.units = self.atm.absorber.gas_column_thickness_layer(density_sensor_idx, gas_name).units.name
+        gas_density_layer = self.atm.absorber.gas_number_density_layer(density_sensor_idx)
 
-        if hasattr(self.atm.absorber, "dry_air_number_density_layer"):
-            dry_air = self.create_variable("dry_air_column_thickness", absorber_group, float, (layer_dim,))
-            dry_air[:] = self.atm.absorber.dry_air_number_density_layer(density_sensor_idx).value.value
-            dry_air.units = self.atm.absorber.dry_air_number_density_layer(density_sensor_idx).units.name
+        for gas_idx, gas_name in enumerate(gas_name_list):
+            avmr = self.atm.absorber.absorber_vmr(gas_name)
+            vmr_var[gas_idx, :] = avmr.vmr_grid(self.atm.pressure).value
+            
+            gas_column[gas_idx, :] = gas_density_layer.value.value[:, gas_idx]
+            gas_column.units = gas_density_layer.units.name
+
+        dry_air = self.create_variable("total_air_number_density_layer", absorber_group, float, (layer_dim,))
+        dry_air[:] = self.atm.absorber.total_air_number_density_layer(density_sensor_idx).value.value
+        dry_air.units = self.atm.absorber.total_air_number_density_layer(density_sensor_idx).units.name
     
         # Aerosol 
 
