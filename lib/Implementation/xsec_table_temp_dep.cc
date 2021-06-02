@@ -1,5 +1,6 @@
 #include "xsec_table_temp_dep.h"
 #include "fp_serialize_support.h"
+#include "fp_logger.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -41,6 +42,8 @@ ArrayAdWithUnit<double, 1> XSecTableTempDep::optical_depth_each_layer_unweighted
         Exception err;
         err << "Only " << coeffs.rows() << " cross section coefficients returned, need at least 2";
         throw err;
+    } else if(coeffs.rows() > 2) {
+        Logger::warning() << "Temperature dependant cross section data only needs 2 coefficients, but data with " << coeffs.rows() << " passed.";
     }
 
     double c1 = coeffs.value(0);
