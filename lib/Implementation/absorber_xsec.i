@@ -41,8 +41,9 @@ class AbsorberXSec: virtual public Absorber {
     virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& Gas_name) const;
     virtual boost::shared_ptr<XSecTable> xsec_table(const std::string& Gas_name) const;
 
-    const Pressure& pressure() const;
-
+    %python_attribute(pressure, boost::shared_ptr<Pressure>);
+    %python_attribute(temperature, boost::shared_ptr<Temperature>);
+ 
     %pickle_serialization();
 };
 }

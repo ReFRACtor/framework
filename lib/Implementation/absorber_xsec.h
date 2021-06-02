@@ -112,9 +112,14 @@ public:
     virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& Gas_name) const;
     virtual boost::shared_ptr<XSecTable> xsec_table(const std::string& Gas_name) const;
 
-    const Pressure& pressure() const
+    const boost::shared_ptr<Pressure> pressure() const
     {
-        return *press;
+        return press;
+    }
+
+    const boost::shared_ptr<Temperature> temperature() const
+    {
+        return temp;
     }
 
 private:
