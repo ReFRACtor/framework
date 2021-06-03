@@ -6,6 +6,9 @@
 %}
 
 %base_import(rayleigh_imp_base)
+%import "pressure.i"
+%import "altitude.i"
+%import "constant.i"
 
 %fp_shared_ptr(FullPhysics::RayleighBodhaine);
 

@@ -22,6 +22,10 @@ namespace FullPhysics {
 %import "temperature.i"
 %import "observer.i"
 
+%fp_shared_ptr(FullPhysics::Altitude)
+namespace FullPhysics {
+  class Altitude;
+}
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Altitude>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::Altitude>)
 

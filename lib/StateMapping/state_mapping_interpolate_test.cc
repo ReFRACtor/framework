@@ -59,19 +59,18 @@ BOOST_AUTO_TEST_CASE(serialize)
   if(!have_serialize_supported())
     return;
 
-    boost::shared_ptr<StateMappingInterpolateLinearLinear> map_interp_orig =
-        boost::make_shared<StateMappingInterpolateLinearLinear>(press_to, press_from);
+  boost::shared_ptr<StateMappingInterpolateLinearLinear> map_interp_orig =
+    boost::make_shared<StateMappingInterpolateLinearLinear>(press_to, press_from);
 
-    std::string serial_str = serialize_write_string(map_interp_orig);
-
-    boost::shared_ptr<StateMappingInterpolateLinearLinear> map_interp_restore =
-        serialize_read_string<StateMappingInterpolateLinearLinear>(serial_str);
- 
-    ArrayAd<double, 1> vals_expt = map_interp_orig->mapped_state(vals_from_ad);
-    ArrayAd<double, 1> vals_restore = map_interp_restore->mapped_state(vals_from_ad);
-
-    BOOST_CHECK_MATRIX_CLOSE_TOL(vals_restore.value(), vals_expt.value(), 1e-7);
- 
+  std::string serial_str = serialize_write_string(map_interp_orig);
+  
+  boost::shared_ptr<StateMappingInterpolateLinearLinear> map_interp_restore =
+    serialize_read_string<StateMappingInterpolateLinearLinear>(serial_str);
+  
+  ArrayAd<double, 1> vals_expt = map_interp_orig->mapped_state(vals_from_ad);
+  ArrayAd<double, 1> vals_restore = map_interp_restore->mapped_state(vals_from_ad);
+  
+  BOOST_CHECK_MATRIX_CLOSE_TOL(vals_restore.value(), vals_expt.value(), 1e-7);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

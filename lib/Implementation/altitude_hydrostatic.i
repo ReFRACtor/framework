@@ -17,6 +17,8 @@ public:
 		      const boost::shared_ptr<Temperature>& T,
 		      const DoubleWithUnit& Latitude, 
 		      const DoubleWithUnit& Surface_height);
+  virtual void add_observer(Observer<Altitude>& Obs);
+  virtual void remove_observer(Observer<Altitude>& Obs);
   virtual AutoDerivativeWithUnit<double> 
   altitude(const AutoDerivativeWithUnit<double>& P) const;
   virtual AutoDerivativeWithUnit<double> 

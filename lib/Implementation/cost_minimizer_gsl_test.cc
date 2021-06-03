@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(meyer)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 2900);
+  BOOST_CHECK(n_f_calls < 4000);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(powell_singular)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 1100);
+  BOOST_CHECK(n_f_calls < 2000);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK( (abs(cst-0.0) < 0.0000001) );
   BOOST_CHECK(abs(nlls->parameters()(0)-0.0) < 0.0000001);
@@ -668,7 +668,7 @@ BOOST_AUTO_TEST_CASE(meyer_ml)
   BOOST_CHECK_CLOSE(sum(abs(nlls->parameters()-solver.accepted_points()[iLast])), 0.0, 1e-12);
 
   BOOST_CHECK_EQUAL((int)solver.status(), (int)CostMinimizerGSL::SUCCESS);
-  BOOST_CHECK(n_f_calls < 2900);
+  BOOST_CHECK(n_f_calls < 4000);
   BOOST_CHECK(n_j_calls <= 0);
   BOOST_CHECK_CLOSE(cst, 43.9729, 0.01);
   BOOST_CHECK_CLOSE(nlls->parameters()(0), 0.0056096, 0.01);

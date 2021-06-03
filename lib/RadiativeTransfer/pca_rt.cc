@@ -202,8 +202,10 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
         twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
         twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
 
-        first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
-        first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+	if (do_3m_correction) { 
+	  first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
+	  first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+	}
     }
 
     // Compute correction factors
