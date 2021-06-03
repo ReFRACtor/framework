@@ -1,4 +1,5 @@
 import re
+import logging
 from collections import OrderedDict
 
 import numpy as np
@@ -8,6 +9,8 @@ from .types import RetrievalComponents
 from .. import param
 
 from refractor import framework as rf
+
+logger = logging.getLogger(__name__)
 
 class RetrievalBaseCreator(Creator):
 
@@ -167,11 +170,13 @@ class StateVector(Creator):
         sv = rf.StateVector()
 
         # Register retrieval components first as state vector observers
-        for observer in self.retrieval_components().values():
+        for ret_name, observer in self.retrieval_components().items():
+            logger.debug(f"Registering retrieval component {ret_name} as state vector observer")
             sv.add_observer(observer)
             
         # Add remaining non retrieval components as observers
         for observer in self.sv_observers:
+            logger.debug(f"Registering class {observer.__class__.__name__} as a non retrieval state vector observer")
             sv.add_observer(observer)
 
         return sv
@@ -187,13 +192,16 @@ class InitialGuessFromSV(Creator):
 
         # Gather initial guess from retrieval components
         ig_values = []
-        for ret_component in self.retrieval_components().values():
+        for ret_name, ret_component in self.retrieval_components().items():
+            logger.debug(f"Adding initial guess value for {ret_name} of size {len(ret_component.coefficient.value)}")
             ig_values.append(ret_component.coefficient.value)
 
         if len(ig_values) == 0:
             raise param.ParamError("InitialGuessFromSV: No initial guess values available as identified by the retrieval components")
 
         ig = np.concatenate(ig_values)
+
+        logger.debug(f"Total initial guess size: {len(ig)}")
 
         if ig.shape[0] != sv.observer_claimed_size:
             raise ValueError("The initial guess vector size %d does not match expected state vector size %d" % (ig.shape[0], sv.observer_claimed_size))
@@ -269,8 +277,12 @@ class CovarianceByComponent(Creator):
             if not np.all(np.linalg.eigvals(used_cov) > 0):
                 raise param.ParamError("CovarianceByComponent: covariance for {} is not positive definite".format(rc_name))
 
+            logger.debug(f"Adding covariance for {rc_name} with shape {used_cov.shape}")
+
             total_len += used_cov.shape[0]
             covariances.append(used_cov)
+
+        logger.debug(f"Total covariance size: {total_len} x {total_len}")
 
         # Concatenate covariances along the diagonal
         total_covariance = np.zeros((total_len, total_len), dtype=float)
