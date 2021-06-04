@@ -82,7 +82,7 @@ class SVObserverComponents(Creator):
 
     def receive(self, rec_obj):
 
-        if hasattr(rec_obj, "sub_state_identifier") and rec_obj.coefficient.value.shape[0] > 0:
+        if hasattr(rec_obj, "sub_state_identifier") and rec_obj.sub_state_vector_values.value.shape[0] > 0:
             ss_iden = rec_obj.sub_state_identifier
             self.retrieval_components[ss_iden] = rec_obj
 
@@ -193,8 +193,8 @@ class InitialGuessFromSV(Creator):
         # Gather initial guess from retrieval components
         ig_values = []
         for ret_name, ret_component in self.retrieval_components().items():
-            logger.debug(f"Adding initial guess value for {ret_name} of size {len(ret_component.coefficient.value)}")
-            ig_values.append(ret_component.coefficient.value)
+            logger.debug(f"Adding initial guess value for {ret_name} of size {len(ret_component.sub_state_vector_values.value)}")
+            ig_values.append(ret_component.sub_state_vector_values.value)
 
         if len(ig_values) == 0:
             raise param.ParamError("InitialGuessFromSV: No initial guess values available as identified by the retrieval components")

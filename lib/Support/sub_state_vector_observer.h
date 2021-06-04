@@ -8,7 +8,18 @@ namespace FullPhysics {
 /****************************************************************//**
   A common StateVectorObserver just "owns" a subset of the
   StateVector. This class gives the common behavior for this case.
+
+ Additionally defines the interface necessary for interacting with 
+ a portion of the state vector that represents an individual 
+ retrieval component.
+
+ The intended purpose for some of these methods is is to define the 
+ interface expected by the configuration system to use retrieval 
+ components to set up which components are added registered into 
+ the StateVector as well as obtain the initial guess values from 
+ the components.
 *******************************************************************/
+
 class SubStateVectorObserver : virtual public StateVectorObserver {
 public:
   virtual ~SubStateVectorObserver() {}
@@ -40,11 +51,11 @@ public:
 //-----------------------------------------------------------------------
 /// Called by state_vector_name with the subset of the Sv_name used by
 /// this class. The default function doesn't change anything, but
-/// derived classes can ovveride this.
+/// derived classes can overide this.
 //-----------------------------------------------------------------------
 
-  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& UNUSED(Sv_name)) 
-    const {}
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& UNUSED(Sv_name)) const { ; }
+
   virtual void notify_add(StateVector& Sv)
   { 
     if(pstart != -1)
@@ -63,6 +74,33 @@ public:
     blitz::Array<double, 2> cov_sub(0, 0);
     update_sub_state(sv_sub, cov_sub);
   }
+
+  //-----------------------------------------------------------------------
+  /// Return a string to identify this retrieval component that manages
+  /// part of the state, this name should be all lower case and seperate 
+  /// parts with a /. For example, an aerosol
+  /// named strat would be named as:
+  ///   aerosol/strat.
+  /// A gas named CO2 would be named like this:
+  ///   absorber/co2
+  /// The name is intended to be used for looking up retrieval values 
+  /// for a configuration system. Classes that have the same type of inputs
+  /// should have the same name.
+  //-----------------------------------------------------------------------
+
+  virtual std::string sub_state_identifier() const {
+      return "unknown/not_set";
+  }
+
+  //-----------------------------------------------------------------------
+  /// The current portion of values from the state vector managed by this
+  /// component. 
+  /// Before retrieval starts this would be the initial guess. But they will
+  /// change based on updates to the state vector.
+  //-----------------------------------------------------------------------
+
+  virtual ArrayAd<double, 1> sub_state_vector_values() const = 0;
+
 protected:
 //-----------------------------------------------------------------------
 /// Take the given number of state vector parameters. We determine
