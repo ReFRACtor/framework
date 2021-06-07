@@ -87,10 +87,11 @@ ArrayAd<double, 1> SubStateVectorProxy::sub_state_vector_values() const
         ArrayAd<double, 1> curr_values(curr_obs->sub_state_vector_values());
 
         if(combined_values.is_constant() && !curr_values.is_constant()) {
-            combined_values.resize_number_variable(combined_values.number_variable());
+            combined_values.resize_number_variable(curr_values.number_variable());
         }
 
         combined_values(prox_range) = curr_values;
+        offset += curr_obs->sub_vector_size();
     }
 
     return combined_values;
