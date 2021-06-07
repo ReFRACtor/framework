@@ -261,3 +261,45 @@ class BrdfWeightFromContinuum(Creator):
             params[chan_idx, brdf_indexes.weight_offset_index] = weight
 
         return params
+
+class GroundCoxmunk(Creator):
+
+    # For coxmunk kernel
+    windspeed = param.Scalar(dtype=float)
+    refractive_index = param.Array(dims=1)
+    windspeed_retrieved = param.Scalar(bool, default=True)
+
+    # For optional lambertian portion
+    albedo_coeffs = param.Array(dims=2, required=False)
+    band_reference = param.ArrayWithUnit(dims=1, required=False)
+    desc_band_name = param.Iterable(required=False)
+    which_albedo_retrieved = param.Array(dims=2, required=False)
+
+    def create(self, **kwargs):
+        # Coxmunk portion
+        windspeed_retrieved = self.windspeed_retrieved()
+
+        if windspeed_retrieved is not None:
+            mapping = rf.StateMappingAtIndexes(np.array([windspeed_retrieved]).astype(bool))
+        else:
+            mapping = rf.StateMappingLinear()
+
+        coxmunk_obj = rf.GroundCoxmunk(self.windspeed(), self.refractive_index(), mapping)
+
+        # Lambertian portion
+        albedo_coeffs = self.albedo_coeffs()
+
+        if albedo_coeffs is not None:
+            lambertian_def = {
+                'polynomial_coeffs': albedo_coeffs,
+                'band_reference': self.band_reference,
+                'desc_band_name': self.desc_band_name,
+                'which_retrieved': self.which_albedo_retrieved,
+            }
+
+            lambertian_obj = GroundLambertian(lambertian_def).create()
+
+            return rf.GroundCoxmunkPlusLambertian(coxmunk_obj, lambertian_obj)
+
+        else:
+            return coxmunk_obj

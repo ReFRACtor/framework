@@ -28,7 +28,9 @@ class ConfigParam(object):
         else:
             out_value = in_value
 
-        self.check_type(out_value)
+        # Do not check type if value is not required and the value is equal to None
+        if self.required or out_value is not None:
+            self.check_type(out_value)
 
         return out_value
 

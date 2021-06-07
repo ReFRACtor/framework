@@ -3,6 +3,7 @@
 
 #include "ground_imp_base.h"
 #include "auto_derivative.h"
+#include "state_mapping_linear.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -11,7 +12,8 @@ namespace FullPhysics {
 class GroundCoxmunk: virtual public GroundImpBase {
 public:
   GroundCoxmunk(const double Windspeed,
-                const blitz::Array<double, 1>& Refr_index);
+                const blitz::Array<double, 1>& Refr_index,
+                boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 

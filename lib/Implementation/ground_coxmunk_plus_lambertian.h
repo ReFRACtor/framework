@@ -24,6 +24,8 @@ public:
 
   virtual boost::shared_ptr<Ground> clone() const;
 
+  virtual std::string sub_state_identifier() const { return "ground/coxmunk_plus_lambertian"; }
+
   virtual void print(std::ostream& Os) const;
 
   virtual std::string desc() const { return "GroundCoxmunkPlusLambertian"; }

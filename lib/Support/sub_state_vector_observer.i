@@ -21,10 +21,33 @@ public:
   virtual void update_sub_state(
     const ArrayAd<double, 1>& Sv_sub,
     const blitz::Array<double, 2>& Cov_sub) = 0;
-  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name)
-    const;
   virtual void notify_add(StateVector& Sv);
   virtual void notify_remove(StateVector& Sv);
+
+  %python_attribute(sub_state_identifier, std::string);
+  %python_attribute(sub_state_vector_values, ArrayAd<double, 1>);
+
+  %extend {
+      // Convert sub state vector names from a blitz array to a vector
+      // the same way that is done for the full state vector names in
+      // the StateVector interface
+      std::vector<std::string> _sub_state_vector_names() const {
+          blitz::Array<std::string, 1> names_arr($self->sub_state_vector_values().rows());
+          $self->state_vector_name_sub(names_arr);
+          std::vector<std::string> names_vec;
+          for(int i = 0; i < names_arr.extent(blitz::firstDim); ++i) {
+              names_vec.push_back(names_arr(i));
+          }
+          return names_vec;
+      }
+  }
+
+  %pythoncode {
+      @property
+      def sub_state_vector_names(self):
+          return self._sub_state_vector_names()
+  }
+ 
   %pickle_serialization();
 protected:
   SubStateVectorObserver(int Plen);

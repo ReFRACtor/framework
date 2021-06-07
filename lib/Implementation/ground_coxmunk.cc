@@ -27,10 +27,11 @@ REGISTER_LUA_END()
 #endif
 
 GroundCoxmunk::GroundCoxmunk(double Windspeed,
-                const blitz::Array<double, 1>& Refr_index)
+                             const blitz::Array<double, 1>& Refr_index,
+                             boost::shared_ptr<StateMapping> Mapping)
     : refractive_index_(Refr_index)
 {
-  SubStateVectorArray<Ground>::init(Windspeed);
+  SubStateVectorArray<Ground>::init(Windspeed, Mapping);
 }
 
 ArrayAd<double, 1> GroundCoxmunk::surface_parameter(double UNUSED(wn), int spec_index) const

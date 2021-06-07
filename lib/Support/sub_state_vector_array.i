@@ -20,7 +20,6 @@ public:
   void init(double Coeff,
             boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
   virtual ~SubStateVectorArray();
-  %python_attribute(sub_state_identifier, std::string);
   virtual std::string state_vector_name_i(int i) const;
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
