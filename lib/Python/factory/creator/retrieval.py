@@ -232,7 +232,7 @@ class CovarianceByComponent(Creator):
         # vector parameters where we want to subselect the covariance in case
         # we turn some of the parameters dynamically during a retrieval but
         # supply the whole covariance to the config
-        if isinstance(rc_obj.state_mapping, rf.StateMappingAtIndexes):
+        if hasattr(rc_obj, "state_mapping") and isinstance(rc_obj.state_mapping, rf.StateMappingAtIndexes):
             return rc_obj.state_mapping.retrieval_indexes
         else:
             return None
