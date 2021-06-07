@@ -179,6 +179,10 @@ class StateVector(Creator):
             logger.debug(f"Registering class {observer.__class__.__name__} as a non retrieval state vector observer")
             sv.add_observer(observer)
 
+        logger.debug(f"State vector elements:")
+        for sv_name in sv.state_vector_name:
+            logger.debug(f"\t{sv_name}")
+
         return sv
 
 class InitialGuessFromSV(Creator):
