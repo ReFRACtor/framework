@@ -14,6 +14,9 @@
 %fp_shared_ptr(FullPhysics::SpectrumSampling);
 
 namespace FullPhysics {
+// Allow these classes to be derived from in Python.
+%feature("director") SpectrumSampling;
+  
 class SpectrumSampling : public GenericObject {
 public:
   virtual ~SpectrumSampling();
@@ -28,5 +31,9 @@ public:
   virtual bool need_interpolation(int Spec_index) const;
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization();
+protected:
+  int nspectrometer;
+  SpectrumSampling();
+  SpectrumSampling(int num_spectrometer);
 };
 }
