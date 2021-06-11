@@ -208,7 +208,7 @@ SUBROUTINE SPLINE (x, y, n, y2)
   REAL (KIND=dp), DIMENSION(n), INTENT(IN) :: x, y  
   REAL (KIND=dp), DIMENSION(n), INTENT(OUT) :: y2
   
-  REAL (KIND=dp), DIMENSION(n)     		 :: u
+  REAL (KIND=dp), DIMENSION(n) :: u
   INTEGER       :: i, k
   REAL(KIND=dp) :: sig, p, qn, un
   
@@ -286,17 +286,19 @@ END SUBROUTINE SPLINT
 ! Inputs/Outputs:                                                                   !
 ! nz: number of atmospheric layers                                                  !
 ! nw: number of wavelengths                                                         !
+! nw_out: number of output wavelengths                                                         !
 ! sza: solar zenith angle  (degree)                                                 !
 ! vza: viewing zenith angle (degree)                                                !
 ! sca: scattering angle (degree, backscattering: 180 )                              !
 ! albedo: Lambertian surface albedo (only for satellite observations)               !
 ! do_upwelling: true for satellite observations else: ground-based measurements     !
 ! ts:  temperature profile fro TOA to BOS (K)                                       !
-! wave: wavelengths (nm), increasing order                                          !
+! wave: wavelengths (nm), increasing order of sol an taus                                          !
+! wave_out: wavelengths of output (nm), increasing order of sol an taus                                          !
 ! sol:  solar irradiance                                                            !
 ! rhos: number of air molecules at each layer (molecules cm^-2)                     !
 ! taus: optical thickness at each wavelength and each layer                         !
-! rspec: Ring spectrum at wave (i.e., relative diff. with and without Ring effect)  !
+! rspec: Ring spectrum at wave_out (i.e., relative diff. with and without Ring effect)  !
 ! problems: if true, errors occur during computing the Ring spectrum                !
 !                                                                                   !
 ! Notes:                                                                            !
@@ -310,22 +312,23 @@ END SUBROUTINE SPLINT
 !     to the grid of you want.                                                      !
 ! ==================================================================================! 
 
-SUBROUTINE GET_RAMAN (nz, nw, maxnu, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
-     wave, sol, taus, rspec, problems) bind(C)
+SUBROUTINE GET_RAMAN (nz, nw, nw_out, maxnu, sza, vza, sca, albedo, do_upwelling, ts, rhos, &
+     wave, wave_out, sol, taus, rspec, problems) bind(C)
  
   IMPLICIT NONE
 
   ! ========================
   ! Input/output variables
   ! ========================
-  INTEGER(c_int),        INTENT(IN)  :: nz, nw, maxnu
+  INTEGER(c_int),        INTENT(IN)  :: nz, nw, nw_out, maxnu
   LOGICAL(c_bool),       INTENT(IN)  :: do_upwelling
   LOGICAL(c_bool),       INTENT(OUT) :: problems
   REAL (KIND=c_double),  INTENT(IN)  :: sza, sca, vza, albedo
   REAL (KIND=c_double),  DIMENSION(nz), INTENT(IN)     :: ts, rhos
   REAL (KIND=c_double),  DIMENSION(nw), INTENT(IN)     :: wave, sol
+  REAL (KIND=c_double),  DIMENSION(nw_out), INTENT(IN)     :: wave_out
   REAL (KIND=c_double),  DIMENSION(nw, nz), INTENT(IN) :: taus
-  REAL (KIND=c_double),  DIMENSION(nw),    INTENT(OUT) :: rspec
+  REAL (KIND=c_double),  DIMENSION(nw_out),    INTENT(OUT) :: rspec
 
   ! ========================
   ! Local Variables
@@ -407,24 +410,24 @@ SUBROUTINE GET_RAMAN (nz, nw, maxnu, sza, vza, sca, albedo, do_upwelling, ts, rh
         problems = .TRUE.; RETURN
      ENDIF
   ENDDO
-  
+
   ! Call raman program
   CALL RAMAN(nulo, nuhi, nu, nz, sca, tmpalb, ts, rhos, st(1:nu,1:nz), vt(1:nu,1:nz), ring(1:nu))
  
   ! Interpolate calculated ring back to input radiance grids
-  CALL BSPLINE(ramanwav(1:nu), ring(1:nu), nu, wave(1:nw), rspec(1:nw), nw, errstat)
+  CALL BSPLINE(ramanwav(1:nu), ring(1:nu), nu, wave_out(1:nw_out), rspec(1:nw_out), nw_out, errstat)
     
   ! Set edge pixels to zero
-  DO i = 1, nw
-     IF (wave(i) >= ramanwav(nu-NedgePos) ) THEN
+  DO i = 1, nw_out
+     IF (wave_out(i) >= ramanwav(nu-NedgePos) ) THEN
         EXIT
      ELSE
         rspec(i) = 0.D0
      ENDIF
   ENDDO
 
-  DO i = nw, 1, -1
-     IF (wave(i) <= ramanwav(NedgePos+1) ) THEN
+  DO i = nw_out, 1, -1
+     IF (wave_out(i) <= ramanwav(NedgePos+1) ) THEN
         EXIT
      ELSE
         rspec(i) = 0.D0
@@ -551,7 +554,7 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   ! troospheric column ozone for one orbit is (0.014+/-0.06 DU)
   ! Use effective temperature, replace T(iz) with T
 
-  DO iz = 1, nz	     
+  DO iz = 1, nz
      !calculate partitioning of N2  	
      !iz = 12
      ZN2=0

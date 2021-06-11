@@ -72,7 +72,7 @@ ExampleBaseConfig = ConfigCommon:new {
 -- problems with Lua
 ------------------------------------------------------------
 
-    diagnostic = true,
+    -- diagnostic = true,
 
 ------------------------------------------------------------
 -- Paths for Absco data. We first look in local path, and if

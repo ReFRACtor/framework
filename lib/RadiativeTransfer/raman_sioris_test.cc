@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE(offline_data)
     bool do_upwelling = true;
     double albedo = 0.5;
 
-    SpectralDomain wave_sd = SpectralDomain(wave, units::nm);
+    SpectralDomain wave_sd(wave, units::nm);
 
-    Array<double, 1> rspec_calc = FullPhysics::compute_raman_sioris(sza, vza, sca, albedo, do_upwelling, ts, rhos, wave_sd, sol, taus);
+    Array<double, 1> rspec_calc = FullPhysics::compute_raman_sioris(sza, vza, sca, albedo, do_upwelling, ts, rhos, wave_sd, wave_sd, sol, taus);
 
     Array<double, 1> rspec_expt = offline_data.read_field<double, 1>("rspec");
 
@@ -80,13 +80,6 @@ BOOST_AUTO_TEST_CASE(effect)
     DoubleWithUnit observation_zenith = config_level_1b->sounding_zenith(channel_idx);
     DoubleWithUnit relative_azimuth = config_level_1b->relative_azimuth(channel_idx);
 
-    RamanSiorisEffect raman = RamanSiorisEffect(scale_factor,
-                                                channel_idx, 
-                                                solar_zenith, observation_zenith, relative_azimuth,
-                                                atm_rayleigh, solar_model, albedo);
-
-    ForwardModelSpectralGrid fm_spec_grid(config_instrument, config_spectral_window, config_spectrum_sampling);
-
     // Make a grid from 740 to 770 nm
     // The grid must be wide enough for the RamanSioris code to calculate any values
     Array<double, 1> grid_vals(30);
@@ -95,6 +88,17 @@ BOOST_AUTO_TEST_CASE(effect)
         grid_vals(grid_idx) = wave_nm++;
     }
     SpectralDomain sd = SpectralDomain(grid_vals, units::nm);
+    double pad_amount =
+      0.1 * (sd.data()(sd.rows()-1) - sd.data()(0));
+    SpectralDomain padded_grid = sd.add_padding(DoubleWithUnit(pad_amount, units::nm));
+    RamanSiorisEffect raman =
+      RamanSiorisEffect(padded_grid, scale_factor, channel_idx, solar_zenith,
+			observation_zenith, relative_azimuth,
+			atm_rayleigh, solar_model, albedo);
+
+    ForwardModelSpectralGrid
+      fm_spec_grid(config_instrument, config_spectral_window,
+		   config_spectrum_sampling);
 
     int num_jac = 10;
     ArrayAd<double, 1> spec_range(sd.data().rows(), num_jac);
@@ -146,7 +150,6 @@ BOOST_AUTO_TEST_CASE(effect)
     Array<double, 1> pert_effect = spec_pert.spectral_range().data();
 
     Array<double, 1> expt_jac( (pert_effect - applied_effect) / perturbation );
-
     BOOST_CHECK_MATRIX_CLOSE_TOL(expt_jac, calc_jac(Range::all(), 0), 1e-10);
 
 }

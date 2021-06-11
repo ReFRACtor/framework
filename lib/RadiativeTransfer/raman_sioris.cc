@@ -18,11 +18,12 @@ void RamanSiorisEffect::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
-    & FP_NVP_(channel_index) & FP_NVP_(albedo) & FP_NVP_(padding_fraction)
-    & FP_NVP_(do_upwelling) & FP_NVP_(jac_perturbation) & FP_NVP_(solar_zenith)
-    & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth) & FP_NVP_(scattering_angle)
-    & FP_NVP_(temperature_layers) & FP_NVP_(atmosphere)
-    & FP_NVP_(solar_model) & FP_NVP_(absorber);
+    & FP_NVP_(solar_and_odepth_spec_domain) & FP_NVP_(channel_index)
+    & FP_NVP_(albedo) 
+    & FP_NVP_(do_upwelling) & FP_NVP_(solar_zenith)
+    & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth)
+    & FP_NVP_(scattering_angle) & FP_NVP_(atmosphere)
+    & FP_NVP_(solar_model);
 }
 
 FP_IMPLEMENT(RamanSiorisEffect);
@@ -30,7 +31,7 @@ FP_IMPLEMENT(RamanSiorisEffect);
 
 
 extern "C" {
-    void get_raman(int *nz, int *nw, int* maxnu, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, const double *sol, const double *taus, double *rspec, bool *problems);
+  void get_raman(int *nz, int *nw, int *nw_out, int* maxnu, double *sza, double *vza, double *sca, double *albedo, bool *do_upwelling, const double *ts, const double *rhos, const double *wave, double *wave_out, const double *sol, const double *taus, double *rspec, bool *problems);
 }
 
 //-----------------------------------------------------------------------
@@ -39,11 +40,12 @@ extern "C" {
 /// arrays to column first ordering.
 //-----------------------------------------------------------------------
 
-Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double viewing_zenith, double scattering_angle, double albedo, bool do_upwelling, const Array<double, 1> &temperature_layers, const Array<double, 1>& air_number_density, const SpectralDomain &grid, const Array<double, 1> &solar_irradiance, const Array<double, 2> &total_optical_depth)
+Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double viewing_zenith, double scattering_angle, double albedo, bool do_upwelling, const Array<double, 1> &temperature_layers, const Array<double, 1>& air_number_density, const SpectralDomain &grid, const SpectralDomain &grid_out, const Array<double, 1> &solar_irradiance, const Array<double, 2> &total_optical_depth)
 {
 
     int num_layers = temperature_layers.rows(); // nz
     int num_points = grid.data().rows(); // nw
+    int num_points_out = grid_out.data().rows(); // nw_out
 
     if (air_number_density.rows() != num_layers) {
         Exception err;
@@ -74,13 +76,16 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
     }
 
     Array<double, 1> nm_grid = grid.convert_wave(units::nm);
+    Array<double, 1> nm_grid_out = grid_out.convert_wave(units::nm);
 
     // Check if we need to reverse the grid because we are coming from wavenumbers
     // Reverse all relevant arrays since the fortran code assumes increasing ordering
     // in the spectral domain
     bool reverse_grid = nm_grid(0) > nm_grid(nm_grid.rows()-1);
+    bool reverse_grid_out = nm_grid_out(0) > nm_grid_out(nm_grid_out.rows()-1);
 
     Array<double, 1> nm_grid_f(num_points, ColumnMajorArray<1>());
+    Array<double, 1> nm_grid_out_f(num_points_out, ColumnMajorArray<1>());
     Array<double, 2> total_optical_depth_f(num_points, num_layers, ColumnMajorArray<2>());
     Array<double, 1> solar_irradiance_f(num_points, ColumnMajorArray<1>());
 
@@ -104,24 +109,43 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
         solar_irradiance_f = solar_irradiance;
     }
 
+    if (reverse_grid_out) {
+        // Copy values into memory seen by fortan in their reverse order
+        nm_grid_out_f = nm_grid_out.reverse(firstDim);
+    } else {
+        nm_grid_out_f = nm_grid_out;
+    }
+    
     // Compute the maximum extent of internal get_raman arrays so we never run into
     // hitting a maximum value. The Fortran code computes an internal wavelenght grid
     // spaced every 1 wavenumber, but still in nm. This value represents the extent
     // it would expect.
     int maxnu = int(1e7/nm_grid_f(0)) - int(1e7/nm_grid_f(num_points-1)) + 2;
 
-    Array<double, 1> raman_spec(num_points, ColumnMajorArray<1>());
+    // Also check that we cover at least the minimum grid size. If we
+    // don't the Fortran code will seg fault, and we don't have enough
+    // data to calculate anything anyways.
+    if((maxnu - 2) < RamanSiorisEffect::raman_edge_wavenumber) {
+      Exception e;
+      e << "The Solar_and_odepth_spec_domain is too small for the raman code\n"
+	<< "  Width in wavenumber: " << maxnu - 2 << "\n"
+	<< "  Minimum wavenumber required: "
+	<< RamanSiorisEffect::raman_edge_wavenumber << "\n";
+      throw e;
+    }
+    
+    Array<double, 1> raman_spec(num_points_out, ColumnMajorArray<1>());
 
     bool problems = false;
 
-    get_raman(&num_layers, &num_points, &maxnu, &solar_zenith, &viewing_zenith, &scattering_angle, &albedo, &do_upwelling, temperature_layers.dataFirst(), air_number_density.dataFirst(), nm_grid_f.dataFirst(), solar_irradiance_f.dataFirst(), total_optical_depth_f.dataFirst(), raman_spec.dataFirst(), &problems);
+    get_raman(&num_layers, &num_points, &num_points_out, &maxnu, &solar_zenith, &viewing_zenith, &scattering_angle, &albedo, &do_upwelling, temperature_layers.dataFirst(), air_number_density.dataFirst(), nm_grid_f.dataFirst(), nm_grid_out_f.dataFirst(), solar_irradiance_f.dataFirst(), total_optical_depth_f.dataFirst(), raman_spec.dataFirst(), &problems);
 
     if (problems) {
         throw Exception("raman_sioris fortran code encountered an internal issue.");
     }
 
     // Reverse back to order of calling grid
-    if (reverse_grid) {
+    if (reverse_grid_out) {
         raman_spec.reverseSelf(firstDim);
     }
 
@@ -146,24 +170,23 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
 /// a significant enough effect that an approximate value can suffice.
 //-----------------------------------------------------------------------
 
-RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
-                                     int channel_index,
-                                     const DoubleWithUnit& solar_zenith, 
-                                     const DoubleWithUnit& observation_zenith, 
-                                     const DoubleWithUnit& relative_azimuth,
-                                     const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
-                                     const boost::shared_ptr<SolarModel>& solar_model,
-                                     double albedo,
-                                     const boost::shared_ptr<StateMapping> mapping,
-                                     double padding_fraction,
-                                     bool do_upwelling,
-                                     double jac_perturbation)
+RamanSiorisEffect::RamanSiorisEffect
+(const SpectralDomain& Solar_and_odepth_spec_domain,
+ double scale_factor,
+ int channel_index,
+ const DoubleWithUnit& solar_zenith, 
+ const DoubleWithUnit& observation_zenith, 
+ const DoubleWithUnit& relative_azimuth,
+ const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
+ const boost::shared_ptr<SolarModel>& solar_model,
+ double albedo,
+ const boost::shared_ptr<StateMapping> mapping,
+ bool do_upwelling)
 : SpectrumEffectImpBase(scale_factor, mapping),
+  solar_and_odepth_spec_domain_(Solar_and_odepth_spec_domain),
   channel_index_(channel_index),
   albedo_(albedo),
-  padding_fraction_(padding_fraction),
   do_upwelling_(do_upwelling),
-  jac_perturbation_(jac_perturbation),
   atmosphere_(atmosphere),
   solar_model_(solar_model)
 {
@@ -172,8 +195,6 @@ RamanSiorisEffect::RamanSiorisEffect(double scale_factor,
     obs_zenith_ = observation_zenith.convert(units::deg).value;
     relative_azimuth_ = relative_azimuth.convert(units::deg).value; // stored for use in cloning
     scattering_angle_ = scattering_angle(observation_zenith, solar_zenith, relative_azimuth).convert(units::deg).value;
-
-    absorber_ = atmosphere_->absorber_ptr();
 
     // Initialize the temperature levels
     compute_temp_layers(*atmosphere_->pressure_ptr());
@@ -198,61 +219,57 @@ void RamanSiorisEffect::apply_effect
 ) const
 {
     Range ra = Range::all();
-
+    firstIndex i1;
+    secondIndex i2;
     // Convert dry air number density to the necessary units of molecules/cm^2
-    Array<double, 1> dry_air_density = absorber_->total_air_number_density_layer(channel_index_).convert(Unit("cm^-2")).value.value();
+    Array<double, 1> dry_air_density = atmosphere_->absorber_ptr()->total_air_number_density_layer(channel_index_).convert(Unit("cm^-2")).value.value();
 
-    // Compute a padded grid due to requirements of the fortran code
-    // Pad 10% of the size of the input grid
-    double pad_amount = 
-        padding_fraction_ * (Spec.spectral_domain().data()(Spec.spectral_domain().rows()-1) - Spec.spectral_domain().data()(0));
-    SpectralDomain padded_grid = Spec.spectral_domain().add_padding(DoubleWithUnit(pad_amount, Spec.spectral_domain().units()));
-
-    // Compute total optical depth, hopefully use any caching that atmosphere class provides
-    Array<double, 1> wn_grid = padded_grid.wavenumber();
-    Array<double, 2> total_optical_depth(wn_grid.rows(), temperature_layers_.rows());
+    // Compute total optical depth
+    Array<double, 1> wn_grid = solar_and_odepth_spec_domain_.wavenumber();
+    Array<double, 2> total_optical_depth(wn_grid.rows(),
+					 temperature_layers_.rows());
 
     for(int wn_idx = 0; wn_idx < wn_grid.rows(); wn_idx++) {
-        total_optical_depth(wn_idx, ra) = atmosphere_->optical_depth_wrt_rt(wn_grid(wn_idx), channel_index_).value();
+        total_optical_depth(wn_idx, ra) =
+	  atmosphere_->optical_depth_wrt_rt(wn_grid(wn_idx),
+					    channel_index_).value();
     }
     
-    // Absolute magnitude of the solar spectrum does not seem to matter, no need to convert to a certain unit
-    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(padded_grid).spectral_range().data();
+    // Absolute magnitude of the solar spectrum doesn't matter (we
+    // calculate a ratio, so magnitude cancels out). No need to
+    // convert to a certain unit;
+    Array<double, 1> solar_spectrum = solar_model_->
+      solar_spectrum(solar_and_odepth_spec_domain_).spectral_range().data();
 
     // Compute raman spectrum
-    Array<double, 1> raman_spec(padded_grid.data().rows());
-    raman_spec = compute_raman_sioris(solar_zenith_, obs_zenith_, scattering_angle_, albedo_, do_upwelling_, temperature_layers_, dry_air_density, padded_grid, solar_spectrum, total_optical_depth);
+    Array<double, 1> raman_spec =
+       compute_raman_sioris(solar_zenith_, obs_zenith_,
+         scattering_angle_, albedo_, do_upwelling_,
+         temperature_layers_, dry_air_density, solar_and_odepth_spec_domain_,
+         Spec.spectral_domain(), solar_spectrum, total_optical_depth);
 
     // Load scale factor
     AutoDerivative<double> scale_factor = coefficient()(0);
 
-    // Apply raman scattering scaling and compute jacobian through a perturbation
+    // Apply raman scattering scaling.
     ArrayAd<double, 1> spec_rad = Spec.spectral_range().data_ad();
 
-    // Create spectrum with raman effect applied, index into padded raman scattering only for the points to be returned
-    Array<double, 1> raman_applied_rad_val(spec_rad.rows());
-    Array<double, 1> raman_applied_rad_pert(spec_rad.rows());
-
-    for(int pad_idx = 0; pad_idx < padded_grid.data().rows(); pad_idx++) {
-        int out_idx = padded_grid.sample_index()(pad_idx);
-        if (out_idx >= 0) {
-            raman_applied_rad_val(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * scale_factor.value() + 1.0);
-            raman_applied_rad_pert(out_idx) = spec_rad.value()(out_idx) * (raman_spec(pad_idx) * (scale_factor.value() + jac_perturbation_) + 1.0);
-        }
+    // Chain rule for derivatives. We could just convert to and from
+    // auto_derivative to do this automatically, but it isn't too hard
+    // to just write out the explicit rule, which is faster to run.
+    if(!spec_rad.is_constant() && !scale_factor.is_constant() &&
+       spec_rad.number_variable() != scale_factor.number_variable())
+	  throw Exception("Need to have the same number of variables for Spec jacobian and scale_factor"); 
+    if(!spec_rad.is_constant() || !scale_factor.is_constant()) {
+      spec_rad.resize_number_variable(std::max(spec_rad.number_variable(),
+					       scale_factor.number_variable()));
+      spec_rad.jacobian() = spec_rad.jacobian()(i1, i2) *
+	(raman_spec(i1) * scale_factor.value() + 1.0);
+      if(!scale_factor.is_constant())
+	spec_rad.jacobian() += spec_rad.value()(i1) * raman_spec(i1) *
+	  scale_factor.gradient()(i2);
     }
-
-    // Save applied effect
-    spec_rad.value() = raman_applied_rad_val;
-
-    // Compute FD jacobian values
-    if(!spec_rad.is_constant() && !coefficient().is_constant()) {
-        for(int sv_idx = 0; sv_idx < spec_rad.jacobian().cols(); sv_idx++) {
-            if(coefficient().jacobian()(0, sv_idx) > 0) {
-                spec_rad.jacobian()(ra, sv_idx) = coefficient().jacobian()(0, sv_idx) * (raman_applied_rad_pert - raman_applied_rad_val) / jac_perturbation_;
-            }
-        }
-    }
-
+    spec_rad.value() *= (raman_spec * scale_factor.value() + 1.0);
 }
 
 //-----------------------------------------------------------------------
@@ -281,19 +298,17 @@ void RamanSiorisEffect::compute_temp_layers(const Pressure& pressure)
 boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
 {
 
-    return boost::shared_ptr<SpectrumEffect>( 
-            new RamanSiorisEffect(coefficient().value()(0),
-                                  channel_index_,
-                                  DoubleWithUnit(solar_zenith_, units::deg),
-                                  DoubleWithUnit(obs_zenith_, units::deg),
-                                  DoubleWithUnit(relative_azimuth_, units::deg),
-                                  atmosphere_,
-                                  solar_model_,
-                                  albedo_,
-                                  mapping,
-                                  padding_fraction_,
-                                  do_upwelling_,
-                                  jac_perturbation_));
+    return boost::make_shared<RamanSiorisEffect>
+      (solar_and_odepth_spec_domain_, coefficient().value()(0),
+       channel_index_,
+       DoubleWithUnit(solar_zenith_, units::deg),
+       DoubleWithUnit(obs_zenith_, units::deg),
+       DoubleWithUnit(relative_azimuth_, units::deg),
+       atmosphere_,
+       solar_model_,
+       albedo_,
+       mapping,
+       do_upwelling_);
 }
 
 //-----------------------------------------------------------------------

@@ -28,6 +28,7 @@ namespace FullPhysics {
        const blitz::Array<double, 1> &temperature_layers,
        const blitz::Array<double, 1>& air_number_density,
        const SpectralDomain &grid,
+       const SpectralDomain &grid_out,
        const blitz::Array<double, 1> &solar_irradiance,
        const blitz::Array<double, 2> &total_optical_depth);
 
@@ -35,19 +36,21 @@ class RamanSiorisEffect : public SpectrumEffectImpBase,
                           public Observer<Pressure> {
 
 public:
-    RamanSiorisEffect(double scale_factor,
-                      int channel_index, 
-                      const DoubleWithUnit& solar_zenith, 
-                      const DoubleWithUnit& observation_zenith, 
-                      const DoubleWithUnit& relative_azimuth,
-                      const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
-                      const boost::shared_ptr<SolarModel>& solar_model,
-                      double albedo,
-                      const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
-                      double padding_fraction = 0.10,
-                      bool do_upwelling = true,
-                      double jac_perturbation = 0.001);
+  RamanSiorisEffect(const SpectralDomain& Solar_and_odepth_spec_domain,
+		    double scale_factor,
+                    int channel_index, 
+                    const DoubleWithUnit& solar_zenith, 
+                    const DoubleWithUnit& observation_zenith, 
+                    const DoubleWithUnit& relative_azimuth,
+                    const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
+                    const boost::shared_ptr<SolarModel>& solar_model,
+                    double albedo,
+                    const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
+                    bool do_upwelling = true);
 
+  /// The "edge" we need to the desired range of the Raman calculation
+  static constexpr double raman_edge_wavenumber = 218;
+  
   virtual void apply_effect(Spectrum& Spec,
 	      const ForwardModelSpectralGrid& Forward_model_grid) const;
   virtual void notify_update(const Pressure& pressure);
