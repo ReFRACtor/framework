@@ -92,6 +92,7 @@ set(DIR_SOURCES
     powell_nlls_problem.cc
     powell_singular_nlls_problem.cc
     pressure_sigma.cc
+    pressure_with_cloud_handling.cc
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
     radiance_scaling_sv_fit.cc
@@ -202,6 +203,7 @@ set(TEST_SOURCES
     output_hdf_test.cc
     planck_test.cc
     pressure_sigma_test.cc
+    pressure_with_cloud_handling_test.cc
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
     rayleigh_only_test.cc
