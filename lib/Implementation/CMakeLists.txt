@@ -48,6 +48,7 @@ set(DIR_SOURCES
     ground_emissivity_polynomial.cc
     ground_emissivity_piecewise.cc
     ground_lambertian.cc
+    ground_with_cloud_handling.cc
     ground_lambertian_piecewise.cc
     gsl_lsp.cc
     gsl_mdm.cc
@@ -169,6 +170,7 @@ set(TEST_SOURCES
     ground_emissivity_polynomial_test.cc
     ground_emissivity_piecewise_test.cc
     ground_lambertian_test.cc
+    ground_with_cloud_handling_test.cc
     ground_lambertian_piecewise_test.cc
     hdf_constant_test.cc
     ils_grating_test.cc

@@ -53,8 +53,8 @@ public:
   %python_attribute(spurr_brdf_type, SpurrBrdfType);
   virtual ArrayAd<double, 1> surface_parameter
     (const double wn, const int spec_index) const = 0;
-  virtual boost::shared_ptr<Ground> clone() const = 0;
-  virtual void print(std::ostream& Os) const = 0;
+  virtual boost::shared_ptr<Ground> clone() const;
+  virtual void print(std::ostream& Os) const;
   %pickle_serialization();
 };
 }

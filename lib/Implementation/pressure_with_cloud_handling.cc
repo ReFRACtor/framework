@@ -41,7 +41,7 @@ PressureWithCloudHandling::PressureWithCloudHandling
 
 boost::shared_ptr<Pressure> PressureWithCloudHandling::clone() const
 {
-  return boost::make_shared<PressureWithCloudHandling>(pressure_clear_,
+  return boost::make_shared<PressureWithCloudHandling>(pressure_clear_->clone(),
 						       cloud_pressure_level_,
 						       do_cloud_);
 }
