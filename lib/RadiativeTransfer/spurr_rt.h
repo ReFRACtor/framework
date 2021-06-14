@@ -31,7 +31,11 @@ public:
   /// becomes stale when the Atmosphere is changed, so we observe atm
   /// and mark the cache when it changes. 
   //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
+  virtual void notify_update(const RtAtmosphere& atm)
+  {
+    alt_spec_index_cache = -1;
+    rt_driver_->notify_update(atm);
+  }
 
   /// Number of stokes in returned stokes values
   /// Note that LIDORT will only ever calculate the first stoke index for I,
@@ -44,7 +48,12 @@ public:
   virtual int number_moment() const = 0;
 
   /// Integer representing the surface type using the LIDORT indexing nomenclature
-  virtual int surface_type() const { return surface_type_int; }
+  virtual int surface_type() const
+  {
+    if(!ground_)
+      throw Exception("Need to have a ground to determine surface_type");
+    return ground_->spurr_brdf_type();
+  }
 
   virtual void print(std::ostream& Os, bool Short_form = false) const;
 
@@ -80,9 +89,9 @@ public:
   }
 protected:
 
-  int surface_type_int;
   bool do_solar_sources, do_thermal_emission;
 
+  boost::shared_ptr<Ground> ground_;
   blitz::Array<double, 1> sza, zen, azm;
 
   //-----------------------------------------------------------------------

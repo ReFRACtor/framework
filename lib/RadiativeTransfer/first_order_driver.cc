@@ -14,7 +14,9 @@ void FirstOrderDriver::serialize(Archive & ar,
 				 const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
+    & FP_NVP_(num_layers)
     & FP_NVP_(num_moments) & FP_NVP_(num_streams)
+    & FP_NVP_(surface_type)
     & FP_NVP(height_diffs)
     & FP_NVP(geometry) & FP_NVP(legendre) & FP_NVP_(solar_interface)
     & FP_NVP(l_brdf_driver);
@@ -42,219 +44,228 @@ FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int numb
     do_deltam_scaling_ = true;
 }
 
+void FirstOrderDriver::notify_update(const RtAtmosphere& atm)
+{
+  int nlayers = atm.number_layer();
+  int stype = atm.ground()->spurr_brdf_type();
+  if(nlayers != number_layers() ||
+     stype != surface_type())
+    init_interfaces(nlayers, stype);
+}
 
 void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 {
-    // We process 1 geometry at a time for now
-    int nszas = 1;
-    int nvzas = 1;
-    int nazms = 1;
-    int ngeoms = nszas * nvzas * nazms;
+  num_layers_ = nlayers;
+  // We process 1 geometry at a time for now
+  int nszas = 1;
+  int nvzas = 1;
+  int nazms = 1;
+  int ngeoms = nszas * nvzas * nazms;
 
-    // Match what is used by LIDORT driver
-    int nfine = 4;
+  // Match what is used by LIDORT driver
+  int nfine = 4;
+  
+  geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
+  
+  // Use same definitions as Fortran code
+  // Define pi and degrees to radians
+  geometry->pie(acos(-1.0));
+  geometry->dtr(geometry->pie() / 180.0);
+  
+  // Do not compute chapman factors
+  geometry->do_chapman(false);
+  
+  // input angles (Degrees), VSIGN = +1 (Up); -1(Down)
+  // scattering angle control, Upwelling only
+  geometry->vsign(1);
+  
+  // Earth's radius
+  geometry->eradius(OldConstant::wgs84_a.convert(units::km).value);
+  
+  // Specify angles instead of using observation geometry mode
+  geometry->do_obsgeom(false);
+  
+  // Attenuation control
+  // Criticality not set (fast option) valid for lower optical depth atmospheres
+  // Only needed when enchanced_ps is enabled for extremely optically thick atmospheres 
+  // where light does not reach surface
+  geometry->docrit(false);
 
-    geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
+  // Commented out values not used if docrit == false
+  // Critical attenuation
+  //geometry->acrit(1.0e-10);
+  // Extincion profile
+  //geometry->extinct(...)
 
-    // Use same definitions as Fortran code
-    // Define pi and degrees to radians
-    geometry->pie(acos(-1.0));
-    geometry->dtr(geometry->pie() / 180.0);
+  ///////
+  // Initialize legendre interface
+  // Used for computing exact scattering from phase moments
 
-    // Do not compute chapman factors
-    geometry->do_chapman(false);
+  // Should always be true before first Spherfuncs call
+  bool starter = true;
+  legendre.reset(new Fo_Scalarss_Spherfuncs(starter, num_moments_, ngeoms, num_moments_, ngeoms));
 
-    // input angles (Degrees), VSIGN = +1 (Up); -1(Down)
-    // scattering angle control, Upwelling only
-    geometry->vsign(1);
-
-    // Earth's radius
-    geometry->eradius(OldConstant::wgs84_a.convert(units::km).value);
-
-    // Specify angles instead of using observation geometry mode
-    geometry->do_obsgeom(false);
-   
-    // Attenuation control
-    // Criticality not set (fast option) valid for lower optical depth atmospheres
-    // Only needed when enchanced_ps is enabled for extremely optically thick atmospheres 
-    // where light does not reach surface
-    geometry->docrit(false);
-
-    // Commented out values not used if docrit == false
-    // Critical attenuation
-    //geometry->acrit(1.0e-10);
-    // Extincion profile
-    //geometry->extinct(...)
-
-    ///////
-    // Initialize legendre interface
-    // Used for computing exact scattering from phase moments
-
-    // Should always be true before first Spherfuncs call
-    bool starter = true;
-    legendre.reset(new Fo_Scalarss_Spherfuncs(starter, num_moments_, ngeoms, num_moments_, ngeoms));
-
-    ///////
-    // Initialize radiance interface
-
-    // Use LIDORT parameters to have consistent sizes for maximum weighting functions
-    Lidort_Pars lid_pars = Lidort_Pars::instance();
-    int natmoswfs = lid_pars.max_atmoswfs;
-    int nsurfacewfs = lid_pars.max_surfacewfs; 
-
-    // Initialize solar mode interface
-    solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
-    
+  ///////
+  // Initialize radiance interface
+  
+  // Use LIDORT parameters to have consistent sizes for maximum weighting functions
+  Lidort_Pars lid_pars = Lidort_Pars::instance();
+  int natmoswfs = lid_pars.max_atmoswfs;
+  int nsurfacewfs = lid_pars.max_surfacewfs; 
+  
+  // Initialize solar mode interface
+  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
+  
     // Set solar flux to 1.0 for solar spectrum case
     // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
-    float lidort_flux_factor = 1.0;
-    solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
-
-    // Recommended value by manual of 50 in case we use cox-munk
-    int n_brdf_stream = 50;
-    l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
-    Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
-
-    // Only use 1 beam meaning only one set of sza, azm
-    brdf_inputs.bs_nbeams(1);
-    brdf_inputs.bs_n_user_streams(1);
-    brdf_inputs.bs_n_user_relazms(1);
-
-    // This MUST be consistent with streams used for 
-    // LIDORT RT calculation
-    brdf_inputs.bs_nstreams(num_streams_);
-
-    // Number of quadtrature streams for BRDF calculation
-    brdf_inputs.bs_nstreams_brdf(n_brdf_stream);
-
-    brdf_inputs.bs_do_directbounce_only(true);
-    brdf_inputs.bs_do_brdf_surface(true);
-    brdf_inputs.bs_do_user_streams(true);
-    brdf_inputs.bs_do_solar_sources(do_solar_sources);
-    brdf_inputs.bs_do_surface_emission(do_thermal_emission);
-
-    // Copy LidortBrdfDriver pointer into SpurrDriver variable
-    brdf_driver_ = l_brdf_driver;
-    brdf_driver_->initialize_brdf_inputs(surface_type);
+  float lidort_flux_factor = 1.0;
+  solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
+  
+  // Recommended value by manual of 50 in case we use cox-munk
+  int n_brdf_stream = 50;
+  l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
+  Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
+  
+  // Only use 1 beam meaning only one set of sza, azm
+  brdf_inputs.bs_nbeams(1);
+  brdf_inputs.bs_n_user_streams(1);
+  brdf_inputs.bs_n_user_relazms(1);
+  
+  // This MUST be consistent with streams used for 
+  // LIDORT RT calculation
+  brdf_inputs.bs_nstreams(num_streams_);
+  
+  // Number of quadtrature streams for BRDF calculation
+  brdf_inputs.bs_nstreams_brdf(n_brdf_stream);
+  
+  brdf_inputs.bs_do_directbounce_only(true);
+  brdf_inputs.bs_do_brdf_surface(true);
+  brdf_inputs.bs_do_user_streams(true);
+  brdf_inputs.bs_do_solar_sources(do_solar_sources);
+  brdf_inputs.bs_do_surface_emission(do_thermal_emission);
+  
+  // Copy LidortBrdfDriver pointer into SpurrDriver variable
+  brdf_driver_ = l_brdf_driver;
+  brdf_driver_->initialize_brdf_inputs(surface_type);
 }
 
 /// Set plane parallel sphericity
 void FirstOrderDriver::set_plane_parallel()
 {
-    // LIDORT should have ts_do_sscorr_nadir(false), ts_do_sscorr_outgoing(false)
-    geometry->do_planpar(true);
-    geometry->do_enhanced_ps(false);
-
-    copy_geometry_flags();
+  // LIDORT should have ts_do_sscorr_nadir(false), ts_do_sscorr_outgoing(false)
+  geometry->do_planpar(true);
+  geometry->do_enhanced_ps(false);
+  
+  copy_geometry_flags();
 }
 
 /// Set pseudo spherical sphericity
 void FirstOrderDriver::set_pseudo_spherical()
 {
-    // Matches LIDORT ts_do_sscorr_nadir(true)
-    geometry->do_planpar(false);
-    geometry->do_enhanced_ps(false);
-
-    copy_geometry_flags();
+  // Matches LIDORT ts_do_sscorr_nadir(true)
+  geometry->do_planpar(false);
+  geometry->do_enhanced_ps(false);
+  
+  copy_geometry_flags();
 }
 
 /// Set pseudo spherical sphericity
 void FirstOrderDriver::set_line_of_sight()
 {
-    // Matches LIDORT ts_do_sscorr_outgoing(true)
-    geometry->do_planpar(false);
-    geometry->do_enhanced_ps(true);
-
-    copy_geometry_flags();
+  // Matches LIDORT ts_do_sscorr_outgoing(true)
+  geometry->do_planpar(false);
+  geometry->do_enhanced_ps(true);
+  
+  copy_geometry_flags();
 }
 
 /// Copy flags for sphericity calculations from geometry object
 void FirstOrderDriver::copy_geometry_flags()
 {
-    // Flags copied from geometry object
-    solar_interface_->do_planpar(geometry->do_planpar());
-    solar_interface_->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
-    solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
+  // Flags copied from geometry object
+  solar_interface_->do_planpar(geometry->do_planpar());
+  solar_interface_->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
+  solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
 void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_grid)
 {
-    int nlayers = height_grid.rows() - 1;
-
-    geometry->heights()(Range(0, nlayers)) = height_grid;
-
-    // Used for computing extincts value
-    height_diffs.resize(nlayers);
-    for (int lev_idx = 1; lev_idx < height_grid.rows(); lev_idx++) {
-        height_diffs(lev_idx-1) = height_grid(lev_idx-1) - height_grid(lev_idx);
-    }
+  int nlayers = height_grid.rows() - 1;
+  
+  geometry->heights()(Range(0, nlayers)) = height_grid;
+  
+  // Used for computing extincts value
+  height_diffs.resize(nlayers);
+  for (int lev_idx = 1; lev_idx < height_grid.rows(); lev_idx++) {
+    height_diffs(lev_idx-1) = height_grid(lev_idx-1) - height_grid(lev_idx);
+  }
 }
 
 void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
 {
-    Array<double, 1> alpha_boa(geometry->alpha_boa());
-    alpha_boa(0) = zen;
-
-    Array<double, 1> theta_boa(geometry->theta_boa());
-    theta_boa(0) = sza;
-
-    Array<double, 1> phi_boa(geometry->phi_boa());
-    phi_boa(0) = azm;
-
-    // Run geometry computation
-    geometry->run();
-
-    if (geometry->fail()) {
-        Exception err;
-        err << "Error in first order geometry calculation:\n"
-            << "Message: " << geometry->message() << "\n"
-            << "Trace: " << geometry->trace() << "\n";
-        throw err;
-    }
+  Array<double, 1> alpha_boa(geometry->alpha_boa());
+  alpha_boa(0) = zen;
+  
+  Array<double, 1> theta_boa(geometry->theta_boa());
+  theta_boa(0) = sza;
+  
+  Array<double, 1> phi_boa(geometry->phi_boa());
+  phi_boa(0) = azm;
+  
+  // Run geometry computation
+  geometry->run();
+  
+  if (geometry->fail()) {
+    Exception err;
+    err << "Error in first order geometry calculation:\n"
+	<< "Message: " << geometry->message() << "\n"
+	<< "Trace: " << geometry->trace() << "\n";
+    throw err;
+  }
     
-    // Rerun legendre interface since it dependes on cosscat
-    legendre->cosscat(geometry->cosscat());
-    legendre->run();
-
-    // Copy dynamic geometry outputs into FO interface object
-    // Consider .reference to avoid copying?
-    Array<int, 2> nfinedivs(solar_interface_->nfinedivs());
-    nfinedivs = geometry->nfinedivs();
-
-    solar_interface_->donadir(geometry->donadir());
-    solar_interface_->ncrit(geometry->ncrit());
-    solar_interface_->xfine(geometry->xfine());
-    solar_interface_->wfine(geometry->wfine());
-    solar_interface_->csqfine(geometry->csqfine());
-    solar_interface_->cotfine(geometry->cotfine());
-    solar_interface_->raycon(geometry->raycon());
-    solar_interface_->cota(geometry->cota());
-    solar_interface_->sunpaths(geometry->sunpaths());
-    solar_interface_->ntraverse(geometry->ntraverse());
-    solar_interface_->sunpaths_fine(geometry->sunpathsfine());
-    solar_interface_->ntraverse_fine(geometry->ntraversefine());
+  // Rerun legendre interface since it dependes on cosscat
+  legendre->cosscat(geometry->cosscat());
+  legendre->run();
+  
+  // Copy dynamic geometry outputs into FO interface object
+  // Consider .reference to avoid copying?
+  Array<int, 2> nfinedivs(solar_interface_->nfinedivs());
+  nfinedivs = geometry->nfinedivs();
+  
+  solar_interface_->donadir(geometry->donadir());
+  solar_interface_->ncrit(geometry->ncrit());
+  solar_interface_->xfine(geometry->xfine());
+  solar_interface_->wfine(geometry->wfine());
+  solar_interface_->csqfine(geometry->csqfine());
+  solar_interface_->cotfine(geometry->cotfine());
+  solar_interface_->raycon(geometry->raycon());
+  solar_interface_->cota(geometry->cota());
+  solar_interface_->sunpaths(geometry->sunpaths());
+  solar_interface_->ntraverse(geometry->ntraverse());
+  solar_interface_->sunpaths_fine(geometry->sunpathsfine());
+  solar_interface_->ntraverse_fine(geometry->ntraversefine());
+  
+  // Compute these values for plane parallel or regular pseudo spherical modes
+  if (geometry->do_planpar() || (!geometry->do_planpar() && !geometry->do_enhanced_ps())) {
+    Array<double, 1> mu0(solar_interface_->mu0());
+    Array<double, 1> mu1(solar_interface_->mu1());
     
-    // Compute these values for plane parallel or regular pseudo spherical modes
-    if (geometry->do_planpar() || (!geometry->do_planpar() && !geometry->do_enhanced_ps())) {
-        Array<double, 1> mu0(solar_interface_->mu0());
-        Array<double, 1> mu1(solar_interface_->mu1());
-
-        for (int ns = 0; ns < geometry->nszas(); ns++) {
-            int nv_offset = geometry->nvzas() * geometry->nazms() * ns;
-            for(int nv = 0; nv < geometry->nvzas(); nv++) {
-                int na_offset = nv_offset + geometry->nazms() * nv;
-                for(int na = 0; na < geometry->nazms(); na++) {
-                    // Geometry index for lattice
-                    int g =  na_offset + na;
-                    mu0(g) = cos(geometry->theta_boa()(ns) * geometry->dtr());
-                    mu1(g) = cos(geometry->alpha_boa()(nv) * geometry->dtr());
-                }
-            }
-        }
-    } else {
-        solar_interface_->mu0(geometry->mu0());
-        solar_interface_->mu1(geometry->mu1());
+    for (int ns = 0; ns < geometry->nszas(); ns++) {
+      int nv_offset = geometry->nvzas() * geometry->nazms() * ns;
+      for(int nv = 0; nv < geometry->nvzas(); nv++) {
+	int na_offset = nv_offset + geometry->nazms() * nv;
+	for(int na = 0; na < geometry->nazms(); na++) {
+	  // Geometry index for lattice
+	  int g =  na_offset + na;
+	  mu0(g) = cos(geometry->theta_boa()(ns) * geometry->dtr());
+	  mu1(g) = cos(geometry->alpha_boa()(nv) * geometry->dtr());
+	}
+      }
     }
+  } else {
+    solar_interface_->mu0(geometry->mu0());
+    solar_interface_->mu1(geometry->mu1());
+  }
 }
 
 void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb))

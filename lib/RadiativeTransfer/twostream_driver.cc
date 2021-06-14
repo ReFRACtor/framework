@@ -503,3 +503,11 @@ void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::
   // jac_surf_temp, jac_atm_temp not available yet
 }
 
+void TwostreamRtDriver::notify_update(const RtAtmosphere& atm)
+{
+  int stype = atm.ground()->spurr_brdf_type();
+  if(stype != surface_type()) {
+    surface_type_ = stype;
+    brdf_driver()->initialize_brdf_inputs(surface_type_);
+  }
+}

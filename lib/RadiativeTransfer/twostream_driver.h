@@ -64,6 +64,7 @@ public:
   TwostreamRtDriver(int nlayers, int surface_type, bool do_fullquadrature = true,
           bool do_solar = true, bool do_thermal = false);
 
+  virtual void notify_update(const RtAtmosphere& atm);
   void setup_height_grid(const blitz::Array<double, 1>& height_grid);
   void setup_geometry(double sza, double azm, double zen);
 

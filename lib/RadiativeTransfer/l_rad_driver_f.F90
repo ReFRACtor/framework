@@ -60,6 +60,13 @@ module l_rad_driver_wrap
   end type l_rad_struct_t
 contains
 
+  subroutine lr_update_surftype(surftype, l_rad_struct_c) bind(C)
+    integer(c_int), intent(in) :: surftype
+    type(c_ptr), intent(inout) :: l_rad_struct_c
+    type(l_rad_struct_t), pointer :: l_rad_struct
+    call c_f_pointer(l_rad_struct_c, l_rad_struct)
+    l_rad_struct%surftype = surftype
+  end subroutine lr_update_surftype
   subroutine lr_init(nstream, nstokes, surftype, l_rad_struct_c) bind(C)
     integer(c_int), intent(in) :: nstream, nstokes, surftype
     type(c_ptr), intent(out) :: l_rad_struct_c

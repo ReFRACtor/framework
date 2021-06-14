@@ -56,7 +56,7 @@ public:
   virtual int number_stream() const { return driver->number_stream(); }
 
   /// Returns an integer with l_rad's representation of surface type
-  virtual int surface_type() const { return surface_type_int; }
+  virtual int surface_type() const;
 
   /// Return an interpolated z_matrix value for use in offline testing
   ArrayAd<double, 2> interp_z_matrix(double Wn) {
@@ -68,7 +68,11 @@ public:
   /// becomes stale when the Atmosphere is changed, so we observe atm
   /// and mark the cache when it changes. 
   //-----------------------------------------------------------------------
-  void notify_update(const RtAtmosphere& UNUSED(atm)) { alt_spec_index_cache = -1; }
+  void notify_update(const RtAtmosphere& UNUSED(atm))
+  {
+    alt_spec_index_cache = -1;
+    driver->surface_type(surface_type());
+  }
   
   virtual blitz::Array<double, 1> stokes_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   virtual ArrayAd<double, 1> stokes_and_jacobian_single_wn(double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
@@ -91,8 +95,6 @@ private:
 
   void initialize(const SpectralBound& Spec_bound, double Spectrum_spacing);
 
-  int surface_type_int;
-
   /// Set up interpolated z-matrix giving it the ends of the bands, or window
   /// Using this reduces the need for costly calculations for each spectral point
   void setup_z_matrix_interpol(const double wmin, const ArrayAd<double, 3>& pf_min, const double wmax, const ArrayAd<double, 3>& pf_max) const;
@@ -107,6 +109,8 @@ private:
   ArrayAd<double, 2> get_z_matrix(const double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
   void apply_jacobians(double Wn, int Spec_index, ArrayAd<double, 1>& stokes, const blitz::Array<double, 3>& jac_atm, const blitz::Array<double, 2>& jac_surf, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;
 
+  boost::shared_ptr<Ground> ground_;
+  
   // Control how to use the l_rad_driver
   bool use_first_order_scatt_calc;
   bool do_second_order;

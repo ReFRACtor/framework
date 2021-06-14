@@ -12,6 +12,8 @@ extern "C" {
     void lr_init(const int* nstream,
                  const int* nstokes, const int* surftype,
                  void** l_rad_struct_c);
+    void lr_update_surftype(const int* surftype,
+			    void** l_rad_struct_c);
     void lr_cleanup(void** l_rad_struct_c);
     void init_l_rad(void** l_rad_struct_c, const double* sza,
                     const double* zen, const double* azm, const double* alt,
@@ -50,7 +52,7 @@ void LRadDriver::serialize(Archive & ar,
 			const unsigned int version)
 {
   FP_GENERIC_BASE(LRadDriver);
-  ar & FP_NVP(nstream) & FP_NVP(nstokes) & FP_NVP(surface_type)
+  ar & FP_NVP(nstream) & FP_NVP(nstokes) & FP_NVP(surface_type_)
     & FP_NVP(use_tms_correction) & FP_NVP(pure_nadir)
     & FP_NVP(regular_ps) & FP_NVP(enhanced_ps);
   // Note all the arrays are initialized on first use, so we don't
@@ -68,7 +70,7 @@ template<class Archive>
 void LRadDriver::load(Archive & UNUSED(ar),
 			    const unsigned int UNUSED(version))
 {
-  lr_init(&nstream, &nstokes, &surface_type, &l_rad_struct);
+  lr_init(&nstream, &nstokes, &surface_type_, &l_rad_struct);
 }
 
 FP_IMPLEMENT(LRadDriver);
@@ -80,7 +82,7 @@ LRadDriver::LRadDriver(int Number_stream, int Number_stokes,
                        bool Pure_nadir, const PsMode ps_mode)
     : nstream(Number_stream),
       nstokes(Number_stokes),
-      surface_type(Surface_type),
+      surface_type_(Surface_type),
       use_tms_correction(Tms_correction),
       pure_nadir(Pure_nadir)
 {
@@ -90,6 +92,11 @@ LRadDriver::LRadDriver(int Number_stream, int Number_stokes,
     range_check(nstokes, 1, 4);
 
     initialize(ps_mode);
+}
+
+void LRadDriver::surface_type(int stype)
+{
+  lr_update_surftype(&stype, &l_rad_struct);
 }
 
 //-----------------------------------------------------------------------
@@ -107,7 +114,7 @@ void LRadDriver::initialize(const PsMode ps_mode)
     // Initially we are not using jacobians until linear inputs are setup
     need_jacobians_i = 0;
 
-    lr_init(&nstream, &nstokes, &surface_type, &l_rad_struct);
+    lr_init(&nstream, &nstokes, &surface_type_, &l_rad_struct);
 }
 
 //-----------------------------------------------------------------------
@@ -514,7 +521,7 @@ void LRadDriver::print(std::ostream& Os, bool UNUSED(Short_form)) const
     Os << "LRadDriver:\n";
     Os << "  Number stream: " << nstream << "\n"
        << "  Number stokes: " << nstokes << "\n"
-       << "  Surface type: " << surface_type << "\n"
+       << "  Surface type: " << surface_type_ << "\n"
        << "  Use TMS Correction: "
        << (use_tms_correction ? "True\n" : "False\n")
        << "  Pure nadir mode: "

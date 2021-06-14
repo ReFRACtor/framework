@@ -259,6 +259,15 @@ void LidortRtDriver::init()
   setup_sphericity(max(zen_));
 }
 
+void LidortRtDriver::notify_update(const RtAtmosphere& atm)
+{
+  int stype = atm.ground()->spurr_brdf_type();
+  if(stype != surface_type()) {
+    surface_type_ = stype;
+    brdf_driver()->initialize_brdf_inputs(surface_type_);
+  }
+}
+
 int LidortRtDriver::number_moment() const 
 {
   if (!lidort_interface_) {

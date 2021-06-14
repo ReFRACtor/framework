@@ -3,15 +3,6 @@
 #include "ostream_pad.h"
 #include <cmath>
 
-#include "spurr_brdf_types.h"
-#include "ground_lambertian.h"
-#include "ground_lambertian_piecewise.h"
-#include "ground_emissivity_polynomial.h"
-#include "ground_emissivity_piecewise.h"
-#include "ground_coxmunk.h"
-#include "ground_coxmunk_plus_lambertian.h"
-#include "ground_brdf.h"
-
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -22,8 +13,9 @@ void SpurrRt::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
-    & FP_NVP(surface_type_int) & FP_NVP(do_solar_sources)
-    & FP_NVP(do_thermal_emission) & FP_NVP(sza) & FP_NVP(zen)
+    & FP_NVP(do_solar_sources)
+    & FP_NVP(do_thermal_emission) & FP_NVP_(ground)
+    & FP_NVP(sza) & FP_NVP(zen)
     & FP_NVP(azm);
   boost::serialization::split_member(ar, *this, version);
 }
@@ -80,6 +72,7 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
                  const bool do_thermal)
 : RadiativeTransferSingleWn(Stokes_coef, Atm),
   do_solar_sources(do_solar), do_thermal_emission(do_thermal),
+  ground_(Atm->ground()),
   sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
   alt_spec_index_cache(-1), geo_spec_index_cache(-1)
 {
@@ -95,32 +88,6 @@ SpurrRt::SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
 
   // Watch atmosphere for changes, so we clear cache if needed.
   atm->add_observer(*this);
-
-  // Looks at the type of the Ground class to determine the surface
-  // type integer for use in the Spurr RT Fortran code
-  // Do this in the constructor since dynamic casting is an expensive operation
-  if(dynamic_cast<GroundLambertian*>(atm->ground().get())) {
-    surface_type_int = LAMBERTIAN;
-  } else if(dynamic_cast<GroundLambertianPiecewise*>(atm->ground().get())) {
-    surface_type_int = LAMBERTIAN;
-  } else if(dynamic_cast<GroundEmissivityPolynomial*>(atm->ground().get())) {
-    surface_type_int = EMISSIVITY;
-  } else if(dynamic_cast<GroundEmissivityPiecewise*>(atm->ground().get())) {
-    surface_type_int = EMISSIVITY;
-   } else if(dynamic_cast<GroundCoxmunk*>(atm->ground().get())) {
-    surface_type_int = COXMUNK;
-  } else if(dynamic_cast<GroundCoxmunkPlusLambertian*>(atm->ground().get())) {
-    surface_type_int = COXMUNK;
-  } else if(dynamic_cast<GroundBrdfVeg*>(atm->ground().get())) {
-    surface_type_int = BPDFVEGN;
-  } else if(dynamic_cast<GroundBrdfSoil*>(atm->ground().get())) {
-    surface_type_int = BPDFSOIL;
-  } else {
-    Exception err_msg;
-    err_msg << "Spurr RT can not determine surface type integer from ground class: "
-            << atm->ground();
-    throw(err_msg);
-  }
 }
 
 //-----------------------------------------------------------------------

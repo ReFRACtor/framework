@@ -5,6 +5,7 @@
 #include <blitz/array.h>
 #include "array_ad.h"
 #include "generic_object.h"
+#include "rt_atmosphere.h"
 
 /****************************************************************//**
   Contains classes to abstract away details in various Spurr
@@ -97,6 +98,14 @@ public:
 
   SpurrRtDriver(bool do_solar = true, bool do_thermal = false) 
       : do_solar_sources(do_solar), do_thermal_emission(do_thermal) {}
+
+  //-----------------------------------------------------------------------
+  /// Some drivers may have assumptions about the number of layers or
+  /// surface type. They can override this function to handle any
+  /// changes to the atm. Default is to do nothing.
+  //-----------------------------------------------------------------------
+  
+  virtual void notify_update(const RtAtmosphere& UNUSED(atm)) { }
 
   /// Computes reflectance without jacobians
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,

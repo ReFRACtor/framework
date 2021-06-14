@@ -18,6 +18,8 @@ public:
                             const boost::shared_ptr<StateMapping>& in_map = boost::make_shared<StateMappingLinear>());
 
   virtual boost::shared_ptr<Ground> clone() const;
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::LAMBERTIAN; }
 
   virtual std::string sub_state_identifier() const;
   virtual std::string state_vector_name_i(int i) const;

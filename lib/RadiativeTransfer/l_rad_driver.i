@@ -20,8 +20,9 @@ public:
 	     bool Pure_nadir = false,
 	     const PsMode ps_mode = DETECT);
   
-  %python_attribute(number_stokes, virtual int)
-  %python_attribute(number_stream, virtual int)
+  %python_attribute(number_stokes, virtual int);
+  %python_attribute(number_stream, virtual int);
+  %python_attribute_with_set(surface_type, int);
 
   ArrayAd<double, 2> z_matrix(const ArrayAd<double, 3>& pf) const;
 

@@ -16,6 +16,8 @@ class GroundCoxmunkPlusLambertian: virtual public Ground,
 public:
   GroundCoxmunkPlusLambertian(const boost::shared_ptr<GroundCoxmunk>& Coxmunk, const boost::shared_ptr<GroundLambertian>& Lambertian);
 
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::COXMUNK; }
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
   virtual const boost::shared_ptr<GroundCoxmunk> coxmunk() const { return coxmunk_; }

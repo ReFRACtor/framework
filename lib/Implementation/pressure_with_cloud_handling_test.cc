@@ -57,8 +57,8 @@ BOOST_AUTO_TEST_CASE(serialization)
   BOOST_CHECK_MATRIX_CLOSE(pr->pressure_grid().value.value(), press_grid_expect);
   pr->do_cloud(true);
   Array<double, 1> press_grid_expect2(2);
-  press_grid_expect = 3, 6;
-  BOOST_CHECK_MATRIX_CLOSE(pr->pressure_grid().value.value(), press_grid_expect);
+  press_grid_expect2 = 3, 6;
+  BOOST_CHECK_MATRIX_CLOSE(pr->pressure_grid().value.value(), press_grid_expect2);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

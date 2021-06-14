@@ -7,6 +7,7 @@
 
 %base_import(generic_object)
 %import "array_ad.i"
+%import "rt_atmosphere.i"
 %fp_shared_ptr(FullPhysics::SpurrBrdfDriver);
 %fp_shared_ptr(FullPhysics::SpurrRtDriver);
 
@@ -32,6 +33,7 @@ public:
   SpurrRtDriver(bool do_solar = true, bool do_thermal = false);
 
   std::string print_to_string() const;
+  virtual void notify_update(const RtAtmosphere& atm);
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
                                        double sza, double azm, double zen,
                                        int surface_type,

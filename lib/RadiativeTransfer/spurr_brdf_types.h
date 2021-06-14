@@ -18,7 +18,11 @@ namespace FullPhysics {
         BPDFVEGN    = 11,
         BRDFNDVI    = 12,
         NEWCMGLINT  = 13,
-        EMISSIVITY  = 100 // Not a real index from LIDORT family, but included to meet interface
+        EMISSIVITY  = 100, // Not a real index from LIDORT family, but
+			   // included to meet interface
+	UNKNOWN = -999	   // Type that will trigger an error, if we
+			   // have a ground type that doesn't map to
+			   // the spurr BRDF
     };
  
 }

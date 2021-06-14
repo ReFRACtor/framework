@@ -18,8 +18,12 @@ public:
   FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments,
 		   bool do_solar = true, bool do_thermal = false); 
 
+  virtual void notify_update(const RtAtmosphere& atm);
+
   int number_moment() const { return num_moments_; }
   int number_stream() const { return num_streams_; }
+  int number_layers() const { return num_layers_; }
+  int surface_type() const { return surface_type_; }
 
   void set_plane_parallel();
   void set_pseudo_spherical();
@@ -58,8 +62,10 @@ private:
   const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 2>& pf) const;
   const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const;
 
+  int num_layers_;
   int num_moments_;
   int num_streams_;
+  int surface_type_;
   bool do_deltam_scaling_;
 
   blitz::Array<double, 1> height_diffs;

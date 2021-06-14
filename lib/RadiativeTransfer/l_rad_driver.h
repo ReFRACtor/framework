@@ -34,6 +34,8 @@ public:
 
   virtual ~LRadDriver();
 
+  int surface_type() const {return surface_type_;}
+  void surface_type(int s);
   virtual int number_stokes() const {return nstokes;}
   virtual int number_stream() const {return nstream;}
 
@@ -125,7 +127,7 @@ private:
 
   // Options configured at construction
   int nstream, nstokes;
-  int surface_type;
+  int surface_type_;
   bool use_tms_correction;
   bool pure_nadir;
   bool regular_ps, enhanced_ps;

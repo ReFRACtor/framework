@@ -115,6 +115,8 @@ public:
                 boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()) :
     GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::BPDFVEGN; }
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
   static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
@@ -145,6 +147,8 @@ public:
                  boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()) :
     GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::BPDFSOIL; }
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
   static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);

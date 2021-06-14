@@ -2,11 +2,6 @@
 #include "fp_serialize_support.h"
 #include "ostream_pad.h"
 
-#include "ground_lambertian.h"
-#include "ground_coxmunk.h"
-#include "ground_coxmunk_plus_lambertian.h"
-#include "ground_brdf.h"
-
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -17,7 +12,8 @@ void LRadRt::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
-    & FP_NVP(surface_type_int) & FP_NVP(use_first_order_scatt_calc)
+    & FP_NVP_(ground)
+    & FP_NVP(use_first_order_scatt_calc)
     & FP_NVP(do_second_order) & FP_NVP(sza) & FP_NVP(zen)
     & FP_NVP(azm) & FP_NVP(wmin) & FP_NVP(wmax) & FP_NVP(rt)
     & FP_NVP(driver);
@@ -93,6 +89,7 @@ LRadRt::LRadRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Rt,
                const LRadDriver::PsMode ps_mode)
     : RadiativeTransferSingleWn(Rt->stokes_coefficient(),
                                 Rt->atmosphere_ptr()),
+    ground_(Rt->atmosphere_ptr()->ground()),
     use_first_order_scatt_calc(Use_first_order_scatt_calc),
     do_second_order(Do_second_order),
     sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
@@ -155,6 +152,7 @@ LRadRt::LRadRt(const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
                double Spectrum_spacing,
                const LRadDriver::PsMode ps_mode)
     : RadiativeTransferSingleWn(Stokes_coef, Atm),
+      ground_(Atm->ground()),
       use_first_order_scatt_calc(true),
       do_second_order(Do_second_order),
       sza(Sza.copy()), zen(Zen.copy()), azm(Azm.copy()),
@@ -201,29 +199,26 @@ void LRadRt::initialize(const SpectralBound& Spec_bound, double Spectrum_spacing
         wmax.push_back(t);
     }
 
-    // Looks at the type of the Ground class to determine the surface
-    // type integer for use in the Spurr RT Fortran code
-    // Do this in the consturctor since dynamic casting is an expensive operation
-    // Used BRDF Types from LRadRt
-    if(dynamic_cast<GroundLambertian*>(atm->ground().get())) {
-        surface_type_int= LRadRt::LAMBERTIAN;
-    } else if(dynamic_cast<GroundCoxmunk*>(atm->ground().get())) {
-        surface_type_int = LRadRt::COXMUNK;
-    } else if(dynamic_cast<GroundCoxmunkPlusLambertian*>(atm->ground().get())) {
-        surface_type_int = LRadRt::COXMUNK;
-    } else if(dynamic_cast<GroundBrdfVeg*>(atm->ground().get())) {
-        surface_type_int = LRadRt::BPDFVEGN;
-    } else if(dynamic_cast<GroundBrdfSoil*>(atm->ground().get())) {
-        surface_type_int = LRadRt::BPDFSOIL;
-    } else {
-        Exception err_msg;
-        err_msg << "Spurr RT can not determine surface type integer from ground class: "
-                << atm->ground();
-        throw(err_msg);
-    }
-
     // Watch atmosphere for changes, so we clear cache if needed.
     atm->add_observer(*this);
+}
+
+int LRadRt::surface_type() const
+{
+  if(!ground_)
+    throw Exception("Need to have a ground to determine surface_type");
+  SpurrBrdfType b = ground_->spurr_brdf_type();
+  if(b == SpurrBrdfType::LAMBERTIAN)
+    return BrdfType::LAMBERTIAN;
+  if(b == SpurrBrdfType::COXMUNK)
+    return BrdfType::COXMUNK;
+  if(b == SpurrBrdfType::BPDFVEGN)
+    return BrdfType::BPDFVEGN;
+  if(b == SpurrBrdfType::BPDFSOIL)
+    return BrdfType::BPDFSOIL;
+  Exception e;
+  e << "Unrecognized SpurrBrdfType: " << b;
+  throw e;
 }
 
 void LRadRt::setup_z_matrix_interpol(const double wmin, const ArrayAd<double, 3>& pf_min, const double wmax, const ArrayAd<double, 3>& pf_max) const

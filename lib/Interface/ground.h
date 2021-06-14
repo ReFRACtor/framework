@@ -3,6 +3,7 @@
 #include "state_vector_observer.h"
 #include "observer.h"
 #include "auto_derivative.h"
+#include "spurr_brdf_types.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -28,6 +29,13 @@ public:
   virtual void remove_observer(Observer<Ground>& Obs) 
   { remove_observer_do(Obs, *this);}
 
+//-----------------------------------------------------------------------
+/// BRDF to pass to Rob Spurr RT code.
+//-----------------------------------------------------------------------
+
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::UNKNOWN; }
+  
 //-----------------------------------------------------------------------
 /// Surface parmeters.
 ///

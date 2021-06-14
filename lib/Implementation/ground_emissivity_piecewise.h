@@ -17,6 +17,8 @@ public:
                             const blitz::Array<double, 1>& point_values,
                             const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
 
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::EMISSIVITY; }
   virtual boost::shared_ptr<Ground> clone() const;
 
   virtual std::string sub_state_identifier() const;

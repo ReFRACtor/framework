@@ -19,6 +19,8 @@ public:
   FirstOrderDriver(int number_layers, int surface_type, int number_streams, int number_moments,
 		   bool do_solar = true, bool do_thermal = false);
   %python_attribute(number_moment, int);
+  %python_attribute(number_layers, int);
+  %python_attribute(surface_type, int);
   %python_attribute(number_stream, int);
   void set_plane_parallel();
   void set_pseudo_spherical();

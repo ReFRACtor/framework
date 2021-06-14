@@ -20,6 +20,8 @@ public:
                              const std::vector<std::string>& Desc_band_names,
                              boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
+  virtual SpurrBrdfType spurr_brdf_type() const
+  { return SpurrBrdfType::EMISSIVITY; }
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 
   virtual const AutoDerivative<double> emissivity(const DoubleWithUnit wave_point, const int spec_index) const;

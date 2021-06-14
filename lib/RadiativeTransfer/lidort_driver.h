@@ -72,6 +72,7 @@ public:
           const blitz::Array<double, 1>& zen, bool pure_nadir, 
           bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
 
+  virtual void notify_update(const RtAtmosphere& atm);
   int number_moment() const;
   int number_stream() const;
 
@@ -84,6 +85,7 @@ public:
   bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
 
   bool pure_nadir() const { return pure_nadir_; }
+  int surface_type() const { return surface_type_; }
   bool do_thermal_scattering() const { return do_thermal_scattering_;}
 
   /// Access to BRDF driver
