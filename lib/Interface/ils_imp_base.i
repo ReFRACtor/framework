@@ -17,6 +17,7 @@
 %base_import(sample_grid)
 
 %fp_shared_ptr(FullPhysics::IlsImpBase);
+%fp_shared_ptr(FullPhysics::IdentityIls);
 
 %feature("director") FullPhysics::IlsImpBase;
 
@@ -44,6 +45,22 @@ public:
 protected:
   IlsImpBase();
 };
+
+class IdentityIls: public IlsImpBase {
+public:
+  IdentityIls(const boost::shared_ptr<SampleGrid>& Sample_grid);
+  virtual blitz::Array<double, 1> apply_ils
+    (const blitz::Array<double, 1>& High_resolution_wave_number,
+     const blitz::Array<double, 1>& High_resolution_radiance,
+     const std::vector<int>& Pixel_list) const;
+  virtual ArrayAd<double, 1> apply_ils
+    (const blitz::Array<double, 1>& High_resolution_wave_number,
+     const ArrayAd<double, 1>& High_resolution_radiance,
+     const std::vector<int>& Pixel_list) const;
+  virtual boost::shared_ptr<Ils> clone() const;
+  %pickle_serialization();
+};  
+  
 }
 
 %swig_director_serialization(IlsImpBase);

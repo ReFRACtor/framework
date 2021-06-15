@@ -20,7 +20,7 @@ public:
   GroundPiecewise(const ArrayWithUnit<double, 1>& spectral_points,
                   const blitz::Array<double, 1>& point_values,
                   const boost::shared_ptr<StateMapping>& mapping = boost::make_shared<StateMappingLinear>());
-
+  virtual boost::shared_ptr<Ground> clone() const = 0;
   virtual const ArrayWithUnit<double, 1>& spectral_points() const;
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
 

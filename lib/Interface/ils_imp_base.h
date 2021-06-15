@@ -84,6 +84,35 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
+
+/****************************************************************//**
+  Handle the degenerate case when we don't want to apply a ILS, this
+  just returns the high resolution spectrum without change.
+*******************************************************************/
+  
+class IdentityIls: public IlsImpBase {
+public:
+  IdentityIls(const boost::shared_ptr<SampleGrid>& Sample_grid)
+    : IlsImpBase(Sample_grid, DoubleWithUnit(0, units::nm)) {}
+  virtual blitz::Array<double, 1> apply_ils
+  (const blitz::Array<double, 1>& UNUSED(High_resolution_wave_number),
+   const blitz::Array<double, 1>& High_resolution_radiance,
+   const std::vector<int>& UNUSED(Pixel_list)) const 
+  { return High_resolution_radiance; }
+  virtual ArrayAd<double, 1> apply_ils
+  (const blitz::Array<double, 1>& UNUSED(High_resolution_wave_number),
+   const ArrayAd<double, 1>& High_resolution_radiance,
+   const std::vector<int>& UNUSED(Pixel_list)) const
+  { return High_resolution_radiance; }
+  virtual boost::shared_ptr<Ils> clone() const
+  { return boost::make_shared<IdentityIls>(sample_grid()); }
+private:
+  IdentityIls() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+};  
 }
+FP_EXPORT_KEY(IdentityIls);
 FP_EXPORT_KEY(IlsImpBase);
 #endif

@@ -12,6 +12,7 @@
 %import "double_with_unit.i"
 
 %fp_shared_ptr(FullPhysics::SpectrumSampling);
+%fp_shared_ptr(FullPhysics::IdentitySpectrumSampling);
 
 namespace FullPhysics {
 // Allow these classes to be derived from in Python.
@@ -36,4 +37,12 @@ protected:
   SpectrumSampling();
   SpectrumSampling(int num_spectrometer);
 };
+class IdentitySpectrumSampling: public SpectrumSampling {
+public:
+  IdentitySpectrumSampling(int nspec);
+  virtual SpectralDomain spectral_domain(int spec_index,
+		 const SpectralDomain& Lowres_grid, 
+		 const DoubleWithUnit& Edge_extension) const;
+  %pickle_serialization();
+};  
 }

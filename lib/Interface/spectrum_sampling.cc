@@ -11,7 +11,15 @@ void SpectrumSampling::serialize(Archive & ar,
   ar & FP_NVP(nspectrometer);
 }
 
+template<class Archive>
+void IdentitySpectrumSampling::serialize(Archive & ar,
+			const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumSampling);
+}
+
 FP_IMPLEMENT(SpectrumSampling);
+FP_IMPLEMENT(IdentitySpectrumSampling);
 #endif
 
 #ifdef HAVE_LUA

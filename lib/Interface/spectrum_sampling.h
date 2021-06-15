@@ -89,7 +89,32 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
+
+/****************************************************************//**
+  Handle the degenerate case where we want the high and low resolution
+  to be the same.
+*******************************************************************/
+  
+class IdentitySpectrumSampling: public SpectrumSampling {
+public:
+  IdentitySpectrumSampling(int nspec) : SpectrumSampling(nspec) {}
+  virtual ~IdentitySpectrumSampling() {}
+  virtual SpectralDomain spectral_domain(int UNUSED(spec_index), 
+		 const SpectralDomain& Lowres_grid, 
+		 const DoubleWithUnit& UNUSED(Edge_extension)) const
+  {
+    return Lowres_grid;
+  }
+  virtual void print(std::ostream& Os) const {Os << "IdentitySpectrumSampling";}
+private:
+  IdentitySpectrumSampling() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
+};
+    
 }
 
 FP_EXPORT_KEY(SpectrumSampling);
+FP_EXPORT_KEY(IdentitySpectrumSampling);
 #endif
