@@ -13,11 +13,11 @@
 namespace FullPhysics {
 class SampleGridSpectralDomain: public SampleGridImpBase {
 public:
-    SampleGridSpectralDomain(const SpectralDomain& Spec_domain, const std::string& Band_name);
-    virtual ~SampleGridSpectralDomain();
-    %python_attribute(sub_state_identifier, std::string);
-    %python_attribute(sample_grid, SpectralDomain)
-    virtual boost::shared_ptr<SampleGrid> clone() const;
+  SampleGridSpectralDomain(const SpectralDomain& Spec_domain, const std::string& Band_name);
+  %python_attribute(sub_state_identifier, std::string);
+  %python_attribute(sample_grid, SpectralDomain);
+  virtual boost::shared_ptr<SampleGrid> clone() const;
+  %pickle_serialization();
 };
 
 }

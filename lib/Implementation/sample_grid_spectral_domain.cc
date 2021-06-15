@@ -1,7 +1,21 @@
 #include "sample_grid_spectral_domain.h"
+#include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+
+template<class Archive>
+void SampleGridSpectralDomain::serialize(Archive & ar,
+                                  const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SampleGridImpBase)
+    & FP_NVP(spec_domain) & FP_NVP_(band_name);
+}
+
+FP_IMPLEMENT(SampleGridSpectralDomain);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

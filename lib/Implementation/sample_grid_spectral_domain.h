@@ -16,24 +16,28 @@ namespace FullPhysics {
   convention, the index is 1 based for GOSAT and OCO, but 0 based
   for FTS.
 *******************************************************************/
-class SampleGridSpectralDomain: public SampleGridImpBase {
+class SampleGridSpectralDomain: virtual public SampleGridImpBase {
 public:
-    SampleGridSpectralDomain(const SpectralDomain& Spec_domain, const std::string& Band_name);
+  SampleGridSpectralDomain(const SpectralDomain& Spec_domain, const std::string& Band_name);
 
-    virtual ~SampleGridSpectralDomain() = default;
+  virtual ~SampleGridSpectralDomain() = default;
 
-    virtual boost::shared_ptr<SampleGrid> clone() const;
+  virtual boost::shared_ptr<SampleGrid> clone() const;
 
-    virtual std::string sub_state_identifier() const
-    {
-        return "sample_grid/" + band_name_;
-    }
+  virtual std::string sub_state_identifier() const
+  { return "sample_grid/" + band_name_;}
 
-    virtual SpectralDomain sample_grid() const;
-    virtual void print(std::ostream& Os) const;
+  virtual SpectralDomain sample_grid() const;
+  virtual void print(std::ostream& Os) const;
 private:
-    SpectralDomain spec_domain;
-    std::string band_name_;
+  SpectralDomain spec_domain;
+  std::string band_name_;
+  SampleGridSpectralDomain() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
 #endif
+
+FP_EXPORT_KEY(SampleGridSpectralDomain);
