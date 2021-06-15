@@ -1,0 +1,10 @@
+This is a forward model created by the test "test_create_underlying_fm_xml"
+found in the omi repository. This is a StandardForwardModel that uses
+PressureWithCloudHandling and GroundWithCloudHandling that we can use
+for the ForwardModelWithCloudHandling testing. This forward model could
+get created in C++, but it would be a bit involved. Since it is much
+easier in python, we just create it that do a write_shelve.
+
+The test can be run again to regenerate the data if needed (e.g.,
+an incompatible format change). Or worse case we can rework the unit test
+for ForwardModelWithCloudHandling.
