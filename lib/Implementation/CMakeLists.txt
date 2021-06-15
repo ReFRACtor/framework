@@ -37,6 +37,7 @@ set(DIR_SOURCES
     empirical_orthogonal_function.cc
     error_analysis.cc
     fd_forward_model.cc
+    forward_model_with_cloud_handling.cc
     fluorescence_effect.cc
     fm_nlls_problem.cc
     fp_logger.cc

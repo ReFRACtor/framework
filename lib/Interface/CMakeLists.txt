@@ -22,6 +22,7 @@ set(DIR_SOURCES
     forward_model.cc
     forward_model_spectral_grid.cc
     gas_absorption.cc
+    generic_object_with_cloud_handling.cc
     ground.cc
     ground_imp_base.cc
     ground_piecewise.cc

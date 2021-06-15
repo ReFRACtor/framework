@@ -6,15 +6,16 @@
 %}
 
 %base_import(pressure)
+%base_import(generic_object_with_cloud_handling)
 %import "auto_derivative.i"
 %fp_shared_ptr(FullPhysics::PressureWithCloudHandling);
 
 namespace FullPhysics {
-class PressureWithCloudHandling : public Pressure, public Observer<Pressure> {
+class PressureWithCloudHandling : public Pressure, public Observer<Pressure>,
+  public GenericObjectWithCloudHandling {
 public:
   PressureWithCloudHandling(const boost::shared_ptr<Pressure> Press_clear,
 			    double Cloud_pressure_level, bool do_cloud = false);
-  %python_attribute_with_set(do_cloud, bool);
   %python_attribute(pressure_clear, boost::shared_ptr<Pressure>);
   %python_attribute_derived(pressure_grid, ArrayAdWithUnit<double, 1>);
   virtual boost::shared_ptr<Pressure> clone() const;

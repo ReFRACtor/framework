@@ -12,7 +12,8 @@ void GroundWithCloudHandling::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Ground)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverGround)
-    & FP_NVP_(ground_clear) & FP_NVP_(do_cloud) & FP_NVP_(cloud_albedo);
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GenericObjectWithCloudHandling)
+    & FP_NVP_(ground_clear)  & FP_NVP_(cloud_albedo);
 }
 
 FP_IMPLEMENT(GroundWithCloudHandling);
@@ -25,8 +26,8 @@ FP_IMPLEMENT(GroundWithCloudHandling);
 GroundWithCloudHandling::GroundWithCloudHandling
 (const boost::shared_ptr<Ground> Ground_clear,
  double Cloud_albedo, bool Do_cloud)
-  : ground_clear_(Ground_clear), cloud_albedo_(Cloud_albedo),
-    do_cloud_(Do_cloud)
+: GenericObjectWithCloudHandling(Do_cloud),
+  ground_clear_(Ground_clear), cloud_albedo_(Cloud_albedo)
 {
   ground_clear_->add_observer(*this);
 }
@@ -34,7 +35,7 @@ GroundWithCloudHandling::GroundWithCloudHandling
 ArrayAd<double, 1> GroundWithCloudHandling::surface_parameter
 (const double wn, const int spec_index) const
 {
-  if(do_cloud_) {
+  if(do_cloud()) {
     ArrayAd<double, 1> spars(1, 0);
     spars(0) = cloud_albedo_;
     return spars;
@@ -45,7 +46,7 @@ ArrayAd<double, 1> GroundWithCloudHandling::surface_parameter
 boost::shared_ptr<Ground> GroundWithCloudHandling::clone() const
 {
   return boost::make_shared<GroundWithCloudHandling>(ground_clear_->clone(),
-						     cloud_albedo_, do_cloud_);
+						     cloud_albedo_, do_cloud());
 }
 
 void GroundWithCloudHandling::print(std::ostream& Os) const

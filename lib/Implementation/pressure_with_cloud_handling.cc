@@ -11,7 +11,8 @@ void PressureWithCloudHandling::serialize(Archive & ar, const unsigned int UNUSE
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Pressure)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
-    & FP_NVP_(pressure_clear) & FP_NVP_(do_cloud)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GenericObjectWithCloudHandling)
+    & FP_NVP_(pressure_clear) 
     & FP_NVP_(cloud_pressure_level);
 }
 
@@ -25,9 +26,9 @@ FP_IMPLEMENT(PressureWithCloudHandling);
 PressureWithCloudHandling::PressureWithCloudHandling
 (const boost::shared_ptr<Pressure> Press_clear,
  double Cloud_pressure_level, bool Do_cloud)
-  : pressure_clear_(Press_clear),
-    do_cloud_(Do_cloud),
-    cloud_pressure_level_(Cloud_pressure_level)
+: GenericObjectWithCloudHandling(Do_cloud),
+  pressure_clear_(Press_clear),
+  cloud_pressure_level_(Cloud_pressure_level)
 {
   pressure_clear_->add_observer(*this);
 }
@@ -43,7 +44,7 @@ boost::shared_ptr<Pressure> PressureWithCloudHandling::clone() const
 {
   return boost::make_shared<PressureWithCloudHandling>(pressure_clear_->clone(),
 						       cloud_pressure_level_,
-						       do_cloud_);
+						       do_cloud());
 }
 
 void PressureWithCloudHandling::print(std::ostream& Os) const
@@ -61,7 +62,7 @@ ArrayAdWithUnit<double, 1>
 PressureWithCloudHandling::pressure_grid() const
 {
   ArrayAdWithUnit<double, 1> full = pressure_clear_->pressure_grid();
-  if(!do_cloud_)
+  if(!do_cloud())
     return full;
   int i;
   for(i = 0; i < full.rows(); ++i) {

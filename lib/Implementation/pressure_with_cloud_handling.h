@@ -3,6 +3,7 @@
 #include "observer.h"
 #include "fp_exception.h"
 #include "pressure.h"
+#include "generic_object_with_cloud_handling.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -17,20 +18,15 @@ namespace FullPhysics {
   ForwardModelWithCloudFraction.
 *******************************************************************/
 class PressureWithCloudHandling : virtual public Pressure,
-				  public Observer<Pressure> {
+				  public Observer<Pressure>,
+				  public GenericObjectWithCloudHandling {
 public:
   PressureWithCloudHandling(const boost::shared_ptr<Pressure> Press_clear,
 			    double Cloud_pressure_level, bool do_cloud = false);
   virtual ~PressureWithCloudHandling() {}
-//-----------------------------------------------------------------------
-/// If true, then truncate Press_clear at Cloud_pressure_level,
-/// otherwise just return pressure levels from Pres_clear
-//-----------------------------------------------------------------------
 
-  bool do_cloud() const { return do_cloud_;}
-  void do_cloud(bool F)
+  virtual void notify_do_cloud_update()
   {
-    do_cloud_ = F;
     Observable<Pressure>::notify_update_do(*this);
   }
 
@@ -67,7 +63,6 @@ public:
   virtual boost::shared_ptr<Pressure> clone() const;
 private:
   boost::shared_ptr<Pressure> pressure_clear_;
-  bool do_cloud_;
   double cloud_pressure_level_;
   PressureWithCloudHandling() {}
   friend class boost::serialization::access;

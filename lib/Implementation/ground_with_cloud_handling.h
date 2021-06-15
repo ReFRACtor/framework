@@ -2,6 +2,7 @@
 #define GROUND_WITH_CLOUD_HANDLING_H
 
 #include "ground.h"
+#include "generic_object_with_cloud_handling.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -11,21 +12,15 @@ namespace FullPhysics {
 *******************************************************************/
 
 class GroundWithCloudHandling: virtual public Ground,
-			       public Observer<Ground>{
+			       public Observer<Ground>,
+			       public GenericObjectWithCloudHandling {
 public:
   GroundWithCloudHandling(const boost::shared_ptr<Ground> Ground_clear,
 			  double Cloud_albedo, bool Do_cloud = false);
   virtual ~GroundWithCloudHandling() {}
 
-//-----------------------------------------------------------------------
-/// If true, then truncate Press_clear at Cloud_pressure_level,
-/// otherwise just return pressure levels from Pres_clear
-//-----------------------------------------------------------------------
-
-  bool do_cloud() const { return do_cloud_;}
-  void do_cloud(bool F)
+  virtual void notify_do_cloud_update()
   {
-    do_cloud_ = F;
     Observable<Ground>::notify_update_do(*this);
   }
 
@@ -56,7 +51,7 @@ public:
 
   virtual SpurrBrdfType spurr_brdf_type() const
   {
-    if(do_cloud_)
+    if(do_cloud())
       return SpurrBrdfType::LAMBERTIAN;
     return ground_clear_->spurr_brdf_type();
   }
@@ -67,7 +62,6 @@ public:
 private:
   boost::shared_ptr<Ground> ground_clear_;
   double cloud_albedo_;
-  bool do_cloud_;
   GroundWithCloudHandling() {}
   friend class boost::serialization::access;
   template<class Archive>

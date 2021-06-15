@@ -8,10 +8,12 @@
 %}
 
 %base_import(ground)
+%base_import(generic_object_with_cloud_handling)
 
 %fp_shared_ptr(FullPhysics::GroundWithCloudHandling);
 namespace FullPhysics {
-class GroundWithCloudHandling: public Ground, public Observer<Ground> {
+class GroundWithCloudHandling: public Ground, public Observer<Ground>,
+  public GenericObjectWithCloudHandling {
 public:
   GroundWithCloudHandling(const boost::shared_ptr<Ground> Ground_clear,
 			  double Cloud_albedo, bool Do_cloud = false);
