@@ -173,9 +173,9 @@ void AltitudeHydrostatic::altitude_calc
     playlist.push_back(psublayer(i));
     glist.push_back(gravv(i));
   }
-  cache.alt = boost::make_shared<AltitudeHydrostaticCache::lin_type>
+  cache->alt = boost::make_shared<AltitudeHydrostaticCache::lin_type>
     (plevlist.begin(), plevlist.end(), altlist.begin());
-  cache.grav = boost::make_shared<AltitudeHydrostaticCache::lin_type>
+  cache->grav = boost::make_shared<AltitudeHydrostaticCache::lin_type>
     (playlist.begin(), playlist.end(), glist.begin());
 }
 
@@ -193,8 +193,9 @@ AltitudeHydrostatic::AltitudeHydrostatic
   t(T),
   num_sublayer(Num_sublayer)
 {
-  p->add_cache_invalidated_observer(cache);
-  t->add_cache_invalidated_observer(cache);
+  cache = boost::make_shared<AltitudeHydrostaticCache>();
+  p->add_cache_invalidated_observer(*cache);
+  t->add_cache_invalidated_observer(*cache);
 }
 
 void AltitudeHydrostaticCache::fill_cache(const AltitudeHydrostatic& A)

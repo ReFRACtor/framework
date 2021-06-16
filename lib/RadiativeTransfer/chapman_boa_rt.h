@@ -71,12 +71,17 @@ private:
   /// Atmosphere object we are using.
   boost::shared_ptr<AtmosphereStandard> atm;
 
+  void init();
   /// Solar zenith angles per spectrometer
   blitz::Array<double, 1> sza;
   ChapmanBoaRT() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
+  template<class Archive>
+  void save(Archive & ar, const unsigned int version) const;
+  template<class Archive>
+  void load(Archive & ar, const unsigned int version);
 };
 }
 

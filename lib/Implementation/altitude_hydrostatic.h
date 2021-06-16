@@ -45,16 +45,16 @@ public:
   virtual ~AltitudeHydrostatic() {};
   virtual AutoDerivativeWithUnit<double> altitude(const AutoDerivativeWithUnit<double>& P) const
   {
-    cache.fill_cache_if_needed(*this);
+    cache->fill_cache_if_needed(*this);
     AutoDerivativeWithUnit<double> p_pas = P.convert(units::Pa);
-    return AutoDerivativeWithUnit<double>((*cache.alt)(p_pas.value), units::km); 
+    return AutoDerivativeWithUnit<double>((*cache->alt)(p_pas.value), units::km); 
   }
 
   virtual AutoDerivativeWithUnit<double> gravity(const AutoDerivativeWithUnit<double>& P) const
   {
-    cache.fill_cache_if_needed(*this);
+    cache->fill_cache_if_needed(*this);
     AutoDerivativeWithUnit<double> p_pas = P.convert(units::Pa);
-    return AutoDerivativeWithUnit<double>((*cache.grav)(p_pas.value), "m/s^2"); 
+    return AutoDerivativeWithUnit<double>((*cache->grav)(p_pas.value), "m/s^2"); 
   }
 
   virtual void print(std::ostream& Os) const { Os << "AltitudeHydrostatic"; }
@@ -62,7 +62,7 @@ public:
 private:
   DoubleWithUnit latitude, surface_height;
   friend AltitudeHydrostaticCache;
-  mutable AltitudeHydrostaticCache cache;
+  mutable boost::shared_ptr<AltitudeHydrostaticCache> cache;
   boost::shared_ptr<Pressure> p;
   boost::shared_ptr<Temperature> t;
   int num_sublayer;

@@ -11,15 +11,30 @@ template<class Archive>
 void ChapmanBoaRTCache::serialize(Archive & ar,
 				  const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver);
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver)
+    & FP_NVP(chapman_boa);
 }
 
 template<class Archive>
 void ChapmanBoaRT::serialize(Archive & ar,
-			     const unsigned int UNUSED(version))
+			     const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransfer)
-    & FP_NVP(cache) & FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
+    &  FP_NVP(spec_bound) & FP_NVP(atm) & FP_NVP(sza);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void ChapmanBoaRT::save(Archive &UNUSED(ar),
+		       const unsigned int UNUSED(version)) const
+{
+}
+
+template<class Archive>
+void ChapmanBoaRT::load(Archive &UNUSED(ar),
+			const unsigned int UNUSED(version)) 
+{
+  init();
 }
 
 FP_IMPLEMENT(ChapmanBoaRTCache);
@@ -49,7 +64,12 @@ ChapmanBoaRT::ChapmanBoaRT(const boost::shared_ptr<AtmosphereStandard>& Atm,
 			   const blitz::Array<double, 1>& Sza) 
   : atm(Atm), sza(Sza)
 {
-  cache.resize(Sza.rows());
+  init();
+}
+
+void ChapmanBoaRT::init()
+{
+  cache.resize(sza.rows());
   BOOST_FOREACH(auto i, cache)
     atm->add_cache_invalidated_observer(i);
 }
