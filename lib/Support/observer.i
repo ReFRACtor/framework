@@ -26,7 +26,6 @@ class CacheInvalidatedObserver: public GenericObject
 public:
   CacheInvalidatedObserver();
   virtual void invalidate_cache();
-  std::string print_to_string() const;
   %pickle_serialization();
 protected:
   bool cache_valid;

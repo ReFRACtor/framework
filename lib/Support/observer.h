@@ -74,7 +74,7 @@ private:
   changes  
 *******************************************************************/
 
-class CacheInvalidatedObserver: public Printable<CacheInvalidatedObserver>
+class CacheInvalidatedObserver: virtual public GenericObject
 {
 public:
   CacheInvalidatedObserver()
@@ -93,10 +93,6 @@ public:
   boost::shared_ptr<CacheInvalidatedObserver>& this_obj()
   { return this_obj_; }
 
-  void print(std::ostream& Os) const
-  {
-    Os << "CacheInvalidatedObserver";
-  }
 protected:
   bool cache_valid;
   // Shared ptr that we can use to get weak_ptr to. This object has
