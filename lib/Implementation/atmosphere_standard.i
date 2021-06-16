@@ -27,7 +27,8 @@ namespace FullPhysics {
 %template(ObserverAtmosphereStandard) FullPhysics::Observer<AtmosphereStandard>;
 
 class AtmosphereStandard : public RtAtmosphere,
-    public Observer<Aerosol> {
+  public Observer<Aerosol>, public Observer<Pressure>,
+  public CacheInvalidatedObserver {
 public:
     // Supply all atmospheric consituent classes
     AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,

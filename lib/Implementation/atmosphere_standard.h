@@ -39,8 +39,9 @@ namespace FullPhysics {
   doc/LIDORT_Jacobian.pdf
 *******************************************************************/
 class AtmosphereStandard : public RtAtmosphere,
-    public Observer<Aerosol>,
-    public Observer<Pressure> {
+			   public Observer<Aerosol>,
+			   public Observer<Pressure>,
+			   public CacheInvalidatedObserver {
 public:
   // Supply all atmospheric consituent classes
   AtmosphereStandard(const boost::shared_ptr<Absorber>& absorberv,
@@ -183,7 +184,7 @@ public:
     sv_jac_size = (int) Sv.state_with_derivative().number_variable();
 
     // Invalidate caches since changes have been made to the atmosphere classes
-    invalidate_cache();
+    invalidate_local_cache();
   }
 
   virtual void print(std::ostream& Os) const;
@@ -192,7 +193,11 @@ public:
   {
     nlay = -1;
   }
-
+  virtual void invalidate_cache()
+  {
+    // Notify objects when *something* changed in AtmosphereStandard
+    notify_update_do(*this);
+  }
   virtual void reset_timer();
   virtual std::string timer_info() const;
 
@@ -315,7 +320,7 @@ private:
 
   void initialize();
   bool fill_cache(double wn, int spec_index) const;
-  void invalidate_cache() const;
+  void invalidate_local_cache() const;
   AtmosphereStandard();
   friend class boost::serialization::access;
   template<class Archive>

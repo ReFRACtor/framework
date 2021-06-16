@@ -23,6 +23,7 @@ void AtmosphereStandard::serialize(Archive & ar,
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RtAtmosphere)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosol)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver)
     & FP_NVP(absorber)
     & FP_NVP(pressure)
     & FP_NVP(temperature)
@@ -228,41 +229,39 @@ AtmosphereStandard::AtmosphereStandard(const boost::shared_ptr<Absorber>& absorb
 
 void AtmosphereStandard::initialize()
 {
-    if(!absorber) {
-        throw Exception("Absorber is not allowed to be null in AtmosphereStandard");
-    }
-
-    if(!pressure) {
-        throw Exception("Pressure is not allowed to be null in AtmosphereStandard");
-    }
-
-    if(!temperature) {
-        throw Exception("Temperature is not allowed to be null in AtmosphereStandard");
-    }
-
-    BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt)
-
-    if(!a) {
+  if(!absorber)
+    throw Exception("Absorber is not allowed to be null in AtmosphereStandard");
+  absorber->add_cache_invalidated_observer(*this);
+  if(!pressure)
+    throw Exception("Pressure is not allowed to be null in AtmosphereStandard");
+  pressure->add_cache_invalidated_observer(*this);
+  if(!temperature)
+    throw Exception("Temperature is not allowed to be null in AtmosphereStandard");
+  temperature->add_cache_invalidated_observer(*this);
+    
+  BOOST_FOREACH(const boost::shared_ptr<Altitude>& a, alt) {
+      if(!a)
         throw Exception("Altitude is not allowed to be null in AtmosphereStandard");
-    }
+      a->add_cache_invalidated_observer(*this);
+  }
 
-    if(aerosol) {
-        aerosol->add_observer(*this);
-    }
+  if(aerosol) {
+    aerosol->add_observer(*this);
+    aerosol->add_cache_invalidated_observer(*this);
+  }
+  pressure->add_observer(*this);
 
-    pressure->add_observer(*this);
+  // Use a map caches, to allow the reuse of values needed outside of the
+  // main spectral grid loops
+  column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+  total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
 
-    // Use a map caches, to allow the reuse of values needed outside of the
-    // main spectral grid loops
-    column_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
-    total_od_cache.reset( new ArrayAdMapCache<double, double, 1>() );
+  // Initially can not use the above two caches unless a StateVector gets attached
+  // to handle invalidating these caches
+  can_cache_channel = false;
 
-    // Initially can not use the above two caches unless a StateVector gets attached
-    // to handle invalidating these caches
-    can_cache_channel = false;
-
-    // Make sure caches are in a consistent state
-    invalidate_cache();
+  // Make sure caches are in a consistent state
+  invalidate_local_cache();
 }
 
 AtmosphereStandard::AtmosphereStandard()
@@ -280,7 +279,7 @@ AtmosphereStandard::AtmosphereStandard()
   can_cache_channel = false;
 
   // Make sure caches are in a consistent state
-  invalidate_cache();
+  invalidate_local_cache();
 }
 
 //-----------------------------------------------------------------------
@@ -303,7 +302,7 @@ void AtmosphereStandard::set_aerosol(boost::shared_ptr<Aerosol>& new_aerosol, St
     aerosol->notify_update(Sv);
 
     // Invalidate caches
-    invalidate_cache();
+    invalidate_local_cache();
 }
 
 void AtmosphereStandard::reset_timer()
@@ -330,7 +329,7 @@ std::string AtmosphereStandard::timer_info() const
 
 void AtmosphereStandard::notify_update(const Aerosol& UNUSED(A))
 {
-    invalidate_cache();
+    invalidate_local_cache();
     notify_update_do(*this);
 }
 
@@ -349,7 +348,7 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 
     // If spectrometer changes then reset caches 
     if(spec_index != spec_index_tau_cache) {
-        invalidate_cache();
+        invalidate_local_cache();
         spec_index_tau_cache = spec_index;
     }
 
@@ -367,7 +366,7 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 /// query
 //-----------------------------------------------------------------------
 
-void AtmosphereStandard::invalidate_cache() const
+void AtmosphereStandard::invalidate_local_cache() const
 {
     wn_tau_cache = -1;
     spec_index_tau_cache = -1;

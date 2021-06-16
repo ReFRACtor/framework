@@ -504,7 +504,7 @@ void LidortRtDriver::set_line_of_sight()
 
 void LidortRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid)
 {
-
+  std::cerr << "Hi, in setup_height_grid\n";
   Lidort_Fixed_Chapman& fchapman_inputs = lidort_interface_->lidort_fixin().chapman();
   Lidort_Modified_Uservalues& muser_inputs = lidort_interface_->lidort_modin().muserval();  
 

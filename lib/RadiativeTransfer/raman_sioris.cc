@@ -14,7 +14,7 @@ using namespace FullPhysics;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void RamanSiorisEffect::serialize(Archive & ar,
-			const unsigned int UNUSED(version))
+			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
@@ -24,6 +24,20 @@ void RamanSiorisEffect::serialize(Archive & ar,
     & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth)
     & FP_NVP_(scattering_angle) & FP_NVP_(atmosphere)
     & FP_NVP_(solar_model);
+  boost::serialization::split_member(ar, *this, version);
+}
+
+template<class Archive>
+void RamanSiorisEffect::save(Archive &UNUSED(ar),
+			     const unsigned int UNUSED(version)) const
+{
+}
+
+template<class Archive>
+void RamanSiorisEffect::load(Archive &UNUSED(ar),
+			     const unsigned int UNUSED(version))
+{
+  compute_temp_layers(*atmosphere_->pressure_ptr());
 }
 
 FP_IMPLEMENT(RamanSiorisEffect);

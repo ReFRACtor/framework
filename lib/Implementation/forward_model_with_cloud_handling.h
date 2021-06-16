@@ -109,7 +109,7 @@ class ForwardModelWithCloudHandling : public ForwardModel {
 public:
   ForwardModelWithCloudHandling
   (const boost::shared_ptr<ForwardModel>& Fmodel,
-   boost::shared_ptr<CloudFraction>& Cfrac,
+   const boost::shared_ptr<CloudFraction>& Cfrac,
    const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >&
    Cloud_handling_vector);
   const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >&

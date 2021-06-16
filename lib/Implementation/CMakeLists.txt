@@ -162,6 +162,7 @@ set(TEST_SOURCES
     dispersion_polynomial_test.cc
     empirical_orthogonal_function_test.cc
     error_analysis_test.cc
+    forward_model_with_cloud_handling_test.cc
     fluorescence_effect_test.cc
     fp_logger_test.cc
     gas_vmr_apriori_test.cc
