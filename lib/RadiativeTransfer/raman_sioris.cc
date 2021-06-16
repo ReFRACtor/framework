@@ -19,7 +19,6 @@ void RamanSiorisEffect::serialize(Archive & ar,
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
     & FP_NVP_(solar_and_odepth_spec_domain) & FP_NVP_(channel_index)
-    & FP_NVP_(albedo) 
     & FP_NVP_(do_upwelling) & FP_NVP_(solar_zenith)
     & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth)
     & FP_NVP_(scattering_angle) & FP_NVP_(atmosphere)
@@ -179,9 +178,11 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
 /// The solar irradiance values must be commensurate with the expected
 /// units of Ph/s/cm^2/nn
 /// 
-/// The retrieved albedo is not used so as to not tie this model to a
-/// certain surface model. The value of albedo does not seem to have
-/// a significant enough effect that an approximate value can suffice.
+/// We currently only work with grounds that have a spurr_brdf_type
+/// of LAMBERTIAN. We need to get the approximate albedo for the
+/// surface, and just have the logic in place for that. We could
+/// support other types if we work out the logic for getting an albedo
+/// estimate (in "evaluate_albedo" function).
 //-----------------------------------------------------------------------
 
 RamanSiorisEffect::RamanSiorisEffect
@@ -193,13 +194,11 @@ RamanSiorisEffect::RamanSiorisEffect
  const DoubleWithUnit& relative_azimuth,
  const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
  const boost::shared_ptr<SolarModel>& solar_model,
- double albedo,
  const boost::shared_ptr<StateMapping> mapping,
  bool do_upwelling)
 : SpectrumEffectImpBase(scale_factor, mapping),
   solar_and_odepth_spec_domain_(Solar_and_odepth_spec_domain),
   channel_index_(channel_index),
-  albedo_(albedo),
   do_upwelling_(do_upwelling),
   atmosphere_(atmosphere),
   solar_model_(solar_model)
@@ -255,10 +254,13 @@ void RamanSiorisEffect::apply_effect
     Array<double, 1> solar_spectrum = solar_model_->
       solar_spectrum(solar_and_odepth_spec_domain_).spectral_range().data();
 
+    double wn_middle = (wn_grid(0) + wn_grid(wn_grid.rows() - 1)) / 2;
+    double albedo = evaluate_albedo(wn_middle, channel_index_);
+
     // Compute raman spectrum
     Array<double, 1> raman_spec =
        compute_raman_sioris(solar_zenith_, obs_zenith_,
-         scattering_angle_, albedo_, do_upwelling_,
+         scattering_angle_, albedo, do_upwelling_,
          temperature_layers_, dry_air_density, solar_and_odepth_spec_domain_,
          Spec.spectral_domain(), solar_spectrum, total_optical_depth);
 
@@ -305,6 +307,27 @@ void RamanSiorisEffect::compute_temp_layers(const Pressure& pressure)
 }
 
 //-----------------------------------------------------------------------
+/// Come up with an estimate of the surface albedo. This doesn't need
+/// to be too accurate, the results don't depend strongly on the
+/// albedo value. We currently look at the surface_parameter for the
+/// middle wavenumber. We only work with LAMBERTIAN type.
+//-----------------------------------------------------------------------
+
+double RamanSiorisEffect::evaluate_albedo(double wn, int cindex) const
+{
+  // For ground observations, skip the surface contribution
+  if(!do_upwelling_)
+    return 0;
+  if(atmosphere_->ground()->spurr_brdf_type() != SpurrBrdfType::LAMBERTIAN) {
+    Exception e;
+    e << "RamanSiorisEffect only works with a ground that has a SpurrBrdfType of LAMBERTIAN.\n"
+      << "  ground: " << *atmosphere_->ground() << "\n";
+    throw e;
+  }
+  return atmosphere_->ground()->surface_parameter(wn, cindex)(0).value();
+}
+
+//-----------------------------------------------------------------------
 /// Create a new copy of this class using the same internal state 
 /// as it currently exists
 //-----------------------------------------------------------------------
@@ -320,7 +343,6 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
        DoubleWithUnit(relative_azimuth_, units::deg),
        atmosphere_,
        solar_model_,
-       albedo_,
        mapping,
        do_upwelling_);
 }
@@ -337,6 +359,5 @@ void RamanSiorisEffect::print(std::ostream& Os) const
      << "  Observation angle:      " << obs_zenith_ << "\n"
      << "  Relative azimuth angle: " << relative_azimuth_ << "\n"
      << "  Scattering angle:       " << scattering_angle_ << "\n"
-     << "  Albedo:                 " << albedo_ << "\n"
      << "  Do upwelling:           " << do_upwelling_ << "\n";
 }

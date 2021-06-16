@@ -7,7 +7,7 @@
 
 #include "standard_forward_model.h"
 #include "simple_fixed_spectrum_sampling.h"
-
+#include "ground_lambertian.h"
 #include "default_constant.h"
 #include "absorber_absco.h"
 
@@ -53,7 +53,6 @@ BOOST_AUTO_TEST_CASE(effect)
 {
     int channel_idx = 0;
     double scale_factor = 1.9;
-    double albedo = 1.0;
 
     // Convert this so we can access ->spectrum_effect
     boost::shared_ptr<StandardForwardModel> fm = boost::dynamic_pointer_cast<StandardForwardModel>(config_forward_model);
@@ -74,6 +73,14 @@ BOOST_AUTO_TEST_CASE(effect)
     boost::shared_ptr<AtmosphereStandard> atm_rayleigh(
             new AtmosphereStandard(absorber, atm->pressure_ptr(), atm->temperature_ptr(), atm->rayleigh_ptr(),
                                    atm->relative_humidity_ptr(), atm->ground(), atm->altitude_ptr(), constant));
+    auto g = boost::dynamic_pointer_cast<GroundLambertian>(atm->ground());
+    // Set albedo to 1.0, to match expected test results.
+    g->sub_state_vector_values()(0) = 1.0;
+    g->sub_state_vector_values()(1) = 0;
+    g->sub_state_vector_values()(2) = 1.0;
+    g->sub_state_vector_values()(3) = 0;
+    g->sub_state_vector_values()(4) = 1.0;
+    g->sub_state_vector_values()(5) = 0;
 
     // Pull out angles we need
     DoubleWithUnit solar_zenith = config_level_1b->solar_zenith(channel_idx);
@@ -94,7 +101,7 @@ BOOST_AUTO_TEST_CASE(effect)
     RamanSiorisEffect raman =
       RamanSiorisEffect(padded_grid, scale_factor, channel_idx, solar_zenith,
 			observation_zenith, relative_azimuth,
-			atm_rayleigh, solar_model, albedo);
+			atm_rayleigh, solar_model);
 
     ForwardModelSpectralGrid
       fm_spec_grid(config_instrument, config_spectral_window,
@@ -114,7 +121,7 @@ BOOST_AUTO_TEST_CASE(effect)
     // class
     StateVector sv;
     sv.add_observer(raman);
-    Array<double,1> x(num_jac);
+    Array<double,1> x(1);
     x(Range(0,0)) = scale_factor;
     sv.update_state(x);
 

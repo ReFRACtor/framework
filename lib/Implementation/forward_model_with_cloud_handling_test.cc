@@ -14,7 +14,6 @@ BOOST_FIXTURE_TEST_SUITE(forward_model_with_cloud_handling, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  return;
   // Note this currently contains a hardcoded path to the absco
   // data. Not clear how to handle this in general. We'll move to the
   // cross section version instead of absco for this particular case,
@@ -44,9 +43,13 @@ BOOST_AUTO_TEST_CASE(basic)
 	   boost::make_shared<CloudFractionFromState>(0.35332658886909485),
 	   cloud_handling_vector);
   fm.set_do_cloud(false);
+  std::cerr << "------------- Clear\n";
+  std::cerr << *underlying_fm << "\n";
   Spectrum rclear = underlying_fm->radiance(0, true);
   std::cerr << rclear.spectral_range().data() << "\n";
   fm.set_do_cloud(true);
+  std::cerr << "------------- Cloudy\n";
+  std::cerr << *underlying_fm << "\n";
   Spectrum rcloud = underlying_fm->radiance(0, true);
   std::cerr << rcloud.spectral_range().data() << "\n";
 }

@@ -191,7 +191,10 @@ public:
   virtual void notify_update(const Aerosol& A);
   virtual void notify_update(const Pressure& UNUSED(P))
   {
-    nlay = -1;
+    if(nlay != pressure->number_layer()) {
+      nlay = -1;
+      invalidate_local_cache();
+    }
   }
   virtual void invalidate_cache()
   {

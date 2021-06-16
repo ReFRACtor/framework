@@ -23,8 +23,8 @@
 %fp_shared_ptr(FullPhysics::RamanSiorisEffect);
 namespace FullPhysics {
   blitz::Array<double, 1> compute_raman_sioris(double solar_zenith,
-       double viewing_zenith, double scattering_angle,
-       double albedo, bool do_upwelling,
+       double viewing_zenith, double scattering_angle, double albedo,
+       bool do_upwelling,
        const blitz::Array<double, 1> &temperature_layers,
        const blitz::Array<double, 1>& air_number_density,
        const SpectralDomain &grid,
@@ -44,7 +44,6 @@ public:
                     const DoubleWithUnit& relative_azimuth,
                     const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                     const boost::shared_ptr<SolarModel>& solar_model,
-                    double albedo,
                     const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
                     bool do_upwelling = true);
 

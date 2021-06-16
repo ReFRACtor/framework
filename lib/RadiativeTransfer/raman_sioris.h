@@ -33,10 +33,9 @@ blitz::Array<double, 1> compute_raman_sioris(double solar_zenith, double viewing
  2. The code uses a simple surface model with a single albedo value.
     The general Ground models we have for the surface are more 
     complicated then this, and in general we don't even directly have
-    an albedo. The raman calculation does not a strong dependence on
-    the albedo, so we just take a single value in the constructor.
-    This isn't tied into a Ground, so we don't have this updated
-    as we modify the Ground.
+    an albedo. We currently only work with a SpurrBrdfType of
+    LAMBERTIAN, we can examine that logic if we need to support other
+    ground types.
  3. Because Raman scattering is looking for the "cross talk" between
     neighboring spectral points, it needs to have the optical depths
     and solar data for a wider range than we calculate the Raman
@@ -70,7 +69,6 @@ public:
                     const DoubleWithUnit& relative_azimuth,
                     const boost::shared_ptr<AtmosphereStandard>& atmosphere, 
                     const boost::shared_ptr<SolarModel>& solar_model,
-                    double albedo,
                     const boost::shared_ptr<StateMapping> mapping = boost::make_shared<StateMappingLinear>(),
                     bool do_upwelling = true);
 
@@ -102,11 +100,10 @@ public:
 private:
 
   void compute_temp_layers(const Pressure& pressure);
-  double evaluate_albedo() const;
+  double evaluate_albedo(double wn, int cindex) const;
 
   SpectralDomain solar_and_odepth_spec_domain_;
   int channel_index_;
-  double albedo_;
   bool do_upwelling_;
 
   double solar_zenith_;
