@@ -55,8 +55,8 @@ def from_db_type(value):
 
 def read_shelve(f):
     '''This handles reading a value from a shelve file. The string f should
-    be of the form file_name:key, file_name.xml, file_name.bin, 
-    or file_name.json. We 
+    be of the form file_name:key, file_name.xml, file_name.xml.gz,
+    file_name.bin, file_name.bin.gz or file_name.json. We 
     open the given file, and read the value for the given key.
 
     A problem with the python shelve/pickle files is that it can't
@@ -90,11 +90,14 @@ def read_shelve(f):
     try:
         if(dirn):
             os.chdir(dirn)
-        if(os.path.splitext(f)[1] == ".xml"):
+        f2, ext = os.path.splitext(f)
+        if(ext not in (".gz")):
+            f2 = f
+        if(os.path.splitext(f2)[1] == ".xml"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
             return refractor_swig.serialize_read_generic(fb)
-        if(os.path.splitext(f)[1] == ".bin"):
+        if(os.path.splitext(f2)[1] == ".bin"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
             return refractor_swig.serialize_read_binary_generic(fb)
@@ -148,12 +151,17 @@ def write_shelve(f, val):
     A problem with the shelve files is that it can't communicate directly 
     with a C++ program, and also the files aren't human readable or portable.
     So we also support xml and bin files, we key off of the file name and if it 
-    is something like "foo.xml" we write that rather than a shelve file.
+    is something like "foo.xml" we write that rather than a shelve file. You
+    can add a ".gz" to use gzip compression on the file.
     '''
-    if(os.path.splitext(f)[1] == ".xml"):
+    # Strip off any compression part, when determining file type
+    f2, ext = os.path.splitext(f)
+    if(ext not in (".gz")):
+        f2 = f
+    if(os.path.splitext(f2)[1] == ".xml"):
         refractor_swig.serialize_write(f, val)
         return
-    if(os.path.splitext(f)[1] == ".bin"):
+    if(os.path.splitext(f2)[1] == ".bin"):
         refractor_swig.serialize_write_binary(f, val)
         return
     if(os.path.splitext(f)[1] == ".json"):

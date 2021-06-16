@@ -15,7 +15,7 @@ config_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../config
 input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data/in"))
 
 config_fn = os.path.join(config_dir, "uv_atmosphere.py")
-serialized_fn = os.path.join(input_dir, "uv_atmosphere/uv_atmosphere.xml")
+serialized_fn = os.path.join(input_dir, "uv_atmosphere/uv_atmosphere.bin.gz")
 
 logging.info(f"Loading configuration: {config_fn}")
 
