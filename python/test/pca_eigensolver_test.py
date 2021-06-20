@@ -2,7 +2,7 @@
 # this component necessitated added SWIG rules for passing
 # a vector of Blitz arrays
 
-from .test_support import *
+from test_support import *
 import os
 
 import pytest

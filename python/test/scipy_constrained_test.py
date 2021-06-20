@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 try:
     import scipy.optimize
 except ImportError:

@@ -13,7 +13,7 @@ set(DIR_SOURCES
     constants.F90
     default_constant.cc
     double_with_unit.cc
-    environment_substitute.cc
+    expandvars.cc
     float_with_unit.h
     fp_gsl_integrate.cc
     fp_gsl_matrix.cc
@@ -56,7 +56,7 @@ set(TEST_SOURCES
     auto_derivative_test.cc
     bin_map_test.cc
     closest_point_test.cc
-    environment_substitute_test.cc
+    expandvars_test.cc
     fp_exception_test.cc
     fp_gsl_integrate_test.cc
     fp_gsl_matrix_test.cc

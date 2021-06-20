@@ -10,6 +10,17 @@
 using namespace FullPhysics;
 using namespace blitz;
 
+class PrintSpectrum: public Observer<boost::shared_ptr<NamedSpectrum> >
+{
+public:
+  virtual ~PrintSpectrum() {}
+  virtual void notify_update(const boost::shared_ptr<NamedSpectrum>& S)
+  {
+    std::cerr << S->name() << ": " << S->spectral_range().data() << "\n";
+  };
+  
+};
+
 BOOST_FIXTURE_TEST_SUITE(forward_model_with_cloud_handling, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
@@ -42,16 +53,9 @@ BOOST_AUTO_TEST_CASE(basic)
   ForwardModelWithCloudHandling fm(underlying_fm,
 	   boost::make_shared<CloudFractionFromState>(0.35332658886909485),
 	   cloud_handling_vector);
-  fm.set_do_cloud(false);
-  std::cerr << "------------- Clear\n";
-  std::cerr << *underlying_fm << "\n";
-  Spectrum rclear = underlying_fm->radiance(0, true);
-  std::cerr << rclear.spectral_range().data() << "\n";
-  fm.set_do_cloud(true);
-  std::cerr << "------------- Cloudy\n";
-  std::cerr << *underlying_fm << "\n";
-  Spectrum rcloud = underlying_fm->radiance(0, true);
-  std::cerr << rcloud.spectral_range().data() << "\n";
+  PrintSpectrum pspec;
+  fm.add_observer(pspec);
+  Spectrum rcfrac = fm.radiance(0, true);
 }
 
 BOOST_AUTO_TEST_CASE(serialization)

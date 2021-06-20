@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 from refractor_swig import *
 import numpy as np
 

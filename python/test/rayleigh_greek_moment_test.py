@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 
 def test_rayleigh_greek_moment():
     '''Test RayleighGreekMoment'''

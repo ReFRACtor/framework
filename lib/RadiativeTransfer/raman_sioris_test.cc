@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(effect)
     // class
     StateVector sv;
     sv.add_observer(raman);
-    Array<double,1> x(1);
+    Array<double,1> x(num_jac);
     x(Range(0,0)) = scale_factor;
     sv.update_state(x);
 

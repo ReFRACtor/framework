@@ -53,10 +53,28 @@ ForwardModelWithCloudHandling::ForwardModelWithCloudHandling
 }
 
 Spectrum ForwardModelWithCloudHandling::radiance
-(int UNUSED(channel_index), bool UNUSED(skip_jacobian)) const
+(int channel_index, bool skip_jacobian) const
 {
-  Spectrum dummy;
-  return dummy;
+  set_do_cloud(false);
+  Spectrum rclear = fmodel_->radiance(channel_index, skip_jacobian);
+  notify_spectrum_update(rclear, "clear", channel_index);
+  auto dclear = rclear.spectral_range().data_ad();
+  set_do_cloud(true);
+  Spectrum rcloud = fmodel_->radiance(channel_index, skip_jacobian);
+  notify_spectrum_update(rcloud, "cloud", channel_index);
+  auto dcloud = rcloud.spectral_range().data_ad();
+  set_do_cloud(false);
+  ArrayAd<double, 1> dcfrac(dclear.rows(), std::max(
+			    std::max(cfrac_->cloud_fraction().number_variable(),
+				     dclear.number_variable()),
+			    dcloud.number_variable()));
+  for(int i = 0; i < dcfrac.rows(); ++i)
+    dcfrac(i) = dcloud(i) * cfrac_->cloud_fraction() +
+      dclear(i) * (1 - cfrac_->cloud_fraction());
+  Spectrum rcfrac(rclear.spectral_domain(),
+		  SpectralRange(dcfrac, rclear.spectral_range().units()));
+  notify_spectrum_update(rcfrac, "cloud fraction", channel_index);
+  return rcfrac;
 }
 
 void ForwardModelWithCloudHandling::print(std::ostream& Os) const	\
@@ -70,8 +88,14 @@ void ForwardModelWithCloudHandling::print(std::ostream& Os) const	\
 }
 
 
-void ForwardModelWithCloudHandling::set_do_cloud(bool do_cloud)
+void ForwardModelWithCloudHandling::set_do_cloud(bool do_cloud) const
 {
   for(auto f : cloud_handling_vector_)
     f->do_cloud(do_cloud);
+}
+
+void ForwardModelWithCloudHandling::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
+{
+  if (olist.size() > 0)
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
 }

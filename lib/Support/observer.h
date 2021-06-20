@@ -246,15 +246,15 @@ protected:
 /// should pass itself to this function, so it can be passed to the
 /// Observers. 
 //-----------------------------------------------------------------------
-  void notify_update_do(const T& Self)
+  void notify_update_do(const T& Self) const
   {
-    clean_dead_ptr();
-    BOOST_FOREACH(boost::weak_ptr<Observer<T> >& t, olist) {
+    const_cast<Observable<T>*>(this)->clean_dead_ptr();
+    for(auto t : olist) {
       boost::shared_ptr<Observer<T> > t2 = t.lock();
       if(t2)
         t2->notify_update(Self);
     }
-    BOOST_FOREACH(boost::weak_ptr<CacheInvalidatedObserver>& t, colist) {
+    for(auto t : colist) {
       boost::shared_ptr<CacheInvalidatedObserver> t2 = t.lock();
       if(t2)
         t2->invalidate_cache();

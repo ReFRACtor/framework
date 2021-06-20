@@ -121,7 +121,7 @@ set_target_properties(_swig_wrap PROPERTIES SUFFIX ".so")
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 # Install non SWIG Python code into refractor/
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/lib/Python/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/python/refractor/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
   FILES_MATCHING
   PATTERN "*_test.py" EXCLUDE
   PATTERN "test_support/*" EXCLUDE

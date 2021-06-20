@@ -1,4 +1,5 @@
 #include "hdf_file.h"
+#include "expandvars.h"
 #include "fp_serialize_support.h"
 
 using namespace FullPhysics;
@@ -282,7 +283,14 @@ REGISTER_LUA_END()
 #endif
 
 //-----------------------------------------------------------------------
-/// Open the given file with the given mode.
+/// Open the given file with the given mode. Note that we call
+/// expandvars on the Fname, so you can use all the standard shell
+/// expansions in the file (e.g., "$abscodir/blah"). This can be
+/// particular useful for serialization where you might serialize a
+/// HdfFile on one system and load it on another. If the file name
+/// include environment variables the expansion will work from one
+/// system to the other (e.g., "/machine1/absco" and
+/// "/machine2/otherpath/absco")
 //-----------------------------------------------------------------------
 
 HdfFile::HdfFile(const std::string& Fname, Mode M)
@@ -319,7 +327,8 @@ void HdfFile::init()
     FileAccPropList file_access = FileAccPropList();
     file_access.setFcloseDegree(H5F_CLOSE_SEMI);
 
-    h.reset(new H5File(fname, flag, FileCreatPropList::DEFAULT, file_access));
+    h.reset(new H5File(expandvars(fname), flag,
+		       FileCreatPropList::DEFAULT, file_access));
   } catch(const H5::Exception& e) {
     Exception en;
     en << "While trying to open file '" << fname 

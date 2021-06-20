@@ -78,7 +78,7 @@ Spectrum StandardForwardModel::radiance
     Spectrum convolved_spec = apply_spectrum_corrections(highres_spec, channel_index);
 
     notify_spectrum_update(convolved_spec, "convolved", channel_index);
-
+   
     return convolved_spec;
 }
 
@@ -112,9 +112,8 @@ Spectrum StandardForwardModel::apply_spectrum_corrections(const Spectrum& highre
 
 void StandardForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
 {
-    if (olist.size() > 0) {
-        const_cast<StandardForwardModel *>(this)->notify_update_do(boost::shared_ptr<NamedSpectrum>(new NamedSpectrum(updated_spec, spec_name, channel_index)));
-    }
+  if (olist.size() > 0)
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
 }
 
 void StandardForwardModel::print(std::ostream& Os) const

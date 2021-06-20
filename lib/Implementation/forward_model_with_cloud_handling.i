@@ -11,6 +11,7 @@
 %base_import(state_vector_observer)
 %base_import(sub_state_vector_array)
 %base_import(forward_model)
+%base_import(named_spectrum)
 %import "generic_object_with_cloud_handling.i"
 
 %fp_shared_ptr(FullPhysics::ForwardModelWithCloudHandling);
@@ -39,32 +40,36 @@ public:
   %pickle_serialization(); 
 }; 
 
-// %template(SubStateVectorArrayCloudFraction) FullPhysics::SubStateVectorArray<CloudFraction>; 
+%template(SubStateVectorArrayCloudFraction) FullPhysics::SubStateVectorArray<CloudFraction>; 
 
-// class CloudFractionFromState: 
-//     virtual public SubStateVectorArray<CloudFraction> { 
-// public: 
-//   CloudFractionFromState(double Cfrac, 
-// 			 const boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()); 
-//   virtual boost::shared_ptr<CloudFraction> clone() const; 
-//   %python_attribute_with_set(cloud_fraction, AutoDerivative<double>); 
-// }; 
+class CloudFractionFromState: 
+    virtual public SubStateVectorArray<CloudFraction> { 
+public: 
+  CloudFractionFromState(double Cfrac, 
+			 const boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>()); 
+  virtual boost::shared_ptr<CloudFraction> clone() const; 
+  %python_attribute_with_set(cloud_fraction, AutoDerivative<double>); 
+}; 
 
-// class ForwardModelWithCloudHandling : public ForwardModel { 
-// public: 
-//   ForwardModelWithCloudHandling 
-//   (const boost::shared_ptr<ForwardModel>& Fmodel, 
-//    boost::shared_ptr<CloudFraction>& Cfrac, 
-//    const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >& 
-//    Cloud_handling_obj); 
-//   const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >& 
-//     cloud_handling_vector() const; 
-//   void add_cloud_handling_object 
-//     (const boost::shared_ptr<GenericObjectWithCloudHandling> & Obj); 
-//   virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const; 
-//   void set_do_cloud(bool do_cloud); 
-//   %python_attribute(underlying_forward_model, boost::shared_ptr<ForwardModel>); 
-//   %python_attribute(cloud_fraction, boost:shared_ptr<CloudFraction>); 
-//   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >); 
-// }; 
+class ForwardModelWithCloudHandling : public ForwardModel,
+public Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> > {
+public: 
+  ForwardModelWithCloudHandling 
+  (const boost::shared_ptr<ForwardModel>& Fmodel, 
+   boost::shared_ptr<CloudFraction>& Cfrac, 
+   const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >& 
+   Cloud_handling_obj = std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >()); 
+  const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >& 
+  cloud_handling_vector() const; 
+  void add_cloud_handling_object 
+  (const boost::shared_ptr<GenericObjectWithCloudHandling> & Obj); 
+  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const; 
+  void set_do_cloud(bool do_cloud) const; 
+  virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
+  virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  %python_attribute(underlying_forward_model, boost::shared_ptr<ForwardModel>); 
+  %python_attribute(cloud_fraction, boost::shared_ptr<CloudFraction>); 
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >); 
+}; 
 }

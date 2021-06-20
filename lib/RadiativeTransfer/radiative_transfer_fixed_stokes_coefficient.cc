@@ -46,7 +46,7 @@ Spectrum RadiativeTransferFixedStokesCoefficient::reflectance
       boost::shared_ptr<NamedSpectrum> stoke_ptr(new NamedSpectrum(Spec_domain, stoke_range, "stokes_" + std::string(stoke_names[stokes_idx]), Spec_index));
       stoke_spectrums.push_back(stoke_ptr);
     }
-    const_cast<RadiativeTransferFixedStokesCoefficient *>(this)->notify_update_do(stoke_spectrums);
+    notify_update_do(stoke_spectrums);
   }
 
   ArrayAd<double, 1> res(stk.rows(), stk.number_variable());

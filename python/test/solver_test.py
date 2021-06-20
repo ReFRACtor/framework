@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 
 def test_gsl_bard():
     '''Use GSL solver to find solution solve bard problem.'''

@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 
 def test_exception():
     t = rf.FpException("test")

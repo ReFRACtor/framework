@@ -93,7 +93,7 @@ if(BUILD_PYTHON_BINDING)
     file(MAKE_DIRECTORY ${PYTEST_TEST_RUN_DIR})
 
     add_test(NAME python_pytest 
-        COMMAND ${PYTEST_WRAP} ${PROJECT_SOURCE_DIR}/lib/Python
+        COMMAND ${PYTEST_WRAP} ${PROJECT_SOURCE_DIR}/python/test
         WORKING_DIRECTORY ${PYTEST_TEST_RUN_DIR})
 
     add_custom_target(python_test

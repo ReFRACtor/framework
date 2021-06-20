@@ -1,5 +1,5 @@
-from .generic_object_extend import *
-from .test_support import *
+from refractor.generic_object_extend import *
+from test_support import *
 from refractor_swig import *
 
 def test_subobj(sample_forward_model):

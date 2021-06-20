@@ -1,4 +1,4 @@
-from .test_support import *
+from test_support import *
 import math
 try:
     import nlopt

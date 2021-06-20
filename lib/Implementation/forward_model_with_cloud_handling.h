@@ -3,6 +3,7 @@
 #include "forward_model.h"
 #include "sub_state_vector_array.h"
 #include "generic_object_with_cloud_handling.h"
+#include "named_spectrum.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -105,13 +106,14 @@ private:
   the "do_cloud" variable to get the clear and cloudy data.
 *******************************************************************/
 
-class ForwardModelWithCloudHandling : public ForwardModel {
+class ForwardModelWithCloudHandling : public ForwardModel,
+		public Observable<boost::shared_ptr<NamedSpectrum> >{
 public:
   ForwardModelWithCloudHandling
   (const boost::shared_ptr<ForwardModel>& Fmodel,
    const boost::shared_ptr<CloudFraction>& Cfrac,
    const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >&
-   Cloud_handling_vector);
+   Cloud_handling_vector = std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >());
   const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >&
   cloud_handling_vector() const {return cloud_handling_vector_;}
   void add_cloud_handling_object
@@ -135,7 +137,7 @@ public:
 /// exact same thing by 
 //-----------------------------------------------------------------------
 
-  void set_do_cloud(bool do_cloud);
+  void set_do_cloud(bool do_cloud) const;
   
 //-----------------------------------------------------------------------
 /// The underlying forward model used for the clear and cloudy
@@ -152,7 +154,20 @@ public:
   const boost::shared_ptr<CloudFraction>& cloud_fraction() const
   { return cfrac_; }
 
-//-----------------------------------------------------------------------
+  /// Required observable functions
+  virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs)
+  {
+    add_observer_do(Obs);
+  }
+
+  virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs)
+  {
+    remove_observer_do(Obs);
+  }
+
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+
+  //-----------------------------------------------------------------------
 /// We have some fairly nested object hierarchies. It can be useful to
 /// be able to search this for things (e.g., which Pressure object is
 /// used by a ForwardModel?). This returns a list of subobjects

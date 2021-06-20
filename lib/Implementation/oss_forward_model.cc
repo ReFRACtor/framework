@@ -187,7 +187,6 @@ void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>
 
 void OssForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
 {
-    if (olist.size() > 0) {
-        const_cast<OssForwardModel *>(this)->notify_update_do(boost::shared_ptr<NamedSpectrum>(new NamedSpectrum(updated_spec, spec_name, channel_index)));
-    }
+  if (olist.size() > 0)
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
 }

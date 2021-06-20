@@ -1,6 +1,6 @@
-from .swig_shelve import *
+from refractor.swig_shelve import *
 import time
-from .test_support import *
+from test_support import *
 import pickle
 from refractor_swig import *
 
