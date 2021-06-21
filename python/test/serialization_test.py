@@ -1,5 +1,5 @@
 from test_support import *
-from refractor_swig import *
+from refractor.framework import *
 import pickle
 import logging
 

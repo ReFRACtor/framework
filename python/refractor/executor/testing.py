@@ -1,6 +1,6 @@
 from refractor.executor import StrategyExecutor
 from refractor.output.base import OutputBase
-from refractor_swig import ObserverPtrNamedSpectrum
+from refractor.framework import ObserverPtrNamedSpectrum
 
 class CaptureRadiance(ObserverPtrNamedSpectrum, OutputBase):
 

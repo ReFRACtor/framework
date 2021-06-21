@@ -1,6 +1,6 @@
 from test_support import *
 from refractor.factory.creator.scenario import ScenarioFromL1b
-from refractor_swig import *
+from refractor.framework import *
 
 def test_scenerio_from_l1b():
     l1b = ExampleLevel1b(HdfFile(unit_test_data +

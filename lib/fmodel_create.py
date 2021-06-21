@@ -1,4 +1,4 @@
-from refractor_swig import *
+from refractor_framework_swig import *
 from refractor import *
 import pickle
 import h5py

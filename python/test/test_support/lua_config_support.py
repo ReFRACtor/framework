@@ -5,7 +5,6 @@
 
 from refractor import framework as rf
 from refractor import read_shelve, write_shelve
-import refractor_swig
 import os
 import sys
 import pytest
@@ -31,7 +30,7 @@ def sample_forward_model(config_ls):
 def sample_solar_model(sample_forward_model):
     '''A forward model example. Currently comes from Lua, but we may
     change the source in the future'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.SolarModel)
+    return sample_forward_model.find_subobject_of_type(rf.SolarModel)
 
 @pytest.fixture(scope="function")
 def sample_absorber(sample_forward_model):
@@ -45,7 +44,7 @@ def sample_absorber(sample_forward_model):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.Absorber)
+    return sample_forward_model.find_subobject_of_type(rf.Absorber)
 
 @pytest.fixture(scope="function")
 def sample_temperature(sample_forward_model):
@@ -55,7 +54,7 @@ def sample_temperature(sample_forward_model):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.Temperature)
+    return sample_forward_model.find_subobject_of_type(rf.Temperature)
 
 @pytest.fixture(scope="function")
 def sample_atmosphere(sample_forward_model):
@@ -65,7 +64,7 @@ def sample_atmosphere(sample_forward_model):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.RtAtmosphere)
+    return sample_forward_model.find_subobject_of_type(rf.RtAtmosphere)
 
 
 @pytest.fixture(scope="function")
@@ -76,7 +75,7 @@ def sample_pressure(sample_forward_model):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.Pressure)
+    return sample_forward_model.find_subobject_of_type(rf.Pressure)
 
 @pytest.fixture(scope="function")
 def sample_aerosol(sample_forward_model):
@@ -86,4 +85,4 @@ def sample_aerosol(sample_forward_model):
     probably want to come up with a different method (e.g, directly create
     this), since we are trying to phase out the Lua. But for now, use it 
     because it is available.'''
-    return sample_forward_model.find_subobject_of_type(refractor_swig.Aerosol)
+    return sample_forward_model.find_subobject_of_type(rf.Aerosol)

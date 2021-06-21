@@ -136,20 +136,20 @@ configure_file (
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor)
 
-# Install SWIG Python code into refractor_swig/
-install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
-install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
+# Install SWIG Python code into refractor_framework_swig/
+install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
+install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig
     FILES_MATCHING PATTERN "*.py")
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/swig_rules/python/" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/swig_rules/python/" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig
     FILES_MATCHING PATTERN "*.py")
 
   
-install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_swig)
+install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
 
 # On systems with older cmake, it may try to link against lib_swig_wrap.so
 #  Add lib_swig_wrap.so as a symlink to _swig_wrap.so to support this
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_wrap.so lib_swig_wrap.so
-                              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/refractor_swig)")
+                              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/refractor_framework_swig)")
 
 # Expose Python install path to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)

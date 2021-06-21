@@ -1,4 +1,4 @@
-from refractor_swig import *
+from refractor.framework import *
 import pytest
 from _pytest.python_api import ApproxBase
 

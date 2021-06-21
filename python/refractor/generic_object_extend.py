@@ -1,6 +1,6 @@
 # This contains a few useful function to extend GenericObject from swig
 
-from refractor_swig import GenericObject
+from refractor_framework_swig import GenericObject
 
 def _subobject(self, recursive=True):
     '''Return all the (possibly empty) subobjects found for this object.

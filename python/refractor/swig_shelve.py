@@ -18,7 +18,7 @@ from collections.abc import MutableMapping as DictMixin
 import pickle
 import sqlite3
 import os.path
-import refractor_swig
+from refractor import framework as rf
 
 # Allow jsonpickle to be used, if available.
 try:
@@ -96,11 +96,11 @@ def read_shelve(f):
         if(os.path.splitext(f2)[1] == ".xml"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
-            return refractor_swig.serialize_read_generic(fb)
+            return rf.serialize_read_generic(fb)
         if(os.path.splitext(f2)[1] == ".bin"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
-            return refractor_swig.serialize_read_binary_generic(fb)
+            return rf.serialize_read_binary_generic(fb)
         if(os.path.splitext(f)[1] == ".json"):
             if(os.path.exists("extra_python_init.py")):
                 exec(open("extra_python_init.py").read())
@@ -159,10 +159,10 @@ def write_shelve(f, val):
     if(ext not in (".gz")):
         f2 = f
     if(os.path.splitext(f2)[1] == ".xml"):
-        refractor_swig.serialize_write(f, val)
+        rf.serialize_write(f, val)
         return
     if(os.path.splitext(f2)[1] == ".bin"):
-        refractor_swig.serialize_write_binary(f, val)
+        rf.serialize_write_binary(f, val)
         return
     if(os.path.splitext(f)[1] == ".json"):
         if(have_jsonpickle):

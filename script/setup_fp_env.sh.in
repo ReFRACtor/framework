@@ -18,9 +18,9 @@ else
 fi
 
 if [ -n "$LD_LIBRARY_PATH" ]; then
-  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_swig:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_framework_swig:$LD_LIBRARY_PATH
 else
-  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_swig
+  export LD_LIBRARY_PATH=$REFRACTOR_INSTALL_PATH/lib:$refr_python_path/refractor_framework_swig
 fi
 
 if [ -n "$PYTHONPATH" ]; then

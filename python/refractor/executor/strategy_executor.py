@@ -6,7 +6,7 @@ import pprint
 import numpy as np
 from netCDF4 import Dataset
 
-from refractor_swig import StateMappingAtIndexes
+yfrom refractor.framework import StateMappingAtIndexes
 
 from .config import load_config_module, find_strategy_function
 from .configuration_interface import ConfigurationInterface

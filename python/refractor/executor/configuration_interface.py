@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from refractor_swig import (SolverIterationLog, RtAtmosphere, ForwardModel, IterativeSolver,
+from refractor.framework import (SolverIterationLog, RtAtmosphere, ForwardModel, IterativeSolver,
                             StateVector, Level1b)
 from .config import find_config_function
 from ..factory import process_config, creator

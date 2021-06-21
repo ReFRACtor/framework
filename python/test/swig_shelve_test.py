@@ -2,7 +2,7 @@ from refractor.swig_shelve import *
 import time
 from test_support import *
 import pickle
-from refractor_swig import *
+from refractor.framework import *
 
 def test_sqlite_shelf(isolated_dir):
     d = SQLiteShelf("sqlite_shelf.db")
