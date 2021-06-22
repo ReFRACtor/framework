@@ -13,3 +13,6 @@ netCDF4 --no-binary netCDF4
 # Needed to support both Python 2 and 3
 future
 six
+
+# Needed for construct_config_diagram.py
+pygraphviz

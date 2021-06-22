@@ -1,0 +1,36 @@
+name: framework-development-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - gcc_linux-64
+  - gxx_linux-64
+  - gfortran_linux-64
+  - make
+  - cmake>3.13
+  - pkg-config
+  - python<3.9
+  - numpy>=1.19.2
+  - libboost
+  - swig<4.0
+  - doxygen
+  - gsl
+  - eigen
+  - lua<5.4
+  - hdf5
+  - jsonpickle
+  - jupyter
+  - numpy
+  - scipy
+  - matplotlib
+  - attrdict
+  - pytest
+  - pytest-xdist
+  - pytest-cov
+  - pytest-runner
+  - pytz
+  - h5py
+  - netcdf4
+  - pyhdf
+  - cachetools
+  - pygraphviz
