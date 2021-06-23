@@ -131,7 +131,7 @@ if(NOT MERRA_DIR)
 endif()
 
 # Obtain the CM version of the source code
-execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/support/refractor/version_util.py ${PROJECT_SOURCE_DIR}
+execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/python/refractor/version_util.py ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE REFRACTOR_CM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
