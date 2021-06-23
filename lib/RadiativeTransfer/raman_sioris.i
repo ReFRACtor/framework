@@ -48,7 +48,7 @@ public:
                     bool do_upwelling = true);
 
   /// The "edge" we need to the desired range of the Raman calculation
-  static constexpr double raman_edge_wavenumber = 218;
+  static const double raman_edge_wavenumber;
   
   virtual void apply_effect(Spectrum& Spec,
 	      const ForwardModelSpectralGrid& Forward_model_grid) const;
@@ -56,6 +56,9 @@ public:
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
   %pickle_serialization();
 };
-  
+
+const double RamanSiorisEffect::raman_edge_wavenumber = 218;
+
+
 }
 

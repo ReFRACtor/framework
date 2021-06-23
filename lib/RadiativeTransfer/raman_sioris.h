@@ -73,7 +73,7 @@ public:
                     bool do_upwelling = true);
 
   /// The "edge" we need to the desired range of the Raman calculation
-  static constexpr double raman_edge_wavenumber = 218;
+  static const double raman_edge_wavenumber;
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
   virtual void notify_update(const Pressure& pressure) { compute_temp_layers(pressure); };
@@ -125,6 +125,8 @@ private:
   template<class Archive>
   void load(Archive & ar, const unsigned int version);
 };
+
+const double RamanSiorisEffect::raman_edge_wavenumber = 218;
 
 }
 FP_EXPORT_KEY(RamanSiorisEffect);
