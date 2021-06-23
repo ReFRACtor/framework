@@ -11,6 +11,9 @@
 using namespace blitz;
 using namespace FullPhysics;
 
+// The "edge" we need to the desired range of the Raman calculation
+const double RamanSiorisEffect::raman_edge_wavenumber = 218;
+
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void RamanSiorisEffect::serialize(Archive & ar,

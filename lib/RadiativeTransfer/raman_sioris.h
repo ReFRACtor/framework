@@ -126,8 +126,6 @@ private:
   void load(Archive & ar, const unsigned int version);
 };
 
-const double RamanSiorisEffect::raman_edge_wavenumber = 218;
-
 }
 FP_EXPORT_KEY(RamanSiorisEffect);
 #endif
