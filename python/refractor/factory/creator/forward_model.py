@@ -210,8 +210,9 @@ class FluorescenceEffect(Creator):
           return fluoresence
 
 class RamanSiorisEffect(Creator):
-
-    albedo = param.Array(dims=1)
+    instrument = param.InstanceOf(rf.Instrument)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+    spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
 
     scale_factors = param.Array(dims=1)
     solar_zenith = param.ArrayWithUnit(dims=1)
@@ -222,14 +223,12 @@ class RamanSiorisEffect(Creator):
     num_channels = param.Scalar(int)
 
     do_upwelling = param.Scalar(bool, default=True)
-    padding_fraction = param.Scalar(float, default=0.10)
-    jacobian_perturbation = param.Scalar(float, default=0.001)
 
     def create(self, solar_model=None, **kwargs):
+        # TODO: Better way to pick up high resolution grid?
+        spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
 
         scale_factor = self.scale_factors()
-
-        albedo = self.albedo()
 
         solar_zenith = self.solar_zenith()
         obs_zenith = self.observation_zenith()
@@ -240,19 +239,16 @@ class RamanSiorisEffect(Creator):
         if solar_model is None:
             solar_model = self.solar_model()
 
-        padding_fraction = self.padding_fraction()
         do_upwelling = self.do_upwelling()
-        jac_perturb = self.jacobian_perturbation()
 
         mapping = rf.StateMappingLinear()
 
         raman_effect = []
         for chan_index in range(self.num_channels()):
-            raman_effect.append( rf.RamanSiorisEffect(scale_factor[chan_index], chan_index,
+            raman_effect.append( rf.RamanSiorisEffect(spectral_grid.high_resolution_grid(chan_index),
+                                 scale_factor[chan_index], chan_index,
                                  solar_zenith[chan_index], obs_zenith[chan_index], rel_azimuth[chan_index],
-                                 atmosphere, solar_model[chan_index], albedo[chan_index], 
-                                 mapping,
-                                 padding_fraction, do_upwelling, jac_perturb) )
+                                 atmosphere, solar_model[chan_index], mapping, do_upwelling) )
 
         return raman_effect
 
