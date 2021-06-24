@@ -3,8 +3,7 @@
 # a forward model). We'll try to restrict this stuff to the fixtures here,
 # so there is one place to update when we can move away from Lua.
 
-from refractor import framework as rf
-from refractor import read_shelve, write_shelve
+import refractor.framework as rf
 import os
 import sys
 import pytest

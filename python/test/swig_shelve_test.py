@@ -1,4 +1,3 @@
-from refractor.swig_shelve import *
 import time
 from test_support import *
 import pickle

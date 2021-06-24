@@ -27,3 +27,6 @@ bindings/python/.deps/swig_python_wrap.Tpcc
 
 # Build directories
 /build*
+
+# Egg directory, if we install with pip install -e
+python/refractor_framework.egg-info

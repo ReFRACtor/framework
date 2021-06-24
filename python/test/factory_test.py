@@ -1,8 +1,8 @@
 from functools import partial
 
-import refractor.factory.creator as creator
-import refractor.factory.param as param
-from refractor.factory import process_config
+import refractor.framework.factory.creator as creator
+import refractor.framework.factory.param as param
+from refractor.framework.factory import process_config
 
 from test_support import *
 
