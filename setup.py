@@ -10,7 +10,8 @@ setup(
     description='ReFRACtor Framework',
     author='James McDuffie',
     author_email='James.McDuffie@jpl.nasa.gov',
-    packages=find_namespace_packages(include=["refractor.*"]),
+    packages=find_namespace_packages(include=["refractor.*"],
+                                     where="python"),
     package_dir={"": "python"},
     install_requires=[
         'numpy', 
