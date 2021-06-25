@@ -9,7 +9,7 @@ from netCDF4 import Dataset
 from scipy.io import readsav
 
 import refractor.framework as rf
-import refractor.framework.factory.creator as creator
+import refractor.framework.factory as creator
 
 class MusesSimConfig(object):
 

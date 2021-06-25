@@ -1,20 +1,19 @@
 from functools import partial
 
-import refractor.framework.factory.creator as creator
-import refractor.framework.factory.param as param
-from refractor.framework.factory import process_config
+import refractor.framework.factory as creator
+from refractor.framework.factory import param, process_config
 
 from test_support import *
 
 def ParamReturnCreator(param_type, **kwargs):
-    class ReturnCreatorHelper(creator.base.Creator):
+    class ReturnCreatorHelper(creator.Creator):
         val = param_type(**kwargs)
         def create(self, **kwargs):
             return self.param("val")
 
     return ReturnCreatorHelper
 
-class AddCreator(creator.base.Creator):
+class AddCreator(creator.Creator):
     
     x = param.Scalar()
     y = param.Scalar()
@@ -203,7 +202,7 @@ def test_common_store():
     config_def = {
         'order': ['common', 'use_common'],
         'common': {
-            'creator': creator.base.SaveToCommon,
+            'creator': creator.SaveToCommon,
             'x': 5,
             'y': 6,
         },
@@ -218,7 +217,7 @@ def test_common_store():
 
 def test_param_choice():
 
-    class ChoiceCreator(creator.base.Creator):
+    class ChoiceCreator(creator.Creator):
         some_val = param.Choice(param.Scalar(int), param.Scalar(float))
 
         def create(self, **kwargs):
@@ -251,7 +250,7 @@ def test_param_choice():
 
 def test_bound_params():
 
-    class BoundParamCreator(creator.base.Creator):
+    class BoundParamCreator(creator.Creator):
         some_val = param.Choice(param.Scalar(int), param.Scalar(int))
 
         def create(self, **kwargs):

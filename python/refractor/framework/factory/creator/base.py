@@ -195,6 +195,13 @@ class Creator(object):
         "Implements the action to create the object referred to by the Creator class. Should not be called directly."
         raise NotImplementedError("Create must be defined in inheriting Creator classes")
 
+    @classmethod
+    def create_direct(cls, **kwargs):
+        '''This is syntactic sugar to make a creator act like it can directly
+        create an object. It just combines the deferred arguments passed in the
+        constructor and directly calls the create function.'''
+        return cls(kwargs).create()
+
     def __call__(self, **kwargs):
         """Turns creators into callables so that they can be evaluated by ConfigParam as any other callable without it
         needing to know any details of this class."""

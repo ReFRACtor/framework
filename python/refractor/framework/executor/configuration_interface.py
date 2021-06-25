@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from refractor.framework import (SolverIterationLog, RtAtmosphere,
-                                 ForwardModel, IterativeSolver, StateVector,
-                                 Level1b)
+from refractor_framework_swig import (SolverIterationLog, RtAtmosphere,
+                                      ForwardModel, IterativeSolver,
+                                      StateVector, Level1b)
 from .config import find_config_function
-from ..factory import process_config, creator
+import refractor.framework.factory as creator
 from ..output.atmosphere import AtmosphereOutputRetrieval, AtmosphereOutputSimulation
 from ..output.radiance import ForwardModelRadianceOutput, ObservationRadianceOutput
 from ..output.solver import SolverIterationOutput
@@ -90,7 +90,7 @@ class ConfigurationInterface(ABC):
 def ObjectCapture(capture_class):
     "Generate a Creator that watches for an object to be emitted elsewhere then stores it internally to use as its return object"
 
-    class ObjectCaptureCreator(creator.base.Creator):
+    class ObjectCaptureCreator(creator.Creator):
         def __init__(self, *vargs, **kwargs):
             super().__init__(*vargs, **kwargs)
 
@@ -118,7 +118,7 @@ class ConfigurationCreator(ConfigurationInterface):
         # Augment loaded configuration to help capture objects
         # required for output
         config_def = {
-            'creator': creator.base.ParamPassThru, 
+            'creator': creator.ParamPassThru, 
             'order': ['file_config'],
             'file_config': config_func(**strategy_keywords) if config_func else config_dict,
         }
@@ -131,11 +131,11 @@ class ConfigurationCreator(ConfigurationInterface):
             'solver': ObjectCapture(IterativeSolver),
             'state_vector': ObjectCapture(StateVector),
             'l1b': ObjectCapture(Level1b),
-            'retrieval_components': ObjectCapture(creator.retrieval.RetrievalComponents),
+            'retrieval_components': ObjectCapture(creator.RetrievalComponents),
         }
         config_def.update(captured_objects)
         config_def['order'] += list(captured_objects.keys())
-        self.config_inst = process_config(config_def)
+        self.config_inst = creator.process_config(config_def)
 
     @property
     def file_config(self):
