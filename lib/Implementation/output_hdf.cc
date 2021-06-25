@@ -208,6 +208,8 @@ template void OutputHdf::write_data_t(const std::string& Dataset_name,
 template void OutputHdf::write_data_t(const std::string& Dataset_name, 
 				      const std::string& Val);
 template void OutputHdf::write_data_t(const std::string& Dataset_name, 
+                      std::string Val);
+template void OutputHdf::write_data_t(const std::string& Dataset_name,
 				      const char* Val);
 
 template void OutputHdf::write_data_t(const std::string& Dataset_name, 
