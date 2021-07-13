@@ -109,7 +109,7 @@ std::string GlobalFixture::absco_data_dir() const
 	       "done if you are running 'make check', but you need to\n"
 	       "manually set this if you are running outside of make (e.g.,\n"
 	       "running in a debugger");
-  return std::string(srcdir) + "/v3.3.0/lowres";
+  return std::string(srcdir) + "/v5.0.0";
 }
 
 //-----------------------------------------------------------------------
@@ -140,26 +140,6 @@ std::string GlobalFixture::merra_data_dir() const
   return std::string(srcdir) + "/";
 }
 
-//-----------------------------------------------------------------------
-/// Location of absco 4d table. Note that all of the Absco is going to
-/// be 4d in the future, so this can eventually go away. But for now
-/// most of the unit tests are 3d except for the few depending on the
-/// newer 4d tables.
-//-----------------------------------------------------------------------
-
-std::string GlobalFixture::absco_4d_dir() const
-{
-  char* srcdir = getenv("abscodir");
-  // This should get set in set_default_value, but just in case
-  // something odd happens print an error message.
-  if(!srcdir)
-    BOOST_FAIL("To run this test, you must set the 'abscodir' environment\n"
-	       "variable to the top of the source tree. This is automatically\n"
-	       "done if you are running 'make check', but you need to\n"
-	       "manually set this if you are running outside of make (e.g.,\n"
-	       "running in a debugger");
-  return std::string(srcdir) + "/v4.2.0_unscaled";
-}
 
 //-----------------------------------------------------------------------
 /// Location of OSS run data. In particular, the input tape5_nc4.nc used

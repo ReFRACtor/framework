@@ -16,7 +16,6 @@ public:
   std::string absco_data_dir() const;
   std::string absco_aer_data_dir() const;
   std::string merra_data_dir() const;
-  std::string absco_4d_dir() const;
   std::string oss_run_dir() const;
   std::string oss_data_dir() const;
   void turn_on_logger() const;

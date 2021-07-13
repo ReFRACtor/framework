@@ -145,8 +145,6 @@ BOOST_AUTO_TEST_CASE(rayleigh_atmosphere)
   std::ofstream of_zeroext("atm_zeroext.new");
   of_zeroext << *atm_zeroext << std::endl;
 
-  std::cerr << "atm_rayleigh = " << atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value() << std::endl
-            << "atm_zeroext = " << atm_zeroext->optical_depth_wrt_rt(12929.94, 0).value() << std::endl;
   BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value(),
                            atm_zeroext->optical_depth_wrt_rt(12929.94, 0).value());
   BOOST_CHECK_MATRIX_CLOSE(atm_rayleigh->optical_depth_wrt_rt(12929.94, 0).value(),
