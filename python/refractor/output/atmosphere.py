@@ -66,7 +66,7 @@ class AtmosphereOutputBase(OutputBase):
             gas_column[gas_idx, :] = gas_density_layer.value.value[:, gas_idx]
             gas_column.units = gas_density_layer.units.name
 
-        dry_air = self.create_variable("total_air_number_density_layer", absorber_group, float, (layer_dim,))
+        dry_air = self.create_variable("total_dry_air_number_density_layer", absorber_group, float, (layer_dim,))
         dry_air[:] = self.atm.absorber.total_air_number_density_layer(density_sensor_idx).value.value
         dry_air.units = self.atm.absorber.total_air_number_density_layer(density_sensor_idx).units.name
     
