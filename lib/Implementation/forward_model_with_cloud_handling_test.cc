@@ -25,12 +25,6 @@ BOOST_FIXTURE_TEST_SUITE(forward_model_with_cloud_handling, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
-  // Note this currently contains a hardcoded path to the absco
-  // data. Not clear how to handle this in general. We'll move to the
-  // cross section version instead of absco for this particular case,
-  // but it would be good to be able to handle this in some general
-  // sort of way. A filename class of some kind that handles
-  // environment variables? So other method?
   auto underlying_fm = serialize_read<StandardForwardModel>(test_data_dir() + "in/forward_model/omi_underlying_forward_model.xml");
   // We don't save these values, should perhaps change the serialized
   // data

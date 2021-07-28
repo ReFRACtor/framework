@@ -6,6 +6,9 @@
 
 from refractor import framework as rf
 from refractor import write_shelve
+
+from refractor.input.paths import cross_section_filenames, cross_section_file_conversion_factors
+
 import numpy as np
 import h5py
 import os
@@ -249,15 +252,20 @@ rayleigh = rf.RayleighBodhaine(pressure, altitude, constants)
 
 # --------------
 # Absorber
-absco_filename = "${abscodir}/omi/res_0.1/O3_19840-37879_v0.0_init.nc"
-absorptions = rf.vector_gas_absorption()
-absorptions.push_back(rf.AbscoAer(absco_filename, 1.0, 5000,
-                                  rf.AbscoAer.NEAREST_NEIGHBOR_WN))
 vmrs = rf.vector_absorber_vmr()
 vmrs.push_back(rf.AbsorberVmrLevel(pressure_clear, o3_vmr_levels,
                                    "O3", rf.StateMappingLog()))
-absorber = rf.AbsorberAbsco(vmrs, pressure, temperature, altitude,
-                            absorptions, constants)
+
+xsec_data = np.loadtxt(cross_section_filenames["O3"])
+spec_grid = rf.ArrayWithUnit(xsec_data[:, 0], "nm")
+xsec_values = rf.ArrayWithUnit(xsec_data[:, 1:], "cm^2")
+
+o3_table = rf.XSecTableTempDep(spec_grid, xsec_values, cross_section_file_conversion_factors["O3"])
+
+xsec_tables = rf.vector_xsec_table()
+xsec_tables.push_back(o3_table)
+
+absorber = rf.AbsorberXSec(vmrs, pressure, temperature, altitude, xsec_tables)
 
 # --------------
 # Ground
