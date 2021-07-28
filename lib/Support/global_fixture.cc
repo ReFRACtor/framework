@@ -109,18 +109,8 @@ std::string GlobalFixture::absco_data_dir() const
 	       "done if you are running 'make check', but you need to\n"
 	       "manually set this if you are running outside of make (e.g.,\n"
 	       "running in a debugger");
-  return std::string(srcdir) + "/v5.0.0";
+  return std::string(srcdir);
 }
-
-//-----------------------------------------------------------------------
-/// Location of absco table. 
-//-----------------------------------------------------------------------
-
-std::string GlobalFixture::absco_aer_data_dir() const
-{
-  return test_data_dir() + "in/absco_aer/";
-}
-
 
 //-----------------------------------------------------------------------
 /// Location of merra data. 

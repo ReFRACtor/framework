@@ -121,10 +121,12 @@ endif()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # Expose options that user should supply
-set(ABSCO_DIR $ENV{abscodir} CACHE PATH "Base path of Absoprtion Coefficient tables are located")
-if(NOT ABSCO_DIR)
-    message(WARNING "ABSCO_DIR option not supplied, tests will fail")
+set(DEFAULT_ABSCO_DIR "${CMAKE_SOURCE_DIR}/test/unit/data/absco")
+set(ABSCO_DIR ${DEFAULT_ABSCO_DIR} CACHE PATH "Base path of Absoprtion Coefficient tables are located")
+if(ABSCO_DIR STREQUAL DEFAULT_ABSCO_DIR)
+    message(WARNING "ABSCO_DIR option not supplied, using internal path with reduced size ABSCO files. Standard unit tests should all pass. Long unit tests using L2_FP_LONG_CHECK will fail without full sized ABSCO files (distributed separately).")
 endif()
+
 set(MERRA_DIR $ENV{merradir} CACHE PATH "Base path of MERRA Composite files are located")
 if(NOT MERRA_DIR)
     message(WARNING "MERRA_DIR option not supplied, some tests will fail")

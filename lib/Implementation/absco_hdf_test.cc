@@ -12,10 +12,10 @@ BOOST_FIXTURE_TEST_SUITE(absco_hdf, GlobalFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   IfstreamCs expected_data(test_data_dir() + "expected/absco_hdf/basic");
-  AbscoHdf f(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
+  AbscoHdf f(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   // Note scale here is a nonsense value
   double table_scale = 1.2;
-  AbscoHdf fscale(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5", table_scale);
+  AbscoHdf fscale(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5", table_scale);
   BOOST_CHECK_EQUAL(f.number_broadener(), 1);
   Array<double, 1> pgrid_expect;
   expected_data >> pgrid_expect;
@@ -111,8 +111,8 @@ BOOST_AUTO_TEST_CASE(scale_specindex)
   tscale.push_back(1.0);
   tscale.push_back(1.1);
   tscale.push_back(1.2);
-  AbscoHdf f(absco_data_dir() + "/co2_devi2015_wco2scale-nist_sco2scale-unity.h5");
-  AbscoHdf fscale(absco_data_dir() + "/co2_devi2015_wco2scale-nist_sco2scale-unity.h5", sb, tscale);
+  AbscoHdf f(absco_data_dir() + "/legacy/co2_devi2015_wco2scale-nist_sco2scale-unity.h5");
+  AbscoHdf fscale(absco_data_dir() + "/legacy/co2_devi2015_wco2scale-nist_sco2scale-unity.h5", sb, tscale);
   DoubleWithUnit pv(12250, "Pa");
   DoubleWithUnit tv(190, "K");
   blitz::Array<double, 1> bvalue(1);
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(scale_specindex)
 BOOST_AUTO_TEST_CASE(absco_4d)
 {
   IfstreamCs expected_data(test_data_dir() + "expected/absco_hdf/4d");
-  AbscoHdf f(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
+  AbscoHdf f(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   BOOST_CHECK_EQUAL(f.broadener_name(0), "h2o");
   BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 3);
   Array<double, 1> bgrid_expect;
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE(timing)
   boost::timer tm;
   std::cerr << "Starting read of all data\n";
   int j = 0;
-  AbscoHdf f(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
+  AbscoHdf f(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   for(double i = 12929.94; i < 13210.15; i += 0.01, j++) {
     if(j % 1000 == 0)
       std::cerr << "Reading " << j << "\n"
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE(timing)
 
 BOOST_AUTO_TEST_CASE(cache_boundary)
 {
-  AbscoHdf f(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
+  AbscoHdf f(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   // This wn corresponds to the value at line 5000, which is the next
   // cache line.
   Array<double,3> data(f.read<double, 3>(12970.0));
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(serialization)
     return;
   
   boost::shared_ptr<AbscoHdf> a =
-    boost::make_shared<AbscoHdf>(absco_data_dir() + "/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
+    boost::make_shared<AbscoHdf>(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   std::string d = serialize_write_string(a);
   if(false)
     std::cerr << d;

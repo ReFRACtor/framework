@@ -12,12 +12,12 @@ BOOST_FIXTURE_TEST_SUITE(absco_aer, GlobalFixture)
 BOOST_AUTO_TEST_CASE(basic)
 {
   IfstreamCs expected_data(test_data_dir() + "expected/absco_aer/basic");
-  AbscoAer f(absco_aer_data_dir() + "/H2O_06200-06201_v0.0_init.nc");
+  AbscoAer f(absco_data_dir() + "/aer/H2O_06200-06201_v0.0_init.nc");
   // Note scale here is a nonsense value
   double table_scale = 1.2;
-  AbscoAer fscale(absco_aer_data_dir() + "/H2O_06200-06201_v0.0_init.nc",
+  AbscoAer fscale(absco_data_dir() + "/aer/H2O_06200-06201_v0.0_init.nc",
 		  table_scale);
-  AbscoAer f2(absco_aer_data_dir() + "/CH4_06200-06201_v0.0_init.nc");
+  AbscoAer f2(absco_data_dir() + "/aer/CH4_06200-06201_v0.0_init.nc");
   BOOST_CHECK_EQUAL(f.broadener_name(0), "h2o");
   BOOST_CHECK_EQUAL(f.number_broadener_vmr(0), 2);
   BOOST_CHECK_EQUAL(f.broadener_vmr_grid(0).rows(), 2);
@@ -113,8 +113,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_CASE(interpolation)
 {
-  IfstreamCs expected_data(test_data_dir() + "expected/absco_aer/basic");
-  AbscoAer f(absco_aer_data_dir() + "/H2O_06200-06201_v0.0_init.nc");
+  AbscoAer f(absco_data_dir() + "/aer/H2O_06200-06201_v0.0_init.nc");
   // For the given table, we determined a wavenumber that is not on
   // the grid, and the closest point on the grid.
   double wn_not_on_grid = 6200.025;
@@ -145,7 +144,7 @@ BOOST_AUTO_TEST_CASE(interpolation)
 BOOST_AUTO_TEST_CASE(read_o2)
 {
   // O2 has 2 broadners. Want to make sure we can read this.
-  AbscoAer f(absco_aer_data_dir() + "/O2_06200-06201_v0.0_init.nc");
+  AbscoAer f(absco_data_dir() + "/aer/O2_06200-06201_v0.0_init.nc");
   // For the given table, we determined a wavenumber that is not on
   // the grid, and the closest point on the grid.
   double wn = 6200;
@@ -166,7 +165,7 @@ BOOST_AUTO_TEST_CASE(full_wn_range)
   // had this working this test isn't needed.
   return;
   // Read through the full wn range.
-  AbscoAer a(absco_aer_data_dir() + "/CO2_04760-06300_v0.0_init.nc");
+  AbscoAer a(absco_data_dir() + "/aer/CO2_04760-06300_v0.0_init.nc");
   DoubleWithUnit press(12250, "Pa");
   DoubleWithUnit temp(190, "K");
   blitz::Array<double, 1> bvalue(1);
@@ -186,7 +185,7 @@ BOOST_AUTO_TEST_CASE(serialization)
     return;
   
   boost::shared_ptr<AbscoAer> a =
-    boost::make_shared<AbscoAer>(absco_aer_data_dir() + "/H2O_06200-06201_v0.0_init.nc");
+    boost::make_shared<AbscoAer>(absco_data_dir() + "/aer/H2O_06200-06201_v0.0_init.nc");
   std::string d = serialize_write_string(a);
   if(false)
     std::cerr << d;

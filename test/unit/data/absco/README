@@ -1,0 +1,7 @@
+This directory contains a shortened set of ABSCO files with only the wavenumbers
+used by the default short unit tests. The long tests enabled by the L2_FP_LONG_CHECK=1 or
+L2_FP_REALLY_LONG_CHECK=1 environment variables will fail with the short ABSCO files distributed
+with the framework source code. 
+
+For running the long and very long tests obtain the full length ABSCO files distributed
+as a seperate repository and use the ABSCO_DIR cmake variable to point to this directory.

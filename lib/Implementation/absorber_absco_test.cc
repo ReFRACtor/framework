@@ -181,8 +181,8 @@ BOOST_AUTO_TEST_CASE(two_broadener_optical_depth_each_layer)
 
   // Test 2 broadener
   AbsorberAbsco& a = *(boost::dynamic_pointer_cast<AbsorberAbsco>(config_absorber));
-  Array<double, 1> od_calc_1( sum(a.optical_depth_each_layer(1500.08111,0).value(),i2) );
-  Array<double, 1> od_calc_2( sum(a.optical_depth_each_layer_nder(1500.08111,0),i2) );
+  Array<double, 1> od_calc_1( sum(a.optical_depth_each_layer(6200.10,0).value(),i2) );
+  Array<double, 1> od_calc_2( sum(a.optical_depth_each_layer_nder(6200.10,0),i2) );
   std::cerr << od_calc_1;
   std::cerr << od_calc_2;
   // Test one broadener
@@ -192,5 +192,3 @@ BOOST_AUTO_TEST_CASE(two_broadener_optical_depth_each_layer)
   std::cerr << od_calc_4;
 }
 BOOST_AUTO_TEST_SUITE_END()
-
-
