@@ -113,25 +113,6 @@ std::string GlobalFixture::absco_data_dir() const
 }
 
 //-----------------------------------------------------------------------
-/// Location of merra data. 
-//-----------------------------------------------------------------------
-
-std::string GlobalFixture::merra_data_dir() const
-{
-  char* srcdir = getenv("merradir");
-  // This should get set in set_default_value, but just in case
-  // something odd happens print an error message.
-  if(!srcdir)
-    BOOST_FAIL("To run this test, you must set the 'merradir' environment\n"
-	       "variable to the top of the source tree. This is automatically\n"
-	       "done if you are running 'make check', but you need to\n"
-	       "manually set this if you are running outside of make (e.g.,\n"
-	       "running in a debugger");
-  return std::string(srcdir) + "/";
-}
-
-
-//-----------------------------------------------------------------------
 /// Location of OSS run data. In particular, the input tape5_nc4.nc used
 /// to read test data for OssConfigurationFixture
 //-----------------------------------------------------------------------

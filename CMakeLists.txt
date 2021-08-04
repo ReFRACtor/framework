@@ -127,11 +127,6 @@ if(ABSCO_DIR STREQUAL DEFAULT_ABSCO_DIR)
     message(WARNING "ABSCO_DIR option not supplied, using internal path with reduced size ABSCO files. Standard unit tests should all pass. Long unit tests using L2_FP_LONG_CHECK will fail without full sized ABSCO files (distributed separately).")
 endif()
 
-set(MERRA_DIR $ENV{merradir} CACHE PATH "Base path of MERRA Composite files are located")
-if(NOT MERRA_DIR)
-    message(WARNING "MERRA_DIR option not supplied, some tests will fail")
-endif()
-
 # Obtain the CM version of the source code
 execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/python/refractor/version_util.py ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE REFRACTOR_CM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE

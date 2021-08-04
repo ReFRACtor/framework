@@ -5,7 +5,6 @@ export REFRACTOR_INPUT_PATH=$refr_etc_path/input
 export REFRACTOR_TEMPLATE_PATH=$refr_etc_path/template
 
 export abscodir=@ABSCO_DIR@
-export merradir=@MERRA_DIR@
 
 if [ -n "@PYTHON_INSTALL_DIR@" ]; then
     refr_python_path=$REFRACTOR_INSTALL_PATH/@PYTHON_INSTALL_DIR@

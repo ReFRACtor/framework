@@ -15,7 +15,6 @@ void GlobalFixture::set_default_value()
   // overwrite existing variable. This means we don't need to bother
   // checking if this is set before we assign a value to it.
   setenv("abscodir", "@ABSCO_DIR@", 0);
-  setenv("merradir", "@MERRA_DIR@", 0);
   setenv("ossdir", "@OSS_DIR@", 0);
   setenv("oss_data_dir", "@OSS_DATA_DIR@", 0);
   setenv("abs_top_srcdir", "@PROJECT_SOURCE_DIR@", 1);
