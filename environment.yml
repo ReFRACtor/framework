@@ -7,6 +7,7 @@ dependencies:
   - gxx_linux-64
   - gfortran_linux-64
   - make
+  - patch
   - cmake>3.13
   - pkg-config
   - python<3.9
