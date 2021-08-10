@@ -17,7 +17,6 @@ dependencies:
   - doxygen
   - gsl
   - eigen
-  - lua<5.3
   - hdf5
   - jsonpickle
   - jupyter
