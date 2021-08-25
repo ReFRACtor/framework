@@ -516,7 +516,8 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos)     :: RaylP, nr, &
        Raylro, N2so, O2so, I_tot, R_tot, e, Raylcsec, N2sumin, O2sumin, diff
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, nz) :: I
-
+  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * N2Jmax-3) :: N2so_temp
+  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * O2max-7) :: O2so_temp
   fidx = nulo + maxpos; lidx = nuhi - maxpos
   ! calculate dynamic optical parameters
   DO nu = nulo, nuhi
@@ -548,6 +549,24 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
        * temp) * 3.d0 / (4.d0 + 2.d0 * Raylro(fidx:lidx) )         
   
   temp = 256 * pi ** 5 / 27
+
+  ! We precompute some values for the iz loop below for efficiency
+  ! set arrays to zero initially
+  N2so_temp(fidx:lidx, 0:2*N2Jmax-3) = 0.0;
+  O2so_temp(fidx:lidx, 0:2*O2max-7) = 0.0;
+
+  ! calculate relative amounts of light shifted in/out of a given nu
+  DO nu = fidx, lidx
+    temp1 = gammaN2(nu) * gammaN2(nu); temp2 = (REAL(nu))**4
+    DO j = 0, 2 * N2Jmax-3
+       N2so_temp(nu, j) = (REAL(nu - N2shift(j)))**4 * temp1
+    ENDDO
+
+    temp1 = gammaO2(nu) * gammaO2(nu)
+    DO k = 0, 2 * O2max-7
+       O2so_temp(nu, k) = (REAL(nu - O2shift(k)))**4 * temp1
+    ENDDO
+  ENDDO
 
   ! The following loop could be avoided by just using an effective temperature
   ! Will have small effect on the computed Ring effect spectrum (the effect on
@@ -599,14 +618,16 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
         temp1 = gammaN2(nu) * gammaN2(nu); temp2 = (REAL(nu))**4
         
         DO j = 0, 2 * N2Jmax-3
-           N2so(nu) = N2so(nu) + N2csec(j) * (REAL(nu - N2shift(j)))**4 * temp1
+           ! N2so(nu) = N2so(nu) + N2csec(j) * (REAL(nu - N2shift(j)))**4 * temp1
+           N2so(nu) = N2so(nu) + N2csec(j) * N2so_temp(nu, j)
            N2sumin(nu) = N2sumin(nu) + R(nu + N2shift(j), iz) / R(nu, iz) &
                 * N2csec(j) * gammaN2( nu + N2shift(j)) ** 2 * temp2
         ENDDO
      
         temp1 = gammaO2(nu) * gammaO2(nu)
         DO k = 0, 2 * O2max-7           
-           O2so(nu) = O2so(nu) + O2csec(k) * (REAL(nu - O2shift(k)))**4 * temp1
+           ! O2so(nu) = O2so(nu) + O2csec(k) * (REAL(nu - O2shift(k)))**4 * temp1
+           O2so(nu) = O2so(nu) + O2csec(k) * O2so_temp(nu, k)
            O2sumin(nu) = O2sumin(nu) + R(nu + O2shift(k), iz) / R(nu, iz) &
                 * O2csec(k) * gammaO2(nu + O2shift(k)) ** 2 * temp2
         ENDDO
