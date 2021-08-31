@@ -4,7 +4,7 @@ set(LUABIND_NAME luabind)
 # https://github.com/Oberon00/luabind
 # Commit version used is shown in the filename below
 if(NOT DEFINED LUABIND_URL)
-  set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-60e576e.tar.gz)
+  set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-c0b9359.tar.gz)
 endif(NOT DEFINED LUABIND_URL)
 
 # Set up arguments to cmake call
