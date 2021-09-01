@@ -506,7 +506,8 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   ! Local variables
   ! ========================
   INTEGER        :: nu, iz, j, k, fidx, lidx
-  REAL (KIND=dp) :: ZN2, ZO2, temp, temp1, temp2, phasefnc, pi3
+  REAL (KIND=dp) :: ZN2, ZO2, temp, temp1, temp2, phasefnc, pi3, N2so, O2so, &
+       N2sumin, O2sumin
   REAL (KIND=dp), DIMENSION (nz)          :: tempz
   REAL (KIND=dp), DIMENSION (nulo:nuhi)   :: gammaN2, gammaO2
   REAL (KIND=dp), DIMENSION(0:N2Jmax)     :: N2pop
@@ -514,10 +515,12 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   REAL (KIND=dp), DIMENSION(0:O2maxJ)     :: O2popz
   REAL (KIND=dp), DIMENSION(0:2*O2max-7)  :: O2csec, O2pop
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos)     :: RaylP, nr, &
-       Raylro, N2so, O2so, I_tot, R_tot, e, Raylcsec, N2sumin, O2sumin, diff
+       Raylro, I_tot, R_tot, e, Raylcsec, diff
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, nz) :: I
-  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * N2Jmax-3) :: N2so_temp
-  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * O2max-7) :: O2so_temp
+  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * N2Jmax-3) :: &
+       N2so_temp, N2gamma_temp
+  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * O2max-7) :: &
+       O2so_temp, O2gamma_temp
   fidx = nulo + maxpos; lidx = nuhi - maxpos
   ! calculate dynamic optical parameters
   DO nu = nulo, nuhi
@@ -551,20 +554,17 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   temp = 256 * pi ** 5 / 27
 
   ! We precompute some values for the iz loop below for efficiency
-  ! set arrays to zero initially
-  N2so_temp(fidx:lidx, 0:2*N2Jmax-3) = 0.0;
-  O2so_temp(fidx:lidx, 0:2*O2max-7) = 0.0;
-
-  ! calculate relative amounts of light shifted in/out of a given nu
   DO nu = fidx, lidx
     temp1 = gammaN2(nu) * gammaN2(nu); temp2 = (REAL(nu))**4
     DO j = 0, 2 * N2Jmax-3
        N2so_temp(nu, j) = (REAL(nu - N2shift(j)))**4 * temp1
+       N2gamma_temp(nu, j) = gammaN2( nu + N2shift(j)) ** 2 * temp2
     ENDDO
 
     temp1 = gammaO2(nu) * gammaO2(nu)
     DO k = 0, 2 * O2max-7
        O2so_temp(nu, k) = (REAL(nu - O2shift(k)))**4 * temp1
+       O2gamma_temp(nu, k) = gammaO2(nu + O2shift(k)) ** 2 * temp2
     ENDDO
   ENDDO
 
@@ -609,30 +609,26 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
         O2csec(k)= temp * O2pop(k) * O2b(k) / ZO2
      ENDDO
   
-     ! set arrays to zero initially
-     N2so(fidx:lidx) = 0.0; N2sumin(fidx:lidx) = 0.0
-     O2so(fidx:lidx) = 0.0; O2sumin(fidx:lidx) = 0.0
   
      ! calculate relative amounts of light shifted in/out of a given nu     
      DO nu = fidx, lidx
-        temp1 = gammaN2(nu) * gammaN2(nu); temp2 = (REAL(nu))**4
-        
+        ! set accumulators to zero initially
+        N2so = 0.0; N2sumin = 0.0
+        O2so = 0.0; O2sumin = 0.0
+
         DO j = 0, 2 * N2Jmax-3
-           ! N2so(nu) = N2so(nu) + N2csec(j) * (REAL(nu - N2shift(j)))**4 * temp1
-           N2so(nu) = N2so(nu) + N2csec(j) * N2so_temp(nu, j)
-           N2sumin(nu) = N2sumin(nu) + R(nu + N2shift(j), iz) / R(nu, iz) &
-                * N2csec(j) * gammaN2( nu + N2shift(j)) ** 2 * temp2
+           N2so = N2so + N2csec(j) * N2so_temp(nu, j)
+           N2sumin = N2sumin + R(nu + N2shift(j), iz) / R(nu, iz) &
+                * N2csec(j) * N2gamma_temp(nu, j)
         ENDDO
      
-        temp1 = gammaO2(nu) * gammaO2(nu)
-        DO k = 0, 2 * O2max-7           
-           ! O2so(nu) = O2so(nu) + O2csec(k) * (REAL(nu - O2shift(k)))**4 * temp1
-           O2so(nu) = O2so(nu) + O2csec(k) * O2so_temp(nu, k)
-           O2sumin(nu) = O2sumin(nu) + R(nu + O2shift(k), iz) / R(nu, iz) &
-                * O2csec(k) * gammaO2(nu + O2shift(k)) ** 2 * temp2
+        DO k = 0, 2 * O2max-7
+           O2so = O2so + O2csec(k) * O2so_temp(nu, k)
+           O2sumin = O2sumin + R(nu + O2shift(k), iz) / R(nu, iz) &
+                * O2csec(k) * O2gamma_temp(nu, k)
         ENDDO
         
-        diff(nu) = N2mix * (N2sumin(nu) - N2so(nu)) + O2mix * (O2sumin(nu) - O2so(nu))
+        diff(nu) = N2mix * (N2sumin - N2so) + O2mix * (O2sumin - O2so)
         I(nu, iz) = R(nu, iz) * ( 1.0 + phasefnc * diff(nu) &
              / (Raylcsec(nu) * RaylP(nu)))
      ENDDO
