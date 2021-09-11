@@ -20,6 +20,11 @@ public:
                    const ArrayWithUnit<double, 1>& Ref_points,
                    const std::vector<std::string>& Desc_band_names,
                    boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
+  GroundLambertian(const blitz::Array<double, 2>& Spec_coeffs,
+                   const ArrayWithUnit<double, 1>& Ref_points,
+		   const Unit& Polynomial_unit,
+                   const std::vector<std::string>& Desc_band_names,
+                   boost::shared_ptr<StateMapping> Mapping = boost::make_shared<StateMappingLinear>());
 
   virtual ArrayAd<double, 1> surface_parameter(const double wn, const int spec_index) const;
   virtual const AutoDerivative<double> albedo(const DoubleWithUnit wave_point, const int spec_index) const;
@@ -30,6 +35,7 @@ public:
   virtual const DoubleWithUnit reference_point(const int spec_index) const;
   virtual boost::shared_ptr<Ground> clone() const;
   %python_attribute(sub_state_identifier, std::string);
+  %python_attribute(polynomial_unit, Unit);
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
   virtual std::string desc() const;
