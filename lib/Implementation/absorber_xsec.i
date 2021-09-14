@@ -14,6 +14,9 @@
 
 namespace FullPhysics {
 
+// Allow these classes to be derived from in Python.
+%feature("director") AbsorberXSec;
+  
 class AbsorberXSec: virtual public Absorber {
  public:
     AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vmr,

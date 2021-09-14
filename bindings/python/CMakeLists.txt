@@ -120,13 +120,16 @@ set_target_properties(_swig_wrap PROPERTIES SUFFIX ".so")
 # Find where Python distribution libaries should be located by querying distutils
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+if(PIP_DEVELOP_MODE)
+  set(_pip_args "--editable")
+else()
+  set(_pip_args)
+endif()
+
 # Install non SWIG Python code into refractor/
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/python/refractor/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor
-  FILES_MATCHING
-  PATTERN "*_test.py" EXCLUDE
-  PATTERN "test_support/*" EXCLUDE
-  PATTERN "test_support" EXCLUDE
-  PATTERN "*.py")
+add_custom_target(pip_install
+  COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_SOURCE_DIR} 
+  )
 
 # Create version.py file by evaluating cmake variables
 configure_file (
@@ -134,7 +137,7 @@ configure_file (
     "${CMAKE_CURRENT_BINARY_DIR}/version.py"
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
 
 # Install SWIG Python code into refractor_framework_swig/
 install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
@@ -155,7 +158,7 @@ install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_w
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
 
 # Make a custom target to allow doing: make python
-add_custom_target(python DEPENDS _swig_wrap)
+add_custom_target(python DEPENDS _swig_wrap pip_install)
 
 # Suppress some warning in SWIG code, since we don't generate this ourselves
 add_definitions("-Wno-unused-parameter")

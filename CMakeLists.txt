@@ -128,7 +128,7 @@ if(ABSCO_DIR STREQUAL DEFAULT_ABSCO_DIR)
 endif()
 
 # Obtain the CM version of the source code
-execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/python/refractor/version_util.py ${PROJECT_SOURCE_DIR}
+execute_process(COMMAND python ${PROJECT_SOURCE_DIR}/support/refractor/framework/version_util.py ${PROJECT_SOURCE_DIR}
     OUTPUT_VARIABLE REFRACTOR_CM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
@@ -159,6 +159,7 @@ add_subdirectory(input)
 
 # Add Python binding rules
 option(BUILD_PYTHON_BINDING "Build Python SWIG bindings" ON)
+option(PIP_DEVELOP_MODE "Install Python in editable mode" OFF)
 if(BUILD_PYTHON_BINDING) 
     add_subdirectory(bindings/python)
 endif()
