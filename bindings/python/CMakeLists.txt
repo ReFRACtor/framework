@@ -158,7 +158,8 @@ install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_w
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
 
 # Make a custom target to allow doing: make python
-add_custom_target(python DEPENDS _swig_wrap pip_install)
+# Make sure it gets called during the all target
+add_custom_target(python ALL DEPENDS _swig_wrap pip_install)
 
 # Suppress some warning in SWIG code, since we don't generate this ourselves
 add_definitions("-Wno-unused-parameter")
