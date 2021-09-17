@@ -79,6 +79,15 @@ find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem syst
 list(APPEND THIRDPARTY_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 
+# boost timer depends on librt, which for some reason don't get added
+# by the find package. Look for this, and if we find it add it in.
+#find_library(LIB_RT NAMES rt librt HINT ${CONDA_BUILD_SYSROOT}/lib64)
+find_library(LIB_RT NAMES rt librt)
+if(NOT ${LIB_RT} MATCHES "-NOTFOUND")
+  message(STATUS "Linking with librt: ${LIB_RT}")
+  list(APPEND THIRDPARTY_LIBRARIES ${LIB_RT})
+endif()
+
 # Set up Eigen
 find_package(Eigen REQUIRED)
 list(APPEND THIRDPARTY_INCLUDES ${EIGEN_INCLUDE_DIRS})
