@@ -79,6 +79,11 @@ add_definitions("-Wno-deprecated-declarations")
 # When we are using debug mode, turn on the blitz range checking.
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DBZ_DEBUG")
 
+# We want to use full paths for all the libraries, otherwise we
+# get weird behavior in conda where system libraries get picked out
+# instead of the conda library
+cmake_policy(SET CMP0060 NEW)
+
 if(POLICY CMP0068)
   cmake_policy(SET CMP0068 NEW)
 endif()
