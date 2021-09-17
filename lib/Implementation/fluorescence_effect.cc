@@ -3,7 +3,6 @@
 #include "forward_model_spectral_grid.h"
 #include "ostream_pad.h"
 
-#include <boost/progress.hpp>
 using namespace FullPhysics;
 using namespace blitz;
 

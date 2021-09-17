@@ -23,7 +23,7 @@ RadiativeTransferSingleWn::stokes(const SpectralDomain& Spec_domain,
   FunctionTimer ft(timer.function_timer(true));
 
   Array<double, 1> wn(Spec_domain.wavenumber());
-  boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
+  boost::shared_ptr<boost::timer::progress_display> disp = progress_display(wn);
   Array<double, 2> res(wn.rows(), number_stokes());
 
   for(int i = 0; i < wn.rows(); ++i) {
@@ -46,7 +46,7 @@ RadiativeTransferSingleWn::stokes_and_jacobian(const SpectralDomain& Spec_domain
   Array<double, 1> wn(Spec_domain.wavenumber());
   if(wn.rows() < 1)		// Handle degenerate case.
     return ArrayAd<double, 2>(0,number_stokes(),0);
-  boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
+  boost::shared_ptr<boost::timer::progress_display> disp = progress_display(wn);
   ArrayAd<double, 1> t =
     stokes_and_jacobian_single_wn(wn(0), Spec_index);
   ArrayAd<double, 2> res(wn.rows(), number_stokes(), t.number_variable());

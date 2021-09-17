@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(reflectance_second_order_serialization)
 BOOST_AUTO_TEST_CASE(l_rad_timing)
 {
   is_timing_test();
-  boost::timer tm;
+  boost::timer::cpu_timer tm;
   RtAtmosphere& atm = *config_atmosphere;
   int i = 0;
   for(double wn = 12929.94; wn <= 13210.15; wn += 0.01) {
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(l_rad_timing)
       res(rt_lrad_only->stokes_and_jacobian_single_wn(wn, 0));
     if(++i % 1000 == 0)
       std::cerr << "Done with " << i << "\n"
-                << "Total: " << tm.elapsed() << "\n"
+                << "Total: " << tm.format() << "\n"
                 << atm.timer_info() << "\n";
   }
 }

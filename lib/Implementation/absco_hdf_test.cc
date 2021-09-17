@@ -2,7 +2,7 @@
 #include "unit_test_support.h"
 #include "ifstream_cs.h"
 #include "spectral_bound.h"
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -206,18 +206,18 @@ BOOST_AUTO_TEST_CASE(timing)
 {
   is_timing_test();
   // Read through all the data, to make sure it doesn't take to long.
-  boost::timer tm;
+  boost::timer::cpu_timer tm;
   std::cerr << "Starting read of all data\n";
   int j = 0;
   AbscoHdf f(absco_data_dir() + "/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5");
   for(double i = 12929.94; i < 13210.15; i += 0.01, j++) {
     if(j % 1000 == 0)
       std::cerr << "Reading " << j << "\n"
-		<< "Total time: " << tm.elapsed() << "\n";
+		<< "Total time: " << tm.format() << "\n";
     f.read<float, 3>(i);
   }
   std::cerr << "Done\n"
-	    << "Total time: " << tm.elapsed() << "\n";
+	    << "Total time: " << tm.format() << "\n";
 }
 
 BOOST_AUTO_TEST_CASE(cache_boundary)

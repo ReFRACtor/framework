@@ -1,4 +1,4 @@
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "absorber_vmr_level.h"
 #include "ostream_pad.h"
@@ -7,6 +7,7 @@
 
 using namespace FullPhysics;
 using namespace blitz;
+using namespace boost::placeholders;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>

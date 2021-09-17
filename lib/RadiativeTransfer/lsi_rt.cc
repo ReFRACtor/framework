@@ -4,7 +4,7 @@
 #include "bin_map.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 #include "atmosphere_standard.h"
 #include "optical_properties_lsi.h"
@@ -288,7 +288,7 @@ void LsiRt::calc_correction(const SpectralDomain& Spec_domain,
   Range ra(Range::all());
   Array<double, 1> wn(Spec_domain.wavenumber());
 
-  boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
+  boost::shared_ptr<boost::timer::progress_display> disp = progress_display(wn);
 
   // Cast into an AtmosphereStandard because we need some AtmosphereStandard specific
   // values below, namely to pull out the Atmosphere class

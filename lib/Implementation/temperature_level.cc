@@ -3,11 +3,12 @@
 #include "linear_interpolate.h"
 #include "fp_serialize_support.h"
 
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+using namespace boost::placeholders;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 

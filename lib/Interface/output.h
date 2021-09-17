@@ -4,7 +4,7 @@
 #include <boost/function.hpp>
 #include <blitz/array.h>
 #include <boost/shared_ptr.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/any.hpp>
 #include <map>

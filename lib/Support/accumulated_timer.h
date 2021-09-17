@@ -4,7 +4,7 @@
 #include "logger.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 namespace FullPhysics {
 class FunctionTimer;
@@ -60,16 +60,16 @@ public:
     : at(At), auto_log(Auto_log) {}
   ~FunctionTimerR() 
   { 
-    at.elapsed_ += t.elapsed(); 
+    at.elapsed_ += t.elapsed().user; 
     if(auto_log) {
       Logger::info() << "Current: " << at.desc << " elapsed time " 
-		     << t.elapsed() << "\n";
+		     << t.format() << "\n";
       Logger::info() << "Total:   " << at << "\n";
     }
   }
 private:
   const AccumulatedTimer& at;
-  boost::timer t;
+  boost::timer::cpu_timer t;
   bool auto_log;
 };
 

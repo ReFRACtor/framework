@@ -160,7 +160,7 @@ blitz::Array<double, 2> ChapmanBoaRT::stokes(const SpectralDomain& Spec_domain, 
 
   Array<double, 1> wn(Spec_domain.wavenumber());
   Array<double, 2> trans(wn.extent(firstDim), number_stokes());
-  boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
+  boost::shared_ptr<boost::timer::progress_display> disp = progress_display(wn);
 
   for(int i = 0; i < wn.rows(); ++i) {
     trans(i, 0) = value( cache[Spec_index].chapman_boa->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0) );
@@ -179,7 +179,7 @@ ArrayAd<double, 2> ChapmanBoaRT::stokes_and_jacobian(const SpectralDomain& Spec_
 
   Array<double, 1> wn(Spec_domain.wavenumber());
   ArrayAd<double, 2> trans_jac(wn.extent(firstDim), number_stokes(), 1);
-  boost::shared_ptr<boost::progress_display> disp = progress_display(wn);
+  boost::shared_ptr<boost::timer::progress_display> disp = progress_display(wn);
 
   for(int i = 0; i < wn.extent(firstDim); ++i) {
     AutoDerivative<double> trans_wn = cache[Spec_index].chapman_boa->transmittance(atm->optical_depth_wrt_state_vector(wn(i), Spec_index).to_array(), 0);

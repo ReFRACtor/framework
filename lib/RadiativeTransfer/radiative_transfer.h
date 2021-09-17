@@ -5,7 +5,7 @@
 #include "array_ad.h"
 #include "spectrum.h"
 #include <blitz/array.h>
-#include <boost/progress.hpp>
+#include <boost/timer/progress_display.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 
@@ -104,7 +104,7 @@ public:
   }
 protected:
   static AccumulatedTimer timer;
-  boost::shared_ptr<boost::progress_display> progress_display(const 
+  boost::shared_ptr<boost::timer::progress_display> progress_display(const 
            blitz::Array<double, 1>& wn, boost::optional<std::string> message = boost::optional<std::string>()) const;
 private:  
   friend class boost::serialization::access;

@@ -1,10 +1,11 @@
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include "absorber_vmr_scaled.h"
 #include "linear_interpolate.h"
 #include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+using namespace boost::placeholders;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 

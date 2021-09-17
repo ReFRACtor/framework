@@ -5,6 +5,9 @@ extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>
 }
+// Luabind uses a deprecated version of boost bind. Silence a warning
+// message, since we don't actually want to fix luabind
+#define BOOST_BIND_GLOBAL_PLACEHOLDERS 1
 #include <luabind/luabind.hpp>
 #include "level_1b_sample_coefficient.h"
 #include "register_lua.h"

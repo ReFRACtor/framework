@@ -76,7 +76,7 @@ void LogTiming::write_to_log(const std::string& Prefix) const
 {
   // Grab all the timing information at once, so we don't have
   // inconsistent times in the report.
-  double wtime = wall_clock.elapsed();
+  double wtime = wall_clock.elapsed().user;
   struct rusage r_usage;
   int status = getrusage(RUSAGE_SELF, &r_usage);
   if(status != 0)

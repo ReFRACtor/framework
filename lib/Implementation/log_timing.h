@@ -2,7 +2,7 @@
 #define LOG_TIMING_H
 #include "printable.h"
 #include "connor_solver.h"
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 namespace FullPhysics {
 
@@ -21,7 +21,7 @@ public:
 private:
   int number_divergent;
   int number_iteration;
-  boost::timer wall_clock;
+  boost::timer::cpu_timer wall_clock;
   double cpu_factor;
   double speed_mhz;
   std::string cpu_model;

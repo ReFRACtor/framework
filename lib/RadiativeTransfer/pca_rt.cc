@@ -63,7 +63,7 @@ void PCARt::compute_bins(const SpectralDomain& Spec_domain, int Spec_index) cons
 {
     
     boost::optional<std::string> progress_message("Optical Properties: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
-    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
+    boost::shared_ptr<boost::timer::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute optical properties for the whole band
     for (int dom_idx = 0; dom_idx < Spec_domain.data().rows(); dom_idx++) {
@@ -248,7 +248,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
     std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
 
     boost::optional<std::string> progress_message("PCA RT: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
-    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
+    boost::shared_ptr<boost::timer::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < (int) bins.size(); bin_idx++) {
@@ -316,7 +316,7 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
     std::vector<blitz::Array<int, 1> > bins = pca_bin->bin_indexes();
 
     boost::optional<std::string> progress_message("PCA RT + Jacobian: Channel " + boost::lexical_cast<std::string>(Spec_index + 1));
-    boost::shared_ptr<boost::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
+    boost::shared_ptr<boost::timer::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute values for each bin
     for (int bin_idx = 0; bin_idx < (int) bins.size(); bin_idx++) {

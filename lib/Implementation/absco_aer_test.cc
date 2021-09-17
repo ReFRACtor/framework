@@ -2,7 +2,6 @@
 #include "unit_test_support.h"
 #include "ifstream_cs.h"
 #include "spectral_bound.h"
-#include <boost/timer.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;

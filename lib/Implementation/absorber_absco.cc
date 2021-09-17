@@ -6,7 +6,7 @@
 #include "ostream_pad.h"
 #include "absco.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 using namespace FullPhysics;
 using namespace blitz;
 inline double sqr(double x) {return x * x;}
