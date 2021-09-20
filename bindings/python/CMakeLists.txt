@@ -2,8 +2,8 @@
 # before the libs (i.e., the order is important). Otherwise this finds
 # the system python for libraries but uses conda for the interpreter, which
 # of course causes problems. This goes away if you do this in the other order.
-find_package(PythonInterp 3.0 REQUIRED)
-find_package(PythonLibs 3.0 REQUIRED)
+find_package(PythonInterp 3.7 REQUIRED)
+find_package(PythonLibs 3.7 REQUIRED)
 include_directories(${PYTHON_INCLUDE_PATH})
 
 # Find NumPy
