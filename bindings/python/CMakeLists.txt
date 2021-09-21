@@ -88,6 +88,13 @@ else()
     swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cc)
 endif()
 
+# Add dependency of the compilaiton of .i files on the third party library to avoid
+# failure for missing .h files installed by the thirdparty step.
+# This target can run in parallel with the refractor library target since the _swig_wrap
+# target is where the libraries get linked.
+# This dependency must come after swig_add_library since this target gets defined there
+add_dependencies(swig_wrap_swig_compilation thirdparty)
+
 # Link with main library, which is also called refractor!
 
 if(APPLE)
