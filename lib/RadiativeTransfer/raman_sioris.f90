@@ -517,9 +517,9 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos)     :: RaylP, nr, &
        Raylro, I_tot, R_tot, e, Raylcsec, diff
   REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, nz) :: I
-  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * N2Jmax-3) :: &
+  REAL (KIND=dp), DIMENSION(0:2 * N2Jmax-3, nulo+maxpos:nuhi-maxpos) :: &
        N2so_temp, N2gamma_temp
-  REAL (KIND=dp), DIMENSION(nulo+maxpos:nuhi-maxpos, 0:2 * O2max-7) :: &
+  REAL (KIND=dp), DIMENSION(0:2 * O2max-7, nulo+maxpos:nuhi-maxpos) :: &
        O2so_temp, O2gamma_temp
   fidx = nulo + maxpos; lidx = nuhi - maxpos
   ! calculate dynamic optical parameters
@@ -557,14 +557,14 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   DO nu = fidx, lidx
     temp1 = gammaN2(nu) * gammaN2(nu); temp2 = (REAL(nu))**4
     DO j = 0, 2 * N2Jmax-3
-       N2so_temp(nu, j) = (REAL(nu - N2shift(j)))**4 * temp1
-       N2gamma_temp(nu, j) = gammaN2( nu + N2shift(j)) ** 2 * temp2
+       N2so_temp(j, nu) = (REAL(nu - N2shift(j)))**4 * temp1
+       N2gamma_temp(j, nu) = gammaN2( nu + N2shift(j)) ** 2 * temp2
     ENDDO
 
     temp1 = gammaO2(nu) * gammaO2(nu)
     DO k = 0, 2 * O2max-7
-       O2so_temp(nu, k) = (REAL(nu - O2shift(k)))**4 * temp1
-       O2gamma_temp(nu, k) = gammaO2(nu + O2shift(k)) ** 2 * temp2
+       O2so_temp(k, nu) = (REAL(nu - O2shift(k)))**4 * temp1
+       O2gamma_temp(k, nu) = gammaO2(nu + O2shift(k)) ** 2 * temp2
     ENDDO
   ENDDO
 
@@ -617,15 +617,15 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
         O2so = 0.0; O2sumin = 0.0
 
         DO j = 0, 2 * N2Jmax-3
-           N2so = N2so + N2csec(j) * N2so_temp(nu, j)
+           N2so = N2so + N2csec(j) * N2so_temp(j, nu)
            N2sumin = N2sumin + R(nu + N2shift(j), iz) / R(nu, iz) &
-                * N2csec(j) * N2gamma_temp(nu, j)
+                * N2csec(j) * N2gamma_temp(j, nu)
         ENDDO
      
         DO k = 0, 2 * O2max-7
-           O2so = O2so + O2csec(k) * O2so_temp(nu, k)
+           O2so = O2so + O2csec(k) * O2so_temp(k, nu)
            O2sumin = O2sumin + R(nu + O2shift(k), iz) / R(nu, iz) &
-                * O2csec(k) * O2gamma_temp(nu, k)
+                * O2csec(k) * O2gamma_temp(k, nu)
         ENDDO
         
         diff(nu) = N2mix * (N2sumin - N2so) + O2mix * (O2sumin - O2so)
