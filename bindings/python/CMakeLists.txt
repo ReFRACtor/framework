@@ -88,13 +88,6 @@ else()
     swig_add_module(swig_wrap python ${BUILD_USED_SWIG_FILES} ${CMAKE_SWIG_OUTDIR}/swig_wrap.cc)
 endif()
 
-# Add dependency of the compilaiton of .i files on the third party library to avoid
-# failure for missing .h files installed by the thirdparty step.
-# This target can run in parallel with the refractor library target since the _swig_wrap
-# target is where the libraries get linked.
-# This dependency must come after swig_add_library since this target gets defined there
-add_dependencies(swig_wrap_swig_compilation thirdparty)
-
 # Link with main library, which is also called refractor!
 
 if(APPLE)
@@ -134,9 +127,7 @@ else()
 endif()
 
 # Install non SWIG Python code into refractor/
-add_custom_target(pip_install
-  COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_SOURCE_DIR} 
-  )
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_SOURCE_DIR})")
 
 # Create version.py file by evaluating cmake variables
 configure_file (
@@ -166,7 +157,7 @@ set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
 
 # Make a custom target to allow doing: make python
 # Make sure it gets called during the all target
-add_custom_target(python ALL DEPENDS _swig_wrap pip_install)
+add_custom_target(python ALL DEPENDS _swig_wrap)
 
 # Suppress some warning in SWIG code, since we don't generate this ourselves
 add_definitions("-Wno-unused-parameter")
