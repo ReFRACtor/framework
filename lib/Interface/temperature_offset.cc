@@ -62,9 +62,13 @@ void TemperatureOffset::calc_temperature_grid() const
   }
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
     lin_type;
-  boost::shared_ptr<lin_type> lin
-    (new lin_type(plist.begin(), plist.end(), tlist.begin()));
-  cache.tgrid = boost::bind(&lin_type::operator(), lin, _1);
+  if(press->type_preference() == Pressure::PREFER_INCREASING_PRESSURE) {
+    boost::shared_ptr<lin_type> lin(new lin_type(plist.begin(), plist.end(), tlist.begin()));
+    cache.tgrid = boost::bind(&lin_type::operator(), lin, _1);
+  } else {
+    boost::shared_ptr<lin_type> lin(new lin_type(plist.rbegin(), plist.rend(), tlist.rbegin()));
+    cache.tgrid = boost::bind(&lin_type::operator(), lin, _1);
+  }
 }
 
 // See base class for description of this function.
