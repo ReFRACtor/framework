@@ -19,11 +19,9 @@ class AerosolExtinctionImpBase:
 public:
   virtual ~AerosolExtinctionImpBase() {}
   virtual std::string aerosol_name() const {return aerosol_name_;}
-  virtual ArrayAd<double, 1> aerosol_extinction() const
-  { fill_cache(); return aext; }
-  virtual AutoDerivative<double> extinction_for_layer(int i) const
-  { fill_cache(); range_check(i, 0, aext.rows() - 1); 
-    return (aext(i) + aext(i + 1)) / 2; }
+  virtual ArrayAd<double, 1> aerosol_extinction
+  (Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
+  virtual AutoDerivative<double> extinction_for_layer(int i) const;
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
   virtual void update_sub_state_hook() 
   { cache_stale = true; }

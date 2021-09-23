@@ -49,15 +49,17 @@ class PressureImpBase: public SubStateVectorArray<Pressure> {
 public:
   // From PressureImpBase
   virtual ~PressureImpBase();
-  virtual boost::shared_ptr<Pressure> clone() const = 0;
-  %python_attribute_derived(pressure_grid, ArrayAdWithUnit<double, 1>);
+  virtual ArrayAdWithUnit<double, 1> pressure_grid(Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
+  %python_attribute_derived(type_preference, Pressure::TypePreference);
   %sub_state_virtual_func(Pressure);
   %pickle_serialization();
 protected:
   mutable PressureImpBaseCache cache;
   virtual void calc_pressure_grid() const = 0;
   PressureImpBase();
-  PressureImpBase(const blitz::Array<double, 1>& Coeff);
+  PressureImpBase(const blitz::Array<double, 1>& Coeff,
+		  Pressure::TypePreference Tpref =
+		  Pressure::PREFER_INCREASING_PRESSURE);
 };
 }
 

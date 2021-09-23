@@ -431,7 +431,7 @@ class OssForwardModel(Creator):
 
         pressure = self.pressure()
 
-        fm_press = pressure.pressure_grid.value.value
+        fm_press = pressure.pressure_grid().value.value
 
         self.check_retrieval_order(retrieval_components)
 

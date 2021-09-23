@@ -51,7 +51,8 @@ public:
   virtual AutoDerivative<double> 
   volume_mixing_ratio(const AutoDerivative<double>& P) const = 0;
 
-  virtual ArrayAd<double, 1> vmr_grid(const Pressure& P) const;
+  virtual ArrayAd<double, 1> vmr_grid(const Pressure& P,
+      Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
 
 //-----------------------------------------------------------------------
 /// Indicate what portion of the state vector is used to calculate the

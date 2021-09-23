@@ -317,7 +317,7 @@ class TestAltitudeHydrostatic(BaseForTesting):
                                    DoubleWithUnit(416, "m"))
 
     def check(self, a1, a2):
-        pgrid = self.t.create().pressure_grid
+        pgrid = self.t.create().pressure_grid()
         t3 = TestAutoDerivativeWithUnit()
         t3.create()
         for i in range(pgrid.value.rows):
@@ -534,7 +534,7 @@ class TestAerosolExtinctionLinear(BaseForTesting):
         return AerosolExtinctionLinear(self.t.create(), [0.0, 1.0, 0.2], "Kahn")
 
     def check(self, a1, a2):
-        assert a1.aerosol_extinction == approx(a2.aerosol_extinction)
+        assert a1.aerosol_extinction() == approx(a2.aerosol_extinction())
         assert a1.aerosol_name == a2.aerosol_name
         assert a1.model_short_name == a2.model_short_name
 

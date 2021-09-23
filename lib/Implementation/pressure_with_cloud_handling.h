@@ -58,9 +58,11 @@ public:
   {
     return pressure_clear_->max_number_level();
   }
-  virtual ArrayAdWithUnit<double, 1> pressure_grid() const;
+  virtual ArrayAdWithUnit<double, 1> pressure_grid(Pressure::PressureGridType Gtype= INCREASING_PRESSURE) const;
   virtual void print(std::ostream& Os) const;
   virtual boost::shared_ptr<Pressure> clone() const;
+  virtual TypePreference type_preference() const
+  { return pressure_clear_->type_preference(); }
 private:
   boost::shared_ptr<Pressure> pressure_clear_;
   double cloud_pressure_level_;

@@ -58,7 +58,7 @@ class PressureGridMUSES(CreatorMUSES):
 
             logger.debug(f"Loading pressure grid from: {press_osp.fm_pressure_filename}")
 
-            pressure_levels = press_osp.fm_pressure_grid
+            pressure_levels = press_osp.fm_pressure_grid()
 
         if surface_pressure is None:
             # Disable cutoff to get all pressure levels present
@@ -113,7 +113,7 @@ class TemperatureMUSES(CreatorMUSES, atmosphere.TemperatureLevel):
             logger.debug(f"Resampling supplied pressure profile to pressure grid: {osp_pressure_grid}")
 
             # Resample supplied value so that covariance from MUSES can be used
-            inp_pressure_grid = self.pressure().pressure_grid.value.value
+            inp_pressure_grid = self.pressure().pressure_grid().value.value
 
             self.config_def["temperature_profile"] = np.interp(osp_pressure_grid, inp_pressure_grid, self.temperature_profile())
 

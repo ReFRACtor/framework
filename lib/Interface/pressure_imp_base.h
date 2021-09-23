@@ -44,8 +44,7 @@ private:
 class PressureImpBase: virtual public SubStateVectorArray<Pressure> {
 public:
   virtual ~PressureImpBase() {}
-  virtual ArrayAdWithUnit<double, 1> pressure_grid() const
-  { cache.fill_cache_if_needed(*this); return cache.pgrid; }
+  virtual ArrayAdWithUnit<double, 1> pressure_grid(Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   virtual boost::shared_ptr<Pressure> clone() const = 0;
   virtual void update_sub_state_hook() 
   { cache.invalidate_cache(); }
@@ -64,10 +63,12 @@ public:
 //-----------------------------------------------------------------------
   virtual std::string desc() const { return "PressureImpBase"; }
 
+  virtual TypePreference type_preference() const {return type_preference_;}
   using SubStateVectorArray<Pressure>::update_sub_state;
   using SubStateVectorArray<Pressure>::state_vector_name_sub;
 protected:
   mutable PressureImpBaseCache cache;
+  Pressure::TypePreference type_preference_;
 
 //-----------------------------------------------------------------------
 /// Derived classes should provide a function to fill in pgrid when this is 
@@ -80,12 +81,15 @@ protected:
 /// constructor.
 //-----------------------------------------------------------------------
 
-  PressureImpBase() { }
+  PressureImpBase() : type_preference_(Pressure::PREFER_INCREASING_PRESSURE) { }
 
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient() values.
 //-----------------------------------------------------------------------
-  PressureImpBase(const blitz::Array<double, 1>& Coeff)
+  PressureImpBase(const blitz::Array<double, 1>& Coeff,
+		  Pressure::TypePreference Tpref =
+		  Pressure::PREFER_INCREASING_PRESSURE)
+    : type_preference_(Tpref)
   {
     SubStateVectorArray<Pressure>::init(Coeff);
   }
@@ -100,5 +104,6 @@ typedef SubStateVectorArray<Pressure> SubStateVectorArrayPressure;
 
 FP_EXPORT_KEY(PressureImpBaseCache);
 FP_EXPORT_KEY(PressureImpBase);
+FP_CLASS_VERSION(PressureImpBase, 1);
 FP_EXPORT_KEY(SubStateVectorArrayPressure);
 #endif

@@ -33,7 +33,8 @@ public:
   %python_attribute(important_pressure_level, virtual ArrayWithUnit<double, 1>);
   virtual AutoDerivativeWithUnit<double> 
   temperature(const AutoDerivativeWithUnit<double>& Press) const = 0;
-  virtual ArrayAdWithUnit<double, 1> temperature_grid(const Pressure& P) const;
+  virtual ArrayAdWithUnit<double, 1> temperature_grid(const Pressure& P,
+      Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   virtual boost::shared_ptr<Temperature> clone() const = 0;
   std::string print_to_string() const;
   %pickle_serialization();

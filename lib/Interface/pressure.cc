@@ -34,6 +34,6 @@ REGISTER_LUA_END()
 
 AutoDerivativeWithUnit<double> Pressure::surface_pressure() const
 {
-  ArrayAdWithUnit<double, 1> p(pressure_grid());
+  ArrayAdWithUnit<double, 1> p(pressure_grid(INCREASING_PRESSURE));
   return p(p.rows() - 1);
 }

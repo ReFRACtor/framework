@@ -19,3 +19,22 @@ void AerosolExtinctionImpBase::serialize(Archive & ar,
 
 FP_IMPLEMENT(AerosolExtinctionImpBase);
 #endif
+
+ArrayAd<double, 1> AerosolExtinctionImpBase::aerosol_extinction
+(Pressure::PressureGridType Gtype) const
+{
+  fill_cache();
+  if(Gtype == Pressure::NATIVE_ORDER ||
+     (int) Gtype == (int) press->type_preference())
+    return aext;
+  return ArrayAd<double, 1>(aext.value().reverse(blitz::firstDim),
+			    aext.jacobian().reverse(blitz::firstDim));
+}
+
+AutoDerivative<double>
+AerosolExtinctionImpBase::extinction_for_layer(int i) const
+{
+  ArrayAd<double, 1> a = aerosol_extinction();
+  range_check(i, 0, a.rows() - 1); 
+  return (a(i) + a(i + 1)) / 2;
+}

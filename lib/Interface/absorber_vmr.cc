@@ -35,9 +35,10 @@ REGISTER_LUA_END()
 /// Return the vmr on the pressure grid.
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 1> AbsorberVmr::vmr_grid(const Pressure& P) const
+ArrayAd<double, 1> AbsorberVmr::vmr_grid(const Pressure& P,
+					 Pressure::PressureGridType Gtype) const
 {
-  ArrayAd<double, 1> pgrid = P.pressure_grid().convert(Unit("Pa")).value;
+  ArrayAd<double, 1> pgrid = P.pressure_grid(Gtype).convert(Unit("Pa")).value;
   blitz::Array<AutoDerivative<double>, 1> res(pgrid.rows());
   for(int i = 0; i < res.rows(); ++i)
     res(i) = volume_mixing_ratio(pgrid(i));

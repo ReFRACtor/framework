@@ -92,7 +92,7 @@ class SurfacePressureFromAltitude(Creator):
 
         if isinstance(press_in, rf.Pressure):
             press_obj = press_in
-            press_levels = press_obj.pressure_grid.value.value
+            press_levels = press_obj.pressure_grid().value.value
         else:
             press_levels = self.pressure()
             press_obj = rf.PressureSigma(press_levels, press_levels[-1])

@@ -41,7 +41,7 @@ public:
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
   virtual AutoDerivative<double> extinction_for_layer(int i) const;
   %python_attribute(aerosol_name, virtual std::string);
-  %python_attribute(aerosol_extinction, virtual ArrayAd<double, 1>);
+  virtual ArrayAd<double, 1> aerosol_extinction(Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   %python_attribute_abstract(model_short_name, std::string);
   %sub_state_virtual_func(AerosolExtinction);
   %python_attribute(aerosol_parameter, blitz::Array<double, 1>);

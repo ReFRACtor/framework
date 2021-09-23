@@ -80,7 +80,7 @@ class GasVmrApriori(Creator, ReferenceAtmFileMixin):
         elif gas_name is None:
             raise param.ParamError("gas_name not supplied to creator %s" % self.__class__.__name__)
 
-        pressure_levels = self.pressure().pressure_grid.value.value
+        pressure_levels = self.pressure().pressure_grid().value.value
         temperature_levels = self.temperature().temperature_grid(self.pressure()).value.value
 
         apriori_obj = rf.GasVmrApriori(pressure_levels, temperature_levels, self.latitude().value[0], self.time()[0], \

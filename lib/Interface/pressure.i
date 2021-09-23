@@ -30,12 +30,18 @@ namespace FullPhysics {
 class Pressure : virtual public StateVectorObserver, 
 		 public Observable<Pressure> {
 public:
+  enum TypePreference {PREFER_INCREASING_PRESSURE=0,
+    PREFER_DECREASING_PRESSURE=1};
+  enum PressureGridType { INCREASING_PRESSURE=0,
+    DECREASING_PRESSURE=1, NATIVE_ORDER=2};
   virtual ~Pressure();
   virtual void add_observer(Observer<Pressure>& Obs);
   virtual void remove_observer(Observer<Pressure>& Obs);
+  virtual ArrayAdWithUnit<double, 1>
+  pressure_grid(PressureGridType Gtype = INCREASING_PRESSURE) const = 0;
   %python_attribute(surface_pressure, AutoDerivativeWithUnit<double>)
   %python_attribute(surface_pressure_value, double)
-  %python_attribute_abstract(pressure_grid, ArrayAdWithUnit<double, 1>)
+  %python_attribute_abstract(type_preference, TypePreference)
   %python_attribute(number_layer, int)
   %python_attribute(number_level, int)
   %python_attribute(max_number_level, virtual int)

@@ -59,17 +59,26 @@ void PressureWithCloudHandling::print(std::ostream& Os) const
 }
 
 ArrayAdWithUnit<double, 1>
-PressureWithCloudHandling::pressure_grid() const
+PressureWithCloudHandling::pressure_grid(Pressure::PressureGridType Gtype) const
 {
-  ArrayAdWithUnit<double, 1> full = pressure_clear_->pressure_grid();
+  ArrayAdWithUnit<double, 1> full = pressure_clear_->pressure_grid(Gtype);
   if(!do_cloud())
     return full;
+  if(full(1).value.value() > full(0).value.value()) {
+    int i;
+    for(i = 0; i < full.rows(); ++i) {
+      double v = full(i).convert(Unit("Pa")).value.value();
+      if(v > cloud_pressure_level_)
+	break;
+    }
+    return full(blitz::Range(0,i-1));
+  }
   int i;
-  for(i = 0; i < full.rows(); ++i) {
+  for(i = full.rows() - 1; i >= 0; --i) {
     double v = full(i).convert(Unit("Pa")).value.value();
     if(v > cloud_pressure_level_)
       break;
   }
-  return full(blitz::Range(0,i-1));
+  return full(blitz::Range(i+1,blitz::toEnd));
 }
 

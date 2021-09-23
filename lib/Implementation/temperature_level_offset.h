@@ -22,7 +22,8 @@ public:
   /// Temperature from profile, used to write to output file
   //-----------------------------------------------------------------------
   blitz::Array<double, 1> temperature_profile() const { return temp_levels; }
-  blitz::Array<double, 1> pressure_profile() const { return press->pressure_grid().value.value(); }
+  blitz::Array<double, 1> pressure_profile() const
+  { return press->pressure_grid(Pressure::NATIVE_ORDER).value.value(); }
 
 private:
   blitz::Array<double, 1> temp_levels;

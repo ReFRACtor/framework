@@ -27,10 +27,10 @@ REGISTER_LUA_END()
 /// Return temperature at the pressure grid.
 //-----------------------------------------------------------------------
 
-ArrayAdWithUnit<double, 1> Temperature::temperature_grid(const Pressure& P) 
+ArrayAdWithUnit<double, 1> Temperature::temperature_grid(const Pressure& P, Pressure::PressureGridType Gtype) 
 const
 {
-  ArrayAdWithUnit<double, 1> pgrid = P.pressure_grid();
+  ArrayAdWithUnit<double, 1> pgrid = P.pressure_grid(Gtype);
   blitz::Array<AutoDerivative<double>, 1> res(pgrid.rows());
   Unit u = temperature(pgrid(0)).units;
   for(int i = 0; i < res.rows(); ++i)

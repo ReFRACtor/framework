@@ -35,8 +35,8 @@ class AtmosphereOutputBase(OutputBase):
         # Pressure
 
         pressure_var = self.create_variable("pressure_levels", atm_group, float, (level_dim,))
-        pressure_var[:] = self.atm.pressure.pressure_grid.value.value
-        pressure_var.units = self.atm.pressure.pressure_grid.units.name
+        pressure_var[:] = self.atm.pressure.pressure_grid().value.value
+        pressure_var.units = self.atm.pressure.pressure_grid().units.name
 
         # Temperature
         temperature_var = self.create_variable("temperature_levels", atm_group, float, (level_dim,))
