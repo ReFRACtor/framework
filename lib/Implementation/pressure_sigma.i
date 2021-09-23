@@ -14,9 +14,12 @@ class PressureSigma : public PressureImpBase {
 public:
   PressureSigma(const blitz::Array<double, 1>& A,
                 const blitz::Array<double, 1>& B,
-                double Surface_pressure);
+                double Surface_pressure,
+		Pressure::TypePreference Tpref = Pressure::PREFER_INCREASING_PRESSURE);
+
   PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
-                double Surface_pressure);
+                double Surface_pressure,
+		Pressure::TypePreference Tpref = Pressure::PREFER_INCREASING_PRESSURE);
   %python_attribute(surface_pressure_uncertainty, double)
   %rename(_v_set_surface_pressure) set_surface_pressure;
   void set_surface_pressure(const AutoDerivative<double>& Surface_pressure);

@@ -15,10 +15,12 @@ class PressureSigma : virtual public PressureImpBase {
 public:
   PressureSigma(const blitz::Array<double, 1>& A,
                 const blitz::Array<double, 1>& B,
-                double Surface_pressure);
+                double Surface_pressure,
+		Pressure::TypePreference Tpref = Pressure::PREFER_INCREASING_PRESSURE);
 
   PressureSigma(const blitz::Array<double, 1>& Pressure_grid,
-                double Surface_pressure);
+                double Surface_pressure,
+		Pressure::TypePreference Tpref = Pressure::PREFER_INCREASING_PRESSURE);
 
   virtual ~PressureSigma() {}
 
