@@ -12,6 +12,7 @@ class MetDataFixture : public GlobalFixture {
 public:
     boost::shared_ptr<Meteorology> met_data;
     boost::shared_ptr<Pressure> pressure;
+    boost::shared_ptr<Pressure> pressure_reverse;
     MetDataFixture();
 };
 

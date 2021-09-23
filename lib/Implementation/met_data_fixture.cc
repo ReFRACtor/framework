@@ -20,4 +20,5 @@ MetDataFixture::MetDataFixture()
     met_data.reset(new ExampleMetFile(met_file, "20091009203401"));
 
     pressure.reset(new PressureSigma(pressure_array, psurf_val));
+    pressure_reverse.reset(new PressureSigma(pressure_array.reverse(blitz::firstDim), psurf_val, Pressure::PREFER_DECREASING_PRESSURE));
 }
