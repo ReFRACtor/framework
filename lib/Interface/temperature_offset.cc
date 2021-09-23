@@ -62,7 +62,9 @@ void TemperatureOffset::calc_temperature_grid() const
   }
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
     lin_type;
-  if(press->type_preference() == Pressure::PREFER_INCREASING_PRESSURE) {
+  if(plist.size() < 2)
+    throw Exception("Must have at least 2 pressure level");
+  if(plist[1].value() > plist[0].value()) {
     boost::shared_ptr<lin_type> lin(new lin_type(plist.begin(), plist.end(), tlist.begin()));
     cache.tgrid = boost::bind(&lin_type::operator(), lin, _1);
   } else {

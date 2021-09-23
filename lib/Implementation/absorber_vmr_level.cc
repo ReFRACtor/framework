@@ -124,9 +124,16 @@ void AbsorberVmrLevel::calc_vmr() const
 
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
     lin_type;
-  boost::shared_ptr<lin_type> lin
-    (new lin_type(plist.begin(), plist.end(), vmrlist.begin()));
-  vmr = boost::bind(&lin_type::operator(), lin, _1);
+  if(mapped_pressure->type_preference() ==
+     Pressure::PREFER_INCREASING_PRESSURE) {
+    boost::shared_ptr<lin_type> lin
+      (new lin_type(plist.begin(), plist.end(), vmrlist.begin()));
+    vmr = boost::bind(&lin_type::operator(), lin, _1);
+  } else {
+    boost::shared_ptr<lin_type> lin
+      (new lin_type(plist.rbegin(), plist.rend(), vmrlist.rbegin()));
+    vmr = boost::bind(&lin_type::operator(), lin, _1);
+  }
 }
 
 

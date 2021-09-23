@@ -61,9 +61,17 @@ void AbsorberVmrScaled::calc_vmr() const
   }
   typedef LinearInterpolate<AutoDerivative<double>, AutoDerivative<double> >
     lin_type;
-  boost::shared_ptr<lin_type> lin
-    (new lin_type(plist.begin(), plist.end(), vlist.begin()));
-  vmr = boost::bind(&lin_type::operator(), lin, _1);
+  if(plist.size() < 2)
+    throw Exception("Must have at least 2 pressure level");
+  if(plist[1].value() > plist[0].value()) {
+    boost::shared_ptr<lin_type> lin
+      (new lin_type(plist.begin(), plist.end(), vlist.begin()));
+    vmr = boost::bind(&lin_type::operator(), lin, _1);
+  } else {
+    boost::shared_ptr<lin_type> lin
+      (new lin_type(plist.rbegin(), plist.rend(), vlist.rbegin()));
+    vmr = boost::bind(&lin_type::operator(), lin, _1);
+  }
 }
 
 void AbsorberVmrScaled::print(std::ostream& Os) const
