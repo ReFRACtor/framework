@@ -19,14 +19,18 @@ BOOST_AUTO_TEST_CASE(basic)
 
   AerosolExtinctionLinear aer_kahn_lin = AerosolExtinctionLinear(pressure, coeffs, "Kahn");
   BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_linear, aer_kahn_lin.aerosol_extinction().value(), 1e-14);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_linear, aer_kahn_lin.aerosol_extinction(Pressure::NATIVE_ORDER).value(), 1e-14);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(kahn_linear.reverse(blitz::firstDim), aer_kahn_lin.aerosol_extinction(Pressure::DECREASING_PRESSURE).value(), 1e-14);
 
   // Water
   Array<double, 1> water_expt(3);
   coeffs = 10.0, 0.75, 0.1;
   water_expt = coeffs;
 
-  AerosolExtinctionLinear aer_water_lin = AerosolExtinctionLinear(pressure, coeffs, "Water");
+  AerosolExtinctionLinear aer_water_lin = AerosolExtinctionLinear(pressure_reverse, coeffs.reverse(blitz::firstDim), "Water");
   BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt, aer_water_lin.aerosol_extinction().value(), 1e-14);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt.reverse(blitz::firstDim), aer_water_lin.aerosol_extinction(Pressure::NATIVE_ORDER).value(), 1e-14);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(water_expt.reverse(blitz::firstDim), aer_water_lin.aerosol_extinction(Pressure::DECREASING_PRESSURE).value(), 1e-14);
 
   // Ice
   Array<double, 1> ice_expt(3);
