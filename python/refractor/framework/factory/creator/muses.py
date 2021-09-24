@@ -58,7 +58,7 @@ class PressureGridMUSES(CreatorMUSES):
 
             logger.debug(f"Loading pressure grid from: {press_osp.fm_pressure_filename}")
 
-            pressure_levels = press_osp.fm_pressure_grid()
+            pressure_levels = press_osp.fm_pressure_grid
 
         if surface_pressure is None:
             # Disable cutoff to get all pressure levels present
@@ -88,7 +88,7 @@ class PressureGridMUSES(CreatorMUSES):
 
         press_obj = rf.PressureSigma(pressure_levels, surface_pressure)
 
-        logger.debug(f"Using forward model pressure grid:\n{press_obj.pressure_grid.value.value}")
+        logger.debug(f"Using forward model pressure grid:\n{press_obj.pressure_grid().value.value}")
 
         return press_obj
 
@@ -169,7 +169,7 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
             else:
                 mapping_first = rf.StateMappingLinear()
 
-            logger.debug(f"Mapping {gas_name} levels from retrieval pressure grid:\n{pressure_from.pressure_grid.value.value}\nto forward model pressure grid:\n{self.pressure().pressure_grid.value.value}")
+            logger.debug(f"Mapping {gas_name} levels from retrieval pressure grid:\n{pressure_from.pressure_grid().value.value}\nto forward model pressure grid:\n{self.pressure().pressure_grid().value.value}")
 
             mapping_interp = rf.StateMappingInterpolateLogLog(self.pressure(), pressure_from)
 

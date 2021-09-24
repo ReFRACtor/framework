@@ -17,7 +17,9 @@ public:
   PressureWithCloudHandling(const boost::shared_ptr<Pressure> Press_clear,
 			    double Cloud_pressure_level, bool do_cloud = false);
   %python_attribute(pressure_clear, boost::shared_ptr<Pressure>);
-  %python_attribute_derived(pressure_grid, ArrayAdWithUnit<double, 1>);
+  %python_attribute_derived(type_preference, TypePreference)
+  virtual ArrayAdWithUnit<double, 1>
+  pressure_grid(PressureGridType Gtype = INCREASING_PRESSURE) const;
   virtual boost::shared_ptr<Pressure> clone() const;
   %python_attribute_with_set(cloud_pressure_level, double);
   %pickle_serialization();

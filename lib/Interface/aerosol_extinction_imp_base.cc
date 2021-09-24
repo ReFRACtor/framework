@@ -28,7 +28,8 @@ ArrayAd<double, 1> AerosolExtinctionImpBase::aerosol_extinction
      (int) Gtype == (int) press->type_preference())
     return aext;
   return ArrayAd<double, 1>(aext.value().reverse(blitz::firstDim),
-			    aext.jacobian().reverse(blitz::firstDim));
+			    aext.jacobian().reverse(blitz::firstDim),
+			    aext.is_constant());
 }
 
 AutoDerivative<double>

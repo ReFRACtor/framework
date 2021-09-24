@@ -39,7 +39,8 @@ ArrayAdWithUnit<double, 1> PressureImpBase::pressure_grid
     return cache.pgrid;
   return ArrayAdWithUnit<double, 1>
     (ArrayAd<double, 1>(cache.pgrid.value.value().reverse(blitz::firstDim),
-			cache.pgrid.value.jacobian().reverse(blitz::firstDim)),
+			cache.pgrid.value.jacobian().reverse(blitz::firstDim),
+			cache.pgrid.value.is_constant()),
      cache.pgrid.units);
 }
 

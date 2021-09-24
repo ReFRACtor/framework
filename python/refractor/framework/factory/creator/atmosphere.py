@@ -111,8 +111,8 @@ class SurfacePressureFromAltitude(Creator):
 
         alt_grid = np.zeros(press_levels.shape)
         for lev_idx in range(press_levels.shape[0]):
-            press_val = rf.AutoDerivativeWithUnitDouble(press_obj.pressure_grid.value[lev_idx], 
-                                                        press_obj.pressure_grid.units)
+            press_val = rf.AutoDerivativeWithUnitDouble(press_obj.pressure_grid().value[lev_idx], 
+                                                        press_obj.pressure_grid().units)
             alt_grid[lev_idx] = alt_calc.altitude(press_val).convert("m").value.value
 
         surf_height_in = self.surface_height()
@@ -233,7 +233,7 @@ class AtmosphereDictCreator(Creator):
             # TODO: Check if cache invalidation necessary
             if not self.cached_alt_grid:
                 # Direct translation from C++
-                pres_grid = self.pressure().pressure_grid
+                pres_grid = self.pressure().pressure_grid()
                 # TODO: swig missing __call__/operator() for ArrayAdWithUnit to get AutoDerivativeWithUnit
                 first_pres = rf.AutoDerivativeWithUnitDouble(pres_grid.value[0], pres_grid.units)
                 alt_unit = self.altitude()[spec_index].altitude(first_pres).units

@@ -59,11 +59,20 @@ public:
   FunctionTimerR(const AccumulatedTimer& At, bool Auto_log)  
     : at(At), auto_log(Auto_log) {}
   ~FunctionTimerR() 
-  { 
-    at.elapsed_ += t.elapsed().user; 
+  {
+    // Time is in nanonseconds, but we accumulate as seconds
+    at.elapsed_ += t.elapsed().user / 1e9;
     if(auto_log) {
+      // There appears to be a bug, t.format() can throw a
+      // std::bad_cast. This appears to be internal to boost, where
+      // it casts its nanoseconds type to double using a
+      // static_cast. This really should work, but it doesn't.
+      // Work around this by just using elapsed user time. This
+      // is pretty much what we want anyways.
+      // Logger::info() << "Current: " << at.desc << " elapsed time " 
+      // 		     << t.format() << "\n";
       Logger::info() << "Current: " << at.desc << " elapsed time " 
-		     << t.format() << "\n";
+		     << t.elapsed().user / 1e9 << "\n";
       Logger::info() << "Total:   " << at << "\n";
     }
   }

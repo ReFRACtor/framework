@@ -289,7 +289,7 @@ bool AbscoAer::have_data(double wn) const
     // now just check that the table scale for a wn is non zero
     auto UNUSED(extents) = wn_extent(wn);
     return table_scale(wn) > 0.0;
-  } catch (Exception e) {
+  } catch (const Exception& e) {
     // If there is an exception that means wn_extent did 
     // not find a valid wavenumber
     return false;
