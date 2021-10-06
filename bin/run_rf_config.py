@@ -3,7 +3,7 @@
 import sys
 import logging
 
-from refractor.executor import StrategyExecutor
+from refractor.framework import StrategyExecutor
 
 def main():
 
