@@ -98,7 +98,7 @@ class MusesSimConfig(object):
         ignore_gas_list = ['CCL4', 'PAN']
 
         used_gas_list = []
-        for in_gas_name in atm_gas_list:
+        for in_gas_name in self.atm_gas_list:
             absco_gas_name = in_gas_name
 
             absco_gas_name = re.sub('^HDO$', 'H2O', absco_gas_name)
