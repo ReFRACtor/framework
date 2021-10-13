@@ -1,5 +1,6 @@
 # Files in the current directory to include in the library
 set(DIR_SOURCES
+    brdf_functions.F90
     chapman_boa.cc
     chapman_boa_rt.cc
     first_order_debug.f90
