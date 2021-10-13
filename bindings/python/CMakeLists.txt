@@ -125,6 +125,9 @@ if(PIP_DEVELOP_MODE)
 else()
   set(_pip_args)
 endif()
+# Install in the supplied prefix, rather than into the system version
+# of the libraries
+set(_pip_args "${_pip_args}" --prefix "${CMAKE_INSTALL_PREFIX}")
 
 # Install non SWIG Python code into refractor/
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_SOURCE_DIR})")
