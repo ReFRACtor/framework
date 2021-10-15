@@ -4,10 +4,10 @@ set(DIR_SOURCES
     absco_aer.cc
     absco_hdf.cc
     absorber_absco.cc
-    absorber_xsec.cc
     absorber_vmr_level.cc
     absorber_vmr_level_scaled.cc
     absorber_vmr_met.cc
+    absorber_xsec.cc
     aerosol_extinction_level.cc
     aerosol_extinction_linear.cc
     aerosol_extinction_log.cc
@@ -17,14 +17,15 @@ set(DIR_SOURCES
     aerosol_shape_gaussian.cc
     altitude_hydrostatic.cc
     apply_instrument_units.cc
-    atmosphere_standard.cc
     atmosphere_legacy.cc
+    atmosphere_standard.cc
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
     brdf_functions.F90
     brown_nlls_problem.cc
     chisq_convergence.cc
+    cloud_3d_effect.cc
     composite_perturbation.cc
     connor_convergence.cc
     connor_cost_function.cc
@@ -37,27 +38,27 @@ set(DIR_SOURCES
     empirical_orthogonal_function.cc
     error_analysis.cc
     fd_forward_model.cc
-    forward_model_with_cloud_handling.cc
     fluorescence_effect.cc
     fm_nlls_problem.cc
+    forward_model_with_cloud_handling.cc
     fp_logger.cc
     freudenstein_roth_nlls_problem.cc
     gas_vmr_apriori.cc
     ground_brdf.cc
     ground_coxmunk.cc
     ground_coxmunk_plus_lambertian.cc
-    ground_emissivity_polynomial.cc
     ground_emissivity_piecewise.cc
+    ground_emissivity_polynomial.cc
     ground_lambertian.cc
-    ground_with_cloud_handling.cc
     ground_lambertian_piecewise.cc
+    ground_with_cloud_handling.cc
     gsl_lsp.cc
     gsl_mdm.cc
     gsl_sm_lsp.cc
     hdf_constant.cc
     helical_valley_nlls_problem.cc
-    ils_grating.cc
     ils_gaussian.cc
+    ils_grating.cc
     ils_instrument.cc
     ils_table.cc
     initial_guess_value.cc
@@ -151,6 +152,7 @@ set(TEST_SOURCES
     atmosphere_standard_test.cc
     bad_sample_noise_model_test.cc
     chisq_convergence_test.cc
+    cloud_3d_effect_test.cc
     composite_initial_guess_full_guess_test.cc
     composite_perturbation_test.cc
     configuration_fixture.cc
