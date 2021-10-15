@@ -11,8 +11,8 @@ class Cloud3dFixture : public GlobalFixture {
 public:
     Cloud3dFixture()
     {
-        initial_offset = 1.0;;
-        initial_slope = 2.0;
+        initial_offset = 0.2;;
+        initial_slope = 0.0002;
         band_name = "TEST";
 
         cloud_3d.reset(new Cloud3dEffect(initial_offset, initial_slope, band_name));
