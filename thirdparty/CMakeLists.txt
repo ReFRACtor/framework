@@ -199,16 +199,6 @@ else()
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
-find_package(First_order)
-if(FIRST_ORDER_FOUND AND (NOT BUILD_FIRST_ORDER))
-    list(APPEND THIRDPARTY_LIBRARIES ${FIRST_ORDER_LIBRARIES})
-else()
-    message(STATUS "Building first_order from source")
-    include(first_order/first_order.cmake)
-    list(APPEND THIRDPARTY_TARGETS first_order)
-    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libfirst_order${CMAKE_SHARED_LIBRARY_SUFFIX})
-endif()
-
 # Custom target that makes it easier to compile all third party independently
 add_custom_target(thirdparty DEPENDS ${THIRDPARTY_TARGETS})
 
