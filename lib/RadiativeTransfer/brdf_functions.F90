@@ -2,10 +2,12 @@ module brdf_functions_m
 
     use iso_c_binding
 
-    USE LIDORT_pars, only : fpk, DEG_TO_RAD, MAXBEAMS, MAXSTREAMS_BRDF, MAX_BRDF_KERNELS, &
-                            MAXSTHALF_BRDF, MAX_BRDF_PARAMETERS, ZERO, ONE, TWO, PIE, &
-                            MAX_USER_STREAMS, MAX_USER_RELAZMS, &
-                            BPDFVEGN_IDX, BPDFSOIL_IDX, RAHMAN_IDX
+    USE LIDORT_pars_m, only : fpk, DEG_TO_RAD, MAXBEAMS, MAXSTREAMS_BRDF, MAX_BRDF_KERNELS, &
+                              MAXSTHALF_BRDF, MAX_BRDF_PARAMETERS, ZERO, ONE, TWO, PIE, &
+                              MAX_USER_STREAMS, MAX_USER_RELAZMS, COXMUNK_IDX, &
+                              BPDFVEGN_IDX, BPDFSOIL_IDX, RAHMAN_IDX
+
+    USE l_surface_m
 
     implicit none
 
@@ -216,7 +218,7 @@ contains
   
     real(kind=c_double) function black_sky_albedo_f(breon_type, params, sza) bind(c)
 
-      USE brdf_sup_aux_m, only : BRDF_GAULEG, BRDF_QUADRATURE_Gaussian
+      USE brdf_sup_aux_m, only : GETQUAD2, BRDF_QUADRATURE_Gaussian
 
       ! There should only be 5 parameters, ordered how GroundBrdf does so
       integer(c_int), intent(in)       :: breon_type
@@ -343,7 +345,7 @@ contains
 !  Set up Quadrature streams for BSA Scaling.
 
       SCAL_NSTREAMS = MAXSTREAMS_SCALING
-      CALL BRDF_GAULEG ( ZERO, ONE, SCAL_QUAD_STREAMS, SCAL_QUAD_WEIGHTS, SCAL_NSTREAMS )
+      CALL GETQUAD2(ZERO, ONE, SCAL_NSTREAMS, SCAL_QUAD_STREAMS, SCAL_QUAD_WEIGHTS)
       DO I = 1, SCAL_NSTREAMS
          SCAL_QUAD_SINES(I)   = SQRT(ONE-SCAL_QUAD_STREAMS(I)*SCAL_QUAD_STREAMS(I))
          SCAL_QUAD_STRMWTS(I) = SCAL_QUAD_STREAMS(I) * SCAL_QUAD_WEIGHTS(I)
@@ -404,9 +406,9 @@ contains
 
 !  module, dimensions and numbers
 
-      USE LIDORT_pars, only : fpk, MAX_BRDF_PARAMETERS, &
-                              MAXBEAMS, &
-                              MAXSTREAMS_BRDF
+      USE LIDORT_pars_m, only : fpk, MAX_BRDF_PARAMETERS, &
+                                MAXBEAMS, &
+                                MAXSTREAMS_BRDF
 
       USE brdf_sup_routines_m, only : BRDF_FUNCTION
 
@@ -484,7 +486,7 @@ contains
 
 !  include file of dimensions and numbers
 
-      USE LIDORT_PARS, only : fpk, MAXSTREAMS_BRDF, ZERO, HALF
+      USE LIDORT_PARS_m, only : fpk, MAXSTREAMS_BRDF, ZERO, HALF
 
       IMPLICIT NONE
 

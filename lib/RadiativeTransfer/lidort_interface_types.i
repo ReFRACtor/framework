@@ -16,7 +16,7 @@ namespace FullPhysics {
 
 struct Lidort_Pars {
 
-  const char lidort_version_number[3];
+  const char lidort_version_number[5];
   const int lidort_inunit;
   const int lidort_scenunit;
   const int lidort_funit;
@@ -103,6 +103,9 @@ struct Lidort_Pars {
   const int bpdfvegn_idx;
   const int bpdfndvi_idx;
   const int newcmglint_idx;
+  const int rtkhotspot_idx;
+  const int modfresnel_idx;
+  const int snowbrdf_idx;
   const int maxbrdf_idx;
   
   static Lidort_Pars& instance();
@@ -193,9 +196,6 @@ public:
   Brdf_Sup_Inputs(const Brdf_Sup_Inputs& src);
   ~Brdf_Sup_Inputs();
 
-  const bool bs_do_user_streams() const;
-  void bs_do_user_streams(const bool& bs_do_user_streams_in);
-  
   const bool bs_do_brdf_surface() const;
   void bs_do_brdf_surface(const bool& bs_do_brdf_surface_in);
   
@@ -205,8 +205,14 @@ public:
   const bool bs_do_solar_sources() const;
   void bs_do_solar_sources(const bool& bs_do_solar_sources_in);
   
+  const bool bs_do_user_streams() const;
+  void bs_do_user_streams(const bool& bs_do_user_streams_in);
+  
   const bool bs_do_user_obsgeoms() const;
   void bs_do_user_obsgeoms(const bool& bs_do_user_obsgeoms_in);
+  
+  const bool bs_do_doublet_geometry() const;
+  void bs_do_doublet_geometry(const bool& bs_do_doublet_geometry_in);
   
   const int& bs_nstreams() const;
   void bs_nstreams(const int& bs_nstreams_in);
@@ -234,6 +240,12 @@ public:
   
   const blitz::Array<double, 2>& bs_user_obsgeoms() const;
   void bs_user_obsgeoms(const blitz::Array<double, 2>& bs_user_obsgeoms_in);
+  
+  const int& bs_n_user_doublets() const;
+  void bs_n_user_doublets(const int& bs_n_user_doublets_in);
+  
+  const blitz::Array<double, 2>& bs_user_doublets() const;
+  void bs_user_doublets(const blitz::Array<double, 2>& bs_user_doublets_in);
   
   const int& bs_n_brdf_kernels() const;
   void bs_n_brdf_kernels(const int& bs_n_brdf_kernels_in);
@@ -419,6 +431,9 @@ public:
   const bool sl_do_isotropic() const;
   void sl_do_isotropic(const bool& sl_do_isotropic_in);
   
+  const bool sl_do_roughsurface() const;
+  void sl_do_roughsurface(const bool& sl_do_roughsurface_in);
+  
   const bool sl_do_exact() const;
   void sl_do_exact(const bool& sl_do_exact_in);
   
@@ -431,8 +446,16 @@ public:
   const bool sl_do_solar_sources() const;
   void sl_do_solar_sources(const bool& sl_do_solar_sources_in);
   
+  const std::string sl_sleave_datapath() const;
+  
+  const bool sl_do_user_streams() const;
+  void sl_do_user_streams(const bool& sl_do_user_streams_in);
+  
   const bool sl_do_user_obsgeoms() const;
   void sl_do_user_obsgeoms(const bool& sl_do_user_obsgeoms_in);
+  
+  const bool sl_do_doublet_geometry() const;
+  void sl_do_doublet_geometry(const bool& sl_do_doublet_geometry_in);
   
   const int& sl_nstreams() const;
   void sl_nstreams(const int& sl_nstreams_in);
@@ -449,9 +472,6 @@ public:
   const blitz::Array<double, 1>& sl_user_relazms() const;
   void sl_user_relazms(const blitz::Array<double, 1>& sl_user_relazms_in);
   
-  const bool sl_do_user_streams() const;
-  void sl_do_user_streams(const bool& sl_do_user_streams_in);
-  
   const int& sl_n_user_streams() const;
   void sl_n_user_streams(const int& sl_n_user_streams_in);
   
@@ -464,6 +484,12 @@ public:
   const blitz::Array<double, 2>& sl_user_obsgeoms() const;
   void sl_user_obsgeoms(const blitz::Array<double, 2>& sl_user_obsgeoms_in);
   
+  const int& sl_n_user_doublets() const;
+  void sl_n_user_doublets(const int& sl_n_user_doublets_in);
+  
+  const blitz::Array<double, 2>& sl_user_doublets() const;
+  void sl_user_doublets(const blitz::Array<double, 2>& sl_user_doublets_in);
+  
   const double& sl_salinity() const;
   void sl_salinity(const double& sl_salinity_in);
   
@@ -472,6 +498,12 @@ public:
   
   const double& sl_wavelength() const;
   void sl_wavelength(const double& sl_wavelength_in);
+  
+  const bool sl_azimuthdep() const;
+  void sl_azimuthdep(const bool& sl_azimuthdep_in);
+  
+  const bool sl_do_fourier_output() const;
+  void sl_do_fourier_output(const bool& sl_do_fourier_output_in);
   
   const double& sl_windspeed() const;
   void sl_windspeed(const double& sl_windspeed_in);
@@ -520,18 +552,6 @@ public:
   Lidort_Fixed_Lincontrol(const Lidort_Fixed_Lincontrol& src);
   ~Lidort_Fixed_Lincontrol();
 
-  const bool ts_do_column_linearization() const;
-  void ts_do_column_linearization(const bool& ts_do_column_linearization_in);
-  
-  const bool ts_do_profile_linearization() const;
-  void ts_do_profile_linearization(const bool& ts_do_profile_linearization_in);
-  
-  const bool ts_do_surface_linearization() const;
-  void ts_do_surface_linearization(const bool& ts_do_surface_linearization_in);
-  
-  const bool ts_do_sleave_wfs() const;
-  void ts_do_sleave_wfs(const bool& ts_do_sleave_wfs_in);
-  
   const blitz::Array<bool, 1> ts_layer_vary_flag() const;
   void ts_layer_vary_flag(const blitz::Array<bool, 1>& ts_layer_vary_flag_in);
   
@@ -547,11 +567,9 @@ public:
   const int& ts_n_sleave_wfs() const;
   void ts_n_sleave_wfs(const int& ts_n_sleave_wfs_in);
   
-  const bool ts_do_atmos_lbbf() const;
-  void ts_do_atmos_lbbf(const bool& ts_do_atmos_lbbf_in);
+  const std::vector< std::string > ts_columnwf_names() const;
   
-  const bool ts_do_surface_lbbf() const;
-  void ts_do_surface_lbbf(const bool& ts_do_surface_lbbf_in);
+  const std::vector< std::string > ts_profilewf_names() const;
   
   
 
@@ -572,6 +590,12 @@ public:
   
   const blitz::Array<double, 3>& ts_l_phasmoms_total_input() const;
   void ts_l_phasmoms_total_input(const blitz::Array<double, 3>& ts_l_phasmoms_total_input_in);
+  
+  const blitz::Array<double, 3>& ts_l_phasfunc_input_up() const;
+  void ts_l_phasfunc_input_up(const blitz::Array<double, 3>& ts_l_phasfunc_input_up_in);
+  
+  const blitz::Array<double, 3>& ts_l_phasfunc_input_dn() const;
+  void ts_l_phasfunc_input_dn(const blitz::Array<double, 3>& ts_l_phasfunc_input_dn_in);
   
   
 
@@ -595,14 +619,52 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
+class Lidort_Modified_Lincontrol : public Lidort_Structure {
+public:
+  Lidort_Modified_Lincontrol();
+  Lidort_Modified_Lincontrol(const Lidort_Modified_Lincontrol& src);
+  ~Lidort_Modified_Lincontrol();
+
+  const bool ts_do_column_linearization() const;
+  void ts_do_column_linearization(const bool& ts_do_column_linearization_in);
+  
+  const bool ts_do_profile_linearization() const;
+  void ts_do_profile_linearization(const bool& ts_do_profile_linearization_in);
+  
+  const bool ts_do_atmos_linearization() const;
+  void ts_do_atmos_linearization(const bool& ts_do_atmos_linearization_in);
+  
+  const bool ts_do_surface_linearization() const;
+  void ts_do_surface_linearization(const bool& ts_do_surface_linearization_in);
+  
+  const bool ts_do_linearization() const;
+  void ts_do_linearization(const bool& ts_do_linearization_in);
+  
+  const bool ts_do_simulation_only() const;
+  void ts_do_simulation_only(const bool& ts_do_simulation_only_in);
+  
+  const bool ts_do_atmos_lbbf() const;
+  void ts_do_atmos_lbbf(const bool& ts_do_atmos_lbbf_in);
+  
+  const bool ts_do_surface_lbbf() const;
+  void ts_do_surface_lbbf(const bool& ts_do_surface_lbbf_in);
+  
+  const bool ts_do_sleave_wfs() const;
+  void ts_do_sleave_wfs(const bool& ts_do_sleave_wfs_in);
+  
+  
+
+  virtual void print(std::ostream &output_stream) const;
+};
+
 class Lidort_Modified_Lininputs : public Lidort_Structure {
 public:
   Lidort_Modified_Lininputs();
   Lidort_Modified_Lininputs(const Lidort_Modified_Lininputs& src);
   ~Lidort_Modified_Lininputs();
 
-  const int& dummy() const;
-  void dummy(const int& dummy_in);
+  const Lidort_Modified_Lincontrol& mcont() const;
+  void mcont(Lidort_Modified_Lincontrol& mcont_in);
   
   
 
@@ -618,26 +680,98 @@ public:
   const blitz::Array<double, 4>& ts_columnwf() const;
   void ts_columnwf(const blitz::Array<double, 4>& ts_columnwf_in);
   
-  const blitz::Array<double, 4>& ts_mint_columnwf() const;
-  void ts_mint_columnwf(const blitz::Array<double, 4>& ts_mint_columnwf_in);
+  const blitz::Array<double, 4>& ts_meani_diffuse_colwf() const;
+  void ts_meani_diffuse_colwf(const blitz::Array<double, 4>& ts_meani_diffuse_colwf_in);
   
-  const blitz::Array<double, 4>& ts_flux_columnwf() const;
-  void ts_flux_columnwf(const blitz::Array<double, 4>& ts_flux_columnwf_in);
+  const blitz::Array<double, 4>& ts_flux_diffuse_colwf() const;
+  void ts_flux_diffuse_colwf(const blitz::Array<double, 4>& ts_flux_diffuse_colwf_in);
+  
+  const blitz::Array<double, 3>& ts_dnmeani_direct_colwf() const;
+  void ts_dnmeani_direct_colwf(const blitz::Array<double, 3>& ts_dnmeani_direct_colwf_in);
+  
+  const blitz::Array<double, 3>& ts_dnflux_direct_colwf() const;
+  void ts_dnflux_direct_colwf(const blitz::Array<double, 3>& ts_dnflux_direct_colwf_in);
   
   const blitz::Array<double, 5>& ts_profilewf() const;
   void ts_profilewf(const blitz::Array<double, 5>& ts_profilewf_in);
   
-  const blitz::Array<double, 5>& ts_mint_profilewf() const;
-  void ts_mint_profilewf(const blitz::Array<double, 5>& ts_mint_profilewf_in);
+  const blitz::Array<double, 5>& ts_meani_diffuse_profwf() const;
+  void ts_meani_diffuse_profwf(const blitz::Array<double, 5>& ts_meani_diffuse_profwf_in);
   
-  const blitz::Array<double, 5>& ts_flux_profilewf() const;
-  void ts_flux_profilewf(const blitz::Array<double, 5>& ts_flux_profilewf_in);
+  const blitz::Array<double, 5>& ts_flux_diffuse_profwf() const;
+  void ts_flux_diffuse_profwf(const blitz::Array<double, 5>& ts_flux_diffuse_profwf_in);
+  
+  const blitz::Array<double, 4>& ts_dnmeani_direct_profwf() const;
+  void ts_dnmeani_direct_profwf(const blitz::Array<double, 4>& ts_dnmeani_direct_profwf_in);
+  
+  const blitz::Array<double, 4>& ts_dnflux_direct_profwf() const;
+  void ts_dnflux_direct_profwf(const blitz::Array<double, 4>& ts_dnflux_direct_profwf_in);
   
   const blitz::Array<double, 4>& ts_abbwfs_jacobians() const;
   void ts_abbwfs_jacobians(const blitz::Array<double, 4>& ts_abbwfs_jacobians_in);
   
   const blitz::Array<double, 4>& ts_abbwfs_fluxes() const;
   void ts_abbwfs_fluxes(const blitz::Array<double, 4>& ts_abbwfs_fluxes_in);
+  
+  const blitz::Array<double, 3>& ts_albmed_user_profwf() const;
+  void ts_albmed_user_profwf(const blitz::Array<double, 3>& ts_albmed_user_profwf_in);
+  
+  const blitz::Array<double, 3>& ts_trnmed_user_profwf() const;
+  void ts_trnmed_user_profwf(const blitz::Array<double, 3>& ts_trnmed_user_profwf_in);
+  
+  const blitz::Array<double, 3>& ts_albmed_fluxes_profwf() const;
+  void ts_albmed_fluxes_profwf(const blitz::Array<double, 3>& ts_albmed_fluxes_profwf_in);
+  
+  const blitz::Array<double, 3>& ts_trnmed_fluxes_profwf() const;
+  void ts_trnmed_fluxes_profwf(const blitz::Array<double, 3>& ts_trnmed_fluxes_profwf_in);
+  
+  const blitz::Array<double, 3>& ts_transbeam_profwf() const;
+  void ts_transbeam_profwf(const blitz::Array<double, 3>& ts_transbeam_profwf_in);
+  
+  const blitz::Array<double, 2>& ts_albmed_user_colwf() const;
+  void ts_albmed_user_colwf(const blitz::Array<double, 2>& ts_albmed_user_colwf_in);
+  
+  const blitz::Array<double, 2>& ts_trnmed_user_colwf() const;
+  void ts_trnmed_user_colwf(const blitz::Array<double, 2>& ts_trnmed_user_colwf_in);
+  
+  const blitz::Array<double, 2>& ts_albmed_fluxes_colwf() const;
+  void ts_albmed_fluxes_colwf(const blitz::Array<double, 2>& ts_albmed_fluxes_colwf_in);
+  
+  const blitz::Array<double, 2>& ts_trnmed_fluxes_colwf() const;
+  void ts_trnmed_fluxes_colwf(const blitz::Array<double, 2>& ts_trnmed_fluxes_colwf_in);
+  
+  const blitz::Array<double, 2>& ts_transbeam_colwf() const;
+  void ts_transbeam_colwf(const blitz::Array<double, 2>& ts_transbeam_colwf_in);
+  
+  const blitz::Array<double, 3>& ts_planetary_transterm_profwf() const;
+  void ts_planetary_transterm_profwf(const blitz::Array<double, 3>& ts_planetary_transterm_profwf_in);
+  
+  const blitz::Array<double, 2>& ts_planetary_sbterm_profwf() const;
+  void ts_planetary_sbterm_profwf(const blitz::Array<double, 2>& ts_planetary_sbterm_profwf_in);
+  
+  const blitz::Array<double, 2>& ts_planetary_transterm_colwf() const;
+  void ts_planetary_transterm_colwf(const blitz::Array<double, 2>& ts_planetary_transterm_colwf_in);
+  
+  const blitz::Array<double, 1>& ts_planetary_sbterm_colwf() const;
+  void ts_planetary_sbterm_colwf(const blitz::Array<double, 1>& ts_planetary_sbterm_colwf_in);
+  
+  const blitz::Array<double, 3>& ts_lc_lostrans() const;
+  void ts_lc_lostrans(const blitz::Array<double, 3>& ts_lc_lostrans_in);
+  
+  const blitz::Array<double, 3>& ts_lc_layer_mssts() const;
+  void ts_lc_layer_mssts(const blitz::Array<double, 3>& ts_lc_layer_mssts_in);
+  
+  const blitz::Array<double, 2>& ts_lc_surf_mssts() const;
+  void ts_lc_surf_mssts(const blitz::Array<double, 2>& ts_lc_surf_mssts_in);
+  
+  const blitz::Array<double, 3>& ts_lp_lostrans() const;
+  void ts_lp_lostrans(const blitz::Array<double, 3>& ts_lp_lostrans_in);
+  
+  const blitz::Array<double, 4>& ts_lp_layer_mssts() const;
+  void ts_lp_layer_mssts(const blitz::Array<double, 4>& ts_lp_layer_mssts_in);
+  
+  const blitz::Array<double, 3>& ts_lp_surf_mssts() const;
+  void ts_lp_surf_mssts(const blitz::Array<double, 3>& ts_lp_surf_mssts_in);
   
   
 
@@ -653,17 +787,23 @@ public:
   const blitz::Array<double, 4>& ts_surfacewf() const;
   void ts_surfacewf(const blitz::Array<double, 4>& ts_surfacewf_in);
   
-  const blitz::Array<double, 4>& ts_mint_surfacewf() const;
-  void ts_mint_surfacewf(const blitz::Array<double, 4>& ts_mint_surfacewf_in);
+  const blitz::Array<double, 4>& ts_meani_diffuse_surfwf() const;
+  void ts_meani_diffuse_surfwf(const blitz::Array<double, 4>& ts_meani_diffuse_surfwf_in);
   
-  const blitz::Array<double, 4>& ts_flux_surfacewf() const;
-  void ts_flux_surfacewf(const blitz::Array<double, 4>& ts_flux_surfacewf_in);
+  const blitz::Array<double, 4>& ts_flux_diffuse_surfwf() const;
+  void ts_flux_diffuse_surfwf(const blitz::Array<double, 4>& ts_flux_diffuse_surfwf_in);
   
   const blitz::Array<double, 3>& ts_sbbwfs_jacobians() const;
   void ts_sbbwfs_jacobians(const blitz::Array<double, 3>& ts_sbbwfs_jacobians_in);
   
   const blitz::Array<double, 3>& ts_sbbwfs_fluxes() const;
   void ts_sbbwfs_fluxes(const blitz::Array<double, 3>& ts_sbbwfs_fluxes_in);
+  
+  const blitz::Array<double, 3>& ts_ls_layer_mssts() const;
+  void ts_ls_layer_mssts(const blitz::Array<double, 3>& ts_ls_layer_mssts_in);
+  
+  const blitz::Array<double, 2>& ts_ls_surf_mssts() const;
+  void ts_ls_surf_mssts(const blitz::Array<double, 2>& ts_ls_surf_mssts_in);
   
   
 
@@ -713,6 +853,29 @@ public:
   
   const blitz::Array<double, 2>& ts_ls_user_emissivity() const;
   void ts_ls_user_emissivity(const blitz::Array<double, 2>& ts_ls_user_emissivity_in);
+  
+  
+
+  virtual void print(std::ostream &output_stream) const;
+};
+
+class Lidort_Linsup_Sleave : public Lidort_Structure {
+public:
+  Lidort_Linsup_Sleave();
+  Lidort_Linsup_Sleave(const Lidort_Linsup_Sleave& src);
+  ~Lidort_Linsup_Sleave();
+
+  const blitz::Array<double, 2>& ts_lssl_slterm_isotropic() const;
+  void ts_lssl_slterm_isotropic(const blitz::Array<double, 2>& ts_lssl_slterm_isotropic_in);
+  
+  const blitz::Array<double, 4>& ts_lssl_slterm_userangles() const;
+  void ts_lssl_slterm_userangles(const blitz::Array<double, 4>& ts_lssl_slterm_userangles_in);
+  
+  const blitz::Array<double, 4>& ts_lssl_slterm_f_0() const;
+  void ts_lssl_slterm_f_0(const blitz::Array<double, 4>& ts_lssl_slterm_f_0_in);
+  
+  const blitz::Array<double, 4>& ts_lssl_user_slterm_f_0() const;
+  void ts_lssl_user_slterm_f_0(const blitz::Array<double, 4>& ts_lssl_user_slterm_f_0_in);
   
   
 
@@ -773,29 +936,6 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Sleave : public Lidort_Structure {
-public:
-  Lidort_Linsup_Sleave();
-  Lidort_Linsup_Sleave(const Lidort_Linsup_Sleave& src);
-  ~Lidort_Linsup_Sleave();
-
-  const blitz::Array<double, 2>& ts_lssl_slterm_isotropic() const;
-  void ts_lssl_slterm_isotropic(const blitz::Array<double, 2>& ts_lssl_slterm_isotropic_in);
-  
-  const blitz::Array<double, 4>& ts_lssl_slterm_userangles() const;
-  void ts_lssl_slterm_userangles(const blitz::Array<double, 4>& ts_lssl_slterm_userangles_in);
-  
-  const blitz::Array<double, 4>& ts_lssl_slterm_f_0() const;
-  void ts_lssl_slterm_f_0(const blitz::Array<double, 4>& ts_lssl_slterm_f_0_in);
-  
-  const blitz::Array<double, 4>& ts_lssl_user_slterm_f_0() const;
-  void ts_lssl_user_slterm_f_0(const blitz::Array<double, 4>& ts_lssl_user_slterm_f_0_in);
-  
-  
-
-  virtual void print(std::ostream &output_stream) const;
-};
-
 class Lidort_Linsup_Inout : public Lidort_Structure {
 public:
   Lidort_Linsup_Inout();
@@ -825,17 +965,50 @@ public:
   const blitz::Array<double, 3>& ts_intensity() const;
   void ts_intensity(const blitz::Array<double, 3>& ts_intensity_in);
   
-  const blitz::Array<double, 3>& ts_mean_intensity() const;
-  void ts_mean_intensity(const blitz::Array<double, 3>& ts_mean_intensity_in);
+  const blitz::Array<double, 3>& ts_meani_diffuse() const;
+  void ts_meani_diffuse(const blitz::Array<double, 3>& ts_meani_diffuse_in);
   
-  const blitz::Array<double, 3>& ts_flux_integral() const;
-  void ts_flux_integral(const blitz::Array<double, 3>& ts_flux_integral_in);
+  const blitz::Array<double, 3>& ts_flux_diffuse() const;
+  void ts_flux_diffuse(const blitz::Array<double, 3>& ts_flux_diffuse_in);
+  
+  const blitz::Array<double, 2>& ts_dnmeani_direct() const;
+  void ts_dnmeani_direct(const blitz::Array<double, 2>& ts_dnmeani_direct_in);
   
   const blitz::Array<double, 2>& ts_dnflux_direct() const;
   void ts_dnflux_direct(const blitz::Array<double, 2>& ts_dnflux_direct_in);
   
-  const blitz::Array<double, 2>& ts_dnmean_direct() const;
-  void ts_dnmean_direct(const blitz::Array<double, 2>& ts_dnmean_direct_in);
+  const blitz::Array<double, 1>& ts_albmed_user() const;
+  void ts_albmed_user(const blitz::Array<double, 1>& ts_albmed_user_in);
+  
+  const blitz::Array<double, 1>& ts_trnmed_user() const;
+  void ts_trnmed_user(const blitz::Array<double, 1>& ts_trnmed_user_in);
+  
+  const blitz::Array<double, 1>& ts_albmed_fluxes() const;
+  void ts_albmed_fluxes(const blitz::Array<double, 1>& ts_albmed_fluxes_in);
+  
+  const blitz::Array<double, 1>& ts_trnmed_fluxes() const;
+  void ts_trnmed_fluxes(const blitz::Array<double, 1>& ts_trnmed_fluxes_in);
+  
+  const blitz::Array<double, 1>& ts_planetary_transterm() const;
+  void ts_planetary_transterm(const blitz::Array<double, 1>& ts_planetary_transterm_in);
+  
+  const double& ts_planetary_sbterm() const;
+  void ts_planetary_sbterm(const double& ts_planetary_sbterm_in);
+  
+  const blitz::Array<double, 2>& ts_pathgeoms() const;
+  void ts_pathgeoms(const blitz::Array<double, 2>& ts_pathgeoms_in);
+  
+  const blitz::Array<double, 2>& ts_lostrans() const;
+  void ts_lostrans(const blitz::Array<double, 2>& ts_lostrans_in);
+  
+  const blitz::Array<double, 2>& ts_layer_mssts() const;
+  void ts_layer_mssts(const blitz::Array<double, 2>& ts_layer_mssts_in);
+  
+  const blitz::Array<double, 1>& ts_surf_mssts() const;
+  void ts_surf_mssts(const blitz::Array<double, 1>& ts_surf_mssts_in);
+  
+  const blitz::Array<double, 2>& ts_contribs() const;
+  void ts_contribs(const blitz::Array<double, 2>& ts_contribs_in);
   
   const blitz::Array<int, 1>& ts_fourier_saved() const;
   void ts_fourier_saved(const blitz::Array<int, 1>& ts_fourier_saved_in);
@@ -845,6 +1018,38 @@ public:
   
   const blitz::Array<double, 1>& ts_solarbeam_boatrans() const;
   void ts_solarbeam_boatrans(const blitz::Array<double, 1>& ts_solarbeam_boatrans_in);
+  
+  const double& ts_spheralb() const;
+  void ts_spheralb(const double& ts_spheralb_in);
+  
+  const blitz::Array<double, 1>& ts_trans1_user() const;
+  void ts_trans1_user(const blitz::Array<double, 1>& ts_trans1_user_in);
+  
+  const blitz::Array<double, 1>& ts_trans1_beam() const;
+  void ts_trans1_beam(const blitz::Array<double, 1>& ts_trans1_beam_in);
+  
+  
+
+  virtual void print(std::ostream &output_stream) const;
+};
+
+class Lidort_Wladjusted_Outputs : public Lidort_Structure {
+public:
+  Lidort_Wladjusted_Outputs();
+  Lidort_Wladjusted_Outputs(const Lidort_Wladjusted_Outputs& src);
+  ~Lidort_Wladjusted_Outputs();
+
+  const blitz::Array<double, 1>& ts_wladjusted_isotropic() const;
+  void ts_wladjusted_isotropic(const blitz::Array<double, 1>& ts_wladjusted_isotropic_in);
+  
+  const blitz::Array<double, 3>& ts_wladjusted_direct() const;
+  void ts_wladjusted_direct(const blitz::Array<double, 3>& ts_wladjusted_direct_in);
+  
+  const blitz::Array<double, 3>& ts_wladjusted_f_ords_0() const;
+  void ts_wladjusted_f_ords_0(const blitz::Array<double, 3>& ts_wladjusted_f_ords_0_in);
+  
+  const blitz::Array<double, 3>& ts_wladjusted_f_user_0() const;
+  void ts_wladjusted_f_user_0(const blitz::Array<double, 3>& ts_wladjusted_f_user_0_in);
   
   
 
@@ -912,6 +1117,9 @@ public:
 
   const Lidort_Main_Outputs& main() const;
   void main(Lidort_Main_Outputs& main_in);
+  
+  const Lidort_Wladjusted_Outputs& wlout() const;
+  void wlout(Lidort_Wladjusted_Outputs& wlout_in);
   
   const Lidort_Exception_Handling& status() const;
   void status(Lidort_Exception_Handling& status_in);
@@ -988,6 +1196,9 @@ public:
   const blitz::Array<double, 2>& ts_intensity_db() const;
   void ts_intensity_db(const blitz::Array<double, 2>& ts_intensity_db_in);
   
+  const blitz::Array<double, 2>& ts_contribs_ss() const;
+  void ts_contribs_ss(const blitz::Array<double, 2>& ts_contribs_ss_in);
+  
   
 
   virtual void print(std::ostream &output_stream) const;
@@ -1022,15 +1233,6 @@ public:
   const bool ts_do_fullrad_mode() const;
   void ts_do_fullrad_mode(const bool& ts_do_fullrad_mode_in);
   
-  const bool ts_do_sscorr_truncation() const;
-  void ts_do_sscorr_truncation(const bool& ts_do_sscorr_truncation_in);
-  
-  const bool ts_do_ss_external() const;
-  void ts_do_ss_external(const bool& ts_do_ss_external_in);
-  
-  const bool ts_do_ssfull() const;
-  void ts_do_ssfull(const bool& ts_do_ssfull_in);
-  
   const bool ts_do_thermal_emission() const;
   void ts_do_thermal_emission(const bool& ts_do_thermal_emission_in);
   
@@ -1049,11 +1251,41 @@ public:
   const bool ts_do_dnwelling() const;
   void ts_do_dnwelling(const bool& ts_do_dnwelling_in);
   
+  const bool ts_do_toa_contribs() const;
+  void ts_do_toa_contribs(const bool& ts_do_toa_contribs_in);
+  
   const bool ts_do_surface_leaving() const;
   void ts_do_surface_leaving(const bool& ts_do_surface_leaving_in);
   
   const bool ts_do_sl_isotropic() const;
   void ts_do_sl_isotropic(const bool& ts_do_sl_isotropic_in);
+  
+  const bool ts_do_water_leaving() const;
+  void ts_do_water_leaving(const bool& ts_do_water_leaving_in);
+  
+  const bool ts_do_fluorescence() const;
+  void ts_do_fluorescence(const bool& ts_do_fluorescence_in);
+  
+  const bool ts_do_tf_iteration() const;
+  void ts_do_tf_iteration(const bool& ts_do_tf_iteration_in);
+  
+  const bool ts_do_wladjusted_output() const;
+  void ts_do_wladjusted_output(const bool& ts_do_wladjusted_output_in);
+  
+  const bool ts_do_toa_illumination() const;
+  void ts_do_toa_illumination(const bool& ts_do_toa_illumination_in);
+  
+  const bool ts_do_boa_illumination() const;
+  void ts_do_boa_illumination(const bool& ts_do_boa_illumination_in);
+  
+  const blitz::Array<bool, 1> ts_do_albtrn_media() const;
+  void ts_do_albtrn_media(const blitz::Array<bool, 1>& ts_do_albtrn_media_in);
+  
+  const bool ts_do_planetary_problem() const;
+  void ts_do_planetary_problem(const bool& ts_do_planetary_problem_in);
+  
+  const bool ts_do_mssts() const;
+  void ts_do_mssts(const bool& ts_do_mssts_in);
   
   
 
@@ -1066,9 +1298,6 @@ public:
   Lidort_Fixed_Control(const Lidort_Fixed_Control& src);
   ~Lidort_Fixed_Control();
 
-  const double& ts_thermal_cutoff() const;
-  void ts_thermal_cutoff(const double& ts_thermal_cutoff_in);
-  
   const int& ts_taylor_order() const;
   void ts_taylor_order(const int& ts_taylor_order_in);
   
@@ -1086,6 +1315,21 @@ public:
   
   const double& ts_lidort_accuracy() const;
   void ts_lidort_accuracy(const double& ts_lidort_accuracy_in);
+  
+  const double& ts_asymtx_tolerance() const;
+  void ts_asymtx_tolerance(const double& ts_asymtx_tolerance_in);
+  
+  const int& ts_tf_maxiter() const;
+  void ts_tf_maxiter(const int& ts_tf_maxiter_in);
+  
+  const double& ts_tf_criterion() const;
+  void ts_tf_criterion(const double& ts_tf_criterion_in);
+  
+  const double& ts_toa_illumination() const;
+  void ts_toa_illumination(const double& ts_toa_illumination_in);
+  
+  const double& ts_boa_illumination() const;
+  void ts_boa_illumination(const double& ts_boa_illumination_in);
   
   
 
@@ -1158,14 +1402,57 @@ public:
   const blitz::Array<double, 2>& ts_phasmoms_total_input() const;
   void ts_phasmoms_total_input(const blitz::Array<double, 2>& ts_phasmoms_total_input_in);
   
-  const blitz::Array<double, 1>& ts_thermal_bb_input() const;
-  void ts_thermal_bb_input(const blitz::Array<double, 1>& ts_thermal_bb_input_in);
+  const blitz::Array<double, 2>& ts_phasfunc_input_up() const;
+  void ts_phasfunc_input_up(const blitz::Array<double, 2>& ts_phasfunc_input_up_in);
+  
+  const blitz::Array<double, 2>& ts_phasfunc_input_dn() const;
+  void ts_phasfunc_input_dn(const blitz::Array<double, 2>& ts_phasfunc_input_dn_in);
   
   const double& ts_lambertian_albedo() const;
   void ts_lambertian_albedo(const double& ts_lambertian_albedo_in);
   
+  const blitz::Array<double, 1>& ts_thermal_bb_input() const;
+  void ts_thermal_bb_input(const blitz::Array<double, 1>& ts_thermal_bb_input_in);
+  
   const double& ts_surface_bb_input() const;
   void ts_surface_bb_input(const double& ts_surface_bb_input_in);
+  
+  const double& ts_atmos_wavelength() const;
+  void ts_atmos_wavelength(const double& ts_atmos_wavelength_in);
+  
+  
+
+  virtual void print(std::ostream &output_stream) const;
+};
+
+class Lidort_Fixed_Write : public Lidort_Structure {
+public:
+  Lidort_Fixed_Write();
+  Lidort_Fixed_Write(const Lidort_Fixed_Write& src);
+  ~Lidort_Fixed_Write();
+
+  const bool ts_do_debug_write() const;
+  void ts_do_debug_write(const bool& ts_do_debug_write_in);
+  
+  const bool ts_do_write_input() const;
+  void ts_do_write_input(const bool& ts_do_write_input_in);
+  
+  const std::string ts_input_write_filename() const;
+  
+  const bool ts_do_write_scenario() const;
+  void ts_do_write_scenario(const bool& ts_do_write_scenario_in);
+  
+  const std::string ts_scenario_write_filename() const;
+  
+  const bool ts_do_write_fourier() const;
+  void ts_do_write_fourier(const bool& ts_do_write_fourier_in);
+  
+  const std::string ts_fourier_write_filename() const;
+  
+  const bool ts_do_write_results() const;
+  void ts_do_write_results(const bool& ts_do_write_results_in);
+  
+  const std::string ts_results_write_filename() const;
   
   
 
@@ -1196,6 +1483,9 @@ public:
   const Lidort_Fixed_Optical& optical() const;
   void optical(Lidort_Fixed_Optical& optical_in);
   
+  const Lidort_Fixed_Write& write() const;
+  void write(Lidort_Fixed_Write& write_in);
+  
   
 
   virtual void print(std::ostream &output_stream) const;
@@ -1207,11 +1497,26 @@ public:
   Lidort_Modified_Boolean(const Lidort_Modified_Boolean& src);
   ~Lidort_Modified_Boolean();
 
-  const bool ts_do_sscorr_nadir() const;
-  void ts_do_sscorr_nadir(const bool& ts_do_sscorr_nadir_in);
+  const bool ts_do_focorr() const;
+  void ts_do_focorr(const bool& ts_do_focorr_in);
   
-  const bool ts_do_sscorr_outgoing() const;
-  void ts_do_sscorr_outgoing(const bool& ts_do_sscorr_outgoing_in);
+  const bool ts_do_focorr_external() const;
+  void ts_do_focorr_external(const bool& ts_do_focorr_external_in);
+  
+  const bool ts_do_focorr_nadir() const;
+  void ts_do_focorr_nadir(const bool& ts_do_focorr_nadir_in);
+  
+  const bool ts_do_focorr_outgoing() const;
+  void ts_do_focorr_outgoing(const bool& ts_do_focorr_outgoing_in);
+  
+  const bool ts_do_sscorr_truncation() const;
+  void ts_do_sscorr_truncation(const bool& ts_do_sscorr_truncation_in);
+  
+  const bool ts_do_sscorr_usephasfunc() const;
+  void ts_do_sscorr_usephasfunc(const bool& ts_do_sscorr_usephasfunc_in);
+  
+  const bool ts_do_external_wleave() const;
+  void ts_do_external_wleave(const bool& ts_do_external_wleave_in);
   
   const bool ts_do_double_convtest() const;
   void ts_do_double_convtest(const bool& ts_do_double_convtest_in);
@@ -1260,6 +1565,9 @@ public:
   
   const bool ts_do_observation_geometry() const;
   void ts_do_observation_geometry(const bool& ts_do_observation_geometry_in);
+  
+  const bool ts_do_doublet_geometry() const;
+  void ts_do_doublet_geometry(const bool& ts_do_doublet_geometry_in);
   
   
 
@@ -1324,8 +1632,14 @@ public:
   const int& ts_n_user_obsgeoms() const;
   void ts_n_user_obsgeoms(const int& ts_n_user_obsgeoms_in);
   
-  const blitz::Array<double, 2>& ts_user_obsgeom_input() const;
-  void ts_user_obsgeom_input(const blitz::Array<double, 2>& ts_user_obsgeom_input_in);
+  const blitz::Array<double, 2>& ts_user_obsgeoms_input() const;
+  void ts_user_obsgeoms_input(const blitz::Array<double, 2>& ts_user_obsgeoms_input_in);
+  
+  const int& ts_n_user_doublets() const;
+  void ts_n_user_doublets(const int& ts_n_user_doublets_in);
+  
+  const blitz::Array<double, 2>& ts_user_doublets() const;
+  void ts_user_doublets(const blitz::Array<double, 2>& ts_user_doublets_in);
   
   
 

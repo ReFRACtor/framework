@@ -19,6 +19,7 @@ endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+# Include all Fortran code under this LIDORT directory...
 file(GLOB_RECURSE LIDORT_SRC "*.f90")
 
 # Configure overridable LIDORT parameters file

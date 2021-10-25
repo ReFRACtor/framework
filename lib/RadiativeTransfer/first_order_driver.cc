@@ -60,12 +60,13 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   int nszas = 1;
   int nvzas = 1;
   int nazms = 1;
+  int npartials = 0;
   int ngeoms = nszas * nvzas * nazms;
 
   // Match what is used by LIDORT driver
   int nfine = 4;
   
-  geometry.reset(new Fo_Ssgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine));
+  geometry.reset(new Fo_Sswpgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, npartials, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials));
   
   // Use same definitions as Fortran code
   // Define pi and degrees to radians
@@ -85,25 +86,16 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // Specify angles instead of using observation geometry mode
   geometry->do_obsgeom(false);
   
-  // Attenuation control
-  // Criticality not set (fast option) valid for lower optical depth atmospheres
-  // Only needed when enchanced_ps is enabled for extremely optically thick atmospheres 
-  // where light does not reach surface
-  geometry->docrit(false);
-
-  // Commented out values not used if docrit == false
-  // Critical attenuation
-  //geometry->acrit(1.0e-10);
-  // Extincion profile
-  //geometry->extinct(...)
-
   ///////
   // Initialize legendre interface
   // Used for computing exact scattering from phase moments
+  legendre.reset(new Fo_Scalarss_Spherfuncs(num_moments_, ngeoms, num_moments_, ngeoms));
+  
+  // Flags to be set for each calculation (safety)
+  legendre->starter(true);
 
-  // Should always be true before first Spherfuncs call
-  bool starter = true;
-  legendre.reset(new Fo_Scalarss_Spherfuncs(starter, num_moments_, ngeoms, num_moments_, ngeoms));
+  // Need to calculate spherical function because we supplying phasmoms not phasfunc values
+  legendre->do_spherfunc(true);
 
   ///////
   // Initialize radiance interface
@@ -112,14 +104,19 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   Lidort_Pars lid_pars = Lidort_Pars::instance();
   int natmoswfs = lid_pars.max_atmoswfs;
   int nsurfacewfs = lid_pars.max_surfacewfs; 
-  
+  int n_sleavewfs = lid_pars.max_sleavewfs;
+  int n_user_levels = 1;
+
   // Initialize solar mode interface
-  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, nfine, natmoswfs, nsurfacewfs, ngeoms, nlayers));
+  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, npartials, nfine, num_moments_, n_user_levels, natmoswfs, ngeoms, nlayers, n_user_levels, npartials, nsurfacewfs, n_sleavewfs, n_sleavewfs, nsurfacewfs));
   
-    // Set solar flux to 1.0 for solar spectrum case
-    // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
+  // Set solar flux to 1.0 for solar spectrum case
+  // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
   float lidort_flux_factor = 1.0;
   solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
+
+  // Set delta-m scaling flag for internal computations
+  solar_interface_->do_deltam_scaling(do_deltam_scaling_);
   
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
@@ -184,7 +181,6 @@ void FirstOrderDriver::copy_geometry_flags()
 {
   // Flags copied from geometry object
   solar_interface_->do_planpar(geometry->do_planpar());
-  solar_interface_->do_regular_ps(!geometry->do_planpar() && !geometry->do_enhanced_ps());
   solar_interface_->do_enhanced_ps(geometry->do_enhanced_ps());
 }
 
@@ -218,54 +214,42 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
   if (geometry->fail()) {
     Exception err;
     err << "Error in first order geometry calculation:\n"
-	<< "Message: " << geometry->message() << "\n"
-	<< "Trace: " << geometry->trace() << "\n";
+        << "Message: " << geometry->message() << "\n"
+        << "Trace: " << geometry->trace() << "\n";
     throw err;
   }
     
   // Rerun legendre interface since it dependes on cosscat
   legendre->cosscat(geometry->cosscat());
   legendre->run();
-  
+
   // Copy dynamic geometry outputs into FO interface object
+  solar_interface_->mu0(geometry->mu0());
+  solar_interface_->mu1(geometry->mu1());
+
+  solar_interface_->legpoly_up(legendre->ss_pleg());
+   
   // Consider .reference to avoid copying?
   Array<int, 2> nfinedivs(solar_interface_->nfinedivs());
   nfinedivs = geometry->nfinedivs();
-  
-  solar_interface_->donadir(geometry->donadir());
-  solar_interface_->ncrit(geometry->ncrit());
+
+  solar_interface_->losw_paths(geometry->losw_paths());
+  solar_interface_->losp_paths(geometry->losp_paths());
+ 
   solar_interface_->xfine(geometry->xfine());
   solar_interface_->wfine(geometry->wfine());
-  solar_interface_->csqfine(geometry->csqfine());
-  solar_interface_->cotfine(geometry->cotfine());
-  solar_interface_->raycon(geometry->raycon());
-  solar_interface_->cota(geometry->cota());
+
   solar_interface_->sunpaths(geometry->sunpaths());
   solar_interface_->ntraverse(geometry->ntraverse());
-  solar_interface_->sunpaths_fine(geometry->sunpathsfine());
-  solar_interface_->ntraverse_fine(geometry->ntraversefine());
-  
-  // Compute these values for plane parallel or regular pseudo spherical modes
-  if (geometry->do_planpar() || (!geometry->do_planpar() && !geometry->do_enhanced_ps())) {
-    Array<double, 1> mu0(solar_interface_->mu0());
-    Array<double, 1> mu1(solar_interface_->mu1());
-    
-    for (int ns = 0; ns < geometry->nszas(); ns++) {
-      int nv_offset = geometry->nvzas() * geometry->nazms() * ns;
-      for(int nv = 0; nv < geometry->nvzas(); nv++) {
-	int na_offset = nv_offset + geometry->nazms() * nv;
-	for(int na = 0; na < geometry->nazms(); na++) {
-	  // Geometry index for lattice
-	  int g =  na_offset + na;
-	  mu0(g) = cos(geometry->theta_boa()(ns) * geometry->dtr());
-	  mu1(g) = cos(geometry->alpha_boa()(nv) * geometry->dtr());
-	}
-      }
-    }
-  } else {
-    solar_interface_->mu0(geometry->mu0());
-    solar_interface_->mu1(geometry->mu1());
-  }
+  solar_interface_->sunpathsfine(geometry->sunpathsfine());
+  solar_interface_->ntraversefine(geometry->ntraversefine());
+
+  solar_interface_->xfine_p(geometry->xfine_p());
+  solar_interface_->wfine_p(geometry->wfine_p());
+  solar_interface_->sunpaths_p(geometry->sunpaths_p());
+  solar_interface_->ntraverse_p(geometry->ntraverse_p());
+  solar_interface_->sunpathsfine_p(geometry->sunpathsfine_p());
+  solar_interface_->ntraversefine_p(geometry->ntraversefine_p());
 }
 
 void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const blitz::Array<double, 1>& UNUSED(atmosphere_bb))
@@ -304,28 +288,28 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     Array<double, 1> extinction(solar_interface_->extinction());
     extinction = optical_depth / height_diffs;
 
-    // Compute truncated values when delta_m truncation is turned on or not
-    Array<double, 1> tms;
-    if(do_deltam_scaling_) {
-        Array<double, 1> truncfac = deltam_trunc_factor(pf);
-        optical_depth *= (1 - truncfac * ssa);
-        extinction *= (1 - truncfac * ssa);
+    // Single scattering albedo
+    Array<double, 1> omega(solar_interface_->omega());
+    omega = ssa;
 
-        tms.resize(ssa.rows());
-        tms = ssa / (1 - truncfac * ssa);
-    } else {
-        tms.reference(ssa);
+    // Compute truncated values when delta_m truncation is turned on or not
+    if(do_deltam_scaling_) {
+        // Set trunfaction factor for use in FO when deltam scaling is turned on
+        // It only seems to use this for generating exactscatt from phasemoms
+        Array<double, 1> truncfac(solar_interface_->truncfac());
+        truncfac = deltam_trunc_factor(pf);
+
+        // Are thse needed???
+        // Doing this to omega would mess up internal deltam scaling code
+        optical_depth *= (1 - truncfac * ssa);
+        //omega *= (1 - truncfac * ssa);
+        extinction *= (1 - truncfac * ssa);
     }
 
-    // Compute phase function from fourier moments by summing over moments times general spherical function
-    // Sum over moment index, only use the number of common moments available
-    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
-    Range r_all = Range::all();
-    firstIndex lay_idx; secondIndex geom_idx; thirdIndex mom_idx;
+    // Set phase moments, FO storage is transpose of ReFRACtor ordering
+    Array<double, 2> phasmoms(solar_interface_->phasmoms());
+    phasmoms = pf.transpose(secondDim, firstDim);
 
-    Array<double, 2> exactscat(solar_interface_->exactscat_up());
-    exactscat = sum(legendre->ss_pleg()(r_mom, r_all)(mom_idx, geom_idx) * pf(r_mom, r_all)(mom_idx, lay_idx), mom_idx) * tms(lay_idx);
-    
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
     reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
@@ -334,7 +318,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 void FirstOrderDriver::clear_linear_inputs() 
 {
     solar_interface_->do_profilewfs(false);
-    solar_interface_->do_reflecwfs(false); 
+    solar_interface_->do_surfacewfs(false); 
     solar_interface_->n_reflecwfs(0);
 }
 
@@ -386,9 +370,11 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set up OD related inputs
     Array<double, 2> l_deltau(solar_interface_->l_deltaus());
+    Array<double, 2> l_omega(solar_interface_->l_omega());
     Array<double, 2> l_extinction(solar_interface_->l_extinction());
 
     l_deltau(r_lay, r_jac) = od.jacobian();
+    l_omega(r_lay, r_jac) = ssa.jacobian();
 
     firstIndex i1; secondIndex i2;
     l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
@@ -399,7 +385,8 @@ void FirstOrderDriver::setup_linear_inputs
 
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
-        Array<double, 2> l_truncfac = deltam_linear_trunc_factor(pf);
+        Array<double, 2> l_truncfac(solar_interface_->l_truncfac()); 
+        l_truncfac = deltam_linear_trunc_factor(pf);
 
         Array<double, 1> correction_fac(truncfac.rows());
         correction_fac = 1 - truncfac * ssa.value();
@@ -409,53 +396,18 @@ void FirstOrderDriver::setup_linear_inputs
 
         l_extinction(r_lay, r_jac) = l_extinction(r_lay, r_jac)(i1, i2) * correction_fac(i1) -
             (od.value()(i1) / height_diffs(i1)) * (l_truncfac(i1, i2) * ssa.value()(i1) + truncfac(i1) * ssa.jacobian()(i1, i2));
-
-        Array<double, 2> l_correction_fac(l_truncfac.shape());
-        l_correction_fac = - l_truncfac(i1, i2) * ssa.value()(i1) - truncfac(i1) * ssa.jacobian()(i1, i2);
-
-        tms.resize(ssa.rows());
-        tms = ssa.value() / (1 - truncfac * ssa.value());
-
-        l_tms.resize(ssa.jacobian().shape());
-        l_tms = (ssa.jacobian()(i1, i2) - tms(i1) * l_correction_fac(i1, i2)) / correction_fac(i1);
-
-    } else {
-        tms.reference(ssa.value());
-        l_tms.reference(ssa.jacobian());
     }
 
-    // Already computed in setup_optical_inputs
-    Array<double, 2> exactscat(solar_interface_->exactscat_up());
-
-    // l_exactscat takes into account ssa jacobian contributions
-    // Compute legendre * pf function first seperately so that separate placeholder
-    // variables can be used when computing l_exactscat to ensure correct ordering of values
-    Array<double, 3> l_exactscat(solar_interface_->l_exactscat_up());
-
-    // Sum over moment index, only use the number of common moments available
-    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
-
-    // j1 = layers, j2 = geometry, j3 = moments
-    Array<double, 2> legpf(nlay, ngeom);
-    Array<double, 3> l_legpf(nlay, ngeom, natm_jac);
-
-    firstIndex j1; secondIndex j2; thirdIndex j3;
-
-    legpf = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.value()(r_mom, r_all)(j3, j1), j3);
-
-    for(int jac_idx = 0; jac_idx < natm_jac; jac_idx++)
-        l_legpf(r_all, r_all, jac_idx) = sum(legendre->ss_pleg()(r_mom, r_all)(j3, j2) * pf.jacobian()(r_mom, r_all, jac_idx)(j3, j1), j3);
-
-    // k1 = layers, k2 = ngeom, k3 = jacobians
-    firstIndex k1; secondIndex k2; thirdIndex k3;
-    l_exactscat(r_lay, r_all, r_jac) = l_legpf(k1, k2, k3) * tms(k1) + legpf(k1, k2) * l_tms(k1, k3);
+    // Set phasmoms jacobian and set correct ordering in copy
+    Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
+    l_phasmoms = pf.jacobian().transpose(secondDim, firstDim, thirdDim);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
         int n_surf_wfs = brdf_driver()->n_surface_wfs();
         Range r_surf_wfs = Range(0, n_surf_wfs-1);
 
-        solar_interface_->do_reflecwfs(true); 
+        solar_interface_->do_surfacewfs(true); 
         solar_interface_->n_reflecwfs(n_surf_wfs);
         
         // Set up reflection linearization from BRDF supplement

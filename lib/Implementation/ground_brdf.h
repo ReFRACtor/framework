@@ -116,7 +116,7 @@ public:
     GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
   virtual SpurrBrdfType spurr_brdf_type() const
-  { return SpurrBrdfType::BPDFVEGN; }
+  { return SpurrBrdfType::BREONVEG; }
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
   static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);
@@ -148,7 +148,7 @@ public:
     GroundBrdf(Coeffs, Ref_points, Desc_band_names, Mapping) {}
 
   virtual SpurrBrdfType spurr_brdf_type() const
-  { return SpurrBrdfType::BPDFSOIL; }
+  { return SpurrBrdfType::BREONSOIL; }
   virtual double black_sky_albedo(int Spec_index, double Sza);
 
   static double kernel_value_at_params(const blitz::Array<double, 1>& params, double Sza, double Vza, double Azm);

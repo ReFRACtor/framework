@@ -26,15 +26,15 @@ public:
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void Brdf_Linsup_Masters::serialize(Archive& ar,
+void Brdf_Lin_Sup_Masters::serialize(Archive& ar,
 					     const unsigned int version)
 {
-  FP_GENERIC_BASE(Brdf_Linsup_Masters);
+  FP_GENERIC_BASE(Brdf_Lin_Sup_Masters);
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void Brdf_Linsup_Masters::save(Archive & ar,
+void Brdf_Lin_Sup_Masters::save(Archive & ar,
 		    const unsigned int UNUSED(version)) const
 {
   TemporaryFile tf;
@@ -47,7 +47,7 @@ void Brdf_Linsup_Masters::save(Archive & ar,
   ar & FP_NVP(data);
 }
 template<class Archive>
-void Brdf_Linsup_Masters::load(Archive & ar,
+void Brdf_Lin_Sup_Masters::load(Archive & ar,
 			    const unsigned int UNUSED(version))
 {
   TemporaryFile tf;
@@ -93,6 +93,6 @@ void Lidort_Lps_Masters::load(Archive & ar,
   read_fortran_file(tf.file_name.string());
 }
 
-FP_IMPLEMENT(Brdf_Linsup_Masters);
+FP_IMPLEMENT(Brdf_Lin_Sup_Masters);
 FP_IMPLEMENT(Lidort_Lps_Masters);
 #endif

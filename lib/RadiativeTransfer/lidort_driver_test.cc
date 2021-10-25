@@ -10,10 +10,10 @@ using namespace FullPhysics;
 using namespace blitz;
 
 bool check_brdf_inputs(boost::shared_ptr<LidortRtDriver>& lidort_driver) {
-  Lidort_Sup_Accessories brdf_check = Lidort_Sup_Accessories(lidort_driver->brdf_interface()->brdf_sup_in_ptr(),
+  Lidort_Brdf_Sup_Accessories brdf_check = Lidort_Brdf_Sup_Accessories(lidort_driver->brdf_interface()->brdf_sup_in_ptr(),
       lidort_driver->lidort_interface()->lidort_fixin_ptr(),
       lidort_driver->lidort_interface()->lidort_modin_ptr());
-  brdf_check.brdf_input_checker();
+  brdf_check.brdf_input_check();
 
   Lidort_Exception_Handling& brdf_check_status = brdf_check.lidort_brdfcheck_status();
   Lidort_Pars lid_pars = Lidort_Pars::instance();

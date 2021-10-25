@@ -82,13 +82,21 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                 surface_type, zen, pure_nadir,
                                                 do_solar, do_thermal);  
 
+  // Set up LIDORT to only perform single scattering calculations
+  auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
+  auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
+  fbool.ts_do_fullrad_mode(false);
+  mbool.ts_do_focorr(true);
+
+  mbool.ts_do_deltam_scaling(do_deltam_scaling);
+
   // Configure sphericity and phase function affecting options
   switch(sphericity_mode) {
     case 0:
         lidort_driver.set_plane_parallel();
 
         // This is important for getting agreement.
-        lidort_driver.lidort_interface()->lidort_modin().mbool().ts_do_sscorr_nadir(true);
+        mbool.ts_do_focorr_nadir(true);
 
         break;
     case 1:
@@ -100,13 +108,6 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
     default:
         throw Exception("Unknown sphericity_mode value");
   }
-
-  auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
-  mbool.ts_do_deltam_scaling(do_deltam_scaling);
-
-  // Set up LIDORT to only perform single scattering calculations
-  auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
-  fbool.ts_do_ssfull(true);
 
   // Simple height grid evenly spaced
   Array<double, 1> heights(nlayer+1);

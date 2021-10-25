@@ -93,7 +93,7 @@ LidortDriverCoxmunkFixture::LidortDriverCoxmunkFixture() : LidortDriverCommonFix
 LidortDriverBrdfVegFixture::LidortDriverBrdfVegFixture() : LidortDriverCommonFixture()
 {
   surface_params.resize(5); 
-  surface_type = BPDFVEGN;
+  surface_type = BREONVEG;
 
   lidort_driver.reset(new LidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir));
 

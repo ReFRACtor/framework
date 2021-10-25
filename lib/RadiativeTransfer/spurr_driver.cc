@@ -55,8 +55,8 @@ void SpurrBrdfDriver::initialize_brdf_inputs(int surface_type)
     initialize_brdf_kernel(COXMUNK);
     initialize_brdf_kernel(LAMBERTIAN);
     break;
-  case BPDFVEGN:
-  case BPDFSOIL:
+  case BREONVEG:
+  case BREONSOIL:
     initialize_brdf_kernel(RAHMAN);
     initialize_brdf_kernel(surface_type);
     break;
@@ -110,8 +110,8 @@ void SpurrBrdfDriver::initialize_brdf_kernel(int which_brdf) {
     do_params_wfs.resize(n_brdf_parameters);
     do_params_wfs = true;
     break;
-  case BPDFVEGN:
-  case BPDFSOIL:
+  case BREONVEG:
+  case BREONSOIL:
     n_brdf_parameters = 1;
 
     do_factor_wfs = true;
@@ -184,8 +184,8 @@ ArrayAd<double, 1> SpurrBrdfDriver::setup_brdf_inputs(int surface_type, const Ar
     parameter_indexes(0) = 2;
     setup_lambertian_inputs(1, rt_surf_params, parameter_indexes);
     break;
-  case BPDFVEGN:
-  case BPDFSOIL:
+  case BREONVEG:
+  case BREONSOIL:
     parameter_indexes.resize(4);
     parameter_indexes(0) = 0; // rahman kernel factor
     parameter_indexes(1) = 1; // hotspot parameter

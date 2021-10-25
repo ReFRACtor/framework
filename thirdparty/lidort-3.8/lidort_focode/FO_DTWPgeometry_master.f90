@@ -213,8 +213,8 @@ subroutine FO_DTWPGeometry_Master  &
 !  Exception handling
 
    logical      , intent(out)    :: fail
-   character*(*), intent(out)    :: message
-   character*(*), intent(out)    :: trace
+   character*100, intent(out)    :: message
+   character*100, intent(out)    :: trace
 
 !  Local arguments
 !  ===============
