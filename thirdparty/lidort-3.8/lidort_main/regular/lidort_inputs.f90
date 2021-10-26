@@ -2375,14 +2375,16 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 !   -- Add DOUBLET_GEOMETRY to this list. DO_TOA_CONTRIBS also added
 !   -- Several restrictions on use of MSSTS option, need to be checked
 
+!  10/12/21. Version 3.8.3. Add dimensioning check on N_PARTLAYERS 
+
 !  module, dimensions and numbers
 
-      USE LIDORT_pars_m, only : fpk, MAX_USER_STREAMS, MAX_USER_RELAZMS,     &
-                                MAX_USER_LEVELS, MAXBEAMS, MAX_TAYLOR_TERMS, &
-                                MAXSTREAMS, MAXLAYERS, MAXMOMENTS_INPUT,     &
-                                MAX_THERMAL_COEFFS, MAX_USER_OBSGEOMS,       &
-                                MAXFINELAYERS, MAX_ALLSTRMS_P1,              &
-                                ZERO, MAX_MESSAGES, LIDORT_SUCCESS,          &
+      USE LIDORT_pars_m, only : fpk, MAX_USER_STREAMS, MAX_USER_RELAZMS,        &
+                                MAX_USER_LEVELS, MAXBEAMS, MAX_TAYLOR_TERMS,    &
+                                MAXSTREAMS, MAXLAYERS, MAXMOMENTS_INPUT,        &
+                                MAX_THERMAL_COEFFS, MAX_USER_OBSGEOMS,          &
+                                MAX_PARTLAYERS, MAXFINELAYERS, MAX_ALLSTRMS_P1, &
+                                ZERO, MAX_MESSAGES, LIDORT_SUCCESS,             &
                                 LIDORT_WARNING, LIDORT_SERIOUS
 
       IMPLICIT NONE
@@ -2581,8 +2583,8 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 
 !  local variables
 
-      REAL(fpk)      :: XT
-      INTEGER        :: I, N, UTA, NSTART, NALLSTREAMS, NM
+      REAL(fpk)      :: XT, DT, RT
+      INTEGER        :: I, N, UTA, NSTART, NALLSTREAMS, NM, N_PARTLAYERS
       CHARACTER*2    :: C2
       LOGICAL        :: LOOP
 
@@ -3492,6 +3494,21 @@ SUBROUTINE LIDORT_CHECK_INPUT &
         ENDIF
       ENDDO
 
+!  10/08/21. Version 3.8.3. Add provision to check N_PARTLAYERS does not exceed dimensioning
+
+      N_PARTLAYERS = 0
+      DO UTA = 1, N_USER_LEVELS
+        DT = USER_LEVELS(UTA)
+        RT = DT - DBLE(INT(DT))
+        IF ( RT.GT.ZERO ) N_PARTLAYERS = N_PARTLAYERS + 1
+      ENDDO
+      if ( N_PARTLAYERS.gt. MAX_PARTLAYERS ) then
+        NM = NM + 1
+        MESSAGES(NM) = 'Too many partial-layer outputs: exceeds dimensioning parameter MAX_PARTLAYERS'
+        ACTIONS(NM)  = 'increase MAX_PARTLAYERS to cover all desired partial-layer outputs'
+        STATUS = LIDORT_SERIOUS
+      endif
+
 !  2/28/21. Version 3.8.3. New section, Checking on TOA contribution flag
 !    TOA Upwelling must be set, if you are using this flag
 
@@ -4156,7 +4173,6 @@ SUBROUTINE LIDORT_DERIVE_INPUT ( &
           UTAU_LEVEL_MASK_UP(UTA)  = N - 1
           UTAU_LEVEL_MASK_DN(UTA)  = N - 1
         ENDIF
-
       ENDDO
       N_PARTLAYERS = UT
 
