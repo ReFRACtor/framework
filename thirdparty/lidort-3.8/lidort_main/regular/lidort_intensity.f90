@@ -136,7 +136,7 @@ module lidort_intensity_m
 !  Everything public
 !  I.8.3.  ==> Convergence routines no longer in this list
 
-   PUBLIC :: UPUSER_INTENSITY, DNUSER_INTENSITY, MIFLUX_INTENSITY, GET_TOA_SOURCE, GET_BOA_SOURCE
+   PUBLIC :: UPUSER_INTENSITY, DNUSER_INTENSITY, MIFLUX_INTENSITY, GET_TOASOURCE, GET_BOASOURCE
 
 contains
 
