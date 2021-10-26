@@ -4,10 +4,6 @@
 #include "lidort_interface_types.h"
 #include "spurr_brdf_types.h"
 
-// Default maximum number of layers
-#define LIDORT_MAXLAYER 23
-#define LIDORT_MAXATMOSWFS 7
-
 using namespace FullPhysics;
 using namespace blitz;
 

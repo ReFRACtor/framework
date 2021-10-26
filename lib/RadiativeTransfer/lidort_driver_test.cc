@@ -352,7 +352,6 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
 
   // Pseudo-spherical mode FD test
   ldriver->set_pseudo_spherical();
-  ldriver->lidort_interface()->lidort_modin().mbool().ts_do_no_azimuth(true);
  
   lidort_surface.value() = surface_params;
   lidort_surface.jacobian() = 1.0;
