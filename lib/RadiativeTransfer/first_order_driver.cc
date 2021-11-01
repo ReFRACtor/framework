@@ -117,6 +117,10 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
   // Set delta-m scaling flag for internal computations
   solar_interface_->do_deltam_scaling(do_deltam_scaling_);
+
+  // Enable sources for all layers
+  Array<bool, 2> do_sources_up(solar_interface_->do_sources_up());
+  do_sources_up = true;
   
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
@@ -353,11 +357,11 @@ void FirstOrderDriver::setup_linear_inputs
     // Set which profile layer jacobians are computed
     int natm_jac = od.number_variable();
     int nlay = od.rows();
-    int ngeom = geometry->ngeoms();
 
     Range r_all = Range::all();
     Range r_jac = Range(0, natm_jac-1);
     Range r_lay = Range(0, nlay-1);
+    Range r_mom = Range(0, num_moments_-1);
 
     // Enable weighting functions
     solar_interface_->do_profilewfs(true);
@@ -400,7 +404,7 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set phasmoms jacobian and set correct ordering in copy
     Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
-    l_phasmoms = pf.jacobian().transpose(secondDim, firstDim, thirdDim);
+    l_phasmoms(r_all, r_all, r_mom) = pf.jacobian().transpose(secondDim, firstDim, thirdDim);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
@@ -428,7 +432,7 @@ void FirstOrderDriver::calculate_rt() const
 
 double FirstOrderDriver::get_intensity() const
 {
-    return solar_interface_->intensity_db()(0) + solar_interface_->intensity_up()(0);
+    return solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
 }
 
 void FirstOrderDriver::copy_jacobians
@@ -439,11 +443,15 @@ void FirstOrderDriver::copy_jacobians
 {
     Range ra(Range::all());
 
+    // Output array size is: max_user_levels, maxgeoms, maxlayers, max_atmoswf
+    // We only have 1 user_level and 1 geom
+    Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, 0, ra, ra) + solar_interface_->lp_jacobians_db()(0, 0, ra, ra));
     // Need to transpose output to be in the expected order of njac, nlay
-    Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, ra, ra) + solar_interface_->lp_jacobians_db()(0, ra, ra));
     jac_total.transposeSelf(secondDim, firstDim);
     jac_atm.reference(jac_total);
 
     jac_surf_param.resize(solar_interface_->max_surfacewfs());
-    jac_surf_param = solar_interface_->ls_jacobians_db()(0, ra);
+
+    // Output array size is: max_user_levels, maxgeoms, max_surfacewfs
+    jac_surf_param = solar_interface_->ls_jacobians_db()(0, 0, ra);
 }
