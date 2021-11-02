@@ -1604,7 +1604,7 @@ extern "C" {
 class Fo_Scalarss_Rtcalcs_I : public virtual Printable<Fo_Scalarss_Rtcalcs_I> {
 
 public:
-  Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in) 
+  Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), nmoments_input_(nmoments_input_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in) 
   { 
     do_deltam_scaling_ = false;
     do_phasfunc_ = false;
@@ -1618,7 +1618,6 @@ public:
     do_sources_dn_p_ = false;
     nfinedivs_.reference( blitz::Array<int, 2>(maxlayers_, maxgeoms_, blitz::ColumnMajorArray<2>()) );
     nfinedivs_ = 0;
-    nmoments_input_ = 0;
     user_levels_.reference( blitz::Array<int, 1>(max_user_levels_, blitz::ColumnMajorArray<1>()) );
     user_levels_ = 0;
     nfinedivs_p_.reference( blitz::Array<int, 2>(maxpartials_, maxgeoms_, blitz::ColumnMajorArray<2>()) );
@@ -1908,10 +1907,6 @@ public:
 
   const int& nmoments_input() const {
     return nmoments_input_;
-  }
-
-  void nmoments_input(const int& nmoments_input_in) {
-    nmoments_input_ = nmoments_input_in;
   }
 
   
@@ -2824,7 +2819,7 @@ extern "C" {
 class Fo_Scalarss_Rtcalcs_Ilps : public virtual Printable<Fo_Scalarss_Rtcalcs_Ilps> {
 
 public:
-  Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), max_atmoswfs_(max_atmoswfs_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in), max_surfacewfs_(max_surfacewfs_in), max_sleavewfs_(max_sleavewfs_in), n_sleavewfs_(n_sleavewfs_in), n_surfacewfs_(n_surfacewfs_in) 
+  Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), max_atmoswfs_(max_atmoswfs_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), nmoments_input_(nmoments_input_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in), max_surfacewfs_(max_surfacewfs_in), max_sleavewfs_(max_sleavewfs_in), n_sleavewfs_(n_sleavewfs_in), n_surfacewfs_(n_surfacewfs_in) 
   { 
     do_deltam_scaling_ = false;
     do_phasfunc_ = false;
@@ -2845,7 +2840,6 @@ public:
     lvarymoms_ = false;
     nfinedivs_.reference( blitz::Array<int, 2>(maxlayers_, maxgeoms_, blitz::ColumnMajorArray<2>()) );
     nfinedivs_ = 0;
-    nmoments_input_ = 0;
     user_levels_.reference( blitz::Array<int, 1>(max_user_levels_, blitz::ColumnMajorArray<1>()) );
     user_levels_ = 0;
     nfinedivs_p_.reference( blitz::Array<int, 2>(maxpartials_, maxgeoms_, blitz::ColumnMajorArray<2>()) );
@@ -3212,10 +3206,6 @@ public:
 
   const int& nmoments_input() const {
     return nmoments_input_;
-  }
-
-  void nmoments_input(const int& nmoments_input_in) {
-    nmoments_input_ = nmoments_input_in;
   }
 
   

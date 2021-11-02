@@ -55,6 +55,23 @@ void FirstOrderDriver::notify_update(const RtAtmosphere& atm)
 
 void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 {
+
+  // Use LIDORT parameters to have consistent sizes for maximum values
+  Lidort_Pars lid_pars = Lidort_Pars::instance();
+  int max_geoms = lid_pars.max_geometries;
+  int max_szas = lid_pars.maxbeams;
+  int max_vzas = lid_pars.max_user_streams;
+  int max_azms = lid_pars.max_user_relazms;
+  int max_layers = lid_pars.maxlayers;
+  int max_partials = lid_pars.max_partlayers;
+  int max_fine = lid_pars.maxfinelayers;
+  int max_moments_input = lid_pars.maxmoments_input;
+  int max_user_levels = lid_pars.max_user_levels;
+  int max_atmoswfs = lid_pars.max_atmoswfs;
+  int max_surfacewfs = lid_pars.max_surfacewfs; 
+  int max_sleavewfs = lid_pars.max_sleavewfs;
+
+  // Compute actual sizes used for processing < max values
   num_layers_ = nlayers;
   // We process 1 geometry at a time for now
   int nszas = 1;
@@ -62,12 +79,15 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   int nazms = 1;
   int npartials = 0;
   int ngeoms = nszas * nvzas * nazms;
+  int n_sleavewfs = 0; // No surface leaving
+  int n_user_levels = 1;
+  int nsurfacewfs = 1; // Single surface term???
 
   // Match what is used by LIDORT driver
   int nfine = 4;
   
-  geometry.reset(new Fo_Sswpgeometry_Master(ngeoms, nszas, nvzas, nazms, nlayers, npartials, nfine, ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials));
-  
+  geometry.reset(new Fo_Sswpgeometry_Master(max_geoms, max_szas, max_vzas, max_azms, max_layers, max_partials, max_fine, ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials));
+
   // Use same definitions as Fortran code
   // Define pi and degrees to radians
   geometry->pie(acos(-1.0));
@@ -89,39 +109,33 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   ///////
   // Initialize legendre interface
   // Used for computing exact scattering from phase moments
-  legendre.reset(new Fo_Scalarss_Spherfuncs(num_moments_, ngeoms, num_moments_, ngeoms));
+  legendre.reset(new Fo_Scalarss_Spherfuncs(max_moments_input, max_geoms, num_moments_, ngeoms));
   
   // Flags to be set for each calculation (safety)
   legendre->starter(true);
 
-  // Need to calculate spherical function because we supplying phasmoms not phasfunc values
+  // Need to calculate spherical function 
   legendre->do_spherfunc(true);
 
   ///////
   // Initialize radiance interface
   
-  // Use LIDORT parameters to have consistent sizes for maximum weighting functions
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-  int natmoswfs = lid_pars.max_atmoswfs;
-  int nsurfacewfs = lid_pars.max_surfacewfs; 
-  int n_sleavewfs = lid_pars.max_sleavewfs;
-  int n_user_levels = 1;
-
   // Initialize solar mode interface
-  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(ngeoms, nlayers, npartials, nfine, num_moments_, n_user_levels, natmoswfs, ngeoms, nlayers, n_user_levels, npartials, nsurfacewfs, n_sleavewfs, n_sleavewfs, nsurfacewfs));
+  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(max_geoms, max_layers, max_partials, max_fine, max_moments_input, max_user_levels, max_atmoswfs, ngeoms, nlayers, num_moments_, n_user_levels, npartials, max_surfacewfs, max_sleavewfs, n_sleavewfs, nsurfacewfs));
   
   // Set solar flux to 1.0 for solar spectrum case
   // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
   float lidort_flux_factor = 1.0;
   solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
 
-  // Set delta-m scaling flag for internal computations
-  solar_interface_->do_deltam_scaling(do_deltam_scaling_);
-
   // Enable sources for all layers
   Array<bool, 2> do_sources_up(solar_interface_->do_sources_up());
   do_sources_up = true;
-  
+
+  // Supply phase moments instead of phase function
+  // This is the same way LIDORT would do its internal call to FO
+  solar_interface_->do_phasfunc(false);
+
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
   l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
@@ -284,35 +298,42 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
                                             const blitz::Array<double, 1>& ssa,
                                             const blitz::Array<double, 2>& pf) 
 {
+    int nlay = od.rows();
+    Range r_all = Range::all();
+    Range r_lay = Range(0, nlay-1);
+    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
+
+    // Set delta-m scaling flag for solar interface
+    solar_interface_->do_deltam_scaling(do_deltam_scaling_);
+
     // Total per layer optical depth
     Array<double, 1> optical_depth(solar_interface_->deltaus());
-    optical_depth = od;
+    optical_depth(r_lay) = od;
 
     // Extinction profile
     Array<double, 1> extinction(solar_interface_->extinction());
-    extinction = optical_depth / height_diffs;
+    extinction(r_lay) = optical_depth(r_lay) / height_diffs;
 
     // Single scattering albedo
     Array<double, 1> omega(solar_interface_->omega());
-    omega = ssa;
+    omega(r_lay) = ssa;
 
     // Compute truncated values when delta_m truncation is turned on or not
     if(do_deltam_scaling_) {
         // Set trunfaction factor for use in FO when deltam scaling is turned on
-        // It only seems to use this for generating exactscatt from phasemoms
         Array<double, 1> truncfac(solar_interface_->truncfac());
         truncfac = deltam_trunc_factor(pf);
 
         // Are thse needed???
         // Doing this to omega would mess up internal deltam scaling code
-        optical_depth *= (1 - truncfac * ssa);
+        optical_depth *= (1 - truncfac * omega);
         //omega *= (1 - truncfac * ssa);
-        extinction *= (1 - truncfac * ssa);
+        extinction *= (1 - truncfac * omega);
     }
 
     // Set phase moments, FO storage is transpose of ReFRACtor ordering
     Array<double, 2> phasmoms(solar_interface_->phasmoms());
-    phasmoms = pf.transpose(secondDim, firstDim);
+    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim)(r_all, r_mom);
 
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
@@ -361,16 +382,18 @@ void FirstOrderDriver::setup_linear_inputs
     Range r_all = Range::all();
     Range r_jac = Range(0, natm_jac-1);
     Range r_lay = Range(0, nlay-1);
-    Range r_mom = Range(0, num_moments_-1);
+
+    // Only use the number of common moments available
+    Range r_mom = Range(0, min(num_moments_, pf.rows()-1)); 
 
     // Enable weighting functions
     solar_interface_->do_profilewfs(true);
 
     Array<bool, 1> layer_jac_flag( solar_interface_->lvaryflags() );
-    layer_jac_flag = true;
+    layer_jac_flag(r_lay) = true;
 
     Array<int, 1> layer_jac_number( solar_interface_->lvarynums() );
-    layer_jac_number = natm_jac;
+    layer_jac_number(r_lay) = natm_jac;
 
     // Set up OD related inputs
     Array<double, 2> l_deltau(solar_interface_->l_deltaus());
@@ -384,12 +407,9 @@ void FirstOrderDriver::setup_linear_inputs
     l_extinction(r_lay, r_jac) = od.jacobian()(i1, i2) / height_diffs(i1);
 
     // Truncate jacobian weights for deltam scaling
-    Array<double, 1> tms;
-    Array<double, 2> l_tms;
-
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
-        Array<double, 2> l_truncfac(solar_interface_->l_truncfac()); 
+        Array<double, 2> l_truncfac(solar_interface_->l_truncfac());
         l_truncfac = deltam_linear_trunc_factor(pf);
 
         Array<double, 1> correction_fac(truncfac.rows());
@@ -404,7 +424,7 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set phasmoms jacobian and set correct ordering in copy
     Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
-    l_phasmoms(r_all, r_all, r_mom) = pf.jacobian().transpose(secondDim, firstDim, thirdDim);
+    l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian().transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
 
     // Set up solar linear inputs
     if (do_surface_linearization) {

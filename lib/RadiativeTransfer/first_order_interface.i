@@ -170,7 +170,7 @@ public:
 class Fo_Scalarss_Rtcalcs_I {
 
 public:
-  Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in);
+  Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in);
   virtual ~Fo_Scalarss_Rtcalcs_I();
   std::string print_to_string() const;
 
@@ -274,7 +274,7 @@ public:
 class Fo_Scalarss_Rtcalcs_Ilps {
 
 public:
-  Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in);
+  Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in);
   virtual ~Fo_Scalarss_Rtcalcs_Ilps();
   std::string print_to_string() const;
 

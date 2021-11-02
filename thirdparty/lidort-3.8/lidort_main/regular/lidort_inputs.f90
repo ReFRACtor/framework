@@ -3278,15 +3278,17 @@ SUBROUTINE LIDORT_CHECK_INPUT &
 !  Just the FO correction alone, enabled 25 September 2007. Name changed, Version 3.8
 !   Diffuse-field Delta-M scaling must be turned off
 
-      IF ( DO_FOCORR_ALONE ) THEN
-        IF ( DO_DELTAM_SCALING ) THEN
-          NM = NM + 1
-          MESSAGES(NM) = 'Bad input: First-Order ALONE --> diffuse-field delta-M on'
-          ACTIONS(NM)  = 'First-Order ALONE: internal default to deltam_scaling = false'
-          STATUS = LIDORT_WARNING
-          DO_DELTAM_SCALING = .FALSE.
-        ENDIF
-      ENDIF
+      ! Check disabled for ReFRACtor due to testing FO delta-M correction against LIDORT
+
+      !IF ( DO_FOCORR_ALONE ) THEN
+      !  IF ( DO_DELTAM_SCALING ) THEN
+      !    NM = NM + 1
+      !    MESSAGES(NM) = 'Bad input: First-Order ALONE --> diffuse-field delta-M on'
+      !    ACTIONS(NM)  = 'First-Order ALONE: internal default to deltam_scaling = false'
+      !    STATUS = LIDORT_WARNING
+      !    DO_DELTAM_SCALING = .FALSE.
+      !  ENDIF
+      !ENDIF
 
 !  Check thermal inputs
 !  ====================
