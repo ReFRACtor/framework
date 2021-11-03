@@ -13,6 +13,10 @@ set(LUA_LIBTOOL "${CMAKE_LIBTOOL} --tag=CC")
 # Add a CFLAG necessary for compilation
 set(LUA_CFLAGS  "-DLUA_USE_LINUX ${LUA_CFLAGS}")
 
+# By default LUA_LDFLAGS is empty but if its set in our env (e.g. conda) we should use it
+set(LUA_LDFLAGS  "$ENV{LDFLAGS}")
+
+
 ExternalProject_Add(${LUA_NAME}
     URL ${LUA_URL}
     PATCH_COMMAND patch -p1 < ${LUA_PATCH}
