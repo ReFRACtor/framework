@@ -1,4 +1,4 @@
-from refractor_framework_swig import ObserverPtrNamedSpectrum
+from refractor.framework_swig.named_spectrum import ObserverPtrNamedSpectrum
 from .strategy_executor import StrategyExecutor
 from ..output.base import OutputBase
 

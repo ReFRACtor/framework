@@ -21,7 +21,7 @@ require_serialize = pytest.mark.skipif(not rf.have_serialize_supported(),
 # reason.
 skip = pytest.mark.skip
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def isolated_dir(tmpdir):
     '''This is a fixture that creates a temporary directory, and uses this
     while running a unit tests. Useful for tests that write out a test file
