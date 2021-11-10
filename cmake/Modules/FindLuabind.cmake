@@ -31,7 +31,7 @@ set(LUABIND_ROOT_DIR
 ###
 # Dependencies
 ###
-find_package(Lua51 QUIET)
+find_package(Lua52 QUIET)
 
 ###
 # Configure Luabind
