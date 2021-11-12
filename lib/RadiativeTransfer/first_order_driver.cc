@@ -81,7 +81,6 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   int ngeoms = nszas * nvzas * nazms;
   int n_sleavewfs = 0; // No surface leaving
   int n_user_levels = 1;
-  int nsurfacewfs = 1; // Single surface term???
 
   // Match what is used by LIDORT driver
   int nfine = 4;
@@ -116,25 +115,9 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
   // Need to calculate spherical function 
   legendre->do_spherfunc(true);
-
+  
   ///////
-  // Initialize radiance interface
-  
-  // Initialize solar mode interface
-  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(max_geoms, max_layers, max_partials, max_fine, max_moments_input, max_user_levels, max_atmoswfs, ngeoms, nlayers, num_moments_, n_user_levels, npartials, max_surfacewfs, max_sleavewfs, n_sleavewfs, nsurfacewfs));
-  
-  // Set solar flux to 1.0 for solar spectrum case
-  // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
-  float lidort_flux_factor = 1.0;
-  solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
-
-  // Enable sources for all layers
-  Array<bool, 2> do_sources_up(solar_interface_->do_sources_up());
-  do_sources_up = true;
-
-  // Supply phase moments instead of phase function
-  // This is the same way LIDORT would do its internal call to FO
-  solar_interface_->do_phasfunc(false);
+  // Initialize brdf interface
 
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
@@ -162,6 +145,29 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // Copy LidortBrdfDriver pointer into SpurrDriver variable
   brdf_driver_ = l_brdf_driver;
   brdf_driver_->initialize_brdf_inputs(surface_type);
+
+  ///////
+  // Initialize radiance interface
+
+  // Dynamically determined from BRDF driver setup
+  int nsurfacewfs = brdf_driver()->n_surface_wfs();
+  
+  // Initialize solar mode interface
+  solar_interface_.reset(new Fo_Scalarss_Rtcalcs_Ilps(max_geoms, max_layers, max_partials, max_fine, max_moments_input, max_user_levels, max_atmoswfs, ngeoms, nlayers, num_moments_, n_user_levels, npartials, max_surfacewfs, max_sleavewfs, n_sleavewfs, nsurfacewfs));
+  
+  // Set solar flux to 1.0 for solar spectrum case
+  // Adjust flux value to the same meaning as LIDORT's TS_FLUX_FACTOR
+  float lidort_flux_factor = 1.0;
+  solar_interface_->flux(0.25 * lidort_flux_factor / geometry->pie());
+
+  // Enable sources for all layers
+  Array<bool, 2> do_sources_up(solar_interface_->do_sources_up());
+  do_sources_up = true;
+
+  // Supply phase moments instead of phase function
+  // This is the same way LIDORT would do its internal call to FO
+  solar_interface_->do_phasfunc(false);
+
 }
 
 /// Set plane parallel sphericity
@@ -425,6 +431,17 @@ void FirstOrderDriver::setup_linear_inputs
     // Set phasmoms jacobian and set correct ordering in copy
     Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
     l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian().transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
+
+
+    // Check for variation of PHASMOMS associated with Jacobian wrt current atmospheric parameter
+    // Duplicates behavior in lidort_sfo_lps_interface.f90
+    Lidort_Pars lid_pars = Lidort_Pars::instance();
+
+    Array<bool, 2> layer_jac_moms( solar_interface_->lvarymoms() );
+    for(int mom_idx = 0; mom_idx < num_moments_; mom_idx++) {
+        Array<double, 2> l_mom_vals(l_phasmoms(r_all, mom_idx, r_all));
+        layer_jac_moms = where(abs(l_mom_vals) >= 1000.0 * lid_pars.smallnum, true, layer_jac_moms);
+    }
 
     // Set up solar linear inputs
     if (do_surface_linearization) {
