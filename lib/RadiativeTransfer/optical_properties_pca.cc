@@ -111,7 +111,8 @@ ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalPro
     ArrayAd<double, 1> ray_od(source_properties->rayleigh_optical_depth());
     ArrayAd<double, 2> aer_ext(source_properties->aerosol_extinction_optical_depth_per_particle());
 
-    packed_v.jacobian() = source_properties->intermediate_jacobian();
+    if(!source_properties->is_constant())
+      packed_v.jacobian() = source_properties->intermediate_jacobian();
 
     int packed_idx = 0;
 

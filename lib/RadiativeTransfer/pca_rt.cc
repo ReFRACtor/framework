@@ -1,13 +1,31 @@
-#include <fstream>
+#include "pca_rt.h"
+#include "fp_serialize_support.h"
 #include "ostream_pad.h"
 #include <boost/lexical_cast.hpp>
-
-#include "pca_rt.h"
-
+#include <fstream>
 #include "optical_properties_wrt_rt.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void PCARt::serialize(Archive & ar,
+		      const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferFixedStokesCoefficient)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+
+    & FP_NVP(atm) & FP_NVP(primary_absorber) & FP_NVP(bin_method)
+    & FP_NVP(num_bins) & FP_NVP(num_eofs) & FP_NVP(num_gas)
+    & FP_NVP(num_aerosol) & FP_NVP(num_layer) & FP_NVP(num_packed_var)
+    & FP_NVP(do_3m_correction) & FP_NVP(aerosol_optical)
+    & FP_NVP(lidort_rt) & FP_NVP(twostream_rt) 
+    & FP_NVP(first_order_rt);
+}
+
+FP_IMPLEMENT(PCARt);
+#endif
 
 PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
              const std::string Primary_absorber,
@@ -25,31 +43,50 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
 : RadiativeTransferFixedStokesCoefficient(Stokes_coef), atm(Atm), primary_absorber(Primary_absorber), 
   bin_method(Bin_method), num_bins(Num_bins), num_eofs(Num_eofs), do_3m_correction(do_3M_correction)
 {
+  // Need to convert aerosol from atmosphere to AerosolOptical for PCA optical properties packing
+  aerosol_optical = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
+  
+  // Only throw an error if the original pointer is not already null
+  if(atm->aerosol_ptr() && !aerosol_optical)
+    throw Exception("Failed to convert aerosol class to AerosolOptical");
 
-    // Need to convert aerosol from atmosphere to AerosolOptical for PCA optical properties packing
-    aerosol_optical = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
+  lidort_rt.reset(new LidortRt(Atm, Stokes_coef, Sza, Zen, Azm, false,
+			       Number_streams, Number_moments, true,
+			       do_solar_sources, do_thermal_emission,
+			       do_thermal_emission));
 
-    // Only throw an error if the original pointer is not already null
-    if(atm->aerosol_ptr() && !aerosol_optical) {
-        throw Exception("Failed to convert aerosol class to AerosolOptical");
-    }
+  twostream_rt.reset(new TwostreamRt(Atm, Stokes_coef, Sza, Zen, Azm, true,
+				     do_solar_sources, do_thermal_emission));
 
-    lidort_rt.reset(new LidortRt(Atm, Stokes_coef, Sza, Zen, Azm, false, Number_streams, Number_moments, true, do_solar_sources, do_thermal_emission, do_thermal_emission));
+  first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm,
+					Number_streams, Number_moments,
+					do_solar_sources, do_thermal_emission));
 
-    twostream_rt.reset(new TwostreamRt(Atm, Stokes_coef, Sza, Zen, Azm, true, do_solar_sources, do_thermal_emission));
+  num_gas = atm->absorber_ptr()->number_species();
+  num_layer = atm->pressure_ptr()->number_layer();
 
-    first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm, Number_streams, Number_moments, do_solar_sources, do_thermal_emission));
+  if (aerosol_optical)
+    num_aerosol = aerosol_optical->number_particle();
+  else
+    num_aerosol = 0;
+  
+  num_packed_var = 2 + num_aerosol;
+  
+  // Watch atmosphere for changes, so we clear cache if needed.
+  atm->add_observer(*this);
+}
 
-    num_gas = atm->absorber_ptr()->number_species();
-    num_layer = atm->pressure_ptr()->number_layer();
+void PCARt::notify_update(const RtAtmosphere& UNUSED(a))
+{
+  num_gas = atm->absorber_ptr()->number_species();
+  num_layer = atm->pressure_ptr()->number_layer();
 
-    if (aerosol_optical) {
-        num_aerosol = aerosol_optical->number_particle();
-    } else {
-        num_aerosol = 0;
-    }
-
-    num_packed_var = 2 + num_aerosol;
+  if (aerosol_optical)
+    num_aerosol = aerosol_optical->number_particle();
+  else
+    num_aerosol = 0;
+  
+  num_packed_var = 2 + num_aerosol;
 }
 
 void PCARt::clear_pca_objects() const

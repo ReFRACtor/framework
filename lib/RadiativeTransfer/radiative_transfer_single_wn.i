@@ -14,7 +14,7 @@ namespace FullPhysics {
 class RadiativeTransferSingleWn : 
   public RadiativeTransferFixedStokesCoefficient {
 public:
-  %python_attribute_abstract(number_stream, int)
+  %python_attribute(number_stream, int)
   %python_attribute(atmosphere, boost::shared_ptr<RtAtmosphere>)
   virtual blitz::Array<double, 2> stokes(const SpectralDomain& Spec_domain, int Spec_index) const;
   virtual ArrayAd<double, 2> stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const;
