@@ -14,16 +14,18 @@
 %fp_shared_ptr(FullPhysics::SpurrRt);
 
 namespace FullPhysics {
+%nodefaultctor SpurrRt;
+  
 class SpurrRt : public RadiativeTransferSingleWn,
                 public Observer<RtAtmosphere> {
 public:
-  SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
-          const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
-          const blitz::Array<double, 1>& Sza, 
-          const blitz::Array<double, 1>& Zen, 
-          const blitz::Array<double, 1>& Azm,
-          bool do_solar = true,
-          bool do_thermal = false);
+  // SpurrRt(const boost::shared_ptr<RtAtmosphere>& Atm,
+  //         const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
+  //         const blitz::Array<double, 1>& Sza, 
+  //         const blitz::Array<double, 1>& Zen, 
+  //         const blitz::Array<double, 1>& Azm,
+  //         bool do_solar = true,
+  //         bool do_thermal = false);
 
   %python_attribute(number_stokes, virtual int)
   %python_attribute(surface_type, virtual int)
