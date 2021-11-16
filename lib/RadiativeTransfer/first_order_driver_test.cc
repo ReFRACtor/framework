@@ -522,7 +522,7 @@ BOOST_AUTO_TEST_CASE(surface_only)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_surface_only(do_solar, do_thermal, debug_output);
 }
@@ -531,7 +531,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_only)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_rayleigh_only(do_solar, do_thermal, debug_output);
 }
@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE(gas_surface)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_gas_surface(do_solar, do_thermal, debug_output);
 }
@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_CASE(gas_surface_aerosol)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
 }
