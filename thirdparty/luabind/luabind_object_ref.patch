@@ -1,0 +1,15 @@
+--- luabind-Oberon00-c0b9359/luabind/detail/object_rep.hpp	2020-11-11 01:18:51.000000000 -0800
++++ luabind-Oberon00-c0b9359-patched/luabind/detail/object_rep.hpp	2021-11-12 08:48:26.913200130 -0800
+@@ -98,7 +98,11 @@
+         void operator=(object_rep const&);
+ 
+         BOOST_STATIC_CONSTANT(std::size_t, instance_buffer_size=32);
+-        boost::aligned_storage<instance_buffer_size> m_instance_buffer;
++        // The allocation below causes segfaults when built in conda env
++        // boost::aligned_storage<instance_buffer_size> m_instance_buffer;
++        // We replace with allocation of a simple char array
++        // See https://github.com/Oberon00/luabind/issues/42 for more info
++        char m_instance_buffer[instance_buffer_size];
+         instance_holder* m_instance;
+         class_rep* m_classrep; // the class information about this object's type
+         std::size_t m_dependency_cnt; // counts dependencies
