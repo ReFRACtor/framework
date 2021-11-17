@@ -82,7 +82,7 @@ class AtmosphereOutputBase(OutputBase):
 
             for aer_idx, aer_name in enumerate(aer_name_list):
                 aer_obj = self.atm.aerosol.aerosol_extinction(aer_idx)
-                ext_var[aer_idx, :] = aer_obj.aerosol_extinction.value
+                ext_var[aer_idx, :] = aer_obj.aerosol_extinction().value
 
 class AtmosphereOutputRetrieval(rf.ObserverIterativeSolver, AtmosphereOutputBase):
 
