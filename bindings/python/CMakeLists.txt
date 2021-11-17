@@ -119,12 +119,16 @@ set_target_properties(_swig_wrap PROPERTIES SUFFIX ".so")
 
 # Find where Python distribution libaries should be located by querying distutils
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(True, False, ''))" OUTPUT_VARIABLE PYTHON_INSTALL_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+set(PYTHON_SWIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/refractor/framework_swig")
 
 if(PIP_DEVELOP_MODE)
   set(_pip_args "--editable")
 else()
   set(_pip_args)
 endif()
+# Install in the supplied prefix, rather than into the system version
+# of the libraries
+set(_pip_args "--prefix ${CMAKE_INSTALL_PREFIX} ${_pip_args}")
 
 # Install non SWIG Python code into refractor/
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_SOURCE_DIR})")
@@ -135,22 +139,27 @@ configure_file (
     "${CMAKE_CURRENT_BINARY_DIR}/version.py"
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/version.py" DESTINATION ${PYTHON_SWIG_DIR})
 
-# Install SWIG Python code into refractor_framework_swig/
-install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
-install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig
+# Install SWIG Python code into refractor/framework_swig/
+install(TARGETS _swig_wrap EXPORT RefractorTargets DESTINATION ${PYTHON_SWIG_DIR})
+install(DIRECTORY ${CMAKE_SWIG_OUTDIR}/ DESTINATION ${PYTHON_SWIG_DIR}
     FILES_MATCHING PATTERN "*.py")
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/swig_rules/python/" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/swig_rules/python/" DESTINATION ${PYTHON_SWIG_DIR}
     FILES_MATCHING PATTERN "*.py")
-
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/setup.py" DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
   
-install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/__init__.py" DESTINATION ${PYTHON_INSTALL_DIR}/refractor_framework_swig)
+install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/__init__.py" DESTINATION ${PYTHON_SWIG_DIR})
+install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/all.py" DESTINATION ${PYTHON_SWIG_DIR})
 
 # On systems with older cmake, it may try to link against lib_swig_wrap.so
 #  Add lib_swig_wrap.so as a symlink to _swig_wrap.so to support this
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_wrap.so lib_swig_wrap.so
-                              WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/${PYTHON_INSTALL_DIR}/refractor_framework_swig)")
+                              WORKING_DIRECTORY ${PYTHON_SWIG_DIR})")
+
+message("execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_CURRENT_BINARY_DIR})")
+# Install swig python
+install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_CURRENT_BINARY_DIR})")
 
 # Expose Python install path to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)

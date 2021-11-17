@@ -505,6 +505,10 @@ void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::
 
 void TwostreamRtDriver::notify_update(const RtAtmosphere& atm)
 {
+  if(twostream_interface_->nlayers() != atm.number_layer()) {
+    twostream_interface_->nlayers(atm.number_layer());
+    twostream_interface_->ntotal(2*atm.number_layer());
+  }
   int stype = atm.ground()->spurr_brdf_type();
   if(stype != surface_type()) {
     surface_type_ = stype;

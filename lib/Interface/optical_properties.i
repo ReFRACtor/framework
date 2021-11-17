@@ -35,6 +35,7 @@ public:
   virtual ArrayAd<double, 3> total_phase_function_moments(int num_moments = -1, int num_scattering = -1) const = 0;
   virtual blitz::Array<double, 3> intermediate_jacobian() const = 0;
   std::string print_to_string() const;
+  %python_attribute(is_constant, bool);
   %pickle_serialization();
 };
 }

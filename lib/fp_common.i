@@ -11,7 +11,7 @@
 // directors=1 and allprotected=1 set.
 
 %module(directors="1", allprotected="1") refractor_swig
-#define SWIG_MODULE refractor_framework_swig
+#define SWIG_MODULE refractor.framework_swig
 %{
 #include <boost/shared_ptr.hpp>
 #include <boost/rational.hpp>
@@ -19,7 +19,7 @@
 
 // Short cut for ingesting a base class
 %define %base_import(NAME)
-%import(module="refractor_framework_swig.NAME") "NAME.i"
+%import(module="refractor.framework_swig.NAME") "NAME.i"
 %enddef
 
 // Map std::string to and from the native string type

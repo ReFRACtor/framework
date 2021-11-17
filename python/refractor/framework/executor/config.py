@@ -51,6 +51,12 @@ def load_config_module(filename):
 
     return module
 
+class NoConfigFoundError(Exception):
+    pass
+
+class MultipleConfigFoundError(Exception):
+    pass
+
 def find_marked_uniq_function(module, marker):
     "Finds a function marked with a certain attribute in a named module and returns the only unique one. An error occurs if more than one marked function is present in a module."
 
@@ -65,10 +71,10 @@ def find_marked_uniq_function(module, marker):
                 config_func = mod_item
                 config_found = True
             else:
-                raise Exception("Only one ReFRACtor configuration function should be present in file: {}".format(module.__file__))
+                raise MultipleConfigFoundError("Only one ReFRACtor configuration function should be present in file: {}".format(module.__file__))
     
     if not config_found:
-        raise Exception("No ReFRACtor configuration found in file: {}".format(module.__file__))
+        raise NoConfigFoundError("No ReFRACtor configuration found in file: {}".format(module.__file__))
 
     return config_func
 

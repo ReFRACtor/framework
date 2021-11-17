@@ -18,7 +18,7 @@ from collections.abc import MutableMapping as DictMixin
 import pickle
 import sqlite3
 import os.path
-import refractor_framework_swig as rf
+import refractor.framework_swig.serialize_function as rf
 
 # Allow jsonpickle to be used, if available.
 try:

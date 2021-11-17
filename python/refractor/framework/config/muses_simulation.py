@@ -83,7 +83,7 @@ class MusesSimConfig(object):
             },
         }
 
-    def setup_atmosphere_profiles(self, atm_gas_list, profile_getter):
+    def setup_atmosphere_profiles(self, profile_getter):
 
         # Set pressure grid, reverse and convert mb -> Pa
         self.config_def['atmosphere']['pressure']['pressure_levels'] =  profile_getter("pressure") * 100
@@ -94,22 +94,16 @@ class MusesSimConfig(object):
 
         # Set absorbers
 
-        # Get names of gases we actually know about
-        absco_gas_list = [ fn.split("_")[0] for fn in os.listdir(os.environ['ABSCO_PATH']) ]
-
-        # Ignore due to errors that occur when including these gases, possible errors in ABSCO or the profile
+        # Ignore due to errors that occur when including these gases
         ignore_gas_list = ['CCL4', 'PAN']
 
         used_gas_list = []
-        for in_gas_name in atm_gas_list:
+        for in_gas_name in self.atm_gas_list:
             absco_gas_name = in_gas_name
 
             absco_gas_name = re.sub('^HDO$', 'H2O', absco_gas_name)
 
-            if not absco_gas_name in absco_gas_list:
-                print("No ABSCO available for gas named: {}".format(absco_gas_name))
-                continue
-            elif absco_gas_name in ignore_gas_list:
+            if absco_gas_name in ignore_gas_list:
                 print("Ignoring troublesome gas: {}".format(absco_gas_name))
                 continue
 
@@ -259,7 +253,10 @@ class MusesUipSimConfig(MusesSimConfig):
         self.muses_inputs = readsav(muses_uip_file, python_dict=True)
         self.uip = self.muses_inputs['uip']
 
-        self.atm_gas_list = atm_gas_list
+        if atm_gas_list is not None:
+            self.atm_gas_list = atm_gas_list
+        else:
+            self.atm_gas_list = config_def['atmosphere']['absorber']['gases']
 
     def configure_micro_windows(self, desired_instrument=None):
 
@@ -297,13 +294,7 @@ class MusesUipSimConfig(MusesSimConfig):
             param_index = param_list.index(param_name.lower())
             return self.uip['atmosphere'][0][:, param_index][::-1]
 
-        if self.atm_gas_list is None:
-            # First 2 elements are Pressure and TATM, after that gas names
-            gas_list = [ n.decode('UTF-8') for n in self.uip['species'][0] ]
-        else:
-            gas_list = self.atm_gas_list
-
-        self.setup_atmosphere_profiles(gas_list, atmosphere_column)
+        self.setup_atmosphere_profiles(atmosphere_column)
 
 class MusesThermalUipSimConfig(MusesUipSimConfig):
 

@@ -953,6 +953,10 @@ public:
     return ntotal_;
   }
 
+  // MANUAL CHANGE
+  void nlayers(int v) { nlayers_ = v;}
+  void ntotal(int v) { ntotal_ = v;}
+  // MANUAL CHANGE
   
 
   const double& stream_value() const {

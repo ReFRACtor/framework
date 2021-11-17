@@ -152,6 +152,13 @@ public:
   virtual blitz::Array<double, 3> intermediate_jacobian() const = 0;
 
 //-----------------------------------------------------------------------
+/// True if intermediate_jacobian is zero sized.
+//-----------------------------------------------------------------------
+
+  virtual bool is_constant() const
+  { return intermediate_jacobian().depth() == 0; }
+  
+//-----------------------------------------------------------------------
 /// Print description of object.
 //-----------------------------------------------------------------------
 

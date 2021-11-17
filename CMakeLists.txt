@@ -8,8 +8,8 @@ project(refractor)
 # Version number
 set(REFRACTOR_MAJOR_VERSION "8.0.0")
 
-# Global setting: Use C++11
-set(CMAKE_CXX_STANDARD 11)
+# Global setting: Use C++14
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Conda has a separate set of debug flags defined, which is more than just
