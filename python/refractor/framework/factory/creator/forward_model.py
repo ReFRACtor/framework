@@ -267,7 +267,7 @@ class Cloud3dEffect(Creator):
 
         cloud_3d_effect = []
         for chan_index in range(self.num_channels()):
-            cloud_3d_effect.append( rf.Cloud3dEffect(offset[chan_index], slope[chan_index], band_name[chan_index])
+            cloud_3d_effect.append( rf.Cloud3dEffect(offset[chan_index], slope[chan_index], band_name[chan_index]) )
 
         return cloud_3d_effect
 
