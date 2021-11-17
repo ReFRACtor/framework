@@ -7,6 +7,11 @@ if(NOT DEFINED LUABIND_URL)
   set(LUABIND_URL ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind-Oberon00-c0b9359.tar.gz)
 endif(NOT DEFINED LUABIND_URL)
 
+# This patch works around an aligned_storage allocation the results in seg faults.
+# The issue and the adopted workaround is described at https://github.com/Oberon00/luabind/issues/42
+set(LUABIND_PATCH ${CMAKE_CURRENT_SOURCE_DIR}/luabind/luabind_object_ref.patch)
+
+
 # Set up arguments to cmake call
 # 1. Tell their cmake that Lua was found and pass the include directory path found by thirdparty cmake
 # 2. Turn on shared libary creation
@@ -35,6 +40,7 @@ endif(CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.0
 # Build and install manually to avoid dependence on bjam
 ExternalProject_Add(${LUABIND_NAME}
     URL ${LUABIND_URL}
+    PATCH_COMMAND patch -p1 < ${LUABIND_PATCH}
     CONFIGURE_COMMAND export CXXFLAGS=${CMAKE_CXX_FLAGS} COMMAND export CFLAGS=${CMAKE_C_FLAGS} COMMAND export CXX="${CMAKE_CXX_COMPILER}" COMMAND export CC="${CMAKE_C_COMPILER}" COMMAND ${CMAKE_COMMAND} ${CMAKE_ARGS} . 
     BUILD_COMMAND make luabind
     BUILD_IN_SOURCE 1
