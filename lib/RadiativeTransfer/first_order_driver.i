@@ -42,7 +42,7 @@ public:
 		      blitz::Array<double, 1>& jac_surf_param,
 		      double& jac_surf_temp,
 		      blitz::Array<double, 1>& jac_atm_temp) const;
-  %python_attribute(geometry_interface, boost::shared_ptr<Fo_Ssgeometry_Master>);
+  %python_attribute(geometry_interface, boost::shared_ptr<Fo_Sswpgeometry_Master>);
   %python_attribute(solar_interface, boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps>);
   %pickle_serialization();
 };
