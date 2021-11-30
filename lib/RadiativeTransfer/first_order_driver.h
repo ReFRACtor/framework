@@ -48,7 +48,7 @@ public:
   double get_intensity() const;
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
-  const boost::shared_ptr<Fo_Ssgeometry_Master> geometry_interface() const { return geometry; }
+  const boost::shared_ptr<Fo_Sswpgeometry_Master> geometry_interface() const { return geometry; }
   const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
 
   bool do_deltam_scaling() const { return do_deltam_scaling_; }
@@ -70,7 +70,7 @@ private:
 
   blitz::Array<double, 1> height_diffs;
 
-  boost::shared_ptr<Fo_Ssgeometry_Master> geometry;
+  boost::shared_ptr<Fo_Sswpgeometry_Master> geometry;
   boost::shared_ptr<Fo_Scalarss_Spherfuncs> legendre;
   boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface_;
 

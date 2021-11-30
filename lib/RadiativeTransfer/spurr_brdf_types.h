@@ -14,15 +14,18 @@ namespace FullPhysics {
         ROUJEAN     = 7,
         RAHMAN      = 8,
         COXMUNK     = 9,
-        BPDFSOIL    = 10,
-        BPDFVEGN    = 11,
-        BRDFNDVI    = 12,
+        BREONSOIL   = 10,
+        BREONVEG    = 11,
+        BPDFNDVI    = 12,
         NEWCMGLINT  = 13,
+        RTKHOTSPOT  = 14,
+        MODFRESNEL  = 15,
+        SNOWBRDF    = 16,
         EMISSIVITY  = 100, // Not a real index from LIDORT family, but
-			   // included to meet interface
-	UNKNOWN = -999	   // Type that will trigger an error, if we
-			   // have a ground type that doesn't map to
-			   // the spurr BRDF
+                           // included to meet interface
+        UNKNOWN = -999     // Type that will trigger an error, if we
+                           // have a ground type that doesn't map to
+                           // the spurr BRDF
     };
  
 }

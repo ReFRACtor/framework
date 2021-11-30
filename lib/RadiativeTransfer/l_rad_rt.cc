@@ -212,9 +212,9 @@ int LRadRt::surface_type() const
     return BrdfType::LAMBERTIAN;
   if(b == SpurrBrdfType::COXMUNK)
     return BrdfType::COXMUNK;
-  if(b == SpurrBrdfType::BPDFVEGN)
+  if(b == SpurrBrdfType::BREONVEG)
     return BrdfType::BPDFVEGN;
-  if(b == SpurrBrdfType::BPDFSOIL)
+  if(b == SpurrBrdfType::BREONSOIL)
     return BrdfType::BPDFSOIL;
   Exception e;
   e << "Unrecognized SpurrBrdfType: " << b;

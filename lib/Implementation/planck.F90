@@ -3,7 +3,7 @@
 module planck_m
 
     use iso_c_binding
-    use LIDORT_getPlanck, only :get_planckfunction, get_planckfunction_plus  
+    use LIDORT_getPlanck_m, only :get_planckfunction, get_planckfunction_plus  
 
 contains
 

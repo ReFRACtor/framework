@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-const bool do_debug_output = true;
+const bool do_debug_output = false;
 
 void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere, 
                        const boost::shared_ptr<StokesCoefficient>& stokes_coefs,
@@ -31,11 +31,11 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
                                nstreams, nmoms, do_multiple_scattering_only));
   
   // Set deltam scaling on or off
-  lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(do_deltam_scaling);
+  auto lidort_interface = lidort_rt->rt_driver()->lidort_interface();
 
-  // Disable the diffuse calculation in LIDORT
-  auto fbool = lidort_rt->rt_driver()->lidort_interface()->lidort_fixin().f_bool();
-  fbool.ts_do_ssfull(true);
+  // Configured delta-m scaling flag to match
+  auto mbool = lidort_interface->lidort_modin().mbool();
+  mbool.ts_do_deltam_scaling(do_deltam_scaling);
 
   // Configure sphericity and phase function affecting options
   switch(sphericity_mode) {
@@ -43,7 +43,7 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
         lidort_rt->rt_driver()->set_plane_parallel();
 
         // This is important for getting agreement.
-        lidort_rt->rt_driver()->lidort_interface()->lidort_modin().mbool().ts_do_sscorr_nadir(true);
+        mbool.ts_do_focorr_nadir(true);
 
         break;
     case 1:
@@ -55,6 +55,13 @@ void compare_lidort_fo(boost::shared_ptr<RtAtmosphere>& atmosphere,
     default:
         throw Exception("Unknown sphericity_mode value");
   }
+
+  // Set up LIDORT to only perform single scattering calculations
+  // Do this after sphericity mode since plane-parallel in LIDORT turns off do_focorr
+  auto fbool = lidort_interface->lidort_fixin().f_bool();
+  fbool.ts_do_fullrad_mode(false);
+  mbool.ts_do_focorr(true);
+  mbool.ts_do_no_azimuth(false);
 
   ArrayAd<double, 2> lid_rad_jac = lidort_rt->stokes_and_jacobian(wn_arr, 0);
 

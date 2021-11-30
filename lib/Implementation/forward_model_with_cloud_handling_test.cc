@@ -30,8 +30,9 @@ BOOST_AUTO_TEST_CASE(basic)
   // data
   auto rt = boost::dynamic_pointer_cast<LidortRt>(underlying_fm->radiative_transfer());
   auto lid_interface = rt->rt_driver()->lidort_interface();
-  lid_interface->lidort_modin().mbool().ts_do_sscorr_nadir(false);
-  lid_interface->lidort_modin().mbool().ts_do_sscorr_outgoing(false);
+  lid_interface->lidort_modin().mbool().ts_do_focorr(true);
+  lid_interface->lidort_modin().mbool().ts_do_focorr_nadir(true);
+  lid_interface->lidort_modin().mbool().ts_do_focorr_outgoing(false);
   lid_interface->lidort_modin().mbool().ts_do_rayleigh_only(true);
   lid_interface->lidort_modin().mbool().ts_do_double_convtest(false);
   lid_interface->lidort_modin().mbool().ts_do_deltam_scaling(false);

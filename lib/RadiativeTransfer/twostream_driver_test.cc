@@ -11,14 +11,20 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(twostream_driver, GlobalFixture)
 
-void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, bool debug_output)
+void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, ArrayAd<double, 1>& taua, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, bool debug_output)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
-  sza = 0.001;
-  zen = 0.0;
+  sza = 30.0;
+  zen = 20.0;
   azm = 0.0;
   bool pure_nadir = false;
+  int nmoms = 2;
+
+  // Aerosol properties
+  double aer_prop_ssa = 0.9;
+  double aer_prop_asym = 0.7;
+  double depol = 0.0;
 
   int nlayer = taug.rows();
   int nparam = taug.number_variable();
@@ -43,16 +49,13 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
 
   // Use LIDORT for comparison
   int lid_nstreams = 1;
-  int lid_nmoms = 3;
+  int lid_nmoms = 2*lid_nstreams;
   bool do_multiple_scattering_only = true;
   LidortRtDriver lidort_driver =
     LidortRtDriver(lid_nstreams, lid_nmoms, 
-		   do_multiple_scattering_only,
-		   twostream_driver->surface_type(), zen, pure_nadir,
-		   do_solar, do_thermal);  
-
-  // Turn off delta-m scaling
-  lidort_driver.lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+                   do_multiple_scattering_only,
+                   twostream_driver->surface_type(), zen, pure_nadir,
+                   do_solar, do_thermal);  
 
   // Plane-parallel
   lidort_driver.set_plane_parallel();
@@ -68,20 +71,36 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   taug.jacobian()(all, 0) = 1;
   taur.jacobian()(all, 1) = 1;
 
+  if (pert_atm.rows() > 2 && pert_atm(2) != 0.0) {
+      taua.jacobian()(all, 2) = 1;
+  }
+
   ArrayAd<double, 1> od(nlayer, nparam);
   ArrayAd<double, 1> ssa(nlayer, nparam);
   
+  ArrayAd<double,1> ray_wt(nlayer, nparam);
+  ArrayAd<double,1> aer_wt(nlayer, nparam);
+
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
-    od(lay_idx) = taur(lay_idx) + taug(lay_idx);
-    ssa(lay_idx) = taur(lay_idx) / od(lay_idx);
-  }
-  
-  // No aerosols, and depolization factor = 0 
-  // so simplified phase function moments:
-  ArrayAd<double, 2> pf(3, nlayer, nparam);
+    od(lay_idx) = taur(lay_idx) + taug(lay_idx) + taua(lay_idx);
+    ssa(lay_idx) = (taur(lay_idx) + aer_prop_ssa*taua(lay_idx)) / od(lay_idx);
+
+    ray_wt(lay_idx) = taur(lay_idx) / (taur(lay_idx) + aer_prop_ssa * taua(lay_idx));
+    aer_wt(lay_idx) = 1.0 - ray_wt(lay_idx);
+  } 
+
+  // Compute phase function
+  ArrayAd<double, 2> pf(nmoms+1, nlayer, nparam);
   pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5;
+
+  for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
+      pf(0, lay_idx) = 1.0;
+      pf(2, lay_idx) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
+
+      for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
+          pf(mom_idx, lay_idx) = pf(mom_idx, lay_idx) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+      }
+  }
 
   // Set up thermal inputs if enabled
   double bb_surface = 0.0;
@@ -115,8 +134,8 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
     (heights, sza(0), zen(0), azm(0),
      twostream_driver->surface_type(), ts_surface_params,
      od, ssa, pf, refl_ts, 
-                                                   jac_atm_ts, jac_surf_param_ts, jac_surf_temp_ts, jac_atm_temp_ts,
-                                                   bb_surface, bb_atm);
+     jac_atm_ts, jac_surf_param_ts, jac_surf_temp_ts, jac_atm_temp_ts,
+     bb_surface, bb_atm);
 
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
@@ -126,36 +145,55 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   BOOST_CHECK_CLOSE(refl_lid, refl_ts, 7e-5);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
+  jac_atm_fd = 0.0;
+
   double refl_fd;
 
   for(int l_idx = 0; l_idx < nlayer; l_idx++) {
-    for(int p_idx = 0; p_idx < nparam; p_idx++) {
+    for(int p_idx = 0; p_idx < pert_atm.rows(); p_idx++) {
       blitz::Array<double,1> taug_pert( taug.value().copy() );
       blitz::Array<double,1> taur_pert( taur.value().copy() );
+      blitz::Array<double,1> taua_pert( taua.value().copy() );
 
       blitz::Array<double,1> od_pert( od.value().shape() );
       blitz::Array<double,1> ssa_pert( ssa.value().shape() );
       blitz::Array<double,2> pf_pert( pf.value().copy() );
    
-      switch (p_idx) {
+     switch (p_idx) {
       case 0:
         taug_pert(l_idx) += pert_atm(p_idx);
         break;
       case 1:
         taur_pert(l_idx) += pert_atm(p_idx);
         break;
+      case 2:
+        taua_pert(l_idx) += pert_atm(p_idx);
+        break;
       }
 
-      od_pert = taur_pert + taug_pert;
-      ssa_pert = taur_pert / od_pert;
+      od_pert = taur_pert + taug_pert + taua_pert;
+      ssa_pert = (taur_pert + aer_prop_ssa*taua_pert) / od_pert;
+
+      double ray_wt_pert = taur_pert(l_idx) / (taur_pert(l_idx) + aer_prop_ssa * taua_pert(l_idx));
+      double aer_wt_pert = 1.0 - ray_wt_pert;
+
+      pf_pert(all, l_idx) = 0;
+      pf_pert(0, l_idx) = 1.0;
+      pf_pert(2, l_idx) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
+
+      for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
+          pf_pert(mom_idx, l_idx) = pf_pert(mom_idx, l_idx) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+      }
 
       refl_fd = twostream_driver->reflectance_calculate
-	(heights, sza(0), zen(0), azm(0),
-	 twostream_driver->surface_type(), surface_params.value().copy(),
-	 od_pert, ssa_pert, pf_pert,
-	 bb_surface, bb_atm);
+        (heights, sza(0), zen(0), azm(0),
+         twostream_driver->surface_type(), surface_params.value().copy(),
+         od_pert, ssa_pert, pf_pert,
+         bb_surface, bb_atm);
 
-      jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_ts) / pert_atm(p_idx);
+      if (pert_atm(p_idx) != 0.0) {
+        jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_ts) / pert_atm(p_idx);
+      }
     }
   }
 
@@ -180,10 +218,10 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
       surface_params_pert(p_idx) += pert_surf(p_idx);
 
       refl_fd = twostream_driver->reflectance_calculate
-	(heights, sza(0), zen(0), azm(0),
-	 twostream_driver->surface_type(), surface_params_pert,
-	 od.value(), ssa.value(), pf.value(),
-	 bb_surface, bb_atm);
+        (heights, sza(0), zen(0), azm(0),
+         twostream_driver->surface_type(), surface_params_pert,
+         od.value(), ssa.value(), pf.value(),
+         bb_surface, bb_atm);
 
       jac_surf_param_fd(p_idx) = (refl_fd - refl_ts) / pert_surf(p_idx);
 
@@ -206,14 +244,15 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
 void test_twostream_lambertian(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, bool do_solar, bool do_thermal, bool debug_output)
 {
   int nlayer = 2;
-  int nparam = 2;
+  int nparam = 3;
   ArrayAd<double, 1> surface_params(1, 1); 
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Check jacobian using finite derivatives
   // od, ssa
-  blitz::Array<double, 1> pert_atm(2);
+  blitz::Array<double, 1> pert_atm(nparam);
 
   // Perturbation value for surface fd checking
   Array<double, 1> pert_surf(1);
@@ -229,11 +268,12 @@ void test_twostream_lambertian(boost::shared_ptr<TwostreamRtDriver>& twostream_d
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0;
 
   if (debug_output) std::cerr << "Surface only" << std::endl << "----------------------------" << std::endl;  
-  pert_atm = 1e-4, 1e-4;
+  pert_atm = 1e-4, 1e-4, 0;
   pert_surf = 1e-8;
-  test_twostream(twostream_driver, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Rayleigh only
@@ -248,11 +288,12 @@ void test_twostream_lambertian(boost::shared_ptr<TwostreamRtDriver>& twostream_d
 
   taur = 2.0e-2/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0;
 
   if (debug_output) std::cerr << "Rayleigh only" << std::endl << "----------------------------" << std::endl;  
-  pert_atm = 1e-3, -1e-4;
+  pert_atm = 1e-3, -1e-4, 0;
   pert_surf = 1e-8;
-  test_twostream(twostream_driver, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
   ////////////////
   // Gas + Surface
@@ -264,11 +305,29 @@ void test_twostream_lambertian(boost::shared_ptr<TwostreamRtDriver>& twostream_d
 
   taur = 1.0e-6/nlayer;
   taug = 1.0/nlayer;
+  taua = 0;
 
   if (debug_output) std::cerr << "Gas + Surface" << std::endl << "----------------------------" << std::endl;  
-  pert_atm = 1e-4, 1e-4;
+  pert_atm = 1e-4, 1e-4, 0;
   pert_surf = 1e-8;
-  test_twostream(twostream_driver, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+
+  ////////////////////////////
+  // Gas + Surface + Aerosol
+  if (do_thermal && !do_solar) {
+      surface_params.value() = 1.0e-6;
+  } else {
+      surface_params.value() = 1.0;
+  }
+
+  taur = 1.0e-6/nlayer;
+  taug = 1.0/nlayer;
+  taua = 1.0e-2/nlayer;
+
+  if (debug_output) std::cerr << "Gas + Surface + Aerosol" << std::endl << "----------------------------" << std::endl;  
+  pert_atm = 1e-4, 1e-4, 1e-4;
+  pert_surf = 1e-8;
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 
 }
 
@@ -281,17 +340,14 @@ BOOST_AUTO_TEST_CASE(lambertian_solar)
   int nlayer = 2;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
 
 
   test_twostream_lambertian(twostream_driver, do_solar, do_thermal,
-			    debug_output);
+                            debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(lambertian_solar_serialization)
@@ -305,10 +361,7 @@ BOOST_AUTO_TEST_CASE(lambertian_solar_serialization)
   int nlayer = 2;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
@@ -321,28 +374,25 @@ BOOST_AUTO_TEST_CASE(lambertian_solar_serialization)
     serialize_read_string<TwostreamRtDriver>(d);
 
   test_twostream_lambertian(tdriver_r, do_solar, do_thermal,
-			    debug_output);
+                            debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(lambertian_thermal)
 {
   bool do_solar = false;
   bool do_thermal = true;
-  bool debug_output = true;
+  bool debug_output = false;
   int surface_type = LAMBERTIAN;
   int nlayer = 2;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
 
   test_twostream_lambertian(twostream_driver, do_solar, do_thermal,
-			    debug_output);
+                            debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(lambertian_thermal_serialization)
@@ -351,15 +401,12 @@ BOOST_AUTO_TEST_CASE(lambertian_thermal_serialization)
     return;
   bool do_solar = false;
   bool do_thermal = true;
-  bool debug_output = true;
+  bool debug_output = false;
   int surface_type = LAMBERTIAN;
   int nlayer = 2;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
@@ -371,7 +418,7 @@ BOOST_AUTO_TEST_CASE(lambertian_thermal_serialization)
     serialize_read_string<TwostreamRtDriver>(d);
 
   test_twostream_lambertian(tdriver_r, do_solar, do_thermal,
-			    debug_output);
+                            debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(coxmunk)
@@ -385,6 +432,7 @@ BOOST_AUTO_TEST_CASE(coxmunk)
   ArrayAd<double, 1> surface_params(4, 3); 
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Use simple lambertian throughout
   int surface_type = COXMUNK;
@@ -407,18 +455,16 @@ BOOST_AUTO_TEST_CASE(coxmunk)
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   if (debug_output) std::cerr << "Coxmunk" << std::endl << "----------------------------" << std::endl;  
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
-  test_twostream(twostream_driver, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(coxmunk_serialization)
@@ -434,6 +480,7 @@ BOOST_AUTO_TEST_CASE(coxmunk_serialization)
   ArrayAd<double, 1> surface_params(4, 3); 
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Use simple lambertian throughout
   int surface_type = COXMUNK;
@@ -456,14 +503,12 @@ BOOST_AUTO_TEST_CASE(coxmunk_serialization)
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   if (debug_output) std::cerr << "Coxmunk" << std::endl << "----------------------------" << std::endl;  
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
@@ -474,7 +519,7 @@ BOOST_AUTO_TEST_CASE(coxmunk_serialization)
   boost::shared_ptr<TwostreamRtDriver> tdriver_r =
     serialize_read_string<TwostreamRtDriver>(d);
   
-  test_twostream(tdriver_r, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(tdriver_r, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(brdf)
@@ -488,9 +533,10 @@ BOOST_AUTO_TEST_CASE(brdf)
   ArrayAd<double, 1> surface_params(5, 1); 
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Use simple lambertian throughout
-  int surface_type = BPDFVEGN;
+  int surface_type = BREONVEG;
   
   // Check jacobian using finite derivatives
   // od, ssa
@@ -510,18 +556,16 @@ BOOST_AUTO_TEST_CASE(brdf)
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   pert_atm = 1e-4, 1e-4;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
-  test_twostream(twostream_driver, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(twostream_driver, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(brdf_serialization)
@@ -537,9 +581,10 @@ BOOST_AUTO_TEST_CASE(brdf_serialization)
   ArrayAd<double, 1> surface_params(5, 1); 
   ArrayAd<double, 1> taug(nlayer, nparam);
   ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
 
   // Use simple lambertian throughout
-  int surface_type = BPDFVEGN;
+  int surface_type = BREONVEG;
   
   // Check jacobian using finite derivatives
   // od, ssa
@@ -559,14 +604,12 @@ BOOST_AUTO_TEST_CASE(brdf_serialization)
 
   taur = 1.0e-6/nlayer;
   taug = 1.0e-6/nlayer;
+  taua = 0.0;
 
   pert_atm = 1e-4, 1e-4;
   boost::shared_ptr<TwostreamRtDriver> twostream_driver =
     boost::make_shared<TwostreamRtDriver>(nlayer, surface_type, false,
-					  do_solar, do_thermal);
-
-  // Turn off delta-m scaling
-  twostream_driver->twostream_interface()->do_d2s_scaling(false);
+                                          do_solar, do_thermal);
 
   // Plane-parallel
   twostream_driver->twostream_interface()->do_plane_parallel(true);
@@ -577,7 +620,7 @@ BOOST_AUTO_TEST_CASE(brdf_serialization)
   boost::shared_ptr<TwostreamRtDriver> tdriver_r =
     serialize_read_string<TwostreamRtDriver>(d);
   
-  test_twostream(tdriver_r, surface_params, taug, taur, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
+  test_twostream(tdriver_r, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, debug_output);
 }
 
 BOOST_AUTO_TEST_CASE(valgrind_problem)

@@ -82,13 +82,17 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                 surface_type, zen, pure_nadir,
                                                 do_solar, do_thermal);  
 
+  // Configured delta-m scaling flag to match
+  auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
+  mbool.ts_do_deltam_scaling(do_deltam_scaling);
+
   // Configure sphericity and phase function affecting options
   switch(sphericity_mode) {
     case 0:
         lidort_driver.set_plane_parallel();
 
         // This is important for getting agreement.
-        lidort_driver.lidort_interface()->lidort_modin().mbool().ts_do_sscorr_nadir(true);
+        mbool.ts_do_focorr_nadir(true);
 
         break;
     case 1:
@@ -101,12 +105,12 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
         throw Exception("Unknown sphericity_mode value");
   }
 
-  auto mbool = lidort_driver.lidort_interface()->lidort_modin().mbool();
-  mbool.ts_do_deltam_scaling(do_deltam_scaling);
-
   // Set up LIDORT to only perform single scattering calculations
+  // Do this after sphericity mode since plane-parallel in LIDORT turns off do_focorr
   auto fbool = lidort_driver.lidort_interface()->lidort_fixin().f_bool();
-  fbool.ts_do_ssfull(true);
+  fbool.ts_do_fullrad_mode(false);
+  mbool.ts_do_focorr(true);
+  mbool.ts_do_no_azimuth(false);
 
   // Simple height grid evenly spaced
   Array<double, 1> heights(nlayer+1);
@@ -518,7 +522,7 @@ BOOST_AUTO_TEST_CASE(surface_only)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_surface_only(do_solar, do_thermal, debug_output);
 }
@@ -527,7 +531,7 @@ BOOST_AUTO_TEST_CASE(rayleigh_only)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_rayleigh_only(do_solar, do_thermal, debug_output);
 }
@@ -536,7 +540,7 @@ BOOST_AUTO_TEST_CASE(gas_surface)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_gas_surface(do_solar, do_thermal, debug_output);
 }
@@ -545,7 +549,7 @@ BOOST_AUTO_TEST_CASE(gas_surface_aerosol)
 {
   bool do_solar = true;
   bool do_thermal = false;
-  bool debug_output = true;
+  bool debug_output = false;
 
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
 }

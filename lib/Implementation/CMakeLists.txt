@@ -22,7 +22,6 @@ set(DIR_SOURCES
     bad_sample_noise_model.cc
     bard_ml_problem.cc
     bard_nlls_problem.cc
-    brdf_functions.F90
     brown_nlls_problem.cc
     chisq_convergence.cc
     composite_perturbation.cc

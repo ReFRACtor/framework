@@ -1,0 +1,12 @@
+Since blitz++ is an integral part of this framework we distribute a version
+known to work with the framework itself.
+
+We have a forked copy of blitz here:
+https://github.com/ReFRACtor/blitz
+
+We created a fork so we can maintain a version that works with our software
+ahead of our pull requests getting pulled into the main repository at:
+https://github.com/blitzpp/blitz
+
+Generally we are compatible with the upstream and will pull upstream changes
+into our fork as necessary.

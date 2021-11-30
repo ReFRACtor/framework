@@ -274,7 +274,7 @@ void TwostreamRtDriver::initialize_rt()
   twostream_interface_->do_upwelling(true);
   twostream_interface_->do_dnwelling(false);
 
-  // In most instances this flag for delta-m scaling should be set
+  // delta-m scaling should always be set otherwise results will be unphysical
   twostream_interface_->do_d2s_scaling(true);
 
   // Beam source flux, same value used for all solar angles
