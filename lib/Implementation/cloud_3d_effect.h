@@ -44,7 +44,7 @@ public:
 
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
 
-  virtual std::string sub_state_identifier() const { return "cloud_3d"; }
+  virtual std::string sub_state_identifier() const { return "cloud_3d/" + band_name; }
 
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
