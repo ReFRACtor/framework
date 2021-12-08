@@ -4,13 +4,12 @@ import logging
 
 import numpy as np
 
-import refractor.factory.creator as creator
-import refractor.factory.param as param
-from refractor.config import refractor_config
+from refractor.framework.factory import creator, param
+from refractor.framework.config import refractor_config
 from refractor import framework as rf
 
-unit_test_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../unit/data"))
-common_input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../input/common/input"))
+unit_test_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data"))
+common_input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../input/common/input"))
 
 static_input_file = os.path.join(unit_test_dir, "lua/example_static_input.h5")
 ils_file = os.path.join(unit_test_dir, "lua/ils_data.h5")
