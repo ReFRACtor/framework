@@ -290,7 +290,7 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
 {
   // Initialize scene 
   setup_height_grid(height_grid);
-  brdf_driver_-> setup_geometry(sza, azm, zen);
+  brdf_driver_->setup_geometry(sza, azm, zen);
   setup_geometry(sza, azm, zen);
 
   // Set up BRDF inputs, here we throw away the jacobian

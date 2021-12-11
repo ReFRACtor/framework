@@ -34,6 +34,7 @@ public:
   virtual void notify_update(const RtAtmosphere& atm)
   {
     alt_spec_index_cache = -1;
+    geo_spec_index_cache = -1;
     rt_driver_->notify_update(atm);
   }
 

@@ -35,22 +35,15 @@ FirstOrderDriver::FirstOrderDriver(int number_layers, int surface_type, int numb
     num_moments_(number_moments), num_streams_(number_streams)
 {
     init_interfaces(number_layers, surface_type);
-
-    // By default enable most accurate mode to match LIDORT defaults
-    set_line_of_sight();
-
-    // Enabled by default to match LIDORT behavior and because its generally a good idea
-    // to leave this enabled except for testing
-    do_deltam_scaling_ = true;
 }
 
 void FirstOrderDriver::notify_update(const RtAtmosphere& atm)
 {
   int nlayers = atm.number_layer();
   int stype = atm.ground()->spurr_brdf_type();
-  if(nlayers != number_layers() ||
-     stype != surface_type())
+  if(nlayers != number_layers() || stype != surface_type()) {
     init_interfaces(nlayers, stype);
+  }
 }
 
 void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
@@ -70,6 +63,9 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   int max_atmoswfs = lid_pars.max_atmoswfs;
   int max_surfacewfs = lid_pars.max_surfacewfs; 
   int max_sleavewfs = lid_pars.max_sleavewfs;
+
+  // Store the surface type being used, this value is only used for the surface_type() accessor
+  surface_type_ = surface_type;
 
   // Compute actual sizes used for processing < max values
   num_layers_ = nlayers;
@@ -168,6 +164,12 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // This is the same way LIDORT would do its internal call to FO
   solar_interface_->do_phasfunc(false);
 
+  // By default enable most accurate mode to match LIDORT defaults
+  set_line_of_sight();
+
+  // Enabled by default to match LIDORT behavior and because its generally a good idea
+  // to leave this enabled except for testing
+  do_deltam_scaling_ = true;
 }
 
 /// Set plane parallel sphericity
