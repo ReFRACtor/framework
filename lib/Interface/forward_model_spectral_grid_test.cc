@@ -11,7 +11,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(forward_model_spectral_grid, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(forward_model_spectral_grid, LuaConfigurationFixture)
 
 // Use to print out expected values
 void print_grid(std::ostream& out, std::vector<SpectralDomain>& grid)

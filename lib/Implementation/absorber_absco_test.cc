@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(absorber_absco, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(absorber_absco, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_each_layer)
 {

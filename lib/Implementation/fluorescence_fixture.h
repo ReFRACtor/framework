@@ -5,10 +5,10 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-class FluorescenceFixture: public ConfigurationFixture {
+class FluorescenceFixture: public LuaConfigurationFixture {
 public:
   FluorescenceFixture()
-    : ConfigurationFixture("config_fluor.lua") 
+    : LuaConfigurationFixture("config_fluor.lua") 
   {
       epsilon.resizeAndPreserve(114);
 

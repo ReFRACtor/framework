@@ -30,10 +30,10 @@ namespace FullPhysics {
   do things like change the config file to load (through the
   constructor argument), or individual values.
 *******************************************************************/
-class ConfigurationFixture: public GlobalFixture {
+class LuaConfigurationFixture: public GlobalFixture {
 public:
-  ConfigurationFixture(const std::string& Config_file = "config.lua");
-  virtual ~ConfigurationFixture() 
+  LuaConfigurationFixture(const std::string& Config_file = "config.lua");
+  virtual ~LuaConfigurationFixture() 
   { config_state_vector->update_state(sv_initial); }
 
   boost::shared_ptr<Absorber> config_absorber;
@@ -81,7 +81,7 @@ private:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_coxmunk.lua
 *******************************************************************/
-class ConfigurationCoxmunkFixture: public ConfigurationFixture {
+class ConfigurationCoxmunkFixture: public LuaConfigurationFixture {
 public:
   ConfigurationCoxmunkFixture(const std::string& Config_file = "config_coxmunk.lua");
   virtual ~ConfigurationCoxmunkFixture() {}
@@ -94,10 +94,10 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_coxmunk+lamb.lua
 *******************************************************************/
-class ConfigurationCoxmunkPlusLambertianFixture: public ConfigurationFixture {
+class ConfigurationCoxmunkPlusLambertianFixture: public LuaConfigurationFixture {
 public:
   ConfigurationCoxmunkPlusLambertianFixture()
-    : ConfigurationFixture("config_coxmunk+lamb.lua") {}
+    : LuaConfigurationFixture("config_coxmunk+lamb.lua") {}
   virtual ~ConfigurationCoxmunkPlusLambertianFixture() {}
 };
 
@@ -108,10 +108,10 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_brdf_veg.lua
 *******************************************************************/
-class ConfigurationBrdfVegFixture: public ConfigurationFixture {
+class ConfigurationBrdfVegFixture: public LuaConfigurationFixture {
 public:
   ConfigurationBrdfVegFixture()
-    : ConfigurationFixture("config_brdf_veg.lua") {}
+    : LuaConfigurationFixture("config_brdf_veg.lua") {}
   virtual ~ConfigurationBrdfVegFixture() {}
 };
 
@@ -122,10 +122,10 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_brdf_soil.lua
 *******************************************************************/
-class ConfigurationBrdfSoilFixture: public ConfigurationFixture {
+class ConfigurationBrdfSoilFixture: public LuaConfigurationFixture {
 public:
   ConfigurationBrdfSoilFixture()
-    : ConfigurationFixture("config_brdf_soil.lua") {}
+    : LuaConfigurationFixture("config_brdf_soil.lua") {}
   virtual ~ConfigurationBrdfSoilFixture() {}
 };
 
@@ -136,10 +136,10 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_two_broadener.lua
 *******************************************************************/
-class ConfigurationTwoBroadener: public ConfigurationFixture {
+class ConfigurationTwoBroadener: public LuaConfigurationFixture {
 public:
   ConfigurationTwoBroadener()
-    : ConfigurationFixture("config_two_broadener.lua") {}
+    : LuaConfigurationFixture("config_two_broadener.lua") {}
   virtual ~ConfigurationTwoBroadener() {}
 };
 }

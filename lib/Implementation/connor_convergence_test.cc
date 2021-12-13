@@ -4,7 +4,7 @@
 
 using namespace FullPhysics;
 
-BOOST_FIXTURE_TEST_SUITE(connor_convergence, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(connor_convergence, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

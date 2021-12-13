@@ -4,8 +4,8 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-std::map<std::string, boost::shared_ptr<LuaState> > ConfigurationFixture::config;
-ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
+std::map<std::string, boost::shared_ptr<LuaState> > LuaConfigurationFixture::config;
+LuaConfigurationFixture::LuaConfigurationFixture(const std::string& Config_file)
 {
   if(!config[Config_file]) {
     // Disable floating point exeptions while loading 
@@ -79,7 +79,7 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
 }
 
 ConfigurationCoxmunkFixture::ConfigurationCoxmunkFixture(const std::string& Config_file) 
-  : ConfigurationFixture(Config_file)
+  : LuaConfigurationFixture(Config_file)
 {
   // Shrink array from base constructor less elements but first many should be the same
   epsilon.resizeAndPreserve(110);

@@ -128,7 +128,7 @@ LidortRtCommonFixture::LidortRtCommonFixture() : sza(3), zen(3), azm(3)
 }
 
 LidortLambertianFixture::LidortLambertianFixture(const std::string& Config_file) : 
-  LidortRtCommonFixture(), ConfigurationFixture(Config_file)
+  LidortRtCommonFixture(), LuaConfigurationFixture(Config_file)
 {
   int nstreams = 4;
   int nmoms = 2*nstreams;

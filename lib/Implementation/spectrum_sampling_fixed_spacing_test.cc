@@ -6,7 +6,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(spectrum_sampling_fixed_spacing, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(spectrum_sampling_fixed_spacing, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

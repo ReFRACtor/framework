@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(albedo)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_lambertian_config, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_lambertian_config, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {

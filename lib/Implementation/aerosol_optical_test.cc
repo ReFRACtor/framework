@@ -46,7 +46,7 @@ BOOST_AUTO_TEST_CASE(layer_parameters)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(aerosol_jac, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(aerosol_jac, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_jac)
 {

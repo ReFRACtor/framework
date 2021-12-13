@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(composite_initial_guess_full_guess, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(composite_initial_guess_full_guess, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(full_initial_guess)
 {

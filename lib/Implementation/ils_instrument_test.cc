@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(basic)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ils_instrument_static, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_instrument_static, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic_static_test)
 {
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(basic_static_test)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ils_instrument_timing, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_instrument_timing, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(timing)
 {

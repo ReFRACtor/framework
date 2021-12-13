@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(connor_cost_function, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(connor_cost_function, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(all_pixels)
 {

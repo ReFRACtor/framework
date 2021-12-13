@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(serialization)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(atmosphere_standard_jac, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(atmosphere_standard_jac, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_jac)
 {

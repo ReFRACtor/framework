@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-class ChapmanBoaRtFixture: public ConfigurationFixture {
+class ChapmanBoaRtFixture: public LuaConfigurationFixture {
 public:
   ChapmanBoaRtFixture() 
   {

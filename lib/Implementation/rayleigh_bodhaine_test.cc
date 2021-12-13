@@ -10,7 +10,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(rayleigh_bodhaine, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(rayleigh_bodhaine, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(cross_section)
 {

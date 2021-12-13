@@ -17,7 +17,7 @@ namespace FullPhysics {
   generated using l2_fp with the "-t" option (see l2_fp -h for
   details). 
 *******************************************************************/
-class SolverFinishedFixture : public ConfigurationFixture {
+class SolverFinishedFixture : public LuaConfigurationFixture {
 public:
   SolverFinishedFixture();
   virtual ~SolverFinishedFixture() {}

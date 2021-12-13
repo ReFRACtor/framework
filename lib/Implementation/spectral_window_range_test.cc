@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(spectral_window_range, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(spectral_window_range, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(grid_indexes)
 {

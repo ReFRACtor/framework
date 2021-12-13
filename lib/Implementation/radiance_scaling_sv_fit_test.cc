@@ -6,7 +6,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(radiance_scaling_sv_fit, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(radiance_scaling_sv_fit, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

@@ -108,10 +108,10 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortRt based on the ConfigurationFixture.
+  LidortRt based on the LuaConfigurationFixture.
 *******************************************************************/
 class LidortLambertianFixture : public LidortRtCommonFixture, 
-                                public ConfigurationFixture {
+                                public LuaConfigurationFixture {
 public:
   LidortLambertianFixture(const std::string& Config_file = "config.lua");
   virtual ~LidortLambertianFixture() {};
@@ -168,10 +168,10 @@ class LidortLowHighCommon {
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortLowHighDriver based on the ConfigurationFixture.
+  LidortLowHighDriver based on the LuaConfigurationFixture.
 *******************************************************************/
  class LidortLowHighLambertianFixture : public LidortLowHighCommon,
-                                        public ConfigurationFixture
+                                        public LuaConfigurationFixture
   {
 public:
   LidortLowHighLambertianFixture();
@@ -181,12 +181,12 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortLowHighDriver based on the ConfigurationFixture. This is very
+  LidortLowHighDriver based on the LuaConfigurationFixture. This is very
   similar to LidortLowHighFixture, but we have the polarization turned off
   for this.
 *******************************************************************/
 class LidortLowHighFixtureNoPolarization : public LidortLowHighCommon,
-                                           public ConfigurationFixture {
+                                           public LuaConfigurationFixture {
 public:
   LidortLowHighFixtureNoPolarization();
   virtual ~LidortLowHighFixtureNoPolarization() {}

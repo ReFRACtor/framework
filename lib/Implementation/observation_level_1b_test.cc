@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(observation_level_1b, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(observation_level_1b, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

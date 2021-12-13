@@ -11,7 +11,7 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(l_rad_driver, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(l_rad_driver, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(lambertian_first_order)
 {

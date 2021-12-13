@@ -11,7 +11,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(rayleigh_young, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(rayleigh_young, LuaConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(cross_section)
 {
