@@ -1,4 +1,4 @@
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "observation_level_1b.h"
 

@@ -1,5 +1,5 @@
 #include "fluorescence_effect.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include <boost/shared_ptr.hpp>
 
 using namespace FullPhysics;

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 #include "connor_cost_function.h"
 

@@ -1,4 +1,4 @@
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include <fenv.h>
 
 using namespace FullPhysics;

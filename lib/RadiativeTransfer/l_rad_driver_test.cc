@@ -1,7 +1,7 @@
 #include "unit_test_support.h"
 #include "l_rad_driver.h"
 #include "pressure_sigma.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 #include "aerosol_property_hdf.h"
 

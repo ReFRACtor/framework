@@ -3,7 +3,7 @@
 #include "unit_test_support.h"
 #include "fp_serialize_support.h"
 
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;

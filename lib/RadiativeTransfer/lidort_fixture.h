@@ -1,7 +1,7 @@
 #ifndef LIDORT_FIXTURE_H
 #define LIDORT_FIXTURE_H
 
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "lidort_rt.h"
 
 namespace FullPhysics {

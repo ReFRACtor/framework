@@ -1,6 +1,6 @@
 #ifndef ATMOSPHERE_FIXTURE_H
 #define ATMOSPHERE_FIXTURE_H
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "atmosphere_standard.h"
 #include "state_vector.h"
 

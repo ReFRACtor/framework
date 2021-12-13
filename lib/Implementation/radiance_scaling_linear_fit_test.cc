@@ -1,6 +1,6 @@
 #include "unit_test_support.h"
 
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "radiance_scaling_linear_fit.h"
 
 using namespace FullPhysics;

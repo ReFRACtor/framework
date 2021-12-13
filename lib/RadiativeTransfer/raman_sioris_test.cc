@@ -1,6 +1,6 @@
 #include "unit.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 #include "hdf_file.h"
 #include "raman_sioris.h"

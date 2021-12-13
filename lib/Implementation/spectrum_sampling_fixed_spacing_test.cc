@@ -1,7 +1,7 @@
 #include "spectrum_sampling_fixed_spacing.h"
 #include "simple_fixed_spectrum_sampling.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;

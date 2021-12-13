@@ -1,7 +1,7 @@
 #include "rayleigh_young.h"
 
 #include "pressure.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "altitude_hydrostatic.h"
 #include "atmosphere_standard.h"
 #include "unit_test_support.h"

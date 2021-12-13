@@ -1,7 +1,7 @@
 #ifndef SOLVER_FINISHED_FIXTURE_H
 #define SOLVER_FINISHED_FIXTURE_H
 #include "global_fixture.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 
 namespace FullPhysics {
 /****************************************************************//**

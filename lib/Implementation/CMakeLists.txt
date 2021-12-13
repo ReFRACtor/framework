@@ -152,7 +152,7 @@ set(TEST_SOURCES
     chisq_convergence_test.cc
     composite_initial_guess_full_guess_test.cc
     composite_perturbation_test.cc
-    configuration_fixture.cc
+    lua_configuration_fixture.cc
     connor_convergence_test.cc
     connor_cost_function_test.cc
     connor_solver_test.cc

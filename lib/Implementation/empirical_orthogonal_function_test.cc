@@ -5,7 +5,7 @@
 #include "dispersion_polynomial.h"
 #include "ils_table.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "accumulated_timer.h"
 #include <iostream>
 using namespace FullPhysics;

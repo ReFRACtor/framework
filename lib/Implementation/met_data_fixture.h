@@ -1,7 +1,7 @@
 #ifndef MET_DATA_FIXTURE
 #define MET_DATA_FIXTURE
 
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "meteorology.h"
 

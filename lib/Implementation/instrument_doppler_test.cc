@@ -1,6 +1,6 @@
 #include "instrument_doppler.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "simple_fixed_spectrum_sampling.h"
 #include "forward_model_spectral_grid.h"
 #include "old_constant.h"

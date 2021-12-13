@@ -1,6 +1,6 @@
 #include "forward_model_spectral_grid.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include <fstream>
 
 #include "nonuniform_spectrum_sampling.h"
