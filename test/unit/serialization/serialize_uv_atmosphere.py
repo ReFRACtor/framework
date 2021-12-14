@@ -5,9 +5,9 @@ import sys
 import logging
 
 from refractor import framework as rf
-from refractor.executor.config import load_config_module, find_config_function
-from refractor.factory import process_config
-from refractor import write_shelve
+from refractor.framework import load_config_module, find_config_function
+from refractor.framework.factory import process_config
+from refractor.framework import write_shelve
 
 logging.basicConfig(level=logging.DEBUG)
 
