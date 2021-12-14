@@ -32,8 +32,6 @@ namespace FullPhysics {
 class ConfigurationFixture: public GlobalFixture {
 public:
 
-  ~ConfigurationFixture() = default;
-
   boost::shared_ptr<Absorber> config_absorber;
   boost::shared_ptr<Aerosol> config_aerosol;
   boost::shared_ptr<RtAtmosphere> config_atmosphere;
@@ -66,6 +64,9 @@ public:
   /// This is an epsilon that can be used to generate finite
   /// difference Jacobians for unit tests.
   blitz::Array<double, 1> epsilon;
+protected:
+  virtual void init_variables() = 0;
+  virtual void init_epsilon() = 0;
 };
 
 }

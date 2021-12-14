@@ -19,14 +19,20 @@ namespace FullPhysics {
 *******************************************************************/
 class LuaConfigurationFixture: public ConfigurationFixture {
 public:
+
   LuaConfigurationFixture(const std::string& Config_file = "config.lua");
+
   virtual ~LuaConfigurationFixture() 
   { config_state_vector->update_state(sv_initial); }
 
   boost::shared_ptr<ErrorAnalysis> config_error_analysis;
 
   LuabindObject lua_config;
+protected:
+  virtual void init_variables();
+  virtual void init_epsilon();
 private:
+  std::string config_filename;
   static std::map<std::string, boost::shared_ptr<LuaState> > config;
   blitz::Array<double,1> sv_initial;
 };
