@@ -18,9 +18,9 @@ public:
   }
   virtual ~ConnorCostFunction() {}
   virtual void cost_function(const blitz::Array<double, 1>& X,
-			blitz::Array<double, 1>& Residual,
-			blitz::Array<double, 1>& Se,
-			blitz::Array<double, 2>& Jacobian) const
+                        blitz::Array<double, 1>& Residual,
+                        blitz::Array<double, 1>& Se,
+                        blitz::Array<double, 2>& Jacobian) const
   {
     using namespace blitz;
     statev->update_state(X);
@@ -38,6 +38,7 @@ public:
     Residual = rad_mod.data() - rad_meas.data();
     Jacobian.reference(rad_mod.data_ad().jacobian());
   }
+  const boost::shared_ptr<Observation> observation() const { return meas; }
   virtual void print(std::ostream& Os) const
   {
     Os << "ConnorCostFunction";
