@@ -359,20 +359,12 @@ def base_config(**kwargs):
                     'filename': covariance_file,
                 }
             },
-            'solver_nlls_gsl': {
-                'creator': creator.retrieval.NLLSSolverGSLLMSDER,
-                'max_cost_function_calls': 10,
-                'dx_tol_abs': 1e-5,
-                'dx_tol_rel': 1e-5, 
-                'g_tol_abs': 1e-5,
-            },
             'solver': {
-                'creator': creator.retrieval.ConnorSolverMAP,
-                'max_cost_function_calls': 14,
-                'threshold': 2.0,
+                'creator': creator.retrieval.LegacyConnorSolver,
                 'max_iteration': 7,
                 'max_divergence': 2,
                 'max_chisq': 1.4,
+                'threshold': 2.0,
                 'gamma_initial': 10.0,
             },
         },
