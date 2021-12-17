@@ -1,6 +1,20 @@
 #include "observation_level_1b.h"
 #include "level_1b_sample_coefficient.h"
 
+#include "fp_serialize_support.h"
+using namespace FullPhysics;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ObservationLevel1b::serialize(Archive& ar, const unsigned int UNUSED(version))
+{
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Observation)
+       & FP_NVP(l1b) & FP_NVP(inst) & FP_NVP(grids);
+}
+
+FP_IMPLEMENT(ObservationLevel1b);
+#endif
+
 using namespace FullPhysics;
 using namespace blitz;
 

@@ -29,7 +29,14 @@ private:
     boost::shared_ptr<Level1b> l1b;
     boost::shared_ptr<Instrument> inst;
     boost::shared_ptr<ForwardModelSpectralGrid> grids;
+
+    ObservationLevel1b() = default;
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ObservationLevel1b);
 
 #endif
