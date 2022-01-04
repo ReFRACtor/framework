@@ -22,5 +22,7 @@ public:
                              blitz::Array<double, 1>& OUTPUT,
                              blitz::Array<double, 2>& OUTPUT) const;
   %python_attribute(observation, boost::shared_ptr<Observation>);
+
+  %pickle_serialization();
 };
 }

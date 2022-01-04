@@ -47,6 +47,15 @@ private:
   boost::shared_ptr<StateVector> statev;
   boost::shared_ptr<ForwardModel> forward_model;
   boost::shared_ptr<Observation> meas;
+
+  ConnorCostFunction() = default;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ConnorCostFunction);
+
 #endif
