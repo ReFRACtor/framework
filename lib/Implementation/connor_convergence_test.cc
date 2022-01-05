@@ -6,9 +6,9 @@ using namespace FullPhysics;
 
 BOOST_FIXTURE_TEST_SUITE(connor_convergence, LuaConfigurationFixture)
 
-BOOST_AUTO_TEST_CASE(basic)
+void check_conv(const boost::shared_ptr<ConnorConvergence>& conv)
 {
-  ConnorConvergence conv(config_forward_model, 0.1, 10, 4, 1.4);
+
   FitStatistic  fs, fs_last;
   bool has_converged, convergence_failed, step_diverged;
   double gamma;
@@ -39,14 +39,14 @@ BOOST_AUTO_TEST_CASE(basic)
   fs.number_iteration = 1;
   //
   fs.d_sigma_sq_scaled = 0.1 + 0.05;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma == 8.0 );
   BOOST_CHECK( step_diverged == false );
   BOOST_CHECK( has_converged == false );
   //
   fs.d_sigma_sq_scaled = 0.1 - 0.05;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma == 8.0 );
   BOOST_CHECK( step_diverged == false );
@@ -62,7 +62,7 @@ BOOST_AUTO_TEST_CASE(basic)
   //
   fs.d_sigma_sq_scaled = 0.1 + 0.05;
   gamma = 8.0;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma < 8.0 );
   BOOST_CHECK( step_diverged == false );
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(basic)
   //
   fs.d_sigma_sq_scaled = 0.1 - 0.05;
   gamma = 8.0;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma < 8.0 );
   BOOST_CHECK( step_diverged == false );
@@ -80,13 +80,13 @@ BOOST_AUTO_TEST_CASE(basic)
   // Now after more than one iteration and
   // an increase in the cost function (a bad
   // prediction), gamma should increase.
-  //
+  //!G
   fs.chisq_apriori = 0.55;
   fs.chisq_measured = 1.75;
   //
   gamma = 8.0;
   fs.d_sigma_sq_scaled = 0.1 + 0.05;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma > 8.0 );
   BOOST_CHECK( step_diverged == true );
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(basic)
   //
   gamma = 8.0;
   fs.d_sigma_sq_scaled = 0.1 - 0.05;
-  conv.convergence_check( fs_last, fs, has_converged, 
+  conv->convergence_check( fs_last, fs, has_converged, 
                            convergence_failed, gamma, step_diverged );
   BOOST_CHECK( gamma > 8.0 );
   BOOST_CHECK( step_diverged == true );
@@ -115,8 +115,23 @@ BOOST_AUTO_TEST_CASE(basic)
   //  whether or not the elimination of the return statement
   //  will cause an error in any other place.
 //  BOOST_CHECK( has_converged == true );
+}
 
+BOOST_AUTO_TEST_CASE(basic)
+{
+  boost::shared_ptr<ConnorConvergence> conv(new ConnorConvergence(config_forward_model, 0.1, 10, 4, 1.4));
 
+  check_conv(conv);
+}
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  boost::shared_ptr<ConnorConvergence> conv_orig(new ConnorConvergence(config_forward_model, 0.1, 10, 4, 1.4));
+
+  std::string serial_str = serialize_write_string(conv_orig);
+  boost::shared_ptr<ConnorConvergence> conv_read = serialize_read_string<ConnorConvergence>(serial_str);
+
+  check_conv(conv_read);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

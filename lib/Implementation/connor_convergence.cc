@@ -1,14 +1,28 @@
 #include "connor_convergence.h"
 #include "fp_exception.h"
 
+#include "fp_serialize_support.h"
+
 using namespace FullPhysics;
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_DERIVED_CLASS(ConnorConvergence, ConvergenceCheck)
 .def(luabind::constructor<const boost::shared_ptr<ForwardModel>&,
-			  double, int, int, double>())
+                          double, int, int, double>())
 REGISTER_LUA_END()
+#endif
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void ConnorConvergence::serialize(Archive& ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConvergenceCheck)
+     & FP_NVP(fm) & FP_NVP(threshold) & FP_NVP(max_iteration) & FP_NVP(max_divergence)
+     & FP_NVP(max_chisq);
+}
+
+FP_IMPLEMENT(ConnorConvergence);
 #endif
 
 //-----------------------------------------------------------------------
@@ -43,12 +57,12 @@ ConnorConvergence::ConnorConvergence(
 //-----------------------------------------------------------------------
 
 void ConnorConvergence::convergence_check(
-	 const FitStatistic& fs_last,
- 	 FitStatistic& fs,
-	 bool& has_converged,
-	 bool& convergence_failed,
-	 double& gamma,
-	 bool& step_diverged)
+         const FitStatistic& fs_last,
+          FitStatistic& fs,
+         bool& has_converged,
+         bool& convergence_failed,
+         double& gamma,
+         bool& step_diverged)
 {
   has_converged = false;
   convergence_failed = false;
@@ -101,8 +115,8 @@ void ConnorConvergence::convergence_check(
 // See base class for description of this function.
 
 void ConnorConvergence::evaluate_quality(FitStatistic& fit_stat,
-	 const blitz::Array<double, 1>& Residual,
-	 const blitz::Array<double, 1>& Residual_cov_diag)
+         const blitz::Array<double, 1>& Residual,
+         const blitz::Array<double, 1>& Residual_cov_diag)
 {
   if (not fit_stat.fit_succeeded)
     throw Exception("Can not evaulate quality when the fit has not succeeded");
@@ -114,10 +128,10 @@ void ConnorConvergence::evaluate_quality(FitStatistic& fit_stat,
     boost::optional<blitz::Range> pr = fm->stacked_pixel_range(i);
     if(pr) {
       double chisq_m = fit_stat.chisq_measure_norm(Residual(*pr), 
-						   Residual_cov_diag(*pr));
+                                                   Residual_cov_diag(*pr));
       ++nband;
       if(chisq_m < max_chisq)
-	quality_count++;
+        quality_count++;
     }
   }
   
