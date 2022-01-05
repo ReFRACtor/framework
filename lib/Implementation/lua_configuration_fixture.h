@@ -7,15 +7,11 @@
 
 namespace FullPhysics {
 /****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it.
+  This fixture loads ConfigurationFixture objects by loading
+  a Lua configuration.
 
-  Fixtures that are closely related to this one can derive from it and
-  do things like change the config file to load (through the
-  constructor argument), or individual values.
+  This ConfigurationFixture is in the process of being deprecated
+  in preference for serialized objects.
 *******************************************************************/
 class LuaConfigurationFixture: public ConfigurationFixture {
 public:
