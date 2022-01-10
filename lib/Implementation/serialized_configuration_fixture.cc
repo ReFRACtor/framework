@@ -25,7 +25,7 @@ void SerializedConfigurationFixture::init_variables()
     config_aerosol = obj_map->get<Aerosol>("aerosol");
     config_atmosphere = obj_map->get<RtAtmosphere>("atmosphere");
     config_state_vector = obj_map->get<StateVector>("state_vector");
-//    config_solver = obj_map->get<ConnorSolver>("solver");
+    config_solver = obj_map->get<ConnorSolver>("solver");
     config_spectral_window = obj_map->get<SpectralWindow>("spectral_window");
     config_initial_guess = obj_map->get<InitialGuess>("initial_guess");
     config_instrument = obj_map->get<Instrument>("instrument");

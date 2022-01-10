@@ -62,7 +62,7 @@ for config_name in config_object_names:
 # Copy retrieval objects
 config_object_names = [
     "state_vector",
-#    "solver",
+    "solver",
 ]
 
 for config_name in config_object_names:
