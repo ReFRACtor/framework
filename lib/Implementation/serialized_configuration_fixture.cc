@@ -10,8 +10,11 @@ using namespace blitz;
 using namespace FullPhysics;
 
 SerializedConfigurationFixture::SerializedConfigurationFixture(const std::string& Serialized_file)
-  : serialized_filename(Serialized_file)
+  
 {
+    // Preprend test_data_dir here this function is only available from within the scope of a fixture
+    serialized_filename = test_data_dir() + "in/configuration_fixture/" + Serialized_file;
+
     init_variables();
     init_epsilon();
 }
@@ -41,4 +44,28 @@ void SerializedConfigurationFixture::init_variables()
 
 void SerializedConfigurationFixture::init_epsilon()
 {
+    epsilon.resize(config_state_vector->observer_claimed_size());
+    epsilon = 1e-6;                  // Default
+
+    for (int sv_idx = 0 ; sv_idx < config_state_vector->observer_claimed_size(); sv_idx++) {
+        std::string sv_name = config_state_vector->state_vector_name()(sv_idx);
+
+        if (sv_name.find("CO2") == 0) {
+            // CO2 VMR
+            epsilon(sv_idx) = 1e-7;
+        } else if (sv_name.find("Surface Pressure") == 0) {
+            // Surface Pressure
+            epsilon(sv_idx) = 1e-3;
+        } else if (sv_name.find("Temperature") == 0) {
+            // Temperature
+            epsilon(sv_idx) = 1e-4;
+        } else if (sv_name.find("Ground") == 0) {
+            // Aerosol
+            epsilon(sv_idx) = 1e-8;
+        } else if (sv_name.find("Instrument Dispersion") == 0) {
+            // Aerosol
+            epsilon(sv_idx) = 1e-8;
+        }
+
+    }
 }

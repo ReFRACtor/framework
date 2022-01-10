@@ -5,33 +5,54 @@
 using namespace blitz;
 using namespace FullPhysics;
 
-BOOST_FIXTURE_TEST_SUITE(serialized_configuration_fixture, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(serialized_configuration_fixture, LambertianConfigurationFixture)
 
-BOOST_AUTO_TEST_CASE(read)
+BOOST_AUTO_TEST_CASE(valid_objects)
 {
     if(!have_serialize_supported())
         return;
 
-    SerializedConfigurationFixture fixture(test_data_dir() + "in/configuration_fixture/lambertian_example_config.bin.gz");
-
     // Check that objects are not empty
-    BOOST_CHECK(fixture.config_absorber);
-    BOOST_CHECK(fixture.config_pressure);
-    BOOST_CHECK(fixture.config_aerosol);
-    BOOST_CHECK(fixture.config_atmosphere);
-    BOOST_CHECK(fixture.config_state_vector);
-    BOOST_CHECK(fixture.config_solver);
-    BOOST_CHECK(fixture.config_spectral_window);
-    BOOST_CHECK(fixture.config_initial_guess);
-    BOOST_CHECK(fixture.config_instrument);
-    BOOST_CHECK(fixture.config_temperature);
-    BOOST_CHECK(fixture.config_spectrum_sampling);
-    BOOST_CHECK(fixture.config_level_1b);
-    BOOST_CHECK(fixture.config_ground);
-    BOOST_CHECK(fixture.config_forward_model);
-    BOOST_CHECK(fixture.config_observation);
-    BOOST_CHECK(fixture.config_rt);
+    BOOST_CHECK(config_absorber);
+    BOOST_CHECK(config_pressure);
+    BOOST_CHECK(config_aerosol);
+    BOOST_CHECK(config_atmosphere);
+    BOOST_CHECK(config_state_vector);
+    BOOST_CHECK(config_solver);
+    BOOST_CHECK(config_spectral_window);
+    BOOST_CHECK(config_initial_guess);
+    BOOST_CHECK(config_instrument);
+    BOOST_CHECK(config_temperature);
+    BOOST_CHECK(config_spectrum_sampling);
+    BOOST_CHECK(config_level_1b);
+    BOOST_CHECK(config_ground);
+    BOOST_CHECK(config_forward_model);
+    BOOST_CHECK(config_observation);
+    BOOST_CHECK(config_rt);
 
+}
+
+BOOST_AUTO_TEST_CASE(epsilon_check)
+{
+    blitz::Array<double, 1> epsilon_expected(config_state_vector->observer_claimed_size());
+
+    // Legacy way of configuring epsilon with hard coded indexes
+    epsilon_expected = 1e-6;                  // Default
+    epsilon_expected(Range(0, 19)) = 1e-7;    // CO2 VMR
+    epsilon_expected(21) = 1e-3;              // Surface Pressure
+    epsilon_expected(22) = 1e-4;              // Temperature
+    epsilon_expected(Range(23, 34)) = 1e-8;   // Ground + Dispersion
+
+    // For debugging epsilon values
+    if (false) {
+        for (int sv_idx = 0 ; sv_idx < epsilon_expected.rows(); sv_idx++) {
+            std::string sv_name = config_state_vector->state_vector_name()(sv_idx);
+
+            std::cerr << sv_idx << ": " << sv_name << ", epsilon = " << epsilon(sv_idx) << ", epsilon_expected = " << epsilon_expected(sv_idx) << std::endl;
+        }
+    }
+
+    BOOST_CHECK_MATRIX_CLOSE(epsilon_expected, epsilon);    
 }
 
 BOOST_AUTO_TEST_SUITE_END()

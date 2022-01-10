@@ -30,5 +30,10 @@ private:
 
 };
 
+class LambertianConfigurationFixture : public SerializedConfigurationFixture {
+public:
+    LambertianConfigurationFixture() : SerializedConfigurationFixture("lambertian_example_config.bin.gz") { ; }
+};
+
 }
 #endif
