@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(read)
     if(!have_serialize_supported())
         return;
 
-    SerializedConfigurationFixture fixture(test_data_dir() + "in/configuration_fixture/example_base_config.bin.gz");
+    SerializedConfigurationFixture fixture(test_data_dir() + "in/configuration_fixture/lambertian_example_config.bin.gz");
 
     // Check that objects are not empty
     BOOST_CHECK(fixture.config_absorber);
