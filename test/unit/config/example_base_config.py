@@ -50,6 +50,29 @@ def ils_relative_response():
     with h5py.File(ils_file) as ils_input:
         return ils_input["/InstrumentData/ils_relative_response"][:]
 
+class SampleGridIndexes(creator.Creator):
+
+    instrument = param.InstanceOf(rf.Instrument)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+    spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
+    
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+        spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
+
+        sample_indexes = []
+        for chan_idx in range(self.num_channels()):
+            chan_indexes = spectral_grid.pixel_list(chan_idx)
+            
+            # Remove last grid index so that unit tests are consistent with previous bug where
+            # code was not being inclusive of the last point at the end of the supplied range
+            chan_indexes = chan_indexes[:-1]
+
+            sample_indexes.append(chan_indexes)
+
+        return sample_indexes
+
 @refractor_config
 def base_config(**kwargs):
 
@@ -254,8 +277,8 @@ def base_config(**kwargs):
                     'polynomial_coeffs': {
                         'creator': creator.ground.AlbedoFromSignalLevel,
                         'signal_level': {
-                            'creator': creator.l1b.ValueFromLevel1b,
-                            'field': "signal",
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
                         },
                         'solar_zenith': {
                             'creator': creator.l1b.ValueFromLevel1b,
@@ -341,7 +364,7 @@ def base_config(**kwargs):
                 'creator': creator.retrieval.SVObserverComponents,
                 'exclude': ['absorber_levels/linear/O2', 'instrument_doppler'],
                 # Match order tradtionally used in old system
-                'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol_shape', 'ground', 'dispersion'],
+                'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol', 'ground', 'dispersion'],
             },
             'state_vector': {
                 'creator': creator.retrieval.StateVector,

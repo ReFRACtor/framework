@@ -1,9 +1,12 @@
 #include "unit_test_support.h"
 
+#include "lua_configuration_fixture.h"
 #include "serialized_configuration_fixture.h"
 
 using namespace blitz;
 using namespace FullPhysics;
+
+int DEBUG = false;
 
 BOOST_FIXTURE_TEST_SUITE(serialized_configuration_fixture, LambertianConfigurationFixture)
 
@@ -44,7 +47,7 @@ BOOST_AUTO_TEST_CASE(epsilon_check)
     epsilon_expected(Range(23, 34)) = 1e-8;   // Ground + Dispersion
 
     // For debugging epsilon values
-    if (false) {
+    if (DEBUG) {
         for (int sv_idx = 0 ; sv_idx < epsilon_expected.rows(); sv_idx++) {
             std::string sv_name = config_state_vector->state_vector_name()(sv_idx);
 
@@ -55,4 +58,19 @@ BOOST_AUTO_TEST_CASE(epsilon_check)
     BOOST_CHECK_MATRIX_CLOSE(epsilon_expected, epsilon);    
 }
 
+BOOST_AUTO_TEST_CASE(state_check)
+{
+    LuaConfigurationFixture lua_fixture = LuaConfigurationFixture();
+
+    BOOST_CHECK_EQUAL(lua_fixture.config_state_vector->state().rows(), config_state_vector->state().rows());
+
+    for(int sv_idx = 0; sv_idx < config_state_vector->state().rows(); sv_idx++) {
+        if (DEBUG) {
+            std::cerr << sv_idx << " Lua:    " << lua_fixture.config_state_vector->state_vector_name()(sv_idx) << " = "<< lua_fixture.config_state_vector->state()(sv_idx) << std::endl
+                      << sv_idx << " Serial: " << config_state_vector->state_vector_name()(sv_idx) << " = " << config_state_vector->state()(sv_idx) << std::endl;
+        }
+        BOOST_CHECK_CLOSE(lua_fixture.config_state_vector->state()(sv_idx), config_state_vector->state()(sv_idx), 1e-8);
+    }
+}
+ 
 BOOST_AUTO_TEST_SUITE_END()

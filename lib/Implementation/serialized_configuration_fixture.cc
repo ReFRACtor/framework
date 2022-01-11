@@ -59,10 +59,7 @@ void SerializedConfigurationFixture::init_epsilon()
         } else if (sv_name.find("Temperature") == 0) {
             // Temperature
             epsilon(sv_idx) = 1e-4;
-        } else if (sv_name.find("Ground") == 0) {
-            // Aerosol
-            epsilon(sv_idx) = 1e-8;
-        } else if (sv_name.find("Instrument Dispersion") == 0) {
+        } else if (sv_name.find("Aerosol") == 0) {
             // Aerosol
             epsilon(sv_idx) = 1e-8;
         }
