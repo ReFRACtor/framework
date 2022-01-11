@@ -70,6 +70,7 @@ def serialize_config(config_fn, serialized_fn):
     # to meet ConfigurationFixture interface
     initial_guess_builder = rf.InitialGuessValue()
     initial_guess_builder.apriori = config_inst.retrieval.initial_guess
+    initial_guess_builder.apriori_covariance = config_inst.retrieval.covariance
     initial_guess_val = rf.CompositeInitialGuess()
     initial_guess_val.add_builder(initial_guess_builder)
     obj_map["initial_guess"] = initial_guess_val
