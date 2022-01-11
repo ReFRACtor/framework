@@ -1,11 +1,11 @@
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "dispersion_fit.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(dispersion_fit, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(dispersion_fit, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

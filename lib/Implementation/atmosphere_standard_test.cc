@@ -1,4 +1,5 @@
 #include "unit_test_support.h"
+#include "serialized_configuration_fixture.h"
 #include "atmosphere_fixture.h"
 #include "generic_object_map.h"
 
@@ -437,7 +438,7 @@ BOOST_AUTO_TEST_CASE(serialization)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(atmosphere_standard_jac, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(atmosphere_standard_jac, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_jac)
 {

@@ -1,7 +1,8 @@
 #include "unit_test_support.h"
 #include "l_rad_driver.h"
 #include "pressure_sigma.h"
-#include "lua_configuration_fixture.h"
+#include "rayleigh_greek_moment.h"
+#include "serialized_configuration_fixture.h"
 
 #include "aerosol_property_hdf.h"
 
@@ -11,7 +12,7 @@ using namespace boost::assign; // bring 'operator+=()' into scope
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(l_rad_driver, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(l_rad_driver, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(lambertian_first_order)
 {

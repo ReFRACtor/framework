@@ -1,11 +1,11 @@
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "observation_level_1b.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(observation_level_1b, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(observation_level_1b, LambertianConfigurationFixture)
 
 void check_obs_l1b(const boost::shared_ptr<ObservationLevel1b>& obs_l1b, const string& test_data_dir) {
     Spectrum radiance_all = obs_l1b->radiance_all();

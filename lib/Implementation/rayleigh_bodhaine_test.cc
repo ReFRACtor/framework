@@ -1,7 +1,7 @@
 #include "rayleigh_bodhaine.h"
 
 #include "pressure.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "altitude_hydrostatic.h"
 #include "atmosphere_standard.h"
 #include "unit_test_support.h"
@@ -10,7 +10,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(rayleigh_bodhaine, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(rayleigh_bodhaine, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(cross_section)
 {

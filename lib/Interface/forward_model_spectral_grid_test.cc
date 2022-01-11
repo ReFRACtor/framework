@@ -1,6 +1,6 @@
 #include "forward_model_spectral_grid.h"
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include <fstream>
 
 #include "nonuniform_spectrum_sampling.h"
@@ -11,7 +11,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(forward_model_spectral_grid, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(forward_model_spectral_grid, LambertianConfigurationFixture)
 
 // Use to print out expected values
 void print_grid(std::ostream& out, std::vector<SpectralDomain>& grid)

@@ -1,11 +1,11 @@
 #include "composite_initial_guess.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(composite_initial_guess_full_guess, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(composite_initial_guess_full_guess, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(full_initial_guess)
 {

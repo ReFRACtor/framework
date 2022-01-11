@@ -1,11 +1,11 @@
 #include "altitude_hydrostatic.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(altitude_hydrostatic, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(altitude_hydrostatic, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

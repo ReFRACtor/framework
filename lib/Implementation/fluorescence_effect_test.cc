@@ -1,6 +1,6 @@
 #include "fluorescence_effect.h"
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include <boost/shared_ptr.hpp>
 #include "simple_fixed_spectrum_sampling.h"
 #include "fluorescence_fixture.h"

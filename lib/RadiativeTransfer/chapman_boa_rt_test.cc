@@ -3,12 +3,12 @@
 #include "unit_test_support.h"
 #include "fp_serialize_support.h"
 
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-class ChapmanBoaRtFixture: public LuaConfigurationFixture {
+class ChapmanBoaRtFixture: public LambertianConfigurationFixture {
 public:
   ChapmanBoaRtFixture() 
   {

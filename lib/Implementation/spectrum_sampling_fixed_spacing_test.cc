@@ -1,12 +1,12 @@
 #include "spectrum_sampling_fixed_spacing.h"
 #include "simple_fixed_spectrum_sampling.h"
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(spectrum_sampling_fixed_spacing, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(spectrum_sampling_fixed_spacing, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

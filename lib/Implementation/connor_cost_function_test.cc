@@ -1,14 +1,14 @@
 #include <iostream>
 
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 #include "connor_cost_function.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(connor_cost_function, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(connor_cost_function, LambertianConfigurationFixture)
 
 void check_cost_func(const boost::shared_ptr<ConnorCostFunction>& cost_func, const boost::shared_ptr<StateVector>& state_vector, const string& test_data_dir)
 {

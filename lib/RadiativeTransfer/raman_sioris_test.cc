@@ -1,6 +1,6 @@
 #include "unit.h"
 #include "unit_test_support.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 #include "hdf_file.h"
 #include "raman_sioris.h"
@@ -14,7 +14,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(raman_sioris, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(raman_sioris, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(offline_data)
 {

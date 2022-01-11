@@ -1,5 +1,5 @@
 #include "absorber_absco.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
 #include "lua_state.h"
@@ -8,7 +8,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(absorber_absco, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(absorber_absco, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_each_layer)
 {

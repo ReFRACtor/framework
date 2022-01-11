@@ -1,10 +1,10 @@
 #include "connor_convergence.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;
 
-BOOST_FIXTURE_TEST_SUITE(connor_convergence, LuaConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(connor_convergence, LambertianConfigurationFixture)
 
 void check_conv(const boost::shared_ptr<ConnorConvergence>& conv)
 {
