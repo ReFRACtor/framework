@@ -1,6 +1,6 @@
 #ifndef ATMOSPHERE_FIXTURE_H
 #define ATMOSPHERE_FIXTURE_H
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "atmosphere_standard.h"
 #include "state_vector.h"
 
@@ -18,7 +18,7 @@ namespace FullPhysics {
   clean new Atmosphere each time, you might just want to use
   LuaConfigurationFixture.
 *******************************************************************/
-class AtmosphereFixture : public LuaConfigurationFixture {
+class AtmosphereFixture : public LambertianConfigurationFixture {
 public:
   AtmosphereFixture();
   virtual ~AtmosphereFixture() {statev->remove_observer(*atm);}

@@ -206,7 +206,7 @@ def base_config(**kwargs):
                             'creator': creator.atmosphere.ConstantForAllLevels,
                             'value': static_value("Gas/O2/average_mole_fraction")[0],
                         },
-                        'retrieved': False,
+                        'mapping': creator.mapping.NotRetrieved,
                     },
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,

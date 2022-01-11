@@ -1,8 +1,9 @@
+import numpy as np
+
 import refractor.framework as rf
 
 from .base import Creator
 from .. import param
-
 
 class Linear(Creator):
     '''Creator for Linear or "one-to-one" mapping'''
@@ -93,3 +94,10 @@ class Composite(Creator):
             mappings_vec.push_back(map_obj)
         
         return rf.StateMappingComposite(mappings_vec)
+
+class NotRetrieved(Creator):
+    '''Creates a mapping where the element is not retrieved by setting as having no retrieval indexes'''
+
+    def create(self, **kwargs):
+        no_indexes = np.zeros(0, dtype=bool)
+        return rf.StateMappingAtIndexes(no_indexes)

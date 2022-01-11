@@ -1,5 +1,6 @@
 #include "absorber_absco.h"
 #include "serialized_configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
 #include "lua_state.h"

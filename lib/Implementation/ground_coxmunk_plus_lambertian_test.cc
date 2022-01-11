@@ -1,5 +1,6 @@
 #include "ground_coxmunk_plus_lambertian.h"
 #include "ground_fixture.h"
+#include "lua_configuration_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;
