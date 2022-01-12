@@ -85,5 +85,8 @@ def serialize_config(config_fn, serialized_fn):
     logging.info(f"Writing serialized objects: {serialized_fn}")
     write_shelve(serialized_fn, obj_map)
 
-serialize_config(os.path.join(config_dir, "example_base_config.py"),
+serialize_config(os.path.join(config_dir, "lambertian_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/lambertian_example_config.bin.gz"))
+
+serialize_config(os.path.join(config_dir, "coxmunk_example_config.py"),
+                 os.path.join(input_dir, "configuration_fixture/coxmunk_example_config.bin.gz"))

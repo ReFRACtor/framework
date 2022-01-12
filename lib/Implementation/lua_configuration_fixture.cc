@@ -90,7 +90,7 @@ void LuaConfigurationFixture::init_epsilon()
   }
 }
 
-ConfigurationCoxmunkFixture::ConfigurationCoxmunkFixture(const std::string& Config_file) 
+LuaCoxmunkConfigurationFixture::LuaCoxmunkConfigurationFixture(const std::string& Config_file) 
   : LuaConfigurationFixture(Config_file)
 {
   // Shrink array from base constructor less elements but first many should be the same

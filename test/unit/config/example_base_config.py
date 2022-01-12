@@ -290,6 +290,29 @@ def base_config(**kwargs):
                         },
                     },
                 },
+                'brdf': {
+                    'creator': creator.ground.GroundBrdf,
+                    'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                    'brdf_type': creator.ground.BrdfTypeOption.soil,
+                },
+                'coxmunk': {
+                    'creator': creator.ground.GroundCoxmunk,
+                    'windspeed': {
+                        'creator': creator.met.ValueFromMet,
+                        'field': "windspeed",
+                    },
+                    'refractive_index': static_value("/Ground/Refractive_Index/a_priori"),
+                },
+                'coxmunk_lambertian': {
+                    'creator': creator.ground.GroundCoxmunk,
+                    'windspeed': {
+                        'creator': creator.met.ValueFromMet,
+                        'field': "windspeed",
+                    },
+                    'refractive_index': static_value("/Ground/Refractive_Index/a_priori"),
+                    # Add lambertian portion to Coxmunk kernel
+                    'albedo_coeffs': static_value("/Ground/Coxmunk_Albedo/a_priori"),
+                },
             },
         },
         'radiative_transfer': {

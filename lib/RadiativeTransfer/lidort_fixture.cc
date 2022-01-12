@@ -143,7 +143,7 @@ LidortLambertianFixture::LidortLambertianFixture(const std::string& Config_file)
 }
 
 LidortCoxmunkFixture::LidortCoxmunkFixture(const std::string& Config_file) : 
-  LidortRtCommonFixture(), ConfigurationCoxmunkFixture(Config_file)
+  LidortRtCommonFixture(), LuaCoxmunkConfigurationFixture(Config_file)
 {
   int nstreams = 4;
   int nmoms = 2*nstreams;

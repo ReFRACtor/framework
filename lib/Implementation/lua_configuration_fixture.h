@@ -40,10 +40,10 @@ private:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_coxmunk.lua
 *******************************************************************/
-class ConfigurationCoxmunkFixture: public LuaConfigurationFixture {
+class LuaCoxmunkConfigurationFixture: public LuaConfigurationFixture {
 public:
-  ConfigurationCoxmunkFixture(const std::string& Config_file = "config_coxmunk.lua");
-  virtual ~ConfigurationCoxmunkFixture() {}
+  LuaCoxmunkConfigurationFixture(const std::string& Config_file = "config_coxmunk.lua");
+  virtual ~LuaCoxmunkConfigurationFixture() {}
 };
 
 /****************************************************************//**

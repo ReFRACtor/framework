@@ -1,4 +1,4 @@
-#include "lua_configuration_fixture.h"
+#include "global_fixture.h"
 #include "hdf_file.h"
 #include "unit_test_support.h"
 
