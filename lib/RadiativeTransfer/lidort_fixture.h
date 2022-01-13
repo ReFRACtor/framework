@@ -2,6 +2,7 @@
 #define LIDORT_FIXTURE_H
 
 #include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "lidort_rt.h"
 
 namespace FullPhysics {
@@ -111,9 +112,9 @@ public:
   LidortRt based on the LuaConfigurationFixture.
 *******************************************************************/
 class LidortLambertianFixture : public LidortRtCommonFixture, 
-                                public LuaConfigurationFixture {
+                                public LambertianConfigurationFixture {
 public:
-  LidortLambertianFixture(const std::string& Config_file = "config.lua");
+  LidortLambertianFixture();
   virtual ~LidortLambertianFixture() {};
 };
 

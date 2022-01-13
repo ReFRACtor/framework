@@ -127,8 +127,8 @@ LidortRtCommonFixture::LidortRtCommonFixture() : sza(3), zen(3), azm(3)
   stokes_coefs.reset(new StokesCoefficientConstant(stokes_coef_v));
 }
 
-LidortLambertianFixture::LidortLambertianFixture(const std::string& Config_file) : 
-  LidortRtCommonFixture(), LuaConfigurationFixture(Config_file)
+LidortLambertianFixture::LidortLambertianFixture() : 
+  LidortRtCommonFixture(), LambertianConfigurationFixture()
 {
   int nstreams = 4;
   int nmoms = 2*nstreams;
