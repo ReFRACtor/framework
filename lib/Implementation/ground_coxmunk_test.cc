@@ -1,5 +1,4 @@
 #include "ground_fixture.h"
-#include "lua_configuration_fixture.h"
 #include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
@@ -32,7 +31,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_config, LuaCoxmunkConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_config, CoxmunkConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {
