@@ -90,3 +90,6 @@ serialize_config(os.path.join(config_dir, "lambertian_example_config.py"),
 
 serialize_config(os.path.join(config_dir, "coxmunk_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/coxmunk_example_config.bin.gz"))
+
+serialize_config(os.path.join(config_dir, "coxmunk_lambertian_example_config.py"),
+                 os.path.join(input_dir, "configuration_fixture/coxmunk_lambertian_example_config.bin.gz"))

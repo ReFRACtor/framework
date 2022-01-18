@@ -53,11 +53,11 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_coxmunk+lamb.lua
 *******************************************************************/
-class ConfigurationCoxmunkPlusLambertianFixture: public LuaConfigurationFixture {
+class LuaCoxmunkPlusLambertianConfigurationFixture: public LuaConfigurationFixture {
 public:
-  ConfigurationCoxmunkPlusLambertianFixture()
+  LuaCoxmunkPlusLambertianConfigurationFixture()
     : LuaConfigurationFixture("config_coxmunk+lamb.lua") {}
-  virtual ~ConfigurationCoxmunkPlusLambertianFixture() {}
+  virtual ~LuaCoxmunkPlusLambertianConfigurationFixture() {}
 };
 
 /****************************************************************//**

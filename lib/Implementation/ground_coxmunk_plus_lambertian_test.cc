@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_plus_lamb_config, ConfigurationCoxmunkPlusLambertianFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_plus_lamb_config, LuaCoxmunkPlusLambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {

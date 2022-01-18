@@ -40,5 +40,10 @@ public:
     CoxmunkConfigurationFixture() : SerializedConfigurationFixture("coxmunk_example_config.bin.gz") { ; }
 };
 
+class CoxmunkPlusLambertianConfigurationFixture : public SerializedConfigurationFixture {
+public:
+    CoxmunkPlusLambertianConfigurationFixture() : SerializedConfigurationFixture("coxmunk_lambertian_example_config.bin.gz") { ; }
+};
+
 }
 #endif
