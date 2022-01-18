@@ -94,7 +94,7 @@ def base_config(**kwargs):
                 'units': static_units("Common/band_reference_point"),
             },
             'num_channels': num_channels,
-            'absco_base_path': os.environ['ABSCO_PATH'],
+            'absco_base_path': "${abscodir}/legacy",
             'constants': {
                 'creator': creator.common.DefaultConstants,
             },

@@ -209,8 +209,13 @@ class AbscoCreator(Creator):
         except ValueError as exc:
             raise param.ParamError('Error formatting absco filename template "%s": %s' % (self.filename(), exc))
 
+        # Try expanding vars to check that filename exists, but do not expand, let HdfFile expand internally
+        # This way we can have portable filenames using enviroment variables
+        check_filename = os.path.expandvars(absco_filename)
+
         # Try expanding globs
-        if not os.path.exists(absco_filename):
+        # This is not compatible with using environment vars as any expanded globs will overwrite the filename
+        if not os.path.exists(check_filename):
             filename_matches = glob(absco_filename)
 
             if len(filename_matches) > 1:
@@ -219,9 +224,10 @@ class AbscoCreator(Creator):
                 raise param.ParamError("No ABSCO filename found using glob: %s" % absco_filename)
             else:
                 absco_filename = filename_matches[0]
+                check_filenmae = absco_filename
 
         # Error if filename still not found
-        if not os.path.exists(absco_filename):
+        if not os.path.exists(check_filename):
             raise param.ParamError("HDF ABSCO filename does not exist: %s" % absco_filename)
 
         table_scale = self.table_scale()
