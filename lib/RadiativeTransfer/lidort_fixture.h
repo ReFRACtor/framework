@@ -1,7 +1,6 @@
 #ifndef LIDORT_FIXTURE_H
 #define LIDORT_FIXTURE_H
 
-#include "lua_configuration_fixture.h"
 #include "serialized_configuration_fixture.h"
 #include "lidort_rt.h"
 
@@ -169,10 +168,10 @@ class LidortLowHighCommon {
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortLowHighDriver based on the LuaConfigurationFixture.
+  LidortLowHighDriver based on the ConfigurationFixture.
 *******************************************************************/
  class LidortLowHighLambertianFixture : public LidortLowHighCommon,
-                                        public LuaConfigurationFixture
+                                        public LambertianConfigurationFixture
   {
 public:
   LidortLowHighLambertianFixture();
@@ -182,12 +181,12 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortLowHighDriver based on the LuaConfigurationFixture. This is very
+  LidortLowHighDriver based on the ConfigurationFixture. This is very
   similar to LidortLowHighFixture, but we have the polarization turned off
   for this.
 *******************************************************************/
 class LidortLowHighFixtureNoPolarization : public LidortLowHighCommon,
-                                           public LuaConfigurationFixture {
+                                           public LambertianConfigurationFixture {
 public:
   LidortLowHighFixtureNoPolarization();
   virtual ~LidortLowHighFixtureNoPolarization() {}
