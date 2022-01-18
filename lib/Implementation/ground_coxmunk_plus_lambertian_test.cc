@@ -1,6 +1,6 @@
 #include "ground_coxmunk_plus_lambertian.h"
 #include "ground_fixture.h"
-#include "lua_configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_plus_lamb_config, LuaCoxmunkPlusLambertianConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_coxmunk_plus_lamb_config, CoxmunkPlusLambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {
