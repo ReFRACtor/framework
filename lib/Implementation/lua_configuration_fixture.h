@@ -67,11 +67,11 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_brdf_veg.lua
 *******************************************************************/
-class ConfigurationBrdfVegFixture: public LuaConfigurationFixture {
+class LuaBrdfVegConfigurationFixture: public LuaConfigurationFixture {
 public:
-  ConfigurationBrdfVegFixture()
+  LuaBrdfVegConfigurationFixture()
     : LuaConfigurationFixture("config_brdf_veg.lua") {}
-  virtual ~ConfigurationBrdfVegFixture() {}
+  virtual ~LuaBrdfVegConfigurationFixture() {}
 };
 
 /****************************************************************//**
@@ -81,11 +81,11 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_brdf_soil.lua
 *******************************************************************/
-class ConfigurationBrdfSoilFixture: public LuaConfigurationFixture {
+class LuaBrdfSoilConfigurationFixture: public LuaConfigurationFixture {
 public:
-  ConfigurationBrdfSoilFixture()
+  LuaBrdfSoilConfigurationFixture()
     : LuaConfigurationFixture("config_brdf_soil.lua") {}
-  virtual ~ConfigurationBrdfSoilFixture() {}
+  virtual ~LuaBrdfSoilConfigurationFixture() {}
 };
 
 /****************************************************************//**

@@ -45,5 +45,15 @@ public:
     CoxmunkPlusLambertianConfigurationFixture() : SerializedConfigurationFixture("coxmunk_lambertian_example_config.bin.gz") { ; }
 };
 
+class BrdfVegConfigurationFixture : public SerializedConfigurationFixture {
+public:
+    BrdfVegConfigurationFixture() : SerializedConfigurationFixture("brdf_veg_example_config.bin.gz") { ; }
+};
+
+class BrdfSoilConfigurationFixture : public SerializedConfigurationFixture {
+public:
+    BrdfSoilConfigurationFixture() : SerializedConfigurationFixture("brdf_soil_example_config.bin.gz") { ; }
+};
+
 }
 #endif

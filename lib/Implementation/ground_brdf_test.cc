@@ -1,5 +1,4 @@
 #include "ground_fixture.h"
-#include "lua_configuration_fixture.h"
 #include "serialized_configuration_fixture.h"
 #include "unit_test_support.h"
 
@@ -131,9 +130,9 @@ BOOST_AUTO_TEST_CASE(albedo)
 BOOST_AUTO_TEST_SUITE_END()
 
 
-BOOST_FIXTURE_TEST_SUITE(ground_brdf_veg_config, ConfigurationBrdfVegFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_brdf_veg_config, BrdfVegConfigurationFixture)
 
-BOOST_AUTO_TEST_CASE(load_from_lua)
+BOOST_AUTO_TEST_CASE(load_from_config)
 {
     Array<double, 1> overall_amp_expt(3);
     overall_amp_expt = 1.5770827726964785, 1.4105140989771507, 1.1222600923273593;
@@ -162,9 +161,9 @@ BOOST_AUTO_TEST_CASE(kernel_value)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_brdf_soil_config, ConfigurationBrdfSoilFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_brdf_soil_config, BrdfSoilConfigurationFixture)
 
-BOOST_AUTO_TEST_CASE(load_from_lua)
+BOOST_AUTO_TEST_CASE(load_from_config)
 {
     Array<double, 1> overall_amp_expt(3);
     overall_amp_expt = 1.5770827726964785, 1.4105140989771507, 1.1222600923273593;

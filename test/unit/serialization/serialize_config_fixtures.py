@@ -93,3 +93,9 @@ serialize_config(os.path.join(config_dir, "coxmunk_example_config.py"),
 
 serialize_config(os.path.join(config_dir, "coxmunk_lambertian_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/coxmunk_lambertian_example_config.bin.gz"))
+
+serialize_config(os.path.join(config_dir, "brdf_veg_example_config.py"),
+                 os.path.join(input_dir, "configuration_fixture/brdf_veg_example_config.bin.gz"))
+
+serialize_config(os.path.join(config_dir, "brdf_soil_example_config.py"),
+                 os.path.join(input_dir, "configuration_fixture/brdf_soil_example_config.bin.gz"))

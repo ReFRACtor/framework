@@ -290,9 +290,60 @@ def base_config(**kwargs):
                         },
                     },
                 },
-                'brdf': {
+                'brdf_veg': {
                     'creator': creator.ground.GroundBrdf,
-                    'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                    'brdf_parameters': {
+                        'creator': creator.ground.BrdfWeightFromSignalVeg,
+                        'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                        'signal_level': {
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
+                        },
+                        'solar_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "solar_zenith",
+                        },
+                        'sounding_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "sounding_zenith",
+                        },
+                        'relative_azimuth': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "relative_azimuth",
+                        },
+                        'solar_strength': np.array([4.87e21, 2.096e21, 1.15e21]),
+                        'solar_distance': {
+                            'creator': creator.l1b.SolarDistanceFromL1b,
+                        },
+                    },
+                    'brdf_type': creator.ground.BrdfTypeOption.vegetation,
+                },
+                'brdf_soil': {
+                    'creator': creator.ground.GroundBrdf,
+                    'brdf_parameters': {
+                        'creator': creator.ground.BrdfWeightFromSignalSoil,
+                        'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                        'signal_level': {
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
+                        },
+                        'solar_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "solar_zenith",
+                        },
+                        'sounding_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "sounding_zenith",
+                        },
+                        'relative_azimuth': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "relative_azimuth",
+                        },
+                        'solar_strength': np.array([4.87e21, 2.096e21, 1.15e21]),
+                        'solar_distance': {
+                            'creator': creator.l1b.SolarDistanceFromL1b,
+                        },
+                     },
                     'brdf_type': creator.ground.BrdfTypeOption.soil,
                 },
                 'coxmunk': {

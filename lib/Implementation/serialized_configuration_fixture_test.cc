@@ -164,5 +164,73 @@ BOOST_AUTO_TEST_CASE(state_check)
 
     check_state(*this, lua_fixture);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+/****************************************************************//**
+ BRDF Vegetation Fixture
+*******************************************************************/
+
+BOOST_FIXTURE_TEST_SUITE(brdf_veg_configuration_fixture, BrdfVegConfigurationFixture)
+
+BOOST_AUTO_TEST_CASE(valid_objects)
+{
+    if(!have_serialize_supported())
+        return;
+    
+    check_valid_objects(*this);
+}
+
+BOOST_AUTO_TEST_CASE(epsilon_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    check_epsilon(*this);
+}
+
+BOOST_AUTO_TEST_CASE(state_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    LuaBrdfVegConfigurationFixture lua_fixture = LuaBrdfVegConfigurationFixture();
+
+    check_state(*this, lua_fixture);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+ 
+/****************************************************************//**
+ BRDF Soil Fixture
+*******************************************************************/
+
+BOOST_FIXTURE_TEST_SUITE(brdf_soil_configuration_fixture, BrdfSoilConfigurationFixture)
+
+BOOST_AUTO_TEST_CASE(valid_objects)
+{
+    if(!have_serialize_supported())
+        return;
+    
+    check_valid_objects(*this);
+}
+
+BOOST_AUTO_TEST_CASE(epsilon_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    check_epsilon(*this);
+}
+
+BOOST_AUTO_TEST_CASE(state_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    LuaBrdfSoilConfigurationFixture lua_fixture = LuaBrdfSoilConfigurationFixture();
+
+    check_state(*this, lua_fixture);
+}
  
 BOOST_AUTO_TEST_SUITE_END()
