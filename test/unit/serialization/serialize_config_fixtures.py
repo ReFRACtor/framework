@@ -14,6 +14,9 @@ logging.basicConfig(level=logging.DEBUG)
 config_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../config"))
 input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data/in"))
 
+# Define this environment variable so that it can be used within configuration to set paths that get expended out during unit testing execution
+os.environ['abs_top_srcdir'] = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
+
 def serialize_config(config_fn, serialized_fn):
     logging.info(f"Loading configuration: {config_fn}")
 

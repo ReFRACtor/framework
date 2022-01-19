@@ -18,8 +18,9 @@ solar_file = os.path.join(common_input_dir, "l2_solar_model.h5")
 aerosol_prop_file = os.path.join(common_input_dir, "l2_aerosol_combined.h5")
 covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
-l1b_file = os.path.join(unit_test_dir, "in/common/l1b_example_data.h5")
-met_file = os.path.join(unit_test_dir, "in/common/met_example_data.h5")
+# Reference these using environment variables to enable relocation for serialized objects
+l1b_file = "${abs_top_srcdir}/test/unit/data/in/common/l1b_example_data.h5"
+met_file = "${abs_top_srcdir}/test/unit/data/in/common/met_example_data.h5"
 
 observation_id = "2014090915251774"
 num_channels = 3
