@@ -55,5 +55,10 @@ public:
     BrdfSoilConfigurationFixture() : SerializedConfigurationFixture("brdf_soil_example_config.bin.gz") { ; }
 };
 
+class TwoBroadenerConfigurationFixture : public SerializedConfigurationFixture {
+public:
+    TwoBroadenerConfigurationFixture() : SerializedConfigurationFixture("two_broadener_example_config.bin.gz") { ; }
+};
+
 }
 #endif

@@ -102,3 +102,6 @@ serialize_config(os.path.join(config_dir, "brdf_veg_example_config.py"),
 
 serialize_config(os.path.join(config_dir, "brdf_soil_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/brdf_soil_example_config.bin.gz"))
+
+serialize_config(os.path.join(config_dir, "two_broadener_example_config.py"),
+                 os.path.join(input_dir, "configuration_fixture/two_broadener_example_config.bin.gz"))

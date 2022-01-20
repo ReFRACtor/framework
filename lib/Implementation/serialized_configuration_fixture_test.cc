@@ -234,3 +234,37 @@ BOOST_AUTO_TEST_CASE(state_check)
 }
  
 BOOST_AUTO_TEST_SUITE_END()
+
+/****************************************************************//**
+ Two Broadener Fixture
+*******************************************************************/
+
+BOOST_FIXTURE_TEST_SUITE(two_broadener_configuration_fixture, TwoBroadenerConfigurationFixture)
+
+BOOST_AUTO_TEST_CASE(valid_objects)
+{
+    if(!have_serialize_supported())
+        return;
+    
+    check_valid_objects(*this);
+}
+
+BOOST_AUTO_TEST_CASE(epsilon_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    check_epsilon(*this);
+}
+
+BOOST_AUTO_TEST_CASE(state_check)
+{
+    if(!have_serialize_supported())
+        return;
+
+    LuaTwoBroadenerConfigurationFixture lua_fixture = LuaTwoBroadenerConfigurationFixture();
+
+    check_state(*this, lua_fixture);
+}
+ 
+BOOST_AUTO_TEST_SUITE_END()

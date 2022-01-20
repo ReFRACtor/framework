@@ -79,7 +79,7 @@ def base_config(**kwargs):
 
     config_def = {
         'creator': creator.base.SaveToCommon,
-        'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
+        'order': ['input', 'common', 'scenario', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
         'input': {
             'creator': creator.base.SaveToCommon,
             'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -95,7 +95,7 @@ def base_config(**kwargs):
                 'units': static_units("Common/band_reference_point"),
             },
             'num_channels': num_channels,
-            'absco_base_path': "${abscodir}/legacy",
+            'absco_base_path': "${abscodir}",
             'constants': {
                 'creator': creator.common.DefaultConstants,
             },
@@ -103,6 +103,9 @@ def base_config(**kwargs):
                 'creator': creator.l1b.ValueFromLevel1b,
                 'field': "stokes_coefficient",
             },
+        },
+        'scenario': {
+            'creator': creator.scenario.ScenarioFromL1b,
         },
         'spec_win': {
             'creator': creator.forward_model.SpectralWindowRange,
@@ -184,7 +187,7 @@ def base_config(**kwargs):
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': [1.0, 1.0, 1.004],
-                        'filename': "{absco_base_path}/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
+                        'filename': "{absco_base_path}/legacy/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                     },
                 },
                 'H2O': {
@@ -196,7 +199,7 @@ def base_config(**kwargs):
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': 1.0,
-                        'filename': "{absco_base_path}/h2o_hitran12.h5",
+                        'filename': "{absco_base_path}/legacy/h2o_hitran12.h5",
                     },
                 },
                 'O2': {
@@ -212,8 +215,8 @@ def base_config(**kwargs):
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': 1.0,
-                        'filename': "{absco_base_path}/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
-                     },
+                        'filename': "{absco_base_path}/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
+                    },
                 },
             },
             'aerosol': {

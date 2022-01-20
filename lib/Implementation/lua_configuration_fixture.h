@@ -95,11 +95,11 @@ public:
   this fixture creates one copy for all the tests and add handling for
   sharing it. This version reads config_two_broadener.lua
 *******************************************************************/
-class ConfigurationTwoBroadener: public LuaConfigurationFixture {
+class LuaTwoBroadenerConfigurationFixture: public LuaConfigurationFixture {
 public:
-  ConfigurationTwoBroadener()
+  LuaTwoBroadenerConfigurationFixture()
     : LuaConfigurationFixture("config_two_broadener.lua") {}
-  virtual ~ConfigurationTwoBroadener() {}
+  virtual ~LuaTwoBroadenerConfigurationFixture() {}
 };
 }
 #endif

@@ -1,6 +1,5 @@
 #include "absorber_absco.h"
 #include "serialized_configuration_fixture.h"
-#include "lua_configuration_fixture.h"
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
 #include "lua_state.h"
@@ -173,7 +172,7 @@ BOOST_AUTO_TEST_CASE(serialization)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(absorber_absco2, ConfigurationTwoBroadener)
+BOOST_FIXTURE_TEST_SUITE(absorber_absco_aer, TwoBroadenerConfigurationFixture)
 BOOST_AUTO_TEST_CASE(two_broadener_optical_depth_each_layer)
 {
   secondIndex i2;
