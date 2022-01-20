@@ -9,16 +9,17 @@ from refractor.framework.config import refractor_config
 from refractor import framework as rf
 
 unit_test_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data"))
-common_input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../input/common/input"))
 
 static_input_file = os.path.join(unit_test_dir, "lua/example_static_input.h5")
 ils_file = os.path.join(unit_test_dir, "lua/ils_data.h5")
 
-solar_file = os.path.join(common_input_dir, "l2_solar_model.h5")
-aerosol_prop_file = os.path.join(common_input_dir, "l2_aerosol_combined.h5")
 covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
 # Reference these using environment variables to enable relocation for serialized objects
+
+solar_file = "${abs_top_srcdir}/input/common/input/l2_solar_model.h5"
+aerosol_prop_file = "${abs_top_srcdir}/input/common/input/l2_aerosol_combined.h5"
+
 l1b_file = "${abs_top_srcdir}/test/unit/data/in/common/l1b_example_data.h5"
 met_file = "${abs_top_srcdir}/test/unit/data/in/common/met_example_data.h5"
 
