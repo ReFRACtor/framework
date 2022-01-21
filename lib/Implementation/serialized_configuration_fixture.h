@@ -3,6 +3,7 @@
 
 #include "configuration_fixture.h"
 #include "fp_exception.h"
+#include "generic_object_map.h"
 
 namespace FullPhysics {
 
@@ -22,6 +23,8 @@ protected:
 
     virtual void init_variables();
     virtual void init_epsilon();
+
+    boost::shared_ptr<GenericObjectMap> obj_map;
 
 private:
 

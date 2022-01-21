@@ -6,10 +6,10 @@ import logging
 
 from refractor import framework as rf
 from refractor.framework import load_config_module, find_config_function
-from refractor.framework.factory import process_config
+from refractor.framework.factory import creator, process_config
 from refractor.framework import write_shelve, GenericObjectMap
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 config_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../config"))
 input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data/in"))
@@ -17,76 +17,121 @@ input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data/in
 # Define this environment variable so that it can be used within configuration to set paths that get expended out during unit testing execution
 os.environ['abs_top_srcdir'] = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
 
-def serialize_config(config_fn, serialized_fn):
-    logging.info(f"Loading configuration: {config_fn}")
+class SerializeConfigObjects(object):
 
-    config_module = load_config_module(config_fn)
-    config_func = find_config_function(config_module)
+    def __init__(self, config_fn):
 
-    config_def = config_func()
+        self.config_fn = config_fn
 
-    config_inst = process_config(config_def)
+        self._load_config_definition()
+        self._instantiate_config()
+        self._extract_objects()
 
-    # Update state vector with initial guess so that individual SubStateVectorObserver objects
-    # have a value for their sv_full values and the state_vector state itself is non zero
-    config_inst.retrieval.state_vector.update_state(config_inst.retrieval.initial_guess)
+    def _load_config_definition(self):
+        """Load the configuration definition structure"""
 
-    logging.info(f"Writing serialized representation: {serialized_fn}")
+        logging.info(f"Loading configuration: {self.config_fn}")
 
-    # Copy objects from Python config into a serializable object in the form
-    # used by the ConfigurationFixture classes
-    obj_map = GenericObjectMap()
+        config_module = load_config_module(self.config_fn)
+        config_func = find_config_function(config_module)
 
-    # Copy base objects
-    config_object_names = [
-        "atmosphere",
-        "instrument",
-        "spectrum_sampling",
-        "forward_model",
-    ]
+        self.config_def = config_func()
 
-    for config_name in config_object_names:
-        obj_map[config_name] = config_inst[config_name]
+    def _instantiate_config(self):
+        """Loads config definition and processes it into an instantiated config"""
 
-    # Copy atmosphere objects
-    config_object_names = [
-        "absorber",
-        "aerosol",
-        "pressure",
-        "temperature",
-        "ground",
-    ]
+        logging.info(f"Processing configuration")
 
-    for config_name in config_object_names:
-        obj_map[config_name] = getattr(config_inst.atmosphere, config_name)
+        self.config_inst = process_config(self.config_def)
 
-    # Copy retrieval objects
-    config_object_names = [
-        "state_vector",
-        "solver",
-    ]
+        # Update state vector with initial guess so that individual SubStateVectorObserver objects
+        # have a value for their sv_full values and the state_vector state itself is non zero
+        self.config_inst.retrieval.state_vector.update_state(self.config_inst.retrieval.initial_guess)
 
-    for config_name in config_object_names:
-        obj_map[config_name] = config_inst.retrieval[config_name]
+    def _extract_objects(self):
+        """Copy objects from Python config into a serializable object in the form
+           used by the ConfigurationFixture classes"""
 
-    # Initial guess in Python configuration is reperesented by an array, wrap in an InitialGuess object
-    # to meet ConfigurationFixture interface
-    initial_guess_builder = rf.InitialGuessValue()
-    initial_guess_builder.apriori = config_inst.retrieval.initial_guess
-    initial_guess_builder.apriori_covariance = config_inst.retrieval.covariance
-    initial_guess_val = rf.CompositeInitialGuess()
-    initial_guess_val.add_builder(initial_guess_builder)
-    obj_map["initial_guess"] = initial_guess_val
+        logging.info("Extracting objects to serialize")
+
+        self.obj_map = GenericObjectMap()
+
+        # Copy base objects
+        config_object_names = [
+            "atmosphere",
+            "instrument",
+            "spectrum_sampling",
+            "forward_model",
+        ]
+
+        for config_name in config_object_names:
+            self.obj_map[config_name] = self.config_inst[config_name]
+
+        # Copy atmosphere objects
+        config_object_names = [
+            "absorber",
+            "aerosol",
+            "pressure",
+            "temperature",
+            "ground",
+        ]
+
+        for config_name in config_object_names:
+            self.obj_map[config_name] = getattr(self.config_inst.atmosphere, config_name)
+
+        # Copy retrieval objects
+        config_object_names = [
+            "state_vector",
+            "solver",
+        ]
+
+        for config_name in config_object_names:
+            self.obj_map[config_name] = self.config_inst.retrieval[config_name]
+
+        # Initial guess in Python configuration is reperesented by an array, wrap in an InitialGuess object
+        # to meet ConfigurationFixture interface
+        initial_guess_builder = rf.InitialGuessValue()
+        initial_guess_builder.apriori = self.config_inst.retrieval.initial_guess
+        initial_guess_builder.apriori_covariance = self.config_inst.retrieval.covariance
+        initial_guess_val = rf.CompositeInitialGuess()
+        initial_guess_val.add_builder(initial_guess_builder)
+        self.obj_map["initial_guess"] = initial_guess_val
+            
+
+        # Remaining objects
+        self.obj_map["spectral_window"] = self.config_inst.spec_win
+        self.obj_map["level_1b"] = self.config_inst.input.l1b
+        self.obj_map["observation"] = self.config_inst.retrieval.solver.cost_function.observation
+        self.obj_map["rt"] = self.config_inst.radiative_transfer
+
+    def dump(self, serialized_fn):
+        """Serialized objects into an output file"""
+
+        logging.info(f"Writing serialized objects: {serialized_fn}")
+        write_shelve(serialized_fn, self.obj_map)
+
+class SerializeWithFluorescence(SerializeConfigObjects):
+
+    def _load_config_definition(self):
+        super()._load_config_definition()
         
+        self.config_def["fluorescence"] = creator.util.ObjectCapture(rf.FluorescenceEffect)
+        self.config_def["order"].append("fluorescence")
 
-    # Remaining objects
-    obj_map["spectral_window"] = config_inst.spec_win
-    obj_map["level_1b"] = config_inst.input.l1b
-    obj_map["observation"] = config_inst.retrieval.solver.cost_function.observation
-    obj_map["rt"] = config_inst.radiative_transfer
+    def _extract_objects(self):
+        super()._extract_objects()
 
-    logging.info(f"Writing serialized objects: {serialized_fn}")
-    write_shelve(serialized_fn, obj_map)
+        self.obj_map["fluorescence"] = self.config_inst.fluorescence
+ 
+def serialize_config(config_fn, serialized_fn):
+
+    ser = SerializeConfigObjects(config_fn)
+    ser.dump(serialized_fn)
+
+def serialize_fluor_config(config_fn, serialized_fn):
+
+    ser = SerializeWithFluorescence(config_fn)
+    ser.dump(serialized_fn)
 
 serialize_config(os.path.join(config_dir, "lambertian_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/lambertian_example_config.bin.gz"))
@@ -105,3 +150,6 @@ serialize_config(os.path.join(config_dir, "brdf_soil_example_config.py"),
 
 serialize_config(os.path.join(config_dir, "two_broadener_example_config.py"),
                  os.path.join(input_dir, "configuration_fixture/two_broadener_example_config.bin.gz"))
+
+serialize_fluor_config(os.path.join(config_dir, "fluorescence_example_config.py"),
+                       os.path.join(input_dir, "configuration_fixture/fluorescence_example_config.bin.gz"))

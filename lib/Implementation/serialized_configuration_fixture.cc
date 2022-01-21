@@ -3,7 +3,6 @@
 // Unsure of why but without including unit_test_support.h the import of p_serialize_support.h fails with
 // complaints about GenericObject not being defined?!
 #include "unit_test_support.h"
-#include "generic_object_map.h"
 #include "fp_serialize_support.h"
 
 using namespace blitz;
@@ -21,7 +20,7 @@ SerializedConfigurationFixture::SerializedConfigurationFixture(const std::string
 
 void SerializedConfigurationFixture::init_variables()
 {
-    boost::shared_ptr<GenericObjectMap> obj_map = serialize_read_binary<GenericObjectMap>(serialized_filename);
+    obj_map = serialize_read_binary<GenericObjectMap>(serialized_filename);
 
     config_absorber = obj_map->get<Absorber>("absorber");
     config_pressure = obj_map->get<Pressure>("pressure");
