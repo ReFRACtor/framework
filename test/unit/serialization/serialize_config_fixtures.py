@@ -153,3 +153,6 @@ serialize_config(os.path.join(config_dir, "two_broadener_example_config.py"),
 
 serialize_fluor_config(os.path.join(config_dir, "fluorescence_example_config.py"),
                        os.path.join(input_dir, "configuration_fixture/fluorescence_example_config.bin.gz"))
+
+serialize_fluor_config(os.path.join(config_dir, "rayleigh_only_example_config.py"),
+                       os.path.join(input_dir, "configuration_fixture/rayleigh_only_example_config.bin.gz"))
