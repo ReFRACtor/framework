@@ -83,15 +83,15 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
 
   // Other BRDF variables
   bool do_shadow_effect;
-  Array<bool, 1> lambertian_kernel_flag(3);
-  Array<bool, 1> do_kernel_factor_wfs(3);
-  Array<bool, 2> do_kernel_params_wfs(3,3);
-  Array<bool, 1> do_kparams_derivs(3);
+  Array<bool, 1> lambertian_kernel_flag(4);
+  Array<bool, 1> do_kernel_factor_wfs(4);
+  Array<bool, 2> do_kernel_params_wfs(4,4);
+  Array<bool, 1> do_kparams_derivs(4);
   int n_brdf_kernels;
-  Array<int, 1> n_brdf_parameters(3);
-  Array<int, 1> which_brdf(3);
-  Array<double, 1> brdf_factors(3);
-  Array<double, 2> brdf_parameters(3,3);
+  Array<int, 1> n_brdf_parameters(4);
+  Array<int, 1> which_brdf(4);
+  Array<double, 1> brdf_factors(4);
+  Array<double, 2> brdf_parameters(4,4);
 
   // Thermal variables
   double surfbb = 0;
