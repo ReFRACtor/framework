@@ -19,6 +19,7 @@ if(HAVE_LUA)
     set(SWIG_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/lua_state.i
         ${CMAKE_CURRENT_SOURCE_DIR}/luabind_object.i
+        ${CMAKE_CURRENT_SOURCE_DIR}/l2_fp_configuration_lua.i
     )
     list(APPEND SWIG_INTERFACE_FILES ${SWIG_SOURCES})
 
