@@ -2,6 +2,7 @@
 #define LUA_CONFIGURATION_FIXTURE_H
 
 #include "configuration_fixture.h"
+#include "lua_state.h"
 #include "error_analysis.h"
 #include <map>
 

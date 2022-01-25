@@ -12,7 +12,6 @@
 #include "sample_grid.h"
 #include "rt_atmosphere.h"
 #include "radiative_transfer.h"
-#include "lua_state.h"
 #include "global_fixture.h"
 #include "forward_model.h"
 #include "observation.h"

@@ -62,7 +62,6 @@ set(DIR_SOURCES
     initial_guess_value.cc
     instrument_doppler.cc
     jennrich_sampson_nlls_problem.cc
-    l2_fp_configuration_lua.cc
     level_1b_average.cc
     level_1b_cache.cc
     level_1b_scale_radiance.cc
@@ -182,7 +181,6 @@ set(TEST_SOURCES
     level_1b_average_test.cc
     level_1b_cache_test.cc
     level_1b_scale_radiance_test.cc
-    lua_configuration_fixture.cc
     merra_aerosol_test.cc
     met_data_fixture.cc
     nlls_max_a_posteriori_test.cc
