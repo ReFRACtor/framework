@@ -40,6 +40,14 @@ extern "C" {
                              const int* need_jacobians_i,
                              double* R2, double* L_R2, double* Ls_R2,
                              double* ICorr, double* L_ICorr, double* Ls_ICorr);
+    void l_rad_second_ionly_driver(void* const* l_rad_struct_c, const int* n_layers,
+                             const int* n_params, const int* n_streams,
+                             const int*n_scatt, const double* tau, const double* L_tau,
+                             const double* omega, const double* L_omega,
+                             const double* spars, const int* nspars,
+                             const double* coefs, const double* L_coefs, const int* n_eff_coefs,
+                             const int* need_jacobians_i,
+                             double* ICorr, double* L_ICorr, double* Ls_ICorr);
 
     void calc_z(void* const* l_rad_struct_c, const int* nlay, const int* nstokes,
                 const int* nmom, const int* npar, const double* dcoef,

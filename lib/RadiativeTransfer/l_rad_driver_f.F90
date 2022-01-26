@@ -554,4 +554,125 @@ contains
 
   end subroutine L_rad_second_driver
 
+  SUBROUTINE L_rad_second_ionly_driver(l_rad_struct_c, n_layers, n_params, nmoms, n_scatt, &
+       tau, L_tau, omega, L_omega, &
+       spars, nspars, coefs, L_coefs, n_eff_coefs, need_jacobians_i, &
+       ICorr, L_ICorr, Ls_ICorr) bind(C)
+    use l_rad_second_ionly_m
+    implicit none
+
+    ! in
+    type(c_ptr),    intent(in) :: l_rad_struct_c
+    integer(c_int), intent(in) :: n_layers, n_params, nspars, nmoms, n_scatt
+    real(c_double), intent(in), dimension(n_layers)           :: tau       ! Total layer extinction optical depth
+    real(c_double), intent(in), dimension(n_layers,n_params)  :: L_tau     ! Deriviative of total layer extinction optical depth
+    real(c_double), intent(in), dimension(n_layers)           :: omega     ! Layer single scattering albedo
+    real(c_double), intent(in), dimension(n_layers,n_params)  :: L_omega   ! Derivative of layer single scattering albedo
+    real(c_double), intent(in), dimension(nspars)             :: spars     ! Surface parameters
+    real(c_double), intent(in), dimension(0:nmoms-1,n_layers,n_scatt) :: coefs     ! Expansion coefficient moments
+    real(c_double), intent(in), dimension(0:nmoms-1,n_layers,n_scatt,n_params) :: L_coefs ! Derivative of expansion coefficient moments
+    integer(c_int), intent(in), dimension(n_layers)           :: n_eff_coefs ! Number of effective coefficients per layer
+    integer(c_int), intent(in)                                :: need_jacobians_i ! should jacobians be calculated
+
+    ! out
+    real(c_double), intent(out)                      :: ICorr
+    real(c_double), intent(out), dimension(n_layers,n_params) :: L_ICorr
+    real(c_double), intent(out), dimension(nspars)  :: Ls_ICorr
+    
+    ! Local
+    logical need_jacobians
+    double precision, parameter :: epsilon  = 1.d-8
+
+    type(l_rad_struct_t), pointer :: l_rad_struct
+
+    double precision, dimension(SIZE(L_ICorr,1),SIZE(L_ICorr,2))        :: L_ICorr_lcl
+
+    double precision, dimension(n_layers) :: tau_r
+    double precision, dimension(n_layers) :: omega_r
+    integer, dimension(n_layers) :: n_eff_coefs_r
+    double precision, dimension(0:nmoms-1,n_layers, n_scatt) :: coefs_r
+    double precision, dimension(0:nmoms-1,n_layers, n_scatt, n_params) :: L_coefs_r
+
+    integer :: i, j, k
+    double precision :: layers_tmp(n_layers)
+    double precision :: L_omega_r(n_layers,n_params)
+    double precision :: L_tau_r(n_layers,n_params)
+    integer :: nfoumax
+
+    call c_f_pointer(l_rad_struct_c, l_rad_struct)
+    need_jacobians = (need_jacobians_i .eq. 1) 
+
+    tau_r   = tau(n_layers:1:-1)
+    omega_r = omega(n_layers:1:-1)
+    n_eff_coefs_r = n_eff_coefs(n_layers:1:-1)
+   
+    coefs_r = 0.0D0
+    do k = 0, nmoms-1
+       do i = 1, n_scatt
+          layers_tmp = coefs(k, 1:n_layers, i)
+          coefs_r(k, :, i) = layers_tmp(n_layers:1:-1)
+
+          do j = 1, n_params
+             layers_tmp = L_coefs(k, :, i, j)
+             L_coefs_r(k, :, i, j) = layers_tmp(n_layers:1:-1)
+          end do
+       end do
+    end do
+
+    ! No need to initialize if there are no jacobians
+    if (need_jacobians) then
+       L_ICorr_lcl = 0.d0
+       Ls_ICorr    = 0.d0
+
+       L_tau_r   = 0.0D0
+       L_omega_r = 0.0D0
+       do i = 1, n_params
+          L_tau_r(:,i)   = L_tau(n_layers:1:-1, i)
+          L_omega_r(:,i) = L_omega(n_layers:1:-1, i)
+       end do
+    end if
+    
+    ! Use "nadir mode" if we do not use enhanced PS mode
+    if (.not. l_rad_struct%enhanced_ps) then
+        nfoumax = 2
+    else
+        nfoumax = nmoms-1
+    endif
+
+    call L_rad_second &
+         (n_layers, nmoms-1, n_params, nmoms / 2, nphibrdf, l_rad_struct%surftype, & !I
+         l_rad_struct%regular_ps, l_rad_struct%enhanced_ps, & !I
+         need_jacobians, need_jacobians, & !I linearize,s_linearize
+         l_rad_struct%azm, omega_r, tau_r, coefs_r, n_eff_coefs_r, & !I
+         L_omega_r, L_tau_r, L_coefs_r, & !I
+         nfoumax, epsilon, SIZE(spars), spars, & !I
+         l_rad_struct%xmu, l_rad_struct%wgt_vec, l_rad_struct%sun_chapman2(:n_layers,:n_layers), &
+         l_rad_struct%x_brdf, l_rad_struct%w_brdf, l_rad_struct%cx_brdf, l_rad_struct%sx_brdf, & !I
+         ICorr, Ls_ICorr, L_ICorr_lcl) !O
+    
+    ! Divide by pi to get intensity from reflection matrix
+    ICorr = ICorr / PI
+
+    if (need_jacobians) then
+       L_Icorr = L_Icorr / PI
+       Ls_Icorr = Ls_Icorr / PI
+
+       ! Reverse order of layers L_ICorr
+       L_ICorr = 0.0D0
+       do j = 1, n_params
+          layers_tmp = L_ICorr_lcl(:, j) / PI
+          L_ICorr(:, j) = layers_tmp(n_layers:1:-1)
+       end do
+
+       if(l_rad_struct%surftype .eq. 2) then
+          ! For coxmunk
+          ! convert deriv wrt to .5*(.003+.00512W) to wrt [W, F=1/(.003+.00512W)] 
+          ! see l_surface.F90
+          Ls_icorr(1) = Ls_icorr(1) * 0.5 * 0.00512D0;
+       end if
+
+    end if
+
+  end subroutine L_rad_second_ionly_driver
+  
 end module l_rad_driver_wrap
