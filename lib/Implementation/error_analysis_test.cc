@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE(basic)
     BOOST_CHECK_CLOSE(error_analysis->reduced_chisq(0), reduced_chisq_0, 1e-8);
     BOOST_CHECK_CLOSE(error_analysis->reduced_chisq(2), reduced_chisq_2, 1e-8);
     BOOST_CHECK_CLOSE(error_analysis->reduced_chisq(1), reduced_chisq_1, 1e-8);
-    BOOST_CHECK_CLOSE(error_analysis->degrees_of_freedom(), degrees_of_freedom, 1e-8);
+    BOOST_CHECK_CLOSE(error_analysis->degrees_of_freedom(), degrees_of_freedom, 1e-6);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
