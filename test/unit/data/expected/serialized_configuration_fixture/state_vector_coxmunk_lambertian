@@ -1,0 +1,53 @@
+# coxmunk_lambertian state_vector state
+(0,47)
+[ 3.86534684012259711385e-04 3.92470008088002396580e-04 3.95165160244680428378e-04 3.97410022194987443654e-04 3.97423170554681210766e-04 3.97419899360654076126e-04 3.97415994896372997379e-04 3.97411425019278743975e-04 3.97406033316477394317e-04 3.97399785592642419262e-04 3.97392580475211510370e-04 3.97384293496099415006e-04 3.97374914811496338096e-04 3.97364234657133607708e-04 3.97352194339169173792e-04 3.97338634183399706454e-04 3.97323567379308890610e-04 3.97306881742644007680e-04 3.97288364258955716424e-04 3.97267979024863433606e-04 1.00000000000000000000e+00 1.02911609375000000000e+05 0.00000000000000000000e+00 -4.38203000000000031378e+00 1.00000000000000000000e+00 2.00000000000000011102e-01 -4.38203000000000031378e+00 1.00000000000000000000e+00 2.00000000000000011102e-01 -4.38203000000000031378e+00 7.50000000000000000000e-01 1.00000000000000005551e-01 -4.38203000000000031378e+00 2.99999999999999988898e-01 4.00000000000000008327e-02 3.15827128629356934653e+00 2.00000000000000004163e-02 0.00000000000000000000e+00 2.00000000000000004163e-02 0.00000000000000000000e+00 2.00000000000000004163e-02 0.00000000000000000000e+00 7.57631522709134364035e-01 1.75147172652687741910e-05 1.59054650939901964790e+00 3.64376802193727957683e-05 2.04304189280997716693e+00 4.69620151873605535782e-05 ]
+
+# coxmunk_lambertian state_vector names
+CO2 at_indexes VMR at 0.103 hPa
+CO2 at_indexes VMR at 54.164 hPa
+CO2 at_indexes VMR at 108.328 hPa
+CO2 at_indexes VMR at 162.492 hPa
+CO2 at_indexes VMR at 216.656 hPa
+CO2 at_indexes VMR at 270.820 hPa
+CO2 at_indexes VMR at 324.984 hPa
+CO2 at_indexes VMR at 379.148 hPa
+CO2 at_indexes VMR at 433.312 hPa
+CO2 at_indexes VMR at 487.476 hPa
+CO2 at_indexes VMR at 541.640 hPa
+CO2 at_indexes VMR at 595.804 hPa
+CO2 at_indexes VMR at 649.968 hPa
+CO2 at_indexes VMR at 704.132 hPa
+CO2 at_indexes VMR at 758.296 hPa
+CO2 at_indexes VMR at 812.460 hPa
+CO2 at_indexes VMR at 866.624 hPa
+CO2 at_indexes VMR at 920.788 hPa
+CO2 at_indexes VMR at 974.952 hPa
+CO2 at_indexes VMR at 1029.116 hPa
+H2O Scaling factor
+Surface Pressure (Pascals)
+Temperature Offset (Kelvin)
+Aerosol Kahn_2b gaussian_log Aerosol Ext for Press Lvl 1
+Aerosol Kahn_2b gaussian_log Aerosol Ext for Press Lvl 2
+Aerosol Kahn_2b gaussian_log Aerosol Ext for Press Lvl 3
+Aerosol Kahn_3b gaussian_log Aerosol Ext for Press Lvl 1
+Aerosol Kahn_3b gaussian_log Aerosol Ext for Press Lvl 2
+Aerosol Kahn_3b gaussian_log Aerosol Ext for Press Lvl 3
+Aerosol Water gaussian_log Aerosol Ext for Press Lvl 1
+Aerosol Water gaussian_log Aerosol Ext for Press Lvl 2
+Aerosol Water gaussian_log Aerosol Ext for Press Lvl 3
+Aerosol Ice gaussian_log Aerosol Ext for Press Lvl 1
+Aerosol Ice gaussian_log Aerosol Ext for Press Lvl 2
+Aerosol Ice gaussian_log Aerosol Ext for Press Lvl 3
+Ground Coxmunk Windspeed
+Ground Lambertian A-Band Albedo Parm 1
+Ground Lambertian A-Band Albedo Parm 2
+Ground Lambertian WC-Band Albedo Parm 1
+Ground Lambertian WC-Band Albedo Parm 2
+Ground Lambertian SC-Band Albedo Parm 1
+Ground Lambertian SC-Band Albedo Parm 2
+Instrument Dispersion A-Band Offset
+Instrument Dispersion A-Band Scale
+Instrument Dispersion WC-Band Offset
+Instrument Dispersion WC-Band Scale
+Instrument Dispersion SC-Band Offset
+Instrument Dispersion SC-Band Scale

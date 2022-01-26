@@ -1,6 +1,9 @@
 #include "unit_test_support.h"
 
+#ifdef HAVE_LUA
 #include "lua_configuration_fixture.h"
+#endif
+
 #include "serialized_configuration_fixture.h"
 
 using namespace blitz;
@@ -52,18 +55,65 @@ void check_epsilon(const ConfigurationFixture& fixture)
     BOOST_CHECK_MATRIX_CLOSE(epsilon_expected, fixture.epsilon);
 }
 
-void check_state(const SerializedConfigurationFixture& ser_fixture, const LuaConfigurationFixture& lua_fixture)
+void compare_state_vector(const Array<double, 1>& sv_expt, const Array<double, 1>& sv_test, const Array<std::string, 1>& names_expt, const Array<std::string, 1>& names_test)
 {
-    BOOST_CHECK_EQUAL(lua_fixture.config_state_vector->state().rows(), ser_fixture.config_state_vector->state().rows());
+    BOOST_CHECK_EQUAL(sv_expt.rows(), sv_test.rows());
 
-    for(int sv_idx = 0; sv_idx < ser_fixture.config_state_vector->state().rows(); sv_idx++) {
+    for(int sv_idx = 0; sv_idx < sv_test.rows(); sv_idx++) {
         if (DEBUG) {
-            std::cerr << sv_idx << " Lua:    " << lua_fixture.config_state_vector->state_vector_name()(sv_idx) << " = " << lua_fixture.config_state_vector->state()(sv_idx) << std::endl
-                      << sv_idx << " Serial: " << ser_fixture.config_state_vector->state_vector_name()(sv_idx) << " = " << ser_fixture.config_state_vector->state()(sv_idx) << std::endl;
+            std::cerr << sv_idx << " Lua:    " << names_expt(sv_idx) << " = " << sv_expt(sv_idx) << std::endl
+                      << sv_idx << " Serial: " << names_test(sv_idx) << " = " << sv_test(sv_idx) << std::endl;
         }
-        BOOST_CHECK_CLOSE(lua_fixture.config_state_vector->state()(sv_idx), ser_fixture.config_state_vector->state()(sv_idx), 1e-8);
+        BOOST_CHECK_CLOSE(sv_expt(sv_idx), sv_test(sv_idx), 1e-8);
     }
 }
+
+#ifdef HAVE_LUA
+void check_state_vs_lua(const SerializedConfigurationFixture& ser_fixture, const LuaConfigurationFixture& lua_fixture, const std::string& expected_name, const std::string& test_data_dir)
+{
+    
+    // Overwrite expected values for when Lua is not enabled
+    if (false) {
+        ofstream out(test_data_dir + "expected/serialized_configuration_fixture/state_vector_" + expected_name);
+        out << std::setprecision(20) << std::scientific;
+        out << "# " << expected_name << " state_vector state" << std::endl;
+        out << lua_fixture.config_state_vector->state() << std::endl;
+        out << "# " << expected_name << " state_vector names" << std::endl;
+        for(int sv_idx = 0; sv_idx < lua_fixture.config_state_vector->state().rows(); sv_idx++) {
+            out << lua_fixture.config_state_vector->state_vector_name()(sv_idx) << std::endl;
+        }
+    }
+
+    compare_state_vector(lua_fixture.config_state_vector->state(), ser_fixture.config_state_vector->state(), lua_fixture.config_state_vector->state_vector_name(), ser_fixture.config_state_vector->state_vector_name());
+}
+#endif
+
+void check_state_vs_expected(const SerializedConfigurationFixture& ser_fixture, const std::string& expected_name, const std::string& test_data_dir)
+{
+    IfstreamCs expt_data(test_data_dir + "expected/serialized_configuration_fixture/state_vector_" + expected_name);
+    
+    Array<double, 1> state_expt;
+    expt_data >> state_expt;
+
+    // Required to transistion from stream operators to getline
+    // Causes stream to ignore up until the next newline
+    expt_data.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    // Delete next empty line then comment line
+    std::string discard;
+    std::getline(expt_data, discard);
+    std::getline(expt_data, discard);
+       
+    Array<std::string, 1> names_expt(state_expt.rows());
+    for(int sv_idx = 0; sv_idx < state_expt.rows(); sv_idx++) {
+        std::string line;
+        std::getline(expt_data, line);
+        names_expt(sv_idx) = line;
+    }
+
+    compare_state_vector(state_expt, ser_fixture.config_state_vector->state(), names_expt, ser_fixture.config_state_vector->state_vector_name());
+}
+
 
 /****************************************************************//**
  Lambertian Fixture
@@ -92,9 +142,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaConfigurationFixture lua_fixture = LuaConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "lambertian", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "lambertian", test_data_dir());
 }
  
 BOOST_AUTO_TEST_SUITE_END()
@@ -126,9 +178,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaCoxmunkConfigurationFixture lua_fixture = LuaCoxmunkConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "coxmunk", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "coxmunk", test_data_dir());
 }
  
 BOOST_AUTO_TEST_SUITE_END()
@@ -160,9 +214,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaCoxmunkPlusLambertianConfigurationFixture lua_fixture = LuaCoxmunkPlusLambertianConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "coxmunk_lambertian", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "coxmunk_lambertian", test_data_dir());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -194,9 +250,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaBrdfVegConfigurationFixture lua_fixture = LuaBrdfVegConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "brdf_veg", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "brdf_veg", test_data_dir());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -228,9 +286,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaBrdfSoilConfigurationFixture lua_fixture = LuaBrdfSoilConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "brdf_soil", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "brdf_soil", test_data_dir());
 }
  
 BOOST_AUTO_TEST_SUITE_END()
@@ -262,9 +322,11 @@ BOOST_AUTO_TEST_CASE(state_check)
     if(!have_serialize_supported())
         return;
 
+#ifdef HAVE_LUA
     LuaTwoBroadenerConfigurationFixture lua_fixture = LuaTwoBroadenerConfigurationFixture();
-
-    check_state(*this, lua_fixture);
+    check_state_vs_lua(*this, lua_fixture, "two_broadener", test_data_dir());
+#endif
+    check_state_vs_expected(*this, "two_broadener", test_data_dir());
 }
  
 BOOST_AUTO_TEST_SUITE_END()
