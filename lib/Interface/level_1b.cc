@@ -199,6 +199,7 @@ REGISTER_LUA_CLASS_NAME(std::vector<boost::shared_ptr<Level1b> >,
 .def(luabind::constructor<>())
 .def("push_back", ((pbt1) &std::vector<boost::shared_ptr<Level1b> >::push_back))
 REGISTER_LUA_END()
+#endif
 
 // Azimuth is modified because the convention used by the OCO L1B file is to
 // take both solar and observation angles as viewed from an observer
@@ -256,5 +257,3 @@ DoubleWithUnit Level1b::signal(int Spec_index, const std::vector<int>& Sample_in
     Range avg_range(0, std::min(nrad - 1, used_rad.rows() - 1));
     return DoubleWithUnit(sum(used_rad(avg_range) / avg_range.length()), rad.units());
 }
-
-#endif

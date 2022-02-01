@@ -1,6 +1,6 @@
 #ifndef ATMOSPHERE_FIXTURE_H
 #define ATMOSPHERE_FIXTURE_H
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "atmosphere_standard.h"
 #include "state_vector.h"
 
@@ -16,14 +16,14 @@ namespace FullPhysics {
   we have a clean Atmosphere for testing (a previous test might have
   purposely put the Atmosphere in an error state). If you don't need a
   clean new Atmosphere each time, you might just want to use
-  ConfigurationFixture.
+  LuaConfigurationFixture.
 *******************************************************************/
-class AtmosphereFixture : public ConfigurationFixture {
+class AtmosphereFixture : public LambertianConfigurationFixture {
 public:
   AtmosphereFixture();
   virtual ~AtmosphereFixture() {statev->remove_observer(*atm);}
 
-  /// Atmosphere read from ConfigurationFixture
+  /// Atmosphere read from LuaConfigurationFixture
   boost::shared_ptr<AtmosphereStandard> atm;
 
   /// Helper routine for initializing an Atmosphere in such a way that jacobians are set up and linked to a StateVector

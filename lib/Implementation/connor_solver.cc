@@ -12,20 +12,35 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void ConnorSolver::serialize(Archive& ar,
-			 const unsigned int UNUSED(version))
+                         const unsigned int UNUSED(version))
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableConnorSolver)
-    & FP_NVP(se) & FP_NVP(k) & FP_NVP(kt_se_m1_k) & FP_NVP(gamma)
-    & FP_NVP_(gamma_last_step) & FP_NVP(fstat) & FP_NVP(apriori_cov_scaled)
-    & FP_NVP(sa_m1_scaled) & FP_NVP(sigma_ap) & FP_NVP(x_a)
-    & FP_NVP(x_i) & FP_NVP_(residual) & FP_NVP(dx)
-    & FP_NVP_(cost_function) & FP_NVP_(convergence_check)
+  FP_GENERIC_BASE(ConnorSolver);
+  ar
+    & FP_NVP_(save_test_data)
+    & FP_NVP(se) 
+    & FP_NVP(k) 
+    & FP_NVP(kt_se_m1_k) 
+    & FP_NVP(gamma)
+    & FP_NVP_(gamma_last_step) 
+    & FP_NVP(fstat)
+    & FP_NVP(apriori_cov_scaled)
+    & FP_NVP(sa_m1_scaled) 
+    & FP_NVP(sigma_ap)
+    & FP_NVP(x_a)
+    & FP_NVP(x_i) 
+    & FP_NVP_(residual) 
+    & FP_NVP(dx)
+    & FP_NVP_(cost_function) 
+    & FP_NVP_(convergence_check)
     & FP_NVP(gamma_initial);
 }
 
+FP_IMPLEMENT(ConnorSolver);
+FP_OBSERVER_SERIALIZE(ConnorSolver);
+
 template<class Archive>
 void ConnorSolverState::serialize(Archive& ar,
-				  const unsigned int UNUSED(version))
+                                  const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(ConnorSolverState);
   ar & FP_NVP_(x_i)
@@ -44,20 +59,18 @@ void ConnorSolverState::serialize(Archive& ar,
     & FP_NVP_(fstat);
 }
 
-FP_IMPLEMENT(ConnorSolver);
 FP_IMPLEMENT(ConnorSolverState);
-FP_OBSERVER_SERIALIZE(ConnorSolver);
 #endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
 REGISTER_LUA_CLASS(ConnorSolver)
 .def(luabind::constructor<const boost::shared_ptr<CostFunction>&,
-			  const boost::shared_ptr<ConvergenceCheck>&,
-			  double>())
+                          const boost::shared_ptr<ConvergenceCheck>&,
+                          double>())
 .def(luabind::constructor<const boost::shared_ptr<CostFunction>&,
-			  const boost::shared_ptr<ConvergenceCheck>&,
-			  double, std::string>())
+                          const boost::shared_ptr<ConvergenceCheck>&,
+                          double, std::string>())
 REGISTER_LUA_END()
 #endif
 
@@ -84,8 +97,8 @@ boost::shared_ptr<ConnorSolverState> ConnorSolver::state() const
 {
   return boost::shared_ptr<ConnorSolverState>
     (new ConnorSolverState(x_i, x_a, apriori_cov_scaled, sa_m1_scaled,
-			   sigma_ap, gamma, gamma_last_step_, gamma_initial,
-			   residual_, se, k, kt_se_m1_k, dx, fstat));
+                           sigma_ap, gamma, gamma_last_step_, gamma_initial,
+                           residual_, se, k, kt_se_m1_k, dx, fstat));
 }
 
 //-----------------------------------------------------------------------
@@ -189,8 +202,8 @@ void ConnorSolver::from_stream(std::istream& is)
 //-----------------------------------------------------------------------
 
 bool ConnorSolver::solve(const blitz::Array<double, 1>& Initial_guess,
-			 const blitz::Array<double, 1>& Apriori, 
-			 const blitz::Array<double, 2>& Apriori_cov)
+                         const blitz::Array<double, 1>& Apriori, 
+                         const blitz::Array<double, 2>& Apriori_cov)
 
 {
   using namespace blitz;
@@ -239,11 +252,11 @@ bool ConnorSolver::solve(const blitz::Array<double, 1>& Initial_guess,
     bool step_diverged, convergence_failed;
     gamma_last_step_ = gamma;
     convergence_check()->convergence_check(fstat_last, fstat,
-					 has_converged,
-					 convergence_failed,
-					 gamma, step_diverged);
-    if(convergence_failed) {	// Return failure to converge if check
-				// tells us to.
+                                         has_converged,
+                                         convergence_failed,
+                                         gamma, step_diverged);
+    if(convergence_failed) {        // Return failure to converge if check
+                                // tells us to.
       fstat.fit_succeeded = false;
       notify_update_do(*this);
       return false;
@@ -283,8 +296,8 @@ bool ConnorSolver::solve(const blitz::Array<double, 1>& Initial_guess,
 //-----------------------------------------------------------------------
 
 void ConnorSolver::test_do_inversion(const std::string& Fname,
-				     blitz::Array<double, 1>& Dx, 
-				     blitz::Array<double, 2>& Kt_se_m1_k)
+                                     blitz::Array<double, 1>& Dx, 
+                                     blitz::Array<double, 2>& Kt_se_m1_k)
 {
   firstIndex i1; secondIndex i2; thirdIndex i3; fourthIndex i4;
   IfstreamCs in(Fname);
@@ -313,7 +326,7 @@ void ConnorSolver::test_do_inversion(const std::string& Fname,
 
     \f[ \mathbf{N}^T \left((1+\gamma) \mathbf{S}_a^{-1} + 
         \mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1} \mathbf{K}_i\right)
-	\mathbf{N} \left(
+        \mathbf{N} \left(
         \mathbf{N}^{-1} d\mathbf{x}_{i+1} \right) = 
     \mathbf{N}^T
     \left[\mathbf{K}_i^T \mathbf{S}_{\epsilon}^{-1}
@@ -366,8 +379,8 @@ void ConnorSolver::do_inversion()
   zero_unused_flag = (zero_unused_parm_v < 1e-8);
   sa_m1_scaled = generalized_inverse(apriori_cov_scaled, zero_unused_flag);
   lhs = ( ((1 + gamma) * sa_m1_scaled(i1, i2) + 
-	   sigma_ap(i1) * kt_se_m1_k(i1, i2) * sigma_ap(i2)) *
-	  zero_unused_parm_v(i1) * zero_unused_parm_v(i2));
+           sigma_ap(i1) * kt_se_m1_k(i1, i2) * sigma_ap(i2)) *
+          zero_unused_parm_v(i1) * zero_unused_parm_v(i2));
 
 //-----------------------------------------------------------------------
 // Calculate the right hand side of the equation. Note the "-"
@@ -397,9 +410,9 @@ void ConnorSolver::do_inversion()
   int d_sigma_sq_numrow = count(max(abs(kt_se_m1_k), i2) > 1e-20);
   fstat.d_sigma_sq_scaled = fstat.d_sigma_sq / d_sigma_sq_numrow;
   fstat.chisq_apriori = sum(((x_a - x_i) / sigma_ap(i1) * 
-			     sum(sa_m1_scaled(i1, i2) * 
-				 (x_a(i2) - x_i(i2)) / sigma_ap(i2), i2))
-			    * zero_unused_parm_v(i1));
+                             sum(sa_m1_scaled(i1, i2) * 
+                                 (x_a(i2) - x_i(i2)) / sigma_ap(i2), i2))
+                            * zero_unused_parm_v(i1));
   fstat.chisq_measured = sum(residual_ * residual_ / se);
 
 //-----------------------------------------------------------------------
@@ -413,9 +426,9 @@ void ConnorSolver::do_inversion()
   x_i_fc += dx;
 
   fstat.chisq_apriori_fc = sum(((x_a - x_i_fc) / sigma_ap(i1) * 
-				sum(sa_m1_scaled(i1, i2) * 
-				    (x_a(i2) - x_i_fc(i2)) / sigma_ap(i2), i2))
-			       * zero_unused_parm_v(i1));
+                                sum(sa_m1_scaled(i1, i2) * 
+                                    (x_a(i2) - x_i_fc(i2)) / sigma_ap(i2), i2))
+                               * zero_unused_parm_v(i1));
   fstat.chisq_measured_fc = sum(residual_fc * residual_fc / se);
 }
 
@@ -473,7 +486,7 @@ Array<double, 2> ConnorSolver::averaging_kernel() const
 
   res = zero_unused_parm()(i1) * sigma_ap(i1) * 
     sum(aposteriori_covariance_scaled()(i1, i3) * 
-	sigma_ap(i3) * kt_se_m1_k(i3, i2), i3) * zero_unused_parm()(i2);
+        sigma_ap(i3) * kt_se_m1_k(i3, i2), i3) * zero_unused_parm()(i2);
   return res;
 }
 

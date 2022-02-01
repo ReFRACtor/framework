@@ -1,3 +1,4 @@
+#include "serialized_configuration_fixture.h"
 #include "ground_fixture.h"
 #include "unit_test_support.h"
 #include "state_vector.h"
@@ -23,7 +24,7 @@ BOOST_AUTO_TEST_CASE(albedo)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ground_lambertian_config, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ground_lambertian_config, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(jacobian)
 {

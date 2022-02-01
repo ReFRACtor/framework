@@ -13,4 +13,6 @@ SolverFinishedFixture::SolverFinishedFixture()
   initial_sv.reference(config_initial_guess->initial_guess());
   apriori_sv.reference(config_initial_guess->apriori());
   apriori_cov.reference(config_initial_guess->apriori_covariance());
+
+  error_analysis.reset(new ErrorAnalysis(solver, config_atmosphere, config_forward_model, config_observation));
 }

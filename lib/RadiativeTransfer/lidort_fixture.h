@@ -1,7 +1,7 @@
 #ifndef LIDORT_FIXTURE_H
 #define LIDORT_FIXTURE_H
 
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "lidort_rt.h"
 
 namespace FullPhysics {
@@ -108,34 +108,34 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortRt based on the ConfigurationFixture.
+  LidortRt based on the LambertianConfigurationFixture.
 *******************************************************************/
 class LidortLambertianFixture : public LidortRtCommonFixture, 
-                                public ConfigurationFixture {
+                                public LambertianConfigurationFixture {
 public:
-  LidortLambertianFixture(const std::string& Config_file = "config.lua");
+  LidortLambertianFixture();
   virtual ~LidortLambertianFixture() {};
 };
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortRt based on the ConfigurationCoxmunkFixture. Same as 
+  LidortRt based on the CoxmunkConfigurationFixture. Same as 
   LidortLambertianFixture but using coxmunk surface type
 *******************************************************************/
 class LidortCoxmunkFixture : public LidortRtCommonFixture, 
-                             public ConfigurationCoxmunkFixture {
+                             public CoxmunkConfigurationFixture {
 public:
-  LidortCoxmunkFixture(const std::string& Config_file = "config_coxmunk.lua");
+  LidortCoxmunkFixture();
   virtual ~LidortCoxmunkFixture() {};
 };
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortRt based on the ConfigurationCoxmunkPlusLambertianFixture. Same as 
+  LidortRt based on the CoxmunkPlusLambertianConfigurationFixture. Same as 
   LidortLambertianFixture but using coxmunk + lambertian surface type
 *******************************************************************/
 class LidortCoxmunkPlusLambertianFixture : public LidortRtCommonFixture, 
-                                           public ConfigurationCoxmunkPlusLambertianFixture {
+                                           public CoxmunkPlusLambertianConfigurationFixture {
 public:
   LidortCoxmunkPlusLambertianFixture();
   virtual ~LidortCoxmunkPlusLambertianFixture() {};
@@ -171,7 +171,7 @@ class LidortLowHighCommon {
   LidortLowHighDriver based on the ConfigurationFixture.
 *******************************************************************/
  class LidortLowHighLambertianFixture : public LidortLowHighCommon,
-                                        public ConfigurationFixture
+                                        public LambertianConfigurationFixture
   {
 public:
   LidortLowHighLambertianFixture();
@@ -186,7 +186,7 @@ public:
   for this.
 *******************************************************************/
 class LidortLowHighFixtureNoPolarization : public LidortLowHighCommon,
-                                           public ConfigurationFixture {
+                                           public LambertianConfigurationFixture {
 public:
   LidortLowHighFixtureNoPolarization();
   virtual ~LidortLowHighFixtureNoPolarization() {}
@@ -194,11 +194,11 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortLowHighDriver based on the ConfigurationCoxmunkFixture. Same as 
+  LidortLowHighDriver based on the CoxmunkConfigurationFixture. Same as 
   LidortLowHighLambertianFixture but using coxmunk surface type
 *******************************************************************/
 class LidortLowHighCoxmunkFixture : public LidortLowHighCommon,
-                                    public ConfigurationCoxmunkFixture {
+                                    public CoxmunkConfigurationFixture {
 public:
   LidortLowHighCoxmunkFixture();
   virtual ~LidortLowHighCoxmunkFixture() {}
@@ -206,12 +206,12 @@ public:
 
 /****************************************************************//**
   This is a test fixture that creates a Atmosphere, Statevector, and
-  LidortRt based on the ConfigurationCoxmunkPlusLambertianFixture. Same as 
+  LidortRt based on the CoxmunkPlusLambertianConfigurationFixture. Same as 
   LidortLambertianFixture but using coxmunk surface type with
   a lambertian component
 *******************************************************************/
 class LidortLowHighCoxmunkPlusLambertianFixture : public LidortLowHighCommon,
-                                                  public ConfigurationCoxmunkPlusLambertianFixture {
+                                                  public CoxmunkPlusLambertianConfigurationFixture {
 public:
   LidortLowHighCoxmunkPlusLambertianFixture();
   virtual ~LidortLowHighCoxmunkPlusLambertianFixture() {}

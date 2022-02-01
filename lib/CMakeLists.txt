@@ -1,6 +1,7 @@
-# Tell code that Lua was found, since it is required here, it is always found!
-# Needs some more work to make Lua truly optional
-add_definitions(-DHAVE_LUA)
+if(HAVE_LUA)
+    # Direct source code to include Lua support
+    add_definitions(-DHAVE_LUA)
+endif()
 
 # Initialize variables used in subdirectories
 set(FP_SOURCE_FILES "")

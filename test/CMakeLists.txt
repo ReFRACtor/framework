@@ -1,6 +1,11 @@
 # Enable ctest
 enable_testing()
 
+if(HAVE_LUA)
+    # Direct source code to include Lua support
+    add_definitions(-DHAVE_LUA)
+endif()
+
 # Find some binaries needed by the tests, create a wrapper using these paths
 find_program(MAKE_BIN make)
 find_program(RUBY_BIN ruby)

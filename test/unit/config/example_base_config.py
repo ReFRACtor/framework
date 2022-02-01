@@ -9,17 +9,19 @@ from refractor.framework.config import refractor_config
 from refractor import framework as rf
 
 unit_test_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../data"))
-common_input_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../../input/common/input"))
 
 static_input_file = os.path.join(unit_test_dir, "lua/example_static_input.h5")
 ils_file = os.path.join(unit_test_dir, "lua/ils_data.h5")
 
-solar_file = os.path.join(common_input_dir, "l2_solar_model.h5")
-aerosol_prop_file = os.path.join(common_input_dir, "l2_aerosol_combined.h5")
 covariance_file = os.path.join(os.path.dirname(__file__), "example_covariance.h5")
 
-l1b_file = os.path.join(unit_test_dir, "in/common/l1b_example_data.h5")
-met_file = os.path.join(unit_test_dir, "in/common/met_example_data.h5")
+# Reference these using environment variables to enable relocation for serialized objects
+
+solar_file = "${abs_top_srcdir}/input/common/input/l2_solar_model.h5"
+aerosol_prop_file = "${abs_top_srcdir}/input/common/input/l2_aerosol_combined.h5"
+
+l1b_file = "${abs_top_srcdir}/test/unit/data/in/common/l1b_example_data.h5"
+met_file = "${abs_top_srcdir}/test/unit/data/in/common/met_example_data.h5"
 
 observation_id = "2014090915251774"
 num_channels = 3
@@ -50,12 +52,35 @@ def ils_relative_response():
     with h5py.File(ils_file) as ils_input:
         return ils_input["/InstrumentData/ils_relative_response"][:]
 
+class SampleGridIndexes(creator.Creator):
+
+    instrument = param.InstanceOf(rf.Instrument)
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+    spectrum_sampling = param.InstanceOf(rf.SpectrumSampling)
+    
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+        spectral_grid = rf.ForwardModelSpectralGrid(self.instrument(), self.spec_win(), self.spectrum_sampling())
+
+        sample_indexes = []
+        for chan_idx in range(self.num_channels()):
+            chan_indexes = spectral_grid.pixel_list(chan_idx)
+            
+            # Remove last grid index so that unit tests are consistent with previous bug where
+            # code was not being inclusive of the last point at the end of the supplied range
+            chan_indexes = chan_indexes[:-1]
+
+            sample_indexes.append(chan_indexes)
+
+        return sample_indexes
+
 @refractor_config
 def base_config(**kwargs):
 
     config_def = {
         'creator': creator.base.SaveToCommon,
-        'order': ['input', 'common', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
+        'order': ['input', 'common', 'scenario', 'spec_win', 'spectrum_sampling', 'instrument', 'atmosphere', 'radiative_transfer', 'forward_model' , 'retrieval'],
         'input': {
             'creator': creator.base.SaveToCommon,
             'l1b': rf.ExampleLevel1b(l1b_file, observation_id),
@@ -71,7 +96,7 @@ def base_config(**kwargs):
                 'units': static_units("Common/band_reference_point"),
             },
             'num_channels': num_channels,
-            'absco_base_path': os.environ['ABSCO_PATH'],
+            'absco_base_path': "${abscodir}",
             'constants': {
                 'creator': creator.common.DefaultConstants,
             },
@@ -79,6 +104,9 @@ def base_config(**kwargs):
                 'creator': creator.l1b.ValueFromLevel1b,
                 'field': "stokes_coefficient",
             },
+        },
+        'scenario': {
+            'creator': creator.scenario.ScenarioFromL1b,
         },
         'spec_win': {
             'creator': creator.forward_model.SpectralWindowRange,
@@ -160,7 +188,7 @@ def base_config(**kwargs):
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': [1.0, 1.0, 1.004],
-                        'filename': "{absco_base_path}/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
+                        'filename': "{absco_base_path}/legacy/co2_devi2015_wco2scale-nist_sco2scale-unity.h5",
                     },
                 },
                 'H2O': {
@@ -172,7 +200,7 @@ def base_config(**kwargs):
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': 1.0,
-                        'filename': "{absco_base_path}/h2o_hitran12.h5",
+                        'filename': "{absco_base_path}/legacy/h2o_hitran12.h5",
                     },
                 },
                 'O2': {
@@ -183,13 +211,13 @@ def base_config(**kwargs):
                             'creator': creator.atmosphere.ConstantForAllLevels,
                             'value': static_value("Gas/O2/average_mole_fraction")[0],
                         },
-                        'retrieved': False,
+                        'mapping': creator.mapping.NotRetrieved,
                     },
                     'absorption': {
                         'creator': creator.absorber.AbscoLegacy,
                         'table_scale': 1.0,
-                        'filename': "{absco_base_path}/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
-                     },
+                        'filename': "{absco_base_path}/legacy/o2_v151005_cia_mlawer_v151005r1_narrow.h5",
+                    },
                 },
             },
             'aerosol': {
@@ -254,8 +282,8 @@ def base_config(**kwargs):
                     'polynomial_coeffs': {
                         'creator': creator.ground.AlbedoFromSignalLevel,
                         'signal_level': {
-                            'creator': creator.l1b.ValueFromLevel1b,
-                            'field': "signal",
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
                         },
                         'solar_zenith': {
                             'creator': creator.l1b.ValueFromLevel1b,
@@ -266,6 +294,80 @@ def base_config(**kwargs):
                             'creator': creator.l1b.SolarDistanceFromL1b,
                         },
                     },
+                },
+                'brdf_veg': {
+                    'creator': creator.ground.GroundBrdf,
+                    'brdf_parameters': {
+                        'creator': creator.ground.BrdfWeightFromSignalVeg,
+                        'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                        'signal_level': {
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
+                        },
+                        'solar_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "solar_zenith",
+                        },
+                        'sounding_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "sounding_zenith",
+                        },
+                        'relative_azimuth': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "relative_azimuth",
+                        },
+                        'solar_strength': np.array([4.87e21, 2.096e21, 1.15e21]),
+                        'solar_distance': {
+                            'creator': creator.l1b.SolarDistanceFromL1b,
+                        },
+                    },
+                    'brdf_type': creator.ground.BrdfTypeOption.vegetation,
+                },
+                'brdf_soil': {
+                    'creator': creator.ground.GroundBrdf,
+                    'brdf_parameters': {
+                        'creator': creator.ground.BrdfWeightFromSignalSoil,
+                        'brdf_parameters': static_value("/Ground/Brdf/a_priori"),
+                        'signal_level': {
+                            'creator': creator.l1b.SignalLevelFromL1b,
+                            'sample_grid_indexes': SampleGridIndexes,
+                        },
+                        'solar_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "solar_zenith",
+                        },
+                        'sounding_zenith': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "sounding_zenith",
+                        },
+                        'relative_azimuth': {
+                            'creator': creator.l1b.ValueFromLevel1b,
+                            'field': "relative_azimuth",
+                        },
+                        'solar_strength': np.array([4.87e21, 2.096e21, 1.15e21]),
+                        'solar_distance': {
+                            'creator': creator.l1b.SolarDistanceFromL1b,
+                        },
+                     },
+                    'brdf_type': creator.ground.BrdfTypeOption.soil,
+                },
+                'coxmunk': {
+                    'creator': creator.ground.GroundCoxmunk,
+                    'windspeed': {
+                        'creator': creator.met.ValueFromMet,
+                        'field': "windspeed",
+                    },
+                    'refractive_index': static_value("/Ground/Refractive_Index/a_priori"),
+                },
+                'coxmunk_lambertian': {
+                    'creator': creator.ground.GroundCoxmunk,
+                    'windspeed': {
+                        'creator': creator.met.ValueFromMet,
+                        'field': "windspeed",
+                    },
+                    'refractive_index': static_value("/Ground/Refractive_Index/a_priori"),
+                    # Add lambertian portion to Coxmunk kernel
+                    'albedo_coeffs': static_value("/Ground/Coxmunk_Albedo/a_priori"),
                 },
             },
         },
@@ -341,7 +443,7 @@ def base_config(**kwargs):
                 'creator': creator.retrieval.SVObserverComponents,
                 'exclude': ['absorber_levels/linear/O2', 'instrument_doppler'],
                 # Match order tradtionally used in old system
-                'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol_shape', 'ground', 'dispersion'],
+                'order': ['CO2', 'H2O', 'surface_pressure', 'temperature_offset', 'aerosol', 'ground', 'dispersion'],
             },
             'state_vector': {
                 'creator': creator.retrieval.StateVector,
@@ -359,20 +461,12 @@ def base_config(**kwargs):
                     'filename': covariance_file,
                 }
             },
-            'solver_nlls_gsl': {
-                'creator': creator.retrieval.NLLSSolverGSLLMSDER,
-                'max_cost_function_calls': 10,
-                'dx_tol_abs': 1e-5,
-                'dx_tol_rel': 1e-5, 
-                'g_tol_abs': 1e-5,
-            },
             'solver': {
-                'creator': creator.retrieval.ConnorSolverMAP,
-                'max_cost_function_calls': 14,
-                'threshold': 2.0,
+                'creator': creator.retrieval.LegacyConnorSolver,
                 'max_iteration': 7,
                 'max_divergence': 2,
                 'max_chisq': 1.4,
+                'threshold': 2.0,
                 'gamma_initial': 10.0,
             },
         },

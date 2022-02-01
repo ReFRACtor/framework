@@ -1,13 +1,22 @@
-#include "configuration_fixture.h"
+#include "lua_configuration_fixture.h"
 #include <fenv.h>
 
 using namespace FullPhysics;
 using namespace blitz;
 
-std::map<std::string, boost::shared_ptr<LuaState> > ConfigurationFixture::config;
-ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
+// Forward reference
+std::map<std::string, boost::shared_ptr<LuaState> > LuaConfigurationFixture::config;
+
+LuaConfigurationFixture::LuaConfigurationFixture(const std::string& Config_file)
+  : config_filename(Config_file)
 {
-  if(!config[Config_file]) {
+  init_variables();
+  init_epsilon();
+}
+
+void LuaConfigurationFixture::init_variables()
+{
+  if(!config[config_filename]) {
     // Disable floating point exeptions while loading 
     // Lua configuration due to the way Lua parses certain
     // things.
@@ -17,14 +26,14 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
 #ifdef HAVE_FEENABLEEXCEPT
     fedisableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
 #endif
-    config[Config_file] = LuaState::load_file(test_data_dir() + "/lua/" + Config_file);
+    config[config_filename] = LuaState::load_file(test_data_dir() + "/lua/" + config_filename);
 #ifdef HAVE_FEENABLEEXCEPT
     feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
     feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
 #endif
   }
 
-  lua_config = config[Config_file]->globals()["config"];
+  lua_config = config[config_filename]->globals()["config"];
 
   config_absorber = lua_config["absorber"].value_ptr<Absorber>();
   // Allow this to fail, we don't have aerosols if we happen to have a 
@@ -61,6 +70,10 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
   sv_initial.reference(config_initial_guess->initial_guess());
   config_state_vector->update_state(sv_initial);
 
+}
+
+void LuaConfigurationFixture::init_epsilon()
+{
   epsilon.resize(config_state_vector->observer_claimed_size());
   epsilon = 1e-6;                  // Default
   epsilon(Range(0, 19)) = 1e-7;    // CO2 VMR
@@ -75,11 +88,10 @@ ConfigurationFixture::ConfigurationFixture(const std::string& Config_file)
           std::cerr << i << ": " << config_state_vector->state_vector_name()(i) << " val = " << config_state_vector->state()(i) << ", epsilon = " << epsilon(i) << std::endl;
       }
   }
-
 }
 
-ConfigurationCoxmunkFixture::ConfigurationCoxmunkFixture(const std::string& Config_file) 
-  : ConfigurationFixture(Config_file)
+LuaCoxmunkConfigurationFixture::LuaCoxmunkConfigurationFixture(const std::string& Config_file) 
+  : LuaConfigurationFixture(Config_file)
 {
   // Shrink array from base constructor less elements but first many should be the same
   epsilon.resizeAndPreserve(110);

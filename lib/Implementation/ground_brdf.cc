@@ -12,7 +12,8 @@ void GroundBrdf::serialize(Archive & ar,
                            const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GroundImpBase)
-    & FP_NVP(reference_points) & FP_NVP(desc_band_names);
+     & FP_NVP(reference_points) & FP_NVP(desc_band_names)
+     & FP_NVP(num_weight_params) & FP_NVP(num_coeff);
 }
 
 template<class Archive>

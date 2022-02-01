@@ -14,18 +14,18 @@ namespace FullPhysics {
 class ConnorConvergence : public ConvergenceCheck {
 public:
   ConnorConvergence(const boost::shared_ptr<ForwardModel>& Fm, 
-		    double Threshold, 
-		    int Max_iteration, int Max_divergence, double Max_chisq);
+                    double Threshold, 
+                    int Max_iteration, int Max_divergence, double Max_chisq);
   virtual ~ConnorConvergence() {}
   virtual void convergence_check(const FitStatistic& fit_stat_last,
-				 FitStatistic& fit_stat,
-				 bool& has_converged,
-				 bool& convergence_failed,
-				 double& gamma,
-				 bool& step_diverged);
+                                 FitStatistic& fit_stat,
+                                 bool& has_converged,
+                                 bool& convergence_failed,
+                                 double& gamma,
+                                 bool& step_diverged);
   virtual void evaluate_quality(FitStatistic& fit_stat,
-	const blitz::Array<double, 1>& Residual,
-	const blitz::Array<double, 1>& Residual_cov_diag);
+                                const blitz::Array<double, 1>& Residual,
+                                const blitz::Array<double, 1>& Residual_cov_diag);
   virtual void print(std::ostream& Os) const;
   // Maximum number of iterations.
   inline int maximum_number_iteration() const { return max_iteration; }
@@ -36,6 +36,15 @@ private:
   int max_iteration;
   int max_divergence;
   double max_chisq;
+
+  ConnorConvergence() = default;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ConnorConvergence);
+
 #endif

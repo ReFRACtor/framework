@@ -62,7 +62,6 @@ set(DIR_SOURCES
     initial_guess_value.cc
     instrument_doppler.cc
     jennrich_sampson_nlls_problem.cc
-    l2_fp_configuration_lua.cc
     level_1b_average.cc
     level_1b_cache.cc
     level_1b_scale_radiance.cc
@@ -135,10 +134,10 @@ set(TEST_SOURCES
     absco_aer_test.cc
     absco_hdf_test.cc
     absorber_absco_test.cc
-    absorber_xsec_test.cc
     absorber_vmr_level_scaled_test.cc
     absorber_vmr_level_test.cc
     absorber_vmr_met_test.cc
+    absorber_xsec_test.cc
     aerosol_extinction_linear_test.cc
     aerosol_extinction_log_test.cc
     aerosol_optical_test.cc
@@ -152,7 +151,6 @@ set(TEST_SOURCES
     chisq_convergence_test.cc
     composite_initial_guess_full_guess_test.cc
     composite_perturbation_test.cc
-    configuration_fixture.cc
     connor_convergence_test.cc
     connor_cost_function_test.cc
     connor_solver_test.cc
@@ -161,21 +159,21 @@ set(TEST_SOURCES
     dispersion_polynomial_test.cc
     empirical_orthogonal_function_test.cc
     error_analysis_test.cc
-    forward_model_with_cloud_handling_test.cc
     fluorescence_effect_test.cc
+    forward_model_with_cloud_handling_test.cc
     fp_logger_test.cc
     gas_vmr_apriori_test.cc
     ground_brdf_test.cc
     ground_coxmunk_plus_lambertian_test.cc
     ground_coxmunk_test.cc
-    ground_emissivity_polynomial_test.cc
     ground_emissivity_piecewise_test.cc
+    ground_emissivity_polynomial_test.cc
+    ground_lambertian_piecewise_test.cc
     ground_lambertian_test.cc
     ground_with_cloud_handling_test.cc
-    ground_lambertian_piecewise_test.cc
     hdf_constant_test.cc
-    ils_grating_test.cc
     ils_gaussian_test.cc
+    ils_grating_test.cc
     ils_instrument_test.cc
     ils_table_test.cc
     initial_guess_value_test.cc
@@ -209,13 +207,15 @@ set(TEST_SOURCES
     pressure_with_cloud_handling_test.cc
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
-    rayleigh_only_test.cc
     rayleigh_bodhaine_test.cc
+    rayleigh_only_test.cc
     rayleigh_young_test.cc
     reference_vmr_apriori_test.cc
     refractive_index_test.cc
     relative_humidity_test.cc
     sample_grid_spectral_domain_test.cc
+    serialized_configuration_fixture.cc
+    serialized_configuration_fixture_test.cc
     simple_fixed_spectrum_sampling_test.cc
     solar_absorption_and_continuum_test.cc
     solar_absorption_gfit_file_test.cc
@@ -230,8 +230,8 @@ set(TEST_SOURCES
     standard_forward_model_test.cc
     stokes_coefficient_constant_test.cc
     stokes_coefficient_fraction_test.cc
-    temperature_level_test.cc
     temperature_level_offset_test.cc
+    temperature_level_test.cc
     temperature_met_test.cc
     uniform_spectrum_sampling_test.cc
     xsec_table_simple_test.cc

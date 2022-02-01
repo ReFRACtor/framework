@@ -26,10 +26,10 @@ public:
 //-----------------------------------------------------------------------
 
   virtual void cost_function(const blitz::Array<double, 1>& X,
-			blitz::Array<double, 1>& Residual,
-			blitz::Array<double, 1>& Se,
-			blitz::Array<double, 2>& Jacobian) const = 0;
-			
+                             blitz::Array<double, 1>& Residual,
+                             blitz::Array<double, 1>& Se,
+                             blitz::Array<double, 2>& Jacobian) const = 0;
+                        
 //-----------------------------------------------------------------------
 /// Print description of object.
 //-----------------------------------------------------------------------

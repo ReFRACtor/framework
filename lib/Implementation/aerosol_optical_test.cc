@@ -2,6 +2,7 @@
 #include "pressure.h"
 #include "unit_test_support.h"
 #include "atmosphere_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "aerosol_property_hdf.h"
 
 using namespace FullPhysics;
@@ -46,7 +47,7 @@ BOOST_AUTO_TEST_CASE(layer_parameters)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(aerosol_jac, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(aerosol_jac, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(optical_depth_jac)
 {

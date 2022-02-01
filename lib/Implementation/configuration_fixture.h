@@ -1,8 +1,8 @@
 #ifndef CONFIGURATION_FIXTURE_H
 #define CONFIGURATION_FIXTURE_H
+
 #include "absorber.h"
 #include "aerosol_optical.h"
-#include "error_analysis.h"
 #include "connor_solver.h"
 #include "spectral_window.h"
 #include "spectrum_sampling.h"
@@ -12,11 +12,9 @@
 #include "sample_grid.h"
 #include "rt_atmosphere.h"
 #include "radiative_transfer.h"
-#include "lua_state.h"
 #include "global_fixture.h"
 #include "forward_model.h"
 #include "observation.h"
-#include <map>
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -32,15 +30,11 @@ namespace FullPhysics {
 *******************************************************************/
 class ConfigurationFixture: public GlobalFixture {
 public:
-  ConfigurationFixture(const std::string& Config_file = "config.lua");
-  virtual ~ConfigurationFixture() 
-  { config_state_vector->update_state(sv_initial); }
 
   boost::shared_ptr<Absorber> config_absorber;
   boost::shared_ptr<Aerosol> config_aerosol;
   boost::shared_ptr<RtAtmosphere> config_atmosphere;
   boost::shared_ptr<StateVector> config_state_vector;
-  boost::shared_ptr<ErrorAnalysis> config_error_analysis;
   boost::shared_ptr<ConnorSolver> config_solver;
   boost::shared_ptr<SpectralWindow> config_spectral_window;
   boost::shared_ptr<InitialGuess> config_initial_guess;
@@ -57,9 +51,11 @@ public:
   /// Useful function that appears in a few tests, so collect here
   DoubleWithUnit high_res_extension(int Spec_index) const
   { return config_instrument->high_res_extension(Spec_index); }
+
   SpectralDomain lowres_grid(int Spec_index) const
   { return config_spectral_window->apply
       (config_instrument->pixel_spectral_domain(Spec_index), Spec_index); }
+
   SpectralDomain highres_grid(int Spec_index) const
   { return config_spectrum_sampling->spectral_domain
       (Spec_index, lowres_grid(Spec_index), high_res_extension(Spec_index)); }
@@ -67,80 +63,10 @@ public:
   /// This is an epsilon that can be used to generate finite
   /// difference Jacobians for unit tests.
   blitz::Array<double, 1> epsilon;
-
-  LuabindObject lua_config;
-private:
-  static std::map<std::string, boost::shared_ptr<LuaState> > config;
-  blitz::Array<double,1> sv_initial;
+protected:
+  virtual void init_variables() = 0;
+  virtual void init_epsilon() = 0;
 };
 
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_coxmunk.lua
-*******************************************************************/
-class ConfigurationCoxmunkFixture: public ConfigurationFixture {
-public:
-  ConfigurationCoxmunkFixture(const std::string& Config_file = "config_coxmunk.lua");
-  virtual ~ConfigurationCoxmunkFixture() {}
-};
-
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_coxmunk+lamb.lua
-*******************************************************************/
-class ConfigurationCoxmunkPlusLambertianFixture: public ConfigurationFixture {
-public:
-  ConfigurationCoxmunkPlusLambertianFixture()
-    : ConfigurationFixture("config_coxmunk+lamb.lua") {}
-  virtual ~ConfigurationCoxmunkPlusLambertianFixture() {}
-};
-
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_brdf_veg.lua
-*******************************************************************/
-class ConfigurationBrdfVegFixture: public ConfigurationFixture {
-public:
-  ConfigurationBrdfVegFixture()
-    : ConfigurationFixture("config_brdf_veg.lua") {}
-  virtual ~ConfigurationBrdfVegFixture() {}
-};
-
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_brdf_soil.lua
-*******************************************************************/
-class ConfigurationBrdfSoilFixture: public ConfigurationFixture {
-public:
-  ConfigurationBrdfSoilFixture()
-    : ConfigurationFixture("config_brdf_soil.lua") {}
-  virtual ~ConfigurationBrdfSoilFixture() {}
-};
-
-/****************************************************************//**
-  There are a number of tests that need to use a 
-  standard set of objects, similar to what we generate when running
-  l2_fp. This is fairly expensive to create, so 
-  this fixture creates one copy for all the tests and add handling for
-  sharing it. This version reads config_two_broadener.lua
-*******************************************************************/
-class ConfigurationTwoBroadener: public ConfigurationFixture {
-public:
-  ConfigurationTwoBroadener()
-    : ConfigurationFixture("config_two_broadener.lua") {}
-  virtual ~ConfigurationTwoBroadener() {}
-};
 }
 #endif

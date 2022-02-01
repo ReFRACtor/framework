@@ -182,3 +182,20 @@ class PCARt(Creator):
                 self.relative_azimuth().convert("deg").value, 
                 self.num_streams(), self.num_mom(), 
                 self.use_solar_sources(), self.use_thermal_emission())
+
+class LRadRt(LidortRt):
+
+    spec_win = param.InstanceOf(rf.SpectralWindow)
+
+    def create(self, **kwargs):
+        rt_lidort = super().create(**kwargs)
+
+        spectral_bound = self.spec_win().spectral_bound
+
+        rt_lrad = rf.LRadRt(rt_lidort, spectral_bound, 
+            self.solar_zenith().convert("deg").value, 
+            self.observation_zenith().convert("deg").value, 
+            self.relative_azimuth().convert("deg").value, 
+            self.pure_nadir(), True, False)
+
+        return rt_lrad

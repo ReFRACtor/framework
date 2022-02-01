@@ -1,11 +1,11 @@
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "level_1b_scale_radiance.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(level_1b_scale_radiance, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(level_1b_scale_radiance, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {

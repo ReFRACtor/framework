@@ -1,7 +1,9 @@
 #ifndef SOLVER_FINISHED_FIXTURE_H
 #define SOLVER_FINISHED_FIXTURE_H
+
 #include "global_fixture.h"
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
+#include "error_analysis.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -17,10 +19,11 @@ namespace FullPhysics {
   generated using l2_fp with the "-t" option (see l2_fp -h for
   details). 
 *******************************************************************/
-class SolverFinishedFixture : public ConfigurationFixture {
+class SolverFinishedFixture : public LambertianConfigurationFixture {
 public:
   SolverFinishedFixture();
   virtual ~SolverFinishedFixture() {}
+  boost::shared_ptr<ErrorAnalysis> error_analysis;
   boost::shared_ptr<ConnorSolver> solver;
   blitz::Array<double, 1> initial_sv;
   blitz::Array<double, 1> apriori_sv;
