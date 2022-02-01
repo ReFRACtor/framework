@@ -1,24 +1,12 @@
-from test_support import *
 import os
 
-# A callback that takes no arguments
-class MyCallback0(rf.LuaCallback):
-    def __init__(self, ls):
-        rf.LuaCallback.__init__(self, ls)
-        self.ls = ls
-        
-    def call(self, obj1,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9,obj10):
-        return rf.LuabindObject(self.ls, 1)
-        
-# A callback that takes one arguments
-class MyCallback1(rf.LuaCallback):
-    def __init__(self, ls):
-        rf.LuaCallback.__init__(self, ls)
-        self.ls = ls
-                
-    def call(self, obj1,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9,obj10):
-        obj1.v3 = "hi there"
-        return rf.LuabindObject(self.ls, 2)
+from test_support import *
+from refractor import framework as rf
+
+@pytest.fixture(scope="function")
+def lua_state():
+    '''Supply a lua_state'''
+    return rf.LuaState(unit_test_data)
 
 # HeritageFile doesn't exist any longer, so skip test    
 @skip    
@@ -53,7 +41,28 @@ def test_config(lua_state):
     lua_state.do_file(unit_test_data + "/lua/config.lua")
     assert lua_state.globals.config.atmosphere.pressure.surface_pressure.value.value == 96716.6249
 
+@skipif(not hasattr(rf, "LuaState"), reason="Lua support not compiled in")
 def test_callback_object(lua_state):
+
+    # A callback that takes no arguments
+    class MyCallback0(rf.LuaCallback):
+        def __init__(self, ls):
+            rf.LuaCallback.__init__(self, ls)
+            self.ls = ls
+            
+        def call(self, obj1,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9,obj10):
+            return rf.LuabindObject(self.ls, 1)
+            
+    # A callback that takes one arguments
+    class MyCallback1(rf.LuaCallback):
+        def __init__(self, ls):
+            rf.LuaCallback.__init__(self, ls)
+            self.ls = ls
+                    
+        def call(self, obj1,obj2,obj3,obj4,obj5,obj6,obj7,obj8,obj9,obj10):
+            obj1.v3 = "hi there"
+            return rf.LuabindObject(self.ls, 2)
+
     '''Test a callback function object. Note you don't normally use this 
     directly, but rather use the callback tested in the next function'''
     lua_state.run("test_var = {}\n")
@@ -88,6 +97,7 @@ def f3(v1, v2, v3):
 def f3_return(v1, v2, v3):
     return v1 + v2 + v3
 
+@skipif(not hasattr(rf, "LuaState"), reason="Lua support not compiled in")
 def test_callback(lua_state):
     '''Test passing any callable object to Lua, to make sure the callbacks 
     work'''
@@ -111,6 +121,7 @@ def test_callback(lua_state):
     lua_state.run("val = f3_return(3, 4, 5)")
     assert g.val == 3 + 4 + 5
 
+@skipif(not hasattr(rf, "LuaState"), reason="Lua support not compiled in")
 def test_luafunc(lua_state):
     '''Test calling a Lua function.'''
     lua_state.run('''
