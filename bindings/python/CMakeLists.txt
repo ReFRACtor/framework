@@ -157,7 +157,6 @@ install(FILES "${CMAKE_SOURCE_DIR}/swig_rules/all.py" DESTINATION ${PYTHON_SWIG_
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_wrap.so lib_swig_wrap.so
                               WORKING_DIRECTORY ${PYTHON_SWIG_DIR})")
 
-message("execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_CURRENT_BINARY_DIR})")
 # Install swig python
 install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_CURRENT_BINARY_DIR})")
 
