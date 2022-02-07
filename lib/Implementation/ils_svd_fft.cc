@@ -13,10 +13,10 @@ IlsSvdFft::IlsSvdFft(const blitz::Array<double, 2>& Left_matrix_truncated,
                      const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
                      const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
                      const blitz::Array<int, 1>& Center_freq_indices,
-                     const boost::shared_ptr<Dispersion>& Disp, 
-                     const DoubleWithUnit& Ils_half_width,
+                     const boost::shared_ptr<SampleGrid>& Sample_grid, 
+                     const DoubleWithUnit& High_res_extension,
                      const std::string& Band_name, const std::string& Hdf_band_name) 
-:   disp(Disp), ils_half_width_(Ils_half_width),
+:   sample_grid(Sample_grid), high_res_extension_(High_res_extension),
     band_name_(Band_name), hdf_band_name_(Hdf_band_name)
 {
     // Some sanity checking on input array sizes
@@ -179,8 +179,11 @@ ArrayAd<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_reso
 
 void IlsSvdFft::print(std::ostream& os) const
 {
+    os << "IlsSvdFft\n";
 }
 
 boost::shared_ptr<Ils> IlsSvdFft::clone() const
 {
+    return boost::shared_ptr<Ils>(new IlsSvdFft(left_matrix_truncated, real(right_matrix_fourier_transforms), imag(right_matrix_fourier_transforms), 
+                                                center_freq_indices, sample_grid, high_res_extension_, band_name_, hdf_band_name_)); 
 }

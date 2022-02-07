@@ -1,7 +1,7 @@
 #ifndef ILS_SVD_FFT_H
 #define ILS_SVD_FFT_H
 #include "ils.h"
-#include "dispersion.h"
+#include "sample_grid.h"
 #include <gsl/gsl_fft_complex.h>
 
 namespace FullPhysics {
@@ -19,8 +19,8 @@ public:
               const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
               const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
               const blitz::Array<int, 1>& Center_freq_indices,
-              const boost::shared_ptr<Dispersion>& Disp, 
-              const DoubleWithUnit& Ils_half_width,
+              const boost::shared_ptr<SampleGrid>& Sample_grid, 
+              const DoubleWithUnit& High_res_extension,
               const std::string& Band_name, const std::string& Hdf_band_name);
   
     virtual ~IlsSvdFft();
@@ -42,13 +42,13 @@ public:
     { return hdf_band_name_; }
   
     virtual SpectralDomain pixel_grid() const
-    { return disp->pixel_grid(); }
+    { return sample_grid->pixel_grid(); }
   
-    virtual DoubleWithUnit ils_half_width() const
-    {return ils_half_width_;}
+    virtual DoubleWithUnit high_res_extension() const
+    {return high_res_extension_;}
   
-    virtual void ils_half_width(const DoubleWithUnit& half_width) 
-    { ils_half_width_ = half_width; }
+    virtual void high_res_extension(const DoubleWithUnit& half_width) 
+    { high_res_extension_ = half_width; }
   
     virtual boost::shared_ptr<Ils> clone() const;
   
@@ -56,8 +56,8 @@ private:
     blitz::Array<double, 2> left_matrix_truncated;
     blitz::Array<std::complex<double>, 2> right_matrix_fourier_transforms;
     blitz::Array<int, 1> center_freq_indices;
-    boost::shared_ptr<Dispersion> disp;
-    DoubleWithUnit ils_half_width_;
+    boost::shared_ptr<SampleGrid> sample_grid;
+    DoubleWithUnit high_res_extension_;
     std::string band_name_, hdf_band_name_;
     
     int fft_size;
