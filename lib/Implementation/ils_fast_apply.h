@@ -10,20 +10,20 @@ namespace FullPhysics {
   with FFT calls to apply the convolution.
 *******************************************************************/
 
-class IlsSvdFft : public Ils {
+class IlsFastApply : public Ils {
 public:
     //-----------------------------------------------------------------------
     /// Constructor with SVD array computed offline supplied.
     //-----------------------------------------------------------------------
-    IlsSvdFft(const blitz::Array<double, 2>& Left_matrix_truncated,
-              const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
-              const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
-              const blitz::Array<int, 1>& Center_freq_indices,
-              const boost::shared_ptr<SampleGrid>& Sample_grid, 
-              const DoubleWithUnit& High_res_extension,
-              const std::string& Band_name, const std::string& Hdf_band_name);
+    IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
+                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
+                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
+                 const blitz::Array<int, 1>& Center_freq_indices,
+                 const boost::shared_ptr<SampleGrid>& Sample_grid,
+                 const DoubleWithUnit& High_res_extension,
+                 const std::string& Band_name, const std::string& Hdf_band_name);
   
-    virtual ~IlsSvdFft();
+    virtual ~IlsFastApply();
   
     virtual blitz::Array<double, 1> apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
                                               const blitz::Array<double, 1>& high_resolution_radiance,

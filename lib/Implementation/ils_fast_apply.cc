@@ -1,4 +1,4 @@
-#include "ils_svd_fft.h"
+#include "ils_fast_apply.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -9,13 +9,13 @@ using namespace blitz;
 /// M = Number of pixels, N = singular values, P = FFT size / spectal dim
 //-----------------------------------------------------------------------
 
-IlsSvdFft::IlsSvdFft(const blitz::Array<double, 2>& Left_matrix_truncated,
-                     const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
-                     const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
-                     const blitz::Array<int, 1>& Center_freq_indices,
-                     const boost::shared_ptr<SampleGrid>& Sample_grid, 
-                     const DoubleWithUnit& High_res_extension,
-                     const std::string& Band_name, const std::string& Hdf_band_name) 
+IlsFastApply::IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
+                           const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
+                           const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
+                           const blitz::Array<int, 1>& Center_freq_indices,
+                           const boost::shared_ptr<SampleGrid>& Sample_grid,
+                           const DoubleWithUnit& High_res_extension,
+                           const std::string& Band_name, const std::string& Hdf_band_name)
 :   sample_grid(Sample_grid), high_res_extension_(High_res_extension),
     band_name_(Band_name), hdf_band_name_(Hdf_band_name)
 {
@@ -61,7 +61,7 @@ IlsSvdFft::IlsSvdFft(const blitz::Array<double, 2>& Left_matrix_truncated,
     fft_workspace = gsl_fft_complex_workspace_alloc(fft_size);
 }
 
-IlsSvdFft::~IlsSvdFft()
+IlsFastApply::~IlsFastApply()
 {
     gsl_fft_complex_wavetable_free(fft_wavetable);
     gsl_fft_complex_workspace_free(fft_workspace);
@@ -71,9 +71,9 @@ IlsSvdFft::~IlsSvdFft()
 /// 
 //-----------------------------------------------------------------------
 
-blitz::Array<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
-                                             const blitz::Array<double, 1>& high_resolution_radiance,
-                                             const std::vector<int>& pixel_list) const
+blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
+                                                const blitz::Array<double, 1>& high_resolution_radiance,
+                                                const std::vector<int>& pixel_list) const
 {
     // Output array
     Array<double, 1> conv_rad(pixel_list.size());
@@ -93,7 +93,7 @@ blitz::Array<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high
         err << "Error calling gsl_fft_complex_forward: " << gsl_strerror(res_fwd);
         throw err;
     }
- 
+
     // Apply SVD factors to high resolution specta
     // num_s = number of singular values
     int num_s = right_matrix_fourier_transforms.cols();
@@ -108,7 +108,7 @@ blitz::Array<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high
             err << "Error calling gsl_fft_complex_inverse: " << gsl_strerror(res_inv);
             throw err;
         }
- 
+
         for(int list_idx = 0; list_idx < pixel_list.size(); list_idx++) {
             int pix_idx = pixel_list[list_idx];
             int hr_idx = center_freq_indices(pix_idx);
@@ -123,9 +123,9 @@ blitz::Array<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high
 /// 
 //-----------------------------------------------------------------------
                       
-ArrayAd<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
-                                        const ArrayAd<double, 1>& high_resolution_radiance,
-                                        const std::vector<int>& pixel_list) const
+ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
+                                           const ArrayAd<double, 1>& high_resolution_radiance,
+                                           const std::vector<int>& pixel_list) const
 {
     // Output array
     ArrayAd<double, 1> conv_rad(pixel_list.size(), high_resolution_radiance.number_variable());
@@ -151,6 +151,8 @@ ArrayAd<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_reso
         err << "Error calling gsl_fft_complex_forward: " << gsl_strerror(res_fwd);
         throw err;
     }
+
+    // TODO add jacobian FFT
  
     // Apply SVD factors to high resolution specta
     // num_s = number of singular values
@@ -158,6 +160,8 @@ ArrayAd<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_reso
     ArrayAd<complex<double>, 1> inv_fft(fft_size, spectrum_fft.number_variable());
     for(int s_idx = 0; s_idx < num_s; s_idx++) {
         inv_fft.value() = right_matrix_fourier_transforms(Range::all(), s_idx) * spectrum_fft.value();
+
+        // TODO add jacobian FFT
 
         // Do inverse FFT to get convolved radiance
         int res_inv = gsl_fft_complex_inverse(reinterpret_cast<double *>(inv_fft.value().dataFirst()), 1, fft_size, fft_wavetable, fft_workspace);
@@ -177,13 +181,13 @@ ArrayAd<double, 1> IlsSvdFft::apply_ils(const blitz::Array<double, 1>& high_reso
     return conv_rad;
 }
 
-void IlsSvdFft::print(std::ostream& os) const
+void IlsFastApply::print(std::ostream& os) const
 {
-    os << "IlsSvdFft\n";
+    os << "IlsFastApply\n";
 }
 
-boost::shared_ptr<Ils> IlsSvdFft::clone() const
+boost::shared_ptr<Ils> IlsFastApply::clone() const
 {
-    return boost::shared_ptr<Ils>(new IlsSvdFft(left_matrix_truncated, real(right_matrix_fourier_transforms), imag(right_matrix_fourier_transforms), 
-                                                center_freq_indices, sample_grid, high_res_extension_, band_name_, hdf_band_name_)); 
+    return boost::shared_ptr<Ils>(new IlsFastApply(left_matrix_truncated, real(right_matrix_fourier_transforms), imag(right_matrix_fourier_transforms), 
+                                                   center_freq_indices, sample_grid, high_res_extension_, band_name_, hdf_band_name_)); 
 }

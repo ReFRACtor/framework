@@ -1,4 +1,4 @@
-#include "ils_svd_fft.h"
+#include "ils_fast_apply.h"
 #include "hdf_file.h"
 #include "dispersion_polynomial.h"
 #include "unit_test_support.h"
@@ -6,7 +6,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(ils_svd_fft, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_fast_apply, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_CASE(basic)
     boost::shared_ptr<DispersionPolynomial>
       dispersion(new DispersionPolynomial(coeff, flag, units::micron, "A-Band", num_pixels, true));
   
-    HdfFile inp_vals(test_data_dir() + "expected/ils_svd_fft/fft_svd_ils_values.h5");
+    HdfFile inp_vals(test_data_dir() + "expected/ils_fast_apply/fft_svd_ils_values.h5");
   
     auto left_matrix_truncated = inp_vals.read_field<double, 2>("left_matrix_truncated");
     auto right_matrix_fourier_transforms_real = inp_vals.read_field<double, 2>("right_matrix_fourier_transforms_real");
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE(basic)
   
     auto ils_half_width = DoubleWithUnit(4.09e-04, "um");
   
-    auto ils = IlsSvdFft(left_matrix_truncated,
+    auto ils = IlsFastApply(left_matrix_truncated,
                          right_matrix_fourier_transforms_real,
                          right_matrix_fourier_transforms_imag,
                          center_freq_indices, 
