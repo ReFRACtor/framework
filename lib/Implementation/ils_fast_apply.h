@@ -15,10 +15,10 @@ public:
     //-----------------------------------------------------------------------
     /// Constructor with SVD array computed offline supplied.
     //-----------------------------------------------------------------------
-    IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
-                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
-                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
-                 const blitz::Array<int, 1>& Center_freq_indices,
+    IlsFastApply(const blitz::Array<double, 2>& Scaled_uh_isrf,
+                 const blitz::Array<double, 2>& Svh_isrf_fft_real,
+                 const blitz::Array<double, 2>& Svh_isrf_fft_imag,
+                 const blitz::Array<int, 1>& Extract_indices,
                  const boost::shared_ptr<SampleGrid>& Sample_grid,
                  const DoubleWithUnit& High_res_extension,
                  const std::string& Band_name, const std::string& Hdf_band_name);
@@ -53,9 +53,9 @@ public:
     virtual boost::shared_ptr<Ils> clone() const;
   
 private:
-    blitz::Array<double, 2> left_matrix_truncated;
-    blitz::Array<std::complex<double>, 2> right_matrix_fourier_transforms;
-    blitz::Array<int, 1> center_freq_indices;
+    blitz::Array<double, 2> scaled_uh_isrf;
+    blitz::Array<std::complex<double>, 2> svh_isrf_fft;
+    blitz::Array<int, 1> extract_indices;
     boost::shared_ptr<SampleGrid> sample_grid;
     DoubleWithUnit high_res_extension_;
     std::string band_name_, hdf_band_name_;

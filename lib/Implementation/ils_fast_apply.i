@@ -16,10 +16,10 @@ namespace FullPhysics {
 
 class IlsFastApply : public Ils {
 public:
-    IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
-                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
-                 const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
-                 const blitz::Array<int, 1>& Center_freq_indices,
+    IlsFastApply(const blitz::Array<double, 2>& Scaled_uh_isrf,
+                 const blitz::Array<double, 2>& Svh_isrf_fft_real,
+                 const blitz::Array<double, 2>& Svh_isrf_fft_imag,
+                 const blitz::Array<int, 1>& Extract_indices,
                  const boost::shared_ptr<SampleGrid>& Sample_grid,
                  const DoubleWithUnit& High_res_extension,
                  const std::string& Band_name, const std::string& Hdf_band_name);

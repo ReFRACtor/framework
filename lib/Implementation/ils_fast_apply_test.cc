@@ -29,17 +29,17 @@ BOOST_AUTO_TEST_CASE(basic)
   
     HdfFile inp_vals(test_data_dir() + "expected/ils_fast_apply/fft_svd_ils_values.h5");
   
-    auto left_matrix_truncated = inp_vals.read_field<double, 2>("left_matrix_truncated");
-    auto right_matrix_fourier_transforms_real = inp_vals.read_field<double, 2>("right_matrix_fourier_transforms_real");
-    auto right_matrix_fourier_transforms_imag = inp_vals.read_field<double, 2>("right_matrix_fourier_transforms_imag");
-    auto center_freq_indices = inp_vals.read_field<int, 1>("center_freq_indices");
+    auto scaled_uh_isrf = inp_vals.read_field<double, 2>("scaled_uh_isrf");
+    auto svh_isrf_fft_real = inp_vals.read_field<double, 2>("svh_isrf_fft_real");
+    auto svh_isrf_fft_imag = inp_vals.read_field<double, 2>("svh_isrf_fft_imag");
+    auto extract_indices = inp_vals.read_field<int, 1>("center_freq_indices");
   
     auto ils_half_width = DoubleWithUnit(4.09e-04, "um");
   
-    auto ils = IlsFastApply(left_matrix_truncated,
-                         right_matrix_fourier_transforms_real,
-                         right_matrix_fourier_transforms_imag,
-                         center_freq_indices, 
+    auto ils = IlsFastApply(scaled_uh_isrf,
+                         svh_isrf_fft_real,
+                         svh_isrf_fft_imag,
+                         extract_indices, 
                          dispersion, ils_half_width, "A-Band", "abo2");
 
     auto high_res_grid = inp_vals.read_field<double, 1>("high_res_grid");

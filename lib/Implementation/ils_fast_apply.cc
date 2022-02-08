@@ -4,15 +4,15 @@ using namespace FullPhysics;
 using namespace blitz;
 
 //-----------------------------------------------------------------------
-/// left_matrix_truncated: M x N
-/// right_matrix_fourier_transforms P x N
+/// scaled_uh_isrf: M x N
+/// svh_isrf_fft P x N
 /// M = Number of pixels, N = singular values, P = FFT size / spectal dim
 //-----------------------------------------------------------------------
 
-IlsFastApply::IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
-                           const blitz::Array<double, 2>& Right_matrix_fourier_transforms_real,
-                           const blitz::Array<double, 2>& Right_matrix_fourier_transforms_imag,
-                           const blitz::Array<int, 1>& Center_freq_indices,
+IlsFastApply::IlsFastApply(const blitz::Array<double, 2>& Scaled_uh_isrf,
+                           const blitz::Array<double, 2>& Svh_isrf_fft_real,
+                           const blitz::Array<double, 2>& Svh_isrf_fft_imag,
+                           const blitz::Array<int, 1>& Extract_indices,
                            const boost::shared_ptr<SampleGrid>& Sample_grid,
                            const DoubleWithUnit& High_res_extension,
                            const std::string& Band_name, const std::string& Hdf_band_name)
@@ -20,43 +20,43 @@ IlsFastApply::IlsFastApply(const blitz::Array<double, 2>& Left_matrix_truncated,
     band_name_(Band_name), hdf_band_name_(Hdf_band_name)
 {
     // Some sanity checking on input array sizes
-    if (Left_matrix_truncated.rows() != Center_freq_indices.rows()) {
+    if (Scaled_uh_isrf.rows() != Extract_indices.rows()) {
         Exception err;
-        err << "left_matrix_truncated rows: " << Left_matrix_truncated.rows() 
-            << " must match center_freq_indices rows: " << Center_freq_indices.rows();
+        err << "scaled_uh_isrf rows: " << Scaled_uh_isrf.rows() 
+            << " must match extract_indices rows: " << Extract_indices.rows();
         throw err;
     }
 
-    if (Left_matrix_truncated.cols() != Right_matrix_fourier_transforms_real.cols()) {
+    if (Scaled_uh_isrf.cols() != Svh_isrf_fft_real.cols()) {
         Exception err;
-        err << "left_matrix_truncated cols: " << Left_matrix_truncated.cols() 
-            << " must match right_matrix_fourier_transforms cols: " << Right_matrix_fourier_transforms_real.cols();
+        err << "scaled_uh_isrf cols: " << Scaled_uh_isrf.cols() 
+            << " must match svh_isrf_fft cols: " << Svh_isrf_fft_real.cols();
         throw err;
     }
 
-    if (Right_matrix_fourier_transforms_real.rows() != Right_matrix_fourier_transforms_imag.rows()) {
+    if (Svh_isrf_fft_real.rows() != Svh_isrf_fft_imag.rows()) {
         Exception err;
-        err << "right_matrix_fourier_transforms_real rows: " << Right_matrix_fourier_transforms_real.rows()
-            << " must match right_matrix_fourier_transforms_imag rows: " << Right_matrix_fourier_transforms_imag.rows();
+        err << "svh_isrf_fft_real rows: " << Svh_isrf_fft_real.rows()
+            << " must match svh_isrf_fft_imag rows: " << Svh_isrf_fft_imag.rows();
         throw err;
     }
 
-    if (Right_matrix_fourier_transforms_real.cols() != Right_matrix_fourier_transforms_imag.cols()) {
+    if (Svh_isrf_fft_real.cols() != Svh_isrf_fft_imag.cols()) {
         Exception err;
-        err << "right_matrix_fourier_transforms_real cols: " << Right_matrix_fourier_transforms_real.cols()
-            << " must match right_matrix_fourier_transforms_imag cols: " << Right_matrix_fourier_transforms_imag.cols();
+        err << "svh_isrf_fft_real cols: " << Svh_isrf_fft_real.cols()
+            << " must match svh_isrf_fft_imag cols: " << Svh_isrf_fft_imag.cols();
         throw err;
     }
 
-    left_matrix_truncated.reference(Left_matrix_truncated);
+    scaled_uh_isrf.reference(Scaled_uh_isrf);
 
-    right_matrix_fourier_transforms.resize(Right_matrix_fourier_transforms_real.shape());
-    real(right_matrix_fourier_transforms) = Right_matrix_fourier_transforms_real;
-    imag(right_matrix_fourier_transforms) = Right_matrix_fourier_transforms_imag;
+    svh_isrf_fft.resize(Svh_isrf_fft_real.shape());
+    real(svh_isrf_fft) = Svh_isrf_fft_real;
+    imag(svh_isrf_fft) = Svh_isrf_fft_imag;
 
-    center_freq_indices.reference(Center_freq_indices);
+    extract_indices.reference(Extract_indices);
 
-    fft_size = right_matrix_fourier_transforms.rows();
+    fft_size = svh_isrf_fft.rows();
     fft_wavetable = gsl_fft_complex_wavetable_alloc(fft_size);
     fft_workspace = gsl_fft_complex_workspace_alloc(fft_size);
 }
@@ -96,10 +96,10 @@ blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& h
 
     // Apply SVD factors to high resolution specta
     // num_s = number of singular values
-    int num_s = right_matrix_fourier_transforms.cols();
+    int num_s = svh_isrf_fft.cols();
     Array<complex<double>, 1> inv_fft(fft_size);
     for(int s_idx = 0; s_idx < num_s; s_idx++) {
-        inv_fft = right_matrix_fourier_transforms(Range::all(), s_idx) * spectrum_fft;
+        inv_fft = svh_isrf_fft(Range::all(), s_idx) * spectrum_fft;
 
         // Do inverse FFT to get convolved radiance
         int res_inv = gsl_fft_complex_inverse(reinterpret_cast<double *>(inv_fft.dataFirst()), 1, fft_size, fft_wavetable, fft_workspace);
@@ -111,8 +111,8 @@ blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& h
 
         for(int list_idx = 0; list_idx < pixel_list.size(); list_idx++) {
             int pix_idx = pixel_list[list_idx];
-            int hr_idx = center_freq_indices(pix_idx);
-            conv_rad(list_idx) += left_matrix_truncated(pix_idx, s_idx) * inv_fft[0](hr_idx);
+            int hr_idx = extract_indices(pix_idx);
+            conv_rad(list_idx) += scaled_uh_isrf(pix_idx, s_idx) * inv_fft[0](hr_idx);
         }
     }
 
@@ -156,10 +156,10 @@ ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_r
  
     // Apply SVD factors to high resolution specta
     // num_s = number of singular values
-    int num_s = right_matrix_fourier_transforms.cols();
+    int num_s = svh_isrf_fft.cols();
     ArrayAd<complex<double>, 1> inv_fft(fft_size, spectrum_fft.number_variable());
     for(int s_idx = 0; s_idx < num_s; s_idx++) {
-        inv_fft.value() = right_matrix_fourier_transforms(Range::all(), s_idx) * spectrum_fft.value();
+        inv_fft.value() = svh_isrf_fft(Range::all(), s_idx) * spectrum_fft.value();
 
         // TODO add jacobian FFT
 
@@ -173,8 +173,8 @@ ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_r
  
         for(int list_idx = 0; list_idx < pixel_list.size(); list_idx++) {
             int pix_idx = pixel_list[list_idx];
-            int hr_idx = center_freq_indices(pix_idx);
-            conv_rad.value()(list_idx) += left_matrix_truncated(pix_idx, s_idx) * real(inv_fft.value())(hr_idx);
+            int hr_idx = extract_indices(pix_idx);
+            conv_rad.value()(list_idx) += scaled_uh_isrf(pix_idx, s_idx) * real(inv_fft.value())(hr_idx);
         }
     }
 
@@ -188,6 +188,6 @@ void IlsFastApply::print(std::ostream& os) const
 
 boost::shared_ptr<Ils> IlsFastApply::clone() const
 {
-    return boost::shared_ptr<Ils>(new IlsFastApply(left_matrix_truncated, real(right_matrix_fourier_transforms), imag(right_matrix_fourier_transforms), 
-                                                   center_freq_indices, sample_grid, high_res_extension_, band_name_, hdf_band_name_)); 
+    return boost::shared_ptr<Ils>(new IlsFastApply(scaled_uh_isrf, real(svh_isrf_fft), imag(svh_isrf_fft), 
+                                                   extract_indices, sample_grid, high_res_extension_, band_name_, hdf_band_name_)); 
 }
