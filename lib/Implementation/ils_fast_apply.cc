@@ -127,55 +127,12 @@ ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_r
                                            const ArrayAd<double, 1>& high_resolution_radiance,
                                            const std::vector<int>& pixel_list) const
 {
-    // Output array
     ArrayAd<double, 1> conv_rad(pixel_list.size(), high_resolution_radiance.number_variable());
-    conv_rad = 0.0;
 
-    // Allocate array for use in FFTs
-    ArrayAd<complex<double>, 1> spectrum_fft(fft_size, high_resolution_radiance.number_variable());
+    conv_rad.value() = apply_ils(high_resolution_wave_number, high_resolution_radiance.value(), pixel_list);
 
-    // Compute the FFT of the high resolution radiance data
-    real(spectrum_fft.value())(Range(0, high_resolution_radiance.rows()-1)) = high_resolution_radiance.value();
-    real(spectrum_fft.value())(Range(high_resolution_radiance.rows(), fft_size-1)) = 0.0;
-    imag(spectrum_fft.value()) = 0.0;
-
-    if (!high_resolution_radiance.is_constant()) {
-        real(spectrum_fft.jacobian())(Range(0, high_resolution_radiance.rows()-1)) = high_resolution_radiance.jacobian();
-        real(spectrum_fft.jacobian())(Range(high_resolution_radiance.rows(), fft_size-1)) = 0.0;
-        imag(spectrum_fft.jacobian()) = 0.0;
-    }
-
-    int res_fwd = gsl_fft_complex_forward(reinterpret_cast<double *>(spectrum_fft.value().dataFirst()), 1, fft_size, fft_wavetable, fft_workspace);
-    if (res_fwd != GSL_SUCCESS) {
-        Exception err;
-        err << "Error calling gsl_fft_complex_forward: " << gsl_strerror(res_fwd);
-        throw err;
-    }
-
-    // TODO add jacobian FFT
- 
-    // Apply SVD factors to high resolution specta
-    // num_s = number of singular values
-    int num_s = svh_isrf_fft.cols();
-    ArrayAd<complex<double>, 1> inv_fft(fft_size, spectrum_fft.number_variable());
-    for(int s_idx = 0; s_idx < num_s; s_idx++) {
-        inv_fft.value() = svh_isrf_fft(Range::all(), s_idx) * spectrum_fft.value();
-
-        // TODO add jacobian FFT
-
-        // Do inverse FFT to get convolved radiance
-        int res_inv = gsl_fft_complex_inverse(reinterpret_cast<double *>(inv_fft.value().dataFirst()), 1, fft_size, fft_wavetable, fft_workspace);
-        if (res_inv != GSL_SUCCESS) {
-            Exception err;
-            err << "Error calling gsl_fft_complex_inverse: " << gsl_strerror(res_inv);
-            throw err;
-        }
- 
-        for(int list_idx = 0; list_idx < pixel_list.size(); list_idx++) {
-            int pix_idx = pixel_list[list_idx];
-            int hr_idx = extract_indices(pix_idx);
-            conv_rad.value()(list_idx) += scaled_uh_isrf(pix_idx, s_idx) * real(inv_fft.value())(hr_idx);
-        }
+    for(int jac_idx = 0; jac_idx < high_resolution_radiance.number_variable(); jac_idx++) {
+        conv_rad.jacobian()(Range::all(), jac_idx) = apply_ils(high_resolution_wave_number, high_resolution_radiance.jacobian()(Range::all(), jac_idx), pixel_list);
     }
 
     return conv_rad;
