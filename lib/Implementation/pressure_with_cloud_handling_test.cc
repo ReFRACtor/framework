@@ -23,12 +23,13 @@ BOOST_AUTO_TEST_CASE(basic)
   Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
+  double cloud_pressure_level = 7;
   auto psigma = boost::make_shared<PressureSigma>(a, b, psurf);
   auto psigma2 = boost::make_shared<PressureSigma>(a.reverse(blitz::firstDim),
 			   b.reverse(blitz::firstDim),
 			   psurf, Pressure::PREFER_DECREASING_PRESSURE);
-  PressureWithCloudHandling p(psigma, 7);
-  PressureWithCloudHandling p2(psigma2, 7);
+  PressureWithCloudHandling p(psigma, cloud_pressure_level);
+  PressureWithCloudHandling p2(psigma2, cloud_pressure_level);
   BOOST_CHECK_EQUAL(p.type_preference(), Pressure::PREFER_INCREASING_PRESSURE);
   BOOST_CHECK_EQUAL(p2.type_preference(), Pressure::PREFER_DECREASING_PRESSURE);
   PrintNotify obs;
@@ -54,6 +55,11 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_MATRIX_CLOSE(p2.pressure_grid().value.value(), press_grid_expect3);
   BOOST_CHECK_MATRIX_CLOSE(p2.pressure_grid(Pressure::NATIVE_ORDER).value.value(), press_grid_expect4);
   psigma->set_surface_pressure(15);
+  cloud_pressure_level = 0.0001;
+  PressureWithCloudHandling p3(psigma, cloud_pressure_level);
+  p3.do_cloud(true);
+  BOOST_CHECK_THROW(p3.pressure_grid(), Exception);
+  BOOST_CHECK_THROW(p3.pressure_grid(Pressure::DECREASING_PRESSURE), Exception);
 }
 
 BOOST_AUTO_TEST_CASE(serialization)
@@ -63,8 +69,9 @@ BOOST_AUTO_TEST_CASE(serialization)
   Array<double, 1> a(3), b(3);
   a = 0; b = 0.3, 0.6, 1.0;
   double psurf = 10;
+  double cloud_pressure_level = 7;
   auto p = boost::make_shared<PressureWithCloudHandling>
-    (boost::make_shared<PressureSigma>(a,b, psurf), 7);
+    (boost::make_shared<PressureSigma>(a,b, psurf), cloud_pressure_level);
   std::string d = serialize_write_string(p);
   if(false)
     std::cerr << d;
