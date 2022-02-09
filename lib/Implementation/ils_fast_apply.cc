@@ -1,12 +1,13 @@
 #include "ils_fast_apply.h"
+#include "ostream_pad.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
 //-----------------------------------------------------------------------
-/// scaled_uh_isrf: M x N
-/// svh_isrf_fft P x N
-/// M = Number of pixels, N = singular values, P = FFT size / spectal dim
+// scaled_uh_isrf: M x N
+// svh_isrf_fft P x N
+// M = Number of pixels, N = singular values, P = FFT size / spectal dim
 //-----------------------------------------------------------------------
 
 IlsFastApply::IlsFastApply(const blitz::Array<double, 2>& Scaled_uh_isrf,
@@ -68,7 +69,7 @@ IlsFastApply::~IlsFastApply()
 }
 
 //-----------------------------------------------------------------------
-/// 
+// Apply the ILS using SVD components
 //-----------------------------------------------------------------------
 
 blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
@@ -120,7 +121,7 @@ blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& h
 }
 
 //-----------------------------------------------------------------------
-/// 
+// Apply the ILS to the radiance and jacobians
 //-----------------------------------------------------------------------
                       
 ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
@@ -141,6 +142,11 @@ ArrayAd<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_r
 void IlsFastApply::print(std::ostream& os) const
 {
     os << "IlsFastApply\n";
+    OstreamPad opad(os, "  ");
+    opad << "Band Name: " << band_name() << "\n"
+         << "Num Singlar Values: " << svh_isrf_fft.cols() << "\n"
+         << "Sample Grid: " << *sample_grid << "\n";
+    opad.strict_sync();
 }
 
 boost::shared_ptr<Ils> IlsFastApply::clone() const
