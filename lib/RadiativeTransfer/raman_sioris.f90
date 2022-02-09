@@ -498,7 +498,7 @@ SUBROUTINE raman(nulo, nuhi, nline, nz, sca, albedo, T, rhos, R, tran, ring)
   ! ========================
   INTEGER,        INTENT(IN) :: nulo, nuhi, nline, nz
   REAL (KIND=dp), INTENT(IN) :: sca, albedo
-  REAL (KIND=dp), DIMENSION(nulo:nuhi, nz), INTENT(IN) :: R, tran
+  REAL (KIND=dp), DIMENSION(nulo:, :), INTENT(IN) :: R, tran
   REAL (KIND=dp), DIMENSION(nz),            INTENT(IN) :: T, rhos
   REAL (KIND=dp), DIMENSION(nline),        INTENT(OUT) :: ring
 

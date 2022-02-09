@@ -18,15 +18,15 @@ contains
 
       integer, intent(in) :: ncoef,npar,nstokes
       logical, intent(in) :: no_rotation
-      double precision, intent(in) :: dcoefs(0:ncoef,6)
-      double precision, intent(in), optional :: L_dcoefs(0:ncoef,6,npar)
+      double precision, intent(in) :: dcoefs(0:,:)
+      double precision, intent(in), optional :: L_dcoefs(0:,:,:)
       double precision, intent(in) :: gsfmin(0:ncoef,2)
       double precision, intent(in), optional :: c2i2m,s2i2m
 
 !  outputs
 
-      double precision, intent(out) :: Zmin(nstokes)
-      double precision, intent(out), optional :: L_Zmin(nstokes,npar)
+      double precision, intent(out) :: Zmin(:)
+      double precision, intent(out), optional :: L_Zmin(:,:)
 
 !  local variables
 

@@ -439,7 +439,6 @@ void LRadDriver::calculate_second_order()
     int natm_jac = jac_atm_f.depth();
 
     Range ra(Range::all());
-    Range rpol(1, number_stokes() - 1);
 
     // We only supply nstream coefficients to l_rad_second, so that is
     // essentially the number of effective coefficients
@@ -473,27 +472,44 @@ void LRadDriver::calculate_second_order()
         l_coefs_f(Range(num_pf_copy, nmom-1), ra, ra, ra) = 0.0;
     }
 
-    l_rad_second_driver(&l_rad_struct, &nlayer, &natm_jac, &nstokes,
-                        &nmom, &nscatt,
-                        tau_f.dataFirst(), l_tau_f.dataFirst(),
-                        omega_f.dataFirst(), l_omega_f.dataFirst(),
-                        surface_param_f.dataFirst(), &nspars,
-                        coefs_f.dataFirst(), l_coefs_f.dataFirst(),
-                        neff_coefs.dataFirst(),
-                        &need_jacobians_i,
-                        r2.dataFirst(), l_r2.dataFirst(), ls_r2.dataFirst(),
-                        &icorr, l_icorr.dataFirst(), ls_icorr.dataFirst());
+    if(number_stokes() > 1) 
+      l_rad_second_driver(&l_rad_struct, &nlayer, &natm_jac, &nstokes,
+			  &nmom, &nscatt,
+			  tau_f.dataFirst(), l_tau_f.dataFirst(),
+			  omega_f.dataFirst(), l_omega_f.dataFirst(),
+			  surface_param_f.dataFirst(), &nspars,
+			  coefs_f.dataFirst(), l_coefs_f.dataFirst(),
+			  neff_coefs.dataFirst(),
+			  &need_jacobians_i,
+			  r2.dataFirst(), l_r2.dataFirst(), ls_r2.dataFirst(),
+			  &icorr, l_icorr.dataFirst(), ls_icorr.dataFirst());
+    else
+      l_rad_second_ionly_driver(&l_rad_struct, &nlayer, &natm_jac, 
+			  &nmom, &nscatt,
+			  tau_f.dataFirst(), l_tau_f.dataFirst(),
+			  omega_f.dataFirst(), l_omega_f.dataFirst(),
+			  surface_param_f.dataFirst(), &nspars,
+			  coefs_f.dataFirst(), l_coefs_f.dataFirst(),
+			  neff_coefs.dataFirst(),
+			  &need_jacobians_i,
+			  &icorr, l_icorr.dataFirst(), ls_icorr.dataFirst());
 
     // Second order calculation is split into parts, combine into how
     // they influence the stokes array and jacobians
     stokes_val_f(0) += icorr;
-    stokes_val_f(rpol) += r2(rpol);
 
     if (need_jacobians_i == 1) {
-        jac_surf_f(0, ra) += ls_icorr;
+      jac_surf_f(0, ra) += ls_icorr;
+      jac_atm_f(0, ra, ra) += l_icorr;
+    }
+    // Handle polarization part
+    if(number_stokes() > 1) {
+      Range rpol(1, number_stokes() - 1);
+      stokes_val_f(rpol) += r2(rpol);
+      if (need_jacobians_i == 1) {
         jac_surf_f(rpol, ra) += ls_r2(rpol, ra);
-        jac_atm_f(0, ra, ra) += l_icorr;
-        jac_atm_f(rpol, ra, ra) += l_r2(rpol, ra, ra);  
+        jac_atm_f(rpol, ra, ra) += l_r2(rpol, ra, ra);
+      }
     }
 }
 

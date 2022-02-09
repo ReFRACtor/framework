@@ -1258,7 +1258,7 @@ subroutine FindSunPaths_D (Do_ZeroSunBOA,nlayers,Radstart,Radii,&
 
 !  Output
 
-   real(ffp), Intent(InOut) :: Sunpaths(nlayers)
+   real(ffp), Intent(InOut) :: Sunpaths(:)
 
 !  Local
 
@@ -1326,7 +1326,7 @@ subroutine FindSunPaths_T (nlayers,Pie,Radstart,Radii,thstart,sthstart,N,sunpath
 !  Output
 
    INTEGER   , Intent(InOut)   :: NT
-   real(ffp), Intent(InOut)    :: Sunpaths(nlayers)
+   real(ffp), Intent(InOut)    :: Sunpaths(:)
 
 !  Local
 
