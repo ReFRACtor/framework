@@ -86,9 +86,9 @@ PressureWithCloudHandling::pressure_grid(Pressure::PressureGridType Gtype) const
     // decreasing pressure
     int i;
     for(i = full.rows() - 1; i >= 0; --i) {
-    double v = full(i).convert(Unit("Pa")).value.value();
-    if(v > cloud_pressure_level_)
-      break;
+      double v = full(i).convert(Unit("Pa")).value.value();
+      if(v > cloud_pressure_level_)
+        break;
     }
     // if cloud_pressure_level_ is negative or very low
     //  blitz::Range(i+1,blitz::toEnd) will be empty
