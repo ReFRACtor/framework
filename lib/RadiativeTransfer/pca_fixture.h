@@ -45,8 +45,62 @@ public:
 
             opt_props.push_back(dat_props);
         }
+
+        num_layers = opt_props[0]->number_layers();
+        num_data_points = opt_props.size();
+
+        grid_total_od.resize(num_layers, num_data_points);
+        grid_total_ssa.resize(num_layers, num_data_points);
+
+        for(int dat_idx = 0 ; dat_idx < num_data_points;  dat_idx++) {
+            grid_total_od(ra, dat_idx) = opt_props[dat_idx]->total_optical_depth().value();
+            grid_total_ssa(ra, dat_idx) = opt_props[dat_idx]->total_single_scattering_albedo().value();
+        }
+    }
+
+    std::vector<Array<double, 2> > gridded_data_generic(int num_points_ret = 0)
+    {
+        if (num_points_ret < 1) {
+            num_points_ret = num_data_points;
+        }
+
+        Range ra = Range::all();
+        Range r_points(0, num_points_ret-1);
+
+        // Pack data for our generic adaptation class
+        std::vector<Array<double, 2> > gridded_data_g;
+
+        gridded_data_g.push_back(grid_total_od(ra, r_points));
+        gridded_data_g.push_back(grid_total_ssa(ra, r_points));
+
+        return gridded_data_g;
+    }
+
+    Array<double, 3> gridded_data_fortran(int num_points_ret = 0)
+    {
+        if (num_points_ret < 1) {
+            num_points_ret = num_data_points;
+        }
+
+        // Pack data for the fortran adaptation class
+        // Get sizes from gridded_data_g to avoid rereading arrays from disk
+        Array<double, 3> gridded_data_f(2, num_layers, num_points_ret);
+
+        Range ra = Range::all();
+        Range r_points(0, num_points_ret-1);
+
+        gridded_data_f(0, ra, ra) = grid_total_od(ra, r_points);
+        gridded_data_f(1, ra, ra) = grid_total_ssa(ra, r_points);
+
+        return gridded_data_f;
     }
 
     std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > opt_props;
+
+    Array<double, 2> grid_total_od;
+    Array<double, 2> grid_total_ssa;
+
+    int num_layers;
+    int num_data_points;
 
 };
