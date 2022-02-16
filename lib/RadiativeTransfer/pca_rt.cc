@@ -195,7 +195,7 @@ const boost::shared_ptr<PCABinOpticalProperties> PCARt::compute_bin_optical_prop
     return bin_opt_props;
 }
 
-double PCARt::bin_effective_wavenumber(Array<double, 1> &win_wavenumbers, int bin_index) const
+double PCARt::bin_effective_wavenumber(const Array<double, 1> &win_wavenumbers, int bin_index) const
 {
     // Create bin averaged spectral point
     int num_bin_points = pca_bin->num_bin_points()(bin_index);
@@ -239,10 +239,10 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
         twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
         twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
 
-	if (do_3m_correction) { 
-	  first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
-	  first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
-	}
+        if (do_3m_correction) { 
+          first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
+          first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+        }
     }
 
     // Compute correction factors
@@ -264,6 +264,42 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
      }
 
     return bin_corrections;
+}
+
+// Compute stokes value for points within bin using PCA method
+void PCARt::compute_bin_pca_stokes(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, Array<double, 2>& stokes) const
+{
+    int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+
+    // We need an effective wavenumber for aerosol property computations
+    double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
+
+    // Solve PCA solution from optical properties for the bin
+    boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bin_wn_indexes);
+    
+    // Compute the binned optical properties
+    boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
+
+    // Compute per wavenumber correction factors from RT runs of binned optical properties
+    Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, spec_index);
+    
+    // Compute 2stream and first order for all points in the bin and use correction to get final values
+    for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+        int grid_idx = bin_wn_indexes(dom_idx);
+        int dom_wn = wavenumbers(grid_idx);
+
+        Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+        Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+
+        // The difference here is the 2M correction only applies to the 2stream values
+        if (do_3m_correction) {
+            stokes(grid_idx, Range::all()) = 
+                bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
+        } else {
+            stokes(grid_idx, Range::all()) = 
+                bin_corrections(dom_idx, Range::all()) * twostream_full(Range::all()) + first_order_full(Range::all());
+        }
+    }
 }
 
 blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
@@ -296,42 +332,64 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             continue;
         }
 
-        // We need an effective wavenumber for aerosol property computations
-        double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
+       compute_bin_pca_stokes(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
 
-        // Solve PCA solution from optical properties for the bin
-        boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bins[bin_idx]);
-        
-        // Compute the binned optical properties
-        boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
-
-        // Compute per wavenumber correction factors from RT runs of binned optical properties
-        Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, Spec_index);
-        
-        // Compute 2stream and first order for all points in the bin and use correction to get final values
-        for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
-            int grid_idx = bins[bin_idx](dom_idx);
-            int dom_wn = wavenumbers(grid_idx);
-
-            Array<double, 1> twostream_full(twostream_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
-            Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
-
-            // The difference here is the 2M correction only applies to the 2stream values
-            if (do_3m_correction) {
-                stokes_output(grid_idx, Range::all()) = 
-                    bin_corrections(dom_idx, Range::all()) * (twostream_full(Range::all()) + first_order_full(Range::all()));
-            } else {
-                stokes_output(grid_idx, Range::all()) = 
-                    bin_corrections(dom_idx, Range::all()) * twostream_full(Range::all()) + first_order_full(Range::all());
-            }
-
-            if (progress_bar) *progress_bar += 1;
-        }
+       if (progress_bar) *progress_bar += num_bin_points;
     }
 
     Logger::info() << atm->timer_info();
 
     return stokes_output;
+}
+
+void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const
+{
+    int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+
+    // We need an effective wavenumber for aerosol property computations
+    double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
+
+    // Solve PCA solution from optical properties for the bin
+    boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bin_wn_indexes);
+    
+    // Compute the binned optical properties
+    boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
+
+    // Compute per wavenumber correction factors from RT runs of binned optical properties
+    Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, spec_index);
+
+    // Compute 2stream and first order for all points in the bin and use correction to get final values
+    for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+        int grid_idx = bin_wn_indexes(dom_idx);
+        int dom_wn = wavenumbers(grid_idx);
+
+        ArrayAd<double, 1> twostream_full(twostream_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+        ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+
+        // The difference here is the 2M correction only applies to the 2stream values
+        if (do_3m_correction) {
+            stokes.value()(grid_idx, Range::all()) = 
+                bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
+        } else {
+            stokes.value()(grid_idx, Range::all()) = 
+                bin_corrections(dom_idx, Range::all()) * twostream_full.value()(Range::all()) + first_order_full.value()(Range::all());
+        }
+        
+        if (stokes.number_variable() == 0) {
+            stokes.resize_number_variable(twostream_full.number_variable());
+        }
+
+        // Corrections can be applied for each jacobian independently according to Vijay
+        for (int jac_idx = 0; jac_idx < twostream_full.number_variable(); jac_idx++) {
+            if (do_3m_correction) {
+                stokes.jacobian()(grid_idx, Range::all(), jac_idx) = 
+                    bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
+            } else {
+                stokes.jacobian()(grid_idx, Range::all(), jac_idx) = 
+                    bin_corrections(dom_idx, Range::all()) * twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
+            }
+        }
+    }
 }
 
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
@@ -364,52 +422,9 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
             continue;
         }
 
-        // We need an effective wavenumber for aerosol property computations
-        double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
-
-        // Solve PCA solution from optical properties for the bin
-        boost::shared_ptr<PCAEigenSolver> pca_solver = compute_bin_solution(bins[bin_idx]);
-        
-        // Compute the binned optical properties
-        boost::shared_ptr<PCABinOpticalProperties> bin_opt_props = compute_bin_optical_props(pca_solver, bin_wn);
-
-        // Compute per wavenumber correction factors from RT runs of binned optical properties
-        Array<double, 2> bin_corrections = compute_bin_correction_factors(pca_solver, bin_opt_props, bin_wn, Spec_index);
-        
-        // Compute 2stream and first order for all points in the bin and use correction to get final values
-        for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
-            int grid_idx = bins[bin_idx](dom_idx);
-            int dom_wn = wavenumbers(grid_idx);
-
-            ArrayAd<double, 1> twostream_full(twostream_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
-            ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, Spec_index, pca_opt[grid_idx]));
-
-            // The difference here is the 2M correction only applies to the 2stream values
-            if (do_3m_correction) {
-                stokes_output.value()(grid_idx, Range::all()) = 
-                    bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
-            } else {
-                stokes_output.value()(grid_idx, Range::all()) = 
-                    bin_corrections(dom_idx, Range::all()) * twostream_full.value()(Range::all()) + first_order_full.value()(Range::all());
-            }
-            
-            if (stokes_output.number_variable() == 0) {
-                stokes_output.resize_number_variable(twostream_full.number_variable());
-            }
-
-            // Corrections can be applied for each jacobian independently according to Vijay
-            for (int jac_idx = 0; jac_idx < twostream_full.number_variable(); jac_idx++) {
-                if (do_3m_correction) {
-                    stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
-                        bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
-                } else {
-                    stokes_output.jacobian()(grid_idx, Range::all(), jac_idx) = 
-                        bin_corrections(dom_idx, Range::all()) * twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
-                }
-            }
-
-            if (progress_bar) *progress_bar += 1;
-        }
+        compute_bin_pca_stokes_and_jac(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+ 
+        if (progress_bar) *progress_bar += num_bin_points;
     }
 
     Logger::info() << atm->timer_info();
