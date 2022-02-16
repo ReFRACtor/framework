@@ -187,7 +187,7 @@ subroutine FindSunPaths_D (Do_ZeroSunBOA,Maxlayers,Radstart,Radii,&
 
 !  Output
 
-   real(ffp), Intent(InOut) :: Sunpaths(maxlayers)
+   real(ffp), Intent(InOut) :: Sunpaths(:)
 
 !  Local
 
