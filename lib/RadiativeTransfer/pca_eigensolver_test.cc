@@ -15,8 +15,6 @@ BOOST_FIXTURE_TEST_SUITE(pca_eigensolver, PcaFixture)
 
 BOOST_AUTO_TEST_CASE(compare_with_fortran)
 {
-    Range ra = Range::all();
-
     int num_eofs = 4;
 
     std::vector<Array<double, 2> > gridded_data_g = gridded_data_generic();

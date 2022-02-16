@@ -10,8 +10,7 @@ using namespace blitz;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
-void PCARt::serialize(Archive & ar,
-		      const unsigned int UNUSED(version))
+void PCARt::serialize(Archive & ar, const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferFixedStokesCoefficient)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
@@ -51,16 +50,16 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
     throw Exception("Failed to convert aerosol class to AerosolOptical");
 
   lidort_rt.reset(new LidortRt(Atm, Stokes_coef, Sza, Zen, Azm, false,
-			       Number_streams, Number_moments, true,
-			       do_solar_sources, do_thermal_emission,
-			       do_thermal_emission));
+                               Number_streams, Number_moments, true,
+                               do_solar_sources, do_thermal_emission,
+                               do_thermal_emission));
 
   twostream_rt.reset(new TwostreamRt(Atm, Stokes_coef, Sza, Zen, Azm, true,
-				     do_solar_sources, do_thermal_emission));
+                                     do_solar_sources, do_thermal_emission));
 
   first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm,
-					Number_streams, Number_moments,
-					do_solar_sources, do_thermal_emission));
+                                        Number_streams, Number_moments,
+                                        do_solar_sources, do_thermal_emission));
 
   num_gas = atm->absorber_ptr()->number_species();
   num_layer = atm->pressure_ptr()->number_layer();
@@ -302,6 +301,22 @@ void PCARt::compute_bin_pca_stokes(const int bin_idx, const int spec_index, cons
     }
 }
 
+// Compute stokes value for points within bin using a full LIDORT + FO computation
+void PCARt::compute_bin_full_stokes(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, Array<double, 2>& stokes) const
+{
+    int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+
+    for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+        int grid_idx = bin_wn_indexes(dom_idx);
+        int dom_wn = wavenumbers(grid_idx);
+
+        Array<double, 1> lidort_full(lidort_rt->stokes_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+        Array<double, 1> first_order_full(first_order_rt->stokes_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+
+        stokes(grid_idx, Range::all()) = lidort_full + first_order_full;
+    }
+}
+
 blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spec_index) const
 {
     FunctionTimer ft(timer.function_timer(true));
@@ -332,7 +347,13 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
             continue;
         }
 
-       compute_bin_pca_stokes(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        // If there are fewer then 1 + 2*num_eof points then nothing is saved by running PCA operations
+        // Instead compute using the full solution
+        if (num_bin_points < (1+2*num_eofs)) {
+            compute_bin_full_stokes(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        } else {
+            compute_bin_pca_stokes(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        }
 
        if (progress_bar) *progress_bar += num_bin_points;
     }
@@ -392,6 +413,29 @@ void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_ind
     }
 }
 
+void PCARt::compute_bin_full_stokes_and_jac(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const
+{
+    int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+
+    for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
+        int grid_idx = bin_wn_indexes(dom_idx);
+        int dom_wn = wavenumbers(grid_idx);
+
+        ArrayAd<double, 1> lidort_full(lidort_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+        ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
+
+        stokes.value()(grid_idx, Range::all()) = lidort_full.value() + first_order_full.value();
+
+        if (stokes.number_variable() == 0) {
+            stokes.resize_number_variable(lidort_full.number_variable());
+        }
+        
+        for (int jac_idx = 0; jac_idx < lidort_full.number_variable(); jac_idx++) {
+            stokes.jacobian()(grid_idx, Range::all(), jac_idx) = lidort_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
+        }
+    }
+}
+
 ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain, int Spec_index) const
 {
     FunctionTimer ft(timer.function_timer(true));
@@ -422,7 +466,13 @@ ArrayAd<double, 2> PCARt::stokes_and_jacobian (const SpectralDomain& Spec_domain
             continue;
         }
 
-        compute_bin_pca_stokes_and_jac(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        // If there are fewer then 1 + 2*num_eof points then nothing is saved by running PCA operations
+        // Instead compute using the full solution
+        if (num_bin_points < (1+2*num_eofs)) {
+            compute_bin_full_stokes_and_jac(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        } else {
+            compute_bin_pca_stokes_and_jac(bin_idx, Spec_index, bins[bin_idx], wavenumbers, stokes_output);
+        }
  
         if (progress_bar) *progress_bar += num_bin_points;
     }

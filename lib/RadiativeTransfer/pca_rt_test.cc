@@ -115,12 +115,16 @@ void test_pca_rt(const boost::shared_ptr<AtmosphereStandard>& atm, const Spectra
     for(int jac_idx = 0; jac_idx < jac_sqr_diff.cols(); jac_idx++) {
         double rms = sqrt(mean(jac_sqr_diff(r_all, jac_idx)));
         BOOST_CHECK(rms < 0.2);
-        std::cerr << "rms = " << rms << std::endl;
+        if (debug_output) {
+            std::cerr << "rms = " << rms << std::endl;
+        }
         rms_avg += rms;
     }
     rms_avg /= jac_sqr_diff.cols();
 
-    std::cerr << "rms average = " << rms_avg << std::endl;
+    if (debug_output) {
+        std::cerr << "rms average = " << rms_avg << std::endl;
+    }
 
     BOOST_CHECK(rms_avg < 3e-3);
 }

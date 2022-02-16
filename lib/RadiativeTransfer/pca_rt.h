@@ -100,7 +100,10 @@ private:
   blitz::Array<double, 2> compute_bin_correction_factors(boost::shared_ptr<PCAEigenSolver>& pca_solver, boost::shared_ptr<PCABinOpticalProperties>& bin_opt_props, double bin_wn, int channel_index) const;
 
   void compute_bin_pca_stokes(const int bin_idx, const int spec_index, const blitz::Array<int, 1> bin_wn_indexes, const blitz::Array<double, 1>& wavenumbers, blitz::Array<double, 2>& stokes) const;
+  void compute_bin_full_stokes(const int bin_idx, const int spec_index, const blitz::Array<int, 1> bin_wn_indexes, const blitz::Array<double, 1>& wavenumbers, blitz::Array<double, 2>& stokes) const;
+
   void compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_index, const blitz::Array<int, 1> bin_wn_indexes, const blitz::Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const;
+  void compute_bin_full_stokes_and_jac(const int bin_idx, const int spec_index, const blitz::Array<int, 1> bin_wn_indexes, const blitz::Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const;
   
   boost::shared_ptr<AtmosphereStandard> atm;
   
