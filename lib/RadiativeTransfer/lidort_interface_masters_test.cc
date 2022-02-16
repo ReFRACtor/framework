@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
 
   Range rbeams( 0, brdf_inputs.bs_nbeams() - 1 );
   Range rdirs( 0, 1 ); // up and down welling
-  Range ratmwfs( 0, min(lin_fcontrol.ts_layer_vary_number()) - 1 );
+  Range ratmwfs( 0, max(min(lin_fcontrol.ts_layer_vary_number()) - 1,0));
   Range rsurfwfs( 0, 0 ); // only first index has values // brdf_inputs.bs_n_surface_wfs() 
 
   Array<double, 3> ts_intensity_calc( lid_output.ts_intensity() );

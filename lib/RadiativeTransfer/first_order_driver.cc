@@ -330,13 +330,13 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
     if(do_deltam_scaling_) {
         // Set trunfaction factor for use in FO when deltam scaling is turned on
         Array<double, 1> truncfac(solar_interface_->truncfac());
-        truncfac = deltam_trunc_factor(pf);
+        truncfac(r_lay) = deltam_trunc_factor(pf);
 
         // Are thse needed???
         // Doing this to omega would mess up internal deltam scaling code
-        optical_depth *= (1 - truncfac * omega);
+        optical_depth(r_lay) *= (1 - truncfac(r_lay) * omega(r_lay));
         //omega *= (1 - truncfac * ssa);
-        extinction *= (1 - truncfac * omega);
+        extinction(r_lay) *= (1 - truncfac(r_lay) * omega(r_lay));
     }
 
     // Set phase moments, FO storage is transpose of ReFRACtor ordering
@@ -418,7 +418,7 @@ void FirstOrderDriver::setup_linear_inputs
     if (do_deltam_scaling_) {
         Array<double, 1> truncfac = deltam_trunc_factor(pf.value());
         Array<double, 2> l_truncfac(solar_interface_->l_truncfac());
-        l_truncfac = deltam_linear_trunc_factor(pf);
+        l_truncfac(r_lay, r_jac) = deltam_linear_trunc_factor(pf);
 
         Array<double, 1> correction_fac(truncfac.rows());
         correction_fac = 1 - truncfac * ssa.value();

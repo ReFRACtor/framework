@@ -18,15 +18,15 @@ contains
 
       integer, intent(in) :: ncoef,npar,nstokes
       logical, intent(in) :: no_rotation
-      double precision, intent(in) :: dcoefs(0:ncoef,6)
-      double precision, intent(in), optional :: L_dcoefs(0:ncoef,6,npar)
+      double precision, intent(in) :: dcoefs(0:,:)
+      double precision, intent(in), optional :: L_dcoefs(0:,:,:)
       double precision, intent(in) :: gsfmin(0:ncoef,2)
       double precision, intent(in), optional :: c2i2m,s2i2m
 
 !  outputs
 
-      double precision, intent(out) :: Zmin(nstokes)
-      double precision, intent(out), optional :: L_Zmin(nstokes,npar)
+      double precision, intent(out) :: Zmin(:)
+      double precision, intent(out), optional :: L_Zmin(:,:)
 
 !  local variables
 
@@ -84,11 +84,13 @@ contains
           enddo
           endif
 
-          Zmin(2) = c2i2m*Fmin(2)
-          if (linearize) then
-          do p = 1, npar
-            L_Zmin(2,p) = c2i2m*L_Fmin(2,p)
-          enddo
+          if (nstokes .ge. 2) then
+             Zmin(2) = c2i2m*Fmin(2)
+             if (linearize) then
+                do p = 1, npar
+                   L_Zmin(2,p) = c2i2m*L_Fmin(2,p)
+                enddo
+             endif
           endif
 
           if (nstokes .eq. 3) then
@@ -101,14 +103,20 @@ contains
           endif
       else     
         !  no rotation
-          do k = 1, 2
-            Zmin(k) = Fmin(k)
-            if (linearize) then
+         Zmin(1) = Fmin(1)
+         if (linearize) then
             do p = 1, npar
-              L_Zmin(k,p) = L_Fmin(k,p)
+               L_Zmin(1,p) = L_Fmin(1,p)
             enddo
+         endif
+         if (nstokes .ge. 2) then
+            Zmin(2) = Fmin(2)
+            if (linearize) then
+               do p = 1, npar
+                  L_Zmin(2,p) = L_Fmin(2,p)
+               enddo
             endif
-          enddo
+         endif
           if (nstokes .eq. 3) then
             Zmin(nstokes) = 0.d0
             if (linearize) then

@@ -1348,7 +1348,11 @@ contains
 
 !  Add to the specular term
 
-      R1M(1,1) = PARS(5)*R1M(1,1) + PARS(1)*RAHMAN_KERNEL
+!  New scaling from Aronne Merrelli
+      R1M(:,:) = R1M(:,:) * PARS(5)
+      R1M(1,1) = R1M(1,1) + PARS(1)*RAHMAN_KERNEL
+
+!     R1M(1,1) = PARS(5)*R1M(1,1) + PARS(1)*RAHMAN_KERNEL
 
 !  Finish
 
@@ -1620,17 +1624,28 @@ contains
 
 !  Add to the specular term
 
-      R1M(1,1) = PARS(5)*R1M(1,1) + PARS(1)*RAHMAN_KERNEL
+!  New scaling from Aronne Merrelli
+      R1M(:,:) = R1M(:,:) * PARS(5)
+      R1M(1,1) = R1M(1,1) + PARS(1)*RAHMAN_KERNEL
+
+!     R1M(1,1) = PARS(5)*R1M(1,1) + PARS(1)*RAHMAN_KERNEL
 
 !  Derivatives
 
       DO J = 1, 3
         IF ( DO_DERIV_PARS(J) ) THEN
-          Ls_R1M(1,1,J+1) = RAHMAN_DERIVATIVES(J)
+          ! New scaling from Aronne Merrelli
+          ! also scale RAHMAN derivatives
+          Ls_R1M(1,1,J+1) = PARS(1)*RAHMAN_DERIVATIVES(J)
         ENDIF
       ENDDO
       Ls_R1M(1,1,1) = RAHMAN_KERNEL
       Ls_R1M(1,1,5) = (R1M(1,1)-PARS(1)*RAHMAN_KERNEL)/PARS(5)
+
+!  Scaling for other elements. V. Natraj 9/8/21.
+
+      Ls_R1M(1,2:4,5) = R1M(1,2:4)/PARS(5)
+      Ls_R1M(2:4,1:4,5) = R1M(2:4,1:4)/PARS(5)
 
 !  Finish
 

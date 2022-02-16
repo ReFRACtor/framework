@@ -20,6 +20,7 @@ set(DIR_SOURCES
     l_rad_fortran/l_rad_first_pp.F90
     l_rad_fortran/l_rad_first_reg.F90
     l_rad_fortran/l_rad_second.F90
+    l_rad_fortran/l_rad_second_ionly.F90
     l_rad_fortran/l_sscorr_nadir.F90
     l_rad_fortran/l_sscorr_outgoing.F90
     l_rad_fortran/l_sscorr_pp.F90

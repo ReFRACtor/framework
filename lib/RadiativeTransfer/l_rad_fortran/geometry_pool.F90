@@ -1258,7 +1258,7 @@ subroutine FindSunPaths_D (Do_ZeroSunBOA,nlayers,Radstart,Radii,&
 
 !  Output
 
-   real(ffp), Intent(InOut) :: Sunpaths(nlayers)
+   real(ffp), Intent(InOut) :: Sunpaths(:)
 
 !  Local
 
@@ -1326,7 +1326,7 @@ subroutine FindSunPaths_T (nlayers,Pie,Radstart,Radii,thstart,sthstart,N,sunpath
 !  Output
 
    INTEGER   , Intent(InOut)   :: NT
-   real(ffp), Intent(InOut)    :: Sunpaths(nlayers)
+   real(ffp), Intent(InOut)    :: Sunpaths(:)
 
 !  Local
 
@@ -1431,6 +1431,9 @@ SUBROUTINE GAULEG_NG(X1,X2,X,W,N,NMAX)
             arg = ( real(i,ffp) - qtr ) / ( rn + half )
 !            Z=COS(3.141592654D0*(I-.25D0)/(N+.5D0))
             Z  = COS ( pie * arg )
+            ! Force loop below to always be run at least once,
+            ! otherwise PP doesn't get initialized.
+            Z1 = 10000
             DO WHILE (ABS(Z-Z1).GT.EPS)
                   P1=one
                   P2=zero
