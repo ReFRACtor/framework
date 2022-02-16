@@ -54,6 +54,7 @@ BOOST_AUTO_TEST_CASE(one_point)
 
     auto eigen_f = PCAEigenSolverFortran(gridded_data_f, num_eofs);
 
+    // Check that Fortran and C++ methods agree for 1 data point
     int num_var = gridded_data_g.size();
     BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.principal_components(), eigen_g.principal_components(), 1e-10);
 
@@ -63,6 +64,9 @@ BOOST_AUTO_TEST_CASE(one_point)
 
         // These should always match since the routine is defined in the base class
         BOOST_CHECK_MATRIX_CLOSE_TOL(eigen_f.data_perturbations()[ivar], eigen_g.data_perturbations()[ivar], 1e-10);
+
+        // With only 1 data point the mean is the same as the input data
+        BOOST_CHECK_MATRIX_CLOSE_TOL(gridded_data_g[ivar](ra, 0), exp(eigen_g.data_mean()[ivar]), 1e-10);
     }
 }
 

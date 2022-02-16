@@ -230,8 +230,10 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
     }
 
     // Remove time-mean for each packed variable, mean over data index
-    for(int ipack = 0; ipack < num_packed; ipack++) {
-        packed_data(ipack, all) = packed_data(ipack, all) - mean(packed_data(ipack, all));
+    if (num_points > 1) {
+        for(int ipack = 0; ipack < num_packed; ipack++) {
+            packed_data(ipack, all) = packed_data(ipack, all) - mean(packed_data(ipack, all));
+        }
     }
 
     // Compute log mean value over the spectral grid for each varible type
@@ -352,8 +354,10 @@ void PCAEigenSolverGeneric::solve(const std::vector<Array<double, 2> >& gridded_
         }
 
         // Final normalization of EOFs and PCs
-        eofs_packed(aa, all) = eofs_packed(aa, all) * stdv;
-        prin_comps_(aa, all) = prin_comps_(aa, all) / stdv;
+        if (num_points > 1) {
+            eofs_packed(aa, all) = eofs_packed(aa, all) * stdv;
+            prin_comps_(aa, all) = prin_comps_(aa, all) / stdv;
+        }
     }
 
     // Unpack eofs array values

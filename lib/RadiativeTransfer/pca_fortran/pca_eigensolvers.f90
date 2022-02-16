@@ -409,9 +409,13 @@ subroutine pca_eigensolver &
 
 !  Remove time-mean
 
-   do i = 1,nlayers2
-      o3_flt(i,:) = o3_in(i,:)-sum(o3_in(i,:))*ddim
-   enddo
+   if (npoints .gt. 1) then
+     do i = 1,nlayers2
+        o3_flt(i,:) = o3_in(i,:)-sum(o3_in(i,:))*ddim
+     enddo
+   else
+     o3_flt = o3_in
+   endif
 
 !  Sanity Check
 !   do i = 1, nlayers2
@@ -527,8 +531,10 @@ subroutine pca_eigensolver &
 
 !  Final normalization of EOFs and PCs
 
-      eofs(aa,:) = eofs(aa,:) * stdv
-      PrinComps(aa,:) = PrinComps(aa,:)/stdv
+      if (npoints .gt. 1) then
+        eofs(aa,:) = eofs(aa,:) * stdv
+        PrinComps(aa,:) = PrinComps(aa,:)/stdv
+      endif
 
 !  End User-defined EOF loop
 
