@@ -4,10 +4,9 @@ from copy import deepcopy
 
 import numpy as np
 
-import refractor.factory.creator as creator
 from refractor import framework as rf
-from refractor.config import refractor_config
-from refractor.input.paths import cross_section_filenames, cross_section_file_conversion_factors
+from refractor.framework import creator, refractor_config
+from refractor.framework import cross_section_filenames, cross_section_file_conversion_factors
 
 profile_filename = os.path.join(os.path.dirname(__file__), '../data/in/uv_atmosphere/Profiles_9_2006726_1500.dat')
  

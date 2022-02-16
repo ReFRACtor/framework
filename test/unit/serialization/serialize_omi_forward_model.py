@@ -5,9 +5,9 @@
 # to be "an example", so the specific sounding isn't all that important.
 
 from refractor import framework as rf
-from refractor import write_shelve
+from refractor.framework import write_shelve
 
-from refractor.input.paths import cross_section_filenames, cross_section_file_conversion_factors
+from refractor.framework import cross_section_filenames, cross_section_file_conversion_factors
 
 import numpy as np
 import h5py
@@ -320,8 +320,9 @@ radiative_transfer = rf.LidortRt(atmosphere, stokes, sza, oza, raz,
                                  use_thermal_emission, use_thermal_scattering)
 # Change RT flags to match py-retrieve
 lid_interface = radiative_transfer.rt_driver.lidort_interface
-lid_interface.lidort_modin.mbool().ts_do_sscorr_nadir(False)
-lid_interface.lidort_modin.mbool().ts_do_sscorr_outgoing(False)
+lid_interface.lidort_modin.mbool().ts_do_focorr(True)
+lid_interface.lidort_modin.mbool().ts_do_focorr_nadir(True)
+lid_interface.lidort_modin.mbool().ts_do_focorr_outgoing(False)
 lid_interface.lidort_modin.mbool().ts_do_rayleigh_only(True)
 lid_interface.lidort_modin.mbool().ts_do_double_convtest(False)
 lid_interface.lidort_modin.mbool().ts_do_deltam_scaling(False)

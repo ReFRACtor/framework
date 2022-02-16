@@ -26,7 +26,7 @@ void SubStateVectorObserver::save(Archive & , const unsigned int ) const
 template<class Archive>
 void SubStateVectorObserver::load(Archive & , const unsigned int)
 {
-  if(pstart >= 0 && plen > 0) {
+  if(pstart >= 0 && plen > 0 && sv_full.rows() > 0) {
     blitz::Range rsub(pstart, pstart + plen - 1);
     sv_sub.reference(sv_full(rsub));
     sv_cov_sub.reference(Array<double, 2>(sv_cov_full(rsub, rsub)));

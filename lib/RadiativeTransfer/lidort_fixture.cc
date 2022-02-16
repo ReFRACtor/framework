@@ -127,8 +127,8 @@ LidortRtCommonFixture::LidortRtCommonFixture() : sza(3), zen(3), azm(3)
   stokes_coefs.reset(new StokesCoefficientConstant(stokes_coef_v));
 }
 
-LidortLambertianFixture::LidortLambertianFixture(const std::string& Config_file) : 
-  LidortRtCommonFixture(), ConfigurationFixture(Config_file)
+LidortLambertianFixture::LidortLambertianFixture() : 
+  LidortRtCommonFixture(), LambertianConfigurationFixture()
 {
   int nstreams = 4;
   int nmoms = 2*nstreams;
@@ -142,8 +142,8 @@ LidortLambertianFixture::LidortLambertianFixture(const std::string& Config_file)
   pp_and_ss_expected_filename = test_data_dir() + "expected/lidort_driver/lambertian_pp_plus_sscorrection";
 }
 
-LidortCoxmunkFixture::LidortCoxmunkFixture(const std::string& Config_file) : 
-  LidortRtCommonFixture(), ConfigurationCoxmunkFixture(Config_file)
+LidortCoxmunkFixture::LidortCoxmunkFixture() : 
+  LidortRtCommonFixture(), CoxmunkConfigurationFixture()
 {
   int nstreams = 4;
   int nmoms = 2*nstreams;

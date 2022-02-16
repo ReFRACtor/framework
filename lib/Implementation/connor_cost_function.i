@@ -18,8 +18,11 @@ public:
           const boost::shared_ptr<ForwardModel>& fm,
           const boost::shared_ptr<Observation>& inst_meas);
   virtual void cost_function(const blitz::Array<double, 1>& X,
-			     blitz::Array<double, 1>& OUTPUT,
-			     blitz::Array<double, 1>& OUTPUT,
-			     blitz::Array<double, 2>& OUTPUT) const;
+                             blitz::Array<double, 1>& OUTPUT,
+                             blitz::Array<double, 1>& OUTPUT,
+                             blitz::Array<double, 2>& OUTPUT) const;
+  %python_attribute(observation, boost::shared_ptr<Observation>);
+
+  %pickle_serialization();
 };
 }

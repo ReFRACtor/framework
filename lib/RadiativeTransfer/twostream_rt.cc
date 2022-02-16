@@ -22,7 +22,8 @@ void TwostreamRt::save(Archive &ar,
   // state.
   if(!SpurrRt::serialize_full_state) {
     bool do_full_quadrature_ = rt_driver()->do_full_quadrature();
-    ar & FP_NVP_(do_full_quadrature);
+    int number_layer_ = atm->number_layer();
+    ar & FP_NVP_(do_full_quadrature) & FP_NVP_(number_layer);
   }
 }
 
@@ -32,9 +33,10 @@ void TwostreamRt::load(Archive &ar,
 {
   if(!rt_driver_) {
     bool do_full_quadrature_;
-    ar & FP_NVP_(do_full_quadrature);
+    int number_layer_;
+    ar & FP_NVP_(do_full_quadrature) & FP_NVP_(number_layer);
     rt_driver_.reset(new TwostreamRtDriver
-     (atm->number_layer(), surface_type(), do_full_quadrature_,
+     (number_layer_, surface_type(), do_full_quadrature_,
       do_solar_sources, do_thermal_emission));
   }
 }

@@ -11,6 +11,9 @@ import pytest
 # Location of test data that is part of source
 unit_test_data = os.path.abspath(os.path.dirname(__file__) + "/../../../test/unit/data/") + "/"
 
+# Define this environment variable so that it can be used within deserialized data to set paths that get expanded out during test execution
+os.environ['abs_top_srcdir'] = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
+
 # Marker that skips a test if we have a build without boost serialization
 # support
 require_serialize = pytest.mark.skipif(not rf.have_serialize_supported(),
@@ -20,6 +23,7 @@ require_serialize = pytest.mark.skipif(not rf.have_serialize_supported(),
 # don't normally run, but might want to comment out for a specific debugging
 # reason.
 skip = pytest.mark.skip
+skipif = pytest.mark.skipif
 
 @pytest.fixture(scope="function")
 def isolated_dir(tmpdir):
@@ -41,9 +45,3 @@ def isolated_dir(tmpdir):
         yield curdir
     finally:
         os.chdir(curdir)
-
-@pytest.fixture(scope="function")
-def lua_state():
-    '''Supply a lua_state'''
-    return rf.LuaState(unit_test_data)
-

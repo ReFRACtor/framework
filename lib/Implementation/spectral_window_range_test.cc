@@ -3,12 +3,12 @@
 #include <boost/foreach.hpp>
 #include "hdf_file.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(spectral_window_range, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(spectral_window_range, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(grid_indexes)
 {

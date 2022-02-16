@@ -5,7 +5,7 @@
 #include "sample_grid_spectral_domain.h"
 #include "ils_table.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "accumulated_timer.h"
 #include <iostream>
 using namespace FullPhysics;
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(basic)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ils_instrument_static, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_instrument_static, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(basic_static_test)
 {
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE(basic_static_test)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_FIXTURE_TEST_SUITE(ils_instrument_timing, ConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(ils_instrument_timing, LambertianConfigurationFixture)
 
 BOOST_AUTO_TEST_CASE(timing)
 {

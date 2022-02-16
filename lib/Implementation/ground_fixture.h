@@ -1,7 +1,7 @@
 #include "ground_lambertian.h"
 #include "ground_coxmunk.h"
 #include "ground_brdf.h"
-#include "configuration_fixture.h"
+#include "global_fixture.h"
 #include "unit_test_support.h"
 
 using namespace FullPhysics;

@@ -42,6 +42,54 @@ class AlbedoFromSignalLevel(Creator):
 
         return albedo_val
 
+class BrdfWeightFromSignalBase(AlbedoFromSignalLevel):
+
+    sounding_zenith = param.ArrayWithUnit(dims=1)
+    relative_azimuth = param.ArrayWithUnit(dims=1)
+
+    brdf_parameters = param.Array(dims=2)
+
+    def adjusted_params(self, brdf_class, **kwargs):
+
+        alb_cont = super().create(**kwargs)
+
+        sza_deg = self.solar_zenith()
+        vza_deg = self.sounding_zenith()
+        azm_deg = self.relative_azimuth()
+
+        # Need to copy since we are editing this array in place and multiple calls
+        # to this creator should return the same answer each time
+        params = self.brdf_parameters().copy()
+
+        for chan_idx in range(self.num_channels()):
+            sza_chan = sza_deg[chan_idx].convert("deg").value
+            vza_chan = vza_deg[chan_idx].convert("deg").value
+            azm_chan = azm_deg[chan_idx].convert("deg").value
+
+            # Extract all but the slope portion of the apriori to feed into the
+            # albedo calculation function
+            params_chan = params[chan_idx, :brdf_class.BRDF_WEIGHT_INTERCEPT_INDEX]
+
+            alb_calc = brdf_class.kernel_value_at_params(params_chan, sza_chan, vza_chan, azm_chan)
+            weight = alb_cont[chan_idx, 0] / alb_calc
+
+            params[chan_idx, brdf_class.BRDF_WEIGHT_INTERCEPT_INDEX] *= weight
+
+        return params
+
+    def create(self, **kwargs):
+        raise NotImplementedError("Use child classes BrdfWeightFromSignalVeg or BrdfWeightFromSignalSoil for this creator")
+
+class BrdfWeightFromSignalVeg(BrdfWeightFromSignalBase):
+
+    def create(self, **kwargs):
+        return self.adjusted_params(rf.GroundBrdfVeg, **kwargs)
+
+class BrdfWeightFromSignalSoil(BrdfWeightFromSignalBase):
+
+    def create(self, **kwargs):
+        return self.adjusted_params(rf.GroundBrdfSoil, **kwargs)
+
 class GroundLambertian(Creator):
 
     polynomial_coeffs = param.Array(dims=2)

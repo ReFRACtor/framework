@@ -35,6 +35,7 @@ void AtmosphereStandard::serialize(Archive & ar,
     & FP_NVP(constant)
     & FP_NVP(alt)
     & FP_NVP(sv_jac_size)
+    & FP_NVP(nlay)
     & FP_NVP(can_cache_channel);
 }
 

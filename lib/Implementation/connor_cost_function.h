@@ -18,9 +18,9 @@ public:
   }
   virtual ~ConnorCostFunction() {}
   virtual void cost_function(const blitz::Array<double, 1>& X,
-			blitz::Array<double, 1>& Residual,
-			blitz::Array<double, 1>& Se,
-			blitz::Array<double, 2>& Jacobian) const
+                        blitz::Array<double, 1>& Residual,
+                        blitz::Array<double, 1>& Se,
+                        blitz::Array<double, 2>& Jacobian) const
   {
     using namespace blitz;
     statev->update_state(X);
@@ -38,6 +38,7 @@ public:
     Residual = rad_mod.data() - rad_meas.data();
     Jacobian.reference(rad_mod.data_ad().jacobian());
   }
+  const boost::shared_ptr<Observation> observation() const { return meas; }
   virtual void print(std::ostream& Os) const
   {
     Os << "ConnorCostFunction";
@@ -46,6 +47,15 @@ private:
   boost::shared_ptr<StateVector> statev;
   boost::shared_ptr<ForwardModel> forward_model;
   boost::shared_ptr<Observation> meas;
+
+  ConnorCostFunction() = default;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(ConnorCostFunction);
+
 #endif

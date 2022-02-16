@@ -23,5 +23,7 @@ public:
     SpectralDomain spectral_domain(int channel_index) const;
 
     Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+
+    %pickle_serialization();
 };
 }

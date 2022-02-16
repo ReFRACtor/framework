@@ -1,4 +1,5 @@
 #include "first_order_rt.h"
+#include "atmosphere_standard.h"
 #include "lidort_fixture.h"
 #include "unit_test_support.h"
 #include "fe_disable_exception.h"

@@ -6,7 +6,7 @@ using namespace FullPhysics;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void ConvergenceCheck::serialize(Archive & ar,
-				    const unsigned int UNUSED(version))
+                                 const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(ConvergenceCheck);
 
@@ -21,7 +21,7 @@ void ConvergenceCheck::serialize(Archive & ar,
 
 template<class Archive>
 void FitStatistic::serialize(Archive & ar,
-			     const unsigned int UNUSED(version))
+                             const unsigned int UNUSED(version))
 {
   FP_GENERIC_BASE(FitStatistic);
   ar & FP_NVP(fit_succeeded) & FP_NVP(outcome)

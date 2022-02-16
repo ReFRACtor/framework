@@ -1,6 +1,6 @@
 #include "gas_vmr_apriori.h"
 #include "unit_test_support.h"
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 #include "pressure_sigma.h"
 #include "temperature_met.h"
 #include "altitude_hydrostatic.h"

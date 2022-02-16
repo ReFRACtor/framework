@@ -3,12 +3,12 @@
 #include "unit_test_support.h"
 #include "fp_serialize_support.h"
 
-#include "configuration_fixture.h"
+#include "serialized_configuration_fixture.h"
 
 using namespace FullPhysics;
 using namespace blitz;
 
-class ChapmanBoaRtFixture: public ConfigurationFixture {
+class ChapmanBoaRtFixture: public LambertianConfigurationFixture {
 public:
   ChapmanBoaRtFixture() 
   {

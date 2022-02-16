@@ -1,9 +1,12 @@
 from abc import ABC, abstractmethod
+
 from refractor.framework_swig.all import (SolverIterationLog, RtAtmosphere,
                                           ForwardModel, IterativeSolver,
                                           StateVector, Level1b)
-from .config import find_config_function
-import refractor.framework.factory as creator
+
+from .config import load_config_module, find_config_function
+from ..factory import creator, process_config
+
 from ..output.atmosphere import AtmosphereOutputRetrieval, AtmosphereOutputSimulation
 from ..output.radiance import ForwardModelRadianceOutput, ObservationRadianceOutput
 from ..output.solver import SolverIterationOutput
@@ -86,25 +89,6 @@ class ConfigurationInterface(ABC):
         if isinstance(t, type):
             return t(**strategy_keywords)
         return ConfigurationCreator(t, **strategy_keywords)
-
-def ObjectCapture(capture_class):
-    "Generate a Creator that watches for an object to be emitted elsewhere then stores it internally to use as its return object"
-
-    class ObjectCaptureCreator(creator.Creator):
-        def __init__(self, *vargs, **kwargs):
-            super().__init__(*vargs, **kwargs)
-
-            self.register_to_receive(capture_class)
-            self.captured_object = None
-
-        def receive(self, rec_obj):
-            self.captured_object = rec_obj
-
-        def create(self, **kwargs): 
-            return self.captured_object
-
-    return ObjectCaptureCreator
-
     
 class ConfigurationCreator(ConfigurationInterface):
     '''Implementation of ConfigurationInterface that uses a dictionary of
@@ -118,7 +102,7 @@ class ConfigurationCreator(ConfigurationInterface):
         # Augment loaded configuration to help capture objects
         # required for output
         config_def = {
-            'creator': creator.ParamPassThru, 
+            'creator': creator.base.ParamPassThru, 
             'order': ['file_config'],
             'file_config': config_func(**strategy_keywords) if config_func else config_dict,
         }
@@ -126,16 +110,16 @@ class ConfigurationCreator(ConfigurationInterface):
         # Capture certain objects without depending on the structure
         # of the configuration
         captured_objects = {
-            'atmosphere': ObjectCapture(RtAtmosphere),
-            'forward_model': ObjectCapture(ForwardModel),
-            'solver': ObjectCapture(IterativeSolver),
-            'state_vector': ObjectCapture(StateVector),
-            'l1b': ObjectCapture(Level1b),
-            'retrieval_components': ObjectCapture(creator.RetrievalComponents),
+            'atmosphere': creator.util.ObjectCapture(RtAtmosphere),
+            'forward_model': creator.util.ObjectCapture(ForwardModel),
+            'solver': creator.util.ObjectCapture(IterativeSolver),
+            'state_vector': creator.util.ObjectCapture(StateVector),
+            'l1b': creator.util.ObjectCapture(Level1b),
+            'retrieval_components': creator.util.ObjectCapture(creator.types.RetrievalComponents),
         }
         config_def.update(captured_objects)
         config_def['order'] += list(captured_objects.keys())
-        self.config_inst = creator.process_config(config_def)
+        self.config_inst = process_config(config_def)
 
     @property
     def file_config(self):

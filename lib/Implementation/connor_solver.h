@@ -55,8 +55,8 @@ namespace FullPhysics {
 class ConnorSolverState;
 
 class ConnorSolver : public Observable<ConnorSolver>, 
-		     public Printable<ConnorSolver>,
-		     boost::noncopyable {
+                     public Printable<ConnorSolver>,
+                     boost::noncopyable {
 public:
   //-----------------------------------------------------------------------
   /// Constructor. This takes a CostFunction that we will minimize, a 
@@ -66,9 +66,9 @@ public:
   /// See the comments above this class for the "save_test_data" argument.
   //-----------------------------------------------------------------------
   ConnorSolver(const boost::shared_ptr<CostFunction>& Cf,
-	       const boost::shared_ptr<ConvergenceCheck>& Conv,
-	       double Gamma_initial = 0.0,
-	       const std::string& Save_test_data = "")
+               const boost::shared_ptr<ConvergenceCheck>& Conv,
+               double Gamma_initial = 0.0,
+               const std::string& Save_test_data = "")
     : save_test_data_(Save_test_data), 
       cost_function_(Cf), convergence_check_(Conv), gamma_initial(Gamma_initial)
   { }
@@ -91,11 +91,11 @@ public:
   void state(const boost::shared_ptr<ConnorSolverState>& S);
 
   void test_do_inversion(const std::string& Fname, 
-			 blitz::Array<double, 1>& Dx, 
-			 blitz::Array<double, 2>& Kt_se_m1_k);
+                         blitz::Array<double, 1>& Dx, 
+                         blitz::Array<double, 2>& Kt_se_m1_k);
   virtual bool solve(const blitz::Array<double, 1>& Initial_guess, 
-		     const blitz::Array<double, 1>& Apriori, 
-		     const blitz::Array<double, 2>& Apriori_cov);
+                     const blitz::Array<double, 1>& Apriori, 
+                     const blitz::Array<double, 2>& Apriori_cov);
   virtual blitz::Array<double, 2> aposteriori_covariance_scaled() const;
   virtual blitz::Array<double, 2> aposteriori_covariance() const;
   blitz::Array<double, 1> x_solution_uncertainty() const;
@@ -344,20 +344,20 @@ private:
 *******************************************************************/
 
 class ConnorSolverState: public Printable<ConnorSolverState>,
-			 boost::noncopyable {
+                         boost::noncopyable {
 public:
   ConnorSolverState(const blitz::Array<double, 1>& X_i, 
-		    const blitz::Array<double, 1>& X_a, 
-		    const blitz::Array<double, 2>& Apriori_cov_scaled, 
-		    const blitz::Array<double, 2>& Sa_m1_scaled,
-		    const blitz::Array<double, 1>& Sigma_ap, 
-		    double Gamma, double Gamma_last_step, double Gamma_intial,
-		    const blitz::Array<double, 1>& Residual, 
-		    const blitz::Array<double, 1>& Se, 
-		    const blitz::Array<double, 2>& K, 
-		    const blitz::Array<double, 2>& Kt_se_m1_k, 
-		    const blitz::Array<double, 1>& Dx, 
-		    const FitStatistic& Fstat)
+                    const blitz::Array<double, 1>& X_a, 
+                    const blitz::Array<double, 2>& Apriori_cov_scaled, 
+                    const blitz::Array<double, 2>& Sa_m1_scaled,
+                    const blitz::Array<double, 1>& Sigma_ap, 
+                    double Gamma, double Gamma_last_step, double Gamma_intial,
+                    const blitz::Array<double, 1>& Residual, 
+                    const blitz::Array<double, 1>& Se, 
+                    const blitz::Array<double, 2>& K, 
+                    const blitz::Array<double, 2>& Kt_se_m1_k, 
+                    const blitz::Array<double, 1>& Dx, 
+                    const FitStatistic& Fstat)
     : x_i_(X_i.copy()), x_a_(X_a.copy()),
       apriori_cov_scaled_(Apriori_cov_scaled.copy()), 
       sa_m1_scaled_(Sa_m1_scaled.copy()),
@@ -388,7 +388,7 @@ private:
   blitz::Array<double, 1> x_i_;
   blitz::Array<double, 1> x_a_;
   blitz::Array<double, 2> apriori_cov_scaled_;
-  blitz::Array<double, 2>sa_m1_scaled_;
+  blitz::Array<double, 2> sa_m1_scaled_;
   blitz::Array<double, 1> sigma_ap_;
   double gamma_;
   double gamma_last_step_;
@@ -414,6 +414,7 @@ inline std::istream& operator>>(std::istream& Is, ConnorSolver& Solve)
 }
 
 FP_EXPORT_KEY(ConnorSolver);
-FP_EXPORT_KEY(ConnorSolverState);
 FP_EXPORT_OBSERVER_KEY(ConnorSolver);
+
+FP_EXPORT_KEY(ConnorSolverState);
 #endif

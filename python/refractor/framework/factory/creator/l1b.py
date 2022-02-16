@@ -1,4 +1,5 @@
 import numpy as np
+from collections import abc
 
 from .base import Creator
 from .. import param
@@ -176,3 +177,28 @@ class UncertaintyFromL1b(Creator):
              uncertainty_list.append(chan_uncert)
 
         return uncertainty_list
+
+class SignalLevelFromL1b(Creator):
+
+    l1b = param.InstanceOf(rf.Level1b)
+    sample_grid_indexes = param.Choice(param.Iterable(abc.Iterable), param.NoneValue(), required=False, default=None)
+ 
+    def create(self, **kwargs):
+
+        l1b = self.l1b()
+        num_channels = l1b.number_spectrometer()
+        sample_grid_indexes = self.sample_grid_indexes()
+
+        signal_values = []
+        signal_units = None
+        for chan_idx in range(num_channels):
+            if sample_grid_indexes is not None:
+                grid_indexes = list(sample_grid_indexes[chan_idx])
+                chan_signal = l1b.signal(chan_idx, grid_indexes)
+            else:
+                chan_signal = l1b.signal(chan_idx)
+
+            signal_values.append(chan_signal.value)
+            signal_units = chan_signal.units
+
+        return rf.ArrayWithUnit(np.array(signal_values), signal_units)

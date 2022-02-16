@@ -7,8 +7,11 @@
 #include "absco.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/bind/bind.hpp>
+
 using namespace FullPhysics;
 using namespace blitz;
+using namespace boost::placeholders;
+
 inline double sqr(double x) {return x * x;}
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION

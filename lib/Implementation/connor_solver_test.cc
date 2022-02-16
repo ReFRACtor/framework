@@ -12,9 +12,9 @@ BOOST_FIXTURE_TEST_SUITE(connor_solver, GlobalFixture)
 class CostFunctionTest : public CostFunction {
 public:
   virtual void cost_function(const blitz::Array<double, 1>& x,
-			blitz::Array<double, 1>& Residual,
-			blitz::Array<double, 1>& Se,
-			blitz::Array<double, 2>& Jacobian) const
+                        blitz::Array<double, 1>& Residual,
+                        blitz::Array<double, 1>& Se,
+                        blitz::Array<double, 2>& Jacobian) const
   {
     Jacobian.resize(10, 5);
     Jacobian = 0;
@@ -56,9 +56,9 @@ public:
 class CostFunctionRankDegenerate : public CostFunction {
 public:
   virtual void cost_function(const blitz::Array<double, 1>& x,
-			blitz::Array<double, 1>& Residual,
-			blitz::Array<double, 1>& Se,
-			blitz::Array<double, 2>& Jacobian) const
+                        blitz::Array<double, 1>& Residual,
+                        blitz::Array<double, 1>& Se,
+                        blitz::Array<double, 2>& Jacobian) const
   {
     Jacobian.resize(10, 6);
     Jacobian = 0;
@@ -98,7 +98,7 @@ public:
 BOOST_AUTO_TEST_CASE(basic)
 {
   ConnorSolver cs(boost::shared_ptr<CostFunction>(new CostFunctionTest),
-		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
+                  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
   Array<double, 1> initial_guess(5);
   Array<double, 1> apriori(5);
   Array<double, 2> apriori_cov(5, 5);
@@ -121,8 +121,8 @@ BOOST_AUTO_TEST_CASE(basic)
 BOOST_AUTO_TEST_CASE(rank_deficient)
 {
   ConnorSolver cs(boost::shared_ptr<CostFunction>(new 
-						  CostFunctionRankDegenerate),
-		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
+                                                  CostFunctionRankDegenerate),
+                  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
   Array<double, 1> initial_guess(6);
   Array<double, 1> apriori(6);
   Array<double, 2> apriori_cov(6, 6);
@@ -146,19 +146,16 @@ BOOST_AUTO_TEST_CASE(rank_deficient)
 
 BOOST_AUTO_TEST_CASE(do_inversion_test)
 {
-  is_long_test();		// Skip unless we are running long tests.
-
   // We get the expected results here by running the old Fortran
   // version and capturing the calculated values. We make sure that we
   // are calculating the same values with the new code.
-  ConnorSolver cs(boost::shared_ptr<CostFunction>(new 
-						  CostFunctionRankDegenerate),
-		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
+  ConnorSolver cs(boost::shared_ptr<CostFunction>(new CostFunctionRankDegenerate),
+                  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
   blitz::Array<double, 1> dx;
   blitz::Array<double, 2> kt_se_m1_k;
   cs.test_do_inversion(test_data_dir() + 
-		       "expected/connor_solver/connor_save.txt", dx, 
-		       kt_se_m1_k);
+                       "expected/connor_solver/connor_save.txt", dx, 
+                       kt_se_m1_k);
   FitStatistic fstat = cs.fit_statistic();
   BOOST_CHECK_CLOSE(fstat.d_sigma_sq_scaled, 2898.0253091504742, 1e-4);
   BOOST_CHECK_CLOSE(fstat.d_sigma_sq, 310088.73232535017, 1e-4);
@@ -183,17 +180,34 @@ BOOST_AUTO_TEST_CASE(averaging_kernel_test)
   // saving the state. We restore the state to ConnorSolver (so it is
   // like we just finished this long convergence calculation), and
   // check that we then calculate the averaging kernel correctly.
-  ConnorSolver cs(boost::shared_ptr<CostFunction>(new 
-						  CostFunctionRankDegenerate),
-		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
+  ConnorSolver cs(boost::shared_ptr<CostFunction>(new CostFunctionRankDegenerate),
+                  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
   IfstreamCs in(test_data_dir() + "in/solver/connor_converged");
   in >> cs;
+
   Array<double, 2> ak(cs.averaging_kernel());
-  BOOST_CHECK_CLOSE(ak(0,0), 2.0114592943839052e-05, 2e-3);
-  BOOST_CHECK_CLOSE(ak(0,1), 2.7111012604872633e-05, 2e-3);
-  BOOST_CHECK_CLOSE(ak(1,1), 0.00044724517297504583, 2e-3);
-  BOOST_CHECK_CLOSE(ak(1,2), 0.00069114989773355032, 2e-3);
-  BOOST_CHECK_CLOSE(ak(106,106), 0.99991041825545657, 2e-3);
+
+  if (false) {
+    // write out expected values
+    std::cerr << std::setprecision(20) << std::scientific;
+    std::cerr << "double ak_0_0 = " << ak(0,0) << ";" << std::endl;
+    std::cerr << "double ak_0_1 = " << ak(0,1) << ";" << std::endl;
+    std::cerr << "double ak_1_1 = " << ak(1,1) << ";" << std::endl;
+    std::cerr << "double ak_1_2 = " << ak(1,2) << ";" << std::endl;
+    std::cerr << "double ak_106_106 = " << ak(106,106) << ";" << std::endl;
+  }
+
+  double ak_0_0 = 2.60450323353874073785e-04;
+  double ak_0_1 = 2.94670140053263280612e-04;
+  double ak_1_1 = 4.99260714931101020481e-03;
+  double ak_1_2 = 4.30065525501516481705e-03;
+  double ak_106_106 = 6.43739339202143092967e-07;
+
+  BOOST_CHECK_CLOSE(ak(0,0), ak_0_0, 2e-3);
+  BOOST_CHECK_CLOSE(ak(0,1), ak_0_1, 2e-3);
+  BOOST_CHECK_CLOSE(ak(1,1), ak_1_1, 2e-3);
+  BOOST_CHECK_CLOSE(ak(1,2), ak_1_2, 2e-3);
+  BOOST_CHECK_CLOSE(ak(106,106), ak_106_106, 2e-3);
 }
 
 // This data comes from a test with a nondiagonal covariance
@@ -201,19 +215,16 @@ BOOST_AUTO_TEST_CASE(averaging_kernel_test)
 // covariance matrix with a degenerate jacobian
 BOOST_AUTO_TEST_CASE(nondiagonal_cov)
 {
-  is_long_test();		// Skip unless we are running long tests.
-
   // We get the expected results here by running the old Fortran
   // version and capturing the calculated values. We make sure that we
   // are calculating the same values with the new code.
-  ConnorSolver cs(boost::shared_ptr<CostFunction>(new 
-						  CostFunctionRankDegenerate),
-		  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
+  ConnorSolver cs(boost::shared_ptr<CostFunction>(new CostFunctionRankDegenerate),
+                  boost::shared_ptr<ConvergenceCheck>(new ChisqConvergence));
   blitz::Array<double, 1> dx;
   blitz::Array<double, 2> kt_se_m1_k;
   cs.test_do_inversion(test_data_dir() + 
-		       "expected/connor_solver/connor_nondiagonal_cov.txt", dx, 
-		       kt_se_m1_k);
+                       "expected/connor_solver/connor_nondiagonal_cov.txt", dx, 
+                       kt_se_m1_k);
   BOOST_CHECK_CLOSE(dx(10), 1.80693604E-05, 1e-2);
 }
 
