@@ -26,6 +26,7 @@ public:
    const boost::shared_ptr<Instrument>& Inst,
    const boost::shared_ptr<SpectralWindow>& Spectral_window,
    const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling);
+  ForwardModelSpectralGrid() {}
   std::string print_to_string() const;
   %python_attribute(number_spectrometer, virtual int);
   SpectralDomain low_resolution_grid(int Spec_index) const;
