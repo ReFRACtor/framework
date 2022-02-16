@@ -252,6 +252,25 @@ class RamanSiorisEffect(Creator):
 
         return raman_effect
 
+class Cloud3dEffect(Creator):
+    offset = param.Array(dims=1)
+    slope = param.Array(dims=1)
+
+    desc_band_name = param.Iterable()
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        offset = self.offset()
+        slope = self.slope()
+        band_name = self.desc_band_name()
+
+        cloud_3d_effect = []
+        for chan_index in range(self.num_channels()):
+            cloud_3d_effect.append( rf.Cloud3dEffect(offset[chan_index], slope[chan_index], band_name[chan_index]) )
+
+        return cloud_3d_effect
+
 class ForwardModel(Creator):
 
     instrument = param.InstanceOf(rf.Instrument)
