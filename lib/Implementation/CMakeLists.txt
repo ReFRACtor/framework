@@ -59,6 +59,7 @@ set(DIR_SOURCES
     ils_gaussian.cc
     ils_grating.cc
     ils_instrument.cc
+    ils_fast_apply.cc
     ils_table.cc
     initial_guess_value.cc
     instrument_doppler.cc
@@ -177,6 +178,7 @@ set(TEST_SOURCES
     ils_gaussian_test.cc
     ils_grating_test.cc
     ils_instrument_test.cc
+    ils_fast_apply_test.cc
     ils_table_test.cc
     initial_guess_value_test.cc
     instrument_doppler_test.cc
