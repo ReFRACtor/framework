@@ -139,8 +139,9 @@ class GroundPiecewise(Creator):
                 # Convert microwindows to same units as grid so we can keep the grid in sorted order
                 if spec_win.range_array.units.name == 'sample_index':
                     # For spectral windows using sample_indexes we must look up what value is at the particular index
-                    win_idx_1 = int(win_range[0].value)
-                    win_idx_2 = int(win_range[1].value)
+                    # These are one based indexes so subtract off 1
+                    win_idx_1 = int(win_range[0].value)-1
+                    win_idx_2 = int(win_range[1].value)-1
 
                     win_val_1 = rf.DoubleWithUnit(disp.pixel_grid.data[win_idx_1], disp.pixel_grid.units)
                     win_val_2 = rf.DoubleWithUnit(disp.pixel_grid.data[win_idx_2], disp.pixel_grid.units)
