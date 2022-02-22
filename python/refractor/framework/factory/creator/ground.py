@@ -127,15 +127,30 @@ class GroundPiecewise(Creator):
         grid = self.grid()
         spec_win = self.spec_win()
 
-        ret_indexes = []
+        # Use a set to avoid duplicate indexes
+        ret_indexes = set()
 
         for channel_idx in range(spec_win.range_array.value.shape[0]):
+            disp = spec_win.dispersion[channel_idx]
+
             for mw_idx in range(spec_win.range_array.value.shape[1]):
                 win_range = spec_win.range_array[channel_idx, mw_idx, :]
 
                 # Convert microwindows to same units as grid so we can keep the grid in sorted order
-                win_val_1 = win_range[0].convert_wave(grid.units).value
-                win_val_2 = win_range[1].convert_wave(grid.units).value
+                if spec_win.range_array.units.name == 'sample_index':
+                    # For spectral windows using sample_indexes we must look up what value is at the particular index
+                    win_idx_1 = int(win_range[0].value)
+                    win_idx_2 = int(win_range[1].value)
+
+                    win_val_1 = rf.DoubleWithUnit(disp.pixel_grid.data[win_idx_1], disp.pixel_grid.units)
+                    win_val_2 = rf.DoubleWithUnit(disp.pixel_grid.data[win_idx_2], disp.pixel_grid.units)
+                else:
+                    win_val_1 = win_range[0].convert_wave(grid.units).value
+                    win_val_2 = win_range[1].convert_wave(grid.units).value
+
+                # Convert to grid units
+                win_val_1 = win_val_1.convert_wave(grid.units).value
+                win_val_2 = win_val_2.convert_wave(grid.units).value
 
                 if win_val_1 == win_val_2:
                     # Empty window, for instance where 0 = 0
@@ -145,10 +160,10 @@ class GroundPiecewise(Creator):
                 # the unit conversion above
                 if win_val_1 < win_val_2:
                     index_beg = bisect.bisect_left(grid.value, win_val_1)
-                    index_end = bisect.bisect_right(grid.value, win_val_2)
+                    index_end = bisect.bisect_right(grid.value, win_val_2)-1
                 else:
                     index_beg = bisect.bisect_left(grid.value, win_val_2)
-                    index_end = bisect.bisect_right(grid.value, win_val_1)
+                    index_end = bisect.bisect_right(grid.value, win_val_1)-1
 
                 # If index beg and end equal zero then there are no grid points found for the window
                 # This means the input grid is insufficient
@@ -159,9 +174,9 @@ class GroundPiecewise(Creator):
                 index_beg = max(index_beg-1, 0)
 
                 for idx in range(index_beg, index_end+1):
-                    ret_indexes.append(idx)
+                    ret_indexes.add(idx)
 
-        return ret_indexes
+        return list(ret_indexes)
  
 class GroundEmissivityPiecewise(GroundPiecewise):
 
