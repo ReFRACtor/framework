@@ -56,7 +56,15 @@ ArrayAd<double, 1> StateMappingAtIndexes::retrieval_state(const ArrayAd<double, 
     int out_idx = 0;
 
     for (int ret_idx = 0; ret_idx < retrieval_indexes_.rows(); ret_idx++) {
-        retrieval_subset(out_idx) = initial_values( retrieval_indexes_(ret_idx) );
+        int inp_idx = retrieval_indexes_(ret_idx);
+
+        if (inp_idx < 0 || inp_idx >= initial_values.rows()) {
+            Exception err;
+            err << "Input index: " << inp_idx << " from retrieval indexes list at index: " << ret_idx 
+                << " out of bounds for initial values of size: " << initial_values.rows();
+            throw err;
+        }
+        retrieval_subset(out_idx) = initial_values(inp_idx);
         out_idx++;
     }
 
