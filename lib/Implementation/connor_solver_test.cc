@@ -194,20 +194,17 @@ BOOST_AUTO_TEST_CASE(averaging_kernel_test)
     std::cerr << "double ak_0_1 = " << ak(0,1) << ";" << std::endl;
     std::cerr << "double ak_1_1 = " << ak(1,1) << ";" << std::endl;
     std::cerr << "double ak_1_2 = " << ak(1,2) << ";" << std::endl;
-    std::cerr << "double ak_106_106 = " << ak(106,106) << ";" << std::endl;
   }
 
   double ak_0_0 = 2.60450323353874073785e-04;
   double ak_0_1 = 2.94670140053263280612e-04;
   double ak_1_1 = 4.99260714931101020481e-03;
   double ak_1_2 = 4.30065525501516481705e-03;
-  double ak_106_106 = 6.43739339202143092967e-07;
 
   BOOST_CHECK_CLOSE(ak(0,0), ak_0_0, 2e-3);
   BOOST_CHECK_CLOSE(ak(0,1), ak_0_1, 2e-3);
   BOOST_CHECK_CLOSE(ak(1,1), ak_1_1, 2e-3);
   BOOST_CHECK_CLOSE(ak(1,2), ak_1_2, 2e-3);
-  BOOST_CHECK_CLOSE(ak(106,106), ak_106_106, 2e-3);
 }
 
 // This data comes from a test with a nondiagonal covariance
