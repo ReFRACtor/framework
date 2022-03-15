@@ -16,26 +16,36 @@ public:
     zen = 30.0;
     azm = 10.0;
 
-    rt_first_order.reset(new LRadRt(lidort_rt, config_spectral_window->spectral_bound(), 
-                                    sza, zen, azm, pure_nadir, true, false));
-    rt_second_order.reset(new LRadRt(lidort_rt, config_spectral_window->spectral_bound(),
-                                     sza, zen, azm, pure_nadir, true, true));
-    rt_lrad_only.reset(new LRadRt(lidort_rt->stokes_coefficient(),
-                                  config_atmosphere,
-                                  config_spectral_window->spectral_bound(),
-                                  sza, zen, azm, pure_nadir,
-                                  lidort_rt->number_stokes()));
-    rt_lrad_only_second.reset(new LRadRt(lidort_rt->stokes_coefficient(),
-                                  config_atmosphere,
-                                  config_spectral_window->spectral_bound(),
-                                  sza, zen, azm, pure_nadir,
-                                  lidort_rt->number_stokes(), true));
+    rt_first_order = boost::make_shared<LRadRt>
+      (lidort_rt, config_spectral_window->spectral_bound(), 
+       sza, zen, azm, pure_nadir, true, false);
+    rt_first_order2 = boost::make_shared<LRadRtFixedStokesCoefficient>
+      (lidort_rt, lidort_rt->atmosphere_ptr(),
+       lidort_rt->number_stream(),
+       config_spectral_window->spectral_bound(), 
+       sza, zen, azm, pure_nadir, true, false);
+    rt_second_order = boost::make_shared<LRadRt>
+      (lidort_rt, config_spectral_window->spectral_bound(),
+       sza, zen, azm, pure_nadir, true, true);
+    rt_lrad_only = boost::make_shared<LRadRt>
+      (lidort_rt->stokes_coefficient(),
+       config_atmosphere,
+       config_spectral_window->spectral_bound(),
+       sza, zen, azm, pure_nadir,
+       lidort_rt->number_stokes());
+    rt_lrad_only_second = boost::make_shared<LRadRt>
+      (lidort_rt->stokes_coefficient(),
+       config_atmosphere,
+       config_spectral_window->spectral_bound(),
+       sza, zen, azm, pure_nadir,
+       lidort_rt->number_stokes(), true);
     check_tol = 1e-6;
   }
   virtual ~LRadLambertianFixture() {}
 
   double check_tol;
   boost::shared_ptr<LRadRt> rt_first_order;
+  boost::shared_ptr<LRadRtFixedStokesCoefficient> rt_first_order2;
   boost::shared_ptr<LRadRt> rt_second_order;
   boost::shared_ptr<LRadRt> rt_lrad_only;
   boost::shared_ptr<LRadRt> rt_lrad_only_second;
@@ -87,17 +97,33 @@ BOOST_AUTO_TEST_CASE(reflectance_first_order)
   stokes_expect = 
     0.020742234580895982377, -0.0013228620534916765358, -0.00047622341054522510529, 
     0.020742000112342170309, -0.001322989829824955171, -0.0004762694093559555219;
+  if(false) {
+    // Diagnostics if we need to debug something
+    std::cerr << rt_first_order->stokes(wn, 0) << "\n";
+    serialize_write("driver.xml", rt_first_order->l_rad_driver());
+  }
   BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order->stokes(wn, 0),
+                               stokes_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order2->stokes(wn, 0),
                                stokes_expect, check_tol);
   BOOST_CHECK_MATRIX_CLOSE_TOL
     (rt_first_order->stokes_and_jacobian(wn, 0).value(),
+     stokes_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL
+    (rt_first_order2->stokes_and_jacobian(wn, 0).value(),
      stokes_expect, check_tol);
   Array<double, 1> rad_expect(stokes_expect(Range::all(), 0));
   BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order->reflectance(wn, 0, true).
                                spectral_range().data(), 
                                rad_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order2->reflectance(wn, 0, true).
+                               spectral_range().data(), 
+                               rad_expect, check_tol);
   BOOST_CHECK_MATRIX_CLOSE_TOL
     (rt_first_order->reflectance(wn, 0).spectral_range().data(), 
+     rad_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL
+    (rt_first_order2->reflectance(wn, 0).spectral_range().data(), 
      rad_expect, check_tol);
 }
 
@@ -110,6 +136,11 @@ BOOST_AUTO_TEST_CASE(reflectance_first_order_serialization)
     std::cerr << d;
   boost::shared_ptr<LRadRt> rt_first_order_r =
     serialize_read_string<LRadRt>(d);
+  std::string d2 = serialize_write_string(rt_first_order2);
+  if(false)
+    std::cerr << d2;
+  boost::shared_ptr<LRadRtFixedStokesCoefficient> rt_first_order_r2 =
+    serialize_read_string<LRadRtFixedStokesCoefficient>(d2);
   Array<double, 1> wn(2);
   wn = 12929.94, 12930.30;
   Array<double, 2> stokes_expect(2, 3);
@@ -118,15 +149,26 @@ BOOST_AUTO_TEST_CASE(reflectance_first_order_serialization)
     0.020742000112342170309, -0.001322989829824955171, -0.0004762694093559555219;
   BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order_r->stokes(wn, 0),
                                stokes_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order_r2->stokes(wn, 0),
+                               stokes_expect, check_tol);
   BOOST_CHECK_MATRIX_CLOSE_TOL
     (rt_first_order_r->stokes_and_jacobian(wn, 0).value(),
+     stokes_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL
+    (rt_first_order_r2->stokes_and_jacobian(wn, 0).value(),
      stokes_expect, check_tol);
   Array<double, 1> rad_expect(stokes_expect(Range::all(), 0));
   BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order_r->reflectance(wn, 0, true).
                                spectral_range().data(), 
                                rad_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(rt_first_order_r2->reflectance(wn, 0, true).
+                               spectral_range().data(), 
+                               rad_expect, check_tol);
   BOOST_CHECK_MATRIX_CLOSE_TOL
     (rt_first_order_r->reflectance(wn, 0).spectral_range().data(), 
+     rad_expect, check_tol);
+  BOOST_CHECK_MATRIX_CLOSE_TOL
+    (rt_first_order_r2->reflectance(wn, 0).spectral_range().data(), 
      rad_expect, check_tol);
 }
 

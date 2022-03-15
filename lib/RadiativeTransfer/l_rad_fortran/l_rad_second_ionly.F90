@@ -1039,28 +1039,28 @@ contains
 
       integer m,nmug,nlay,npar,nspars,layer
       logical linearize,s_linearize
-      double precision w(nmug+2)
-      double precision a,L_a(npar)
-      double precision x,x0,L_x0(nlay,npar)
-      double precision facl,L_facl(nlay,npar)
-      double precision Ptc(2,nmug,4,4),Pts(2,nmug,4,4), &
-                       Prc(2,nmug,4,4),Prs(2,nmug,4,4)
-      double precision L_Ptc(2,nmug,4,4,npar), &
-                       L_Pts(2,nmug,4,4,npar), &
-                       L_Prc(2,nmug,4,4,npar), &
-                       L_Prs(2,nmug,4,4,npar)
-      double precision phgl(nmug),phhl(nmug),gl(nmug),hl(nmug)
-      double precision L_phgl(nmug,nlay,npar),L_phhl(nmug,nlay,npar)
-      double precision L_gl(nmug,nlay,npar),L_hl(nmug,nlay,npar)
-      double precision R1c(2,nmug,4,4)
-      double precision R1s(2,nmug,4,4)
-      double precision R1cscal(2,nmug)
-      double precision L_R1c(2,nmug,4,4,nlay,npar)
-      double precision L_R1s(2,nmug,4,4,nlay,npar)
-      double precision L_R1cscal(2,nmug,nlay,npar)
-      double precision Ls_R1c(2,nmug,4,4,nspars)
-      double precision Ls_R1s(2,nmug,4,4,nspars)
-      double precision Ls_R1cscal(2,nmug,nspars)
+      double precision w(:)
+      double precision a,L_a(:)
+      double precision x,x0,L_x0(:,:)
+      double precision facl,L_facl(:,:)
+      double precision Ptc(:,:,:,:),Pts(:,:,:,:), &
+                       Prc(:,:,:,:),Prs(:,:,:,:)
+      double precision L_Ptc(:,:,:,:,:), &
+                       L_Pts(:,:,:,:,:), &
+                       L_Prc(:,:,:,:,:), &
+                       L_Prs(:,:,:,:,:)
+      double precision phgl(:),phhl(:),gl(:),hl(:)
+      double precision L_phgl(:,:,:),L_phhl(:,:,:)
+      double precision L_gl(:,:,:),L_hl(:,:,:)
+      double precision R1c(:,:,:,:)
+      double precision R1s(:,:,:,:)
+      double precision R1cscal(:,:)
+      double precision L_R1c(:,:,:,:,:,:)
+      double precision L_R1s(:,:,:,:,:,:)
+      double precision L_R1cscal(:,:,:,:)
+      double precision Ls_R1c(:,:,:,:,:)
+      double precision Ls_R1s(:,:,:,:,:)
+      double precision Ls_R1cscal(:,:,:)
 
 !  outputs
 
@@ -1398,14 +1398,14 @@ contains
 
       integer m,nmug,nlay,npar,nspars,layer
       logical linearize,s_linearize
-      double precision Prc(2,nmug,4,4),Prs(2,nmug,4,4)
-      double precision L_Prc(2,nmug,4,4,npar), &
-                       L_Prs(2,nmug,4,4,npar)
-      double precision chibjl(nmug),facjl(nmug)
-      double precision L_chibjl(nmug,npar),L_facjl(nmug,npar)
-      double precision chibil(nmug),facil(nmug)
-      double precision L_chibil(nmug,nlay,npar)
-      double precision L_facil(nmug,npar)
+      double precision Prc(:,:,:,:),Prs(:,:,:,:)
+      double precision L_Prc(:,:,:,:,:), &
+                       L_Prs(:,:,:,:,:)
+      double precision chibjl(:),facjl(:)
+      double precision L_chibjl(:,:),L_facjl(:,:)
+      double precision chibil(:),facil(:)
+      double precision L_chibil(:,:,:)
+      double precision L_facil(:,:)
 
 !  outputs
 
@@ -1604,9 +1604,9 @@ contains
 
       integer m,nmug,npar,ndcoefs
       logical linearize
-      double precision coefsm(0:ndcoefs,6)
-      double precision L_coefsm(0:ndcoefs,6,npar)
-      double precision xmu(nmug+2)
+      double precision coefsm(0:,:)
+      double precision L_coefsm(0:,:,:)
+      double precision xmu(:)
 
 !  outputs
 
