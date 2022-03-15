@@ -33,15 +33,30 @@ void LRadRt::serialize(Archive & ar,
       & FP_NVP(do_second_order) & FP_NVP(sza) & FP_NVP(zen)
       & FP_NVP(azm) & FP_NVP(wmin) & FP_NVP(wmax) & FP_NVP(rt)
       & FP_NVP(driver);
+    // Because of the inheritance structure, LRadRtBase doesn't have
+    // access to the atm in the RadiativeTransferSingleWn. So we have
+    // a copy, which we need to make explicit because the Old
+    // serialization version didn't have the l_rad base.
+    atm_ = atm;
     return;
   }
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LRadRtBase)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverRtAtmosphere)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferSingleWn)
+    & FP_NVP(rt);
+}
+
+template<class Archive>
+void LRadRtFixedStokesCoefficient::serialize(Archive & ar,
+		     const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LRadRtBase)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadiativeTransferFixedStokesCoefficient)
     & FP_NVP(rt);
 }
 
 FP_IMPLEMENT(LRadRtBase);
 FP_IMPLEMENT(LRadRt);
+FP_IMPLEMENT(LRadRtFixedStokesCoefficient);
 #endif
 
 #ifdef HAVE_LUA
@@ -115,7 +130,60 @@ LRadRt::LRadRt(const boost::shared_ptr<RadiativeTransferSingleWn>& Rt,
 	     Sza, Zen, Azm, Pure_nadir, Rt->number_stokes(),
 	     Use_first_order_scatt_calc,
 	     Do_second_order, Rt->number_stream(),
-	     Spectrum_spacing, Ps_mode),
+	     Spectrum_spacing, Ps_mode,
+	     true // Use TMS correction, have RT
+	     ),
+  rt(Rt)
+{
+}
+
+//-----------------------------------------------------------------------
+/// Constructor. Note that we can run in two modes, either we are
+/// doing a polarization correction to an underlying multi-scatter RT
+/// code, or we are just doing a single-scatter calculation in the
+/// LRad alone. This constructor sets up for the mult-scatter
+/// correction.
+///
+/// \param Rt RT to apply polarization correction to.
+/// \param Atm Atmosphere
+/// \param Spec_bound Spectral window bounds for each spectrometer.
+/// \param Sza Solar zenith angle. This is in degrees, and should be
+///     in the range 0 to 90, and have size number_spectrometer()
+/// \param Zen Zenith angle (degrees), in range 0 to 90, and have size
+///      number_spectrometer()
+/// \param Azm Azimuth angle (degrees), in range 0 to 360, and have size
+///      number_spectrometer()
+/// \param Pure_nadir If true then scene is purely nadir
+/// \param Use_first_order_scatt_calc Use the first order of scattering
+///      calculation from LRad since it is a faster calculation than
+///      by most other radiative transfers. If using two RTs together
+///      the other RT must only calculate the multiple scattering component
+///      of the stokes vector.
+/// \param Do_second_order If true, we do second order corrections
+/// \param Spectrum_spacing The spectrum spacing
+/// \param ps_mode Which pseudo spherical mode to use: 
+///        REGULAR, ENHANCED, PLANE_PARALLEL, DETECT
+//-----------------------------------------------------------------------
+
+LRadRtFixedStokesCoefficient::LRadRtFixedStokesCoefficient
+(const boost::shared_ptr<RadiativeTransferFixedStokesCoefficient>& Rt,
+ const boost::shared_ptr<RtAtmosphere>& Atm,
+ int Number_stream,
+ const SpectralBound& Spec_bound,
+ const blitz::Array<double, 1>& Sza,
+ const blitz::Array<double, 1>& Zen,
+ const blitz::Array<double, 1>& Azm,
+ bool Pure_nadir,
+ bool Use_first_order_scatt_calc,
+ bool Do_second_order,
+ double Spectrum_spacing,
+ const LRadDriver::PsMode Ps_mode)
+: RadiativeTransferFixedStokesCoefficient(Rt->stokes_coefficient()),
+  LRadRtBase(Atm, Spec_bound,
+	     Sza, Zen, Azm, Pure_nadir, Rt->number_stokes(),
+	     Use_first_order_scatt_calc,
+	     Do_second_order, Number_stream,
+	     Spectrum_spacing, Ps_mode, true),
   rt(Rt)
 {
 }
@@ -132,7 +200,8 @@ LRadRtBase::LRadRtBase
  bool Do_second_order,
  int Number_stream,
  double Spectrum_spacing,
- const LRadDriver::PsMode Ps_mode)
+ const LRadDriver::PsMode Ps_mode,
+ bool Use_tms_correction)
   : atm_(Atm),
     ground_(Atm->ground()),
     use_first_order_scatt_calc(Use_first_order_scatt_calc),
@@ -142,9 +211,13 @@ LRadRtBase::LRadRtBase
 {
   initialize(Spec_bound, Spectrum_spacing);
 
-  driver.reset(new LRadDriver(Number_stream, Number_stokes,
+  // There seems to a bug in l_rad if nstokes = 4,
+  // it will not compute the third stokes value,
+  // so for now the maximum value is 3
+  driver.reset(new LRadDriver(Number_stream,
+			      std::min(Number_stokes, 3),
 			      surface_type(),
-			      false, // Do not use TMS correction, no RT
+			      Use_tms_correction,
 			      Pure_nadir, Ps_mode));
 }
 
@@ -188,8 +261,11 @@ LRadRt::LRadRt(const boost::shared_ptr<StokesCoefficient>& Stokes_coef,
                int Number_stream,
                double Spectrum_spacing,
                const LRadDriver::PsMode Ps_mode)
-: LRadRtBase(Atm, Spec_bound, Sza, Zen, Azm, Pure_nadir, Number_stokes,
-	     true, Do_second_order, Number_stream, Spectrum_spacing, Ps_mode)
+: RadiativeTransferSingleWn(Stokes_coef, Atm),
+  LRadRtBase(Atm, Spec_bound, Sza, Zen, Azm, Pure_nadir, Number_stokes,
+	     true, Do_second_order, Number_stream, Spectrum_spacing, Ps_mode,
+	     false // Do not use TMS correction, no RT
+	     )
 {
 }
 
@@ -362,9 +438,13 @@ void LRadRtBase::apply_jacobians
   }
 }
 
-// See base class for description of this.
-blitz::Array<double, 1> LRadRt::stokes_single_wn
-(double Wn, int Spec_index,
+//-----------------------------------------------------------------------
+/// Calculate the stokes correction, which is pretty much all of
+/// LRadRt expect for adding the actual underlying RT.
+//-----------------------------------------------------------------------
+
+blitz::Array<double, 1> LRadRtBase::stokes_corr
+(double Wn, int Spec_index, bool have_rt,
  const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
   update_altitude(Spec_index);
@@ -384,7 +464,7 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
   }
   Array<double, 3> pf(0, 0, 0);
 
-  if(rt || do_second_order) {
+  if(have_rt || do_second_order) {
     // -1 for numscat means get them all.
     int nscat = (do_second_order ? -1 : 1);
     int nmom = 2 * number_stream();
@@ -422,22 +502,16 @@ blitz::Array<double, 1> LRadRt::stokes_single_wn
   // if we had used a reference
   Array<double, 1> stokes(driver->stokes().shape());
   stokes = driver->stokes();
-
-  // We either are correcting a multi-scatter RT code, or just doing a
-  // single scatter alone.
-  if(rt) {
-    Array<double, 1> t(rt->stokes_single_wn(Wn, Spec_index, Opt_prop));
-
-    for(int i = 0; i < number_stokes(); ++i)
-      stokes(i) = stokes(i) + t(i);
-  }
-
   return stokes;
 }
 
-// See base class for description of this.
-ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
-(double Wn, int Spec_index,
+//-----------------------------------------------------------------------
+/// Calculate the stokes correction, which is pretty much all of
+/// LRadRt expect for adding the actual underlying RT.
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 1> LRadRtBase::stokes_and_jacobian_corr
+(double Wn, int Spec_index, bool have_rt,
  const boost::shared_ptr<OpticalProperties>& Opt_prop) const
 {
   update_altitude(Spec_index);
@@ -466,7 +540,7 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
 
   ArrayAd<double, 3> pf(0, 0, 0, 0);
 
-  if(rt || do_second_order) {
+  if(have_rt || do_second_order) {
     // -1 for numscat means get them all.
     int nscat = (do_second_order ? -1 : 1);
     int nmom = 2 * number_stream();
@@ -511,7 +585,34 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
   stokes.value() = driver->stokes();
   apply_jacobians(Wn, Spec_index, stokes, driver->atmospheric_jacobian(),
 		  driver->surface_jacobian(), Opt_prop);
+  return stokes;
+}
 
+// See base class for description of this.
+blitz::Array<double, 1> LRadRt::stokes_single_wn
+(double Wn, int Spec_index,
+ const boost::shared_ptr<OpticalProperties>& Opt_prop) const
+{
+  bool have_rt = (rt ? true : false);
+  Array<double, 1> stokes = stokes_corr(Wn, Spec_index, have_rt, Opt_prop);
+  if(rt) {
+    Array<double, 1> t(rt->stokes_single_wn(Wn, Spec_index, Opt_prop));
+    for(int i = 0; i < number_stokes(); ++i)
+      stokes(i) = stokes(i) + t(i);
+  }
+
+  return stokes;
+}
+
+// See base class for description of this.
+ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
+(double Wn, int Spec_index,
+ const boost::shared_ptr<OpticalProperties>& Opt_prop) const
+{
+  bool have_rt = (rt ? true : false);
+  ArrayAd<double, 1> stokes = stokes_and_jacobian_corr
+    (Wn, Spec_index, have_rt, Opt_prop);
+  
   // We either are correcting a multi-scatter RT code, or just doing a
   // single scatter alone.
   if(rt) {
@@ -520,6 +621,35 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
 
     for(int i = 0; i < number_stokes(); ++i)
       stokes(i) = stokes(i) + t(i);
+  }
+  return stokes;
+}
+
+// See base class for description of this.
+blitz::Array<double, 2> LRadRtFixedStokesCoefficient::stokes
+(const SpectralDomain& Spec_domain, int Spec_index) const
+{
+  Array<double, 2> stokes = rt->stokes(Spec_domain, Spec_index);
+  Array<double, 1> wn(Spec_domain.wavenumber());
+  for(int i = 0; i < wn.rows(); ++i) {
+    Array<double, 1> corr = stokes_corr(wn(i), Spec_index, true);
+    for(int j = 0; j < number_stokes(); ++j)
+      stokes(i,j) += corr(j);
+  }
+  return stokes;
+}
+
+// See base class for description of this.
+ArrayAd<double, 2> LRadRtFixedStokesCoefficient::stokes_and_jacobian
+(const SpectralDomain& Spec_domain, int Spec_index) const
+{
+  ArrayAd<double, 2> stokes = rt->stokes_and_jacobian(Spec_domain, Spec_index);
+  Array<double, 1> wn(Spec_domain.wavenumber());
+  for(int i = 0; i < wn.rows(); ++i) {
+    ArrayAd<double, 1> corr = stokes_and_jacobian_corr(wn(i), Spec_index,
+						       true);
+    for(int j = 0; j < number_stokes(); ++j)
+      stokes(i,j) = stokes(i,j) + corr(j);
   }
   return stokes;
 }
@@ -571,6 +701,23 @@ void LRadRt::print(std::ostream& Os, bool Short_form) const
     opad.strict_sync();
     // Output print from parent class
     RadiativeTransferSingleWn::print(opad, Short_form);
+    opad.strict_sync();
+    Os << "  Radiative Transfer:\n";
+    OstreamPad opad1(Os, "    ");
+    rt->print(opad1, true);
+    opad1 << "\n";
+    opad1.strict_sync();
+}
+
+void LRadRtFixedStokesCoefficient::print
+(std::ostream& Os, bool Short_form) const
+{
+    OstreamPad opad(Os, "  ");
+    Os << "LRadRt:\n";
+    LRadRtBase::print(opad, Short_form);
+    opad.strict_sync();
+    // Output print from parent class
+    RadiativeTransferFixedStokesCoefficient::print(opad, Short_form);
     opad.strict_sync();
     Os << "  Radiative Transfer:\n";
     OstreamPad opad1(Os, "    ");
