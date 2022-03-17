@@ -15,4 +15,3 @@ future
 six
 
 # Needed for construct_config_diagram.py
-pygraphviz

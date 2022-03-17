@@ -76,6 +76,14 @@ blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& h
                                                 const blitz::Array<double, 1>& high_resolution_radiance,
                                                 const std::vector<int>& pixel_list) const
 {
+    // Check that the number of extract indexes is the same length as the pixel list
+    if (pixel_list.size() != extract_indices.rows()) {
+        Exception err;
+        err << "The number of samples in the pixel_list: " << pixel_list.size() << " "
+            << "must match the number of extract_indices: " << extract_indices.rows();
+        throw err;
+    }
+
     // Output array
     Array<double, 1> conv_rad(pixel_list.size());
     conv_rad = 0.0;
