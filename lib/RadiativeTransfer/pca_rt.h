@@ -56,7 +56,8 @@ public:
 	int Number_moments, 
 	bool do_solar_sources = true, 
 	bool do_thermal_emission = false,
-	bool do_3M_correction = false);
+	bool do_3M_correction = false,
+    const boost::shared_ptr<RadiativeTransferSingleWn>& First_order_rt = NULL);
   
   virtual ~PCARt() = default;
   
@@ -73,7 +74,7 @@ public:
   
   const boost::shared_ptr<LidortRt> lidort() const { return lidort_rt; }
   const boost::shared_ptr<TwostreamRt> twostream() const { return twostream_rt; }
-  const boost::shared_ptr<FirstOrderRt> first_order() const { return first_order_rt; }
+  const boost::shared_ptr<RadiativeTransferSingleWn> first_order() const { return first_order_rt; }
   
   // Debugging accessors
   const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
@@ -128,7 +129,7 @@ private:
   
   boost::shared_ptr<LidortRt> lidort_rt;
   boost::shared_ptr<TwostreamRt> twostream_rt;
-  boost::shared_ptr<FirstOrderRt> first_order_rt;
+  boost::shared_ptr<RadiativeTransferSingleWn> first_order_rt;
   
   // These are stored for the current stokes call for debugging purposes
   // They are empty until stokes or stokes_and_jacobian are called.

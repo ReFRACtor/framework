@@ -38,7 +38,8 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
              int Number_moments, 
              bool do_solar_sources, 
              bool do_thermal_emission,
-             bool do_3M_correction) 
+             bool do_3M_correction,
+             const boost::shared_ptr<RadiativeTransferSingleWn>& First_order_rt) 
 : RadiativeTransferFixedStokesCoefficient(Stokes_coef), atm(Atm), primary_absorber(Primary_absorber), 
   bin_method(Bin_method), num_bins(Num_bins), num_eofs(Num_eofs), do_3m_correction(do_3M_correction)
 {
@@ -46,7 +47,7 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
   aerosol_optical = boost::dynamic_pointer_cast<AerosolOptical>(atm->aerosol_ptr());
   
   // Only throw an error if the original pointer is not already null
-  if(atm->aerosol_ptr() && !aerosol_optical)
+  if (atm->aerosol_ptr() && !aerosol_optical)
     throw Exception("Failed to convert aerosol class to AerosolOptical");
 
   lidort_rt.reset(new LidortRt(Atm, Stokes_coef, Sza, Zen, Azm, false,
@@ -57,9 +58,13 @@ PCARt::PCARt(const boost::shared_ptr<AtmosphereStandard>& Atm,
   twostream_rt.reset(new TwostreamRt(Atm, Stokes_coef, Sza, Zen, Azm, true,
                                      do_solar_sources, do_thermal_emission));
 
-  first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm,
-                                        Number_streams, Number_moments,
-                                        do_solar_sources, do_thermal_emission));
+  if (First_order_rt) {
+    first_order_rt = First_order_rt;
+  } else {
+    first_order_rt.reset(new FirstOrderRt(Atm, Stokes_coef, Sza, Zen, Azm,
+                                          Number_streams, Number_moments,
+                                          do_solar_sources, do_thermal_emission));
+  }
 
   num_gas = atm->absorber_ptr()->number_species();
   num_layer = atm->pressure_ptr()->number_layer();
