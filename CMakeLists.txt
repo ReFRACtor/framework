@@ -43,8 +43,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "ReleaseFast")
   set(CMAKE_Fortran_FLAGS "$ENV{FFLAGS} -Ofast -march=native -Wno-compare-reals")
 endif(CMAKE_BUILD_TYPE STREQUAL "ReleaseFast")
 
-
-
 # Anaconda enables the -fopenmp flag for fortran with its standard compiler
 # flags. This causes problems with lidort (which was fairly hard to track
 # down). -fopenmp implies -frecursive which makes every function in fortran
