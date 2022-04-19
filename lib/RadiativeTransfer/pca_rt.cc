@@ -371,6 +371,7 @@ blitz::Array<double, 2> PCARt::stokes(const SpectralDomain& Spec_domain, int Spe
 void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const
 {
     int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+    Range r_stokes = Range(0, stokes.cols()-1);
 
     // We need an effective wavenumber for aerosol property computations
     double bin_wn = bin_effective_wavenumber(wavenumbers, bin_idx);
@@ -394,11 +395,11 @@ void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_ind
 
         // The difference here is the 2M correction only applies to the 2stream values
         if (do_3m_correction) {
-            stokes.value()(grid_idx, Range::all()) = 
-                bin_corrections(dom_idx, Range::all()) * (twostream_full.value()(Range::all()) + first_order_full.value()(Range::all()));
+            stokes.value()(grid_idx, r_stokes) = 
+                bin_corrections(dom_idx, r_stokes) * (twostream_full.value()(r_stokes) + first_order_full.value()(r_stokes));
         } else {
-            stokes.value()(grid_idx, Range::all()) = 
-                bin_corrections(dom_idx, Range::all()) * twostream_full.value()(Range::all()) + first_order_full.value()(Range::all());
+            stokes.value()(grid_idx, r_stokes) = 
+                bin_corrections(dom_idx, r_stokes) * twostream_full.value()(r_stokes) + first_order_full.value()(r_stokes);
         }
         
         if (stokes.number_variable() == 0) {
@@ -408,11 +409,11 @@ void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_ind
         // Corrections can be applied for each jacobian independently according to Vijay
         for (int jac_idx = 0; jac_idx < twostream_full.number_variable(); jac_idx++) {
             if (do_3m_correction) {
-                stokes.jacobian()(grid_idx, Range::all(), jac_idx) = 
-                    bin_corrections(dom_idx, Range::all()) * (twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx));
+                stokes.jacobian()(grid_idx, r_stokes, jac_idx) = 
+                    bin_corrections(dom_idx, r_stokes) * (twostream_full.jacobian()(r_stokes, jac_idx) + first_order_full.jacobian()(r_stokes, jac_idx));
             } else {
-                stokes.jacobian()(grid_idx, Range::all(), jac_idx) = 
-                    bin_corrections(dom_idx, Range::all()) * twostream_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
+                stokes.jacobian()(grid_idx, r_stokes, jac_idx) = 
+                    bin_corrections(dom_idx, r_stokes) * twostream_full.jacobian()(r_stokes, jac_idx) + first_order_full.jacobian()(r_stokes, jac_idx);
             }
         }
     }
@@ -421,6 +422,7 @@ void PCARt::compute_bin_pca_stokes_and_jac(const int bin_idx, const int spec_ind
 void PCARt::compute_bin_full_stokes_and_jac(const int bin_idx, const int spec_index, const Array<int, 1> bin_wn_indexes, const Array<double, 1>& wavenumbers, ArrayAd<double, 2>& stokes) const
 {
     int num_bin_points = pca_bin->num_bin_points()(bin_idx);
+    Range r_stokes = Range(0, stokes.cols()-1);
 
     for(int dom_idx = 0; dom_idx < num_bin_points; dom_idx++) {
         int grid_idx = bin_wn_indexes(dom_idx);
@@ -429,14 +431,14 @@ void PCARt::compute_bin_full_stokes_and_jac(const int bin_idx, const int spec_in
         ArrayAd<double, 1> lidort_full(lidort_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
         ArrayAd<double, 1> first_order_full(first_order_rt->stokes_and_jacobian_single_wn(dom_wn, spec_index, pca_opt[grid_idx]));
 
-        stokes.value()(grid_idx, Range::all()) = lidort_full.value() + first_order_full.value();
+        stokes.value()(grid_idx, r_stokes) = lidort_full.value()(r_stokes) + first_order_full.value()(r_stokes);
 
         if (stokes.number_variable() == 0) {
             stokes.resize_number_variable(lidort_full.number_variable());
         }
         
         for (int jac_idx = 0; jac_idx < lidort_full.number_variable(); jac_idx++) {
-            stokes.jacobian()(grid_idx, Range::all(), jac_idx) = lidort_full.jacobian()(Range::all(), jac_idx) + first_order_full.jacobian()(Range::all(), jac_idx);
+            stokes.jacobian()(grid_idx, r_stokes, jac_idx) = lidort_full.jacobian()(r_stokes, jac_idx) + first_order_full.jacobian()(r_stokes, jac_idx);
         }
     }
 }
