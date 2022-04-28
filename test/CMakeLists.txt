@@ -30,6 +30,15 @@ set(FP_TEST_FILES ${FP_TEST_FILES} "${CMAKE_CURRENT_BINARY_DIR}/global_fixture_d
 # pieces of the code. These are defined and loaded in the thirdparty cmake file
 add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDORT_MAXATMOSWFS})
 
+# Under some conditions we need to explicitly link to libstdc++ for a successfull test_all build
+find_library(LIB_STDCPP NAMES stdc++)
+if(NOT ${LIB_STDCPP} MATCHES "-NOTFOUND")
+    message(STATUS "Linking with libstdc++: ${LIB_STDCPP}")
+    list(APPEND FP_LIBRARIES ${LIB_STDCPP})
+else()
+    message(WARNING "Could not find libstdc++")
+endif()
+
 #####
 # Create unit test binary, do not include it in the make all target
 find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization timer)
