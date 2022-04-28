@@ -343,21 +343,36 @@ void AtmosphereStandard::notify_update(const Aerosol& UNUSED(A))
 
 bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 {
-    if(fabs(wn - wn_tau_cache) < 1e-6 && spec_index == spec_index_tau_cache) {
-        return true;
-    }
-
     // If spectrometer changes then reset caches 
     if(spec_index != spec_index_tau_cache) {
         invalidate_local_cache();
         spec_index_tau_cache = spec_index;
     }
 
-    wn_tau_cache = wn;
-    FunctionTimer ft(timer.function_timer());
+    n_cache_calls += 1;
 
-    opt_prop.reset(new OpticalPropertiesWrtRt());
-    opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
+    typename std::map<double, boost::shared_ptr<OpticalPropertiesWrtRt> >::const_iterator value_it;
+    value_it = opt_prop_cache.find(wn);
+    if (value_it != opt_prop_cache.end()) {
+
+        opt_prop = value_it->second;
+
+        n_cache_hits += 1;
+
+        return true;
+
+    } else {
+
+        FunctionTimer ft(timer.function_timer());
+
+        opt_prop.reset(new OpticalPropertiesWrtRt());
+        opt_prop->initialize(DoubleWithUnit(wn, units::inv_cm), spec_index, absorber, rayleigh, aerosol, sv_jac_size);
+
+        opt_prop_cache.insert(std::pair<double, boost::shared_ptr<OpticalPropertiesWrtRt> >(wn, opt_prop));
+
+        n_cache_miss += 1;
+
+    }
 
     return false;
 }
@@ -369,8 +384,13 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 
 void AtmosphereStandard::invalidate_local_cache() const
 {
-    wn_tau_cache = -1;
+
     spec_index_tau_cache = -1;
+
+    opt_prop_cache.clear();
+    n_cache_calls = 0;
+    n_cache_hits = 0;
+    n_cache_miss = 0;
 
     column_od_cache->clear();
     total_od_cache->clear();
