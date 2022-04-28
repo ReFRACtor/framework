@@ -11,7 +11,7 @@ extern "C" {
     void create_bin_uvvswir_v5(int *E_nlayers, int *E_ndat, int *E_maxbins, int *ndat, int *nlay, int *nbin, double *gasdat, double *taudp, double *omega, int *ncnt, int *index, int *bin);
 }
 
-PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index)
+PCABinning::PCABinning(const std::vector<boost::shared_ptr<OpticalProperties> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index)
 : opt_props_(optical_properties), bin_method_(bin_method), num_bins_(num_bins), primary_abs_index_(primary_absorber_index)
 {
     compute_bins();

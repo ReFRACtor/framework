@@ -4,7 +4,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "generic_object.h"
-#include "optical_properties_wrt_rt.h"
+#include "optical_properties.h"
 
 namespace FullPhysics {
 
@@ -21,7 +21,7 @@ public:
         UVVSWIR_V5 = 5,
     };
 
-    PCABinning(const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index);
+    PCABinning(const std::vector<boost::shared_ptr<OpticalProperties> >& optical_properties, const Method bin_method, const int num_bins, const int primary_absorber_index);
     virtual ~PCABinning() = default;
 
     /// Number of spectral points in each bin
@@ -33,7 +33,7 @@ public:
 private:
     void compute_bins();
 
-    std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > opt_props_;
+    std::vector<boost::shared_ptr<OpticalProperties> > opt_props_;
 
     Method bin_method_;
     int num_bins_;

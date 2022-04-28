@@ -17,7 +17,7 @@ public:
   OpticalPropertiesPca(const ArrayAd<double, 2>& packed_properties, double wavenumber, const boost::shared_ptr<AerosolOptical>& aerosol, int num_gas, int num_aerosol);
 
   /// Convert another optical properties class into a packed array of properties
-  static ArrayAd<double, 2> pack(const boost::shared_ptr<OpticalPropertiesWrtRt>& source_properties);
+  static ArrayAd<double, 2> pack(const boost::shared_ptr<OpticalProperties>& source_properties);
 
   virtual ArrayAd<double, 2> gas_optical_depth_per_particle() const;
   virtual ArrayAd<double, 1> gas_optical_depth_per_layer() const { assert_init(); return gas_optical_depth_per_layer_; }

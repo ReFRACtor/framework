@@ -15,7 +15,7 @@
 %import "twostream_rt.i"
 %import "first_order_rt.i"
 
-%import "optical_properties_wrt_rt.i"
+%import "optical_properties.i"
 %import "pca_binning.i"
 %import "pca_eigensolver.i"
 
@@ -54,7 +54,7 @@ public:
   %python_attribute(lidort, boost::shared_ptr<LidortRt>);
   %python_attribute(twostream, boost::shared_ptr<TwostreamRt>);
   %python_attribute(first_order, boost::shared_ptr<RadiativeTransferSingleWn>);
-  %python_attribute(optical_properties, std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> >);
+  %python_attribute(optical_properties, std::vector<boost::shared_ptr<OpticalProperties> >);
   %python_attribute(binning, boost::shared_ptr<PCABinning>);
   const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index);
   

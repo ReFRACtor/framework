@@ -107,11 +107,9 @@ void PCARt::compute_bins(const SpectralDomain& Spec_domain, int Spec_index) cons
     boost::shared_ptr<boost::timer::progress_display> progress_bar = progress_display(Spec_domain.data(), progress_message);
 
     // Compute optical properties for the whole band
+    blitz::Array<double, 1> grid_wn = Spec_domain.wavenumber();
     for (int dom_idx = 0; dom_idx < Spec_domain.data().rows(); dom_idx++) {
-        boost::shared_ptr<OpticalPropertiesWrtRt> point_opt_prop(new OpticalPropertiesWrtRt());
-        point_opt_prop->initialize(DoubleWithUnit(Spec_domain.data()(dom_idx), Spec_domain.units()), Spec_index,
-                                   atm->absorber_ptr(), atm->rayleigh_ptr(), atm->aerosol_ptr());
-        pca_opt.push_back(point_opt_prop);
+        pca_opt.push_back(atm->optical_properties(grid_wn(dom_idx), Spec_index));
 
         if(progress_bar) *progress_bar += 1;
     }

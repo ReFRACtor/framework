@@ -5,7 +5,7 @@
 #include "altitude.h"
 %}
 
-%import "optical_properties_wrt_rt.i"
+%import "optical_properties.i"
 
 %fp_shared_ptr(FullPhysics::PCABinning);
 

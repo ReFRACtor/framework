@@ -97,7 +97,7 @@ OpticalPropertiesPca::OpticalPropertiesPca
 /// Pack optical properties into a form that can be manipulated by PCA
 //-----------------------------------------------------------------------
 
-ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalPropertiesWrtRt>& source_properties)
+ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalProperties>& source_properties)
 {
     Range ra = Range::all();
 
