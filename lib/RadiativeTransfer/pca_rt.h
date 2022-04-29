@@ -77,7 +77,7 @@ public:
   const boost::shared_ptr<RadiativeTransferSingleWn> first_order() const { return first_order_rt; }
   
   // Debugging accessors
-  const std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > optical_properties() const { return pca_opt; }
+  const std::vector<boost::shared_ptr<OpticalProperties> > optical_properties() const { return pca_opt; }
   const boost::shared_ptr<PCABinning> binning() const { return pca_bin; }
   const boost::shared_ptr<PCAEigenSolver> solver(const int bin_index) { 
     if (bin_index < 0 || bin_index >= (int) pca_solvers.size()) {
@@ -134,7 +134,7 @@ private:
   // These are stored for the current stokes call for debugging purposes
   // They are empty until stokes or stokes_and_jacobian are called.
   // They are reset for each call
-  mutable std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > pca_opt;
+  mutable std::vector<boost::shared_ptr<OpticalProperties> > pca_opt;
   mutable boost::shared_ptr<PCABinning> pca_bin;
   mutable std::vector<boost::shared_ptr<PCAEigenSolver> > pca_solvers;
   PCARt() {}

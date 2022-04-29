@@ -158,6 +158,7 @@ public:
   (double wn, int spec_index) const
   {
     fill_cache(wn, spec_index);
+
     return opt_prop;
   }
 
@@ -304,7 +305,6 @@ private:
   // its almost certain each subsequent calculation
   // will have the same size, meaning the .resize operation
   // has no work to do and no new memory has to be allocated
-  mutable double wn_tau_cache;
   mutable int spec_index_tau_cache;
   mutable boost::shared_ptr<OpticalPropertiesWrtRt> opt_prop;
   mutable int nlay;
@@ -314,6 +314,10 @@ private:
   // causing everything else to be recalculated
   boost::shared_ptr<ArrayAdCache<double, double, 1> > column_od_cache;
   boost::shared_ptr<ArrayAdCache<double, double, 1> > total_od_cache;
+  mutable std::map<double, boost::shared_ptr<OpticalPropertiesWrtRt> > opt_prop_cache;
+  mutable int n_cache_calls;
+  mutable int n_cache_hits;
+  mutable int n_cache_miss;
 
   // Only allow the column_od and total_od caches if the state vector
   // gets attached, otherwise the cache could become inconsistent with

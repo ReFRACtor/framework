@@ -95,7 +95,7 @@ public:
         return gridded_data_f;
     }
 
-    std::vector<boost::shared_ptr<OpticalPropertiesWrtRt> > opt_props;
+    std::vector<boost::shared_ptr<OpticalProperties> > opt_props;
 
     Array<double, 2> grid_total_od;
     Array<double, 2> grid_total_ssa;
