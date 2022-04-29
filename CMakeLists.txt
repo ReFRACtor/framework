@@ -40,7 +40,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "ReleaseFast")
   # Suppress warning about comparing reals. This is often a bad thing
   # to do, but the fortran code we have does this the "right" way, e.g.
   # checking for identical to zero as a flag value.
-  set(CMAKE_Fortran_FLAGS "$ENV{FFLAGS} -Ofast -march=native -Wno-compare-reals")
+  set(CMAKE_Fortran_FLAGS "$ENV{FFLAGS} -Ofast -march=native -Wno-compare-reals -fno-stack-arrays")
 endif(CMAKE_BUILD_TYPE STREQUAL "ReleaseFast")
 
 # Anaconda enables the -fopenmp flag for fortran with its standard compiler
