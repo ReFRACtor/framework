@@ -416,6 +416,10 @@ void LRadDriver::calculate_second_order()
 {
     check_rt_inputs();
 
+    if(stokes_val_f.rows() != number_stokes()) {
+        stokes_val_f.reference(Array<double, 1>(number_stokes(), ColumnMajorArray<1>()));
+    }
+
     // Only require pf_f to not be size of 0 for second order calculations
     if(pf_f.rows() == 0) {
        throw Exception("pf_f not allocated");
@@ -515,8 +519,8 @@ void LRadDriver::calculate_second_order()
 
 Array<double, 1> LRadDriver::stokes() const
 {
-    if (stokes_val_f.rows() == 0) {
-        throw Exception("Stokes have not yet been allocated, use an RT operation first");
+    if(stokes_val_f.rows() != number_stokes()) {
+        stokes_val_f.reference(Array<double, 1>(number_stokes(), ColumnMajorArray<1>()));
     }
 
     return stokes_val_f;

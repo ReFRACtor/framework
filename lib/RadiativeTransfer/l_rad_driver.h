@@ -150,7 +150,7 @@ private:
   blitz::Array<double, 4> l_pf_f; 
   blitz::Array<double, 3> l_zmat_f; 
   blitz::Array<double, 2> l_fscale_f; 
-  blitz::Array<double, 1> stokes_val_f; 
+  mutable blitz::Array<double, 1> stokes_val_f; 
 
   /// This points to Fortran 90 structure. We have a copy up here in
   /// C++ because we maintain the lifetime of this object here.

@@ -449,15 +449,13 @@ blitz::Array<double, 1> LRadRtBase::stokes_corr
 {
   update_altitude(Spec_index);
 
-  driver->setup_surface_params(atm_->ground()->
-			       surface_parameter(Wn, Spec_index).value());
+  driver->setup_surface_params(atm_->ground()->surface_parameter(Wn, Spec_index).value());
 
   Array<double, 1> tau;
   Array<double, 1> omega;
   if(!Opt_prop) {
     tau.reference(atm_->optical_depth_wrt_rt(Wn, Spec_index).value());
-    omega.reference(atm_->
-		    single_scattering_albedo_wrt_rt(Wn, Spec_index).value());
+    omega.reference(atm_->single_scattering_albedo_wrt_rt(Wn, Spec_index).value());
   } else {
     tau.reference(Opt_prop->total_optical_depth().value());
     omega.reference(Opt_prop->total_single_scattering_albedo().value());
@@ -470,8 +468,7 @@ blitz::Array<double, 1> LRadRtBase::stokes_corr
     int nmom = 2 * number_stream();
 
     if(!Opt_prop)
-      pf.reference(atm_->phase_function_moments_wrt_rt(Wn, Spec_index, nmom,
-						      nscat).value());
+      pf.reference(atm_->phase_function_moments_wrt_rt(Wn, Spec_index, nmom, nscat).value());
     else
       pf.reference(Opt_prop->total_phase_function_moments(nmom, nscat).value());
   } 
@@ -487,13 +484,15 @@ blitz::Array<double, 1> LRadRtBase::stokes_corr
 
   driver->clear_linear_inputs();
   
-  driver->calculate_first_order();
-
-  // Not using first order calculation, so zero out first stokes term,
-  // turn this off in cases where first order of scattering is
-  // contained in RT code
-  if(!use_first_order_scatt_calc)
+  // When not using first order calculation, zero out first stokes term,
+  // This is disable in cases where first order of scattering comes from 
+  // annother RT code or we are only concerned with the second order
+  // correction
+  if(use_first_order_scatt_calc) {
+    driver->calculate_first_order();
+  } else {
     driver->stokes()(0) = 0;
+  }
 
   if(do_second_order)
     driver->calculate_second_order();
@@ -516,8 +515,7 @@ ArrayAd<double, 1> LRadRtBase::stokes_and_jacobian_corr
 {
   update_altitude(Spec_index);
 
-  driver->setup_surface_params(atm_->ground()->
-			       surface_parameter(Wn, Spec_index).value());
+  driver->setup_surface_params(atm_->ground()->surface_parameter(Wn, Spec_index).value());
 
   ArrayAd<double, 1> tau;
   ArrayAd<double, 1> omega;
@@ -546,8 +544,7 @@ ArrayAd<double, 1> LRadRtBase::stokes_and_jacobian_corr
     int nmom = 2 * number_stream();
 
     if(!Opt_prop)
-      pf.reference(atm_->phase_function_moments_wrt_rt(Wn, Spec_index, nmom,
-						      nscat));
+      pf.reference(atm_->phase_function_moments_wrt_rt(Wn, Spec_index, nmom, nscat));
     else
       pf.reference(Opt_prop->total_phase_function_moments(nmom, nscat));
   } 
@@ -560,17 +557,17 @@ ArrayAd<double, 1> LRadRtBase::stokes_and_jacobian_corr
   // more complicated logic to only get what we need.
   ArrayAd<double, 2> zmat = get_z_matrix(Wn, Spec_index, Opt_prop);
 
-  driver->setup_optical_inputs(tau.value(), omega.value(), pf.value(),
-			       zmat.value());
+  driver->setup_optical_inputs(tau.value(), omega.value(), pf.value(), zmat.value());
 
   driver->setup_linear_inputs(tau, omega, pf, zmat);
 
-  driver->calculate_first_order();
-
-  // Not using first order calculation, so zero out first stokes term,
-  // turn this off in cases where first order of scattering is
-  // contained in RT code
-  if(!use_first_order_scatt_calc) {
+  // When not using first order calculation, zero out first stokes term,
+  // This is disable in cases where first order of scattering comes from 
+  // annother RT code or we are only concerned with the second order
+  // correction
+  if(use_first_order_scatt_calc) {
+    driver->calculate_first_order();
+  } else {
     driver->stokes()(0) = 0;
     driver->surface_jacobian()(0, Range::all()) = 0;
     driver->atmospheric_jacobian()(0, Range::all(), Range::all()) = 0;
@@ -584,7 +581,7 @@ ArrayAd<double, 1> LRadRtBase::stokes_and_jacobian_corr
   ArrayAd<double, 1> stokes(driver->stokes().shape(), jac_iv.depth());
   stokes.value() = driver->stokes();
   apply_jacobians(Wn, Spec_index, stokes, driver->atmospheric_jacobian(),
-		  driver->surface_jacobian(), Opt_prop);
+                  driver->surface_jacobian(), Opt_prop);
   return stokes;
 }
 
@@ -616,8 +613,7 @@ ArrayAd<double, 1> LRadRt::stokes_and_jacobian_single_wn
   // We either are correcting a multi-scatter RT code, or just doing a
   // single scatter alone.
   if(rt) {
-    ArrayAd<double, 1> t(rt->stokes_and_jacobian_single_wn(Wn, Spec_index,
-							   Opt_prop));
+    ArrayAd<double, 1> t(rt->stokes_and_jacobian_single_wn(Wn, Spec_index, Opt_prop));
 
     for(int i = 0; i < number_stokes(); ++i)
       stokes(i) = stokes(i) + t(i);
@@ -646,8 +642,7 @@ ArrayAd<double, 2> LRadRtFixedStokesCoefficient::stokes_and_jacobian
   ArrayAd<double, 2> stokes = rt->stokes_and_jacobian(Spec_domain, Spec_index);
   Array<double, 1> wn(Spec_domain.wavenumber());
   for(int i = 0; i < wn.rows(); ++i) {
-    ArrayAd<double, 1> corr = stokes_and_jacobian_corr(wn(i), Spec_index,
-						       true);
+    ArrayAd<double, 1> corr = stokes_and_jacobian_corr(wn(i), Spec_index, true);
     for(int j = 0; j < number_stokes(); ++j)
       stokes(i,j) = stokes(i,j) + corr(j);
   }
