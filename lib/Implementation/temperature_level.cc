@@ -39,22 +39,20 @@ TemperatureLevel::TemperatureLevel(const blitz::Array<double, 1> Temp,
 
 void TemperatureLevel::calc_temperature_grid() const
 {
-  blitz::Array<double, 1> temp_profile( temperature_profile() );
   blitz::Array<double, 1> press_profile( pressure_profile() );
+  ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
 
-  std::vector<AutoDerivative<double> > plist;
-  std::vector<AutoDerivative<double> > tlist;
-
-  if (press_profile.rows() != temp_profile.rows()) {
+  if (press_profile.rows() != mapped_state_coeff.rows()) {
     std::stringstream err_msg;
     err_msg << "Size of pressure grid: "
-	    << press_profile.rows()
-	    << " != size of temperature levels: "
-	    << temp_profile.rows();
+            << press_profile.rows()
+            << " != size of temperature levels: "
+            << mapped_state_coeff.rows();
     throw Exception(err_msg.str());
   }
 
-  ArrayAd<double, 1> mapped_state_coeff = mapping->mapped_state(coeff);
+  std::vector<AutoDerivative<double> > plist;
+  std::vector<AutoDerivative<double> > tlist;
   for(int i = 0; i < press_profile.rows(); ++i) {
     tlist.push_back(mapped_state_coeff(i));
     plist.push_back(press_profile(i));
