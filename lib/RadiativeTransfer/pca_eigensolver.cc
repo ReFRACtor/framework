@@ -52,6 +52,9 @@ blitz::Array<double, 2> PCAEigenSolver::correction_2m(const blitz::Array<double,
     int num_points = principal_components().cols();
     int num_stokes = lidort_mean.rows();
 
+    // The corrections in this method are only for I
+    int stokes_index = 0;
+
     // Check that plus/minus have appropriate shape
     if(lidort_plus.rows() != num_eofs || lidort_minus.rows() != num_eofs) {
         throw Exception("LIDORT radiances values for EOF correction do not match number of EOFs");
@@ -69,35 +72,35 @@ blitz::Array<double, 2> PCAEigenSolver::correction_2m(const blitz::Array<double,
         throw Exception("2stream number of stokes is inconsistent");
     }
 
-    firstIndex i1;
-    Array<double, 1> id_mean( where(twostream_mean(i1) > 0, log( lidort_mean / twostream_mean ), 0.0) );
+    double id_mean = twostream_mean(stokes_index) > 0 ? log(lidort_mean(stokes_index) / twostream_mean(stokes_index)) : 0.0;
 
-    Array<double, 2> term_1(num_eofs, num_stokes);
-    Array<double, 2> term_2(num_eofs, num_stokes);
+    Array<double, 1> term_1(num_eofs);
+    Array<double, 1> term_2(num_eofs);
 
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-        Array<double, 1> lidort_plus_eof(lidort_plus(eof_idx, all));
-        Array<double, 1> twostream_plus_eof(twostream_plus(eof_idx, all));
-        Array<double, 1> id_plus( where(twostream_plus_eof(i1) > 0, log(lidort_plus_eof / twostream_plus_eof), 0.0) );
+        double lidort_plus_eof = lidort_plus(eof_idx, stokes_index);
+        double twostream_plus_eof = twostream_plus(eof_idx, stokes_index);
+        double id_plus = twostream_plus_eof > 0 ? log(lidort_plus_eof / twostream_plus_eof) : 0.0;
 
-        Array<double, 1> lidort_minus_eof(lidort_minus(eof_idx, all));
-        Array<double, 1> twostream_minus_eof(twostream_minus(eof_idx, all));
-        Array<double, 1> id_minus( where(twostream_minus_eof(i1) > 0, log(lidort_minus_eof / twostream_minus_eof), 0.0) );
+        double lidort_minus_eof = lidort_minus(eof_idx, stokes_index);
+        double twostream_minus_eof = twostream_minus(eof_idx, stokes_index);
+        double id_minus = twostream_minus_eof > 0 ? log(lidort_minus_eof / twostream_minus_eof) : 0.0;
   
-        term_1(eof_idx, all) = (id_plus - id_minus) / 2;
-        term_2(eof_idx, all) = (id_plus + id_minus - 2*id_mean) / 2;
+        term_1(eof_idx) = (id_plus - id_minus) / 2;
+        term_2(eof_idx) = (id_plus + id_minus - 2*id_mean) / 2;
     }
 
     Array<double, 2> correction(num_points, num_stokes);
+    correction = 0;
+
     for(int point_idx = 0; point_idx < num_points; point_idx++) {
-        Array<double, 1> ieof(num_stokes);
-        ieof = id_mean;
+        double ieof = id_mean;
 
         for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
             double pc = principal_components()(eof_idx, point_idx);
-            ieof = ieof + term_1(eof_idx, all) * pc + term_2(eof_idx, all) * pc * pc;
+            ieof = ieof + term_1(eof_idx) * pc + term_2(eof_idx) * pc * pc;
         }
-        correction(point_idx, all) = exp(ieof);
+        correction(point_idx, stokes_index) = exp(ieof);
     }
 
     return correction;
@@ -118,6 +121,9 @@ blitz::Array<double, 2> PCAEigenSolver::correction_3m(const blitz::Array<double,
     int num_eofs = principal_components().rows();
     int num_points = principal_components().cols();
     int num_stokes = lidort_mean.rows();
+  
+    // The corrections in this method are only for I
+    int stokes_index = 0;
 
     // Check that plus/minus have appropriate shape
     if(lidort_plus.rows() != num_eofs || lidort_minus.rows() != num_eofs) {
@@ -144,37 +150,37 @@ blitz::Array<double, 2> PCAEigenSolver::correction_3m(const blitz::Array<double,
         throw Exception("First Order number of stokes is inconsistent");
     }
 
-    firstIndex i1;
-    Array<double, 1> hi_ss( lidort_mean + first_order_mean );
-    Array<double, 1> lo_ss( twostream_mean + first_order_mean );
-    Array<double, 1> id_mean( where(lo_ss(i1) > 0, log( hi_ss / lo_ss ), 0.0) );
+    double hi_ss = lidort_mean(stokes_index) + first_order_mean(stokes_index);
+    double lo_ss = twostream_mean(stokes_index) + first_order_mean(stokes_index);
+    double id_mean = lo_ss > 0 ? log( hi_ss / lo_ss ) : 0.0;
 
-    Array<double, 2> term_1(num_eofs, num_stokes);
-    Array<double, 2> term_2(num_eofs, num_stokes);
+    Array<double, 1> term_1(num_eofs);
+    Array<double, 1> term_2(num_eofs);
 
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-        Array<double, 1> hi_ss_plus( lidort_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
-        Array<double, 1> lo_ss_plus( twostream_plus(eof_idx, all) + first_order_plus(eof_idx, all) );
-        Array<double, 1> id_plus( where(lo_ss_plus(i1) > 0, log(hi_ss_plus / lo_ss_plus), 0.0) );
+        double hi_ss_plus = lidort_plus(eof_idx, stokes_index) + first_order_plus(eof_idx, stokes_index);
+        double lo_ss_plus = twostream_plus(eof_idx, stokes_index) + first_order_plus(eof_idx, stokes_index);
+        double id_plus = lo_ss_plus > 0 ? log(hi_ss_plus / lo_ss_plus) : 0.0;
 
-        Array<double, 1> hi_ss_minus( lidort_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
-        Array<double, 1> lo_ss_minus( twostream_minus(eof_idx, all) + first_order_minus(eof_idx, all) );
-        Array<double, 1> id_minus( where(lo_ss_minus(i1) > 0, log(hi_ss_minus / lo_ss_minus), 0.0) );
+        double hi_ss_minus = lidort_minus(eof_idx, stokes_index) + first_order_minus(eof_idx, stokes_index);
+        double lo_ss_minus = twostream_minus(eof_idx, stokes_index) + first_order_minus(eof_idx, stokes_index);
+        double id_minus = lo_ss_minus > 0 ? log(hi_ss_minus / lo_ss_minus) : 0.0;
   
-        term_1(eof_idx, all) = (id_plus - id_minus) / 2;
-        term_2(eof_idx, all) = (id_plus + id_minus - 2*id_mean) / 2;
+        term_1(eof_idx) = (id_plus - id_minus) / 2;
+        term_2(eof_idx) = (id_plus + id_minus - 2*id_mean) / 2;
     }
 
     Array<double, 2> correction(num_points, num_stokes);
+    correction = 0.0;
+
     for(int point_idx = 0; point_idx < num_points; point_idx++) {
-        Array<double, 1> ieof(num_stokes);
-        ieof = id_mean;
+        double ieof = id_mean;
 
         for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
             double pc = principal_components()(eof_idx, point_idx);
-            ieof = ieof + term_1(eof_idx, all) * pc + term_2(eof_idx, all) * pc * pc;
+            ieof = ieof + term_1(eof_idx) * pc + term_2(eof_idx) * pc * pc;
         }
-        correction(point_idx, all) = exp(ieof);
+        correction(point_idx, stokes_index) = exp(ieof);
     }
 
     return correction;
