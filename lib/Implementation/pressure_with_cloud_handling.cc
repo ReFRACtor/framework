@@ -20,7 +20,7 @@ FP_IMPLEMENT(PressureWithCloudHandling);
 #endif
 
 //-----------------------------------------------------------------------
-/// Constructor.
+/// Nominal Constructor.
 //-----------------------------------------------------------------------
 
 PressureWithCloudHandling::PressureWithCloudHandling
@@ -31,6 +31,7 @@ PressureWithCloudHandling::PressureWithCloudHandling
   cloud_pressure_level_(Cloud_pressure_level)
 {
   pressure_clear_->add_observer(*this);
+  type_preference_ = pressure_clear_->type_preference();
 }
 
 //-----------------------------------------------------------------------
@@ -43,8 +44,8 @@ PressureWithCloudHandling::PressureWithCloudHandling
 boost::shared_ptr<Pressure> PressureWithCloudHandling::clone() const
 {
   return boost::make_shared<PressureWithCloudHandling>(pressure_clear_->clone(),
-						       cloud_pressure_level_,
-						       do_cloud());
+                                                       cloud_pressure_level_,
+                                                       do_cloud());
 }
 
 void PressureWithCloudHandling::print(std::ostream& Os) const
@@ -58,48 +59,57 @@ void PressureWithCloudHandling::print(std::ostream& Os) const
   opad.strict_sync();
 }
 
-ArrayAdWithUnit<double, 1>
-PressureWithCloudHandling::pressure_grid(Pressure::PressureGridType Gtype) const
+void PressureWithCloudHandling::calc_pressure_grid() const
 {
-  ArrayAdWithUnit<double, 1> full = pressure_clear_->pressure_grid(Gtype);
-  if(!do_cloud())
-    return full;
-  if(full(1).value.value() > full(0).value.value()) {
+  ArrayAdWithUnit<double, 1> full = pressure_clear_->pressure_grid(Pressure::NATIVE_ORDER);
+  cache.pgrid.units = full.units;
+
+  if(!do_cloud()) {
+    cache.pgrid.value.reference(full.value);
+    return;
+  }
+
+  if(type_preference() == Pressure::PREFER_INCREASING_PRESSURE) {
     // increasing pressure
     int i;
     for(i = 0; i < full.rows(); ++i) {
-      double v = full(i).convert(Unit("Pa")).value.value();
+      double v = full(i).convert(units::Pa).value.value();
       if(v > cloud_pressure_level_)
-	break;
+        break;
     }
+
     // if cloud_pressure_level_ is negative or very low
     //  blitz::Range(0,i-1) will be empty
     if (i == 0) {
-    std::stringstream err_msg;
-    err_msg << "Cloud pressure level too low: "
-            << cloud_pressure_level_
-            << " . Pressure grid would be empty.";
-    throw Exception(err_msg.str());
+      std::stringstream err_msg;
+      err_msg << "Cloud pressure level too low: "
+              << cloud_pressure_level_
+              << " . Pressure grid would be empty.";
+      throw Exception(err_msg.str());
     }
-    return full(blitz::Range(0,i-1));
+
+    cache.pgrid.value.reference( full.value(blitz::Range(0,i-1)) );
+
   } else {
     // decreasing pressure
     int i;
     for(i = full.rows() - 1; i >= 0; --i) {
-      double v = full(i).convert(Unit("Pa")).value.value();
+      double v = full(i).convert(units::Pa).value.value();
       if(v > cloud_pressure_level_)
         break;
     }
+
     // if cloud_pressure_level_ is negative or very low
     //  blitz::Range(i+1,blitz::toEnd) will be empty
     if (i == full.rows() - 1) {
-    std::stringstream err_msg;
-    err_msg << "Cloud pressure level too low: "
-            << cloud_pressure_level_
-            << " . Pressure grid would be empty.";
-    throw Exception(err_msg.str());
+      std::stringstream err_msg;
+      err_msg << "Cloud pressure level too low: "
+              << cloud_pressure_level_
+              << " . Pressure grid would be empty.";
+      throw Exception(err_msg.str());
     }
-    return full(blitz::Range(i+1,blitz::toEnd));
+
+    cache.pgrid.value.reference( full.value(blitz::Range(i+1,blitz::toEnd)) );
+
   }
 }
-

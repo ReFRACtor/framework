@@ -15,7 +15,7 @@ class PressureWithCloudHandling : public Pressure, public Observer<Pressure>,
   public GenericObjectWithCloudHandling {
 public:
   PressureWithCloudHandling(const boost::shared_ptr<Pressure> Press_clear,
-			    double Cloud_pressure_level, bool do_cloud = false);
+                            double Cloud_pressure_level, bool do_cloud = false);
   %python_attribute(pressure_clear, boost::shared_ptr<Pressure>);
   %python_attribute_derived(type_preference, TypePreference)
   virtual ArrayAdWithUnit<double, 1>

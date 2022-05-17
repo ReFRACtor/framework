@@ -26,8 +26,8 @@ BOOST_AUTO_TEST_CASE(basic)
   double cloud_pressure_level = 7;
   auto psigma = boost::make_shared<PressureSigma>(a, b, psurf);
   auto psigma2 = boost::make_shared<PressureSigma>(a.reverse(blitz::firstDim),
-			   b.reverse(blitz::firstDim),
-			   psurf, Pressure::PREFER_DECREASING_PRESSURE);
+                                                   b.reverse(blitz::firstDim),
+                                                   psurf, Pressure::PREFER_DECREASING_PRESSURE);
   PressureWithCloudHandling p(psigma, cloud_pressure_level);
   PressureWithCloudHandling p2(psigma2, cloud_pressure_level);
   BOOST_CHECK_EQUAL(p.type_preference(), Pressure::PREFER_INCREASING_PRESSURE);
@@ -42,10 +42,8 @@ BOOST_AUTO_TEST_CASE(basic)
   BOOST_CHECK_MATRIX_CLOSE(p.pressure_grid(Pressure::NATIVE_ORDER).value.value(), press_grid_expect);
   BOOST_CHECK_MATRIX_CLOSE(p2.pressure_grid().value.value(), press_grid_expect);
   BOOST_CHECK_MATRIX_CLOSE(p2.pressure_grid(Pressure::NATIVE_ORDER).value.value(), press_grid_expect2);
-  std::cerr << p.pressure_grid().value.value() << "\n";
   p.do_cloud(true);
   p2.do_cloud(true);
-  std::cerr << p.pressure_grid().value.value() << "\n";
   Array<double, 1> press_grid_expect3(2);
   press_grid_expect3 = 3, 6;
   Array<double, 1> press_grid_expect4(2);
@@ -73,8 +71,6 @@ BOOST_AUTO_TEST_CASE(serialization)
   auto p = boost::make_shared<PressureWithCloudHandling>
     (boost::make_shared<PressureSigma>(a,b, psurf), cloud_pressure_level);
   std::string d = serialize_write_string(p);
-  if(false)
-    std::cerr << d;
   auto pr = serialize_read_string<PressureWithCloudHandling>(d);
   Array<double, 1> press_grid_expect(3);
   press_grid_expect = 3, 6, 10;
