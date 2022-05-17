@@ -22,7 +22,12 @@ public:
     : value(V), units(U) {}
   ArrayAdWithUnit(const ArrayAd<T, D>& V)
     : value(V), units(units::dimensionless) {}
-  virtual ~ArrayAdWithUnit() {}
+  ArrayAdWithUnit& operator=(const ArrayAdWithUnit<T, D>& V)
+  {
+    reference(V);
+    return *this;
+  }
+  virtual ~ArrayAdWithUnit() = default;
   void print(std::ostream& Os) const 
   { Os << "ArrayAdWithUnit"; }
   ArrayAd<T, D> value;
@@ -90,6 +95,8 @@ public:
     value.reference(V.value);
     units = V.units;
   }
+  inline ArrayAdWithUnit<T, D> copy() const
+  { return ArrayAdWithUnit<T, D>(value.copy(), units); }
 private:  
   friend class boost::serialization::access;
   template<class Archive>
