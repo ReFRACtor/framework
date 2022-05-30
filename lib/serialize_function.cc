@@ -99,6 +99,7 @@ void SWIG_MAPPER_NAMESPACE::skip_weak_ptr_handling(bool Skip)
 
 static void mark_pointer(const boost::shared_ptr<GenericObject>& Obj)
 {
+#ifdef SWIG_HAVE_BOOST_SERIALIZATION
   if(skip_weak_ptr_handling())
     return;
   clear_ptr_serialized_reference();
@@ -106,6 +107,9 @@ static void mark_pointer(const boost::shared_ptr<GenericObject>& Obj)
   boost::archive::polymorphic_binary_oarchive oa(os_first_pass);
   oa << boost::serialization::make_nvp("geocal_object", Obj);
   // Don't actually want output, just side effect of marking pointers
+#else
+  throw std::runtime_error("SWIG_MAPPER_NAMESPACE was not built with boost::serialization support");
+#endif
 }
 
 //-----------------------------------------------------------------------
@@ -228,6 +232,8 @@ SWIG_MAPPER_NAMESPACE::serialize_read_generic(const std::string& Fname)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
   std::ifstream is(Fname.c_str());
+  if(!is)
+    throw std::runtime_error("Trouble opening file " + Fname);
   boost::archive::polymorphic_xml_iarchive ia(is);
   boost::filesystem::path p(Fname);
   std::string dir = p.parent_path().string();
@@ -247,6 +253,8 @@ SWIG_MAPPER_NAMESPACE::serialize_read_binary_generic(const std::string& Fname)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
   std::ifstream is(Fname.c_str());
+  if(!is)
+    throw std::runtime_error("Trouble opening file " + Fname);
   boost::archive::polymorphic_binary_iarchive ia(is);
   boost::filesystem::path p(Fname);
   std::string dir = p.parent_path().string();
