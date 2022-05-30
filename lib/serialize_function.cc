@@ -232,6 +232,8 @@ SWIG_MAPPER_NAMESPACE::serialize_read_generic(const std::string& Fname)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
   std::ifstream is(Fname.c_str());
+  if(!is)
+    throw std::runtime_error("Trouble opening file " + Fname);
   boost::archive::polymorphic_xml_iarchive ia(is);
   boost::filesystem::path p(Fname);
   std::string dir = p.parent_path().string();
@@ -251,6 +253,8 @@ SWIG_MAPPER_NAMESPACE::serialize_read_binary_generic(const std::string& Fname)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
   std::ifstream is(Fname.c_str());
+  if(!is)
+    throw std::runtime_error("Trouble opening file " + Fname);
   boost::archive::polymorphic_binary_iarchive ia(is);
   boost::filesystem::path p(Fname);
   std::string dir = p.parent_path().string();
