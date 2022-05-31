@@ -59,3 +59,4 @@ protected:
 };
 }
 
+%template(vector_aerosol_extinction_imp_base) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinctionImpBase> >;

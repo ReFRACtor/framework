@@ -38,4 +38,3 @@ public:
 }
 
 %template(vector_aerosol_extinction) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinction> >;
-
