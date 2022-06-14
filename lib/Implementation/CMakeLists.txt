@@ -2,6 +2,7 @@
 set(DIR_SOURCES
     absco.cc
     absco_aer.cc
+    absco_coeff.cc
     absco_hdf.cc
     absorber_absco.cc
     absorber_vmr_level.cc
@@ -134,6 +135,7 @@ set(DIR_SOURCES
 
 set(TEST_SOURCES
     absco_aer_test.cc
+    absco_coeff_test.cc
     absco_hdf_test.cc
     absorber_absco_test.cc
     absorber_vmr_level_scaled_test.cc
