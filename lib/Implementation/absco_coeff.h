@@ -24,15 +24,12 @@ namespace FullPhysics {
 *******************************************************************/
 class AbscoCoeff: public Absco {
 public:
-  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0, NEAREST_NEIGHBOR_WN=1};
   AbscoCoeff(const std::string& Fname, double Table_scale = 1.0, 
-	   int Cache_nline = 5000,
-	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
+	     int Cache_nline = 50000);
   AbscoCoeff(const std::string& Fname, 
-	   const SpectralBound& Spectral_bound,
-	   const std::vector<double>& Table_scale,
-	   int Cache_nline = 5000,
-	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
+	     const SpectralBound& Spectral_bound,
+	     const std::vector<double>& Table_scale,
+	     int Cache_nline = 50000);
   void load_file(const std::string& Fname);
   void load_file(const std::string& Fname, double Table_scale,
 		 int Cache_nline = 5000);
@@ -62,7 +59,7 @@ public:
   virtual blitz::Array<double, 2> temperature_grid() const {return tgrid;}
   blitz::Array<double, 1> wavenumber_grid() const { return wngrid; }
   virtual bool have_data(double wn) const;
-  int wn_index(double Wn_in) const;
+  void wn_index(double Wn_in, int& Wn_index, double& F) const;
   virtual bool is_float() const { return is_float_;}
   virtual std::string file_name() const { return hfile->file_name(); } 
   virtual void print(std::ostream& Os) const;
@@ -73,7 +70,6 @@ private:
   void load_file();
   bool is_float_;
   int cache_nline;
-  InterpolationType itype_;
   std::vector<blitz::Array<double, 1> > bvmr;
   boost::shared_ptr<HdfFile> hfile;
   mutable int cache_double_lbound;
@@ -81,14 +77,15 @@ private:
   mutable int cache_float_lbound;
   mutable int cache_float_ubound;
   template<class T> void bound_set(int lbound, int sz) const;
-  mutable blitz::Array<double, 4> read_cache_double;
-  mutable blitz::Array<float, 4> read_cache_float;
+  mutable blitz::Array<double, 2> read_cache_double;
+  mutable blitz::Array<float, 2> read_cache_float;
   template<class T> blitz::Array<T, 4>& read_cache() const;
   template<class T> void swap(int i) const;
   std::string field_name;
   std::vector<std::string> bname;
   blitz::Array<double, 1> pgrid;
   blitz::Array<double, 2> tgrid;
+  blitz::Array<double, 3> cross_sec_coeff;
   blitz::Array<double, 1> wngrid;
   SpectralBound sb;
   std::vector<double> table_scale_;
@@ -107,10 +104,10 @@ private:
   void load(Archive & ar, const unsigned int version);
 };
 
-template<> inline blitz::Array<double, 4>& AbscoCoeff::read_cache<double>() const
+template<> inline blitz::Array<double, 2>& AbscoCoeff::read_cache<double>() const
 { return read_cache_double; }
 
-template<> inline blitz::Array<float, 4>& AbscoCoeff::read_cache<float>() const
+template<> inline blitz::Array<float, 2>& AbscoCoeff::read_cache<float>() const
 { return read_cache_float; }
 
 template<> inline void AbscoCoeff::bound_set<double>(int lbound, int sz) const

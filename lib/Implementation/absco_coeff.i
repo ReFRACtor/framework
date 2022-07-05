@@ -17,13 +17,11 @@ class AbscoCoeff : public Absco {
 public:
   enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0, NEAREST_NEIGHBOR_WN=1};
   AbscoCoeff(const std::string& Fname, double Table_scale = 1.0, 
-	   int Cache_nline = 5000,
-	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
+	     int Cache_nline = 5000);
   AbscoCoeff(const std::string& Fname, 
-	   const SpectralBound& Spectral_bound,
-	   const std::vector<double>& Table_scale,
-	   int Cache_nline = 5000,
-	   InterpolationType Itype = THROW_ERROR_IF_NOT_ON_WN_GRID);
+	     const SpectralBound& Spectral_bound,
+	     const std::vector<double>& Table_scale,
+	     int Cache_nline = 5000);
   void load_file(const std::string& Fname);
   void load_file(const std::string& Fname, double Table_scale,
 		 int Cache_nline = 5000);

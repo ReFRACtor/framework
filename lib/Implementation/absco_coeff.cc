@@ -11,7 +11,7 @@ void AbscoCoeff::serialize(Archive & ar,
 			const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Absco)
-    & FP_NVP(cache_nline) & FP_NVP_(itype) & FP_NVP(hfile)
+    & FP_NVP(cache_nline) & FP_NVP(hfile)
     & FP_NVP(sb) & FP_NVP_(table_scale);
   boost::serialization::split_member(ar, *this, version);
 }
@@ -39,8 +39,7 @@ FP_IMPLEMENT(AbscoCoeff);
 //-----------------------------------------------------------------------
 
 AbscoCoeff::AbscoCoeff(const std::string& Fname, double Table_scale,
-                   int Cache_nline, InterpolationType Itype)
-  : itype_(Itype)
+                   int Cache_nline)
 {
   load_file(Fname, Table_scale, Cache_nline);
 }
@@ -52,10 +51,9 @@ AbscoCoeff::AbscoCoeff(const std::string& Fname, double Table_scale,
 //-----------------------------------------------------------------------
 
 AbscoCoeff::AbscoCoeff(const std::string& Fname, 
-                   const SpectralBound& Spectral_bound,
-                   const std::vector<double>& Table_scale,
-                   int Cache_nline, InterpolationType Itype)
-  : itype_(Itype)
+		       const SpectralBound& Spectral_bound,
+		       const std::vector<double>& Table_scale,
+		       int Cache_nline)
 {
   load_file(Fname, Spectral_bound, Table_scale, Cache_nline);
 }
@@ -135,25 +133,48 @@ void AbscoCoeff::load_file()
   cache_float_ubound = 0;
 
   // Reset caches
-  read_cache_float.resize(0,0,0,0);
-  read_cache_double.resize(0,0,0,0);
+  read_cache_float.reference(blitz::Array<float, 4>());
+  read_cache_double.reference(blitz::Array<double, 4>());
 
   // Read optional metadata
-  if (hfile->has_object("Extent_Range")) {
-      extent_range.reference(hfile->read_field<double, 2>("Extent_Range"));
-      extent_index.reference(hfile->read_field<int, 2>("Extent_Index"));
+  if (hfile->has_object("Extent_Ranges")) {
+      extent_range.reference(hfile->read_field<double, 2>("Extent_Ranges"));
+      extent_index.reference(hfile->read_field<int, 2>("Extent_Indices"));
   }
 
   // Read data fields
-  pgrid.reference(hfile->read_field<double, 1>("Pressure"));
-  tgrid.reference(hfile->read_field<double, 2>("Temperature"));
-  wngrid.reference(hfile->read_field<double, 1>("Wavenumber"));
+  ArrayWithUnit<double, 2> pgrid_unit =
+    hfile->read_field_with_unit<double, 2>("P_layer").convert(Unit("Pa"));
+  // Note that P_layer only has data where the temperature is also
+  // available. So go through each layer and find the first P_layer
+  // that is finite. We then save that value.
+  pgrid.resize(pgrid_unit.rows());
+  for(int i = 0; i < pgrid_unit.rows(); ++i) {
+    bool have_value = false;
+    for(int j = 0; j < pgrid_unit.cols(); ++j) {
+      if(!have_value && isfinite(pgrid_unit.value(i,j))) {
+	pgrid(i) = pgrid_unit.value(i,j);
+	have_value = true;
+      }
+    }
+    if(!have_value) {
+      Exception e;
+      e << "No pressure values found for layer " << i;
+      throw e;
+    }
+  }
+  ArrayWithUnit<double, 2> tgrid_unit =
+    hfile->read_field_with_unit<double, 2>("T_layer").convert(Unit("K"));
+  tgrid.reference(tgrid_unit.value);
+  ArrayWithUnit<double, 1> sg =
+    hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));
+  wngrid.reference(sg.value);
   wnfront = &wngrid(0);
+  cross_sec_coeff.reference(hfile.read_field<double, 3>("Cross_Section_coeffs"));
 
   // This may have a "\0" in it, so we create a string twice, the
   // second one ends at the first "\0".
-  std::string t = hfile->read_field<std::string>("Gas_Index");
-  field_name = std::string("Gas_") + t.c_str() + "_Absorption";
+  field_name = "Cross_Section_repvecs";
   // Determine if data is float or double. We use this to optimize the
   // read. 
   H5::DataSet d = hfile->h5_file().openDataSet(field_name);
@@ -161,32 +182,13 @@ void AbscoCoeff::load_file()
     is_float_ = true;
   else
     is_float_ = false;
-  std::string bindex = "";
-  try {
-    bindex = hfile->read_field<std::string>("Broadener_Index");
-    bindex = std::string(bindex.c_str()); // In case this ends in "\0"
-  } catch(const Exception& E) {
-    // It is ok if we don't have a broadener, this just means that we
-    // are reading a 3D file.
-  }
-  if(bindex == "")
-    ;                                // Nothing to do
-  else if(bindex == "01")        
-    // This is HITRAN index 01, which is H2O. This is documented in
-    // HITRAN papers, such as "The HITRAN 2008 molecular spectroscopic
-    // database", Journal of Quantitative Spectroscopy and Radiative
-    // Transfer, vol. 110, pp. 533-572 (2009)
+  if(hfile->has_object("H2O_VMR")) {
     bname.push_back("h2o");
-  else {
-    Exception e;
-    e << "Right now we only support H2O as a broadener (HITRAN index \"01\"). "
-      << "File " << hfile->file_name() << " has index of \""
-      << bindex << "\"";
-    throw e;
+    bvmr.push_back(hfile->read_field<double, 1>("H2O_VMR").copy());
+  } if(hfile->has_object("O2_VMR")) {
+    bname.push_back("o2");
+    bvmr.push_back(hfile->read_field<double, 1>("O2_VMR").copy());
   }
-
-  if(bname.size() > 0)
-    bvmr.push_back(hfile->read_field<double, 1>("Broadener_" + bindex + "_VMR").copy());
 }
 
 
@@ -273,44 +275,33 @@ bool AbscoCoeff::have_data(double wn) const
 }
 
 // Calculate the wn index number of the data.
-int AbscoCoeff::wn_index(double Wn_in) const
+void AbscoCoeff::wn_index(double Wn_in, int& Wn_index, double & F) const
 {
   // This will throw an exception if it can not find the wavenumber's locations
   auto extent = wn_extent(Wn_in);
 
   double *wnptr = std::lower_bound(extent.first, extent.second, Wn_in);
-  double f;
-  if(wnptr == extent.first)
-    f = 1.0;
-  else
-    f = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
-  if(itype_ == THROW_ERROR_IF_NOT_ON_WN_GRID && f > 0.1 && f < 0.9) {
-    Exception e;
-    e << std::setprecision(8)
-      << "AbscoCoeff does not interpolate in wavenumber direction.\n"
-      << "The interpolation doesn't work well near peaks, so we\n"
-      << "just don't do it. The requested Wn needs to be within 10%\n"
-      << "of the absco wn grid, return the value for the closest number.\n"
-      << "Wn:        " << Wn_in << "\n"
-      << "Wnptr - 1: " << *(wnptr - 1) << "\n"
-      << "Wnptr:     " << *wnptr << "\n"
-      << "Frac:      " << f << " (should be < 0.1 or > 0.9)\n"
-      << "AbscoCoeff:\n"
-      << *this << "\n";
-    throw e;
-  }
-  if(f < 0.5)                        // First point is closest.
+  if(wnptr == extent.first) {
+    F = 0.0;
+    Wn_index = 0;
+  } else {
+    F = (Wn_in - *(wnptr - 1)) / (*wnptr - *(wnptr - 1));
     --wnptr;
-  return (int) (wnptr - wnfront);
+    Wn_index = (int) (wnptr - wnfront);
+  }
 }
 
 // See base class for description
 Array<double, 3> AbscoCoeff::read_double(double Wn_in) const
 {
-  int wi = wn_index(Wn_in);
+  double f;
+  int wi;
+  wn_index(Wn_in, wi, f);
   if(wi < cache_double_lbound ||
-     wi >= cache_double_ubound)
-    swap<double>(wi);
+     wi >= cache_double_ubound ||
+     ((wi+1) < wngrid.rows() &&
+      (wi+1) >= cache_double_ubound))
+    swap<float>(wi);
   return read_cache<double>()(Range::all(), Range::all(), Range::all(), 
                               wi - cache_double_lbound);
 }
@@ -318,9 +309,17 @@ Array<double, 3> AbscoCoeff::read_double(double Wn_in) const
 // See base class for description
 Array<float, 3> AbscoCoeff::read_float(double Wn_in) const
 {
-  int wi = wn_index(Wn_in);
+  // Temp, we'll skip float. The test data from Matt is double, and
+  // read_float is just read_double with a different type. We can
+  // fill this in once read_double is debugged fully
+  throw Exception("Not implemented yet");
+  double f;
+  int wi;
+  wn_index(Wn_in, wi, f);
   if(wi < cache_float_lbound ||
-     wi >= cache_float_ubound)
+     wi >= cache_float_ubound ||
+     ((wi+1) < wngrid.rows() &&
+      (wi+1) >= cache_float_ubound))
     swap<float>(wi);
   return read_cache<float>()(Range::all(), Range::all(), Range::all(), 
                              wi - cache_float_lbound);
@@ -333,32 +332,18 @@ Array<float, 3> AbscoCoeff::read_float(double Wn_in) const
 
 template<class T> void AbscoCoeff::swap(int i) const
 {
-  // First time through, set up space for cache.
- if(read_cache<T>().extent(fourthDim) == 0)
-      read_cache<T>().resize(tgrid.rows(), tgrid.cols(),
-			     (number_broadener() > 0 ? number_broadener_vmr(0) :
-			      1), cache_nline);
-  int nl = read_cache<T>().extent(fourthDim);
-  // Either read 3d or 4d data. We tell which kind by whether or not
-  // we have a number_broadener_vmr() > 0 or not.
-  TinyVector<int, 4> start, size;
-  start = 0, 0, 0, (i / nl) * nl;
-  size = tgrid.rows(), tgrid.cols(), (number_broadener() > 0 ? number_broadener_vmr(0) : 1),
-    std::min(nl, wngrid.rows() - start(3));
-  bound_set<T>((i / nl) * nl, size(3));
-  if(number_broadener() > 0) {
-    // 4d case
-    read_cache<T>()(Range::all(), Range::all(), Range::all(), Range(0, size(3) - 1)) =
-      hfile->read_field<T, 4>(field_name, start, size);
-  } else {
-    // 3d case
-    TinyVector<int, 3> start2, size2;
-    start2 = 0, 0, (i / nl) * nl;
-    size2 = tgrid.rows(), tgrid.cols(),
-      std::min(nl, wngrid.rows() - start(3));
-    read_cache<T>()(Range::all(), Range::all(), 0, Range(0, size(3) - 1)) =
-      hfile->read_field<T, 3>(field_name, start2, size2);
-  }
+  // First time through, set up space for cache. We add an extra point
+  // at the end so we have the data needed for interpolating in the
+  // frequency range.
+  if(read_cache<T>().cols() == 0)
+    read_cache<T>().resize(cross_sec_coeff.rows(), cache_nline + 1);
+  int nl = read_cache<T>().cols();
+  TinyVector<int, 2> start, size;
+  start = 0, (i / cache_nline) * cache_nline;
+  size = cross_sec_coeff.rows(), std::min(nl, wngrid.rows() - start(1));
+  bound_set<T>((i / cache_nline) * cache_nline, size(1));
+  read_cache<T>()(Range::all(), Range(0, size(1) - 1)) =
+    hfile->read_field<T, 2>(field_name, start, size);
 }
 
 void AbscoCoeff::print(std::ostream& Os) const
