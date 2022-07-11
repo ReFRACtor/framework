@@ -146,8 +146,8 @@ class SolarDopplerShiftPolynomialFromL1b(Creator):
 
 class SolarDopplerShiftDistanceVelocity(Creator):
 
-    solar_distance = param.InstanceOf(rf.DoubleWithUnit)
-    solar_velocity = param.InstanceOf(rf.DoubleWithUnit)
+    solar_distance = param.DoubleWithUnit()
+    solar_velocity = param.DoubleWithUnit()
     do_doppler_shift = param.Scalar(bool, default=True)
 
     num_channels = param.Scalar(int)
