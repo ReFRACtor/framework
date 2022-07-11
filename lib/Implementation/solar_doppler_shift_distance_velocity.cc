@@ -1,16 +1,16 @@
-#include "solar_doppler_shift_l1b.h"
+#include "solar_doppler_shift_distance_velocity.h"
 #include "old_constant.h"
 using namespace FullPhysics;
 using namespace blitz;
 #ifdef HAVE_LUA
 #include "register_lua.h"
-REGISTER_LUA_DERIVED_CLASS(SolarDopplerShiftL1b, SolarDopplerShift)
+REGISTER_LUA_DERIVED_CLASS(SolarDopplerShiftDistanceVelocity, SolarDopplerShift)
 .def(luabind::constructor<const DoubleWithUnit&, const DoubleWithUnit&,bool>())
 REGISTER_LUA_END()
 #endif
 
 //-----------------------------------------------------------------------
-/// Create a SolarDopplerShiftL1b.
+/// Create a SolarDopplerShiftDistanceVelocity.
 ///
 /// \param Solar_distance The distance between observed surface and sun
 /// \param Solar_relative_velocity The velocity of the sun along the
@@ -22,7 +22,7 @@ REGISTER_LUA_END()
 ///    pass the wave numbers through unchanged in doppler_stretch. 
 //-----------------------------------------------------------------------
 
-SolarDopplerShiftL1b::SolarDopplerShiftL1b(
+SolarDopplerShiftDistanceVelocity::SolarDopplerShiftDistanceVelocity(
 const DoubleWithUnit& Solar_distance, 
 const DoubleWithUnit& Solar_relative_velocity,
 bool Apply_doppler_shift
@@ -39,16 +39,16 @@ bool Apply_doppler_shift
 /// Print description of object.
 //-----------------------------------------------------------------------
 
-void SolarDopplerShiftL1b::print(std::ostream& Os) const
+void SolarDopplerShiftDistanceVelocity::print(std::ostream& Os) const
 {
-  Os << "SolarDopplerShiftL1b\n"
+  Os << "SolarDopplerShiftDistanceVelocity\n"
      << "  Solar distance: " << solar_distance_.convert(OldConstant::AU) << "\n"
      << "  Doppler shift:  " << doppler_shift_ << "\n"
      << "  Apply Doppler:  " << (apply_doppler_shift_ ? "true" : "false");
 }
 
 // See base class for description
-SpectralDomain SolarDopplerShiftL1b::doppler_stretch(
+SpectralDomain SolarDopplerShiftDistanceVelocity::doppler_stretch(
 const SpectralDomain& Spec_domain) const
 {
   if(apply_doppler_shift_) {

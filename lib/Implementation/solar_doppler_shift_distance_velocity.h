@@ -14,13 +14,13 @@ namespace FullPhysics {
   This implementation gets the Level 1b solar velocity and solar
   distance passed to it.
 *******************************************************************/
-class SolarDopplerShiftL1b : public SolarDopplerShift {
+class SolarDopplerShiftDistanceVelocity : public SolarDopplerShift {
 public:
-  SolarDopplerShiftL1b(const DoubleWithUnit& Solar_distance, 
+  SolarDopplerShiftDistanceVelocity(const DoubleWithUnit& Solar_distance, 
 		       const DoubleWithUnit& Solar_relative_velocity,
 		       bool Apply_doppler_shift = true);
 
-  virtual ~SolarDopplerShiftL1b() {}
+  virtual ~SolarDopplerShiftDistanceVelocity() {}
 
 //-----------------------------------------------------------------------
 /// Print description of object.

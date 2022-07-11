@@ -144,6 +144,26 @@ class SolarDopplerShiftPolynomialFromL1b(Creator):
 
         return doppler_shift
 
+class SolarDopplerShiftDistanceVelocity(Creator):
+
+    solar_distance = param.InstanceOf(rf.DoubleWithUnit)
+    solar_velocity = param.InstanceOf(rf.DoubleWithUnit)
+    do_doppler_shift = param.Scalar(bool, default=True)
+
+    num_channels = param.Scalar(int)
+
+    def create(self, **kwargs):
+
+        doppler_shift = []
+        for chan_idx in range(self.num_channels()):
+            doppler = rf.SolarDopplerShiftDistanceVelocity(self.solar_distance(), 
+                                                           self.solar_velocity(), 
+                                                           self.do_doppler_shift())
+            doppler_shift.append(doppler)
+
+        return doppler_shift
+
+
 class SolarAbsorptionTable(Creator):
 
     solar_data_file = param.Scalar(str)

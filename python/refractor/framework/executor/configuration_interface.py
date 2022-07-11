@@ -180,6 +180,8 @@ class ConfigurationCreator(ConfigurationInterface):
         '''Calculate all the radiances. This doesn't really do anything on
         its own, but if we have been attached to output this would produce
         output. This is used by run_forward_model of StrategyExecutor'''
+        print(self.forward_model)
+        print(self.state_vector)
         return self.forward_model.radiance_all()
 
     def attach_output(self, output, step_index, simulation=False):

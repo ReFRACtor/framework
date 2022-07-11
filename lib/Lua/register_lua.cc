@@ -207,7 +207,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(SolarDopplerShift);
   REGISTER_LUA_LIST(SolarAbsorptionAndContinuum);
   REGISTER_LUA_LIST(SolarDopplerShiftPolynomial);
-  REGISTER_LUA_LIST(SolarDopplerShiftL1b);
+  REGISTER_LUA_LIST(SolarDopplerShiftDistanceVelocity);
   REGISTER_LUA_LIST(SolarAbsorptionTable);
   REGISTER_LUA_LIST(SolarContinuumTable);
   REGISTER_LUA_LIST(CostFunction);
