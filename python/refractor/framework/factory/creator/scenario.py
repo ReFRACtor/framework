@@ -25,7 +25,7 @@ class ScenarioFromL1b(Creator):
     "Extracts necessary scenario values from a L1B file object"
 
     l1b = param.InstanceOf(rf.Level1b)
-    instrument_specific_values = param.InstanceOf(dict)
+    instrument_specific_values = param.InstanceOf(dict, required=False)
 
     def create(self, **kwargs):
         l1b_file = self.l1b()
@@ -47,7 +47,9 @@ class ScenarioFromL1b(Creator):
         })
 
         # Any instrument specific L1B values can be plumbed in with a configuratiom mapping
-        values_from_l1b.update(self.instrument_specific_values())
+        inst_specific_vals = self.instrument_specific_values()
+        if inst_specific_vals is not None:
+            values_from_l1b.update(inst_specific_vals)
 
         scenario_values = {}
 
