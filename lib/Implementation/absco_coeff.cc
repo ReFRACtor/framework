@@ -133,8 +133,8 @@ void AbscoCoeff::load_file()
   cache_float_ubound = 0;
 
   // Reset caches
-  read_cache_float.reference(blitz::Array<float, 4>());
-  read_cache_double.reference(blitz::Array<double, 4>());
+  read_cache_float.reference(blitz::Array<float, 2>());
+  read_cache_double.reference(blitz::Array<double, 2>());
 
   // Read optional metadata
   if (hfile->has_object("Extent_Ranges")) {
@@ -170,7 +170,7 @@ void AbscoCoeff::load_file()
     hfile->read_field_with_unit<double, 1>("Spectral_Grid").convert_wave(Unit("cm^-1"));
   wngrid.reference(sg.value);
   wnfront = &wngrid(0);
-  cross_sec_coeff.reference(hfile.read_field<double, 3>("Cross_Section_coeffs"));
+  cross_sec_coeff.reference(hfile->read_field<double, 3>("Cross_Section_coeffs"));
 
   // This may have a "\0" in it, so we create a string twice, the
   // second one ends at the first "\0".
@@ -294,6 +294,7 @@ void AbscoCoeff::wn_index(double Wn_in, int& Wn_index, double & F) const
 // See base class for description
 Array<double, 3> AbscoCoeff::read_double(double Wn_in) const
 {
+  firstIndex i1; secondIndex i2; thirdIndex i3;
   double f;
   int wi;
   wn_index(Wn_in, wi, f);
@@ -301,9 +302,13 @@ Array<double, 3> AbscoCoeff::read_double(double Wn_in) const
      wi >= cache_double_ubound ||
      ((wi+1) < wngrid.rows() &&
       (wi+1) >= cache_double_ubound))
-    swap<float>(wi);
-  return read_cache<double>()(Range::all(), Range::all(), Range::all(), 
-                              wi - cache_double_lbound);
+    swap<double>(wi);
+  Array<double, 1> repvecs = read_cache<double>()(Range::all(), wi - cache_double_lbound);
+  Array<double, 1> repvecs2 = read_cache<double>()(Range::all(), wi+1 - cache_double_lbound);
+  Array<double, 3> res(number_layer(), number_temperature(), 1);
+  res(Range::all(), Range::all(), 0) =
+    sum((repvecs(i3) * (1-f) + repvecs2(i3) * f) * cross_sec_coeff(i3, i2, i1), i3);
+  return res;
 }
 
 // See base class for description

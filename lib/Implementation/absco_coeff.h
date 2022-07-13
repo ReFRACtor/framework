@@ -79,7 +79,7 @@ private:
   template<class T> void bound_set(int lbound, int sz) const;
   mutable blitz::Array<double, 2> read_cache_double;
   mutable blitz::Array<float, 2> read_cache_float;
-  template<class T> blitz::Array<T, 4>& read_cache() const;
+  template<class T> blitz::Array<T, 2>& read_cache() const;
   template<class T> void swap(int i) const;
   std::string field_name;
   std::vector<std::string> bname;

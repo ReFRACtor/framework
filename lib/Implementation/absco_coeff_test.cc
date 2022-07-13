@@ -23,7 +23,9 @@ BOOST_AUTO_TEST_CASE(basic)
 	      << "# This is the expected pressure grid.\n"
               << f.pressure_grid() << "\n"
 	      << "# This is tsub_expect\n"
-	      << f.temperature_grid()(53, Range(0,7)) << "\n";
+	      << f.temperature_grid()(53, Range(0,7)) << "\n"
+	      << "# This is readsub_expect\n"
+              << f.read<double, 3>(19858.94)(53, Range(0,7), 0) << "\n";
   }
   Array<double, 1> pgrid_expect;
   expected_data >> pgrid_expect;
@@ -36,7 +38,7 @@ BOOST_AUTO_TEST_CASE(basic)
   expected_data >> tsub_expect;
   BOOST_CHECK_MATRIX_CLOSE(tsub, tsub_expect);
   // Same thing with reading the data.
-  Array<double, 1> readsub(f.read<double, 3>(19858.94)(53, Range::all(), 0));
+  Array<double, 1> readsub(f.read<double, 3>(19858.94)(53, Range(0,7), 0));
   Array<double, 1> readsub_expect;
   expected_data >> readsub_expect;
   // Numbers are very small, so we have a small tolerance.
@@ -55,14 +57,14 @@ BOOST_AUTO_TEST_CASE(basic)
   bv.value = 0,0,0;
   bv.units = units::dimensionless;
   Array<double, 1> abs_expect(3);
-  abs_expect = 1.0755117626991715212e-29, 1.1256089624500879072e-29, 1.2291417782245949615e-29;
+  abs_expect = 2.0582147030446068e-19, 2.058638569838823e-19, 2.0590768499973998e-19;
   for(int i = 0; i < 3; ++i) {
     ArrayWithUnit<double, 1> bva;
     bva.value.resize(1);
     bva.value(0) = bv.value(0,i);
     bva.units = bv.units;
     BOOST_CHECK_CLOSE(f.absorption_cross_section
-		      (12929.94, pv(i), tv(i), bva).value,
+		      (19858.94, pv(i), tv(i), bva).value,
 		      abs_expect(i), 1e-4);
   }
   for(int i = 0; i < 3; ++i) {
@@ -71,7 +73,7 @@ BOOST_AUTO_TEST_CASE(basic)
     bva.value(0) = bv.value(0,i);
     bva.units = bv.units;
     BOOST_CHECK_CLOSE(fscale.absorption_cross_section
-		      (12929.94, pv(i), tv(i), bva).value,
+		      (19858.94, pv(i), tv(i), bva).value,
 		      abs_expect(i) * table_scale, 1e-4);
   }
   DoubleWithUnit pvd(pv.value(1), pv.units);
@@ -81,21 +83,21 @@ BOOST_AUTO_TEST_CASE(basic)
   bvd.value.resize(1, 2);
   bvd.value(0) = AutoDerivative<double>(bv.value(0,1), 1, 2);
   bvd.units = bv.units;
-  AutoDerivative<double> absv = f.absorption_cross_section(12929.94, pvd, tvd, 
+  AutoDerivative<double> absv = f.absorption_cross_section(19858.94, pvd, tvd, 
 							   bvd).value;
   AutoDerivative<double> absvscale = 
-    fscale.absorption_cross_section(12929.94, pvd, tvd, 
+    fscale.absorption_cross_section(19858.94, pvd, tvd, 
 				    bvd).value;
   BOOST_CHECK_CLOSE(absv.value(), abs_expect(1), 1e-3);
   BOOST_CHECK_CLOSE(absvscale.value(), abs_expect(1) * table_scale, 1e-3);
-  double epsilon = 1e-3;
+  double epsilon = 1e-4;
   tvd.value += epsilon;
-  double dabs_dt = (f.absorption_cross_section(12929.94, pvd, tvd, 
+  double dabs_dt = (f.absorption_cross_section(19858.94, pvd, tvd, 
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
   tvd.value -= epsilon;
   bvd.value(0) = bvd.value(0) + epsilon;
-  double dabs_db = (f.absorption_cross_section(12929.94, pvd, tvd, 
+  double dabs_db = (f.absorption_cross_section(19858.94, pvd, tvd, 
 					       bvd).value.value() - 
 		    absv.value()) / epsilon;
   BOOST_CHECK_CLOSE(absv.gradient()(0), dabs_dt, 1e-4);
@@ -144,9 +146,9 @@ BOOST_AUTO_TEST_CASE(serialization)
     bva.value(0) = bv.value(0,i);
     bva.units = bv.units;
     BOOST_CHECK_CLOSE(a->absorption_cross_section
-		      (12929.94, pv(i), tv(i), bva).value,
+		      (19858.94, pv(i), tv(i), bva).value,
 		      ar->absorption_cross_section
-		      (12929.94, pv(i), tv(i), bva).value, 1e-4);
+		      (19858.94, pv(i), tv(i), bva).value, 1e-4);
   }
 }
 BOOST_AUTO_TEST_SUITE_END()
