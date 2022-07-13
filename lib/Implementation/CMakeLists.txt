@@ -115,7 +115,7 @@ set(DIR_SOURCES
     solar_absorption_table.cc
     solar_continuum_polynomial.cc
     solar_continuum_table.cc
-    solar_doppler_shift_l1b.cc
+    solar_doppler_shift_distance_velocity.cc
     solar_doppler_shift_polynomial.cc
     solar_reference_spectrum.cc
     solver_iteration_log.cc
@@ -228,7 +228,7 @@ set(TEST_SOURCES
     solar_absorption_table_test.cc
     solar_continuum_polynomial_test.cc
     solar_continuum_table_test.cc
-    solar_doppler_shift_l1b_test.cc
+    solar_doppler_shift_distance_velocity_test.cc
     solar_doppler_shift_polynomial_test.cc
     solver_finished_fixture.cc
     spectral_window_range_test.cc

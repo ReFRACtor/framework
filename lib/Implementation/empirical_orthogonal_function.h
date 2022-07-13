@@ -117,9 +117,10 @@ public:
 //-----------------------------------------------------------------------
 
   int order() const {return order_;}
+
 //-----------------------------------------------------------------------
-/// Scale. This is just coeff(0), but we wrap this for use
-/// by EofOutput
+/// scale. this is just coeff(0), but we wrap this for use
+/// by eofoutput
 //-----------------------------------------------------------------------
 
   double scale() const { return coeff.value()(0); }
@@ -136,6 +137,12 @@ public:
     double t = sv_cov_sub(0,0);
     return (t < 0 ? 0 : sqrt(t)); 
   }
+
+//-----------------------------------------------------------------------
+/// HDF group name read from EOF file
+//-----------------------------------------------------------------------
+
+  std::string hdf_group_name() const { return hdf_group; }
 
 private:
   std::string band_name;

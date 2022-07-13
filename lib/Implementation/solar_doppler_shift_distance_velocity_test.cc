@@ -1,4 +1,4 @@
-#include "solar_doppler_shift_l1b.h"
+#include "solar_doppler_shift_distance_velocity.h"
 #include "unit_test_support.h"
 #include "fp_exception.h"
 #include "old_constant.h"
@@ -9,14 +9,14 @@ using namespace boost::posix_time;
 using namespace boost::gregorian;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(solar_doppler_shift_l1b, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(solar_doppler_shift_distance_velocity, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
   DoubleWithUnit solar_distance(1.0060305651331354, OldConstant::AU);
   DoubleWithUnit solar_velocity(-0.000278885, 
 				OldConstant::AU / units::day);
-  SolarDopplerShiftL1b p(solar_distance, solar_velocity);
+  SolarDopplerShiftDistanceVelocity p(solar_distance, solar_velocity);
   BOOST_CHECK_CLOSE(p.solar_distance().convert(OldConstant::AU).value, 
                     1.0060305651331354, 1e-3); 
   Array<double, 1> wn(6);

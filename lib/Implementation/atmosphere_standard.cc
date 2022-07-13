@@ -11,6 +11,7 @@
 #include "altitude.h"
 #include "aerosol_optical.h"
 #include "ostream_pad.h"
+#include "logger.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -261,7 +262,9 @@ void AtmosphereStandard::initialize()
   // to handle invalidating these caches
   can_cache_channel = false;
 
-  // Make sure caches are in a consistent state
+  // Make sure caches are in a consistent state, zero out so that unintialized values
+  // do not cause the debugging stats to print prematurely
+  n_cache_calls = 0;
   invalidate_local_cache();
 }
 
@@ -384,6 +387,11 @@ bool AtmosphereStandard::fill_cache(double wn, int spec_index) const
 
 void AtmosphereStandard::invalidate_local_cache() const
 {
+    if (n_cache_calls > 0) {
+        Logger::info() << "Resetting optical properties cache: "
+            << n_cache_calls << " calls, " << n_cache_hits << " cache hits, " 
+            << n_cache_miss << " cache misses.\n";
+    }
 
     spec_index_tau_cache = -1;
 

@@ -697,11 +697,13 @@ void LRadRt::print(std::ostream& Os, bool Short_form) const
     // Output print from parent class
     RadiativeTransferSingleWn::print(opad, Short_form);
     opad.strict_sync();
-    Os << "  Radiative Transfer:\n";
-    OstreamPad opad1(Os, "    ");
-    rt->print(opad1, true);
-    opad1 << "\n";
-    opad1.strict_sync();
+    if (rt) {
+        Os << "  Radiative Transfer:\n";
+        OstreamPad opad1(Os, "    ");
+        rt->print(opad1, true);
+        opad1 << "\n";
+        opad1.strict_sync();
+    }
 }
 
 void LRadRtFixedStokesCoefficient::print
@@ -714,9 +716,11 @@ void LRadRtFixedStokesCoefficient::print
     // Output print from parent class
     RadiativeTransferFixedStokesCoefficient::print(opad, Short_form);
     opad.strict_sync();
-    Os << "  Radiative Transfer:\n";
-    OstreamPad opad1(Os, "    ");
-    rt->print(opad1, true);
-    opad1 << "\n";
-    opad1.strict_sync();
+    if (rt) {
+        Os << "  Radiative Transfer:\n";
+        OstreamPad opad1(Os, "    ");
+        rt->print(opad1, true);
+        opad1 << "\n";
+        opad1.strict_sync();
+    }
 }
