@@ -16,9 +16,8 @@ BOOST_AUTO_TEST_CASE(basic)
   // Note scale here is a nonsense value
   double table_scale = 1.2;
   AbscoCoeff fscale(absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc", table_scale);
-  std::cerr << "is float: " << fscale.is_float() << "\n";
   BOOST_CHECK_EQUAL(f.number_broadener(), 0);
-  if(true) {
+  if(false) {
     std::cerr << setprecision(20) << std::scientific
 	      << "# This is the expected pressure grid.\n"
               << f.pressure_grid() << "\n"
@@ -51,13 +50,13 @@ BOOST_AUTO_TEST_CASE(basic)
   pv.value = 11459.857421875, 12250.0 ,13516.7548828125;
   pv.units = units::Pa;
   tv.value.resize(3);
-  tv.value = 183.2799987792969, 190.0, 193.2799987792969;
+  tv.value = 183.2799987792969, 192.0, 193.2799987792969;
   tv.units = units::K;
   bv.value.resize(1, 3);
   bv.value = 0,0,0;
   bv.units = units::dimensionless;
   Array<double, 1> abs_expect(3);
-  abs_expect = 2.0582147030446068e-19, 2.058638569838823e-19, 2.0590768499973998e-19;
+  abs_expect = 2.0582147030446068e-19, 2.0586911035762673e-19, 2.0590768499973998e-19;
   for(int i = 0; i < 3; ++i) {
     ArrayWithUnit<double, 1> bva;
     bva.value.resize(1);
@@ -90,7 +89,7 @@ BOOST_AUTO_TEST_CASE(basic)
 				    bvd).value;
   BOOST_CHECK_CLOSE(absv.value(), abs_expect(1), 1e-3);
   BOOST_CHECK_CLOSE(absvscale.value(), abs_expect(1) * table_scale, 1e-3);
-  double epsilon = 1e-4;
+  double epsilon = 1e-3;
   tvd.value += epsilon;
   double dabs_dt = (f.absorption_cross_section(19858.94, pvd, tvd, 
 					       bvd).value.value() - 
@@ -108,10 +107,8 @@ BOOST_AUTO_TEST_CASE(basic)
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
-  return;
   if(!have_serialize_supported())
     return;
-  
   boost::shared_ptr<AbscoCoeff> a =
     boost::make_shared<AbscoCoeff>(absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc");
   std::string d = serialize_write_string(a);
@@ -119,21 +116,18 @@ BOOST_AUTO_TEST_CASE(serialization)
     std::cerr << d;
   boost::shared_ptr<AbscoCoeff> ar =
     serialize_read_string<AbscoCoeff>(d);
-  BOOST_CHECK_EQUAL(a->broadener_name(0), ar->broadener_name(0)); 
-  BOOST_CHECK_EQUAL(a->number_broadener_vmr(0),ar->number_broadener_vmr(0));
-  BOOST_CHECK_MATRIX_CLOSE(a->broadener_vmr_grid(0),
-			   ar->broadener_vmr_grid(0));
   BOOST_CHECK_MATRIX_CLOSE(a->pressure_grid(),
 			   ar->pressure_grid());
-  BOOST_CHECK_MATRIX_CLOSE(a->temperature_grid(),
-			   ar->temperature_grid());
+  // This has nans, so we can't check this
+  //BOOST_CHECK_MATRIX_CLOSE(a->temperature_grid(),
+  //			   ar->temperature_grid());
   ArrayWithUnit<double, 1> pv, tv;
   ArrayWithUnit<double, 2> bv;
   pv.value.resize(3);
   pv.value = 11459.857421875, 12250.0 ,13516.7548828125;
   pv.units = units::Pa;
   tv.value.resize(3);
-  tv.value = 183.2799987792969, 190.0, 193.2799987792969;
+  tv.value = 183.2799987792969, 192.0, 193.2799987792969;
   tv.units = units::K;
   bv.value.resize(1,3);
   bv.value(0,0) = 0;

@@ -11,6 +11,9 @@ import pytest
 # Location of test data that is part of source
 unit_test_data = os.path.abspath(os.path.dirname(__file__) + "/../../../test/unit/data/") + "/"
 
+# Location of absco test data
+absco_data_dir = os.environ.get("ABSCODIR", None)
+
 # Define this environment variable so that it can be used within deserialized data to set paths that get expanded out during test execution
 os.environ['abs_top_srcdir'] = os.path.realpath(os.path.join(os.path.dirname(__file__), "../../.."))
 

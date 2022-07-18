@@ -15,7 +15,6 @@ namespace FullPhysics {
 
 class AbscoCoeff : public Absco {
 public:
-  enum InterpolationType {THROW_ERROR_IF_NOT_ON_WN_GRID=0, NEAREST_NEIGHBOR_WN=1};
   AbscoCoeff(const std::string& Fname, double Table_scale = 1.0, 
 	     int Cache_nline = 5000);
   AbscoCoeff(const std::string& Fname, 
