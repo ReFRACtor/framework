@@ -29,6 +29,9 @@ class AlbedoFromSignalLevel(Creator):
 
         albedo_val = np.zeros((self.num_channels(), self.polynomial_degree() + 1))
 
+        # Convert solar distance in meters to AU
+        m_to_au = 149597870691
+
         for chan_idx in range(self.num_channels()):
             if isinstance(solar_distance, rf.ArrayWithUnit):
                 chan_solar_distance = solar_distance[chan_idx].value
@@ -37,7 +40,7 @@ class AlbedoFromSignalLevel(Creator):
 
             # Account for solar distance Fsun = Fsun0 / (solar_distance_meters/AU)^2
             # Create SolarDopplerShiftPolynomial so we can compute solar distance
-            chan_solar_strength = solar_strength[chan_idx] / chan_solar_distance**2
+            chan_solar_strength = solar_strength[chan_idx] / (chan_solar_distance / m_to_au)**2
          
             # Account for stokes element for I
             chan_solar_strength = chan_solar_strength * stokes_I[chan_idx]
