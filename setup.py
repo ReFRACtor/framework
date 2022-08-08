@@ -1,4 +1,3 @@
-import os
 from setuptools import setup, find_namespace_packages
 
 # Namespace packages are a bit on the new side. If you haven't seen

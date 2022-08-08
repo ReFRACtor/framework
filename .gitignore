@@ -33,3 +33,8 @@ bindings/python/.deps/swig_python_wrap.Tpcc
 
 # Egg directory, if we install with pip install -e
 python/refractor_framework.egg-info
+bindings/python/refractor_framework_swig.egg-info
+
+# Link to absco tables
+absco
+.env

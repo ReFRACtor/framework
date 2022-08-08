@@ -1,7 +1,14 @@
 {
     "python.pythonPath": ".venv/bin/python",
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+
     "cmake.configureSettings": {
         "PYTHON_EXECUTABLE": "${workspaceFolder}/.venv/bin/python"
     },
-    "cmake.generator": "Unix Makefiles"
+    "cmake.preferredGenerators": [
+        "Unix Makefiles",
+        "Ninja"
+    ],
 }
