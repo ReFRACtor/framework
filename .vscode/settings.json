@@ -11,4 +11,5 @@
         "Unix Makefiles",
         "Ninja"
     ],
+    "cmake.buildDirectory": "${workspaceFolder}/build/${variant:buildType}"    
 }
