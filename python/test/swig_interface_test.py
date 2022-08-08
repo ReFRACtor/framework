@@ -75,7 +75,7 @@ def test_header_only_class():
     mainly a test of the Makefile, SWIG doesn't really act any differently
     for .h vs .h and .cc files'''
     t = rf.FpException("My exception")
-    assert t.what() == "My exception"
+    assert t.what().startswith("My exception")
 
 def test_class_using_another():
     '''Test that import is working properly when a class uses another one. 
