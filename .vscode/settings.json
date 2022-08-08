@@ -2,7 +2,7 @@
     "python.pythonPath": ".venv/bin/python",
     "python.envFile": "${workspaceFolder}/.env",
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
 
     "cmake.configureSettings": {
         "PYTHON_EXECUTABLE": "${workspaceFolder}/.venv/bin/python"
