@@ -1,0 +1,30 @@
+
+! ###################################################################
+! #                                                                 #
+! # This is Version 2.8.3 of the VLIDORT_2p8 software library.      #
+! # This library comes with the Standard GNU General Public License,#
+! # Version 3.0, 29 June 2007. Please read this license carefully.  #
+! #                                                                 #
+! #      VLIDORT Copyright (c) 2003-2021.                           #
+! #          Robert Spurr, RT Solutions, Inc.                       #
+! #          9 Channing Street, Cambridge, MA 02138, USA.           #
+! #                                                                 #
+! # This file is part of VLIDORT_2p8p3 ( Version 2.8.3 )            #
+! #                                                                 #
+! # VLIDORT_2p8p3 is free software: you can redistribute it         #
+! # and/or modify it under the terms of the Standard GNU GPL        #
+! # (General Public License) as published by the Free Software      #
+! # Foundation, either version 3.0 of the License, or any           #
+! # later version.                                                  #
+! #                                                                 #
+! # VLIDORT_2p8p3 is distributed in the hope that it will be        #
+! # useful, but WITHOUT ANY WARRANTY; without even the implied      #
+! # warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR         #
+! # PURPOSE. See the Standard GNU General Public License (GPL)      #
+! # for more details.                                               #
+! #                                                                 #
+! # You should have received a copy of the Standard GNU General     #
+! # Public License (GPL) Version 3.0, along with the VLIDORT_2p8p3  #
+! # code package. If not, see <http://www.gnu.org/licenses/>.       #
+! #                                                                 #
+! ###################################################################

@@ -1,0 +1,28 @@
+Notes on Version 2.8.3
+----------------------
+
+4 New flags for vlidort_inputs_def.f90
+
+  -- From 2.8.2, we will include the DOUBLET_GEOMETRY flag      (for doublet postprocessing)      Modified Boolean
+  -- Also include multiple-scattering source term flag DO_MSSTS (for sphericity corrections)      Fixed Boolean, must be set by hand
+  -- New Flag DO_FOURIER0_NSTOKES2 sets the Stokes number       (for speed-up Fourier-0)          Fixed Boolean, must be set by hand
+  -- Re-introduce the DO_CLASSICAL_SOLUTION flag                (for Greens function control)     Modified Boolean
+
+1 new control setts
+
+  -- ASYMTX Tolerance number, formerly fixed internally, now set by user externally                Fixed value, must be set by hand
+
+Minor modifications to vlidort_work_def.f90
+
+  -- additional pack/unpack variables for help with Green's function solution
+
+Major new outputs of MSST variables in the two output_def files.
+
+vlidort_pars.f90 has an additional kernel index (snow brdf). 19 Kernels now.
+
+@@@@@@@@@@@@@@@@@@@@@@@ This feature is not required 
+2 new type structures, work spaces to hold greens function arrays
+
+  -- vlidort_greens_def.f90
+  -- vlidort_lin_greens_def.f90
+

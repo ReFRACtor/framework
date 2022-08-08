@@ -180,8 +180,7 @@ else()
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libtwostream${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
-
-# Duplicates the setting of these properties as done in lidort-*/CMakeCache.txt
+# Duplicates the setting of these properties as done in lidort-*/CMakeLists.txt
 # because that cmake file is treated as an external project and not exposed to
 # the main cmake enviroment. We want to have these parameter defined at the 
 # top level as well, but allow the LIDORT cmake files to still remain independent
@@ -207,6 +206,34 @@ else()
     include(lidort-3.8/lidort.cmake)
     list(APPEND THIRDPARTY_TARGETS lidort)
     list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/liblidort${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
+
+# Duplicates the setting of these properties as done in vlidort-*/CMakeLists.txt
+# because that cmake file is treated as an external project and not exposed to
+# the main cmake enviroment. We want to have these parameter defined at the 
+# top level as well, but allow the VLIDORT cmake files to still remain independent
+#
+# Configure overridable VLIDORT parameters file
+if(NOT DEFINED VLIDORT_MAXLAYER OR "${VLIDORT_MAXLAYER}" STREQUAL "")
+    set(VLIDORT_MAXLAYER 70 CACHE STRING "Maximum number of VLIDORT layers" FORCE)
+endif()
+
+if(NOT DEFINED VLIDORT_MAXATMOSWFS OR "${VLIDORT_MAXATMOSWFS}" STREQUAL "")
+    set(VLIDORT_MAXATMOSWFS 7 CACHE STRING "Maximum number of VLIDORT atmospheric weighting functions" FORCE)
+endif()
+
+# Expose these variables to the main cmake
+set(VLIDORT_MAXLAYER ${VLIDORT_MAXLAYER} PARENT_SCOPE)
+set(VLIDORT_MAXATMOSWFS ${VLIDORT_MAXATMOSWFS} PARENT_SCOPE)
+
+find_package(Lidort)
+if(VLIDORT_FOUND AND (NOT BUILD_VLIDORT))
+    list(APPEND THIRDPARTY_LIBRARIES ${VLIDORT_LIBRARIES})
+else()
+    message(STATUS "Building vlidort from source")
+    include(vlidort-2.8/vlidort.cmake)
+    list(APPEND THIRDPARTY_TARGETS vlidort)
+    list(APPEND THIRDPARTY_LIBRARIES ${THIRDPARTY_LIB_DIR}/libvlidort${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif()
 
 # Custom target that makes it easier to compile all third party independently
