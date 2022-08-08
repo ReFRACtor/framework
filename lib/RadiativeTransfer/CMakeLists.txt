@@ -56,6 +56,11 @@ set(DIR_SOURCES
     twostream_interface.F90
     twostream_interface_serialization.cc
     twostream_rt.cc
+    vlidort_interface_masters.f90
+    vlidort_interface_masters_io.f90
+    vlidort_interface_masters_serialization.cc
+    vlidort_interface_types.f90
+    vlidort_interface_types_io.f90
 )
 
 set(TEST_SOURCES
@@ -82,6 +87,7 @@ set(TEST_SOURCES
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
+    vlidort_interface_types_test.cc
 )
 
 # Full path already included
