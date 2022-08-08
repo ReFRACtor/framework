@@ -1,6 +1,8 @@
 {
     "recommendations": [
         "ms-vscode.cpptools-extension-pack",
-        "fortran-lang.linter-gfortran"
+        "fortran-lang.linter-gfortran",
+        "twxs.cmake",
+        "ms-vscode.cmake-tools"
     ]
 }
