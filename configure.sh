@@ -38,5 +38,6 @@ pip install -r requirements.txt
 # Link to home dir ~/refractor/absco
 ./link-absco.sh
 
+# Generate .env file for pytest
 echo "REFRACTOR_INPUT_PATH=$(realpath './input')" > .env
 echo "abscodir=$(realpath './absco/unit_test_absco/tables')" >> .env
