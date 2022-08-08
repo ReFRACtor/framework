@@ -1,6 +1,9 @@
 # Cache used by automake
 autom4te.cache
 
+# Python virtual environment
+.venv
+
 # Ignore compiled python file
 *.pyc
 

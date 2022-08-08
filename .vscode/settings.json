@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": ".venv/bin/python",
+    "cmake.configureSettings": {
+        "PYTHON_EXECUTABLE": "${workspaceFolder}/.venv/bin/python"
+    },
+    "cmake.generator": "Unix Makefiles"
+}
