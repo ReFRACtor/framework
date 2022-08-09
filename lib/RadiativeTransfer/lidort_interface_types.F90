@@ -8,7 +8,7 @@ use lidort_pars_m
 implicit none
 
 
-! Links to module: "lidort_pars_m" in file: "lidort_pars.F90.in"
+! Links to module: "lidort_pars_m" in file: "lidort_pars.f90.in"
 type, bind(c) :: lidort_pars_m_c
   character(kind=c_char) :: lidort_version_number(5)
   integer(c_int) :: lidort_inunit
@@ -106,7 +106,7 @@ end type lidort_pars_m_c
 
 
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 type, bind(c) :: brdf_linsup_inputs_c
   type(c_ptr) :: bs_do_kernel_factor_wfs ! dimension(MAX_BRDF_KERNELS)
   integer(c_int), dimension(1) :: bs_do_kernel_factor_wfs_f_shapes
@@ -141,7 +141,7 @@ type, bind(c) :: brdf_linsup_inputs_c
   
 end type brdf_linsup_inputs_c
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 type, bind(c) :: brdf_linsup_outputs_c
   type(c_ptr) :: bs_ls_dbounce_brdfunc ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(4) :: bs_ls_dbounce_brdfunc_f_shapes
@@ -174,7 +174,7 @@ type, bind(c) :: brdf_linsup_outputs_c
   
 end type brdf_linsup_outputs_c
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 type, bind(c) :: brdf_sup_inputs_c
   type(c_ptr) :: bs_do_brdf_surface ! scalar
   integer(c_int) :: bs_do_brdf_surface_f_byte_size
@@ -326,7 +326,7 @@ type, bind(c) :: brdf_sup_inputs_c
   
 end type brdf_sup_inputs_c
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 type, bind(c) :: brdf_sup_outputs_c
   type(c_ptr) :: bs_dbounce_brdfunc ! dimension(MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(3) :: bs_dbounce_brdfunc_f_shapes
@@ -373,7 +373,7 @@ type, bind(c) :: brdf_sup_outputs_c
   
 end type brdf_sup_outputs_c
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 type, bind(c) :: brdf_input_exception_handling_c
   type(c_ptr) :: bs_status_inputread ! scalar
   integer(c_int) :: bs_status_inputread_f_byte_size
@@ -392,7 +392,7 @@ type, bind(c) :: brdf_input_exception_handling_c
   
 end type brdf_input_exception_handling_c
 
-! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 type, bind(c) :: brdf_output_exception_handling_c
   type(c_ptr) :: bs_status_output ! scalar
   integer(c_int) :: bs_status_output_f_byte_size
@@ -407,7 +407,7 @@ type, bind(c) :: brdf_output_exception_handling_c
   
 end type brdf_output_exception_handling_c
 
-! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 type, bind(c) :: sleave_sup_inputs_c
   type(c_ptr) :: sl_do_sleaving ! scalar
   integer(c_int) :: sl_do_sleaving_f_byte_size
@@ -537,7 +537,7 @@ type, bind(c) :: sleave_sup_inputs_c
   
 end type sleave_sup_inputs_c
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_lincontrol_c
   type(c_ptr) :: ts_layer_vary_flag ! dimension(MAXLAYERS)
   integer(c_int), dimension(1) :: ts_layer_vary_flag_f_shapes
@@ -567,7 +567,7 @@ type, bind(c) :: lidort_fixed_lincontrol_c
   
 end type lidort_fixed_lincontrol_c
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_linoptical_c
   type(c_ptr) :: ts_l_deltau_vert_input ! dimension(MAX_ATMOSWFS, MAXLAYERS)
   integer(c_int), dimension(2) :: ts_l_deltau_vert_input_f_shapes
@@ -592,7 +592,7 @@ type, bind(c) :: lidort_fixed_linoptical_c
   
 end type lidort_fixed_linoptical_c
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_fixed_lininputs_c
   type(c_ptr) :: cont ! scalar
   integer(c_int) :: cont_f_byte_size
@@ -603,7 +603,7 @@ type, bind(c) :: lidort_fixed_lininputs_c
   
 end type lidort_fixed_lininputs_c
 
-! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_modified_lincontrol_c
   type(c_ptr) :: ts_do_column_linearization ! scalar
   integer(c_int) :: ts_do_column_linearization_f_byte_size
@@ -635,7 +635,7 @@ type, bind(c) :: lidort_modified_lincontrol_c
   
 end type lidort_modified_lincontrol_c
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 type, bind(c) :: lidort_modified_lininputs_c
   type(c_ptr) :: mcont ! scalar
   integer(c_int) :: mcont_f_byte_size
@@ -643,7 +643,7 @@ type, bind(c) :: lidort_modified_lininputs_c
   
 end type lidort_modified_lininputs_c
 
-! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linatmos_c
   type(c_ptr) :: ts_columnwf ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(4) :: ts_columnwf_f_shapes
@@ -776,7 +776,7 @@ type, bind(c) :: lidort_linatmos_c
   
 end type lidort_linatmos_c
 
-! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linsurf_c
   type(c_ptr) :: ts_surfacewf ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(4) :: ts_surfacewf_f_shapes
@@ -809,7 +809,7 @@ type, bind(c) :: lidort_linsurf_c
   
 end type lidort_linsurf_c
 
-! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 type, bind(c) :: lidort_linoutputs_c
   type(c_ptr) :: atmos ! scalar
   integer(c_int) :: atmos_f_byte_size
@@ -820,7 +820,7 @@ type, bind(c) :: lidort_linoutputs_c
   
 end type lidort_linoutputs_c
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 type, bind(c) :: lidort_linsup_brdf_c
   type(c_ptr) :: ts_ls_exactdb_brdfunc ! dimension(MAX_SURFACEWFS, MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(4) :: ts_ls_exactdb_brdfunc_f_shapes
@@ -853,7 +853,7 @@ type, bind(c) :: lidort_linsup_brdf_c
   
 end type lidort_linsup_brdf_c
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 type, bind(c) :: lidort_linsup_sleave_c
   type(c_ptr) :: ts_lssl_slterm_isotropic ! dimension(MAX_SLEAVEWFS, MAXBEAMS)
   integer(c_int), dimension(2) :: ts_lssl_slterm_isotropic_f_shapes
@@ -874,7 +874,7 @@ type, bind(c) :: lidort_linsup_sleave_c
   
 end type lidort_linsup_sleave_c
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_atmos_c
   type(c_ptr) :: ts_columnwf_ss ! dimension(MAX_ATMOSWFS, MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(4) :: ts_columnwf_ss_f_shapes
@@ -895,7 +895,7 @@ type, bind(c) :: lidort_linsup_ss_atmos_c
   
 end type lidort_linsup_ss_atmos_c
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_surf_c
   type(c_ptr) :: ts_surfacewf_db ! dimension(MAX_SURFACEWFS, MAX_USER_LEVELS, MAX_GEOMETRIES)
   integer(c_int), dimension(3) :: ts_surfacewf_db_f_shapes
@@ -904,7 +904,7 @@ type, bind(c) :: lidort_linsup_ss_surf_c
   
 end type lidort_linsup_ss_surf_c
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 type, bind(c) :: lidort_linsup_ss_c
   type(c_ptr) :: atmos ! scalar
   integer(c_int) :: atmos_f_byte_size
@@ -915,7 +915,7 @@ type, bind(c) :: lidort_linsup_ss_c
   
 end type lidort_linsup_ss_c
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 type, bind(c) :: lidort_linsup_inout_c
   type(c_ptr) :: brdf ! scalar
   integer(c_int) :: brdf_f_byte_size
@@ -929,7 +929,7 @@ type, bind(c) :: lidort_linsup_inout_c
   
 end type lidort_linsup_inout_c
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_main_outputs_c
   type(c_ptr) :: ts_intensity ! dimension(MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(3) :: ts_intensity_f_shapes
@@ -1019,7 +1019,7 @@ type, bind(c) :: lidort_main_outputs_c
   
 end type lidort_main_outputs_c
 
-! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_wladjusted_outputs_c
   type(c_ptr) :: ts_wladjusted_isotropic ! dimension(MAXBEAMS)
   integer(c_int), dimension(1) :: ts_wladjusted_isotropic_f_shapes
@@ -1040,7 +1040,7 @@ type, bind(c) :: lidort_wladjusted_outputs_c
   
 end type lidort_wladjusted_outputs_c
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_exception_handling_c
   type(c_ptr) :: ts_status_inputcheck ! scalar
   integer(c_int) :: ts_status_inputcheck_f_byte_size
@@ -1074,7 +1074,7 @@ type, bind(c) :: lidort_exception_handling_c
   
 end type lidort_exception_handling_c
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_input_exception_handling_c
   type(c_ptr) :: ts_status_inputread ! scalar
   integer(c_int) :: ts_status_inputread_f_byte_size
@@ -1093,7 +1093,7 @@ type, bind(c) :: lidort_input_exception_handling_c
   
 end type lidort_input_exception_handling_c
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 type, bind(c) :: lidort_outputs_c
   type(c_ptr) :: main ! scalar
   integer(c_int) :: main_f_byte_size
@@ -1107,7 +1107,7 @@ type, bind(c) :: lidort_outputs_c
   
 end type lidort_outputs_c
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 type, bind(c) :: lidort_sup_brdf_c
   type(c_ptr) :: ts_exactdb_brdfunc ! dimension(MAX_USER_STREAMS, MAX_USER_RELAZMS, MAXBEAMS)
   integer(c_int), dimension(3) :: ts_exactdb_brdfunc_f_shapes
@@ -1140,7 +1140,7 @@ type, bind(c) :: lidort_sup_brdf_c
   
 end type lidort_sup_brdf_c
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 type, bind(c) :: lidort_sup_sleave_c
   type(c_ptr) :: ts_slterm_isotropic ! dimension(MAXBEAMS)
   integer(c_int), dimension(1) :: ts_slterm_isotropic_f_shapes
@@ -1161,7 +1161,7 @@ type, bind(c) :: lidort_sup_sleave_c
   
 end type lidort_sup_sleave_c
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 type, bind(c) :: lidort_sup_ss_c
   type(c_ptr) :: ts_intensity_ss ! dimension(MAX_USER_LEVELS, MAX_GEOMETRIES, MAX_DIRECTIONS)
   integer(c_int), dimension(3) :: ts_intensity_ss_f_shapes
@@ -1178,7 +1178,7 @@ type, bind(c) :: lidort_sup_ss_c
   
 end type lidort_sup_ss_c
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 type, bind(c) :: lidort_sup_inout_c
   type(c_ptr) :: brdf ! scalar
   integer(c_int) :: brdf_f_byte_size
@@ -1192,7 +1192,7 @@ type, bind(c) :: lidort_sup_inout_c
   
 end type lidort_sup_inout_c
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_boolean_c
   type(c_ptr) :: ts_do_fullrad_mode ! scalar
   integer(c_int) :: ts_do_fullrad_mode_f_byte_size
@@ -1255,7 +1255,7 @@ type, bind(c) :: lidort_fixed_boolean_c
   
 end type lidort_fixed_boolean_c
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_control_c
   type(c_ptr) :: ts_taylor_order ! scalar
   integer(c_int) :: ts_taylor_order_f_byte_size
@@ -1293,7 +1293,7 @@ type, bind(c) :: lidort_fixed_control_c
   
 end type lidort_fixed_control_c
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_sunrays_c
   type(c_ptr) :: ts_flux_factor ! scalar
   integer(c_int) :: ts_flux_factor_f_byte_size
@@ -1301,7 +1301,7 @@ type, bind(c) :: lidort_fixed_sunrays_c
   
 end type lidort_fixed_sunrays_c
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_uservalues_c
   type(c_ptr) :: ts_n_user_levels ! scalar
   integer(c_int) :: ts_n_user_levels_f_byte_size
@@ -1309,7 +1309,7 @@ type, bind(c) :: lidort_fixed_uservalues_c
   
 end type lidort_fixed_uservalues_c
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_chapman_c
   type(c_ptr) :: ts_height_grid ! dimension(0:MAXLAYERS)
   integer(c_int), dimension(1) :: ts_height_grid_f_shapes
@@ -1333,7 +1333,7 @@ type, bind(c) :: lidort_fixed_chapman_c
   
 end type lidort_fixed_chapman_c
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_optical_c
   type(c_ptr) :: ts_deltau_vert_input ! dimension(MAXLAYERS)
   integer(c_int), dimension(1) :: ts_deltau_vert_input_f_shapes
@@ -1367,7 +1367,7 @@ type, bind(c) :: lidort_fixed_optical_c
   
 end type lidort_fixed_optical_c
 
-! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_write_c
   type(c_ptr) :: ts_do_debug_write ! scalar
   integer(c_int) :: ts_do_debug_write_f_byte_size
@@ -1399,7 +1399,7 @@ type, bind(c) :: lidort_fixed_write_c
   
 end type lidort_fixed_write_c
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_fixed_inputs_c
   type(c_ptr) :: f_bool ! scalar
   integer(c_int) :: bool_f_byte_size
@@ -1425,7 +1425,7 @@ type, bind(c) :: lidort_fixed_inputs_c
   
 end type lidort_fixed_inputs_c
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_boolean_c
   type(c_ptr) :: ts_do_focorr ! scalar
   integer(c_int) :: ts_do_focorr_f_byte_size
@@ -1502,7 +1502,7 @@ type, bind(c) :: lidort_modified_boolean_c
   
 end type lidort_modified_boolean_c
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_control_c
   type(c_ptr) :: ts_nmoments_input ! scalar
   integer(c_int) :: ts_nmoments_input_f_byte_size
@@ -1510,7 +1510,7 @@ type, bind(c) :: lidort_modified_control_c
   
 end type lidort_modified_control_c
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_sunrays_c
   type(c_ptr) :: ts_nbeams ! scalar
   integer(c_int) :: ts_nbeams_f_byte_size
@@ -1522,7 +1522,7 @@ type, bind(c) :: lidort_modified_sunrays_c
   
 end type lidort_modified_sunrays_c
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_uservalues_c
   type(c_ptr) :: ts_n_user_relazms ! scalar
   integer(c_int) :: ts_n_user_relazms_f_byte_size
@@ -1562,7 +1562,7 @@ type, bind(c) :: lidort_modified_uservalues_c
   
 end type lidort_modified_uservalues_c
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_chapman_c
   type(c_ptr) :: ts_earth_radius ! scalar
   integer(c_int) :: ts_earth_radius_f_byte_size
@@ -1570,7 +1570,7 @@ type, bind(c) :: lidort_modified_chapman_c
   
 end type lidort_modified_chapman_c
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_optical_c
   type(c_ptr) :: ts_omega_total_input ! dimension(MAXLAYERS)
   integer(c_int), dimension(1) :: ts_omega_total_input_f_shapes
@@ -1579,7 +1579,7 @@ type, bind(c) :: lidort_modified_optical_c
   
 end type lidort_modified_optical_c
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 type, bind(c) :: lidort_modified_inputs_c
   type(c_ptr) :: mbool ! scalar
   integer(c_int) :: mbool_f_byte_size
@@ -1708,7 +1708,7 @@ end subroutine set_lidort_pars
 
 
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_lin_sup_inputs_def_m, only : brdf_linsup_inputs
@@ -1725,7 +1725,7 @@ subroutine brdf_linsup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bi
 
 end subroutine brdf_linsup_inputs_c_alloc_init
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_linsup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_lin_sup_inputs_def_m
@@ -1896,7 +1896,7 @@ subroutine brdf_linsup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bin
 
 end subroutine brdf_linsup_inputs_c_copy
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_lin_sup_outputs_def_m, only : brdf_linsup_outputs
@@ -1913,7 +1913,7 @@ subroutine brdf_linsup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine brdf_linsup_outputs_c_alloc_init
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_linsup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_lin_sup_outputs_def_m
@@ -2120,7 +2120,7 @@ subroutine brdf_linsup_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine brdf_linsup_outputs_c_copy
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_inputs_def_m, only : brdf_sup_inputs
@@ -2137,7 +2137,7 @@ subroutine brdf_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine brdf_sup_inputs_c_alloc_init
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_inputs_def_m
@@ -2763,7 +2763,7 @@ subroutine brdf_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
 
 end subroutine brdf_sup_inputs_c_copy
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_sup_outputs
@@ -2780,7 +2780,7 @@ subroutine brdf_sup_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine brdf_sup_outputs_c_alloc_init
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_sup_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m
@@ -3020,7 +3020,7 @@ subroutine brdf_sup_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
 
 end subroutine brdf_sup_outputs_c_copy
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_input_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_input_exception_handling
@@ -3037,7 +3037,7 @@ subroutine brdf_input_exception_handling_c_alloc_init(transfer_struct_c, fortran
 
 end subroutine brdf_input_exception_handling_c_alloc_init
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_input_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m
@@ -3122,7 +3122,7 @@ subroutine brdf_input_exception_handling_c_copy(fortran_type_c_from, fortran_typ
 
 end subroutine brdf_input_exception_handling_c_copy
 
-! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_output_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_output_exception_handling
@@ -3139,7 +3139,7 @@ subroutine brdf_output_exception_handling_c_alloc_init(transfer_struct_c, fortra
 
 end subroutine brdf_output_exception_handling_c_alloc_init
 
-! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine brdf_output_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m
@@ -3219,7 +3219,7 @@ subroutine brdf_output_exception_handling_c_copy(fortran_type_c_from, fortran_ty
 
 end subroutine brdf_output_exception_handling_c_copy
 
-! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine sleave_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use sleave_sup_inputs_def_m, only : sleave_sup_inputs
@@ -3236,7 +3236,7 @@ subroutine sleave_sup_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bin
 
 end subroutine sleave_sup_inputs_c_alloc_init
 
-! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine sleave_sup_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use sleave_sup_inputs_def_m
@@ -3780,7 +3780,7 @@ subroutine sleave_sup_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind
 
 end subroutine sleave_sup_inputs_c_copy
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lincontrol_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_lincontrol
@@ -3797,7 +3797,7 @@ subroutine lidort_fixed_lincontrol_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_lincontrol_c_alloc_init
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_lincontrol_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m
@@ -3924,7 +3924,7 @@ subroutine lidort_fixed_lincontrol_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_fixed_lincontrol_c_copy
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_linoptical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_linoptical
@@ -3941,7 +3941,7 @@ subroutine lidort_fixed_linoptical_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_linoptical_c_alloc_init
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_linoptical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m
@@ -4091,7 +4091,7 @@ subroutine lidort_fixed_linoptical_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_fixed_linoptical_c_copy
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_lininputs
@@ -4108,7 +4108,7 @@ subroutine lidort_fixed_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_fixed_lininputs_c_alloc_init
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_lininputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m
@@ -4179,7 +4179,7 @@ subroutine lidort_fixed_lininputs_c_copy(fortran_type_c_from, fortran_type_c_to)
 
 end subroutine lidort_fixed_lininputs_c_copy
 
-! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_lincontrol_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_modified_lincontrol
@@ -4196,7 +4196,7 @@ subroutine lidort_modified_lincontrol_c_alloc_init(transfer_struct_c, fortran_ty
 
 end subroutine lidort_modified_lincontrol_c_alloc_init
 
-! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_lincontrol_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m
@@ -4355,7 +4355,7 @@ subroutine lidort_modified_lincontrol_c_copy(fortran_type_c_from, fortran_type_c
 
 end subroutine lidort_modified_lincontrol_c_copy
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_lininputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_modified_lininputs
@@ -4372,7 +4372,7 @@ subroutine lidort_modified_lininputs_c_alloc_init(transfer_struct_c, fortran_typ
 
 end subroutine lidort_modified_lininputs_c_alloc_init
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_lininputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m
@@ -4433,7 +4433,7 @@ subroutine lidort_modified_lininputs_c_copy(fortran_type_c_from, fortran_type_c_
 
 end subroutine lidort_modified_lininputs_c_copy
 
-! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linatmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linatmos
@@ -4450,7 +4450,7 @@ subroutine lidort_linatmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine lidort_linatmos_c_alloc_init
 
-! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linatmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m
@@ -5185,7 +5185,7 @@ subroutine lidort_linatmos_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
 
 end subroutine lidort_linatmos_c_copy
 
-! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsurf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linsurf
@@ -5202,7 +5202,7 @@ subroutine lidort_linsurf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C
 
 end subroutine lidort_linsurf_c_alloc_init
 
-! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsurf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m
@@ -5406,7 +5406,7 @@ subroutine lidort_linsurf_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
 
 end subroutine lidort_linsurf_c_copy
 
-! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linoutputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linoutputs
@@ -5423,7 +5423,7 @@ subroutine lidort_linoutputs_c_alloc_init(transfer_struct_c, fortran_type_c) bin
 
 end subroutine lidort_linoutputs_c_alloc_init
 
-! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linoutputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m
@@ -5494,7 +5494,7 @@ subroutine lidort_linoutputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind
 
 end subroutine lidort_linoutputs_c_copy
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_brdf_def_m, only : lidort_linsup_brdf
@@ -5511,7 +5511,7 @@ subroutine lidort_linsup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bi
 
 end subroutine lidort_linsup_brdf_c_alloc_init
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_brdf_def_m
@@ -5718,7 +5718,7 @@ subroutine lidort_linsup_brdf_c_copy(fortran_type_c_from, fortran_type_c_to) bin
 
 end subroutine lidort_linsup_brdf_c_copy
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_sleave_def_m, only : lidort_linsup_sleave
@@ -5735,7 +5735,7 @@ subroutine lidort_linsup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_linsup_sleave_c_alloc_init
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_sleave_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_sleave_def_m
@@ -5876,7 +5876,7 @@ subroutine lidort_linsup_sleave_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_linsup_sleave_c_copy
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_atmos_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss_atmos
@@ -5893,7 +5893,7 @@ subroutine lidort_linsup_ss_atmos_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_linsup_ss_atmos_c_alloc_init
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_atmos_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m
@@ -6040,7 +6040,7 @@ subroutine lidort_linsup_ss_atmos_c_copy(fortran_type_c_from, fortran_type_c_to)
 
 end subroutine lidort_linsup_ss_atmos_c_copy
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_surf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss_surf
@@ -6057,7 +6057,7 @@ subroutine lidort_linsup_ss_surf_c_alloc_init(transfer_struct_c, fortran_type_c)
 
 end subroutine lidort_linsup_ss_surf_c_alloc_init
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_surf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m
@@ -6129,7 +6129,7 @@ subroutine lidort_linsup_ss_surf_c_copy(fortran_type_c_from, fortran_type_c_to) 
 
 end subroutine lidort_linsup_ss_surf_c_copy
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss
@@ -6146,7 +6146,7 @@ subroutine lidort_linsup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine lidort_linsup_ss_c_alloc_init
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_ss_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m
@@ -6217,7 +6217,7 @@ subroutine lidort_linsup_ss_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
 
 end subroutine lidort_linsup_ss_c_copy
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_inout_def_m, only : lidort_linsup_inout
@@ -6234,7 +6234,7 @@ subroutine lidort_linsup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_linsup_inout_c_alloc_init
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_linsup_inout_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_lin_sup_inout_def_m
@@ -6317,7 +6317,7 @@ subroutine lidort_linsup_inout_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine lidort_linsup_inout_c_copy
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_main_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_main_outputs
@@ -6334,7 +6334,7 @@ subroutine lidort_main_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_main_outputs_c_alloc_init
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_main_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m
@@ -6742,7 +6742,7 @@ subroutine lidort_main_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine lidort_main_outputs_c_copy
 
-! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_wladjusted_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_wladjusted_outputs
@@ -6759,7 +6759,7 @@ subroutine lidort_wladjusted_outputs_c_alloc_init(transfer_struct_c, fortran_typ
 
 end subroutine lidort_wladjusted_outputs_c_alloc_init
 
-! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_wladjusted_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m
@@ -6888,7 +6888,7 @@ subroutine lidort_wladjusted_outputs_c_copy(fortran_type_c_from, fortran_type_c_
 
 end subroutine lidort_wladjusted_outputs_c_copy
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -6905,7 +6905,7 @@ subroutine lidort_exception_handling_c_alloc_init(transfer_struct_c, fortran_typ
 
 end subroutine lidort_exception_handling_c_alloc_init
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m
@@ -7018,7 +7018,7 @@ subroutine lidort_exception_handling_c_copy(fortran_type_c_from, fortran_type_c_
 
 end subroutine lidort_exception_handling_c_copy
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_input_exception_handling_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_input_exception_handling
@@ -7035,7 +7035,7 @@ subroutine lidort_input_exception_handling_c_alloc_init(transfer_struct_c, fortr
 
 end subroutine lidort_input_exception_handling_c_alloc_init
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_input_exception_handling_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m
@@ -7120,7 +7120,7 @@ subroutine lidort_input_exception_handling_c_copy(fortran_type_c_from, fortran_t
 
 end subroutine lidort_input_exception_handling_c_copy
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_outputs
@@ -7137,7 +7137,7 @@ subroutine lidort_outputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C
 
 end subroutine lidort_outputs_c_alloc_init
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_outputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_outputs_def_m
@@ -7218,7 +7218,7 @@ subroutine lidort_outputs_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
 
 end subroutine lidort_outputs_c_copy
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_brdf_def_m, only : lidort_sup_brdf
@@ -7235,7 +7235,7 @@ subroutine lidort_sup_brdf_c_alloc_init(transfer_struct_c, fortran_type_c) bind(
 
 end subroutine lidort_sup_brdf_c_alloc_init
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_brdf_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_brdf_def_m
@@ -7421,7 +7421,7 @@ subroutine lidort_sup_brdf_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C
 
 end subroutine lidort_sup_brdf_c_copy
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_sleave_def_m, only : lidort_sup_sleave
@@ -7438,7 +7438,7 @@ subroutine lidort_sup_sleave_c_alloc_init(transfer_struct_c, fortran_type_c) bin
 
 end subroutine lidort_sup_sleave_c_alloc_init
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_sleave_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_sleave_def_m
@@ -7567,7 +7567,7 @@ subroutine lidort_sup_sleave_c_copy(fortran_type_c_from, fortran_type_c_to) bind
 
 end subroutine lidort_sup_sleave_c_copy
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_ss_def_m, only : lidort_sup_ss
@@ -7584,7 +7584,7 @@ subroutine lidort_sup_ss_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
 
 end subroutine lidort_sup_ss_c_alloc_init
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_ss_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_ss_def_m
@@ -7692,7 +7692,7 @@ subroutine lidort_sup_ss_c_copy(fortran_type_c_from, fortran_type_c_to) bind(C)
 
 end subroutine lidort_sup_ss_c_copy
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_inout_def_m, only : lidort_sup_inout
@@ -7709,7 +7709,7 @@ subroutine lidort_sup_inout_c_alloc_init(transfer_struct_c, fortran_type_c) bind
 
 end subroutine lidort_sup_inout_c_alloc_init
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_sup_inout_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_sup_inout_def_m
@@ -7792,7 +7792,7 @@ subroutine lidort_sup_inout_c_copy(fortran_type_c_from, fortran_type_c_to) bind(
 
 end subroutine lidort_sup_inout_c_copy
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_boolean
@@ -7809,7 +7809,7 @@ subroutine lidort_fixed_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_boolean_c_alloc_init
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_boolean_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8091,7 +8091,7 @@ subroutine lidort_fixed_boolean_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_boolean_c_copy
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_control_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_control
@@ -8108,7 +8108,7 @@ subroutine lidort_fixed_control_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_control_c_alloc_init
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_control_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8291,7 +8291,7 @@ subroutine lidort_fixed_control_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_control_c_copy
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_sunrays
@@ -8308,7 +8308,7 @@ subroutine lidort_fixed_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_sunrays_c_alloc_init
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_sunrays_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8371,7 +8371,7 @@ subroutine lidort_fixed_sunrays_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_sunrays_c_copy
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_uservalues_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_uservalues
@@ -8388,7 +8388,7 @@ subroutine lidort_fixed_uservalues_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_fixed_uservalues_c_alloc_init
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_uservalues_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8451,7 +8451,7 @@ subroutine lidort_fixed_uservalues_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_fixed_uservalues_c_copy
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_chapman
@@ -8468,7 +8468,7 @@ subroutine lidort_fixed_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_chapman_c_alloc_init
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_chapman_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8591,7 +8591,7 @@ subroutine lidort_fixed_chapman_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_chapman_c_copy
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_optical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_optical
@@ -8608,7 +8608,7 @@ subroutine lidort_fixed_optical_c_alloc_init(transfer_struct_c, fortran_type_c) 
 
 end subroutine lidort_fixed_optical_c_alloc_init
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_optical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8779,7 +8779,7 @@ subroutine lidort_fixed_optical_c_copy(fortran_type_c_from, fortran_type_c_to) b
 
 end subroutine lidort_fixed_optical_c_copy
 
-! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_write_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write
@@ -8796,7 +8796,7 @@ subroutine lidort_fixed_write_c_alloc_init(transfer_struct_c, fortran_type_c) bi
 
 end subroutine lidort_fixed_write_c_alloc_init
 
-! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_write_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -8923,7 +8923,7 @@ subroutine lidort_fixed_write_c_copy(fortran_type_c_from, fortran_type_c_to) bin
 
 end subroutine lidort_fixed_write_c_copy
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_inputs
@@ -8940,7 +8940,7 @@ subroutine lidort_fixed_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) b
 
 end subroutine lidort_fixed_inputs_c_alloc_init
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_fixed_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9061,7 +9061,7 @@ subroutine lidort_fixed_inputs_c_copy(fortran_type_c_from, fortran_type_c_to) bi
 
 end subroutine lidort_fixed_inputs_c_copy
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_boolean_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_boolean
@@ -9078,7 +9078,7 @@ subroutine lidort_modified_boolean_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_boolean_c_alloc_init
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_boolean_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9417,7 +9417,7 @@ subroutine lidort_modified_boolean_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_boolean_c_copy
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_control_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_control
@@ -9434,7 +9434,7 @@ subroutine lidort_modified_control_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_control_c_alloc_init
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_control_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9497,7 +9497,7 @@ subroutine lidort_modified_control_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_control_c_copy
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_sunrays_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_sunrays
@@ -9514,7 +9514,7 @@ subroutine lidort_modified_sunrays_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_sunrays_c_alloc_init
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_sunrays_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9592,7 +9592,7 @@ subroutine lidort_modified_sunrays_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_sunrays_c_copy
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_uservalues_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_uservalues
@@ -9609,7 +9609,7 @@ subroutine lidort_modified_uservalues_c_alloc_init(transfer_struct_c, fortran_ty
 
 end subroutine lidort_modified_uservalues_c_alloc_init
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_uservalues_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9801,7 +9801,7 @@ subroutine lidort_modified_uservalues_c_copy(fortran_type_c_from, fortran_type_c
 
 end subroutine lidort_modified_uservalues_c_copy
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_chapman_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_chapman
@@ -9818,7 +9818,7 @@ subroutine lidort_modified_chapman_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_chapman_c_alloc_init
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_chapman_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9881,7 +9881,7 @@ subroutine lidort_modified_chapman_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_chapman_c_copy
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_optical_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_optical
@@ -9898,7 +9898,7 @@ subroutine lidort_modified_optical_c_alloc_init(transfer_struct_c, fortran_type_
 
 end subroutine lidort_modified_optical_c_alloc_init
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_optical_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -9964,7 +9964,7 @@ subroutine lidort_modified_optical_c_copy(fortran_type_c_from, fortran_type_c_to
 
 end subroutine lidort_modified_optical_c_copy
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_inputs_c_alloc_init(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_inputs
@@ -9981,7 +9981,7 @@ subroutine lidort_modified_inputs_c_alloc_init(transfer_struct_c, fortran_type_c
 
 end subroutine lidort_modified_inputs_c_alloc_init
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Initializes only with no allocation
 subroutine lidort_modified_inputs_c_init_only(transfer_struct_c, fortran_type_c) bind(C)
   use lidort_inputs_def_m
@@ -10093,7 +10093,7 @@ subroutine lidort_modified_inputs_c_copy(fortran_type_c_from, fortran_type_c_to)
 end subroutine lidort_modified_inputs_c_copy
 
 
-! Wrapper for character variable "bs_brdf_names" of type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+! Wrapper for character variable "bs_brdf_names" of type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 subroutine brdf_sup_inputs_bs_brdf_names_get(fortran_type_c, bs_brdf_names_in_shape_1, &
       bs_brdf_names_in_len, &
       bs_brdf_names_in) bind(C)
@@ -10122,7 +10122,7 @@ subroutine brdf_sup_inputs_bs_brdf_names_get(fortran_type_c, bs_brdf_names_in_sh
   end do
 
 end subroutine brdf_sup_inputs_bs_brdf_names_get
-! Wrapper for character variable "bs_inputmessages" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Wrapper for character variable "bs_inputmessages" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 subroutine brdf_input_exception_handling_bs_inputmessages_get(fortran_type_c, bs_inputmessages_in_shape_1, &
       bs_inputmessages_in_len, &
       bs_inputmessages_in) bind(C)
@@ -10151,7 +10151,7 @@ subroutine brdf_input_exception_handling_bs_inputmessages_get(fortran_type_c, bs
   end do
 
 end subroutine brdf_input_exception_handling_bs_inputmessages_get
-! Wrapper for character variable "bs_inputactions" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Wrapper for character variable "bs_inputactions" of type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 subroutine brdf_input_exception_handling_bs_inputactions_get(fortran_type_c, bs_inputactions_in_shape_1, &
       bs_inputactions_in_len, &
       bs_inputactions_in) bind(C)
@@ -10180,7 +10180,7 @@ subroutine brdf_input_exception_handling_bs_inputactions_get(fortran_type_c, bs_
   end do
 
 end subroutine brdf_input_exception_handling_bs_inputactions_get
-! Wrapper for character variable "bs_outputmessages" of type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Wrapper for character variable "bs_outputmessages" of type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 subroutine brdf_output_exception_handling_bs_outputmessages_get(fortran_type_c, bs_outputmessages_in_shape_1, &
       bs_outputmessages_in_len, &
       bs_outputmessages_in) bind(C)
@@ -10209,7 +10209,7 @@ subroutine brdf_output_exception_handling_bs_outputmessages_get(fortran_type_c, 
   end do
 
 end subroutine brdf_output_exception_handling_bs_outputmessages_get
-! Wrapper for character variable "sl_sleave_datapath" of type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+! Wrapper for character variable "sl_sleave_datapath" of type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 subroutine sleave_sup_inputs_sl_sleave_datapath_get(fortran_type_c, sl_sleave_datapath_in_len, &
       sl_sleave_datapath_in) bind(C)
   use sleave_sup_inputs_def_m, only : sleave_sup_inputs
@@ -10231,7 +10231,7 @@ subroutine sleave_sup_inputs_sl_sleave_datapath_get(fortran_type_c, sl_sleave_da
   sl_sleave_datapath_in(len_idx) = c_null_char
 
 end subroutine sleave_sup_inputs_sl_sleave_datapath_get
-! Wrapper for character variable "ts_columnwf_names" of type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Wrapper for character variable "ts_columnwf_names" of type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 subroutine fixed_lincontrol_ts_columnwf_names_get(fortran_type_c, ts_columnwf_names_in_shape_1, &
       ts_columnwf_names_in_len, &
       ts_columnwf_names_in) bind(C)
@@ -10260,7 +10260,7 @@ subroutine fixed_lincontrol_ts_columnwf_names_get(fortran_type_c, ts_columnwf_na
   end do
 
 end subroutine fixed_lincontrol_ts_columnwf_names_get
-! Wrapper for character variable "ts_profilewf_names" of type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Wrapper for character variable "ts_profilewf_names" of type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 subroutine fixed_lincontrol_ts_profilewf_names_get(fortran_type_c, ts_profilewf_names_in_shape_1, &
       ts_profilewf_names_in_len, &
       ts_profilewf_names_in) bind(C)
@@ -10289,7 +10289,7 @@ subroutine fixed_lincontrol_ts_profilewf_names_get(fortran_type_c, ts_profilewf_
   end do
 
 end subroutine fixed_lincontrol_ts_profilewf_names_get
-! Wrapper for character variable "ts_checkmessages" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_checkmessages" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_checkmessages_get(fortran_type_c, ts_checkmessages_in_shape_1, &
       ts_checkmessages_in_len, &
       ts_checkmessages_in) bind(C)
@@ -10318,7 +10318,7 @@ subroutine exception_handling_ts_checkmessages_get(fortran_type_c, ts_checkmessa
   end do
 
 end subroutine exception_handling_ts_checkmessages_get
-! Wrapper for character variable "ts_actions" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_actions" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_actions_get(fortran_type_c, ts_actions_in_shape_1, &
       ts_actions_in_len, &
       ts_actions_in) bind(C)
@@ -10347,7 +10347,7 @@ subroutine exception_handling_ts_actions_get(fortran_type_c, ts_actions_in_shape
   end do
 
 end subroutine exception_handling_ts_actions_get
-! Wrapper for character variable "ts_message" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_message" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_message_get(fortran_type_c, ts_message_in_len, &
       ts_message_in) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -10369,7 +10369,7 @@ subroutine exception_handling_ts_message_get(fortran_type_c, ts_message_in_len, 
   ts_message_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_message_get
-! Wrapper for character variable "ts_trace_1" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_1" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_1_get(fortran_type_c, ts_trace_1_in_len, &
       ts_trace_1_in) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -10391,7 +10391,7 @@ subroutine exception_handling_ts_trace_1_get(fortran_type_c, ts_trace_1_in_len, 
   ts_trace_1_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_1_get
-! Wrapper for character variable "ts_trace_2" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_2" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_2_get(fortran_type_c, ts_trace_2_in_len, &
       ts_trace_2_in) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -10413,7 +10413,7 @@ subroutine exception_handling_ts_trace_2_get(fortran_type_c, ts_trace_2_in_len, 
   ts_trace_2_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_2_get
-! Wrapper for character variable "ts_trace_3" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_trace_3" of type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine exception_handling_ts_trace_3_get(fortran_type_c, ts_trace_3_in_len, &
       ts_trace_3_in) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -10435,7 +10435,7 @@ subroutine exception_handling_ts_trace_3_get(fortran_type_c, ts_trace_3_in_len, 
   ts_trace_3_in(len_idx) = c_null_char
 
 end subroutine exception_handling_ts_trace_3_get
-! Wrapper for character variable "ts_inputmessages" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_inputmessages" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine input_exception_handling_ts_inputmessages_get(fortran_type_c, ts_inputmessages_in_shape_1, &
       ts_inputmessages_in_len, &
       ts_inputmessages_in) bind(C)
@@ -10464,7 +10464,7 @@ subroutine input_exception_handling_ts_inputmessages_get(fortran_type_c, ts_inpu
   end do
 
 end subroutine input_exception_handling_ts_inputmessages_get
-! Wrapper for character variable "ts_inputactions" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Wrapper for character variable "ts_inputactions" of type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 subroutine input_exception_handling_ts_inputactions_get(fortran_type_c, ts_inputactions_in_shape_1, &
       ts_inputactions_in_len, &
       ts_inputactions_in) bind(C)
@@ -10493,7 +10493,7 @@ subroutine input_exception_handling_ts_inputactions_get(fortran_type_c, ts_input
   end do
 
 end subroutine input_exception_handling_ts_inputactions_get
-! Wrapper for character variable "ts_input_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Wrapper for character variable "ts_input_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 subroutine fixed_write_ts_input_write_filename_get(fortran_type_c, ts_input_write_filename_in_len, &
       ts_input_write_filename_in) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write
@@ -10515,7 +10515,7 @@ subroutine fixed_write_ts_input_write_filename_get(fortran_type_c, ts_input_writ
   ts_input_write_filename_in(len_idx) = c_null_char
 
 end subroutine fixed_write_ts_input_write_filename_get
-! Wrapper for character variable "ts_scenario_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Wrapper for character variable "ts_scenario_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 subroutine fixed_write_ts_scenario_write_filename_get(fortran_type_c, ts_scenario_write_filename_in_len, &
       ts_scenario_write_filename_in) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write
@@ -10537,7 +10537,7 @@ subroutine fixed_write_ts_scenario_write_filename_get(fortran_type_c, ts_scenari
   ts_scenario_write_filename_in(len_idx) = c_null_char
 
 end subroutine fixed_write_ts_scenario_write_filename_get
-! Wrapper for character variable "ts_fourier_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Wrapper for character variable "ts_fourier_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 subroutine fixed_write_ts_fourier_write_filename_get(fortran_type_c, ts_fourier_write_filename_in_len, &
       ts_fourier_write_filename_in) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write
@@ -10559,7 +10559,7 @@ subroutine fixed_write_ts_fourier_write_filename_get(fortran_type_c, ts_fourier_
   ts_fourier_write_filename_in(len_idx) = c_null_char
 
 end subroutine fixed_write_ts_fourier_write_filename_get
-! Wrapper for character variable "ts_results_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Wrapper for character variable "ts_results_write_filename" of type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 subroutine fixed_write_ts_results_write_filename_get(fortran_type_c, ts_results_write_filename_in_len, &
       ts_results_write_filename_in) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write

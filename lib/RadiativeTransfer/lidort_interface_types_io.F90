@@ -9,7 +9,7 @@ implicit none
 
 contains
 
-! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+! Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_inputs_c_write(lun, fortran_type_c) bind(C)
   use brdf_lin_sup_inputs_def_m, only : brdf_linsup_inputs
@@ -85,7 +85,7 @@ subroutine brdf_linsup_inputs_f_read(lun, fortran_type_f)
   
 end subroutine brdf_linsup_inputs_f_read
 
-! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+! Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_linsup_outputs_c_write(lun, fortran_type_c) bind(C)
   use brdf_lin_sup_outputs_def_m, only : brdf_linsup_outputs
@@ -157,7 +157,7 @@ subroutine brdf_linsup_outputs_f_read(lun, fortran_type_f)
   
 end subroutine brdf_linsup_outputs_f_read
 
-! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+! Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_inputs_c_write(lun, fortran_type_c) bind(C)
   use brdf_sup_inputs_def_m, only : brdf_sup_inputs
@@ -305,7 +305,7 @@ subroutine brdf_sup_inputs_f_read(lun, fortran_type_f)
   
 end subroutine brdf_sup_inputs_f_read
 
-! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_sup_outputs_c_write(lun, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_sup_outputs
@@ -385,7 +385,7 @@ subroutine brdf_sup_outputs_f_read(lun, fortran_type_f)
   
 end subroutine brdf_sup_outputs_f_read
 
-! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_input_exception_handling_c_write(lun, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_input_exception_handling
@@ -451,7 +451,7 @@ subroutine brdf_input_exception_handling_f_read(lun, fortran_type_f)
   
 end subroutine brdf_input_exception_handling_f_read
 
-! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+! Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 ! Allocs and initializes type
 subroutine brdf_output_exception_handling_c_write(lun, fortran_type_c) bind(C)
   use brdf_sup_outputs_def_m, only : brdf_output_exception_handling
@@ -515,7 +515,7 @@ subroutine brdf_output_exception_handling_f_read(lun, fortran_type_f)
   
 end subroutine brdf_output_exception_handling_f_read
 
-! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+! Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 ! Allocs and initializes type
 subroutine sleave_sup_inputs_c_write(lun, fortran_type_c) bind(C)
   use sleave_sup_inputs_def_m, only : sleave_sup_inputs
@@ -651,7 +651,7 @@ subroutine sleave_sup_inputs_f_read(lun, fortran_type_f)
   
 end subroutine sleave_sup_inputs_f_read
 
-! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lincontrol_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_lincontrol
@@ -723,7 +723,7 @@ subroutine lidort_fixed_lincontrol_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_lincontrol_f_read
 
-! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_linoptical_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_linoptical
@@ -791,7 +791,7 @@ subroutine lidort_fixed_linoptical_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_linoptical_f_read
 
-! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_lininputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_fixed_lininputs
@@ -861,7 +861,7 @@ subroutine lidort_fixed_lininputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_lininputs_f_read
 
-! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_lincontrol_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_modified_lincontrol
@@ -937,7 +937,7 @@ subroutine lidort_modified_lincontrol_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_lincontrol_f_read
 
-! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+! Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_lininputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_inputs_def_m, only : lidort_modified_lininputs
@@ -1001,7 +1001,7 @@ subroutine lidort_modified_lininputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_lininputs_f_read
 
-! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linatmos_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linatmos
@@ -1123,7 +1123,7 @@ subroutine lidort_linatmos_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linatmos_f_read
 
-! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsurf_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linsurf
@@ -1195,7 +1195,7 @@ subroutine lidort_linsurf_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsurf_f_read
 
-! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+! Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linoutputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_outputs_def_m, only : lidort_linoutputs
@@ -1265,7 +1265,7 @@ subroutine lidort_linoutputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linoutputs_f_read
 
-! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+! Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_brdf_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_brdf_def_m, only : lidort_linsup_brdf
@@ -1337,7 +1337,7 @@ subroutine lidort_linsup_brdf_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_brdf_f_read
 
-! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+! Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_sleave_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_sleave_def_m, only : lidort_linsup_sleave
@@ -1403,7 +1403,7 @@ subroutine lidort_linsup_sleave_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_sleave_f_read
 
-! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_atmos_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss_atmos
@@ -1469,7 +1469,7 @@ subroutine lidort_linsup_ss_atmos_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_ss_atmos_f_read
 
-! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_surf_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss_surf
@@ -1529,7 +1529,7 @@ subroutine lidort_linsup_ss_surf_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_ss_surf_f_read
 
-! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+! Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_ss_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_ss_def_m, only : lidort_linsup_ss
@@ -1599,7 +1599,7 @@ subroutine lidort_linsup_ss_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_ss_f_read
 
-! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+! Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_linsup_inout_c_write(lun, fortran_type_c) bind(C)
   use lidort_lin_sup_inout_def_m, only : lidort_linsup_inout
@@ -1679,7 +1679,7 @@ subroutine lidort_linsup_inout_f_read(lun, fortran_type_f)
   
 end subroutine lidort_linsup_inout_f_read
 
-! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_main_outputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_main_outputs
@@ -1781,7 +1781,7 @@ subroutine lidort_main_outputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_main_outputs_f_read
 
-! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_wladjusted_outputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_wladjusted_outputs
@@ -1847,7 +1847,7 @@ subroutine lidort_wladjusted_outputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_wladjusted_outputs_f_read
 
-! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_exception_handling_c_write(lun, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_exception_handling
@@ -1923,7 +1923,7 @@ subroutine lidort_exception_handling_f_read(lun, fortran_type_f)
   
 end subroutine lidort_exception_handling_f_read
 
-! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_input_exception_handling_c_write(lun, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_input_exception_handling
@@ -1989,7 +1989,7 @@ subroutine lidort_input_exception_handling_f_read(lun, fortran_type_f)
   
 end subroutine lidort_input_exception_handling_f_read
 
-! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+! Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_outputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_outputs_def_m, only : lidort_outputs
@@ -2065,7 +2065,7 @@ subroutine lidort_outputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_outputs_f_read
 
-! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+! Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_brdf_c_write(lun, fortran_type_c) bind(C)
   use lidort_sup_brdf_def_m, only : lidort_sup_brdf
@@ -2137,7 +2137,7 @@ subroutine lidort_sup_brdf_f_read(lun, fortran_type_f)
   
 end subroutine lidort_sup_brdf_f_read
 
-! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+! Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_sleave_c_write(lun, fortran_type_c) bind(C)
   use lidort_sup_sleave_def_m, only : lidort_sup_sleave
@@ -2203,7 +2203,7 @@ subroutine lidort_sup_sleave_f_read(lun, fortran_type_f)
   
 end subroutine lidort_sup_sleave_f_read
 
-! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+! Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_ss_c_write(lun, fortran_type_c) bind(C)
   use lidort_sup_ss_def_m, only : lidort_sup_ss
@@ -2267,7 +2267,7 @@ subroutine lidort_sup_ss_f_read(lun, fortran_type_f)
   
 end subroutine lidort_sup_ss_f_read
 
-! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+! Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 ! Allocs and initializes type
 subroutine lidort_sup_inout_c_write(lun, fortran_type_c) bind(C)
   use lidort_sup_inout_def_m, only : lidort_sup_inout
@@ -2347,7 +2347,7 @@ subroutine lidort_sup_inout_f_read(lun, fortran_type_f)
   
 end subroutine lidort_sup_inout_f_read
 
-! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_boolean_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_boolean
@@ -2443,7 +2443,7 @@ subroutine lidort_fixed_boolean_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_boolean_f_read
 
-! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_control_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_control
@@ -2523,7 +2523,7 @@ subroutine lidort_fixed_control_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_control_f_read
 
-! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_sunrays_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_sunrays
@@ -2583,7 +2583,7 @@ subroutine lidort_fixed_sunrays_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_sunrays_f_read
 
-! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_uservalues_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_uservalues
@@ -2643,7 +2643,7 @@ subroutine lidort_fixed_uservalues_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_uservalues_f_read
 
-! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_chapman_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_chapman
@@ -2711,7 +2711,7 @@ subroutine lidort_fixed_chapman_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_chapman_f_read
 
-! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_optical_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_optical
@@ -2785,7 +2785,7 @@ subroutine lidort_fixed_optical_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_optical_f_read
 
-! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_write_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_write
@@ -2861,7 +2861,7 @@ subroutine lidort_fixed_write_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_write_f_read
 
-! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_fixed_inputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_fixed_inputs
@@ -2961,7 +2961,7 @@ subroutine lidort_fixed_inputs_f_read(lun, fortran_type_f)
   
 end subroutine lidort_fixed_inputs_f_read
 
-! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_boolean_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_boolean
@@ -3067,7 +3067,7 @@ subroutine lidort_modified_boolean_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_boolean_f_read
 
-! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_control_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_control
@@ -3127,7 +3127,7 @@ subroutine lidort_modified_control_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_control_f_read
 
-! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_sunrays_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_sunrays
@@ -3189,7 +3189,7 @@ subroutine lidort_modified_sunrays_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_sunrays_f_read
 
-! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_uservalues_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_uservalues
@@ -3267,7 +3267,7 @@ subroutine lidort_modified_uservalues_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_uservalues_f_read
 
-! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_chapman_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_chapman
@@ -3327,7 +3327,7 @@ subroutine lidort_modified_chapman_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_chapman_f_read
 
-! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_optical_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_optical
@@ -3387,7 +3387,7 @@ subroutine lidort_modified_optical_f_read(lun, fortran_type_f)
   
 end subroutine lidort_modified_optical_f_read
 
-! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+! Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 ! Allocs and initializes type
 subroutine lidort_modified_inputs_c_write(lun, fortran_type_c) bind(C)
   use lidort_inputs_def_m, only : lidort_modified_inputs

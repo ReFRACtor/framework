@@ -1,8 +1,25 @@
 #include "vlidort_interface_masters.h"
 #include "fp_serialize_support.h"
-#include "linear_algebra.h"
+#include <fstream>
+#include <boost/filesystem.hpp>
 
 using namespace FullPhysics;
+
+// Temporary files. We can move this to a more central place if
+// needed, but for now we just use this here.
+
+namespace FullPhysics {
+class TemporaryFile{
+public:
+  TemporaryFile() {
+    file_name = boost::filesystem::unique_path();
+  }
+  ~TemporaryFile() {
+    boost::filesystem::remove(file_name);
+  }
+  boost::filesystem::path file_name;
+};
+}
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 
@@ -12,28 +29,33 @@ template<class Archive>
 void VBrdf_Linsup_Masters::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VBrdf_Linsup_Masters);
-    ar 
-       & FP_NVP_(vbrdf_sup_in)
-       & FP_NVP_(vbrdf_linsup_in)
-       & FP_NVP_(vbrdf_sup_inputstatus)
-       & FP_NVP_(vbrdf_sup_out)
-       & FP_NVP_(vbrdf_linsup_out)
-       & FP_NVP_(vbrdf_sup_outputstatus);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VBrdf_Linsup_Masters::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VBrdf_Linsup_Masters::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VBrdf_Linsup_Masters::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VBrdf_Linsup_Masters::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -42,26 +64,33 @@ template<class Archive>
 void VBrdf_Sup_Masters::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VBrdf_Sup_Masters);
-    ar 
-       & FP_NVP_(vbrdf_sup_in)
-       & FP_NVP_(vbrdf_sup_inputstatus)
-       & FP_NVP_(vbrdf_sup_out)
-       & FP_NVP_(vbrdf_sup_outputstatus);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VBrdf_Sup_Masters::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VBrdf_Sup_Masters::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VBrdf_Sup_Masters::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VBrdf_Sup_Masters::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -70,26 +99,33 @@ template<class Archive>
 void VLidort_Inputs::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_Inputs);
-    ar 
-       & FP_NVP_(vlidort_sup)
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_inputstatus);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_Inputs::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_Inputs::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_Inputs::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_Inputs::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -98,26 +134,33 @@ template<class Archive>
 void VLidort_Masters::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_Masters);
-    ar 
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_sup)
-       & FP_NVP_(vlidort_out);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_Masters::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_Masters::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_Masters::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_Masters::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -126,28 +169,33 @@ template<class Archive>
 void VLidort_L_Inputs::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_L_Inputs);
-    ar 
-       & FP_NVP_(vlidort_linsup)
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_linfixin)
-       & FP_NVP_(vlidort_linmodin)
-       & FP_NVP_(vlidort_inputstatus);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_L_Inputs::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_L_Inputs::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_L_Inputs::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_L_Inputs::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -156,30 +204,33 @@ template<class Archive>
 void VLidort_Lcs_Masters::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_Lcs_Masters);
-    ar 
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_sup)
-       & FP_NVP_(vlidort_out)
-       & FP_NVP_(vlidort_linfixin)
-       & FP_NVP_(vlidort_linmodin)
-       & FP_NVP_(vlidort_linsup)
-       & FP_NVP_(vlidort_linout);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_Lcs_Masters::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_Lcs_Masters::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_Lcs_Masters::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_Lcs_Masters::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -188,30 +239,33 @@ template<class Archive>
 void VLidort_Lps_Masters::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_Lps_Masters);
-    ar 
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_sup)
-       & FP_NVP_(vlidort_out)
-       & FP_NVP_(vlidort_linfixin)
-       & FP_NVP_(vlidort_linmodin)
-       & FP_NVP_(vlidort_linsup)
-       & FP_NVP_(vlidort_linout);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_Lps_Masters::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_Lps_Masters::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_Lps_Masters::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_Lps_Masters::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 ////////
@@ -220,28 +274,33 @@ template<class Archive>
 void VLidort_Vbrdf_Sup_Accessories::serialize(Archive& ar, const unsigned int version)
 {
   FP_GENERIC_BASE(VLidort_Vbrdf_Sup_Accessories);
-    ar 
-       & FP_NVP_(vbrdf_sup_out)
-       & FP_NVP_(vlidort_fixin)
-       & FP_NVP_(vlidort_modin)
-       & FP_NVP_(vlidort_sup)
-       & FP_NVP_(vbrdf_sup_in)
-       & FP_NVP_(vlidort_vbrdfcheck_status);
 
   boost::serialization::split_member(ar, *this, version);
 }
 
 template<class Archive>
-void VLidort_Vbrdf_Sup_Accessories::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
+void VLidort_Vbrdf_Sup_Accessories::save(Archive & ar, const unsigned int UNUSED(version)) const
 {
-  // Nothing more to do
+  TemporaryFile tf;
+  write_fortran_file(tf.file_name.string());
+  std::string data;
+  std::ifstream fin(tf.file_name.string(), std::ios::binary);
+  auto sz = boost::filesystem::file_size(tf.file_name);
+  data.resize(sz, '\0');
+  fin.read(&data[0], sz);
+  ar & FP_NVP(data);
 }
 
 template<class Archive>
-void VLidort_Vbrdf_Sup_Accessories::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
+void VLidort_Vbrdf_Sup_Accessories::load(Archive & ar, const unsigned int UNUSED(version))
 {
-  // The arrays come back from serialization in C order. We need them
-  // in fortran order, so change them to that.
+  TemporaryFile tf;
+  std::string data;
+  ar & FP_NVP(data);
+  std::ofstream of(tf.file_name.string(), std::ios::binary);
+  of.write(data.c_str(), data.size());
+  of.close();
+  read_fortran_file(tf.file_name.string());
 }
 
 FP_IMPLEMENT(VBrdf_Linsup_Masters);
