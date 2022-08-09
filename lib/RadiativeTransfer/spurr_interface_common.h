@@ -1,5 +1,5 @@
-#ifndef LIDORT_INTERFACE_COMMON_H
-#define LIDORT_INTERFACE_COMMON_H
+#ifndef SPURR_INTERFACE_COMMON_H
+#define SPURR_INTERFACE_COMMON_H
 
 #include <iostream>
 #include <blitz/array.h>
