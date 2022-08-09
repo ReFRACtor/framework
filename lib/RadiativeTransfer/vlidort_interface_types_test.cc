@@ -1,6 +1,7 @@
 #include <blitz/array.h>
 #include <cmath>
 #include "unit_test_support.h"
+#include "spurr_brdf_types.h"
 #include "vlidort_interface_types.h"
 
 
@@ -83,9 +84,9 @@ BOOST_AUTO_TEST_CASE(vlidort_pars)
   BOOST_CHECK_EQUAL(tst_obj.minus_one, -tst_obj.one);
   BOOST_CHECK_EQUAL(tst_obj.minus_two, -tst_obj.two);
   BOOST_CHECK_EQUAL(tst_obj.deg_to_rad, 1.7453292519943d-02);
-  BOOST_CHECK_EQUAL(tst_obj.pie, 180.0d0*tst_obj.deg_to_rad);
-  BOOST_CHECK_EQUAL(tst_obj.pi2, 2.0d0 * tst_obj.pie);
-  BOOST_CHECK_EQUAL(tst_obj.pi4, 4.0d0 * tst_obj.pie);
+  BOOST_CHECK_EQUAL(tst_obj.pie, 180.0e0*tst_obj.deg_to_rad);
+  BOOST_CHECK_EQUAL(tst_obj.pi2, 2.0e0 * tst_obj.pie);
+  BOOST_CHECK_EQUAL(tst_obj.pi4, 4.0e0 * tst_obj.pie);
   BOOST_CHECK_EQUAL(tst_obj.pio2, tst_obj.half * tst_obj.pie);
   BOOST_CHECK_EQUAL(tst_obj.pio4, tst_obj.quarter * tst_obj.pie);
   BOOST_CHECK_EQUAL(tst_obj.eps3, 0.001e0);
@@ -107,25 +108,25 @@ BOOST_AUTO_TEST_CASE(vlidort_pars)
   BOOST_CHECK_EQUAL(tst_obj.vlidort_success, 0);
   BOOST_CHECK_EQUAL(tst_obj.upidx, 1);
   BOOST_CHECK_EQUAL(tst_obj.dnidx, 2);
-  BOOST_CHECK_EQUAL(tst_obj.lambertian_idx, 1);
-  BOOST_CHECK_EQUAL(tst_obj.rossthin_idx, 2);
-  BOOST_CHECK_EQUAL(tst_obj.rossthick_idx, 3);
-  BOOST_CHECK_EQUAL(tst_obj.lisparse_idx, 4);
-  BOOST_CHECK_EQUAL(tst_obj.lidense_idx, 5);
-  BOOST_CHECK_EQUAL(tst_obj.hapke_idx, 6);
-  BOOST_CHECK_EQUAL(tst_obj.roujean_idx, 7);
-  BOOST_CHECK_EQUAL(tst_obj.rahman_idx, 8);
-  BOOST_CHECK_EQUAL(tst_obj.coxmunk_idx, 9);
+  BOOST_CHECK_EQUAL(tst_obj.lambertian_idx, LAMBERTIAN);
+  BOOST_CHECK_EQUAL(tst_obj.rossthin_idx, ROSSTHIN);
+  BOOST_CHECK_EQUAL(tst_obj.rossthick_idx, ROSSTHICK);
+  BOOST_CHECK_EQUAL(tst_obj.lisparse_idx, LISPARSE);
+  BOOST_CHECK_EQUAL(tst_obj.lidense_idx, LIDENSE);
+  BOOST_CHECK_EQUAL(tst_obj.hapke_idx, HAPKE);
+  BOOST_CHECK_EQUAL(tst_obj.roujean_idx, ROUJEAN);
+  BOOST_CHECK_EQUAL(tst_obj.rahman_idx, RAHMAN);
+  BOOST_CHECK_EQUAL(tst_obj.coxmunk_idx, COXMUNK);
   BOOST_CHECK_EQUAL(tst_obj.gisscoxmunk_idx, 10);
   BOOST_CHECK_EQUAL(tst_obj.gisscoxmunk_cri_idx, 11);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfsoil_idx, 12);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx, 13);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfndvi_idx, 14);
-  BOOST_CHECK_EQUAL(tst_obj.newcmglint_idx, 15);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfsoil_idx, BREONSOIL);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx, BREONVEG);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfndvi_idx, BPDFNDVI);
+  BOOST_CHECK_EQUAL(tst_obj.newcmglint_idx, NEWCMGLINT);
   BOOST_CHECK_EQUAL(tst_obj.newgcmglint_idx, 16);
-  BOOST_CHECK_EQUAL(tst_obj.rtkhotspot_idx, 17);
-  BOOST_CHECK_EQUAL(tst_obj.modfresnel_idx, 18);
-  BOOST_CHECK_EQUAL(tst_obj.snowbrdf_idx, 19);
+  BOOST_CHECK_EQUAL(tst_obj.rtkhotspot_idx, RTKHOTSPOT);
+  BOOST_CHECK_EQUAL(tst_obj.modfresnel_idx, MODFRESNEL);
+  BOOST_CHECK_EQUAL(tst_obj.snowbrdf_idx, SNOWBRDF);
   BOOST_CHECK_EQUAL(tst_obj.maxbrdf_idx, tst_obj.snowbrdf_idx);
   
 }
@@ -253,9 +254,9 @@ BOOST_AUTO_TEST_CASE(vbrdf_sup_inputs)
   BOOST_CHECK_EQUAL(tst_obj.bs_user_angles_input().extent(0), lid_pars.max_user_streams);
   BOOST_CHECK_EQUAL(tst_obj.bs_user_relazms().extent(0), lid_pars.max_user_relazms);
   BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(1), lid_pars.3);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(1), 3);
   BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.bs_which_brdf().extent(0), lid_pars.max_brdf_kernels);
   BOOST_CHECK_EQUAL(tst_obj.bs_lambertian_kernel_flag().extent(0), lid_pars.max_brdf_kernels);
   BOOST_CHECK_EQUAL(tst_obj.bs_brdf_factors().extent(0), lid_pars.max_brdf_kernels);
@@ -466,13 +467,13 @@ BOOST_AUTO_TEST_CASE(vsleave_sup_inputs)
   BOOST_CHECK_EQUAL(tst_obj.sl_user_relazms().extent(0), lid_pars.max_user_relazms);
   BOOST_CHECK_EQUAL(tst_obj.sl_user_angles_input().extent(0), lid_pars.max_user_streams);
   BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(1), lid_pars.3);
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(1), 3);
   BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.sl_winddir().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.sl_fl_epoch().extent(0), lid_pars.6);
-  BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(0), lid_pars.3);
-  BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.sl_fl_epoch().extent(0), 6);
+  BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(0), 3);
+  BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(1), 2);
   
 
   // Test initialization
@@ -587,11 +588,11 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_linoptical)
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(0), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(1), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(3), lid_pars.6);
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(3), 6);
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_dn().extent(0), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_dn().extent(1), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_dn().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_dn().extent(3), lid_pars.6);
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_dn().extent(3), 6);
   
 
   // Test initialization
@@ -718,10 +719,10 @@ BOOST_AUTO_TEST_CASE(vlidort_lincol)
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(1), lid_pars.max_user_vzangles);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(2), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(2), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(2), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(0), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(1), lid_pars.max_szangles);
@@ -840,11 +841,11 @@ BOOST_AUTO_TEST_CASE(vlidort_linprof)
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(2), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(3), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(2), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(3), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(2), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(3), lid_pars.max_atmoswfs);
   BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(0), lid_pars.maxstokes);
@@ -938,7 +939,7 @@ BOOST_AUTO_TEST_CASE(vlidort_linatmos)
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(3), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(4), lid_pars.max_directions);
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(2), lid_pars.maxlayers+1);
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(3), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(4), lid_pars.max_directions);
@@ -993,7 +994,7 @@ BOOST_AUTO_TEST_CASE(vlidort_linsurf)
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(2), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(3), lid_pars.max_directions);
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(2), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(3), lid_pars.max_directions);
   
@@ -1323,12 +1324,12 @@ BOOST_AUTO_TEST_CASE(vlidort_main_outputs)
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user().extent(0), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user().extent(1), lid_pars.max_user_vzangles);
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes().extent(0), lid_pars.maxstokes);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes().extent(1), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm().extent(0), lid_pars.maxstokes);
   BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(0), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(0), 2);
   BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(1), lid_pars.maxlayers+1);
   BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(0), lid_pars.max_szangles);
   BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(1), lid_pars.maxlayers);
@@ -1691,7 +1692,7 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_boolean)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_do_albtrn_media().extent(0), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_do_albtrn_media().extent(0), 2);
   
 
   // Test initialization
@@ -1846,10 +1847,10 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_optical)
   BOOST_CHECK_EQUAL(tst_obj.ts_greekmat_total_input().extent(2), lid_pars.maxstokes_sq);
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(0), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(2), lid_pars.6);
+  BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(2), 6);
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_dn().extent(0), lid_pars.maxlayers);
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_dn().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_dn().extent(2), lid_pars.6);
+  BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_dn().extent(2), 6);
   BOOST_CHECK_EQUAL(tst_obj.ts_thermal_bb_input().extent(0), lid_pars.maxlayers+1);
   
 
@@ -2014,9 +2015,9 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_uservalues)
   BOOST_CHECK_EQUAL(tst_obj.ts_user_vzangles_input().extent(0), lid_pars.max_user_vzangles);
   BOOST_CHECK_EQUAL(tst_obj.ts_user_levels().extent(0), lid_pars.max_user_levels);
   BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(0), lid_pars.max_user_obsgeoms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(1), lid_pars.3);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(1), 3);
   BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(0), lid_pars.max_user_vzangles);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(1), lid_pars.2);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(1), 2);
   
 
   // Test initialization

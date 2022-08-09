@@ -1,8 +1,9 @@
 #include <blitz/array.h>
 #include <cmath>
 #include "unit_test_support.h"
-#include "lidort_interface_types.h"
 #include "spurr_brdf_types.h"
+#include "lidort_interface_types.h"
+
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -100,8 +101,8 @@ BOOST_AUTO_TEST_CASE(lidort_pars)
   BOOST_CHECK_EQUAL(tst_obj.roujean_idx, ROUJEAN);
   BOOST_CHECK_EQUAL(tst_obj.rahman_idx, RAHMAN);
   BOOST_CHECK_EQUAL(tst_obj.coxmunk_idx, COXMUNK);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx, BREONVEG);
   BOOST_CHECK_EQUAL(tst_obj.bpdfsoil_idx, BREONSOIL);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx, BREONVEG);
   BOOST_CHECK_EQUAL(tst_obj.bpdfndvi_idx, BPDFNDVI);
   BOOST_CHECK_EQUAL(tst_obj.newcmglint_idx, NEWCMGLINT);
   BOOST_CHECK_EQUAL(tst_obj.rtkhotspot_idx, RTKHOTSPOT);

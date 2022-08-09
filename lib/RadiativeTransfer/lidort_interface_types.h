@@ -7,19 +7,10 @@
 
 #include "fp_exception.h"
 #include <vector>
+#include "lidort_interface_common.h"
+
 
 /* This file was auto-generated */
-
-#define FORTRAN_TRUE_INT 1
-
-#define BYTE_SIZE_ERROR_CHECK(var_name, c_size, f_size) \
-  if(c_size != f_size) { \
-    std::stringstream err_msg; \
-    err_msg << "Size of C variable: " << c_size \
-            << " for " << var_name \
-            << " does not match size of Fortran variable: " << f_size; \
-    throw Exception(err_msg.str()); \
-  }
 
 namespace FullPhysics {
 
@@ -233,20 +224,7 @@ private:
 };
 
 
-class Lidort_Structure : public Printable<Lidort_Structure> {
-public:
-  Lidort_Structure() : fortran_type_c(0), owns_pointer(true) {}
-  Lidort_Structure(void* allocated_f_type_c) : fortran_type_c(allocated_f_type_c), owns_pointer(false) {}
-  void* fortran_type_ptr() { return fortran_type_c; }
-
-  virtual void print(std::ostream &output_stream) const = 0;
-
-protected:
-  void *fortran_type_c;
-  bool owns_pointer;
-};
-
-// Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+// Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 extern "C" {
   void brdf_linsup_inputs_c_alloc_init(struct brdf_linsup_inputs *transfer_struct_c, void **fortran_type_c);
   void brdf_linsup_inputs_c_init_only(struct brdf_linsup_inputs *transfer_struct_c, void **fortran_type_c);
@@ -289,7 +267,7 @@ struct brdf_linsup_inputs {
   
 };
 
-// Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.F90"
+// Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
 class Brdf_Linsup_Inputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -378,7 +356,7 @@ public:
   }
 
   
-  bool bs_do_bsavalue_wf() const {
+  const bool bs_do_bsavalue_wf() const {
     return *transfer_struct_c.bs_do_bsavalue_wf_ != 0;
   }
 
@@ -387,7 +365,7 @@ public:
   }
 
   
-  bool bs_do_wsavalue_wf() const {
+  const bool bs_do_wsavalue_wf() const {
     return *transfer_struct_c.bs_do_wsavalue_wf_ != 0;
   }
 
@@ -396,7 +374,7 @@ public:
   }
 
   
-  bool bs_do_windspeed_wf() const {
+  const bool bs_do_windspeed_wf() const {
     return *transfer_struct_c.bs_do_windspeed_wf_ != 0;
   }
 
@@ -462,7 +440,7 @@ private:
   
 };
 
-// Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+// Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 extern "C" {
   void brdf_linsup_outputs_c_alloc_init(struct brdf_linsup_outputs *transfer_struct_c, void **fortran_type_c);
   void brdf_linsup_outputs_c_init_only(struct brdf_linsup_outputs *transfer_struct_c, void **fortran_type_c);
@@ -503,7 +481,7 @@ struct brdf_linsup_outputs {
   
 };
 
-// Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.F90"
+// Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
 class Brdf_Linsup_Outputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -674,7 +652,7 @@ private:
   
 };
 
-// Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+// Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 extern "C" {
   void brdf_sup_inputs_c_alloc_init(struct brdf_sup_inputs *transfer_struct_c, void **fortran_type_c);
   void brdf_sup_inputs_c_init_only(struct brdf_sup_inputs *transfer_struct_c, void **fortran_type_c);
@@ -835,7 +813,7 @@ struct brdf_sup_inputs {
   
 };
 
-// Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.F90"
+// Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
 class Brdf_Sup_Inputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -858,7 +836,7 @@ public:
       brdf_sup_inputs_c_destroy(&fortran_type_c);
   }
 
-  bool bs_do_brdf_surface() const {
+  const bool bs_do_brdf_surface() const {
     return *transfer_struct_c.bs_do_brdf_surface_ != 0;
   }
 
@@ -867,7 +845,7 @@ public:
   }
 
   
-  bool bs_do_surface_emission() const {
+  const bool bs_do_surface_emission() const {
     return *transfer_struct_c.bs_do_surface_emission_ != 0;
   }
 
@@ -876,7 +854,7 @@ public:
   }
 
   
-  bool bs_do_solar_sources() const {
+  const bool bs_do_solar_sources() const {
     return *transfer_struct_c.bs_do_solar_sources_ != 0;
   }
 
@@ -885,7 +863,7 @@ public:
   }
 
   
-  bool bs_do_user_streams() const {
+  const bool bs_do_user_streams() const {
     return *transfer_struct_c.bs_do_user_streams_ != 0;
   }
 
@@ -894,7 +872,7 @@ public:
   }
 
   
-  bool bs_do_user_obsgeoms() const {
+  const bool bs_do_user_obsgeoms() const {
     return *transfer_struct_c.bs_do_user_obsgeoms_ != 0;
   }
 
@@ -903,7 +881,7 @@ public:
   }
 
   
-  bool bs_do_doublet_geometry() const {
+  const bool bs_do_doublet_geometry() const {
     return *transfer_struct_c.bs_do_doublet_geometry_ != 0;
   }
 
@@ -1088,7 +1066,7 @@ public:
   }
 
   
-  bool bs_do_shadow_effect() const {
+  const bool bs_do_shadow_effect() const {
     return *transfer_struct_c.bs_do_shadow_effect_ != 0;
   }
 
@@ -1097,7 +1075,7 @@ public:
   }
 
   
-  bool bs_do_directbounce_only() const {
+  const bool bs_do_directbounce_only() const {
     return *transfer_struct_c.bs_do_directbounce_only_ != 0;
   }
 
@@ -1106,7 +1084,7 @@ public:
   }
 
   
-  bool bs_do_wsabsa_output() const {
+  const bool bs_do_wsabsa_output() const {
     return *transfer_struct_c.bs_do_wsabsa_output_ != 0;
   }
 
@@ -1115,7 +1093,7 @@ public:
   }
 
   
-  bool bs_do_wsa_scaling() const {
+  const bool bs_do_wsa_scaling() const {
     return *transfer_struct_c.bs_do_wsa_scaling_ != 0;
   }
 
@@ -1124,7 +1102,7 @@ public:
   }
 
   
-  bool bs_do_bsa_scaling() const {
+  const bool bs_do_bsa_scaling() const {
     return *transfer_struct_c.bs_do_bsa_scaling_ != 0;
   }
 
@@ -1151,7 +1129,7 @@ public:
   }
 
   
-  bool bs_do_newcmglint() const {
+  const bool bs_do_newcmglint() const {
     return *transfer_struct_c.bs_do_newcmglint_ != 0;
   }
 
@@ -1196,7 +1174,7 @@ public:
   }
 
   
-  bool bs_do_glintshadow() const {
+  const bool bs_do_glintshadow() const {
     return *transfer_struct_c.bs_do_glintshadow_ != 0;
   }
 
@@ -1205,7 +1183,7 @@ public:
   }
 
   
-  bool bs_do_foamoption() const {
+  const bool bs_do_foamoption() const {
     return *transfer_struct_c.bs_do_foamoption_ != 0;
   }
 
@@ -1214,7 +1192,7 @@ public:
   }
 
   
-  bool bs_do_facetisotropy() const {
+  const bool bs_do_facetisotropy() const {
     return *transfer_struct_c.bs_do_facetisotropy_ != 0;
   }
 
@@ -1223,7 +1201,7 @@ public:
   }
 
   
-  bool bs_do_glitter_msrcorr() const {
+  const bool bs_do_glitter_msrcorr() const {
     return *transfer_struct_c.bs_do_glitter_msrcorr_ != 0;
   }
 
@@ -1232,7 +1210,7 @@ public:
   }
 
   
-  bool bs_do_glitter_msrcorr_dbonly() const {
+  const bool bs_do_glitter_msrcorr_dbonly() const {
     return *transfer_struct_c.bs_do_glitter_msrcorr_dbonly_ != 0;
   }
 
@@ -1435,7 +1413,7 @@ private:
   
 };
 
-// Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 extern "C" {
   void brdf_sup_outputs_c_alloc_init(struct brdf_sup_outputs *transfer_struct_c, void **fortran_type_c);
   void brdf_sup_outputs_c_init_only(struct brdf_sup_outputs *transfer_struct_c, void **fortran_type_c);
@@ -1490,7 +1468,7 @@ struct brdf_sup_outputs {
   
 };
 
-// Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 class Brdf_Sup_Outputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -1706,7 +1684,7 @@ private:
   
 };
 
-// Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 extern "C" {
   void brdf_input_exception_handling_c_alloc_init(struct brdf_input_exception_handling *transfer_struct_c, void **fortran_type_c);
   void brdf_input_exception_handling_c_init_only(struct brdf_input_exception_handling *transfer_struct_c, void **fortran_type_c);
@@ -1735,7 +1713,7 @@ struct brdf_input_exception_handling {
   
 };
 
-// Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 class Brdf_Input_Exception_Handling : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -1836,7 +1814,7 @@ private:
   
 };
 
-// Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 extern "C" {
   void brdf_output_exception_handling_c_alloc_init(struct brdf_output_exception_handling *transfer_struct_c, void **fortran_type_c);
   void brdf_output_exception_handling_c_init_only(struct brdf_output_exception_handling *transfer_struct_c, void **fortran_type_c);
@@ -1860,7 +1838,7 @@ struct brdf_output_exception_handling {
   
 };
 
-// Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.F90"
+// Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
 class Brdf_Output_Exception_Handling : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -1945,7 +1923,7 @@ private:
   
 };
 
-// Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+// Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 extern "C" {
   void sleave_sup_inputs_c_alloc_init(struct sleave_sup_inputs *transfer_struct_c, void **fortran_type_c);
   void sleave_sup_inputs_c_init_only(struct sleave_sup_inputs *transfer_struct_c, void **fortran_type_c);
@@ -2084,7 +2062,7 @@ struct sleave_sup_inputs {
   
 };
 
-// Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.F90"
+// Links to type: "sleave_sup_inputs" from module: "sleave_sup_inputs_def_m" in file: "sleave_sup_inputs_def.f90"
 class Sleave_Sup_Inputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -2107,7 +2085,7 @@ public:
       sleave_sup_inputs_c_destroy(&fortran_type_c);
   }
 
-  bool sl_do_sleaving() const {
+  const bool sl_do_sleaving() const {
     return *transfer_struct_c.sl_do_sleaving_ != 0;
   }
 
@@ -2116,7 +2094,7 @@ public:
   }
 
   
-  bool sl_do_isotropic() const {
+  const bool sl_do_isotropic() const {
     return *transfer_struct_c.sl_do_isotropic_ != 0;
   }
 
@@ -2125,7 +2103,7 @@ public:
   }
 
   
-  bool sl_do_roughsurface() const {
+  const bool sl_do_roughsurface() const {
     return *transfer_struct_c.sl_do_roughsurface_ != 0;
   }
 
@@ -2134,7 +2112,7 @@ public:
   }
 
   
-  bool sl_do_exact() const {
+  const bool sl_do_exact() const {
     return *transfer_struct_c.sl_do_exact_ != 0;
   }
 
@@ -2143,7 +2121,7 @@ public:
   }
 
   
-  bool sl_do_exactonly() const {
+  const bool sl_do_exactonly() const {
     return *transfer_struct_c.sl_do_exactonly_ != 0;
   }
 
@@ -2152,7 +2130,7 @@ public:
   }
 
   
-  bool sl_do_fluorescence() const {
+  const bool sl_do_fluorescence() const {
     return *transfer_struct_c.sl_do_fluorescence_ != 0;
   }
 
@@ -2161,7 +2139,7 @@ public:
   }
 
   
-  bool sl_do_solar_sources() const {
+  const bool sl_do_solar_sources() const {
     return *transfer_struct_c.sl_do_solar_sources_ != 0;
   }
 
@@ -2179,7 +2157,7 @@ public:
   }
 
   
-  bool sl_do_user_streams() const {
+  const bool sl_do_user_streams() const {
     return *transfer_struct_c.sl_do_user_streams_ != 0;
   }
 
@@ -2188,7 +2166,7 @@ public:
   }
 
   
-  bool sl_do_user_obsgeoms() const {
+  const bool sl_do_user_obsgeoms() const {
     return *transfer_struct_c.sl_do_user_obsgeoms_ != 0;
   }
 
@@ -2197,7 +2175,7 @@ public:
   }
 
   
-  bool sl_do_doublet_geometry() const {
+  const bool sl_do_doublet_geometry() const {
     return *transfer_struct_c.sl_do_doublet_geometry_ != 0;
   }
 
@@ -2332,7 +2310,7 @@ public:
   }
 
   
-  bool sl_azimuthdep() const {
+  const bool sl_azimuthdep() const {
     return *transfer_struct_c.sl_azimuthdep_ != 0;
   }
 
@@ -2341,7 +2319,7 @@ public:
   }
 
   
-  bool sl_do_fourier_output() const {
+  const bool sl_do_fourier_output() const {
     return *transfer_struct_c.sl_do_fourier_output_ != 0;
   }
 
@@ -2368,7 +2346,7 @@ public:
   }
 
   
-  bool sl_do_glintshadow() const {
+  const bool sl_do_glintshadow() const {
     return *transfer_struct_c.sl_do_glintshadow_ != 0;
   }
 
@@ -2377,7 +2355,7 @@ public:
   }
 
   
-  bool sl_do_foamoption() const {
+  const bool sl_do_foamoption() const {
     return *transfer_struct_c.sl_do_foamoption_ != 0;
   }
 
@@ -2386,7 +2364,7 @@ public:
   }
 
   
-  bool sl_do_facetisotropy() const {
+  const bool sl_do_facetisotropy() const {
     return *transfer_struct_c.sl_do_facetisotropy_ != 0;
   }
 
@@ -2440,7 +2418,7 @@ public:
   }
 
   
-  bool sl_fl_do_datagaussian() const {
+  const bool sl_fl_do_datagaussian() const {
     return *transfer_struct_c.sl_fl_do_datagaussian_ != 0;
   }
 
@@ -2596,7 +2574,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 extern "C" {
   void lidort_fixed_lincontrol_c_alloc_init(struct lidort_fixed_lincontrol *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_lincontrol_c_init_only(struct lidort_fixed_lincontrol *transfer_struct_c, void **fortran_type_c);
@@ -2636,7 +2614,7 @@ struct lidort_fixed_lincontrol {
   
 };
 
-// Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 class Lidort_Fixed_Lincontrol : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -2666,10 +2644,9 @@ public:
   }
 
   void ts_layer_vary_flag(const blitz::Array<bool, 1>& ts_layer_vary_flag_in) {
-    blitz::Array<int,1> as_int(ts_layer_vary_flag_in.shape());
+    blitz::Array<int,1> as_int(ts_layer_vary_flag_.shape());
     as_int = blitz::where(ts_layer_vary_flag_in == true, FORTRAN_TRUE_INT, 0);
-    blitz::Range rdata(0,as_int.rows()-1);
-    ts_layer_vary_flag_(rdata) = as_int;
+    ts_layer_vary_flag_ = as_int;
   }
 
   
@@ -2783,7 +2760,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 extern "C" {
   void lidort_fixed_linoptical_c_alloc_init(struct lidort_fixed_linoptical *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_linoptical_c_init_only(struct lidort_fixed_linoptical *transfer_struct_c, void **fortran_type_c);
@@ -2816,7 +2793,7 @@ struct lidort_fixed_linoptical {
   
 };
 
-// Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_linoptical" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 class Lidort_Fixed_Linoptical : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -2948,7 +2925,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 extern "C" {
   void lidort_fixed_lininputs_c_alloc_init(struct lidort_fixed_lininputs *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_lininputs_c_init_only(struct lidort_fixed_lininputs *transfer_struct_c, void **fortran_type_c);
@@ -2967,7 +2944,7 @@ struct lidort_fixed_lininputs {
   
 };
 
-// Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_fixed_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 class Lidort_Fixed_Lininputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -3052,7 +3029,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 extern "C" {
   void lidort_modified_lincontrol_c_alloc_init(struct lidort_modified_lincontrol *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_lincontrol_c_init_only(struct lidort_modified_lincontrol *transfer_struct_c, void **fortran_type_c);
@@ -3092,7 +3069,7 @@ struct lidort_modified_lincontrol {
   
 };
 
-// Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_modified_lincontrol" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 class Lidort_Modified_Lincontrol : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -3115,7 +3092,7 @@ public:
       lidort_modified_lincontrol_c_destroy(&fortran_type_c);
   }
 
-  bool ts_do_column_linearization() const {
+  const bool ts_do_column_linearization() const {
     return *transfer_struct_c.ts_do_column_linearization_ != 0;
   }
 
@@ -3124,7 +3101,7 @@ public:
   }
 
   
-  bool ts_do_profile_linearization() const {
+  const bool ts_do_profile_linearization() const {
     return *transfer_struct_c.ts_do_profile_linearization_ != 0;
   }
 
@@ -3133,7 +3110,7 @@ public:
   }
 
   
-  bool ts_do_atmos_linearization() const {
+  const bool ts_do_atmos_linearization() const {
     return *transfer_struct_c.ts_do_atmos_linearization_ != 0;
   }
 
@@ -3142,7 +3119,7 @@ public:
   }
 
   
-  bool ts_do_surface_linearization() const {
+  const bool ts_do_surface_linearization() const {
     return *transfer_struct_c.ts_do_surface_linearization_ != 0;
   }
 
@@ -3151,7 +3128,7 @@ public:
   }
 
   
-  bool ts_do_linearization() const {
+  const bool ts_do_linearization() const {
     return *transfer_struct_c.ts_do_linearization_ != 0;
   }
 
@@ -3160,7 +3137,7 @@ public:
   }
 
   
-  bool ts_do_simulation_only() const {
+  const bool ts_do_simulation_only() const {
     return *transfer_struct_c.ts_do_simulation_only_ != 0;
   }
 
@@ -3169,7 +3146,7 @@ public:
   }
 
   
-  bool ts_do_atmos_lbbf() const {
+  const bool ts_do_atmos_lbbf() const {
     return *transfer_struct_c.ts_do_atmos_lbbf_ != 0;
   }
 
@@ -3178,7 +3155,7 @@ public:
   }
 
   
-  bool ts_do_surface_lbbf() const {
+  const bool ts_do_surface_lbbf() const {
     return *transfer_struct_c.ts_do_surface_lbbf_ != 0;
   }
 
@@ -3187,7 +3164,7 @@ public:
   }
 
   
-  bool ts_do_sleave_wfs() const {
+  const bool ts_do_sleave_wfs() const {
     return *transfer_struct_c.ts_do_sleave_wfs_ != 0;
   }
 
@@ -3240,7 +3217,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 extern "C" {
   void lidort_modified_lininputs_c_alloc_init(struct lidort_modified_lininputs *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_lininputs_c_init_only(struct lidort_modified_lininputs *transfer_struct_c, void **fortran_type_c);
@@ -3256,7 +3233,7 @@ struct lidort_modified_lininputs {
   
 };
 
-// Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.F90"
+// Links to type: "lidort_modified_lininputs" from module: "lidort_lin_inputs_def_m" in file: "lidort_lin_inputs_def.f90"
 class Lidort_Modified_Lininputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -3323,7 +3300,7 @@ private:
   
 };
 
-// Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 extern "C" {
   void lidort_linatmos_c_alloc_init(struct lidort_linatmos *transfer_struct_c, void **fortran_type_c);
   void lidort_linatmos_c_init_only(struct lidort_linatmos *transfer_struct_c, void **fortran_type_c);
@@ -3464,7 +3441,7 @@ struct lidort_linatmos {
   
 };
 
-// Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linatmos" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 class Lidort_Linatmos : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4061,7 +4038,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 extern "C" {
   void lidort_linsurf_c_alloc_init(struct lidort_linsurf *transfer_struct_c, void **fortran_type_c);
   void lidort_linsurf_c_init_only(struct lidort_linsurf *transfer_struct_c, void **fortran_type_c);
@@ -4102,7 +4079,7 @@ struct lidort_linsurf {
   
 };
 
-// Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linsurf" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 class Lidort_Linsurf : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4272,7 +4249,7 @@ private:
   
 };
 
-// Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 extern "C" {
   void lidort_linoutputs_c_alloc_init(struct lidort_linoutputs *transfer_struct_c, void **fortran_type_c);
   void lidort_linoutputs_c_init_only(struct lidort_linoutputs *transfer_struct_c, void **fortran_type_c);
@@ -4291,7 +4268,7 @@ struct lidort_linoutputs {
   
 };
 
-// Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.F90"
+// Links to type: "lidort_linoutputs" from module: "lidort_lin_outputs_def_m" in file: "lidort_lin_outputs_def.f90"
 class Lidort_Linoutputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4376,7 +4353,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+// Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 extern "C" {
   void lidort_linsup_brdf_c_alloc_init(struct lidort_linsup_brdf *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_brdf_c_init_only(struct lidort_linsup_brdf *transfer_struct_c, void **fortran_type_c);
@@ -4417,7 +4394,7 @@ struct lidort_linsup_brdf {
   
 };
 
-// Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.F90"
+// Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
 class Lidort_Linsup_Brdf : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4597,7 +4574,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+// Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 extern "C" {
   void lidort_linsup_sleave_c_alloc_init(struct lidort_linsup_sleave *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_sleave_c_init_only(struct lidort_linsup_sleave *transfer_struct_c, void **fortran_type_c);
@@ -4626,7 +4603,7 @@ struct lidort_linsup_sleave {
   
 };
 
-// Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.F90"
+// Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
 class Lidort_Linsup_Sleave : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4745,7 +4722,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 extern "C" {
   void lidort_linsup_ss_atmos_c_alloc_init(struct lidort_linsup_ss_atmos *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_ss_atmos_c_init_only(struct lidort_linsup_ss_atmos *transfer_struct_c, void **fortran_type_c);
@@ -4774,7 +4751,7 @@ struct lidort_linsup_ss_atmos {
   
 };
 
-// Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss_atmos" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 class Lidort_Linsup_Ss_Atmos : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4895,7 +4872,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 extern "C" {
   void lidort_linsup_ss_surf_c_alloc_init(struct lidort_linsup_ss_surf *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_ss_surf_c_init_only(struct lidort_linsup_ss_surf *transfer_struct_c, void **fortran_type_c);
@@ -4912,7 +4889,7 @@ struct lidort_linsup_ss_surf {
   
 };
 
-// Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 class Lidort_Linsup_Ss_Surf : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -4978,7 +4955,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 extern "C" {
   void lidort_linsup_ss_c_alloc_init(struct lidort_linsup_ss *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_ss_c_init_only(struct lidort_linsup_ss *transfer_struct_c, void **fortran_type_c);
@@ -4997,7 +4974,7 @@ struct lidort_linsup_ss {
   
 };
 
-// Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.F90"
+// Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
 class Lidort_Linsup_Ss : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -5082,7 +5059,7 @@ private:
   
 };
 
-// Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+// Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 extern "C" {
   void lidort_linsup_inout_c_alloc_init(struct lidort_linsup_inout *transfer_struct_c, void **fortran_type_c);
   void lidort_linsup_inout_c_init_only(struct lidort_linsup_inout *transfer_struct_c, void **fortran_type_c);
@@ -5104,7 +5081,7 @@ struct lidort_linsup_inout {
   
 };
 
-// Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.F90"
+// Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
 class Lidort_Linsup_Inout : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -5207,7 +5184,7 @@ private:
   
 };
 
-// Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 extern "C" {
   void lidort_main_outputs_c_alloc_init(struct lidort_main_outputs *transfer_struct_c, void **fortran_type_c);
   void lidort_main_outputs_c_init_only(struct lidort_main_outputs *transfer_struct_c, void **fortran_type_c);
@@ -5305,7 +5282,7 @@ struct lidort_main_outputs {
   
 };
 
-// Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_main_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 class Lidort_Main_Outputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -5684,7 +5661,7 @@ private:
   
 };
 
-// Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 extern "C" {
   void lidort_wladjusted_outputs_c_alloc_init(struct lidort_wladjusted_outputs *transfer_struct_c, void **fortran_type_c);
   void lidort_wladjusted_outputs_c_init_only(struct lidort_wladjusted_outputs *transfer_struct_c, void **fortran_type_c);
@@ -5713,7 +5690,7 @@ struct lidort_wladjusted_outputs {
   
 };
 
-// Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_wladjusted_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 class Lidort_Wladjusted_Outputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -5828,7 +5805,7 @@ private:
   
 };
 
-// Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 extern "C" {
   void lidort_exception_handling_c_alloc_init(struct lidort_exception_handling *transfer_struct_c, void **fortran_type_c);
   void lidort_exception_handling_c_init_only(struct lidort_exception_handling *transfer_struct_c, void **fortran_type_c);
@@ -5876,7 +5853,7 @@ struct lidort_exception_handling {
   
 };
 
-// Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 class Lidort_Exception_Handling : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6030,7 +6007,7 @@ private:
   
 };
 
-// Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 extern "C" {
   void lidort_input_exception_handling_c_alloc_init(struct lidort_input_exception_handling *transfer_struct_c, void **fortran_type_c);
   void lidort_input_exception_handling_c_init_only(struct lidort_input_exception_handling *transfer_struct_c, void **fortran_type_c);
@@ -6059,7 +6036,7 @@ struct lidort_input_exception_handling {
   
 };
 
-// Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_input_exception_handling" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 class Lidort_Input_Exception_Handling : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6160,7 +6137,7 @@ private:
   
 };
 
-// Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 extern "C" {
   void lidort_outputs_c_alloc_init(struct lidort_outputs *transfer_struct_c, void **fortran_type_c);
   void lidort_outputs_c_init_only(struct lidort_outputs *transfer_struct_c, void **fortran_type_c);
@@ -6182,7 +6159,7 @@ struct lidort_outputs {
   
 };
 
-// Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.F90"
+// Links to type: "lidort_outputs" from module: "lidort_outputs_def_m" in file: "lidort_outputs_def.f90"
 class Lidort_Outputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6285,7 +6262,7 @@ private:
   
 };
 
-// Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+// Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 extern "C" {
   void lidort_sup_brdf_c_alloc_init(struct lidort_sup_brdf *transfer_struct_c, void **fortran_type_c);
   void lidort_sup_brdf_c_init_only(struct lidort_sup_brdf *transfer_struct_c, void **fortran_type_c);
@@ -6326,7 +6303,7 @@ struct lidort_sup_brdf {
   
 };
 
-// Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.F90"
+// Links to type: "lidort_sup_brdf" from module: "lidort_sup_brdf_def_m" in file: "lidort_sup_brdf_def.f90"
 class Lidort_Sup_Brdf : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6499,7 +6476,7 @@ private:
   
 };
 
-// Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+// Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 extern "C" {
   void lidort_sup_sleave_c_alloc_init(struct lidort_sup_sleave *transfer_struct_c, void **fortran_type_c);
   void lidort_sup_sleave_c_init_only(struct lidort_sup_sleave *transfer_struct_c, void **fortran_type_c);
@@ -6528,7 +6505,7 @@ struct lidort_sup_sleave {
   
 };
 
-// Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.F90"
+// Links to type: "lidort_sup_sleave" from module: "lidort_sup_sleave_def_m" in file: "lidort_sup_sleave_def.f90"
 class Lidort_Sup_Sleave : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6643,7 +6620,7 @@ private:
   
 };
 
-// Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+// Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 extern "C" {
   void lidort_sup_ss_c_alloc_init(struct lidort_sup_ss *transfer_struct_c, void **fortran_type_c);
   void lidort_sup_ss_c_init_only(struct lidort_sup_ss *transfer_struct_c, void **fortran_type_c);
@@ -6668,7 +6645,7 @@ struct lidort_sup_ss {
   
 };
 
-// Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.F90"
+// Links to type: "lidort_sup_ss" from module: "lidort_sup_ss_def_m" in file: "lidort_sup_ss_def.f90"
 class Lidort_Sup_Ss : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6766,7 +6743,7 @@ private:
   
 };
 
-// Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+// Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 extern "C" {
   void lidort_sup_inout_c_alloc_init(struct lidort_sup_inout *transfer_struct_c, void **fortran_type_c);
   void lidort_sup_inout_c_init_only(struct lidort_sup_inout *transfer_struct_c, void **fortran_type_c);
@@ -6788,7 +6765,7 @@ struct lidort_sup_inout {
   
 };
 
-// Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.F90"
+// Links to type: "lidort_sup_inout" from module: "lidort_sup_inout_def_m" in file: "lidort_sup_def.f90"
 class Lidort_Sup_Inout : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6891,7 +6868,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_boolean_c_alloc_init(struct lidort_fixed_boolean *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_boolean_c_init_only(struct lidort_fixed_boolean *transfer_struct_c, void **fortran_type_c);
@@ -6962,7 +6939,7 @@ struct lidort_fixed_boolean {
   
 };
 
-// Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Boolean : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -6985,7 +6962,7 @@ public:
       lidort_fixed_boolean_c_destroy(&fortran_type_c);
   }
 
-  bool ts_do_fullrad_mode() const {
+  const bool ts_do_fullrad_mode() const {
     return *transfer_struct_c.ts_do_fullrad_mode_ != 0;
   }
 
@@ -6994,7 +6971,7 @@ public:
   }
 
   
-  bool ts_do_thermal_emission() const {
+  const bool ts_do_thermal_emission() const {
     return *transfer_struct_c.ts_do_thermal_emission_ != 0;
   }
 
@@ -7003,7 +6980,7 @@ public:
   }
 
   
-  bool ts_do_surface_emission() const {
+  const bool ts_do_surface_emission() const {
     return *transfer_struct_c.ts_do_surface_emission_ != 0;
   }
 
@@ -7012,7 +6989,7 @@ public:
   }
 
   
-  bool ts_do_plane_parallel() const {
+  const bool ts_do_plane_parallel() const {
     return *transfer_struct_c.ts_do_plane_parallel_ != 0;
   }
 
@@ -7021,7 +6998,7 @@ public:
   }
 
   
-  bool ts_do_brdf_surface() const {
+  const bool ts_do_brdf_surface() const {
     return *transfer_struct_c.ts_do_brdf_surface_ != 0;
   }
 
@@ -7030,7 +7007,7 @@ public:
   }
 
   
-  bool ts_do_upwelling() const {
+  const bool ts_do_upwelling() const {
     return *transfer_struct_c.ts_do_upwelling_ != 0;
   }
 
@@ -7039,7 +7016,7 @@ public:
   }
 
   
-  bool ts_do_dnwelling() const {
+  const bool ts_do_dnwelling() const {
     return *transfer_struct_c.ts_do_dnwelling_ != 0;
   }
 
@@ -7048,7 +7025,7 @@ public:
   }
 
   
-  bool ts_do_toa_contribs() const {
+  const bool ts_do_toa_contribs() const {
     return *transfer_struct_c.ts_do_toa_contribs_ != 0;
   }
 
@@ -7057,7 +7034,7 @@ public:
   }
 
   
-  bool ts_do_surface_leaving() const {
+  const bool ts_do_surface_leaving() const {
     return *transfer_struct_c.ts_do_surface_leaving_ != 0;
   }
 
@@ -7066,7 +7043,7 @@ public:
   }
 
   
-  bool ts_do_sl_isotropic() const {
+  const bool ts_do_sl_isotropic() const {
     return *transfer_struct_c.ts_do_sl_isotropic_ != 0;
   }
 
@@ -7075,7 +7052,7 @@ public:
   }
 
   
-  bool ts_do_water_leaving() const {
+  const bool ts_do_water_leaving() const {
     return *transfer_struct_c.ts_do_water_leaving_ != 0;
   }
 
@@ -7084,7 +7061,7 @@ public:
   }
 
   
-  bool ts_do_fluorescence() const {
+  const bool ts_do_fluorescence() const {
     return *transfer_struct_c.ts_do_fluorescence_ != 0;
   }
 
@@ -7093,7 +7070,7 @@ public:
   }
 
   
-  bool ts_do_tf_iteration() const {
+  const bool ts_do_tf_iteration() const {
     return *transfer_struct_c.ts_do_tf_iteration_ != 0;
   }
 
@@ -7102,7 +7079,7 @@ public:
   }
 
   
-  bool ts_do_wladjusted_output() const {
+  const bool ts_do_wladjusted_output() const {
     return *transfer_struct_c.ts_do_wladjusted_output_ != 0;
   }
 
@@ -7111,7 +7088,7 @@ public:
   }
 
   
-  bool ts_do_toa_illumination() const {
+  const bool ts_do_toa_illumination() const {
     return *transfer_struct_c.ts_do_toa_illumination_ != 0;
   }
 
@@ -7120,7 +7097,7 @@ public:
   }
 
   
-  bool ts_do_boa_illumination() const {
+  const bool ts_do_boa_illumination() const {
     return *transfer_struct_c.ts_do_boa_illumination_ != 0;
   }
 
@@ -7142,7 +7119,7 @@ public:
   }
 
   
-  bool ts_do_planetary_problem() const {
+  const bool ts_do_planetary_problem() const {
     return *transfer_struct_c.ts_do_planetary_problem_ != 0;
   }
 
@@ -7151,7 +7128,7 @@ public:
   }
 
   
-  bool ts_do_mssts() const {
+  const bool ts_do_mssts() const {
     return *transfer_struct_c.ts_do_mssts_ != 0;
   }
 
@@ -7228,7 +7205,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_control_c_alloc_init(struct lidort_fixed_control *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_control_c_init_only(struct lidort_fixed_control *transfer_struct_c, void **fortran_type_c);
@@ -7274,7 +7251,7 @@ struct lidort_fixed_control {
   
 };
 
-// Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Control : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -7444,7 +7421,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_sunrays_c_alloc_init(struct lidort_fixed_sunrays *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_sunrays_c_init_only(struct lidort_fixed_sunrays *transfer_struct_c, void **fortran_type_c);
@@ -7460,7 +7437,7 @@ struct lidort_fixed_sunrays {
   
 };
 
-// Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Sunrays : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -7520,7 +7497,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_uservalues_c_alloc_init(struct lidort_fixed_uservalues *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_uservalues_c_init_only(struct lidort_fixed_uservalues *transfer_struct_c, void **fortran_type_c);
@@ -7536,7 +7513,7 @@ struct lidort_fixed_uservalues {
   
 };
 
-// Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Uservalues : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -7596,7 +7573,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_chapman_c_alloc_init(struct lidort_fixed_chapman *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_chapman_c_init_only(struct lidort_fixed_chapman *transfer_struct_c, void **fortran_type_c);
@@ -7628,7 +7605,7 @@ struct lidort_fixed_chapman {
   
 };
 
-// Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Chapman : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -7748,7 +7725,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_optical_c_alloc_init(struct lidort_fixed_optical *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_optical_c_init_only(struct lidort_fixed_optical *transfer_struct_c, void **fortran_type_c);
@@ -7790,7 +7767,7 @@ struct lidort_fixed_optical {
   
 };
 
-// Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Optical : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -7950,7 +7927,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_write_c_alloc_init(struct lidort_fixed_write *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_write_c_init_only(struct lidort_fixed_write *transfer_struct_c, void **fortran_type_c);
@@ -7994,7 +7971,7 @@ struct lidort_fixed_write {
   
 };
 
-// Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_write" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Write : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -8017,7 +7994,7 @@ public:
       lidort_fixed_write_c_destroy(&fortran_type_c);
   }
 
-  bool ts_do_debug_write() const {
+  const bool ts_do_debug_write() const {
     return *transfer_struct_c.ts_do_debug_write_ != 0;
   }
 
@@ -8026,7 +8003,7 @@ public:
   }
 
   
-  bool ts_do_write_input() const {
+  const bool ts_do_write_input() const {
     return *transfer_struct_c.ts_do_write_input_ != 0;
   }
 
@@ -8044,7 +8021,7 @@ public:
   }
 
   
-  bool ts_do_write_scenario() const {
+  const bool ts_do_write_scenario() const {
     return *transfer_struct_c.ts_do_write_scenario_ != 0;
   }
 
@@ -8062,7 +8039,7 @@ public:
   }
 
   
-  bool ts_do_write_fourier() const {
+  const bool ts_do_write_fourier() const {
     return *transfer_struct_c.ts_do_write_fourier_ != 0;
   }
 
@@ -8080,7 +8057,7 @@ public:
   }
 
   
-  bool ts_do_write_results() const {
+  const bool ts_do_write_results() const {
     return *transfer_struct_c.ts_do_write_results_ != 0;
   }
 
@@ -8138,7 +8115,7 @@ private:
   
 };
 
-// Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_fixed_inputs_c_alloc_init(struct lidort_fixed_inputs *transfer_struct_c, void **fortran_type_c);
   void lidort_fixed_inputs_c_init_only(struct lidort_fixed_inputs *transfer_struct_c, void **fortran_type_c);
@@ -8172,7 +8149,7 @@ struct lidort_fixed_inputs {
   
 };
 
-// Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_fixed_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Fixed_Inputs : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -8347,7 +8324,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_boolean_c_alloc_init(struct lidort_modified_boolean *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_boolean_c_init_only(struct lidort_modified_boolean *transfer_struct_c, void **fortran_type_c);
@@ -8432,7 +8409,7 @@ struct lidort_modified_boolean {
   
 };
 
-// Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_boolean" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Boolean : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -8455,7 +8432,7 @@ public:
       lidort_modified_boolean_c_destroy(&fortran_type_c);
   }
 
-  bool ts_do_focorr() const {
+  const bool ts_do_focorr() const {
     return *transfer_struct_c.ts_do_focorr_ != 0;
   }
 
@@ -8464,7 +8441,7 @@ public:
   }
 
   
-  bool ts_do_focorr_external() const {
+  const bool ts_do_focorr_external() const {
     return *transfer_struct_c.ts_do_focorr_external_ != 0;
   }
 
@@ -8473,7 +8450,7 @@ public:
   }
 
   
-  bool ts_do_focorr_nadir() const {
+  const bool ts_do_focorr_nadir() const {
     return *transfer_struct_c.ts_do_focorr_nadir_ != 0;
   }
 
@@ -8482,7 +8459,7 @@ public:
   }
 
   
-  bool ts_do_focorr_outgoing() const {
+  const bool ts_do_focorr_outgoing() const {
     return *transfer_struct_c.ts_do_focorr_outgoing_ != 0;
   }
 
@@ -8491,7 +8468,7 @@ public:
   }
 
   
-  bool ts_do_sscorr_truncation() const {
+  const bool ts_do_sscorr_truncation() const {
     return *transfer_struct_c.ts_do_sscorr_truncation_ != 0;
   }
 
@@ -8500,7 +8477,7 @@ public:
   }
 
   
-  bool ts_do_sscorr_usephasfunc() const {
+  const bool ts_do_sscorr_usephasfunc() const {
     return *transfer_struct_c.ts_do_sscorr_usephasfunc_ != 0;
   }
 
@@ -8509,7 +8486,7 @@ public:
   }
 
   
-  bool ts_do_external_wleave() const {
+  const bool ts_do_external_wleave() const {
     return *transfer_struct_c.ts_do_external_wleave_ != 0;
   }
 
@@ -8518,7 +8495,7 @@ public:
   }
 
   
-  bool ts_do_double_convtest() const {
+  const bool ts_do_double_convtest() const {
     return *transfer_struct_c.ts_do_double_convtest_ != 0;
   }
 
@@ -8527,7 +8504,7 @@ public:
   }
 
   
-  bool ts_do_solar_sources() const {
+  const bool ts_do_solar_sources() const {
     return *transfer_struct_c.ts_do_solar_sources_ != 0;
   }
 
@@ -8536,7 +8513,7 @@ public:
   }
 
   
-  bool ts_do_refractive_geometry() const {
+  const bool ts_do_refractive_geometry() const {
     return *transfer_struct_c.ts_do_refractive_geometry_ != 0;
   }
 
@@ -8545,7 +8522,7 @@ public:
   }
 
   
-  bool ts_do_chapman_function() const {
+  const bool ts_do_chapman_function() const {
     return *transfer_struct_c.ts_do_chapman_function_ != 0;
   }
 
@@ -8554,7 +8531,7 @@ public:
   }
 
   
-  bool ts_do_rayleigh_only() const {
+  const bool ts_do_rayleigh_only() const {
     return *transfer_struct_c.ts_do_rayleigh_only_ != 0;
   }
 
@@ -8563,7 +8540,7 @@ public:
   }
 
   
-  bool ts_do_isotropic_only() const {
+  const bool ts_do_isotropic_only() const {
     return *transfer_struct_c.ts_do_isotropic_only_ != 0;
   }
 
@@ -8572,7 +8549,7 @@ public:
   }
 
   
-  bool ts_do_no_azimuth() const {
+  const bool ts_do_no_azimuth() const {
     return *transfer_struct_c.ts_do_no_azimuth_ != 0;
   }
 
@@ -8581,7 +8558,7 @@ public:
   }
 
   
-  bool ts_do_all_fourier() const {
+  const bool ts_do_all_fourier() const {
     return *transfer_struct_c.ts_do_all_fourier_ != 0;
   }
 
@@ -8590,7 +8567,7 @@ public:
   }
 
   
-  bool ts_do_deltam_scaling() const {
+  const bool ts_do_deltam_scaling() const {
     return *transfer_struct_c.ts_do_deltam_scaling_ != 0;
   }
 
@@ -8599,7 +8576,7 @@ public:
   }
 
   
-  bool ts_do_solution_saving() const {
+  const bool ts_do_solution_saving() const {
     return *transfer_struct_c.ts_do_solution_saving_ != 0;
   }
 
@@ -8608,7 +8585,7 @@ public:
   }
 
   
-  bool ts_do_bvp_telescoping() const {
+  const bool ts_do_bvp_telescoping() const {
     return *transfer_struct_c.ts_do_bvp_telescoping_ != 0;
   }
 
@@ -8617,7 +8594,7 @@ public:
   }
 
   
-  bool ts_do_user_streams() const {
+  const bool ts_do_user_streams() const {
     return *transfer_struct_c.ts_do_user_streams_ != 0;
   }
 
@@ -8626,7 +8603,7 @@ public:
   }
 
   
-  bool ts_do_additional_mvout() const {
+  const bool ts_do_additional_mvout() const {
     return *transfer_struct_c.ts_do_additional_mvout_ != 0;
   }
 
@@ -8635,7 +8612,7 @@ public:
   }
 
   
-  bool ts_do_mvout_only() const {
+  const bool ts_do_mvout_only() const {
     return *transfer_struct_c.ts_do_mvout_only_ != 0;
   }
 
@@ -8644,7 +8621,7 @@ public:
   }
 
   
-  bool ts_do_thermal_transonly() const {
+  const bool ts_do_thermal_transonly() const {
     return *transfer_struct_c.ts_do_thermal_transonly_ != 0;
   }
 
@@ -8653,7 +8630,7 @@ public:
   }
 
   
-  bool ts_do_observation_geometry() const {
+  const bool ts_do_observation_geometry() const {
     return *transfer_struct_c.ts_do_observation_geometry_ != 0;
   }
 
@@ -8662,7 +8639,7 @@ public:
   }
 
   
-  bool ts_do_doublet_geometry() const {
+  const bool ts_do_doublet_geometry() const {
     return *transfer_struct_c.ts_do_doublet_geometry_ != 0;
   }
 
@@ -8745,7 +8722,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_control_c_alloc_init(struct lidort_modified_control *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_control_c_init_only(struct lidort_modified_control *transfer_struct_c, void **fortran_type_c);
@@ -8761,7 +8738,7 @@ struct lidort_modified_control {
   
 };
 
-// Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_control" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Control : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -8821,7 +8798,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_sunrays_c_alloc_init(struct lidort_modified_sunrays *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_sunrays_c_init_only(struct lidort_modified_sunrays *transfer_struct_c, void **fortran_type_c);
@@ -8841,7 +8818,7 @@ struct lidort_modified_sunrays {
   
 };
 
-// Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_sunrays" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Sunrays : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -8916,7 +8893,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_uservalues_c_alloc_init(struct lidort_modified_uservalues *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_uservalues_c_init_only(struct lidort_modified_uservalues *transfer_struct_c, void **fortran_type_c);
@@ -8964,7 +8941,7 @@ struct lidort_modified_uservalues {
   
 };
 
-// Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_uservalues" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Uservalues : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -9145,7 +9122,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_chapman_c_alloc_init(struct lidort_modified_chapman *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_chapman_c_init_only(struct lidort_modified_chapman *transfer_struct_c, void **fortran_type_c);
@@ -9161,7 +9138,7 @@ struct lidort_modified_chapman {
   
 };
 
-// Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_chapman" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Chapman : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -9221,7 +9198,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_optical_c_alloc_init(struct lidort_modified_optical *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_optical_c_init_only(struct lidort_modified_optical *transfer_struct_c, void **fortran_type_c);
@@ -9238,7 +9215,7 @@ struct lidort_modified_optical {
   
 };
 
-// Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_optical" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Optical : public Lidort_Structure {
 public:
   // Allocating constructor
@@ -9302,7 +9279,7 @@ private:
   
 };
 
-// Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 extern "C" {
   void lidort_modified_inputs_c_alloc_init(struct lidort_modified_inputs *transfer_struct_c, void **fortran_type_c);
   void lidort_modified_inputs_c_init_only(struct lidort_modified_inputs *transfer_struct_c, void **fortran_type_c);
@@ -9333,7 +9310,7 @@ struct lidort_modified_inputs {
   
 };
 
-// Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.F90"
+// Links to type: "lidort_modified_inputs" from module: "lidort_inputs_def_m" in file: "lidort_inputs_def.f90"
 class Lidort_Modified_Inputs : public Lidort_Structure {
 public:
   // Allocating constructor

@@ -26,9 +26,10 @@ configure_file (
 
 set(FP_TEST_FILES ${FP_TEST_FILES} "${CMAKE_CURRENT_BINARY_DIR}/global_fixture_default.cc")
 
-# Define the LIDORT compilation option variables into macros so they can be used by other
+# Define the LIDORT and VLIDORT compilation option variables into macros so they can be used by other
 # pieces of the code. These are defined and loaded in the thirdparty cmake file
 add_definitions(-DLIDORT_MAXLAYER=${LIDORT_MAXLAYER} -DLIDORT_MAXATMOSWFS=${LIDORT_MAXATMOSWFS})
+add_definitions(-DVLIDORT_MAXLAYER=${VLIDORT_MAXLAYER} -DVLIDORT_MAXATMOSWFS=${VLIDORT_MAXATMOSWFS})
 
 # Under some conditions we need to explicitly link to libstdc++ for a successfull test_all build
 find_library(LIB_STDCPP NAMES stdc++)
