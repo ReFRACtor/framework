@@ -3,6 +3,7 @@
         "ms-vscode.cpptools-extension-pack",
         "fortran-lang.linter-gfortran",
         "twxs.cmake",
-        "ms-vscode.cmake-tools"
+        "ms-vscode.cmake-tools",
+        "nicnewdigate.boost-test-adapter-debug"
     ]
 }
