@@ -7,7 +7,7 @@ import os
 # We can change the variables or do additional work here without breaking
 # usage of the filenames.
 
-refractor_input_path = os.environ['REFRACTOR_INPUT_PATH']
+refractor_input_path = os.environ.get('REFRACTOR_INPUT_PATH', './')
 
 #### 
 
