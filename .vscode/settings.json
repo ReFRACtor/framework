@@ -4,6 +4,8 @@
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
 
+    "cmake.configureOnOpen": false,
+    "cmake.configureOnEdit": false,
     "cmake.configureSettings": {
         "PYTHON_EXECUTABLE": "${workspaceFolder}/.venv/bin/python"
     },
