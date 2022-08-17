@@ -223,8 +223,8 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
   // Call linearized BRDF supplement
   Twostream_Ls_Brdf_Supplement twostream_brdf(
     // Max sizes
-    nbeams, n_user_angles, lid_pars.max_user_obsgeoms, nstreams_brdf,
-    lid_pars.max_brdf_kernels, lid_pars.max_brdf_parameters, nspars,
+    nbeams, n_user_angles, lid_pars.max_user_obsgeoms(), nstreams_brdf,
+    lid_pars.max_brdf_kernels(), lid_pars.max_brdf_parameters(), nspars,
     // Instance sizes
     nbeams, n_user_angles, nstreams_brdf);
 
@@ -347,10 +347,10 @@ BOOST_AUTO_TEST_CASE(twostream_l_master)
 
   Twostream_Lps_Master twostream_rt = Twostream_Lps_Master( 
     // Max sizes
-    nlayers, lid_pars.maxtotal, lid_pars.max_messages,
+    nlayers, lid_pars.maxtotal(), lid_pars.max_messages(),
     nbeams, n_geometries, 
-    n_user_angles, n_user_relazms, lid_pars.max_user_obsgeoms, 
-    npars, nspars, lid_pars.max_sleavewfs, 
+    n_user_angles, n_user_relazms, lid_pars.max_user_obsgeoms(), 
+    npars, nspars, lid_pars.max_sleavewfs(), 
     // Instance sizes
     nlayers, ntotal, n_user_angles, n_user_relazms, nbeams, earth_radius, n_geometries);
       

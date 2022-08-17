@@ -88,8 +88,8 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int UNUSED(surface_type))
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
   twostream_brdf_.reset( new Twostream_Ls_Brdf_Supplement(
-    lid_pars.maxbeams, lid_pars.max_user_streams, lid_pars.max_user_obsgeoms, lid_pars.maxstreams_brdf,
-    lid_pars.max_brdf_kernels, lid_pars.max_brdf_parameters, lid_pars.max_surfacewfs,
+    lid_pars.maxbeams(), lid_pars.max_user_streams(), lid_pars.max_user_obsgeoms(), lid_pars.maxstreams_brdf(),
+    lid_pars.max_brdf_kernels(), lid_pars.max_brdf_parameters(), lid_pars.max_surfacewfs(),
     nbeams, n_user_streams, nstreams_brdf) );
 
   brdf_params.reference( twostream_brdf_->brdf_parameters() );
@@ -238,10 +238,10 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_full
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
   twostream_interface_.reset( new Twostream_Lps_Master( 
-    lid_pars.maxlayers, lid_pars.maxtotal, lid_pars.max_messages,
-    lid_pars.maxbeams, lid_pars.max_geometries, 
-    lid_pars.max_user_streams, lid_pars.max_user_relazms, lid_pars.max_user_obsgeoms, 
-    lid_pars.max_atmoswfs, lid_pars.max_surfacewfs, lid_pars.max_sleavewfs, 
+    lid_pars.maxlayers(), lid_pars.maxtotal(), lid_pars.max_messages(),
+    lid_pars.maxbeams(), lid_pars.max_geometries(), 
+    lid_pars.max_user_streams(), lid_pars.max_user_relazms(), lid_pars.max_user_obsgeoms(), 
+    lid_pars.max_atmoswfs(), lid_pars.max_surfacewfs(), lid_pars.max_sleavewfs(), 
     nlayers, ntotal, n_user_streams, n_user_relazms, nbeams, earth_radius, n_geometries) );
 
   // Initialize BRDF data structure

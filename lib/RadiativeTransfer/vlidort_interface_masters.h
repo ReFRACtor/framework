@@ -685,8 +685,8 @@ public:
     v_masters_m_v_master_wrap(&do_debug_input_in, &vlidort_fixin_lcl, &vlidort_modin_lcl, &vlidort_sup_lcl, &vlidort_out_lcl);
     
     VLidort_Pars vlid_pars = VLidort_Pars::instance();
-    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success ||
-        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success ) {
+    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success() ||
+        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success() ) {
        std::stringstream err_msg;
        err_msg << "VLIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception
@@ -1179,8 +1179,8 @@ public:
     v_lcs_masters_m_v_lcs_master_wrap(&do_debug_input_in, &vlidort_fixin_lcl, &vlidort_modin_lcl, &vlidort_sup_lcl, &vlidort_out_lcl, &vlidort_linfixin_lcl, &vlidort_linmodin_lcl, &vlidort_linsup_lcl, &vlidort_linout_lcl);
     
     VLidort_Pars vlid_pars = VLidort_Pars::instance();
-    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success ||
-        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success ) {
+    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success() ||
+        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success() ) {
        std::stringstream err_msg;
        err_msg << "VLIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception
@@ -1458,8 +1458,8 @@ public:
     v_lps_masters_m_v_lps_master_wrap(&do_debug_input_in, &vlidort_fixin_lcl, &vlidort_modin_lcl, &vlidort_sup_lcl, &vlidort_out_lcl, &vlidort_linfixin_lcl, &vlidort_linmodin_lcl, &vlidort_linsup_lcl, &vlidort_linout_lcl);
     
     VLidort_Pars vlid_pars = VLidort_Pars::instance();
-    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success ||
-        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success ) {
+    if( vlidort_out().status().ts_status_inputcheck() != vlid_pars.vlidort_success() ||
+        vlidort_out().status().ts_status_calculation() != vlid_pars.vlidort_success() ) {
        std::stringstream err_msg;
        err_msg << "VLIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception

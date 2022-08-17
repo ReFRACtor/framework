@@ -247,8 +247,8 @@ void LidortRtDriver::init()
 
   // Check inputs against sizes allowed by LIDORT
   Lidort_Pars lid_pars = Lidort_Pars::instance();
-  range_check(nstream_, 1, lid_pars.maxstreams+1);
-  range_check(nmoment_, 2, lid_pars.maxmoments_input+1);
+  range_check(nstream_, 1, lid_pars.maxstreams()+1);
+  range_check(nmoment_, 2, lid_pars.maxmoments_input()+1);
 
   // Initialize BRDF data structure
   brdf_driver()->initialize_brdf_inputs(surface_type_);
@@ -612,9 +612,9 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
                                          bool do_surface_linearization)
 {
   
-  if(od.number_variable() > Lidort_Pars::instance().max_atmoswfs) {
+  if(od.number_variable() > Lidort_Pars::instance().max_atmoswfs()) {
     Exception err;
-    err << "LIDORT has been compiled to allow a maximum of " << Lidort_Pars::instance().max_atmoswfs
+    err << "LIDORT has been compiled to allow a maximum of " << Lidort_Pars::instance().max_atmoswfs()
         << " atmosphere derivatives to be calculated. We are trying to calculate "
         << od.number_variable() << " atmosphere derivatives";
     throw err;
@@ -759,7 +759,7 @@ double LidortRtDriver::get_intensity() const
 
   // Total Intensity I(t,v,d,T) at output level t, output geometry v,
   // direction d
-  return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx-1);
+  return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx()-1);
 }
 
 void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const
@@ -773,17 +773,17 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
 
   // Surface Jacobians KR(r,t,v,d) with respect to surface variable r
   // at output level t, geometry v, direction d
-  jac_surf_param.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx-1).copy() );
+  jac_surf_param.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx()-1).copy() );
 
   // Get profile jacobians
   // Jacobians K(q,n,t,v,d) with respect to profile atmospheric variable
   // q in layer n, at output level t, geometry v, direction d
-  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, lid_pars.upidx-1).copy() );
+  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, lid_pars.upidx()-1).copy() );
 
   // Get surface temp jacobian if thermal emission is enabled
   if(do_thermal_emission) {
-      jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, lid_pars.upidx-1);
+      jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, lid_pars.upidx()-1);
 
-      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, lid_pars.upidx-1).copy() );
+      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, lid_pars.upidx()-1).copy() );
   }
 }

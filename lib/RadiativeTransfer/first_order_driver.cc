@@ -51,18 +51,18 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
   // Use LIDORT parameters to have consistent sizes for maximum values
   Lidort_Pars lid_pars = Lidort_Pars::instance();
-  int max_geoms = lid_pars.max_geometries;
-  int max_szas = lid_pars.maxbeams;
-  int max_vzas = lid_pars.max_user_streams;
-  int max_azms = lid_pars.max_user_relazms;
-  int max_layers = lid_pars.maxlayers;
-  int max_partials = lid_pars.max_partlayers;
-  int max_fine = lid_pars.maxfinelayers;
-  int max_moments_input = lid_pars.maxmoments_input;
-  int max_user_levels = lid_pars.max_user_levels;
-  int max_atmoswfs = lid_pars.max_atmoswfs;
-  int max_surfacewfs = lid_pars.max_surfacewfs; 
-  int max_sleavewfs = lid_pars.max_sleavewfs;
+  int max_geoms = lid_pars.max_geometries();
+  int max_szas = lid_pars.maxbeams();
+  int max_vzas = lid_pars.max_user_streams();
+  int max_azms = lid_pars.max_user_relazms();
+  int max_layers = lid_pars.maxlayers();
+  int max_partials = lid_pars.max_partlayers();
+  int max_fine = lid_pars.maxfinelayers();
+  int max_moments_input = lid_pars.maxmoments_input();
+  int max_user_levels = lid_pars.max_user_levels();
+  int max_atmoswfs = lid_pars.max_atmoswfs();
+  int max_surfacewfs = lid_pars.max_surfacewfs();
+  int max_sleavewfs = lid_pars.max_sleavewfs();
 
   // Store the surface type being used, this value is only used for the surface_type() accessor
   surface_type_ = surface_type;
@@ -442,7 +442,7 @@ void FirstOrderDriver::setup_linear_inputs
     Array<bool, 2> layer_jac_moms( solar_interface_->lvarymoms() );
     for(int mom_idx = 0; mom_idx < num_moments_; mom_idx++) {
         Array<double, 2> l_mom_vals(l_phasmoms(r_all, mom_idx, r_all));
-        layer_jac_moms = where(abs(l_mom_vals) >= 1000.0 * lid_pars.smallnum, true, layer_jac_moms);
+        layer_jac_moms = where(abs(l_mom_vals) >= 1000.0 * lid_pars.smallnum(), true, layer_jac_moms);
     }
 
     // Set up solar linear inputs

@@ -14,212 +14,581 @@
 namespace FullPhysics {
 
 extern "C" {
-  void set_lidort_pars(struct Lidort_Pars *lidort_pars_struct_c);
+  void set_lidort_pars(struct lidort_pars_m *lidort_pars_struct_c);
 }
 
 /* This struct cannot inherit any properties from another struct/class which is a requirement of Fortran interoperability */
 
-struct Lidort_Pars {
+struct lidort_pars_m {
 
-  const double bigexp;
-  const int bpdfndvi_idx;
-  const int bpdfsoil_idx;
-  const int bpdfvegn_idx;
-  const int coxmunk_idx;
-  const double deg_to_rad;
-  const int dnidx;
-  const double eps3;
-  const double eps4;
-  const double eps5;
-  const double four;
-  const double half;
-  const int hapke_idx;
-  const double hopital_tolerance;
-  const int lambertian_idx;
-  const int lidense_idx;
-  const int lidort_dbgunit;
-  const int lidort_debug;
-  const int lidort_errunit;
-  const int lidort_funit;
-  const int lidort_info;
-  const int lidort_inunit;
-  const int lidort_resunit;
-  const int lidort_scenunit;
-  const int lidort_serious;
-  const int lidort_success;
-  const char lidort_version_number[5];
-  const int lidort_warning;
-  const int lisparse_idx;
-  const int max_allstrms;
-  const int max_allstrms_p1;
-  const int max_atmoswfs;
-  const int max_brdf_kernels;
-  const int max_brdf_parameters;
-  const int max_directions;
-  const int max_geometries;
-  const int max_messages;
-  const int max_msrs_muquad;
-  const int max_msrs_phiquad;
-  const int max_partlayers;
-  const int max_sleavewfs;
-  const int max_surfacewfs;
-  const double max_tau_qpath;
-  const double max_tau_spath;
-  const double max_tau_upath;
-  const int max_taylor_terms;
-  const int max_thermal_coeffs;
-  const int max_user_levels;
-  const int max_user_obsgeoms;
-  const int max_user_relazms;
-  const int max_user_streams;
-  const int maxbandtotal;
-  const int maxbeams;
-  const int maxbrdf_idx;
-  const int maxfinelayers;
-  const int maxfourier;
-  const int maxlayers;
-  const int maxmoments;
-  const int maxmoments_input;
-  const int maxsthalf_brdf;
-  const int maxstreams;
-  const int maxstreams_2;
-  const int maxstreams_brdf;
-  const int maxstreams_p1;
-  const int maxstreams_scaling;
-  const int maxtotal;
-  const double minus_one;
-  const double minus_two;
-  const int modfresnel_idx;
-  const int newcmglint_idx;
-  const double omega_smallnum;
-  const double one;
-  const double onep5;
-  const double pi2;
-  const double pi4;
-  const double pie;
-  const double pio2;
-  const double pio4;
-  const double quarter;
-  const int rahman_idx;
-  const int rossthick_idx;
-  const int rossthin_idx;
-  const int roujean_idx;
-  const int rtkhotspot_idx;
-  const double smallnum;
-  const int snowbrdf_idx;
-  const double taylor_small;
-  const double three;
-  const double two;
-  const int upidx;
-  const double zero;
+  double bigexp;
+  int bpdfndvi_idx;
+  int bpdfsoil_idx;
+  int bpdfvegn_idx;
+  int coxmunk_idx;
+  double deg_to_rad;
+  int dnidx;
+  double eps3;
+  double eps4;
+  double eps5;
+  double four;
+  double half;
+  int hapke_idx;
+  double hopital_tolerance;
+  int lambertian_idx;
+  int lidense_idx;
+  int lidort_dbgunit;
+  int lidort_debug;
+  int lidort_errunit;
+  int lidort_funit;
+  int lidort_info;
+  int lidort_inunit;
+  int lidort_resunit;
+  int lidort_scenunit;
+  int lidort_serious;
+  int lidort_success;
+  char lidort_version_number[5];
+  int lidort_warning;
+  int lisparse_idx;
+  int max_allstrms;
+  int max_allstrms_p1;
+  int max_atmoswfs;
+  int max_brdf_kernels;
+  int max_brdf_parameters;
+  int max_directions;
+  int max_geometries;
+  int max_messages;
+  int max_msrs_muquad;
+  int max_msrs_phiquad;
+  int max_partlayers;
+  int max_sleavewfs;
+  int max_surfacewfs;
+  double max_tau_qpath;
+  double max_tau_spath;
+  double max_tau_upath;
+  int max_taylor_terms;
+  int max_thermal_coeffs;
+  int max_user_levels;
+  int max_user_obsgeoms;
+  int max_user_relazms;
+  int max_user_streams;
+  int maxbandtotal;
+  int maxbeams;
+  int maxbrdf_idx;
+  int maxfinelayers;
+  int maxfourier;
+  int maxlayers;
+  int maxmoments;
+  int maxmoments_input;
+  int maxsthalf_brdf;
+  int maxstreams;
+  int maxstreams_2;
+  int maxstreams_brdf;
+  int maxstreams_p1;
+  int maxstreams_scaling;
+  int maxtotal;
+  double minus_one;
+  double minus_two;
+  int modfresnel_idx;
+  int newcmglint_idx;
+  double omega_smallnum;
+  double one;
+  double onep5;
+  double pi2;
+  double pi4;
+  double pie;
+  double pio2;
+  double pio4;
+  double quarter;
+  int rahman_idx;
+  int rossthick_idx;
+  int rossthin_idx;
+  int roujean_idx;
+  int rtkhotspot_idx;
+  double smallnum;
+  int snowbrdf_idx;
+  double taylor_small;
+  double three;
+  double two;
+  int upidx;
+  double zero;
   
+};
+
+class Lidort_Pars : public Spurr_Pars_Base {
+public:
+
+  const double& bigexp() const {
+    return transfer_struct_c.bigexp;
+  }
+
+  const int& bpdfndvi_idx() const {
+    return transfer_struct_c.bpdfndvi_idx;
+  }
+
+  const int& bpdfsoil_idx() const {
+    return transfer_struct_c.bpdfsoil_idx;
+  }
+
+  const int& bpdfvegn_idx() const {
+    return transfer_struct_c.bpdfvegn_idx;
+  }
+
+  const int& coxmunk_idx() const {
+    return transfer_struct_c.coxmunk_idx;
+  }
+
+  const double& deg_to_rad() const {
+    return transfer_struct_c.deg_to_rad;
+  }
+
+  const int& dnidx() const {
+    return transfer_struct_c.dnidx;
+  }
+
+  const double& eps3() const {
+    return transfer_struct_c.eps3;
+  }
+
+  const double& eps4() const {
+    return transfer_struct_c.eps4;
+  }
+
+  const double& eps5() const {
+    return transfer_struct_c.eps5;
+  }
+
+  const double& four() const {
+    return transfer_struct_c.four;
+  }
+
+  const double& half() const {
+    return transfer_struct_c.half;
+  }
+
+  const int& hapke_idx() const {
+    return transfer_struct_c.hapke_idx;
+  }
+
+  const double& hopital_tolerance() const {
+    return transfer_struct_c.hopital_tolerance;
+  }
+
+  const int& lambertian_idx() const {
+    return transfer_struct_c.lambertian_idx;
+  }
+
+  const int& lidense_idx() const {
+    return transfer_struct_c.lidense_idx;
+  }
+
+  const int& lidort_dbgunit() const {
+    return transfer_struct_c.lidort_dbgunit;
+  }
+
+  const int& lidort_debug() const {
+    return transfer_struct_c.lidort_debug;
+  }
+
+  const int& lidort_errunit() const {
+    return transfer_struct_c.lidort_errunit;
+  }
+
+  const int& lidort_funit() const {
+    return transfer_struct_c.lidort_funit;
+  }
+
+  const int& lidort_info() const {
+    return transfer_struct_c.lidort_info;
+  }
+
+  const int& lidort_inunit() const {
+    return transfer_struct_c.lidort_inunit;
+  }
+
+  const int& lidort_resunit() const {
+    return transfer_struct_c.lidort_resunit;
+  }
+
+  const int& lidort_scenunit() const {
+    return transfer_struct_c.lidort_scenunit;
+  }
+
+  const int& lidort_serious() const {
+    return transfer_struct_c.lidort_serious;
+  }
+
+  const int& lidort_success() const {
+    return transfer_struct_c.lidort_success;
+  }
+
+  const std::string lidort_version_number() const {
+    return std::string(transfer_struct_c.lidort_version_number);
+  }
+
+  const int& lidort_warning() const {
+    return transfer_struct_c.lidort_warning;
+  }
+
+  const int& lisparse_idx() const {
+    return transfer_struct_c.lisparse_idx;
+  }
+
+  const int& max_allstrms() const {
+    return transfer_struct_c.max_allstrms;
+  }
+
+  const int& max_allstrms_p1() const {
+    return transfer_struct_c.max_allstrms_p1;
+  }
+
+  const int& max_atmoswfs() const {
+    return transfer_struct_c.max_atmoswfs;
+  }
+
+  const int& max_brdf_kernels() const {
+    return transfer_struct_c.max_brdf_kernels;
+  }
+
+  const int& max_brdf_parameters() const {
+    return transfer_struct_c.max_brdf_parameters;
+  }
+
+  const int& max_directions() const {
+    return transfer_struct_c.max_directions;
+  }
+
+  const int& max_geometries() const {
+    return transfer_struct_c.max_geometries;
+  }
+
+  const int& max_messages() const {
+    return transfer_struct_c.max_messages;
+  }
+
+  const int& max_msrs_muquad() const {
+    return transfer_struct_c.max_msrs_muquad;
+  }
+
+  const int& max_msrs_phiquad() const {
+    return transfer_struct_c.max_msrs_phiquad;
+  }
+
+  const int& max_partlayers() const {
+    return transfer_struct_c.max_partlayers;
+  }
+
+  const int& max_sleavewfs() const {
+    return transfer_struct_c.max_sleavewfs;
+  }
+
+  const int& max_surfacewfs() const {
+    return transfer_struct_c.max_surfacewfs;
+  }
+
+  const double& max_tau_qpath() const {
+    return transfer_struct_c.max_tau_qpath;
+  }
+
+  const double& max_tau_spath() const {
+    return transfer_struct_c.max_tau_spath;
+  }
+
+  const double& max_tau_upath() const {
+    return transfer_struct_c.max_tau_upath;
+  }
+
+  const int& max_taylor_terms() const {
+    return transfer_struct_c.max_taylor_terms;
+  }
+
+  const int& max_thermal_coeffs() const {
+    return transfer_struct_c.max_thermal_coeffs;
+  }
+
+  const int& max_user_levels() const {
+    return transfer_struct_c.max_user_levels;
+  }
+
+  const int& max_user_obsgeoms() const {
+    return transfer_struct_c.max_user_obsgeoms;
+  }
+
+  const int& max_user_relazms() const {
+    return transfer_struct_c.max_user_relazms;
+  }
+
+  const int& max_user_streams() const {
+    return transfer_struct_c.max_user_streams;
+  }
+
+  const int& maxbandtotal() const {
+    return transfer_struct_c.maxbandtotal;
+  }
+
+  const int& maxbeams() const {
+    return transfer_struct_c.maxbeams;
+  }
+
+  const int& maxbrdf_idx() const {
+    return transfer_struct_c.maxbrdf_idx;
+  }
+
+  const int& maxfinelayers() const {
+    return transfer_struct_c.maxfinelayers;
+  }
+
+  const int& maxfourier() const {
+    return transfer_struct_c.maxfourier;
+  }
+
+  const int& maxlayers() const {
+    return transfer_struct_c.maxlayers;
+  }
+
+  const int& maxmoments() const {
+    return transfer_struct_c.maxmoments;
+  }
+
+  const int& maxmoments_input() const {
+    return transfer_struct_c.maxmoments_input;
+  }
+
+  const int& maxsthalf_brdf() const {
+    return transfer_struct_c.maxsthalf_brdf;
+  }
+
+  const int& maxstreams() const {
+    return transfer_struct_c.maxstreams;
+  }
+
+  const int& maxstreams_2() const {
+    return transfer_struct_c.maxstreams_2;
+  }
+
+  const int& maxstreams_brdf() const {
+    return transfer_struct_c.maxstreams_brdf;
+  }
+
+  const int& maxstreams_p1() const {
+    return transfer_struct_c.maxstreams_p1;
+  }
+
+  const int& maxstreams_scaling() const {
+    return transfer_struct_c.maxstreams_scaling;
+  }
+
+  const int& maxtotal() const {
+    return transfer_struct_c.maxtotal;
+  }
+
+  const double& minus_one() const {
+    return transfer_struct_c.minus_one;
+  }
+
+  const double& minus_two() const {
+    return transfer_struct_c.minus_two;
+  }
+
+  const int& modfresnel_idx() const {
+    return transfer_struct_c.modfresnel_idx;
+  }
+
+  const int& newcmglint_idx() const {
+    return transfer_struct_c.newcmglint_idx;
+  }
+
+  const double& omega_smallnum() const {
+    return transfer_struct_c.omega_smallnum;
+  }
+
+  const double& one() const {
+    return transfer_struct_c.one;
+  }
+
+  const double& onep5() const {
+    return transfer_struct_c.onep5;
+  }
+
+  const double& pi2() const {
+    return transfer_struct_c.pi2;
+  }
+
+  const double& pi4() const {
+    return transfer_struct_c.pi4;
+  }
+
+  const double& pie() const {
+    return transfer_struct_c.pie;
+  }
+
+  const double& pio2() const {
+    return transfer_struct_c.pio2;
+  }
+
+  const double& pio4() const {
+    return transfer_struct_c.pio4;
+  }
+
+  const double& quarter() const {
+    return transfer_struct_c.quarter;
+  }
+
+  const int& rahman_idx() const {
+    return transfer_struct_c.rahman_idx;
+  }
+
+  const int& rossthick_idx() const {
+    return transfer_struct_c.rossthick_idx;
+  }
+
+  const int& rossthin_idx() const {
+    return transfer_struct_c.rossthin_idx;
+  }
+
+  const int& roujean_idx() const {
+    return transfer_struct_c.roujean_idx;
+  }
+
+  const int& rtkhotspot_idx() const {
+    return transfer_struct_c.rtkhotspot_idx;
+  }
+
+  const double& smallnum() const {
+    return transfer_struct_c.smallnum;
+  }
+
+  const int& snowbrdf_idx() const {
+    return transfer_struct_c.snowbrdf_idx;
+  }
+
+  const double& taylor_small() const {
+    return transfer_struct_c.taylor_small;
+  }
+
+  const double& three() const {
+    return transfer_struct_c.three;
+  }
+
+  const double& two() const {
+    return transfer_struct_c.two;
+  }
+
+  const int& upidx() const {
+    return transfer_struct_c.upidx;
+  }
+
+  const double& zero() const {
+    return transfer_struct_c.zero;
+  }
+
   static Lidort_Pars& instance() {
     static Lidort_Pars obj;
     return obj;
   }
-
   
-  friend std::ostream& operator<<(std::ostream &output_stream, const Lidort_Pars &obj) {
+  virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Pars:" << std::endl
-      << "               bigexp: " << obj.bigexp  << std::endl
-      << "         bpdfndvi_idx: " << obj.bpdfndvi_idx  << std::endl
-      << "         bpdfsoil_idx: " << obj.bpdfsoil_idx  << std::endl
-      << "         bpdfvegn_idx: " << obj.bpdfvegn_idx  << std::endl
-      << "          coxmunk_idx: " << obj.coxmunk_idx  << std::endl
-      << "           deg_to_rad: " << obj.deg_to_rad  << std::endl
-      << "                dnidx: " << obj.dnidx  << std::endl
-      << "                 eps3: " << obj.eps3  << std::endl
-      << "                 eps4: " << obj.eps4  << std::endl
-      << "                 eps5: " << obj.eps5  << std::endl
-      << "                 four: " << obj.four  << std::endl
-      << "                 half: " << obj.half  << std::endl
-      << "            hapke_idx: " << obj.hapke_idx  << std::endl
-      << "    hopital_tolerance: " << obj.hopital_tolerance  << std::endl
-      << "       lambertian_idx: " << obj.lambertian_idx  << std::endl
-      << "          lidense_idx: " << obj.lidense_idx  << std::endl
-      << "       lidort_dbgunit: " << obj.lidort_dbgunit  << std::endl
-      << "         lidort_debug: " << obj.lidort_debug  << std::endl
-      << "       lidort_errunit: " << obj.lidort_errunit  << std::endl
-      << "         lidort_funit: " << obj.lidort_funit  << std::endl
-      << "          lidort_info: " << obj.lidort_info  << std::endl
-      << "        lidort_inunit: " << obj.lidort_inunit  << std::endl
-      << "       lidort_resunit: " << obj.lidort_resunit  << std::endl
-      << "      lidort_scenunit: " << obj.lidort_scenunit  << std::endl
-      << "       lidort_serious: " << obj.lidort_serious  << std::endl
-      << "       lidort_success: " << obj.lidort_success  << std::endl
-      << "lidort_version_number: " << "\"" << obj.lidort_version_number << "\"" << std::endl
-      << "       lidort_warning: " << obj.lidort_warning  << std::endl
-      << "         lisparse_idx: " << obj.lisparse_idx  << std::endl
-      << "         max_allstrms: " << obj.max_allstrms  << std::endl
-      << "      max_allstrms_p1: " << obj.max_allstrms_p1  << std::endl
-      << "         max_atmoswfs: " << obj.max_atmoswfs  << std::endl
-      << "     max_brdf_kernels: " << obj.max_brdf_kernels  << std::endl
-      << "  max_brdf_parameters: " << obj.max_brdf_parameters  << std::endl
-      << "       max_directions: " << obj.max_directions  << std::endl
-      << "       max_geometries: " << obj.max_geometries  << std::endl
-      << "         max_messages: " << obj.max_messages  << std::endl
-      << "      max_msrs_muquad: " << obj.max_msrs_muquad  << std::endl
-      << "     max_msrs_phiquad: " << obj.max_msrs_phiquad  << std::endl
-      << "       max_partlayers: " << obj.max_partlayers  << std::endl
-      << "        max_sleavewfs: " << obj.max_sleavewfs  << std::endl
-      << "       max_surfacewfs: " << obj.max_surfacewfs  << std::endl
-      << "        max_tau_qpath: " << obj.max_tau_qpath  << std::endl
-      << "        max_tau_spath: " << obj.max_tau_spath  << std::endl
-      << "        max_tau_upath: " << obj.max_tau_upath  << std::endl
-      << "     max_taylor_terms: " << obj.max_taylor_terms  << std::endl
-      << "   max_thermal_coeffs: " << obj.max_thermal_coeffs  << std::endl
-      << "      max_user_levels: " << obj.max_user_levels  << std::endl
-      << "    max_user_obsgeoms: " << obj.max_user_obsgeoms  << std::endl
-      << "     max_user_relazms: " << obj.max_user_relazms  << std::endl
-      << "     max_user_streams: " << obj.max_user_streams  << std::endl
-      << "         maxbandtotal: " << obj.maxbandtotal  << std::endl
-      << "             maxbeams: " << obj.maxbeams  << std::endl
-      << "          maxbrdf_idx: " << obj.maxbrdf_idx  << std::endl
-      << "        maxfinelayers: " << obj.maxfinelayers  << std::endl
-      << "           maxfourier: " << obj.maxfourier  << std::endl
-      << "            maxlayers: " << obj.maxlayers  << std::endl
-      << "           maxmoments: " << obj.maxmoments  << std::endl
-      << "     maxmoments_input: " << obj.maxmoments_input  << std::endl
-      << "       maxsthalf_brdf: " << obj.maxsthalf_brdf  << std::endl
-      << "           maxstreams: " << obj.maxstreams  << std::endl
-      << "         maxstreams_2: " << obj.maxstreams_2  << std::endl
-      << "      maxstreams_brdf: " << obj.maxstreams_brdf  << std::endl
-      << "        maxstreams_p1: " << obj.maxstreams_p1  << std::endl
-      << "   maxstreams_scaling: " << obj.maxstreams_scaling  << std::endl
-      << "             maxtotal: " << obj.maxtotal  << std::endl
-      << "            minus_one: " << obj.minus_one  << std::endl
-      << "            minus_two: " << obj.minus_two  << std::endl
-      << "       modfresnel_idx: " << obj.modfresnel_idx  << std::endl
-      << "       newcmglint_idx: " << obj.newcmglint_idx  << std::endl
-      << "       omega_smallnum: " << obj.omega_smallnum  << std::endl
-      << "                  one: " << obj.one  << std::endl
-      << "                onep5: " << obj.onep5  << std::endl
-      << "                  pi2: " << obj.pi2  << std::endl
-      << "                  pi4: " << obj.pi4  << std::endl
-      << "                  pie: " << obj.pie  << std::endl
-      << "                 pio2: " << obj.pio2  << std::endl
-      << "                 pio4: " << obj.pio4  << std::endl
-      << "              quarter: " << obj.quarter  << std::endl
-      << "           rahman_idx: " << obj.rahman_idx  << std::endl
-      << "        rossthick_idx: " << obj.rossthick_idx  << std::endl
-      << "         rossthin_idx: " << obj.rossthin_idx  << std::endl
-      << "          roujean_idx: " << obj.roujean_idx  << std::endl
-      << "       rtkhotspot_idx: " << obj.rtkhotspot_idx  << std::endl
-      << "             smallnum: " << obj.smallnum  << std::endl
-      << "         snowbrdf_idx: " << obj.snowbrdf_idx  << std::endl
-      << "         taylor_small: " << obj.taylor_small  << std::endl
-      << "                three: " << obj.three  << std::endl
-      << "                  two: " << obj.two  << std::endl
-      << "                upidx: " << obj.upidx  << std::endl
-      << "                 zero: " << obj.zero  << std::endl;
-    return output_stream;
+      << "               bigexp: " << bigexp()  << std::endl
+      << "         bpdfndvi_idx: " << bpdfndvi_idx()  << std::endl
+      << "         bpdfsoil_idx: " << bpdfsoil_idx()  << std::endl
+      << "         bpdfvegn_idx: " << bpdfvegn_idx()  << std::endl
+      << "          coxmunk_idx: " << coxmunk_idx()  << std::endl
+      << "           deg_to_rad: " << deg_to_rad()  << std::endl
+      << "                dnidx: " << dnidx()  << std::endl
+      << "                 eps3: " << eps3()  << std::endl
+      << "                 eps4: " << eps4()  << std::endl
+      << "                 eps5: " << eps5()  << std::endl
+      << "                 four: " << four()  << std::endl
+      << "                 half: " << half()  << std::endl
+      << "            hapke_idx: " << hapke_idx()  << std::endl
+      << "    hopital_tolerance: " << hopital_tolerance()  << std::endl
+      << "       lambertian_idx: " << lambertian_idx()  << std::endl
+      << "          lidense_idx: " << lidense_idx()  << std::endl
+      << "       lidort_dbgunit: " << lidort_dbgunit()  << std::endl
+      << "         lidort_debug: " << lidort_debug()  << std::endl
+      << "       lidort_errunit: " << lidort_errunit()  << std::endl
+      << "         lidort_funit: " << lidort_funit()  << std::endl
+      << "          lidort_info: " << lidort_info()  << std::endl
+      << "        lidort_inunit: " << lidort_inunit()  << std::endl
+      << "       lidort_resunit: " << lidort_resunit()  << std::endl
+      << "      lidort_scenunit: " << lidort_scenunit()  << std::endl
+      << "       lidort_serious: " << lidort_serious()  << std::endl
+      << "       lidort_success: " << lidort_success()  << std::endl
+      << "lidort_version_number: " << "\"" << lidort_version_number() << "\"" << std::endl
+      << "       lidort_warning: " << lidort_warning()  << std::endl
+      << "         lisparse_idx: " << lisparse_idx()  << std::endl
+      << "         max_allstrms: " << max_allstrms()  << std::endl
+      << "      max_allstrms_p1: " << max_allstrms_p1()  << std::endl
+      << "         max_atmoswfs: " << max_atmoswfs()  << std::endl
+      << "     max_brdf_kernels: " << max_brdf_kernels()  << std::endl
+      << "  max_brdf_parameters: " << max_brdf_parameters()  << std::endl
+      << "       max_directions: " << max_directions()  << std::endl
+      << "       max_geometries: " << max_geometries()  << std::endl
+      << "         max_messages: " << max_messages()  << std::endl
+      << "      max_msrs_muquad: " << max_msrs_muquad()  << std::endl
+      << "     max_msrs_phiquad: " << max_msrs_phiquad()  << std::endl
+      << "       max_partlayers: " << max_partlayers()  << std::endl
+      << "        max_sleavewfs: " << max_sleavewfs()  << std::endl
+      << "       max_surfacewfs: " << max_surfacewfs()  << std::endl
+      << "        max_tau_qpath: " << max_tau_qpath()  << std::endl
+      << "        max_tau_spath: " << max_tau_spath()  << std::endl
+      << "        max_tau_upath: " << max_tau_upath()  << std::endl
+      << "     max_taylor_terms: " << max_taylor_terms()  << std::endl
+      << "   max_thermal_coeffs: " << max_thermal_coeffs()  << std::endl
+      << "      max_user_levels: " << max_user_levels()  << std::endl
+      << "    max_user_obsgeoms: " << max_user_obsgeoms()  << std::endl
+      << "     max_user_relazms: " << max_user_relazms()  << std::endl
+      << "     max_user_streams: " << max_user_streams()  << std::endl
+      << "         maxbandtotal: " << maxbandtotal()  << std::endl
+      << "             maxbeams: " << maxbeams()  << std::endl
+      << "          maxbrdf_idx: " << maxbrdf_idx()  << std::endl
+      << "        maxfinelayers: " << maxfinelayers()  << std::endl
+      << "           maxfourier: " << maxfourier()  << std::endl
+      << "            maxlayers: " << maxlayers()  << std::endl
+      << "           maxmoments: " << maxmoments()  << std::endl
+      << "     maxmoments_input: " << maxmoments_input()  << std::endl
+      << "       maxsthalf_brdf: " << maxsthalf_brdf()  << std::endl
+      << "           maxstreams: " << maxstreams()  << std::endl
+      << "         maxstreams_2: " << maxstreams_2()  << std::endl
+      << "      maxstreams_brdf: " << maxstreams_brdf()  << std::endl
+      << "        maxstreams_p1: " << maxstreams_p1()  << std::endl
+      << "   maxstreams_scaling: " << maxstreams_scaling()  << std::endl
+      << "             maxtotal: " << maxtotal()  << std::endl
+      << "            minus_one: " << minus_one()  << std::endl
+      << "            minus_two: " << minus_two()  << std::endl
+      << "       modfresnel_idx: " << modfresnel_idx()  << std::endl
+      << "       newcmglint_idx: " << newcmglint_idx()  << std::endl
+      << "       omega_smallnum: " << omega_smallnum()  << std::endl
+      << "                  one: " << one()  << std::endl
+      << "                onep5: " << onep5()  << std::endl
+      << "                  pi2: " << pi2()  << std::endl
+      << "                  pi4: " << pi4()  << std::endl
+      << "                  pie: " << pie()  << std::endl
+      << "                 pio2: " << pio2()  << std::endl
+      << "                 pio4: " << pio4()  << std::endl
+      << "              quarter: " << quarter()  << std::endl
+      << "           rahman_idx: " << rahman_idx()  << std::endl
+      << "        rossthick_idx: " << rossthick_idx()  << std::endl
+      << "         rossthin_idx: " << rossthin_idx()  << std::endl
+      << "          roujean_idx: " << roujean_idx()  << std::endl
+      << "       rtkhotspot_idx: " << rtkhotspot_idx()  << std::endl
+      << "             smallnum: " << smallnum()  << std::endl
+      << "         snowbrdf_idx: " << snowbrdf_idx()  << std::endl
+      << "         taylor_small: " << taylor_small()  << std::endl
+      << "                three: " << three()  << std::endl
+      << "                  two: " << two()  << std::endl
+      << "                upidx: " << upidx()  << std::endl
+      << "                 zero: " << zero()  << std::endl;
 
+  }
+
+  Lidort_Pars() { 
+    set_lidort_pars(&transfer_struct_c);
   }
 
 private:
-  Lidort_Pars() : bigexp(0), bpdfndvi_idx(0), bpdfsoil_idx(0), bpdfvegn_idx(0), coxmunk_idx(0), deg_to_rad(0), dnidx(0), eps3(0), eps4(0), eps5(0), four(0), half(0), hapke_idx(0), hopital_tolerance(0), lambertian_idx(0), lidense_idx(0), lidort_dbgunit(0), lidort_debug(0), lidort_errunit(0), lidort_funit(0), lidort_info(0), lidort_inunit(0), lidort_resunit(0), lidort_scenunit(0), lidort_serious(0), lidort_success(0), lidort_version_number(), lidort_warning(0), lisparse_idx(0), max_allstrms(0), max_allstrms_p1(0), max_atmoswfs(0), max_brdf_kernels(0), max_brdf_parameters(0), max_directions(0), max_geometries(0), max_messages(0), max_msrs_muquad(0), max_msrs_phiquad(0), max_partlayers(0), max_sleavewfs(0), max_surfacewfs(0), max_tau_qpath(0), max_tau_spath(0), max_tau_upath(0), max_taylor_terms(0), max_thermal_coeffs(0), max_user_levels(0), max_user_obsgeoms(0), max_user_relazms(0), max_user_streams(0), maxbandtotal(0), maxbeams(0), maxbrdf_idx(0), maxfinelayers(0), maxfourier(0), maxlayers(0), maxmoments(0), maxmoments_input(0), maxsthalf_brdf(0), maxstreams(0), maxstreams_2(0), maxstreams_brdf(0), maxstreams_p1(0), maxstreams_scaling(0), maxtotal(0), minus_one(0), minus_two(0), modfresnel_idx(0), newcmglint_idx(0), omega_smallnum(0), one(0), onep5(0), pi2(0), pi4(0), pie(0), pio2(0), pio4(0), quarter(0), rahman_idx(0), rossthick_idx(0), rossthin_idx(0), roujean_idx(0), rtkhotspot_idx(0), smallnum(0), snowbrdf_idx(0), taylor_small(0), three(0), two(0), upidx(0), zero(0) { 
-    set_lidort_pars(this);
-  }
+  struct lidort_pars_m transfer_struct_c;
 };
 
 

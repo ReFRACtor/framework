@@ -195,7 +195,7 @@ LidortLowHighCommon::LidortLowHighCommon()
   nmoms_low = 2*nstreams_low;
 
   nstreams_high = 8;
-  nmoms_high = Lidort_Pars::instance().maxmoments_input;
+  nmoms_high = Lidort_Pars::instance().maxmoments_input();
 
 }
 
