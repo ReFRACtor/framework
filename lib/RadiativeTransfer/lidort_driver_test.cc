@@ -18,10 +18,10 @@ bool check_brdf_inputs(boost::shared_ptr<LidortRtDriver>& lidort_driver) {
   Lidort_Exception_Handling& brdf_check_status = brdf_check.lidort_brdfcheck_status();
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
-  if (brdf_check_status.ts_status_inputcheck() != lid_pars.lidort_success)
+  if (brdf_check_status.ts_status_inputcheck() != lid_pars.lidort_success())
     std::cerr << brdf_check_status << std::endl;
 
-  return brdf_check_status.ts_status_inputcheck() == lid_pars.lidort_success;
+  return brdf_check_status.ts_status_inputcheck() == lid_pars.lidort_success();
 }
 
 BOOST_FIXTURE_TEST_SUITE(lidort_driver_lambertian_solar, GlobalFixture)

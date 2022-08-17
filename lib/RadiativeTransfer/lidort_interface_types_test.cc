@@ -18,97 +18,97 @@ BOOST_AUTO_TEST_CASE(lidort_pars)
   // Test obtaining instance
   Lidort_Pars tst_obj = Lidort_Pars::instance();
   // Test that the value obtained from fortran is as expected
-  BOOST_CHECK_CLOSE(tst_obj.bigexp, 32.0, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfndvi_idx, BPDFNDVI);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfsoil_idx, BREONSOIL);
-  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx, BREONVEG);
-  BOOST_CHECK_EQUAL(tst_obj.coxmunk_idx, COXMUNK);
-  BOOST_CHECK_CLOSE(tst_obj.deg_to_rad, tst_obj.pie/180.0, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.dnidx, 2);
-  BOOST_CHECK_CLOSE(tst_obj.eps3, 0.001, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.eps4, 0.0001, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.eps5, 0.00001, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.four, 4.0, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.half, 0.5, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.hapke_idx, HAPKE);
-  BOOST_CHECK_CLOSE(tst_obj.hopital_tolerance, tst_obj.eps5, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.lambertian_idx, LAMBERTIAN);
-  BOOST_CHECK_EQUAL(tst_obj.lidense_idx, LIDENSE);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_dbgunit, 26);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_debug, 1);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_errunit, 25);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_funit, 23);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_info, 2);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_inunit, 21);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_resunit, 24);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_scenunit, 22);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_serious, 4);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_success, 0);
-  BOOST_CHECK_EQUAL(tst_obj.lidort_version_number, "3.8.3");
-  BOOST_CHECK_EQUAL(tst_obj.lidort_warning, 3);
-  BOOST_CHECK_EQUAL(tst_obj.lisparse_idx, LISPARSE);
-  BOOST_CHECK_EQUAL(tst_obj.max_allstrms, tst_obj.max_user_streams + tst_obj.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.max_allstrms_p1, tst_obj.max_allstrms + tst_obj.maxbeams*tst_obj.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.max_atmoswfs, LIDORT_MAXATMOSWFS);
-  BOOST_CHECK_EQUAL(tst_obj.max_brdf_kernels, 4);
-  BOOST_CHECK_EQUAL(tst_obj.max_brdf_parameters, 4);
-  BOOST_CHECK_EQUAL(tst_obj.max_directions, 2);
-  BOOST_CHECK_EQUAL(tst_obj.max_geometries, tst_obj.max_user_streams*tst_obj.max_user_relazms*tst_obj.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.max_messages, 25);
-  BOOST_CHECK_EQUAL(tst_obj.max_msrs_muquad, 50);
-  BOOST_CHECK_EQUAL(tst_obj.max_msrs_phiquad, 100);
-  BOOST_CHECK_EQUAL(tst_obj.max_partlayers, 2);
-  BOOST_CHECK_EQUAL(tst_obj.max_sleavewfs, 2);
-  BOOST_CHECK_EQUAL(tst_obj.max_surfacewfs, 7);
-  BOOST_CHECK_CLOSE(tst_obj.max_tau_qpath, tst_obj.bigexp, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.max_tau_spath, tst_obj.bigexp, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.max_tau_upath, tst_obj.bigexp, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.max_taylor_terms, 7);
-  BOOST_CHECK_EQUAL(tst_obj.max_thermal_coeffs, 3);
-  BOOST_CHECK_EQUAL(tst_obj.max_user_levels, 5);
-  BOOST_CHECK_EQUAL(tst_obj.max_user_obsgeoms, 8);
-  BOOST_CHECK_EQUAL(tst_obj.max_user_relazms, 3);
-  BOOST_CHECK_EQUAL(tst_obj.max_user_streams, 4);
-  BOOST_CHECK_EQUAL(tst_obj.maxbandtotal, 9*tst_obj.maxstreams - 2);
-  BOOST_CHECK_EQUAL(tst_obj.maxbeams, 4);
-  BOOST_CHECK_EQUAL(tst_obj.maxbrdf_idx, tst_obj.snowbrdf_idx);
-  BOOST_CHECK_EQUAL(tst_obj.maxfinelayers, 4);
-  BOOST_CHECK_EQUAL(tst_obj.maxfourier, 2*tst_obj.maxstreams - 1);
-  BOOST_CHECK_EQUAL(tst_obj.maxlayers, LIDORT_MAXLAYER);
-  BOOST_CHECK_EQUAL(tst_obj.maxmoments, 2*tst_obj.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.maxmoments_input, 180);
-  BOOST_CHECK_EQUAL(tst_obj.maxsthalf_brdf, tst_obj.maxstreams_brdf / 2);
-  BOOST_CHECK_EQUAL(tst_obj.maxstreams, 16);
-  BOOST_CHECK_EQUAL(tst_obj.maxstreams_2, 2*tst_obj.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.maxstreams_brdf, 100);
-  BOOST_CHECK_EQUAL(tst_obj.maxstreams_p1, tst_obj.maxstreams + 1);
-  BOOST_CHECK_EQUAL(tst_obj.maxstreams_scaling, 24);
-  BOOST_CHECK_EQUAL(tst_obj.maxtotal, tst_obj.maxlayers*tst_obj.maxstreams_2);
-  BOOST_CHECK_CLOSE(tst_obj.minus_one, - tst_obj.one, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.minus_two, - tst_obj.two, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.modfresnel_idx, MODFRESNEL);
-  BOOST_CHECK_EQUAL(tst_obj.newcmglint_idx, NEWCMGLINT);
-  BOOST_CHECK_CLOSE(tst_obj.omega_smallnum, 0.00000001, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.one, 1.0, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.onep5, 1.5, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.pi2, tst_obj.two  * tst_obj.pie, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.pi4, tst_obj.four * tst_obj.pie, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.pie, acos(tst_obj.minus_one), 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.pio2, tst_obj.half * tst_obj.pie, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.pio4, tst_obj.quarter * tst_obj.pie, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.quarter, 0.25, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.rahman_idx, RAHMAN);
-  BOOST_CHECK_EQUAL(tst_obj.rossthick_idx, ROSSTHICK);
-  BOOST_CHECK_EQUAL(tst_obj.rossthin_idx, ROSSTHIN);
-  BOOST_CHECK_EQUAL(tst_obj.roujean_idx, ROUJEAN);
-  BOOST_CHECK_EQUAL(tst_obj.rtkhotspot_idx, RTKHOTSPOT);
-  BOOST_CHECK_CLOSE(tst_obj.smallnum, 0.000000001, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.snowbrdf_idx, SNOWBRDF);
-  BOOST_CHECK_CLOSE(tst_obj.taylor_small, 0.0001, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.three, 3.0, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.two, 2.0, 1e-10);
-  BOOST_CHECK_EQUAL(tst_obj.upidx, 1);
-  BOOST_CHECK_CLOSE(tst_obj.zero, 0.0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.bigexp(), 32.0, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfndvi_idx(), BPDFNDVI);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfsoil_idx(), BREONSOIL);
+  BOOST_CHECK_EQUAL(tst_obj.bpdfvegn_idx(), BREONVEG);
+  BOOST_CHECK_EQUAL(tst_obj.coxmunk_idx(), COXMUNK);
+  BOOST_CHECK_CLOSE(tst_obj.deg_to_rad(), tst_obj.pie()/180.0, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.dnidx(), 2);
+  BOOST_CHECK_CLOSE(tst_obj.eps3(), 0.001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.eps4(), 0.0001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.eps5(), 0.00001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.four(), 4.0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.half(), 0.5, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.hapke_idx(), HAPKE);
+  BOOST_CHECK_CLOSE(tst_obj.hopital_tolerance(), tst_obj.eps5(), 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.lambertian_idx(), LAMBERTIAN);
+  BOOST_CHECK_EQUAL(tst_obj.lidense_idx(), LIDENSE);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_dbgunit(), 26);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_debug(), 1);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_errunit(), 25);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_funit(), 23);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_info(), 2);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_inunit(), 21);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_resunit(), 24);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_scenunit(), 22);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_serious(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_success(), 0);
+  BOOST_CHECK_EQUAL(tst_obj.lidort_version_number(), "3.8.3");
+  BOOST_CHECK_EQUAL(tst_obj.lidort_warning(), 3);
+  BOOST_CHECK_EQUAL(tst_obj.lisparse_idx(), LISPARSE);
+  BOOST_CHECK_EQUAL(tst_obj.max_allstrms(), tst_obj.max_user_streams() + tst_obj.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.max_allstrms_p1(), tst_obj.max_allstrms() + tst_obj.maxbeams()*tst_obj.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.max_atmoswfs(), LIDORT_MAXATMOSWFS);
+  BOOST_CHECK_EQUAL(tst_obj.max_brdf_kernels(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.max_brdf_parameters(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.max_directions(), 2);
+  BOOST_CHECK_EQUAL(tst_obj.max_geometries(), tst_obj.max_user_streams()*tst_obj.max_user_relazms()*tst_obj.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.max_messages(), 25);
+  BOOST_CHECK_EQUAL(tst_obj.max_msrs_muquad(), 50);
+  BOOST_CHECK_EQUAL(tst_obj.max_msrs_phiquad(), 100);
+  BOOST_CHECK_EQUAL(tst_obj.max_partlayers(), 2);
+  BOOST_CHECK_EQUAL(tst_obj.max_sleavewfs(), 2);
+  BOOST_CHECK_EQUAL(tst_obj.max_surfacewfs(), 7);
+  BOOST_CHECK_CLOSE(tst_obj.max_tau_qpath(), tst_obj.bigexp(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.max_tau_spath(), tst_obj.bigexp(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.max_tau_upath(), tst_obj.bigexp(), 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.max_taylor_terms(), 7);
+  BOOST_CHECK_EQUAL(tst_obj.max_thermal_coeffs(), 3);
+  BOOST_CHECK_EQUAL(tst_obj.max_user_levels(), 5);
+  BOOST_CHECK_EQUAL(tst_obj.max_user_obsgeoms(), 8);
+  BOOST_CHECK_EQUAL(tst_obj.max_user_relazms(), 3);
+  BOOST_CHECK_EQUAL(tst_obj.max_user_streams(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.maxbandtotal(), 9*tst_obj.maxstreams() - 2);
+  BOOST_CHECK_EQUAL(tst_obj.maxbeams(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.maxbrdf_idx(), tst_obj.snowbrdf_idx());
+  BOOST_CHECK_EQUAL(tst_obj.maxfinelayers(), 4);
+  BOOST_CHECK_EQUAL(tst_obj.maxfourier(), 2*tst_obj.maxstreams() - 1);
+  BOOST_CHECK_EQUAL(tst_obj.maxlayers(), LIDORT_MAXLAYER);
+  BOOST_CHECK_EQUAL(tst_obj.maxmoments(), 2*tst_obj.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.maxmoments_input(), 180);
+  BOOST_CHECK_EQUAL(tst_obj.maxsthalf_brdf(), tst_obj.maxstreams_brdf() / 2);
+  BOOST_CHECK_EQUAL(tst_obj.maxstreams(), 16);
+  BOOST_CHECK_EQUAL(tst_obj.maxstreams_2(), 2*tst_obj.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.maxstreams_brdf(), 100);
+  BOOST_CHECK_EQUAL(tst_obj.maxstreams_p1(), tst_obj.maxstreams() + 1);
+  BOOST_CHECK_EQUAL(tst_obj.maxstreams_scaling(), 24);
+  BOOST_CHECK_EQUAL(tst_obj.maxtotal(), tst_obj.maxlayers()*tst_obj.maxstreams_2());
+  BOOST_CHECK_CLOSE(tst_obj.minus_one(), - tst_obj.one(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.minus_two(), - tst_obj.two(), 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.modfresnel_idx(), MODFRESNEL);
+  BOOST_CHECK_EQUAL(tst_obj.newcmglint_idx(), NEWCMGLINT);
+  BOOST_CHECK_CLOSE(tst_obj.omega_smallnum(), 0.00000001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.one(), 1.0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.onep5(), 1.5, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.pi2(), tst_obj.two()  * tst_obj.pie(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.pi4(), tst_obj.four() * tst_obj.pie(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.pie(), acos(tst_obj.minus_one()), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.pio2(), tst_obj.half() * tst_obj.pie(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.pio4(), tst_obj.quarter() * tst_obj.pie(), 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.quarter(), 0.25, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.rahman_idx(), RAHMAN);
+  BOOST_CHECK_EQUAL(tst_obj.rossthick_idx(), ROSSTHICK);
+  BOOST_CHECK_EQUAL(tst_obj.rossthin_idx(), ROSSTHIN);
+  BOOST_CHECK_EQUAL(tst_obj.roujean_idx(), ROUJEAN);
+  BOOST_CHECK_EQUAL(tst_obj.rtkhotspot_idx(), RTKHOTSPOT);
+  BOOST_CHECK_CLOSE(tst_obj.smallnum(), 0.000000001, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.snowbrdf_idx(), SNOWBRDF);
+  BOOST_CHECK_CLOSE(tst_obj.taylor_small(), 0.0001, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.three(), 3.0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.two(), 2.0, 1e-10);
+  BOOST_CHECK_EQUAL(tst_obj.upidx(), 1);
+  BOOST_CHECK_CLOSE(tst_obj.zero(), 0.0, 1e-10);
   
 }
 
@@ -124,10 +124,10 @@ BOOST_AUTO_TEST_CASE(brdf_linsup_inputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_factor_wfs().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_params_wfs().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_params_wfs().extent(1), lid_pars.max_brdf_parameters);
-  BOOST_CHECK_EQUAL(tst_obj.bs_do_kparams_derivs().extent(0), lid_pars.max_brdf_kernels);
+  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_factor_wfs().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_params_wfs().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_do_kernel_params_wfs().extent(1), lid_pars.max_brdf_parameters());
+  BOOST_CHECK_EQUAL(tst_obj.bs_do_kparams_derivs().extent(0), lid_pars.max_brdf_kernels());
   
 
   // Test initialization
@@ -161,30 +161,30 @@ BOOST_AUTO_TEST_CASE(brdf_linsup_outputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(3), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(2), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_emissivity().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_emissivity().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(2), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(3), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(2), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_emissivity().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_emissivity().extent(1), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f().extent(3), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_brdf_f_0().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(2), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_dbounce_brdfunc().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_emissivity().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_emissivity().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(2), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f().extent(3), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(2), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_brdf_f_0().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_emissivity().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.bs_ls_user_emissivity().extent(1), lid_pars.max_user_streams());
   
 
   // Test initialization
@@ -224,20 +224,20 @@ BOOST_AUTO_TEST_CASE(brdf_sup_inputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.bs_beam_szas().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_factors().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_parameters().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_parameters().extent(1), lid_pars.max_brdf_parameters);
-  BOOST_CHECK_EQUAL(tst_obj.bs_lambertian_kernel_flag().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_n_brdf_parameters().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_angles_input().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.bs_beam_szas().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_factors().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_parameters().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_parameters().extent(1), lid_pars.max_brdf_parameters());
+  BOOST_CHECK_EQUAL(tst_obj.bs_lambertian_kernel_flag().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_n_brdf_parameters().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_angles_input().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(0), lid_pars.max_user_streams());
   BOOST_CHECK_EQUAL(tst_obj.bs_user_doublets().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms());
   BOOST_CHECK_EQUAL(tst_obj.bs_user_obsgeoms().extent(1), 3);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_relazms().extent(0), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.bs_which_brdf().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_winddir().extent(0), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_relazms().extent(0), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.bs_which_brdf().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_winddir().extent(0), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -322,25 +322,25 @@ BOOST_AUTO_TEST_CASE(brdf_sup_outputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_bsa_kernels().extent(0), lid_pars.max_brdf_kernels);
-  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(1), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_emissivity().extent(0), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_user_emissivity().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.bs_wsa_kernels().extent(0), lid_pars.max_brdf_kernels);
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_brdf_f_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_bsa_kernels().extent(0), lid_pars.max_brdf_kernels());
+  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(1), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.bs_dbounce_brdfunc().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_emissivity().extent(0), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_brdf_f_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_user_emissivity().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.bs_wsa_kernels().extent(0), lid_pars.max_brdf_kernels());
   
 
   // Test initialization
@@ -428,17 +428,17 @@ BOOST_AUTO_TEST_CASE(sleave_sup_inputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.sl_beam_szas().extent(0), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.sl_beam_szas().extent(0), lid_pars.maxbeams());
   BOOST_CHECK_EQUAL(tst_obj.sl_fl_epoch().extent(0), 6);
   BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(0), 3);
   BOOST_CHECK_EQUAL(tst_obj.sl_fl_inputgaussians().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_angles_input().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_angles_input().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(0), lid_pars.max_user_streams());
   BOOST_CHECK_EQUAL(tst_obj.sl_user_doublets().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms);
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(0), lid_pars.max_user_obsgeoms());
   BOOST_CHECK_EQUAL(tst_obj.sl_user_obsgeoms().extent(1), 3);
-  BOOST_CHECK_EQUAL(tst_obj.sl_user_relazms().extent(0), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.sl_winddir().extent(0), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.sl_user_relazms().extent(0), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.sl_winddir().extent(0), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -511,8 +511,8 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_lincontrol)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_layer_vary_flag().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_layer_vary_number().extent(0), lid_pars.maxlayers);
+  BOOST_CHECK_EQUAL(tst_obj.ts_layer_vary_flag().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_layer_vary_number().extent(0), lid_pars.maxlayers());
   
 
   // Test initialization
@@ -540,19 +540,19 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_linoptical)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_deltau_vert_input().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_deltau_vert_input().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(1), lid_pars.maxmoments_input+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(2), lid_pars.maxlayers);
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_deltau_vert_input().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_deltau_vert_input().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_dn().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasfunc_input_up().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(1), lid_pars.maxmoments_input()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(2), lid_pars.maxlayers());
   
 
   // Test initialization
@@ -649,106 +649,106 @@ BOOST_AUTO_TEST_CASE(lidort_linatmos)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(0), lid_pars.max_user_levels);
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(0), lid_pars.max_user_levels());
   BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(2), lid_pars.maxlayers+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(2), lid_pars.maxlayers+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(3), lid_pars.max_directions);
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(2), lid_pars.maxlayers()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_fluxes().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(2), lid_pars.maxlayers()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_abbwfs_jacobians().extent(3), lid_pars.max_directions());
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(1), lid_pars.max_atmoswfs);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_colwf().extent(1), lid_pars.max_atmoswfs());
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(2), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_colwf().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_colwf().extent(1), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(2), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(4), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(2), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(2), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_surf_mssts().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lc_surf_mssts().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(3), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(2), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(4), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_colwf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_profwf().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_profwf().extent(1), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_colwf().extent(0), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_colwf().extent(1), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(0), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(2), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(3), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(4), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(1), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(2), lid_pars.max_atmoswfs);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes_profwf().extent(2), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_colwf().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_colwf().extent(1), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user_profwf().extent(2), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_colwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct_profwf().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_colwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct_profwf().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_colwf().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_profwf().extent(4), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_layer_mssts().extent(2), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_lostrans().extent(2), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_surf_mssts().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lc_surf_mssts().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_layer_mssts().extent(3), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_lostrans().extent(2), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lp_surf_mssts().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_colwf().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_profwf().extent(4), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_colwf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_profwf().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_sbterm_profwf().extent(1), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_colwf().extent(0), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_colwf().extent(1), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(0), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm_profwf().extent(2), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(3), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf().extent(4), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_colwf().extent(1), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_transbeam_profwf().extent(2), lid_pars.max_atmoswfs());
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(1), lid_pars.max_atmoswfs);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_colwf().extent(1), lid_pars.max_atmoswfs());
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(2), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(1), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(2), lid_pars.max_atmoswfs);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes_profwf().extent(2), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_colwf().extent(1), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user_profwf().extent(2), lid_pars.max_atmoswfs());
   
 
   // Test initialization
@@ -863,29 +863,29 @@ BOOST_AUTO_TEST_CASE(lidort_linsurf)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(2), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_surf_mssts().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_surf_mssts().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(0), lid_pars.max_user_levels);
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse_surfwf().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_layer_mssts().extent(2), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_surf_mssts().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_surf_mssts().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse_surfwf().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(0), lid_pars.max_user_levels());
   BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(2), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(2), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(3), lid_pars.max_directions);
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_fluxes().extent(2), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_sbbwfs_jacobians().extent(2), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf().extent(3), lid_pars.max_directions());
   
 
   // Test initialization
@@ -943,30 +943,30 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_brdf)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(3), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_emissivity().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_emissivity().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(2), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(2), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(3), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(2), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_emissivity().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_emissivity().extent(1), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f().extent(3), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_brdf_f_0().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_emissivity().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_emissivity().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(2), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_exactdb_brdfunc().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(2), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f().extent(3), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(2), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_brdf_f_0().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_emissivity().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_ls_user_emissivity().extent(1), lid_pars.max_user_streams());
   
 
   // Test initialization
@@ -1006,20 +1006,20 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_sleave)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(0), lid_pars.max_sleavewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_isotropic().extent(0), lid_pars.max_sleavewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_isotropic().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(0), lid_pars.max_sleavewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(2), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(3), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(0), lid_pars.max_sleavewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(1), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(2), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(3), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(0), lid_pars.max_sleavewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_f_0().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_isotropic().extent(0), lid_pars.max_sleavewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_isotropic().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(0), lid_pars.max_sleavewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(2), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_slterm_userangles().extent(3), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(0), lid_pars.max_sleavewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(1), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(2), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lssl_user_slterm_f_0().extent(3), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -1050,22 +1050,22 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_ss_atmos)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(2), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(3), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(3), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(0), lid_pars.max_atmoswfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(2), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(3), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(4), lid_pars.max_directions);
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_db().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(2), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_columnwf_ss().extent(3), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_db().extent(3), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(2), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(3), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_profilewf_ss().extent(4), lid_pars.max_directions());
   
 
   // Test initialization
@@ -1096,9 +1096,9 @@ BOOST_AUTO_TEST_CASE(lidort_linsup_ss_surf)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(0), lid_pars.max_surfacewfs);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(1), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(2), lid_pars.max_geometries);
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(0), lid_pars.max_surfacewfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(1), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surfacewf_db().extent(2), lid_pars.max_geometries());
   
 
   // Test initialization
@@ -1157,36 +1157,36 @@ BOOST_AUTO_TEST_CASE(lidort_main_outputs)
 
   // Test variable shapes
   BOOST_CHECK_EQUAL(tst_obj.ts_albmed_fluxes().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_contribs().extent(0), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_contribs().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(2), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_fourier_saved().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(2), lid_pars.max_directions);
-  BOOST_CHECK_EQUAL(tst_obj.ts_layer_mssts().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_layer_mssts().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(1), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(2), lid_pars.max_directions);
+  BOOST_CHECK_EQUAL(tst_obj.ts_albmed_user().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_contribs().extent(0), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_contribs().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnflux_direct().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_dnmeani_direct().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_flux_diffuse().extent(2), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_fourier_saved().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(1), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity().extent(2), lid_pars.max_directions());
+  BOOST_CHECK_EQUAL(tst_obj.ts_layer_mssts().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_layer_mssts().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_lostrans().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(1), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_meani_diffuse().extent(2), lid_pars.max_directions());
   BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(1), lid_pars.maxlayers+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm().extent(0), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_solarbeam_boatrans().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_surf_mssts().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trans1_beam().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trans1_user().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_pathgeoms().extent(1), lid_pars.maxlayers()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_planetary_transterm().extent(0), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_solarbeam_boatrans().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_surf_mssts().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trans1_beam().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_trans1_user().extent(0), lid_pars.max_user_streams());
   BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_fluxes().extent(0), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_trnmed_user().extent(0), lid_pars.max_user_streams());
   
 
   // Test initialization
@@ -1265,16 +1265,16 @@ BOOST_AUTO_TEST_CASE(lidort_wladjusted_outputs)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(1), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_isotropic().extent(0), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(1), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_direct().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_ords_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_f_user_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_wladjusted_isotropic().extent(0), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -1364,23 +1364,23 @@ BOOST_AUTO_TEST_CASE(lidort_sup_brdf)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_emissivity().extent(0), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(1), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(2), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_emissivity().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_brdf_f_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_emissivity().extent(0), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(1), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.ts_exactdb_brdfunc().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f().extent(2), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_brdf_f_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_emissivity().extent(0), lid_pars.max_user_streams());
   
 
   // Test initialization
@@ -1420,16 +1420,16 @@ BOOST_AUTO_TEST_CASE(lidort_sup_sleave)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(1), lid_pars.maxstreams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_isotropic().extent(0), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(1), lid_pars.max_user_relazms);
-  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(2), lid_pars.maxbeams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(0), lid_pars.maxmoments+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(1), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(2), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(1), lid_pars.maxstreams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_f_0().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_isotropic().extent(0), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(1), lid_pars.max_user_relazms());
+  BOOST_CHECK_EQUAL(tst_obj.ts_slterm_userangles().extent(2), lid_pars.maxbeams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(0), lid_pars.maxmoments()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(1), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_slterm_f_0().extent(2), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -1460,13 +1460,13 @@ BOOST_AUTO_TEST_CASE(lidort_sup_ss)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_contribs_ss().extent(0), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_contribs_ss().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_db().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_db().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(2), lid_pars.max_directions);
+  BOOST_CHECK_EQUAL(tst_obj.ts_contribs_ss().extent(0), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_contribs_ss().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_db().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_db().extent(1), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(1), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_intensity_ss().extent(2), lid_pars.max_directions());
   
 
   // Test initialization
@@ -1619,10 +1619,10 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_chapman)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_finegrid().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_height_grid().extent(0), lid_pars.maxlayers+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_pressure_grid().extent(0), lid_pars.maxlayers+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_temperature_grid().extent(0), lid_pars.maxlayers+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_finegrid().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_height_grid().extent(0), lid_pars.maxlayers()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_pressure_grid().extent(0), lid_pars.maxlayers()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_temperature_grid().extent(0), lid_pars.maxlayers()+1);
   
 
   // Test initialization
@@ -1654,14 +1654,14 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_optical)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_deltau_vert_input().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_dn().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_dn().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_up().extent(0), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_up().extent(1), lid_pars.max_geometries);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(0), lid_pars.maxmoments_input+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(1), lid_pars.maxlayers);
-  BOOST_CHECK_EQUAL(tst_obj.ts_thermal_bb_input().extent(0), lid_pars.maxlayers+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_deltau_vert_input().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_dn().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_dn().extent(1), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_up().extent(0), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasfunc_input_up().extent(1), lid_pars.max_geometries());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(0), lid_pars.maxmoments_input()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_thermal_bb_input().extent(0), lid_pars.maxlayers()+1);
   
 
   // Test initialization
@@ -1800,7 +1800,7 @@ BOOST_AUTO_TEST_CASE(lidort_modified_sunrays)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_beam_szas().extent(0), lid_pars.maxbeams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_beam_szas().extent(0), lid_pars.maxbeams());
   
 
   // Test initialization
@@ -1823,13 +1823,13 @@ BOOST_AUTO_TEST_CASE(lidort_modified_uservalues)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_angles_input().extent(0), lid_pars.max_user_streams);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(0), lid_pars.max_user_streams);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_angles_input().extent(0), lid_pars.max_user_streams());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(0), lid_pars.max_user_streams());
   BOOST_CHECK_EQUAL(tst_obj.ts_user_doublets().extent(1), 2);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_levels().extent(0), lid_pars.max_user_levels);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(0), lid_pars.max_user_obsgeoms);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_levels().extent(0), lid_pars.max_user_levels());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(0), lid_pars.max_user_obsgeoms());
   BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(1), 3);
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_relazms().extent(0), lid_pars.max_user_relazms);
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_relazms().extent(0), lid_pars.max_user_relazms());
   
 
   // Test initialization
@@ -1887,7 +1887,7 @@ BOOST_AUTO_TEST_CASE(lidort_modified_optical)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_omega_total_input().extent(0), lid_pars.maxlayers);
+  BOOST_CHECK_EQUAL(tst_obj.ts_omega_total_input().extent(0), lid_pars.maxlayers());
   
 
   // Test initialization

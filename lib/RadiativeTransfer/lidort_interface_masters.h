@@ -685,8 +685,8 @@ public:
     masters_m_master_wrap(&do_debug_input_in, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl);
     
     Lidort_Pars lid_pars = Lidort_Pars::instance();
-    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success ||
-        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success ) {
+    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success() ||
+        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success() ) {
        std::stringstream err_msg;
        err_msg << "LIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception
@@ -1179,8 +1179,8 @@ public:
     lcs_masters_m_lcs_master_wrap(&do_debug_input_in, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
     Lidort_Pars lid_pars = Lidort_Pars::instance();
-    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success ||
-        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success ) {
+    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success() ||
+        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success() ) {
        std::stringstream err_msg;
        err_msg << "LIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception
@@ -1458,8 +1458,8 @@ public:
     lps_masters_m_lps_master_wrap(&do_debug_input_in, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
     Lidort_Pars lid_pars = Lidort_Pars::instance();
-    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success ||
-        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success ) {
+    if( lidort_out().status().ts_status_inputcheck() != lid_pars.lidort_success() ||
+        lidort_out().status().ts_status_calculation() != lid_pars.lidort_success() ) {
        std::stringstream err_msg;
        err_msg << "LIDORT Error at " << __FILE__ << ":" << __LINE__ << std::endl;
        // Output the full details of the error message to stderr since the exception

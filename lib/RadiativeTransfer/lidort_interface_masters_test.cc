@@ -182,9 +182,9 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
 
   // Read lidort config file
   inp_master.read_config(test_data_dir() + "expected/lidort_interface_masters/3p8_LIDORT_ReadInput.cfg");
-  BOOST_CHECK_EQUAL(inp_master.lidort_inputstatus().ts_status_inputread(), lid_pars.lidort_success); // was read successful?
+  BOOST_CHECK_EQUAL(inp_master.lidort_inputstatus().ts_status_inputread(), lid_pars.lidort_success()); // was read successful?
 
-  if ( inp_master.lidort_inputstatus().ts_status_inputread() != lid_pars.lidort_success )
+  if ( inp_master.lidort_inputstatus().ts_status_inputread() != lid_pars.lidort_success() )
     std::cerr << inp_master.lidort_inputstatus() << std::endl;
 
   // Copy values from input master to lidort master
@@ -207,10 +207,10 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   Lidort_Linsurf& lid_lsoutput = lps_master.lidort_linout().surf();
 
   // Get the preprepared atmosphere
-  Array<double, 2> raymoms(3,lid_pars.maxlayers);
-  Array<double, 1> height_grid(lid_pars.maxlayers+1);
-  Array<double, 1> molext(lid_pars.maxlayers);
-  Array<double, 1> molomg(lid_pars.maxlayers);
+  Array<double, 2> raymoms(3,lid_pars.maxlayers());
+  Array<double, 1> height_grid(lid_pars.maxlayers()+1);
+  Array<double, 1> molext(lid_pars.maxlayers());
+  Array<double, 1> molomg(lid_pars.maxlayers());
 
   int nlayers = fcont.ts_nlayers();
   IfstreamCs atm_data(test_data_dir() + "expected/lidort_interface_masters/input_atmos.dat");
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
 
 
   // Add Aerosols bottom 6 layers, spread evenly
-  Array<double, 1> aermoms(lid_pars.maxmoments_input+1);
+  Array<double, 1> aermoms(lid_pars.maxmoments_input()+1);
 
   int nmoments_input = 80;
   double gaer = 0.8e0;
@@ -245,13 +245,13 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   // so do not subtract one from translating indexes, also increase the size of the array,
   // by 1
   double lambertian_albedo;
-  Array<double, 1> deltau_vert_input(lid_pars.maxlayers);
-  Array<double, 1> omega_total_input(lid_pars.maxlayers);
-  Array<double, 2> phasmoms_total_input(lid_pars.maxmoments_input+1, lid_pars.maxlayers);
+  Array<double, 1> deltau_vert_input(lid_pars.maxlayers());
+  Array<double, 1> omega_total_input(lid_pars.maxlayers());
+  Array<double, 2> phasmoms_total_input(lid_pars.maxmoments_input()+1, lid_pars.maxlayers());
 
-  Array<double, 2> l_deltau_vert_input(lid_pars.max_atmoswfs,lid_pars.maxlayers);
-  Array<double, 2> l_omega_total_input(lid_pars.max_atmoswfs,lid_pars.maxlayers);
-  Array<double, 3> l_phasmoms_total_input(lid_pars.max_atmoswfs,lid_pars.maxmoments_input+1,lid_pars.maxlayers);
+  Array<double, 2> l_deltau_vert_input(lid_pars.max_atmoswfs(),lid_pars.maxlayers());
+  Array<double, 2> l_omega_total_input(lid_pars.max_atmoswfs(),lid_pars.maxlayers());
+  Array<double, 3> l_phasmoms_total_input(lid_pars.max_atmoswfs(),lid_pars.maxmoments_input()+1,lid_pars.maxlayers());
 
   lambertian_albedo = 0.0;
   deltau_vert_input = 0.0;
@@ -398,10 +398,10 @@ BOOST_AUTO_TEST_CASE(lidort_lps_master)
   int inp_status = lps_master.lidort_out().status().ts_status_inputcheck();
   int calc_status = lps_master.lidort_out().status().ts_status_calculation();
 
-  BOOST_CHECK_EQUAL(inp_status, lid_pars.lidort_success);
-  BOOST_CHECK_EQUAL(calc_status, lid_pars.lidort_success);
+  BOOST_CHECK_EQUAL(inp_status, lid_pars.lidort_success());
+  BOOST_CHECK_EQUAL(calc_status, lid_pars.lidort_success());
 
-  if ( inp_status != lid_pars.lidort_success || calc_status != lid_pars.lidort_success )
+  if ( inp_status != lid_pars.lidort_success() || calc_status != lid_pars.lidort_success() )
     std::cerr << lps_master.lidort_out() << std::endl;
 
   // Read expected outputs
