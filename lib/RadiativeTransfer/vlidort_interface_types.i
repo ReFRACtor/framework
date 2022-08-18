@@ -2,144 +2,191 @@
 
 %include "fp_common.i"
 
+%include "spurr_interface_types.i"
+
 %{
 #include "vlidort_interface_types.h"
 %}
 
 %fp_shared_ptr(FullPhysics::VLidort_Pars);
 
+%fp_shared_ptr(FullPhysics::VBrdf_Linsup_Inputs);
+%fp_shared_ptr(FullPhysics::VBrdf_Linsup_Outputs);
+%fp_shared_ptr(FullPhysics::VBrdf_Sup_Inputs);
+%fp_shared_ptr(FullPhysics::VBrdf_Sup_Outputs);
+%fp_shared_ptr(FullPhysics::VBrdf_Input_Exception_Handling);
+%fp_shared_ptr(FullPhysics::VBrdf_Output_Exception_Handling);
+%fp_shared_ptr(FullPhysics::VSleave_Sup_Inputs);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Lincontrol);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Linoptical);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Lininputs);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Lincontrol);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Lininputs);
+%fp_shared_ptr(FullPhysics::VLidort_Lincol);
+%fp_shared_ptr(FullPhysics::VLidort_Linprof);
+%fp_shared_ptr(FullPhysics::VLidort_Linatmos);
+%fp_shared_ptr(FullPhysics::VLidort_Linsurf);
+%fp_shared_ptr(FullPhysics::VLidort_Linoutputs);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Brdf);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Sleave);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Ss_Col);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Ss_Prof);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Ss_Surf);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Ss);
+%fp_shared_ptr(FullPhysics::VLidort_Linsup_Inout);
+%fp_shared_ptr(FullPhysics::VLidort_Main_Outputs);
+%fp_shared_ptr(FullPhysics::VLidort_Wladjusted_Outputs);
+%fp_shared_ptr(FullPhysics::VLidort_Exception_Handling);
+%fp_shared_ptr(FullPhysics::VLidort_Input_Exception_Handling);
+%fp_shared_ptr(FullPhysics::VLidort_Outputs);
+%fp_shared_ptr(FullPhysics::VLidort_Sup_Brdf);
+%fp_shared_ptr(FullPhysics::VLidort_Sup_Sleave);
+%fp_shared_ptr(FullPhysics::VLidort_Sup_Ss);
+%fp_shared_ptr(FullPhysics::VLidort_Sup_Inout);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Boolean);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Control);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Sunrays);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Uservalues);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Chapman);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Optical);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Write);
+%fp_shared_ptr(FullPhysics::VLidort_Fixed_Inputs);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Boolean);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Control);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Sunrays);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Uservalues);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Chapman);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Optical);
+%fp_shared_ptr(FullPhysics::VLidort_Modified_Inputs);
+ 
+
 namespace FullPhysics {
 
 %nodefaultctor VLidort_Pars;
-%nodefaultctor Spurr_Type_Structure;
 
+class VLidort_Pars : public Spurr_Pars_Base {
+public:
 
-struct VLidort_Pars {
-
-  const double bigexp;
-  const int bpdfndvi_idx;
-  const int bpdfsoil_idx;
-  const int bpdfvegn_idx;
-  const int coxmunk_idx;
-  const double deg_to_rad;
-  const int dnidx;
-  const double eps3;
-  const double eps4;
-  const double eps5;
-  const double four;
-  const int gisscoxmunk_cri_idx;
-  const int gisscoxmunk_idx;
-  const double half;
-  const int hapke_idx;
-  const double hopital_tolerance;
-  const int lambertian_idx;
-  const int lidense_idx;
-  const int lisparse_idx;
-  const int max_allstrms;
-  const int max_allstrms_p1;
-  const int max_atmoswfs;
-  const int max_brdf_kernels;
-  const int max_brdf_parameters;
-  const int max_directions;
-  const int max_geometries;
-  const int max_messages;
-  const int max_msrs_muquad;
-  const int max_msrs_phiquad;
-  const int max_partlayers;
-  const int max_psols;
-  const int max_scatpsols;
-  const int max_sleavewfs;
-  const int max_surfacewfs;
-  const int max_szangles;
-  const double max_tau_qpath;
-  const double max_tau_spath;
-  const double max_tau_upath;
-  const int max_taylor_terms;
-  const int max_thermal_coeffs;
-  const int max_user_levels;
-  const int max_user_obsgeoms;
-  const int max_user_relazms;
-  const int max_user_streams;
-  const int max_user_vzangles;
-  const int max_ustrmstks;
-  const int maxbandtotal;
-  const int maxbeams;
-  const int maxbrdf_idx;
-  const int maxevalues;
-  const int maxfinelayers;
-  const int maxfourier;
-  const int maxlayers;
-  const int maxmoments;
-  const int maxmoments_input;
-  const int maxsthalf_brdf;
-  const int maxstokes;
-  const int maxstokes_sq;
-  const int maxstreams;
-  const int maxstreams_2;
-  const int maxstreams_21;
-  const int maxstreams_brdf;
-  const int maxstreams_p1;
-  const int maxstreams_p2;
-  const int maxstreams_scaling;
-  const int maxstrmstks;
-  const int maxstrmstks_2;
-  const int maxstrmstks_21;
-  const int maxstrmstks_p1;
-  const int maxstrmstks_p2;
-  const int maxstrmstks_p4;
-  const int maxtotal;
-  const double minus_one;
-  const double minus_two;
-  const int modfresnel_idx;
-  const int newcmglint_idx;
-  const int newgcmglint_idx;
-  const double omega_smallnum;
-  const double one;
-  const double onep5;
-  const double pi2;
-  const double pi4;
-  const double pie;
-  const double pio2;
-  const double pio4;
-  const double quarter;
-  const int rahman_idx;
-  const int rossthick_idx;
-  const int rossthin_idx;
-  const int roujean_idx;
-  const int rtkhotspot_idx;
-  const double smallnum;
-  const int snowbrdf_idx;
-  const double taylor_large;
-  const double taylor_small;
-  const double three;
-  const double two;
-  const int upidx;
-  const int vlidort_debug;
-  const int vlidort_errunit;
-  const int vlidort_funit;
-  const int vlidort_info;
-  const int vlidort_inunit;
-  const int vlidort_resunit;
-  const int vlidort_scenunit;
-  const int vlidort_serious;
-  const int vlidort_success;
-  const char vlidort_version_number[3];
-  const int vlidort_warning;
-  const double zero;
-  
+  const double& bigexp() const;
+  const int& bpdfndvi_idx() const;
+  const int& bpdfsoil_idx() const;
+  const int& bpdfvegn_idx() const;
+  const int& coxmunk_idx() const;
+  const double& deg_to_rad() const;
+  const int& dnidx() const;
+  const double& eps3() const;
+  const double& eps4() const;
+  const double& eps5() const;
+  const double& four() const;
+  const int& gisscoxmunk_cri_idx() const;
+  const int& gisscoxmunk_idx() const;
+  const double& half() const;
+  const int& hapke_idx() const;
+  const double& hopital_tolerance() const;
+  const int& lambertian_idx() const;
+  const int& lidense_idx() const;
+  const int& lisparse_idx() const;
+  const int& max_allstrms() const;
+  const int& max_allstrms_p1() const;
+  const int& max_atmoswfs() const;
+  const int& max_brdf_kernels() const;
+  const int& max_brdf_parameters() const;
+  const int& max_directions() const;
+  const int& max_geometries() const;
+  const int& max_messages() const;
+  const int& max_msrs_muquad() const;
+  const int& max_msrs_phiquad() const;
+  const int& max_partlayers() const;
+  const int& max_psols() const;
+  const int& max_scatpsols() const;
+  const int& max_sleavewfs() const;
+  const int& max_surfacewfs() const;
+  const int& max_szangles() const;
+  const double& max_tau_qpath() const;
+  const double& max_tau_spath() const;
+  const double& max_tau_upath() const;
+  const int& max_taylor_terms() const;
+  const int& max_thermal_coeffs() const;
+  const int& max_user_levels() const;
+  const int& max_user_obsgeoms() const;
+  const int& max_user_relazms() const;
+  const int& max_user_streams() const;
+  const int& max_user_vzangles() const;
+  const int& max_ustrmstks() const;
+  const int& maxbandtotal() const;
+  const int& maxbeams() const;
+  const int& maxbrdf_idx() const;
+  const int& maxevalues() const;
+  const int& maxfinelayers() const;
+  const int& maxfourier() const;
+  const int& maxlayers() const;
+  const int& maxmoments() const;
+  const int& maxmoments_input() const;
+  const int& maxsthalf_brdf() const;
+  const int& maxstokes() const;
+  const int& maxstokes_sq() const;
+  const int& maxstreams() const;
+  const int& maxstreams_2() const;
+  const int& maxstreams_21() const;
+  const int& maxstreams_brdf() const;
+  const int& maxstreams_p1() const;
+  const int& maxstreams_p2() const;
+  const int& maxstreams_scaling() const;
+  const int& maxstrmstks() const;
+  const int& maxstrmstks_2() const;
+  const int& maxstrmstks_21() const;
+  const int& maxstrmstks_p1() const;
+  const int& maxstrmstks_p2() const;
+  const int& maxstrmstks_p4() const;
+  const int& maxtotal() const;
+  const double& minus_one() const;
+  const double& minus_two() const;
+  const int& modfresnel_idx() const;
+  const int& newcmglint_idx() const;
+  const int& newgcmglint_idx() const;
+  const double& omega_smallnum() const;
+  const double& one() const;
+  const double& onep5() const;
+  const double& pi2() const;
+  const double& pi4() const;
+  const double& pie() const;
+  const double& pio2() const;
+  const double& pio4() const;
+  const double& quarter() const;
+  const int& rahman_idx() const;
+  const int& rossthick_idx() const;
+  const int& rossthin_idx() const;
+  const int& roujean_idx() const;
+  const int& rtkhotspot_idx() const;
+  const double& smallnum() const;
+  const int& snowbrdf_idx() const;
+  const double& taylor_large() const;
+  const double& taylor_small() const;
+  const double& three() const;
+  const double& two() const;
+  const int& upidx() const;
+  const int& vlidort_debug() const;
+  const int& vlidort_errunit() const;
+  const int& vlidort_funit() const;
+  const int& vlidort_info() const;
+  const int& vlidort_inunit() const;
+  const int& vlidort_resunit() const;
+  const int& vlidort_scenunit() const;
+  const int& vlidort_serious() const;
+  const int& vlidort_success() const;
+  const std::string vlidort_version_number() const;
+  const int& vlidort_warning() const;
+  const double& zero() const;
   static VLidort_Pars& instance();
 
+  virtual void print(std::ostream &output_stream) const;
+
+  VLidort_Pars();
+
 };
 
 
-class Spurr_Type_Structure {
-public:
-  void* fortran_type_ptr();
-
-  std::string print_to_string() const;
-};
-
-class VBrdf_Linsup_Inputs : public Spurr_Type_Structure {
+class VBrdf_Linsup_Inputs : public Brdf_Linsup_Inputs_Base {
 public:
   VBrdf_Linsup_Inputs();
   VBrdf_Linsup_Inputs(const VBrdf_Linsup_Inputs& src);
@@ -172,12 +219,10 @@ public:
   const int& bs_n_surface_wfs() const;
   void bs_n_surface_wfs(const int& bs_n_surface_wfs_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Linsup_Outputs : public Spurr_Type_Structure {
+class VBrdf_Linsup_Outputs : public Brdf_Linsup_Outputs_Base {
 public:
   VBrdf_Linsup_Outputs();
   VBrdf_Linsup_Outputs(const VBrdf_Linsup_Outputs& src);
@@ -204,12 +249,10 @@ public:
   const blitz::Array<double, 3>& bs_ls_user_emissivity() const;
   void bs_ls_user_emissivity(const blitz::Array<double, 3>& bs_ls_user_emissivity_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Sup_Inputs : public Spurr_Type_Structure {
+class VBrdf_Sup_Inputs : public Brdf_Sup_Inputs_Base {
 public:
   VBrdf_Sup_Inputs();
   VBrdf_Sup_Inputs(const VBrdf_Sup_Inputs& src);
@@ -355,12 +398,10 @@ public:
   const double& bs_wsa_value() const;
   void bs_wsa_value(const double& bs_wsa_value_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Sup_Outputs : public Spurr_Type_Structure {
+class VBrdf_Sup_Outputs : public Brdf_Sup_Outputs_Base {
 public:
   VBrdf_Sup_Outputs();
   VBrdf_Sup_Outputs(const VBrdf_Sup_Outputs& src);
@@ -399,12 +440,10 @@ public:
   const blitz::Array<double, 1>& bs_wsa_kernels() const;
   void bs_wsa_kernels(const blitz::Array<double, 1>& bs_wsa_kernels_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Input_Exception_Handling : public Spurr_Type_Structure {
+class VBrdf_Input_Exception_Handling : public Brdf_Input_Exception_Handling_Base {
 public:
   VBrdf_Input_Exception_Handling();
   VBrdf_Input_Exception_Handling(const VBrdf_Input_Exception_Handling& src);
@@ -420,12 +459,10 @@ public:
   const int& bs_status_inputread() const;
   void bs_status_inputread(const int& bs_status_inputread_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Output_Exception_Handling : public Spurr_Type_Structure {
+class VBrdf_Output_Exception_Handling : public Brdf_Output_Exception_Handling_Base {
 public:
   VBrdf_Output_Exception_Handling();
   VBrdf_Output_Exception_Handling(const VBrdf_Output_Exception_Handling& src);
@@ -439,12 +476,10 @@ public:
   const int& bs_status_output() const;
   void bs_status_output(const int& bs_status_output_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VSleave_Sup_Inputs : public Spurr_Type_Structure {
+class VSleave_Sup_Inputs : public Sleave_Sup_Inputs_Base {
 public:
   VSleave_Sup_Inputs();
   VSleave_Sup_Inputs(const VSleave_Sup_Inputs& src);
@@ -569,12 +604,10 @@ public:
   const double& sl_windspeed() const;
   void sl_windspeed(const double& sl_windspeed_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Lincontrol : public Spurr_Type_Structure {
+class VLidort_Fixed_Lincontrol : public Spurr_Fixed_Lincontrol_Base {
 public:
   VLidort_Fixed_Lincontrol();
   VLidort_Fixed_Lincontrol(const VLidort_Fixed_Lincontrol& src);
@@ -602,12 +635,10 @@ public:
   
   const std::vector< std::string > ts_profilewf_names() const;
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Linoptical : public Spurr_Type_Structure {
+class VLidort_Fixed_Linoptical : public Spurr_Fixed_Linoptical_Base {
 public:
   VLidort_Fixed_Linoptical();
   VLidort_Fixed_Linoptical(const VLidort_Fixed_Linoptical& src);
@@ -628,12 +659,10 @@ public:
   const blitz::Array<double, 2>& ts_l_omega_total_input() const;
   void ts_l_omega_total_input(const blitz::Array<double, 2>& ts_l_omega_total_input_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Lininputs : public Spurr_Type_Structure {
+class VLidort_Fixed_Lininputs : public Spurr_Fixed_Lininputs_Base {
 public:
   VLidort_Fixed_Lininputs();
   VLidort_Fixed_Lininputs(const VLidort_Fixed_Lininputs& src);
@@ -645,12 +674,10 @@ public:
   const VLidort_Fixed_Linoptical& optical() const;
   void optical(VLidort_Fixed_Linoptical& optical_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Lincontrol : public Spurr_Type_Structure {
+class VLidort_Modified_Lincontrol : public Spurr_Modified_Lincontrol_Base {
 public:
   VLidort_Modified_Lincontrol();
   VLidort_Modified_Lincontrol(const VLidort_Modified_Lincontrol& src);
@@ -683,12 +710,10 @@ public:
   const bool ts_do_surface_linearization() const;
   void ts_do_surface_linearization(const bool& ts_do_surface_linearization_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Lininputs : public Spurr_Type_Structure {
+class VLidort_Modified_Lininputs : public Spurr_Modified_Lininputs_Base {
 public:
   VLidort_Modified_Lininputs();
   VLidort_Modified_Lininputs(const VLidort_Modified_Lininputs& src);
@@ -697,8 +722,6 @@ public:
   const VLidort_Modified_Lincontrol& mcont() const;
   void mcont(VLidort_Modified_Lincontrol& mcont_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
@@ -753,8 +776,6 @@ public:
   const blitz::Array<double, 3>& ts_trnmed_user_colwf() const;
   void ts_trnmed_user_colwf(const blitz::Array<double, 3>& ts_trnmed_user_colwf_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
@@ -809,12 +830,10 @@ public:
   const blitz::Array<double, 4>& ts_trnmed_user_profwf() const;
   void ts_trnmed_user_profwf(const blitz::Array<double, 4>& ts_trnmed_user_profwf_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linatmos : public Spurr_Type_Structure {
+class VLidort_Linatmos : public Spurr_Linatmos_Base {
 public:
   VLidort_Linatmos();
   VLidort_Linatmos(const VLidort_Linatmos& src);
@@ -826,12 +845,10 @@ public:
   const blitz::Array<double, 5>& ts_abbwfs_jacobians() const;
   void ts_abbwfs_jacobians(const blitz::Array<double, 5>& ts_abbwfs_jacobians_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsurf : public Spurr_Type_Structure {
+class VLidort_Linsurf : public Spurr_Linsurf_Base {
 public:
   VLidort_Linsurf();
   VLidort_Linsurf(const VLidort_Linsurf& src);
@@ -858,12 +875,10 @@ public:
   const blitz::Array<double, 5>& ts_surfacewf() const;
   void ts_surfacewf(const blitz::Array<double, 5>& ts_surfacewf_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linoutputs : public Spurr_Type_Structure {
+class VLidort_Linoutputs : public Spurr_Linoutputs_Base {
 public:
   VLidort_Linoutputs();
   VLidort_Linoutputs(const VLidort_Linoutputs& src);
@@ -881,12 +896,10 @@ public:
   const VLidort_Linsurf& surf() const;
   void surf(VLidort_Linsurf& surf_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Brdf : public Spurr_Type_Structure {
+class VLidort_Linsup_Brdf : public Spurr_Linsup_Brdf_Base {
 public:
   VLidort_Linsup_Brdf();
   VLidort_Linsup_Brdf(const VLidort_Linsup_Brdf& src);
@@ -913,12 +926,10 @@ public:
   const blitz::Array<double, 3>& ts_ls_user_emissivity() const;
   void ts_ls_user_emissivity(const blitz::Array<double, 3>& ts_ls_user_emissivity_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Sleave : public Spurr_Type_Structure {
+class VLidort_Linsup_Sleave : public Spurr_Linsup_Sleave_Base {
 public:
   VLidort_Linsup_Sleave();
   VLidort_Linsup_Sleave(const VLidort_Linsup_Sleave& src);
@@ -936,8 +947,6 @@ public:
   const blitz::Array<double, 5>& ts_lssl_user_slterm_f_0() const;
   void ts_lssl_user_slterm_f_0(const blitz::Array<double, 5>& ts_lssl_user_slterm_f_0_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
@@ -953,8 +962,6 @@ public:
   const blitz::Array<double, 5>& ts_columnwf_ss() const;
   void ts_columnwf_ss(const blitz::Array<double, 5>& ts_columnwf_ss_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
@@ -970,12 +977,10 @@ public:
   const blitz::Array<double, 6>& ts_profilewf_ss() const;
   void ts_profilewf_ss(const blitz::Array<double, 6>& ts_profilewf_ss_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Ss_Surf : public Spurr_Type_Structure {
+class VLidort_Linsup_Ss_Surf : public Spurr_Linsup_Ss_Surf_Base {
 public:
   VLidort_Linsup_Ss_Surf();
   VLidort_Linsup_Ss_Surf(const VLidort_Linsup_Ss_Surf& src);
@@ -984,12 +989,10 @@ public:
   const blitz::Array<double, 4>& ts_surfacewf_db() const;
   void ts_surfacewf_db(const blitz::Array<double, 4>& ts_surfacewf_db_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Ss : public Spurr_Type_Structure {
+class VLidort_Linsup_Ss : public Spurr_Linsup_Ss_Base {
 public:
   VLidort_Linsup_Ss();
   VLidort_Linsup_Ss(const VLidort_Linsup_Ss& src);
@@ -1004,12 +1007,10 @@ public:
   const VLidort_Linsup_Ss_Surf& surf() const;
   void surf(VLidort_Linsup_Ss_Surf& surf_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Inout : public Spurr_Type_Structure {
+class VLidort_Linsup_Inout : public Spurr_Linsup_Inout_Base {
 public:
   VLidort_Linsup_Inout();
   VLidort_Linsup_Inout(const VLidort_Linsup_Inout& src);
@@ -1024,12 +1025,10 @@ public:
   const VLidort_Linsup_Ss& ss() const;
   void ss(VLidort_Linsup_Ss& ss_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Main_Outputs : public Spurr_Type_Structure {
+class VLidort_Main_Outputs : public Spurr_Main_Outputs_Base {
 public:
   VLidort_Main_Outputs();
   VLidort_Main_Outputs(const VLidort_Main_Outputs& src);
@@ -1101,12 +1100,10 @@ public:
   const blitz::Array<int, 2>& ts_vza_offsets() const;
   void ts_vza_offsets(const blitz::Array<int, 2>& ts_vza_offsets_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Wladjusted_Outputs : public Spurr_Type_Structure {
+class VLidort_Wladjusted_Outputs : public Spurr_Wladjusted_Outputs_Base {
 public:
   VLidort_Wladjusted_Outputs();
   VLidort_Wladjusted_Outputs(const VLidort_Wladjusted_Outputs& src);
@@ -1124,12 +1121,10 @@ public:
   const blitz::Array<double, 2>& ts_wladjusted_isotropic() const;
   void ts_wladjusted_isotropic(const blitz::Array<double, 2>& ts_wladjusted_isotropic_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Exception_Handling : public Spurr_Type_Structure {
+class VLidort_Exception_Handling : public Spurr_Exception_Handling_Base {
 public:
   VLidort_Exception_Handling();
   VLidort_Exception_Handling(const VLidort_Exception_Handling& src);
@@ -1156,12 +1151,10 @@ public:
   
   const std::string ts_trace_3() const;
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Input_Exception_Handling : public Spurr_Type_Structure {
+class VLidort_Input_Exception_Handling : public Spurr_Input_Exception_Handling_Base {
 public:
   VLidort_Input_Exception_Handling();
   VLidort_Input_Exception_Handling(const VLidort_Input_Exception_Handling& src);
@@ -1177,12 +1170,10 @@ public:
   const int& ts_status_inputread() const;
   void ts_status_inputread(const int& ts_status_inputread_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Outputs : public Spurr_Type_Structure {
+class VLidort_Outputs : public Spurr_Outputs_Base {
 public:
   VLidort_Outputs();
   VLidort_Outputs(const VLidort_Outputs& src);
@@ -1197,12 +1188,10 @@ public:
   const VLidort_Wladjusted_Outputs& wlout() const;
   void wlout(VLidort_Wladjusted_Outputs& wlout_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Sup_Brdf : public Spurr_Type_Structure {
+class VLidort_Sup_Brdf : public Spurr_Sup_Brdf_Base {
 public:
   VLidort_Sup_Brdf();
   VLidort_Sup_Brdf(const VLidort_Sup_Brdf& src);
@@ -1229,12 +1218,10 @@ public:
   const blitz::Array<double, 2>& ts_user_emissivity() const;
   void ts_user_emissivity(const blitz::Array<double, 2>& ts_user_emissivity_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Sup_Sleave : public Spurr_Type_Structure {
+class VLidort_Sup_Sleave : public Spurr_Sup_Sleave_Base {
 public:
   VLidort_Sup_Sleave();
   VLidort_Sup_Sleave(const VLidort_Sup_Sleave& src);
@@ -1252,12 +1239,10 @@ public:
   const blitz::Array<double, 4>& ts_user_slterm_f_0() const;
   void ts_user_slterm_f_0(const blitz::Array<double, 4>& ts_user_slterm_f_0_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Sup_Ss : public Spurr_Type_Structure {
+class VLidort_Sup_Ss : public Spurr_Sup_Ss_Base {
 public:
   VLidort_Sup_Ss();
   VLidort_Sup_Ss(const VLidort_Sup_Ss& src);
@@ -1272,12 +1257,10 @@ public:
   const blitz::Array<double, 4>& ts_stokes_ss() const;
   void ts_stokes_ss(const blitz::Array<double, 4>& ts_stokes_ss_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Sup_Inout : public Spurr_Type_Structure {
+class VLidort_Sup_Inout : public Spurr_Sup_Inout_Base {
 public:
   VLidort_Sup_Inout();
   VLidort_Sup_Inout(const VLidort_Sup_Inout& src);
@@ -1292,12 +1275,10 @@ public:
   const VLidort_Sup_Ss& ss() const;
   void ss(VLidort_Sup_Ss& ss_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Boolean : public Spurr_Type_Structure {
+class VLidort_Fixed_Boolean : public Spurr_Fixed_Boolean_Base {
 public:
   VLidort_Fixed_Boolean();
   VLidort_Fixed_Boolean(const VLidort_Fixed_Boolean& src);
@@ -1372,12 +1353,10 @@ public:
   const bool ts_do_wladjusted_output() const;
   void ts_do_wladjusted_output(const bool& ts_do_wladjusted_output_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Control : public Spurr_Type_Structure {
+class VLidort_Fixed_Control : public Spurr_Fixed_Control_Base {
 public:
   VLidort_Fixed_Control();
   VLidort_Fixed_Control(const VLidort_Fixed_Control& src);
@@ -1425,12 +1404,10 @@ public:
   const double& ts_vlidort_accuracy() const;
   void ts_vlidort_accuracy(const double& ts_vlidort_accuracy_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Sunrays : public Spurr_Type_Structure {
+class VLidort_Fixed_Sunrays : public Spurr_Fixed_Sunrays_Base {
 public:
   VLidort_Fixed_Sunrays();
   VLidort_Fixed_Sunrays(const VLidort_Fixed_Sunrays& src);
@@ -1439,12 +1416,10 @@ public:
   const double& ts_flux_factor() const;
   void ts_flux_factor(const double& ts_flux_factor_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Uservalues : public Spurr_Type_Structure {
+class VLidort_Fixed_Uservalues : public Spurr_Fixed_Uservalues_Base {
 public:
   VLidort_Fixed_Uservalues();
   VLidort_Fixed_Uservalues(const VLidort_Fixed_Uservalues& src);
@@ -1453,12 +1428,10 @@ public:
   const int& ts_n_user_levels() const;
   void ts_n_user_levels(const int& ts_n_user_levels_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Chapman : public Spurr_Type_Structure {
+class VLidort_Fixed_Chapman : public Spurr_Fixed_Chapman_Base {
 public:
   VLidort_Fixed_Chapman();
   VLidort_Fixed_Chapman(const VLidort_Fixed_Chapman& src);
@@ -1479,12 +1452,10 @@ public:
   const blitz::Array<double, 1>& ts_temperature_grid() const;
   void ts_temperature_grid(const blitz::Array<double, 1>& ts_temperature_grid_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Optical : public Spurr_Type_Structure {
+class VLidort_Fixed_Optical : public Spurr_Fixed_Optical_Base {
 public:
   VLidort_Fixed_Optical();
   VLidort_Fixed_Optical(const VLidort_Fixed_Optical& src);
@@ -1514,12 +1485,10 @@ public:
   const blitz::Array<double, 1>& ts_thermal_bb_input() const;
   void ts_thermal_bb_input(const blitz::Array<double, 1>& ts_thermal_bb_input_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Write : public Spurr_Type_Structure {
+class VLidort_Fixed_Write : public Spurr_Fixed_Write_Base {
 public:
   VLidort_Fixed_Write();
   VLidort_Fixed_Write(const VLidort_Fixed_Write& src);
@@ -1548,12 +1517,10 @@ public:
   
   const std::string ts_scenario_write_filename() const;
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Fixed_Inputs : public Spurr_Type_Structure {
+class VLidort_Fixed_Inputs : public Spurr_Fixed_Inputs_Base {
 public:
   VLidort_Fixed_Inputs();
   VLidort_Fixed_Inputs(const VLidort_Fixed_Inputs& src);
@@ -1580,12 +1547,10 @@ public:
   const VLidort_Fixed_Write& write() const;
   void write(VLidort_Fixed_Write& write_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Boolean : public Spurr_Type_Structure {
+class VLidort_Modified_Boolean : public Spurr_Modified_Boolean_Base {
 public:
   VLidort_Modified_Boolean();
   VLidort_Modified_Boolean(const VLidort_Modified_Boolean& src);
@@ -1657,12 +1622,10 @@ public:
   const bool ts_do_user_vzangles() const;
   void ts_do_user_vzangles(const bool& ts_do_user_vzangles_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Control : public Spurr_Type_Structure {
+class VLidort_Modified_Control : public Spurr_Modified_Control_Base {
 public:
   VLidort_Modified_Control();
   VLidort_Modified_Control(const VLidort_Modified_Control& src);
@@ -1671,12 +1634,10 @@ public:
   const int& ts_ngreek_moments_input() const;
   void ts_ngreek_moments_input(const int& ts_ngreek_moments_input_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Sunrays : public Spurr_Type_Structure {
+class VLidort_Modified_Sunrays : public Spurr_Modified_Sunrays_Base {
 public:
   VLidort_Modified_Sunrays();
   VLidort_Modified_Sunrays(const VLidort_Modified_Sunrays& src);
@@ -1688,12 +1649,10 @@ public:
   const blitz::Array<double, 1>& ts_szangles() const;
   void ts_szangles(const blitz::Array<double, 1>& ts_szangles_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Uservalues : public Spurr_Type_Structure {
+class VLidort_Modified_Uservalues : public Spurr_Modified_Uservalues_Base {
 public:
   VLidort_Modified_Uservalues();
   VLidort_Modified_Uservalues(const VLidort_Modified_Uservalues& src);
@@ -1729,12 +1688,10 @@ public:
   const blitz::Array<double, 1>& ts_user_vzangles_input() const;
   void ts_user_vzangles_input(const blitz::Array<double, 1>& ts_user_vzangles_input_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Chapman : public Spurr_Type_Structure {
+class VLidort_Modified_Chapman : public Spurr_Modified_Chapman_Base {
 public:
   VLidort_Modified_Chapman();
   VLidort_Modified_Chapman(const VLidort_Modified_Chapman& src);
@@ -1743,12 +1700,10 @@ public:
   const double& ts_earth_radius() const;
   void ts_earth_radius(const double& ts_earth_radius_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Optical : public Spurr_Type_Structure {
+class VLidort_Modified_Optical : public Spurr_Modified_Optical_Base {
 public:
   VLidort_Modified_Optical();
   VLidort_Modified_Optical(const VLidort_Modified_Optical& src);
@@ -1757,12 +1712,10 @@ public:
   const blitz::Array<double, 1>& ts_omega_total_input() const;
   void ts_omega_total_input(const blitz::Array<double, 1>& ts_omega_total_input_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Modified_Inputs : public Spurr_Type_Structure {
+class VLidort_Modified_Inputs : public Spurr_Modified_Inputs_Base {
 public:
   VLidort_Modified_Inputs();
   VLidort_Modified_Inputs(const VLidort_Modified_Inputs& src);
@@ -1786,8 +1739,6 @@ public:
   const VLidort_Modified_Uservalues& muserval() const;
   void muserval(VLidort_Modified_Uservalues& muserval_in);
   
-  
-
   virtual void print(std::ostream &output_stream) const;
 };
 
