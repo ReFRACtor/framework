@@ -9,7 +9,11 @@ BOOST_FIXTURE_TEST_SUITE(fp_exception, GlobalFixture)
 BOOST_AUTO_TEST_CASE(basic_test)
 {
   Exception e("test");
-  BOOST_CHECK(std::string(e.what()) =="test");
+
+  std::string expt_val1 = "test\n\nBacktrace:";
+
+  BOOST_CHECK(std::string(e.what()).substr(0, expt_val1.size()) == expt_val1);
+
   if(false)			// Print out backtrace. Since this has
 				// things like addresses in it, this
 				// isn't a repeatable test we can
@@ -18,7 +22,9 @@ BOOST_AUTO_TEST_CASE(basic_test)
     std::cerr << boost::trace(e);
   Exception e2;
   e2 << "Test " << 5;
-  BOOST_CHECK(std::string(e2.what()) =="Test 5");
+
+  std::string expt_val2 = "Test 5\n\nBacktrace:";
+  BOOST_CHECK(std::string(e2.what()).substr(0, expt_val2.size()) == expt_val2);
 }
 
 BOOST_AUTO_TEST_CASE(range)

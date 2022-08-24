@@ -68,7 +68,8 @@ void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
 void AbsorberXSecCache::cache_height_delta(const boost::shared_ptr<Pressure>& press, const std::vector<boost::shared_ptr<Altitude> >& alt)
 {
     // Number of derivative variables for auto derivatives
-    int num_jac_variable = pgrid.number_variable();
+    // Mirrors what is done in AltitudeHydrostatic
+    int num_jac_variable = std::max(pgrid.number_variable(), tgrid.number_variable());
 
     height_delta_layer.clear();
 
@@ -99,7 +100,9 @@ void AbsorberXSecCache::cache_total_air_number_density_level()
         throw Exception("pgrid not yet computed by cache");
     }
 
-    air_density.value.resize(pgrid.rows(), pgrid.number_variable());;
+    int num_jac_variable = std::max(pgrid.number_variable(), tgrid.number_variable());
+
+    air_density.value.resize(pgrid.rows(), num_jac_variable);
 
     // Units here will be cm^-3 since the press/temp ratio cancels out with that in the constant
     air_density.units = Unit("cm^-3");

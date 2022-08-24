@@ -2,7 +2,7 @@
 #define FP_EXCEPTION_H
 #include "printable.h"
 #include <boost/backtrace.hpp>
-#include <sstream>		// Definition of ostringstream.
+#include <sstream>                // Definition of ostringstream.
 #include <gsl/gsl_errno.h>
 
 namespace FullPhysics {
@@ -14,7 +14,7 @@ namespace FullPhysics {
 *******************************************************************/
 
 class Exception: public std::exception, public Printable<Exception>,
-		 public boost::backtrace {
+                 public boost::backtrace {
 public:
 //-----------------------------------------------------------------------
 /// Default constructor. Can give an optional string describing
@@ -45,8 +45,8 @@ public:
       : boost::backtrace(E)
     {
       try {
-	s_ << E.s_.str();
-      } catch(...) {		// Ignore all errors.
+        s_ << E.s_.str();
+      } catch(...) {                // Ignore all errors.
       }
     }
 
@@ -74,7 +74,7 @@ public:
   {
     Os << "Full Physics Exception:\n"
        << "=========================\n" 
-       << what() << "\n"
+       << s_.str() << "\n"
        << "=========================\n" 
        << "Backtrace:\n"
        << "=========================\n" 
@@ -90,16 +90,20 @@ public:
     {
 
 //-----------------------------------------------------------------------
-// We can't just do s_.str().c_str(), because the temporary variable
+// We can't just do *.str().c_str(), because the temporary variable
 // returned by str() disappears when we exit this function. Instead,
 // we use a scratch variable that has the lifetime of this object.
 //-----------------------------------------------------------------------
       try {
-	scratch_ = s_.str();
-      } catch(...) {		// If an error condition occurs,
-				// ignore it and return a null
-				// pointer.
-	return 0;
+        std::ostringstream tmp_ss;
+        tmp_ss << s_.str() << "\n\n"
+               << "Backtrace:\n"
+               << boost::trace(*this);
+        scratch_ = tmp_ss.str();
+      } catch(...) {             // If an error condition occurs,
+                                // ignore it and return a null
+                                // pointer.
+        return 0;
       }
       return scratch_.c_str();
     }
@@ -116,9 +120,9 @@ public:
 //-----------------------------------------------------------------------
 
 template <class T> inline void range_check_template(
-const T&	   Val,		// Value to be checked.
-const T&	   Min,		// Minimum allowed value.
-const T&	   Max,		// Maximum allowed value.
+const T&           Val,                // Value to be checked.
+const T&           Min,                // Minimum allowed value.
+const T&           Max,                // Maximum allowed value.
 const char*        File,
 int                Line
 )
@@ -146,8 +150,8 @@ int                Line
 //-----------------------------------------------------------------------
 
 template <class T> inline void range_min_check_template(
-const T&	   Val,		// Value to be checked.
-const T&	   Min,		// Minimum allowed value.
+const T&           Val,                // Value to be checked.
+const T&           Min,                // Minimum allowed value.
 const char*        File,
 int                Line
 )
@@ -173,8 +177,8 @@ int                Line
 //-----------------------------------------------------------------------
 
 template <class T> inline void range_max_check_template(
-const T&	   Val,		// Value to be checked.
-const T&	   Max,		// Maximum allowed value.
+const T&           Val,                // Value to be checked.
+const T&           Max,                // Maximum allowed value.
 const char*        File,
 int                Line
 )

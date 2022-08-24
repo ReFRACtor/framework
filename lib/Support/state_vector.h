@@ -48,6 +48,23 @@ public:
   blitz::Array<std::string, 1> state_vector_name() const;
 
 //-----------------------------------------------------------------------
+/// Get the default state vector names that are used for unobserved
+/// portions of the state vector.
+//-----------------------------------------------------------------------
+
+  std::vector<std::string> default_state_vector_name() const { return default_sv_names; };
+
+//-----------------------------------------------------------------------
+/// Set the default state vector names that are used for unobserved
+/// portions of the state vector. If not set then a generic name
+/// will be used for those portions of the state vector.
+//-----------------------------------------------------------------------
+
+  void default_state_vector_name(const std::vector<std::string>& default_name) {
+    default_sv_names = default_name;
+  }
+
+//-----------------------------------------------------------------------
 /// Current covariance of the state vector.
 //-----------------------------------------------------------------------
 
@@ -79,6 +96,10 @@ public:
 private:
   ArrayAd<double, 1> x_;
   blitz::Array<double, 2> cov_;
+
+  // Default state vector names for elements not connected to observers
+  std::vector<std::string> default_sv_names;
+
   // Helper value that says what portion of state vector has been
   // claimed by observers. We don't do anything with this value in
   // this class, except make it available to StateVectorObservers when 

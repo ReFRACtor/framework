@@ -41,6 +41,8 @@ public:
     
   %python_attribute_with_set(observer_claimed_size, int);
 
+  %python_attribute_with_set(default_state_vector_name, std::vector<std::string>);
+
   std::string print_to_string() const;
 
   %extend {
