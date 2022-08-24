@@ -44,3 +44,9 @@ absorber_absco.xml
 *.new
 lidort_setup
 test.txt
+
+# Fortran debugger
+lib/Implementation/*.mod
+
+# crash core dumps
+core.*
