@@ -38,3 +38,9 @@ bindings/python/refractor_framework_swig.egg-info
 # Link to absco tables
 absco
 .env
+
+# test output
+absorber_absco.xml
+*.new
+lidort_setup
+test.txt
