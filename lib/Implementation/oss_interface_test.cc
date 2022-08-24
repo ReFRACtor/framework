@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(oss_interface, GlobalFixture)
+BOOST_FIXTURE_TEST_SUITE(oss_interface, GlobalFixture, * boost::unit_test::disabled())
 
 BOOST_AUTO_TEST_CASE(oss_interface)
 {

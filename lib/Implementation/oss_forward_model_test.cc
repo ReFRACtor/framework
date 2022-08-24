@@ -5,7 +5,7 @@
 using namespace FullPhysics;
 using namespace blitz;
 
-BOOST_FIXTURE_TEST_SUITE(oss_forward_model, OssConfigurationFixture)
+BOOST_FIXTURE_TEST_SUITE(oss_forward_model, OssConfigurationFixture, * boost::unit_test::disabled())
 
 BOOST_AUTO_TEST_CASE(radiance)
 {
