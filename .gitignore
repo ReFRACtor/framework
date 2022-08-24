@@ -44,6 +44,8 @@ absorber_absco.xml
 *.new
 lidort_setup
 test.txt
+test_compress.txt.gz
+test_uncompress.txt
 
 # Fortran debugger
 lib/Implementation/*.mod
