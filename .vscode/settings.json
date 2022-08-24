@@ -17,5 +17,6 @@
     "cmake.buildDirectory": "${workspaceFolder}/build/${variant:buildType}",
     
     "boost-test-adapter.testExecutable": "${workspaceFolder}/build/debug/test/test_all",
-    "boost-test-adapter.cwd": "${workspaceFolder}"
+    "boost-test-adapter.cwd": "${workspaceFolder}",
+    "boost-test-adapter.logpanel": true
 }
