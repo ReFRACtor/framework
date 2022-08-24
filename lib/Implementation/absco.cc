@@ -432,11 +432,9 @@ AbscoInterpolator::absorption_cross_section_deriv_calc(double wn) const
 	for(int k = 0; k < res.jacobian().cols(); ++k)
 	  *res_jac_p++ = dr_dt * *t_jac_p++ + dr_db1 * *b1_jac_p++ +
 	    dr_db2 * *b2_jac_p++;
-      else if(!t.is_constant()) {
-	std::cerr << "Hi there, in the branch" << "\n";
+      else if(!t.is_constant())
 	for(int k = 0; k < res.jacobian().cols(); ++k)
 	  *res_jac_p++ = dr_dt * *t_jac_p++;
-      }
       else if(!b.is_constant())
 	for(int k = 0; k < res.jacobian().cols(); ++k)
 	  *res_jac_p++ = dr_db1 * *b1_jac_p++ + dr_db2 * *b2_jac_p++;
