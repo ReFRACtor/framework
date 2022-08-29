@@ -1,14 +1,18 @@
 %include "fp_common.i"
+
 %{
 #include "first_order_rt.h"
 #include "sub_state_vector_array.h"
 #include "pressure.h"
 %}
+
 %base_import(observer)
 %base_import(rt_atmosphere)
 %base_import(spurr_rt)
-%import "lidort_driver.i"
+
+%import "lidort_brdf_driver.i"
 %import "first_order_driver.i"
+
 %fp_shared_ptr(FullPhysics::FirstOrderRt);
 
 namespace FullPhysics {

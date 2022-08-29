@@ -1,13 +1,18 @@
 %include "fp_common.i"
+
 %{
 #include "lidort_rt.h"
 #include "sub_state_vector_array.h"
 #include "pressure.h"
 %}
+
 %base_import(observer)
 %base_import(rt_atmosphere)
 %base_import(spurr_rt)
-%import "lidort_driver.i"
+
+%import "lidort_brdf_driver.i"
+%import "lidort_rt_driver.i"
+
 %fp_shared_ptr(FullPhysics::LidortRt);
 
 namespace FullPhysics {
@@ -39,4 +44,5 @@ public:
   virtual void print(std::ostream& Os, bool Short_form = false) const;
   %pickle_serialization();
 };
+
 }

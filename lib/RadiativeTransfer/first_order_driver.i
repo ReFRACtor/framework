@@ -8,7 +8,7 @@
 
 %import "first_order_interface.i"
 
-%base_import(spurr_driver)
+%base_import(spurr_rt_driver)
 
 %fp_shared_ptr(FullPhysics::FirstOrderDriver);
 

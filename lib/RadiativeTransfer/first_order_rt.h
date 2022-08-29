@@ -5,7 +5,7 @@
 #include "spurr_rt.h"
 
 // Include BRDF driver interface from LIDORT driver
-#include "lidort_driver.h"
+#include "lidort_brdf_driver.h"
 
 namespace FullPhysics {
 

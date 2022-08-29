@@ -1,31 +1,19 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
+
 %{
-#include "spurr_driver.h"
+#include "spurr_rt_driver.h"
 %}
 
 %base_import(generic_object)
+
+%import "spurr_brdf_driver.i"
+
 %import "array_ad.i"
 %import "rt_atmosphere.i"
-%fp_shared_ptr(FullPhysics::SpurrBrdfDriver);
+
 %fp_shared_ptr(FullPhysics::SpurrRtDriver);
 
 namespace FullPhysics {
-  class SpurrBrdfDriver : public GenericObject {
-public:
-  std::string print_to_string() const;
-  virtual void initialize_brdf_inputs(int surface_type);
-  virtual void setup_geometry(double sza, double azm, double zen) = 0;
-  virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters);
-
-  %python_attribute_abstract(n_brdf_kernels, int)
-  %python_attribute_abstract(n_kernel_factor_wfs, int)
-  %python_attribute_abstract(n_kernel_params_wfs, int)
-  %python_attribute_abstract(n_surface_wfs, int)
-  %python_attribute_abstract(do_shadow_effect, bool)
-  %pickle_serialization();
-};
 
 class SpurrRtDriver : public GenericObject {
 public:
@@ -76,5 +64,5 @@ public:
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
   %pickle_serialization();
 };
-}
 
+}

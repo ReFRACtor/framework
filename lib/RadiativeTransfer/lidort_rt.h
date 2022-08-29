@@ -1,7 +1,7 @@
 #ifndef LIDORT_RT_H
 #define LIDORT_RT_H
 
-#include "lidort_driver.h"
+#include "lidort_rt_driver.h"
 #include "spurr_rt.h"
 
 namespace FullPhysics {

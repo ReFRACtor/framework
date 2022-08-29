@@ -3,7 +3,7 @@
 
 #include "spurr_brdf_types.h"
 #include "planck.h"
-#include "lidort_driver.h"
+#include "lidort_rt_driver.h"
 #include "old_constant.h"
 
 using namespace FullPhysics;

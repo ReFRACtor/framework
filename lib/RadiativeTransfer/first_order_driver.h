@@ -1,11 +1,11 @@
 #ifndef FO_DRIVER_H
 #define FO_DRIVER_H
 
-#include "spurr_driver.h"
+#include "spurr_rt_driver.h"
 #include "first_order_interface.h"
 
 // Include BRDF driver interface from LIDORT driver
-#include "lidort_driver.h"
+#include "lidort_brdf_driver.h"
 
 /****************************************************************//**
   Driver for optimized first order of scattering RT
@@ -85,4 +85,5 @@ private:
 }
 
 FP_EXPORT_KEY(FirstOrderDriver);
+
 #endif

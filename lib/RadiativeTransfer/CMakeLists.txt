@@ -27,7 +27,8 @@ set(DIR_SOURCES
     l_rad_fortran/l_surface.F90
     l_rad_fortran/l_surface_fourier.F90
     l_rad_rt.cc
-    lidort_driver.cc
+    lidort_brdf_driver.cc
+    lidort_rt_driver.cc
     lidort_interface_masters.F90
     lidort_interface_masters_serialization.cc
     lidort_interface_masters_io.F90
@@ -50,7 +51,8 @@ set(DIR_SOURCES
     radiative_transfer_single_wn.cc
     raman_sioris.cc
     raman_sioris.f90
-    spurr_driver.cc
+    spurr_brdf_driver.cc
+    spurr_rt_driver.cc
     spurr_rt.cc
     twostream_driver.cc
     twostream_interface.F90
