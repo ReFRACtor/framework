@@ -1,33 +1,19 @@
 %include "fp_common.i"
-%include "spurr_driver.i"
+
 %{
-#include "lidort_driver.h"
+#include "lidort_rt_driver.h"
 %}
+
+%base_import(spurr_rt_driver)
+
 %import "lidort_interface_masters.i"
 %import "lidort_interface_types.i"
+%import "lidort_brdf_driver.i"
 %import "array_ad.i"
 
-%fp_shared_ptr(FullPhysics::LidortBrdfDriver);
 %fp_shared_ptr(FullPhysics::LidortRtDriver);
 
 namespace FullPhysics {
-class LidortBrdfDriver : public SpurrBrdfDriver {
-public:
-  LidortBrdfDriver(int nstream, int nmoment);
-  virtual ~LidortBrdfDriver();
-
-  %python_attribute(brdf_interface, boost::shared_ptr<Brdf_Lin_Sup_Masters>)
-
-  virtual void setup_geometry(double sza, double azm, double zen);
-
-  %python_attribute(n_brdf_kernels, int)
-  %python_attribute(n_kernel_factor_wfs, int)
-  %python_attribute(n_kernel_params_wfs, int)
-  %python_attribute(n_surface_wfs, int)
-  %python_attribute(do_shadow_effect, bool)
-  virtual bool do_kparams_derivs(const int kernel_index) const;
-  %pickle_serialization();
-};
 
 class LidortRtDriver : public SpurrRtDriver {
 public:

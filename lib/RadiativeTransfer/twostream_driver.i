@@ -2,7 +2,8 @@
 %{
 #include "twostream_driver.h"
 %}
-%base_import(spurr_driver)
+
+%base_import(spurr_rt_driver)
 %import "twostream_interface.i"
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::TwostreamBrdfDriver);

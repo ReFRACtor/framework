@@ -1,7 +1,7 @@
 #ifndef TWOSTREAM_DRIVER_H
 #define TWOSTREAM_DRIVER_H
 
-#include "spurr_driver.h"
+#include "spurr_rt_driver.h"
 #include "twostream_interface.h"
 
 namespace FullPhysics {
