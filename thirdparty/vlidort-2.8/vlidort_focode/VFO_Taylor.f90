@@ -82,7 +82,7 @@
 ! #                                                             #
 ! ###############################################################
 
-MODULE FO_Taylor_m
+MODULE VFO_Taylor_m
 
 !  1/31/21. Version 2.8.3. No Changes
 
@@ -215,5 +215,5 @@ END SUBROUTINE TAYLOR_SERIES_L_1
 
 !  Finish module
 
-END MODULE FO_Taylor_m
+END MODULE VFO_Taylor_m
 

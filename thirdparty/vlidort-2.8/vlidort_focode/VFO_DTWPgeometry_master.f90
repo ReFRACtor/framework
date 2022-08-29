@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_DTWPGeometry_Master_m
+module VFO_DTWPGeometry_Master_m
 
 !  Stand alone geometry for Direct Thermal only
 
@@ -89,15 +89,15 @@ module FO_DTWPGeometry_Master_m
 !  1/31/21. Version 2.8.3. Following upgrade made for 2.8.1, 5/5/20.
 !    -- Add hfine/hfine_p inputs for correct Direct-thermal calculation (Outgoing sphericity)
 
-   use FO_WPgeometry_Routines_m, only :    LosOut_EnhancedPS_Initial_WP,  LosOut_EnhancedPS_Quadrature_WP
+   use VFO_WPgeometry_Routines_m, only :    LosOut_EnhancedPS_Initial_WP,  LosOut_EnhancedPS_Quadrature_WP
 !                                          LosOut_EnhancedPS_QUpgrade, LosOut_EnhancedPS_FindCrit
 
 private
-public FO_DTWPGeometry_Master
+public VFO_DTWPGeometry_Master
 
 contains
 
-subroutine FO_DTWPGeometry_Master  &
+subroutine VFO_DTWPGeometry_Master  &
        ( maxgeoms, maxlayers, maxpartials, maxfine, dtr, eradius,  & ! Input dimensions/constants
          do_upwelling, do_planpar, do_enhanced_ps, do_Partials,    & ! Input flags
          ngeoms, nlayers, npartials, nfine, partial_layeridx,      & ! Input control
@@ -261,7 +261,7 @@ subroutine FO_DTWPGeometry_Master  &
 
    if ( do_planpar .and. do_enhanced_ps ) then
       message = 'Cannot have BOTH Plane-parallel and Enhanced PS options'
-      trace   = 'Initial Flag Check in FO_DTGeometry_Master'
+      trace   = 'Initial Flag Check in VFO_DTGeometry_Master'
       fail    = .true. ;  return
    endif
 
@@ -283,7 +283,7 @@ subroutine FO_DTWPGeometry_Master  &
       if ( alpha_boa(v).gt.90.0_ffp.or.alpha_boa(v).lt.zero ) then
          write(c2,'(I2)')v
          message = 'Boa LOS angle outside range [0,90]); Check it!'
-         trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_DTGeometry_Master'
+         trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_DTGeometry_Master'
          fail    = .true. ;  return
       endif
     enddo
@@ -396,7 +396,7 @@ subroutine FO_DTWPGeometry_Master  &
 !            extinc, Lospaths, sina, cosa, radii, nfinedivs,               & ! Input
 !            Ncrit, AlphaCrit, RadCrit, CotCrit, fail, message )             ! Outputs
 !      if ( Fail ) then
-!         trace = 'Error from LosOut_EnhancedPS_FindCrit in FO_DTGeometry_Master' ; return
+!         trace = 'Error from LosOut_EnhancedPS_FindCrit in VFO_DTGeometry_Master' ; return
 !      endif
 !   endif
 
@@ -410,7 +410,7 @@ subroutine FO_DTWPGeometry_Master  &
       if (n1 .gt. maxfine ) then
          write(c3,'(I3)')v; write(c33,'(I3)')n1
          message = 'Fine-layer dimensioning insufficient, geometry # '//c3//'; - Increase Maxfine to at least '//c33
-         trace   = 'Dimensioning check AFTER call to LosOut_EnhancedPS_FindCrit in FO_DTGeometry_Master '
+         trace   = 'Dimensioning check AFTER call to LosOut_EnhancedPS_FindCrit in VFO_DTGeometry_Master '
          fail = .true. ;  return
       endif
    enddo
@@ -430,9 +430,9 @@ subroutine FO_DTWPGeometry_Master  &
 !  Finish
 
    return
-end subroutine FO_DTWPGeometry_Master
+end subroutine VFO_DTWPGeometry_Master
 
 !  Finish
 
-end module FO_DTWPGeometry_Master_m
+end module VFO_DTWPGeometry_Master_m
 

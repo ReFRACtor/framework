@@ -79,18 +79,18 @@
 ! #                                                             #
 ! # Subroutines in this Module                                  #
 ! #                                                             #
-! #            FO_get_planckfunction                            #
+! #            VFO_get_planckfunction                            #
 ! #                                                             #
 ! ###############################################################
 
-      module FO_getPlanck_m
+      module VFO_getPlanck_m
 
       PRIVATE
-      PUBLIC :: FO_get_planckfunction
+      PUBLIC :: VFO_get_planckfunction
 
       contains
 
-      subroutine FO_get_planckfunction        &
+      subroutine VFO_get_planckfunction        &
            ( WNUMLO, WNUMHI, TEMPERATURE,     & ! Inputs
              BBFUNC, SMALLV, FAIL, MESSAGE )    ! Outputs
 
@@ -342,9 +342,9 @@
 !  Finish
 
       RETURN
-      END SUBROUTINE FO_get_planckfunction
+      END SUBROUTINE VFO_get_planckfunction
 
 !  End module
 
-end module FO_getPlanck_m
+end module VFO_getPlanck_m
 
