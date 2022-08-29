@@ -469,8 +469,6 @@
       INTEGER, PARAMETER :: ROUJEAN_IDX          = 7
       INTEGER, PARAMETER :: RAHMAN_IDX           = 8
       INTEGER, PARAMETER :: COXMUNK_IDX          = 9
-      INTEGER, PARAMETER :: GISSCOXMUNK_IDX      = 10
-      INTEGER, PARAMETER :: GISSCOXMUNK_CRI_IDX  = 11
 
 !  New for Version 2.4RTC and up to Version 2.6.
 !      INTEGER, PARAMETER :: BPDF2009_IDX         = 12
@@ -478,14 +476,13 @@
 !  New BPDF functions for Version 2.7
 !   These match the options in LIDORT Version 3.7.
 
-      INTEGER, PARAMETER :: BPDFSOIL_IDX         = 12
-      INTEGER, PARAMETER :: BPDFVEGN_IDX         = 13
-      INTEGER, PARAMETER :: BPDFNDVI_IDX         = 14
+      INTEGER, PARAMETER :: BPDFSOIL_IDX         = 10
+      INTEGER, PARAMETER :: BPDFVEGN_IDX         = 11
+      INTEGER, PARAMETER :: BPDFNDVI_IDX         = 12
 
 !  New Cox-Munk functions for Version 2.7
 
-      INTEGER, PARAMETER :: NewCMGLINT_IDX       = 15
-      INTEGER, PARAMETER :: NewGCMGLINT_IDX      = 16
+      INTEGER, PARAMETER :: NewCMGLINT_IDX       = 13
 
 !  New for Version 2.8. Introduced 22 February 2016. R. Spurr
 !  ----------------------------------------------------------
@@ -502,7 +499,7 @@
 !      IEEE Trans. Geo. Rem. Sens., 10.1109/TGRS.2008.2005997 (2008)
 !   -- Ross-Thick Hotspot Kernel from
 
-      INTEGER, PARAMETER :: RTKHOTSPOT_IDX       = 17
+      INTEGER, PARAMETER :: RTKHOTSPOT_IDX       = 14
 
 !  This is a "Modified Fresnel" kernel developed for polarized reflectances
 !   Taken from the following reference.
@@ -513,18 +510,23 @@
 !     modeling top-of-atmopshere measurements,
 !       Rem. Sens. Env., 115, 781-792, (2011).
 
-      INTEGER, PARAMETER :: MODFRESNEL_IDX       = 18
+      INTEGER, PARAMETER :: MODFRESNEL_IDX       = 15
 
 !  1/31/21, Version 2.8.3. Analytical Model for Snow BRDF.
 !     -- Kokhanovsky and Breon, IEEE GeoScience & Remote Sensing Letters, Vol 9(5), 928-932 (2012)
 !     -- First introduced to VLIDORT, 18 November 2020.
 
-      INTEGER, PARAMETER :: SNOWBRDF_IDX         = 19
+      INTEGER, PARAMETER :: SNOWBRDF_IDX         = 16
+
+! Reordered to have above match LIDORT 3.8 ordering
+      INTEGER, PARAMETER :: GISSCOXMUNK_IDX      = 17
+      INTEGER, PARAMETER :: GISSCOXMUNK_CRI_IDX  = 18
+      INTEGER, PARAMETER :: NewGCMGLINT_IDX      = 19
 
 !  1/31/21, Version 2.8.3. Maximum index
 !    -- Revised to take into account New snow brdf index.
 
-      INTEGER, PARAMETER :: MAXBRDF_IDX = SNOWBRDF_IDX
+      INTEGER, PARAMETER :: MAXBRDF_IDX = NewGCMGLINT_IDX
 
 !  End of file.
 
