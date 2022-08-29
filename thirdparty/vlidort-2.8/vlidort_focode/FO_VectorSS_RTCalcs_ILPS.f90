@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_VectorSS_RTCalcs_ILPS_m
+module VFO_VectorSS_RTCalcs_ILPS_m
 
 !  For a given wavelength, this routine will calculate upwelling and downwelling
 !  First Order Stokes vectors, and any number of LPS Jacobians (profile/surface)
@@ -2681,5 +2681,5 @@ end subroutine SSV_Integral_ILPS_UPDN
 
 !  End module
 
-end module FO_VectorSS_RTCalcs_ILPS_m
+end module VFO_VectorSS_RTCalcs_ILPS_m
 

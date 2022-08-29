@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_VectorSS_spherfuncs_m
+module VFO_VectorSS_spherfuncs_m
 
 !  Generalized spherical functions and rotation-angle sines/cosines
 
@@ -90,7 +90,7 @@ public
 
 contains
 
-SUBROUTINE FO_VectorSS_spherfuncs &
+SUBROUTINE VFO_VectorSS_spherfuncs &
         ( MAXMOMENTS, MAXGEOMS, MAXSZAS, MAXVZAS, MAXAZMS, DTR,       & ! Inputs
           NMOMENTS, NGEOMS, NSZAS, NVZAS, NAZMS, NSTOKES, VSIGN,      & ! Inputs
           STARTER, DO_OBSGEOM, DO_DOUBLET, DO_SPHERFUNC, DO_SUNLIGHT, & ! Inputs
@@ -858,10 +858,10 @@ SUBROUTINE FO_VectorSS_spherfuncs &
 !  Finish
 
    RETURN
-END SUBROUTINE FO_VectorSS_spherfuncs
+END SUBROUTINE VFO_VectorSS_spherfuncs
 
 !  Finish
 
-end module FO_VectorSS_spherfuncs_m
+end module VFO_VectorSS_spherfuncs_m
 
 

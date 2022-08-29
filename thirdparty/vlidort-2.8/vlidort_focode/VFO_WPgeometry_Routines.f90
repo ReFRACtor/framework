@@ -75,9 +75,9 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_WPGeometry_Routines_m
+module VFO_WPGeometry_Routines_m
 
-use FO_geometry_Generic_m
+use VFO_geometry_Generic_m
 
 !  Plane-parallel and Regular PS routines
 !  --------------------------------------
@@ -3762,5 +3762,5 @@ end subroutine SolarIn_EnhancedPS_Lattice_SunPaths_WP
 
 !  Finish Module
 
-end module FO_WPGeometry_Routines_m
+end module VFO_WPGeometry_Routines_m
 

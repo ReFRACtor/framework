@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_VectorSS_RTCalcs_I_m
+module VFO_VectorSS_RTCalcs_I_m
 
 !  For given wavelength, routine calculates First-Order upwelling+downwelling Stokes vectors
 
@@ -1603,4 +1603,4 @@ end subroutine SSV_Integral_I_UPDN
 
 !  End module
 
-end module FO_VectorSS_RTCalcs_I_m
+end module VFO_VectorSS_RTCalcs_I_m

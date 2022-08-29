@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_geometry_Generic_m
+module VFO_geometry_Generic_m
 
 !  Following routines are generic ray-tracing routines
 
@@ -463,5 +463,5 @@ end subroutine FindSunPath
 
 !  Finish
 
-end module FO_geometry_Generic_m
+end module VFO_geometry_Generic_m
 

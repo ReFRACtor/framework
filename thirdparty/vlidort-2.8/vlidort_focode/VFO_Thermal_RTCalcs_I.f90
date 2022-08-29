@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_Thermal_RTCalcs_I_m
+module VFO_Thermal_RTCalcs_I_m
 
 !  For a given wavelength, this routine will calculate First-Order upwelling+downwelling Intensities(I):
 
@@ -1081,5 +1081,5 @@ end subroutine DTE_Integral_I_UPDN
 
 !  End module
 
-end module FO_Thermal_RTCalcs_I_m
+end module VFO_Thermal_RTCalcs_I_m
 

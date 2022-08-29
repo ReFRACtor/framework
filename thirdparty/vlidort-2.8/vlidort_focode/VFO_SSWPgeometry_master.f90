@@ -75,7 +75,7 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_SSWPGeometry_Master_m
+module VFO_SSWPGeometry_Master_m
 
 !  Stand alone geometry for solar scattering only
 
@@ -91,14 +91,14 @@ module FO_SSWPGeometry_Master_m
 !     2. Introduce doublet geometry option, first done for VLIDORT 2.8.2 in April 2020
 !          -- Controlled by flag "do_doublet". Offsets now included in input lists
 
-   use FO_WPGeometry_Routines_m
+   use VFO_WPGeometry_Routines_m
 
 private
-public FO_SSWPGeometry_Master
+public VFO_SSWPGeometry_Master
 
 contains
 
-subroutine FO_SSWPGeometry_Master &
+subroutine VFO_SSWPGeometry_Master &
        ( maxgeoms, maxszas, maxvzas, maxazms, maxlayers, maxpartials, maxfine,          & ! Input dimensions/constants
          do_obsgeom, do_doublet, do_Chapman, do_planpar, do_enhanced_ps, do_Partials,   & ! Input flags
          ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials, partial_layeridx,      & ! Input numbers             
@@ -361,7 +361,7 @@ subroutine FO_SSWPGeometry_Master &
 
    if ( do_planpar .and. do_enhanced_ps ) then
       message = 'Cannot have BOTH Plane-parallel and Enhanced PS options'
-      trace   = 'Initial Flag Check in FO_SSGeometry_Master'
+      trace   = 'Initial Flag Check in VFO_SSGeometry_Master'
       fail    = .true. ;  return
    endif
 
@@ -393,7 +393,7 @@ subroutine FO_SSWPGeometry_Master &
          if ( obsgeom_boa(v,2).gt.90.0_ffp.or.obsgeom_boa(v,2).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Boa LOS angle outside range [0,90]); Check it!'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, OBSGEOM mode'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, OBSGEOM mode'
             fail    = .true. ;  return
          endif
 
@@ -401,14 +401,14 @@ subroutine FO_SSWPGeometry_Master &
             if ( obsgeom_boa(v,1).ge.90.0_ffp.or.obsgeom_boa(v,1).lt.zero ) then
                write(c2,'(I2)')v
                message = 'Plane-parallel: Boa SZA angle outside range [0,90)); Check it!'
-               trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, OBSGEOM mode'
+               trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, OBSGEOM mode'
                fail    = .true. ;  return
             endif
          else
             if ( obsgeom_boa(v,1).gt.90.0_ffp.or.obsgeom_boa(v,1).lt.zero ) then
                write(c2,'(I2)')v
                message = 'Pseudo-spherical : Boa SZA angle outside range [0,90]); Check it!'
-               trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, OBSGEOM mode'
+               trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, OBSGEOM mode'
                fail    = .true. ;  return
             endif
          endif
@@ -434,7 +434,7 @@ subroutine FO_SSWPGeometry_Master &
          if ( alpha_boa(v).gt.90.0_ffp.or.alpha_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Boa LOS angle outside range [0,90]); Check it!'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, DOUBLET MODE'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, DOUBLET MODE'
             fail    = .true. ;  return
          endif
       enddo
@@ -447,14 +447,14 @@ subroutine FO_SSWPGeometry_Master &
           if ( theta_boa(v).ge.90.0_ffp.or.theta_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Plane-parallel: Boa SZA angle outside range [0,90)); Check it!'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, DOUBLET MODE'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, DOUBLET MODE'
             fail    = .true. ;  return
           endif
         else
           if ( theta_boa(v).gt.90.0_ffp.or.theta_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Pseudo-spherical : Boa SZA angle outside range [0,90]); Check it!, DOUBLET MODE'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master'
             fail    = .true. ;  return
           endif
         endif
@@ -483,7 +483,7 @@ subroutine FO_SSWPGeometry_Master &
          if ( alpha_boa(v).gt.90.0_ffp.or.alpha_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Boa LOS angle outside range [0,90]); Check it!'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, LATTICE MODE'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, LATTICE MODE'
             fail    = .true. ;  return
          endif
       enddo
@@ -496,14 +496,14 @@ subroutine FO_SSWPGeometry_Master &
           if ( theta_boa(v).ge.90.0_ffp.or.theta_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Plane-parallel: Boa SZA angle outside range [0,90)); Check it!'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master, LATTICE MODE'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master, LATTICE MODE'
             fail    = .true. ;  return
           endif
         else
           if ( theta_boa(v).gt.90.0_ffp.or.theta_boa(v).lt.zero ) then
             write(c2,'(I2)')v
             message = 'Pseudo-spherical : Boa SZA angle outside range [0,90]); Check it!, LATTICE MODE'
-            trace   = 'Geometry # '//c2//'; Initial Angle Check in FO_SSWPGeometry_Master'
+            trace   = 'Geometry # '//c2//'; Initial Angle Check in VFO_SSWPGeometry_Master'
             fail    = .true. ;  return
           endif
         endif
@@ -630,7 +630,7 @@ subroutine FO_SSWPGeometry_Master &
 !            extinc, Lospaths, sina, cosa, radii, nfinedivs,               & ! Input
 !            Ncrit, AlphaCrit, RadCrit, CotCrit, fail, message )             ! Outputs
 !         if ( Fail ) then
-!            trace = 'Error from LosOut_EnhancedPS_FindCrit in FO_SSGeometry_Master, OBSGEOM mode' ; return
+!            trace = 'Error from LosOut_EnhancedPS_FindCrit in VFO_SSGeometry_Master, OBSGEOM mode' ; return
 !         endif
 !      endif
 
@@ -679,7 +679,7 @@ subroutine FO_SSWPGeometry_Master &
 !            extinc, Lospaths_LOS, sina_LOS, cosa_LOS, radii, nfinedivs_LOS,      & ! Inputs
 !            Ncrit_LOS, AlphaCrit_LOS, RadCrit_LOS, CotCrit_LOS, fail, message )    ! Outputs
 !         if ( Fail ) then
-!            trace = 'Error from LosOut_EnhancedPS_FindCrit in FO_SSGeometry_Master, LATTICE mode' ; return
+!            trace = 'Error from LosOut_EnhancedPS_FindCrit in VFO_SSGeometry_Master, LATTICE mode' ; return
 !         endif
 !      endif
 
@@ -752,7 +752,7 @@ subroutine FO_SSWPGeometry_Master &
 !            doCrit, Ncrit, nfinedivs, AlphaCrit, RadCrit, CotCrit,     & ! Outputs
 !            fail, message )                                              ! Outputs
 !         if ( Fail ) then
-!            trace = 'Error from SolarIn_EnhancedPS_Obsgeom_FindCrit in FO_SSGeometry_Master, OBSGEOM mode' ; return
+!            trace = 'Error from SolarIn_EnhancedPS_Obsgeom_FindCrit in VFO_SSGeometry_Master, OBSGEOM mode' ; return
 !         endif
 !      else
 !         call SolarIn_EnhancedPS_Lattice_FindCrit &
@@ -763,7 +763,7 @@ subroutine FO_SSWPGeometry_Master &
 !            doCrit, Ncrit, AlphaCrit, RadCrit, CotCrit,                   & ! Outputs (Incoming criticality)
 !            fail, message )                                                 ! Outputs (Exception handling)
 !         if ( Fail ) then
-!            trace = 'Error from SolarIn_EnhancedPS_Lattice_FindCrit in FO_SSGeometry_Master, LATTICE mode' ; return
+!            trace = 'Error from SolarIn_EnhancedPS_Lattice_FindCrit in VFO_SSGeometry_Master, LATTICE mode' ; return
 !         endif
 !      endif
 !   endif
@@ -841,10 +841,10 @@ subroutine FO_SSWPGeometry_Master &
 !  Finish
 
    return
-end subroutine FO_SSWPGeometry_Master
+end subroutine VFO_SSWPGeometry_Master
 
 !  Finish
 
-end module FO_SSWPGeometry_Master_m
+end module VFO_SSWPGeometry_Master_m
 
 

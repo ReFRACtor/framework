@@ -156,13 +156,13 @@ subroutine VFO_LPS_MASTER &
 
 !  Use modules
 
-   USE FO_SSWPGeometry_Master_m
-   USE FO_DTWPGeometry_Master_m
+   USE VFO_SSWPGeometry_Master_m
+   USE VFO_DTWPGeometry_Master_m
 
-   USE FO_VectorSS_spherfuncs_m
-   USE FO_VectorSS_RTCalcs_ILPS_m
+   USE VFO_VectorSS_spherfuncs_m
+   USE VFO_VectorSS_RTCalcs_ILPS_m
 
-   USE FO_Thermal_RTCalcs_ILPS_m
+   USE VFO_Thermal_RTCalcs_ILPS_m
 
    implicit none
 
@@ -775,7 +775,7 @@ subroutine VFO_LPS_MASTER &
 !    -- 1/31/21. Version 2.8.3. theta_all added to the output, needed for MSST output later on.
 !    -- 1/31/21. Version 2.8.3. do_doublet flag added, Offsets added, some inputs rearranged
 
-       call FO_SSWPGeometry_Master &
+       call VFO_SSWPGeometry_Master &
        ( maxgeoms, maxszas, maxvzas, maxazms, maxlayers, maxpartials, maxfine,          & ! Input dimensions/constants
          do_obsgeom, do_doublet, do_Chapman, do_planpar, do_enhanced_ps, do_Partials,   & ! Input flags
          ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials, partial_layeridx,      & ! Input numbers             
@@ -791,7 +791,7 @@ subroutine VFO_LPS_MASTER &
          fail, message, trace_1 )                                                             ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_SSWPGeometry_Master, Solar Sources, Upwelling calculation'
+         trace_2 = 'Failure from VFO_SSWPGeometry_Master, Solar Sources, Upwelling calculation'
          Master_fail = .true. ; return
        endif
 
@@ -799,7 +799,7 @@ subroutine VFO_LPS_MASTER &
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Include option for Doublet-geometry (Add flag and offsets)
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Rearranged the argument list
 
-       Call FO_VectorSS_spherfuncs &
+       Call VFO_VectorSS_spherfuncs &
         ( MAXMOMENTS_INPUT, MAXGEOMS, MAXSZAS, MAXVZAS, MAXAZMS, DTR,   & ! Inputs
           NMOMENTS_INPUT, NGEOMS, NSZAS, NVZAS, NAZMS, NSTOKES, VSIGN,  & ! Inputs
           STARTER, DO_OBSGEOM, DO_DOUBLET, DO_SPHERFUNC, DO_SUNLIGHT,   & ! Inputs
@@ -888,7 +888,7 @@ subroutine VFO_LPS_MASTER &
 !    -- 1/31/21. Version 2.8.3. theta_all added to the output, needed for MSST output later on.
 !    -- 1/31/21. Version 2.8.3. do_doublet flag added, Offsets added, some inputs rearranged
 
-       call FO_SSWPGeometry_Master &
+       call VFO_SSWPGeometry_Master &
        ( maxgeoms, maxszas, maxvzas, maxazms, maxlayers, maxpartials, maxfine,          & ! Input dimensions/constants
          do_obsgeom, do_doublet, do_Chapman, do_planpar, do_enhanced_ps, do_Partials,   & ! Input flags
          ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials, partial_layeridx,      & ! Input numbers             
@@ -904,7 +904,7 @@ subroutine VFO_LPS_MASTER &
          fail, message, trace_1 )                                                             ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_SSWPGeometry_Master, Solar Sources, Downwelling calculation'
+         trace_2 = 'Failure from VFO_SSWPGeometry_Master, Solar Sources, Downwelling calculation'
          Master_fail = .true. ; return
        endif
 
@@ -912,7 +912,7 @@ subroutine VFO_LPS_MASTER &
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Include option for Doublet-geometry (Add flag and offsets)
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Rearranged the argument list
 
-       Call FO_VectorSS_spherfuncs &
+       Call VFO_VectorSS_spherfuncs &
         ( MAXMOMENTS_INPUT, MAXGEOMS, MAXSZAS, MAXVZAS, MAXAZMS, DTR,   & ! Inputs
           NMOMENTS_INPUT, NGEOMS, NSZAS, NVZAS, NAZMS, NSTOKES, VSIGN,  & ! Inputs
           STARTER, DO_OBSGEOM, DO_DOUBLET, DO_SPHERFUNC, DO_SUNLIGHT,   & ! Inputs
@@ -986,7 +986,7 @@ subroutine VFO_LPS_MASTER &
 !        ==> Add radiifine_LOS + radiifine_p_LOS to the argument list
 !        ==> These are vertical distances from layer top, needed for FO Outgoing direct-thermal calculation
 
-       call FO_DTWPGeometry_Master  &
+       call VFO_DTWPGeometry_Master  &
          ( maxvzas, maxlayers, maxpartials, maxfine, dtr, eradius,        & ! Input dimensions/constants
            .true., do_planpar, do_enhanced_ps, do_Partials,               & ! Input flags
            nvzas, nlayers, npartials, nfine, partial_layeridx,            & ! Input control
@@ -1000,7 +1000,7 @@ subroutine VFO_LPS_MASTER &
            fail, message, trace_1 )                                         ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_DTWPGeometry_Master, Upwelling'
+         trace_2 = 'Failure from VFO_DTWPGeometry_Master, Upwelling'
          Master_fail = .true. ; return
        endif
 
@@ -1300,7 +1300,7 @@ subroutine VFO_LPS_MASTER &
 !        ==> Add radiifine_LOS + radiifine_p_LOS to the argument list
 !        ==> These are vertical distances from layer top, needed for FO Outgoing direct-thermal calculation
 
-       call FO_DTWPGeometry_Master  &
+       call VFO_DTWPGeometry_Master  &
          ( maxvzas, maxlayers, maxpartials, maxfine, dtr, eradius,        & ! Input dimensions/constants
            .false., do_planpar, do_enhanced_ps, do_Partials,              & ! Input flags
            nvzas, nlayers, npartials, nfine, partial_layeridx,            & ! Input control
@@ -1314,7 +1314,7 @@ subroutine VFO_LPS_MASTER &
            fail, message, trace_1 )                                         ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_DTWPGeometry_Master, Downwelling'
+         trace_2 = 'Failure from VFO_DTWPGeometry_Master, Downwelling'
          Master_fail = .true. ; return
        endif
 
@@ -1542,13 +1542,13 @@ subroutine VFO_LCS_MASTER &
 
 !  Use modules
 
-   USE FO_SSWPGeometry_Master_m
-   USE FO_DTWPGeometry_Master_m
+   USE VFO_SSWPGeometry_Master_m
+   USE VFO_DTWPGeometry_Master_m
 
-   USE FO_VectorSS_spherfuncs_m
-   USE FO_VectorSS_RTCalcs_ILCS_m
+   USE VFO_VectorSS_spherfuncs_m
+   USE VFO_VectorSS_RTCalcs_ILCS_m
 
-   USE FO_Thermal_RTCalcs_ILCS_m
+   USE VFO_Thermal_RTCalcs_ILCS_m
 
    implicit none
 
@@ -2149,7 +2149,7 @@ subroutine VFO_LCS_MASTER &
 !    -- 1/31/21. Version 2.8.3. theta_all added to the output, needed for MSST output later on.
 !    -- 1/31/21. Version 2.8.3. do_doublet flag added, Offsets added, some inputs rearranged
 
-       call FO_SSWPGeometry_Master &
+       call VFO_SSWPGeometry_Master &
        ( maxgeoms, maxszas, maxvzas, maxazms, maxlayers, maxpartials, maxfine,          & ! Input dimensions/constants
          do_obsgeom, do_doublet, do_Chapman, do_planpar, do_enhanced_ps, do_Partials,   & ! Input flags
          ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials, partial_layeridx,      & ! Input numbers             
@@ -2165,7 +2165,7 @@ subroutine VFO_LCS_MASTER &
          fail, message, trace_1 )                                                             ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_SSWPGeometry_Master, Solar Sources, Upwelling calculation'
+         trace_2 = 'Failure from VFO_SSWPGeometry_Master, Solar Sources, Upwelling calculation'
          Master_fail = .true. ; return
        endif
 
@@ -2173,7 +2173,7 @@ subroutine VFO_LCS_MASTER &
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Include option for Doublet-geometry (Add flag and offsets)
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Rearranged the argument list
 
-       Call FO_VectorSS_spherfuncs &
+       Call VFO_VectorSS_spherfuncs &
         ( MAXMOMENTS_INPUT, MAXGEOMS, MAXSZAS, MAXVZAS, MAXAZMS, DTR,   & ! Inputs
           NMOMENTS_INPUT, NGEOMS, NSZAS, NVZAS, NAZMS, NSTOKES, VSIGN,  & ! Inputs
           STARTER, DO_OBSGEOM, DO_DOUBLET, DO_SPHERFUNC, DO_SUNLIGHT,   & ! Inputs
@@ -2256,7 +2256,7 @@ subroutine VFO_LCS_MASTER &
 !    -- 1/31/21. Version 2.8.3. theta_all added to the output, needed for MSST output later on.
 !    -- 1/31/21. Version 2.8.3. do_doublet flag added, Offsets added, some inputs rearranged
 
-       call FO_SSWPGeometry_Master &
+       call VFO_SSWPGeometry_Master &
        ( maxgeoms, maxszas, maxvzas, maxazms, maxlayers, maxpartials, maxfine,          & ! Input dimensions/constants
          do_obsgeom, do_doublet, do_Chapman, do_planpar, do_enhanced_ps, do_Partials,   & ! Input flags
          ngeoms, nszas, nvzas, nazms, nlayers, nfine, npartials, partial_layeridx,      & ! Input numbers             
@@ -2272,7 +2272,7 @@ subroutine VFO_LCS_MASTER &
          fail, message, trace_1 )                                                             ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_SSWPGeometry_Master, Solar Sources, Downwelling calculation'
+         trace_2 = 'Failure from VFO_SSWPGeometry_Master, Solar Sources, Downwelling calculation'
          Master_fail = .true. ; return
        endif
 
@@ -2280,7 +2280,7 @@ subroutine VFO_LCS_MASTER &
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Include option for Doublet-geometry (Add flag and offsets)
 !    -- 1/31/21. Version 2.8.3. (Upgrade from 4/15/20). Rearranged the argument list
 
-       Call FO_VectorSS_spherfuncs &
+       Call VFO_VectorSS_spherfuncs &
         ( MAXMOMENTS_INPUT, MAXGEOMS, MAXSZAS, MAXVZAS, MAXAZMS, DTR,   & ! Inputs
           NMOMENTS_INPUT, NGEOMS, NSZAS, NVZAS, NAZMS, NSTOKES, VSIGN,  & ! Inputs
           STARTER, DO_OBSGEOM, DO_DOUBLET, DO_SPHERFUNC, DO_SUNLIGHT,   & ! Inputs
@@ -2353,7 +2353,7 @@ subroutine VFO_LCS_MASTER &
 !        ==> Add radiifine_LOS + radiifine_p_LOS to the argument list
 !        ==> These are vertical distances from layer top, needed for FO Outgoing direct-thermal calculation
 
-       call FO_DTWPGeometry_Master  &
+       call VFO_DTWPGeometry_Master  &
          ( maxvzas, maxlayers, maxpartials, maxfine, dtr, eradius,        & ! Input dimensions/constants
            .true., do_planpar, do_enhanced_ps, do_Partials,               & ! Input flags
            nvzas, nlayers, npartials, nfine, partial_layeridx,            & ! Input control
@@ -2367,7 +2367,7 @@ subroutine VFO_LCS_MASTER &
            fail, message, trace_1 )                                         ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_DTWPGeometry_Master, Upwelling'
+         trace_2 = 'Failure from VFO_DTWPGeometry_Master, Upwelling'
          Master_fail = .true. ; return
        endif
 
@@ -2645,7 +2645,7 @@ subroutine VFO_LCS_MASTER &
 !        ==> Add radiifine_LOS + radiifine_p_LOS to the argument list
 !        ==> These are vertical distances from layer top, needed for FO Outgoing direct-thermal calculation
 
-       call FO_DTWPGeometry_Master  &
+       call VFO_DTWPGeometry_Master  &
          ( maxvzas, maxlayers, maxpartials, maxfine, dtr, eradius,        & ! Input dimensions/constants
            .false., do_planpar, do_enhanced_ps, do_Partials,              & ! Input flags
            nvzas, nlayers, npartials, nfine, partial_layeridx,            & ! Input control
@@ -2659,7 +2659,7 @@ subroutine VFO_LCS_MASTER &
            fail, message, trace_1 )                                         ! Output(Status)
 
        if ( fail ) then
-         trace_2 = 'Failure from FO_DTWPGeometry_Master, Downwelling'
+         trace_2 = 'Failure from VFO_DTWPGeometry_Master, Downwelling'
          Master_fail = .true. ; return
        endif
 

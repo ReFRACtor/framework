@@ -75,10 +75,10 @@
 !    #                                                         #
 !    ###########################################################
 
-module FO_Thermal_RTCalcs_ILCS_m
+module VFO_Thermal_RTCalcs_ILPS_m
 
 !  For a given wavelength, this routine will calculate upwelling and downwelling
-!  First Order Intensities(I), and any number of LCS Jacobians (column/surface)
+!  First Order Intensities(I), and any number of LPS Jacobians (profile/surface)
 
 !     (1) For the Atmospheric and Surface Direct Thermal Emission (DTE) sources.
 
@@ -95,18 +95,18 @@ module FO_Thermal_RTCalcs_ILCS_m
 !    Version 2,  01 June     2012, R. Spurr, RT Solutions Inc.
 !    Version 3,  29 October  2012, Extension to Observational multiple geometries
 !    Version 4,  31 July     2013, Lattice Multi-geometry
-!    Version 5,  07 July     2016, Optional F-matrix usage
+!    Version 5,  07 July     2016, Optional phase function usage
 !    Version 5,  26 August   2016, Partial-layer output
 !    Version 5,  11 December 2017, Optional code for polarized emissivity
 
 !  For Thermal Emission sources, the subroutines are
-!       DTE_Integral_ILCS_UP   (Upwelling only)
-!       DTE_Integral_ILCS_DN   (Downwelling only)
-!       DTE_Integral_ILCS_UPDN (Upwelling and Downwelling)
+!       DTE_Integral_ILPS_UP   (Upwelling only)
+!       DTE_Integral_ILPS_DN   (Downwelling only)
+!       DTE_Integral_ILPS_UPDN (Upwelling and Downwelling)
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !    -  Add hfine/hfine_p inputs for correct DT calculation (Outgoing)
-!    -  lostrans_up, lostrans_up_p (and derivatives) are now outputs from this routine
+!    -  lostrans_up, lostrans_up_p (and linearizations) are now outputs from this routine
 
 !  All subroutines public
 
@@ -114,12 +114,12 @@ public
 
 contains
 
-subroutine DTE_Integral_ILCS_UP &
-   ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels,  & ! Inputs (dimensioning)
-     max_atmoswfs, max_surfacewfs,                                & ! Inputs (dimensioning)
-     Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar,     & ! Inputs (Flags)
-     do_enhanced_ps, do_sources_up, do_sources_up_p,              & ! Inputs (Flags)
-     do_columnwfs, do_surfacewfs, n_columnwfs, n_surfacewfs,      & ! Inputs (Control, Jacobians)
+subroutine DTE_Integral_ILPS_UP &
+   ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels,        & ! Inputs (dimensioning)
+     max_atmoswfs, max_surfacewfs,                                      & ! Inputs (dimensioning)
+     Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar,           & ! Inputs (Flags)
+     do_enhanced_ps, do_sources_up, do_sources_up_p,                    & ! Inputs (Flags)
+     do_profilewfs, do_surfacewfs, Lvaryflags, Lvarynums, n_surfacewfs, & ! Inputs (Control, Jacobians)
      ngeoms, nlayers, nfinedivs, n_user_levels, user_levels, npartials, & ! Inputs (control output)
      nfinedivs_p, partial_outindex, partial_outflag, partial_layeridx,  & ! Inputs (control-partial)
      bb_input, surfbb, user_emissivity, LS_user_emissivity,             & ! Inputs (Thermal)
@@ -127,14 +127,14 @@ subroutine DTE_Integral_ILCS_UP &
      L_extinction, L_deltaus, L_omega, L_truncfac,                      & ! Inputs (Optical - Linearized)
      Mu1, LosW_paths, LosP_paths,                                       & ! Inputs (Geometry)
      xfine, wfine, hfine, xfine_p, wfine_p, hfine_p,                    & ! Inputs (Geometry)
-     intensity_dta_up, intensity_dts, LC_Jacobians_dta_up,              & ! Main Outputs
-     LC_Jacobians_dts_up, LS_Jacobians_dts, tcom1, L_tcom1,             & ! Main and Other Outputs
+     intensity_dta_up, intensity_dts, LP_Jacobians_dta_up,              & ! Main Outputs
+     LP_Jacobians_dts_up, LS_Jacobians_dts, tcom1, L_tcom1,             & ! Main and Other Outputs
      lostrans_up, lostrans_up_p, L_lostrans_up, L_lostrans_up_p,        & ! Other Outputs
      Do_Polarized_Emissivity, nstokes, User_QUVEmissivity, LS_USER_QUVEmissivity, & ! Optional Input.  12/11/17 Rob Add.
-     StokesQUV_dts, LC_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
+     StokesQUV_dts, LP_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
 
 !  Stand alone routine for Upwelling Direct-thermal-emission (DTE)
-!    computation of Radiances and LCS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
+!    computation of Radiances and LPS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
 
 !  This version, revised by R. Spurr, 01 June 2012
 !   - Extension to ObsGeom multiple geometries, 29 October 2012   (Version 1.3)
@@ -194,8 +194,9 @@ subroutine DTE_Integral_ILCS_UP &
 !  Jacobian Flags and control
 
    LOGICAL, Intent(in) :: do_surfacewfs
-   LOGICAL, Intent(in) :: do_columnwfs
-   INTEGER, Intent(in) :: n_columnwfs
+   LOGICAL, Intent(in) :: do_profilewfs
+   LOGICAL, Intent(in) :: Lvaryflags(maxlayers)
+   INTEGER, Intent(in) :: Lvarynums (maxlayers)
    INTEGER, Intent(in) :: n_surfacewfs
 
 !  Layer and Level Control Numbers, Number of Moments
@@ -208,7 +209,7 @@ subroutine DTE_Integral_ILCS_UP &
 !  Numbers for Version 1.5: -->  Partial Control added, 8/26/16
 
    integer, Intent(in) :: Npartials
-   integer, Intent(in) :: partial_layeridx( maxpartials )
+   integer, Intent(in) :: partial_layeridx (maxpartials )
    logical, Intent(in) :: partial_outflag ( MAX_USER_LEVELS )
    integer, Intent(in) :: partial_outindex( MAX_USER_LEVELS )
    integer, Intent(in) :: NFINEDIVS_P(MAXPARTIALS,MAXGEOMS)
@@ -278,8 +279,8 @@ subroutine DTE_Integral_ILCS_UP &
 
 !  Jacobians
 
-   real(ffp), Intent(Out)  :: LC_Jacobians_dta_up  ( max_user_levels, maxgeoms, max_atmoswfs )
-   real(ffp), Intent(Out)  :: LC_Jacobians_dts_up  ( max_user_levels, maxgeoms, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dta_up  ( max_user_levels, maxgeoms, maxlayers, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dts_up  ( max_user_levels, maxgeoms, maxlayers, max_atmoswfs )
    real(ffp), Intent(Out)  :: LS_Jacobians_dts     ( max_user_levels, maxgeoms, max_surfacewfs )
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
@@ -299,7 +300,7 @@ subroutine DTE_Integral_ILCS_UP &
 !  Optional outputs for polarized emission. 12/11/17 Rob Add.
 
    real(ffp), Intent(Out), optional :: StokesQUV_dts          (max_user_levels,3,maxgeoms)
-   real(ffp), Intent(Out), optional :: LC_JacobiansQUV_dts_up (max_user_levels,3,maxgeoms,max_atmoswfs)
+   real(ffp), Intent(Out), optional :: LP_JacobiansQUV_dts_up (max_user_levels,3,maxgeoms,maxlayers,max_atmoswfs)
    real(ffp), Intent(Out), optional :: LS_JacobiansQUV_dts    (max_user_levels,3,maxgeoms,max_surfacewfs)
 
 !  LOCAL
@@ -323,22 +324,25 @@ subroutine DTE_Integral_ILCS_UP &
 
 !  Help
 
-   integer    :: n, j, q, v, uta, nstart, nc, nut, nut_prev, Qnums(maxlayers), np, ut
+   integer    :: n, j, k, q, v, uta, nstart, nc, nut, nut_prev, Qnums(maxlayers), np, ut
    logical    :: do_regular_ps, layermask_up(maxlayers), Qvary(maxlayers)
+
 
    real(ffp)  :: help, sum, tran, kn, xjkn, dj, zj, zjkn, zjL_kn, path_up, Solutionsfine, Solutionsfine_p
    real(ffp)  :: L_help, L_sum(max_atmoswfs), L_kn, L_Solutionsfine, L_Solutionsfine_p
-   real(ffp)  :: cumsource_dste, t_mult_up(0:2), L_t_mult_up(0:2), thermcoeffs(2)
+   real(ffp)  :: t_mult_up(0:2), L_t_mult_up(0:2), thermcoeffs(2)
    real(ffp)  :: tms, L_tms(max_atmoswfs), lostau, LA2, partau, L_Partau
+!mick mod 3/22/2017 - switched CUMSOURCE_DSTE from scalar to 1-D array 
+   real(ffp)  :: cumsource_dste ( 0:maxlayers )
 
 !  Help variables for Optional polarized emissivity. 12/11/17 Rob add.
 
-   integer    :: ns, nws, nwc
+   integer    :: ns, nws
    logical    :: do_PolEmiss
    real(ffp)  :: PolEmiss(3,maxgeoms), LS_PolEmiss(3,maxgeoms,max_surfacewfs)
-   real(ffp)  :: QUV_dts(max_user_levels,3), CUMSOURCE_DSTEQUV(3)
+   real(ffp)  :: QUV_dts(max_user_levels,3), CUMSOURCE_DSTEQUV( 0:maxlayers, 3) ! Followed Mick change to CUMSOURCE_DSTE
    real(ffp)  :: LS_QUV_dts(max_user_levels,3,max_surfacewfs), LS_CUMSOURCE_DSTEQUV(3,max_surfacewfs)
-   real(ffp)  :: LC_QUV_dts(max_user_levels,3,max_atmoswfs),   LC_CUMSOURCE_DSTEQUV(3,max_atmoswfs)
+   real(ffp)  :: LP_QUV_dts(max_user_levels,3,max_atmoswfs),   LP_CUMSOURCE_QUV    (3,max_atmoswfs)
 
 !  parameters
 
@@ -351,15 +355,9 @@ subroutine DTE_Integral_ILCS_UP &
    INTENSITY_dta_up = zero
    INTENSITY_dts    = zero
 
-   LC_JACOBIANS_dta_up = zero
-   LC_JACOBIANS_dts_up = zero
+   LP_JACOBIANS_dta_up = zero
+   LP_JACOBIANS_dts_up = zero
    LS_JACOBIANS_dts    = zero
-
-!  Regular_PS or plane-parallel flag
-
-   do_regular_ps = .false.
-   if ( .not.do_Planpar ) do_regular_ps = .not. do_enhanced_ps
-   do_RegPSorPP = (do_regular_ps .or. do_PlanPar)
 
 !  Optional code for polarized emissivity, set Proxies and Initialize. 12/11/17 Rob add.
 
@@ -371,24 +369,30 @@ subroutine DTE_Integral_ILCS_UP &
         if ( do_surfacewfs .and. present(LS_User_QUVEmissivity) .and. present(LS_JacobiansQUV_dts) ) then
            LS_PolEmiss = LS_User_QUVEmissivity ; LS_JacobiansQUV_dts = zero
         endif
-        if ( do_columnwfs  .and. present(LC_JacobiansQUV_dts_up) ) LC_JacobiansQUV_dts_up = zero
+        if ( do_profilewfs  .and. present(LP_JacobiansQUV_dts_up) ) LP_JacobiansQUV_dts_up = zero
      endif
    endif
 
+!  Regular_PS or plane-parallel flag
+
+   do_regular_ps = .false.
+   if ( .not.do_Planpar ) do_regular_ps = .not. do_enhanced_ps
+   do_RegPSorPP = (do_regular_ps .or. do_PlanPar)
+
 !  Bookkeeping
-!mick fix 3/22/2017  - turned on all values of LAYERMASK_UP
+!mick fix 3/22/2017 - turned on all values of LAYERMASK_UP
 
    !NUT = USER_LEVELS(1) + 1
    !LAYERMASK_UP = .false.
    !LAYERMASK_UP(NUT:NLAYERS) = .true.
    LAYERMASK_UP = .true.
 
-!  Linearization bookkeeping. Additional for partials 8/26/16
+!  Linearization bookkeeping
 
    Qvary = .false. ; QNums = 0
-   if ( do_columnwfs ) then
-      Qvary(1:nlayers) = .true.
-      QNums(1:nlayers) =  n_columnwfs
+   if ( do_profilewfs ) then
+      Qvary(1:nlayers) = Lvaryflags(1:nlayers)
+      QNums(1:nlayers) = Lvarynums (1:nlayers)
    endif
 
 !  Thermal setup factors and linearizations
@@ -410,7 +414,7 @@ subroutine DTE_Integral_ILCS_UP &
             endif
          endif
          thermcoeffs(1)  = bb_input(n-1)
-         thermcoeffs(2)  = (bb_input(n)-bb_input(n-1)) / deltaus(n)
+         thermcoeffs(2)  = ( bb_input(n)-bb_input(n-1) ) / deltaus(n)
          tcom1(n,1) = thermcoeffs(1) * tms
          tcom1(n,2) = thermcoeffs(2) * tms
          if ( Qvary(n) ) then
@@ -421,11 +425,11 @@ subroutine DTE_Integral_ILCS_UP &
             enddo
          endif
       ENDDO
-      do_Thermset = .false. 
+      do_Thermset = .false.
    endif
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!    -- Zero the transmittances
+!    ==>  Zero the transmittances
 
    lostrans_up   = zero ; L_lostrans_up   = zero 
    lostrans_up_p = zero ; L_lostrans_up_p = zero
@@ -436,12 +440,12 @@ subroutine DTE_Integral_ILCS_UP &
    do v = 1, ngeoms
 
 !  Zero local sources
-! mick mod 3/22/2017 - turned off (not needed)
+! mick mod 3/22/2017 - turned off (not needed). 4/24/20 Rob Query
 
-      ! sources_up   = zero   ; cumsource_up = zero
-      ! sources_up_p = zero
-      ! L_sources_up   = zero
-      ! L_sources_up_p = zero
+      !sources_up = zero     ; cumsource_up = zero
+      !sources_up_p = zero
+      !L_sources_up   = zero
+      !L_sources_up_p = zero
 
 !  Plane/Parallel and Regular-PS: Layer integrated source terms
 !  ============================================================
@@ -461,7 +465,7 @@ subroutine DTE_Integral_ILCS_UP &
             t_mult_up(1) = tcom1(n,1) + t_mult_up(2) * Mu1(v)
             sum = t_mult_up(1) + t_mult_up(2) * deltaus(n)
             t_mult_up(0) = - sum
-            sources_up(n) = t_mult_up(0) * lostrans_up(n,v)  + t_mult_up(1)
+            sources_up(n) = t_mult_up(0) * lostrans_up(n,v) + t_mult_up(1)
             if ( Qvary(n) ) then
               do q = 1, Qnums(n)
                 L_t_mult_up(2) = L_tcom1(n,2,q)
@@ -478,6 +482,7 @@ subroutine DTE_Integral_ILCS_UP &
 
 !  Partials. New Code 8/26/16
 !mick fix 3/22/2017 - added "do_Partials" to 1st if condition
+!                   - moved defining of "np" before 2nd if block
 !                   - replaced last three lines with a new set of four in both intensity and
 !                     jacobian sections
 
@@ -488,6 +493,7 @@ subroutine DTE_Integral_ILCS_UP &
         DO ut = 1, npartials
           np = partial_layeridx(ut)
           if ( layermask_up(np).and.do_sources_up_p(ut,v) ) then
+            !np = partial_layeridx(ut)
             path_up = losW_paths(np,v) - losP_paths(ut,v) ; kn = extinction(np)
             lostau = kn * path_up ; if ( lostau .lt. cutoff ) lostrans_up_p(ut,v) = exp( - lostau )
             partau = lostau * Mu1(v)
@@ -497,7 +503,7 @@ subroutine DTE_Integral_ILCS_UP &
 
             !sum = t_mult_up(1) + t_mult_up(2) * partau
             !t_mult_up(0) = - sum
-            !sources_up_p(ut) = t_mult_up(0) * lostrans_up_p(ut,v)  + t_mult_up(1)
+            !sources_up_p(ut) = t_mult_up(0) * lostrans_up_p(ut,v) + t_mult_up(1)
             sum = t_mult_up(1) + t_mult_up(2) * deltaus(np)
             t_mult_up(0) = - sum
             sum = t_mult_up(1) + t_mult_up(2) * partau
@@ -546,7 +552,7 @@ subroutine DTE_Integral_ILCS_UP &
               sum  = sum + solutionsfine * tran * wfine(n,j,v)
               if ( Qvary(n) ) then
                 do q = 1, Qnums(n)
-                  L_kn = L_extinction(n,q) ; zjL_kn = zj * L_kn
+                  L_kn = L_extinction(n,q)  ; zjL_kn = zj * L_kn
                   L_solutionsfine = L_tcom1(n,1,q) + zjkn * L_tcom1(n,2,q) + zjL_kn*tcom1(n,2)
                   L_sum(q)  = L_sum(q) + tran * wfine(n,j,v) * ( L_solutionsfine - zjL_kn * solutionsfine )
                 enddo
@@ -597,10 +603,11 @@ subroutine DTE_Integral_ILCS_UP &
 !  ===========================
 
 !  start recursion ( For DSTE term, Use surface emissivity )
+!mick mod 3/22/2017 - switched CUMSOURCE_DSTE from scalar to 1-D array
 
       NC =  0
-      CUMSOURCE_UP(NC) = zero
-      CUMSOURCE_DSTE   = SURFBB * USER_EMISSIVITY(v)
+      CUMSOURCE_UP(NC)   = zero
+      CUMSOURCE_DSTE(NC) = SURFBB * USER_EMISSIVITY(V)
       NSTART = NLAYERS
       NUT_PREV = NSTART + 1
 
@@ -610,22 +617,22 @@ subroutine DTE_Integral_ILCS_UP &
 !     Check for updating the recursion. Robfix partials, 8/26/16.
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!    ==> Must add geometry index to Lostrans
+!       ==> Must add geometry index to Lostrans
 
       DO UTA = N_USER_LEVELS, 1, -1
-         NUT    = USER_LEVELS(UTA) + 1
+         NUT = USER_LEVELS(UTA) + 1
          DO N = NSTART, NUT, -1
             NC = NLAYERS + 1 - N
-            CUMSOURCE_DSTE   = LOSTRANS_UP(N,v) * CUMSOURCE_DSTE
-            CUMSOURCE_UP(NC) = LOSTRANS_UP(N,v) * CUMSOURCE_UP(NC-1) + SOURCES_UP(N)
+            CUMSOURCE_UP(NC)   = LOSTRANS_UP(N,v) * CUMSOURCE_UP(NC-1) + SOURCES_UP(N)
+            CUMSOURCE_DSTE(NC) = LOSTRANS_UP(N,v) * CUMSOURCE_DSTE(NC-1)
          ENDDO
          IF ( Partial_OUTFLAG(UTA) ) THEN
            UT = Partial_OUTINDEX(UTA)
            INTENSITY_DTA_UP(UTA,V) = CUMSOURCE_UP(NC) * LOSTRANS_UP_p(UT,v) + SOURCES_UP_p(UT)
-           INTENSITY_DTS(UTA,V)    = CUMSOURCE_DSTE * LOSTRANS_UP_p(UT,v)
+           INTENSITY_DTS(UTA,V)    = CUMSOURCE_DSTE(NC) * LOSTRANS_UP_p(UT,v)
          ELSE
            INTENSITY_DTA_UP(UTA,V) = CUMSOURCE_UP(NC)
-           INTENSITY_DTS(UTA,V)    = CUMSOURCE_DSTE
+           INTENSITY_DTS(UTA,V)    = CUMSOURCE_DSTE(NC)
          ENDIF
          IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
          NUT_PREV = NUT
@@ -634,21 +641,21 @@ subroutine DTE_Integral_ILCS_UP &
 !  Optional code for polarized emissivity. 12/11/17 Rob add.
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!    ==> Must add geometry index to Lostrans
+!      ==> Must add geometry index to Lostrans
 
       if ( do_PolEmiss ) then
-         CUMSOURCE_DSTEQUV(1:ns) = SURFBB * PolEmiss(1:ns,v)
+         NC = 0 ; CUMSOURCE_DSTEQUV(NC,1:ns) = SURFBB * PolEmiss(1:ns,v)
          NSTART = NLAYERS ; NUT_PREV = NSTART + 1
          DO UTA = N_USER_LEVELS, 1, -1
             NUT = USER_LEVELS(UTA) + 1
             DO N = NSTART, NUT, -1
-              CUMSOURCE_DSTEQUV(1:ns) = LOSTRANS_UP(N,v) * CUMSOURCE_DSTEQUV(1:ns)
+              CUMSOURCE_DSTEQUV(NC,1:ns) = LOSTRANS_UP(N,v) * CUMSOURCE_DSTEQUV(NC-1,1:ns)
             ENDDO
             IF ( Partial_OUTFLAG(UTA) ) THEN
               UT = Partial_OUTINDEX(UTA)
-              QUV_DTS(UTA,1:ns) = CUMSOURCE_DSTEQUV(1:ns)  * LOSTRANS_UP_p(UT,v)
+              QUV_DTS(UTA,1:ns) = CUMSOURCE_DSTEQUV(NC,1:ns)  * LOSTRANS_UP_p(UT,v)
             ELSE
-              QUV_DTS(UTA,1:ns) = CUMSOURCE_DSTEQUV(1:ns)
+              QUV_DTS(UTA,1:ns) = CUMSOURCE_DSTEQUV(NC,1:ns)
             ENDIF
             IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1; NUT_PREV = NUT
          ENDDO
@@ -656,7 +663,7 @@ subroutine DTE_Integral_ILCS_UP &
       endif
 
 !  Surface WFs. Partials added, 8/26/16
-!mick mod 3/22/2017 - NC turned off (not needed here)
+!mick mod 3/22/2017 - turned off NC (not needed here)
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !    ==> Must add geometry index to Lostrans
@@ -713,109 +720,172 @@ subroutine DTE_Integral_ILCS_UP &
          endif
       endif
 
-!  Column Wfs (Atmospheric term). Partials added, 8/26/16
+!  Profile Wfs (atmospheric term)
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !    ==> Must add geometry index to Lostrans
 
-      if ( do_columnwfs ) then
+      if ( do_profilewfs ) then
+        do k = 1, nlayers
+          if ( Qvary(k) ) then
 !mick fix 3/22/2017 - initialize NC
-        NC = 0
-        L_CUMSOURCE = zero
-        NSTART = NLAYERS
-        NUT_PREV = NSTART + 1
-        DO UTA = N_USER_LEVELS, 1, -1
-          NUT    = USER_LEVELS(UTA) + 1
-          DO N = NSTART, NUT, -1
-            NC = NLAYERS + 1 - N
-            do q = 1, n_columnwfs
-               L_cumsource(q) = L_SOURCES_UP(N,Q) + &
-                 L_LOSTRANS_UP(N,v,Q) * CUMSOURCE_UP(NC-1) + LOSTRANS_UP(N,v)* L_CUMSOURCE(Q)
-            enddo
-          ENDDO
-          IF ( Partial_OUTFLAG(UTA) ) THEN
-            UT = Partial_OUTINDEX(UTA)
-!mick fix 3/22/2017 - added L_SOURCES_UP_P term
-            do q = 1, n_columnwfs
-              LC_Jacobians_DTA_UP(UTA,V,q) = L_SOURCES_UP_P(UT,q) + &
-                L_cumsource(q) * LOSTRANS_UP_p(UT,v) +  L_LOSTRANS_UP_P(UT,v,Q) * CUMSOURCE_UP(NC)
-            enddo
-          ELSE
-            LC_Jacobians_DTA_UP(UTA,V,1:n_columnwfs) = L_cumsource(1:n_columnwfs)
-          ENDIF
-          IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
-          NUT_PREV = NUT
-        ENDDO
-      endif
-
-!  Column Wfs (surface emission term)
-!mick mod 3/22/2017 - NC turned off (not needed here)
-
-!  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!    ==> Must add geometry index to Lostrans
-
-      if ( do_columnwfs ) then
-        CUMSOURCE_DSTE   = SURFBB * USER_EMISSIVITY(V)
-        L_CUMSOURCE      = ZERO
-        NSTART = NLAYERS
-        NUT_PREV = NSTART + 1
-        DO UTA = N_USER_LEVELS, 1, -1
-          NUT    = USER_LEVELS(UTA) + 1
-          DO N = NSTART, NUT, -1
-            !NC = NLAYERS + 1 - N
-            do q = 1, n_columnwfs
-              L_cumsource(q) =  L_LOSTRANS_UP(N,v,Q) * CUMSOURCE_DSTE + LOSTRANS_UP(N,v) * L_CUMSOURCE(Q)
-            enddo
-            CUMSOURCE_DSTE   = LOSTRANS_UP(N,v) * CUMSOURCE_DSTE
-          ENDDO
-          IF ( Partial_OUTFLAG(UTA) ) THEN
-            UT = Partial_OUTINDEX(UTA)
-            do q = 1, n_columnwfs
-              LC_Jacobians_DTS_up(UTA,V,q) = L_cumsource(q) * LOSTRANS_UP_p(UT,v) +  L_LOSTRANS_UP_P(UT,v,Q) * CUMSOURCE_DSTE
-            enddo
-          ELSE
-            LC_Jacobians_DTS_up(UTA,V,1:n_columnwfs)    = L_cumsource(1:n_columnwfs)
-          ENDIF
-          IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
-          NUT_PREV = NUT
-        ENDDO
-      endif
-
-!  Optional code for polarized emissivity (Column Jacobians).12/11/17 Rob add.
-
-!  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!    ==> Must add geometry index to Lostrans
-
-      if ( do_columnwfs .and. do_PolEmiss ) then
-         nwc = n_ColumnWfs
-         CUMSOURCE_DSTEQUV(1:ns)          = SURFBB * PolEmiss(1:ns,v)
-         LC_CUMSOURCE_DSTEQUV(1:ns,1:nwc) = zero
-         NSTART = NLAYERS ; NUT_PREV = NSTART + 1
-         DO UTA = N_USER_LEVELS, 1, -1
-            NUT = USER_LEVELS(UTA) + 1
-            DO N = NSTART, NUT, -1
-              do q = 1, n_columnwfs
-                LC_CUMSOURCE_DSTEQUV(1:ns,q) =  L_LOSTRANS_UP(N,v,q) * CUMSOURCE_DSTEQUV(1:ns) &
-                                                + LOSTRANS_UP(N,v)   * LC_CUMSOURCE_DSTEQUV(1:ns,q)
-              enddo
-              CUMSOURCE_DSTEQUV(1:ns)    = LOSTRANS_UP(N,v) * CUMSOURCE_DSTEQUV(1:ns)
+            NC = 0
+            L_CUMSOURCE = zero
+            NSTART = NLAYERS
+            NUT_PREV = NSTART + 1
+            DO UTA = N_USER_LEVELS, 1, -1
+              NUT    = USER_LEVELS(UTA) + 1
+              DO N = NSTART, NUT, -1
+                NC = NLAYERS + 1 - N
+                if ( k.eq.n ) then
+!mick mod 3/22/2017 - turned off 3rd term (not needed)
+                  do q = 1, Qnums(k)
+                    L_cumsource(q) = L_SOURCES_UP(N,Q) &
+                     + L_LOSTRANS_UP(N,v,Q) * CUMSOURCE_UP(NC-1) !+ LOSTRANS_UP(N,v) * L_CUMSOURCE(Q)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    L_cumsource(q) = LOSTRANS_UP(N,v) * L_CUMSOURCE(Q)
+                  enddo
+                endif
+              ENDDO
+              IF ( Partial_OUTFLAG(UTA) ) THEN
+                UT = Partial_OUTINDEX(UTA) ; np = partial_layeridx(ut)
+                if ( k.eq.np ) then
+!mick fix 3/22/2017 - added L_SOURCES_UP_P term here
+!mick mod 3/22/2017 - turned off 3rd term (not needed)
+                  do q = 1, Qnums(k)
+                    LP_Jacobians_DTA_UP(UTA,V,K,q) = L_SOURCES_UP_P(UT,q) &
+                      + L_LOSTRANS_UP_P(UT,v,Q) * CUMSOURCE_UP(NC) !+ LOSTRANS_UP_p(UT,v) * L_CUMSOURCE(Q)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    LP_Jacobians_DTA_UP(UTA,V,K,q) = LOSTRANS_UP_p(UT,v) * L_CUMSOURCE(q) 
+                  enddo
+                endif
+              ELSE
+                do q = 1, Qnums(k)
+                  LP_Jacobians_dta_up(UTA,V,K,Q) = L_CUMSOURCE(Q)
+                enddo
+              endif
+              IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
+              NUT_PREV = NUT
             ENDDO
-            IF ( Partial_OUTFLAG(UTA) ) THEN
-              UT = Partial_OUTINDEX(UTA)
-              do q = 1, n_columnwfs
-                LC_QUV_DTS(UTA,1:ns,q) = LC_CUMSOURCE_DSTEQUV(1:ns,q) * LOSTRANS_UP_p(UT,v) &
-                                       +  L_LOSTRANS_UP_P(UT,v,q)       * CUMSOURCE_DSTEQUV(1:ns)
+          endif
+        enddo
+      endif
+
+!  Profile Wfs (surface emission term)
+
+!  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
+!    ==> Must add geometry index to Lostrans
+
+      if ( do_profilewfs ) then
+!mick mod 3/22/2017 - defining of CUMSOURCE_DSTE turned off here since CUMSOURCE_DSTE
+!                     now an array defined above
+        !CUMSOURCE_DSTE = SURFBB * USER_EMISSIVITY(v)
+        do k = 1, nlayers
+          if ( Qvary(k) ) then
+!mick fix 3/22/2017 - initialize NC
+!                   - initialize L_CUMSOURCE to zero
+            NC = 0
+            !L_CUMSOURCE = CUMSOURCE_DSTE
+            L_CUMSOURCE = zero
+            NSTART = NLAYERS
+            NUT_PREV = NSTART + 1
+            DO UTA = N_USER_LEVELS, 1, -1
+              NUT  = USER_LEVELS(UTA) + 1
+              DO N = NSTART, NUT, -1
+                NC = NLAYERS + 1 - N
+                if ( k.eq.n ) then
+!mick fix 3/22/2017 - use CUMSOURCE_DSTE array
+                  do q = 1, Qnums(k)
+                    !L_cumsource(q) = L_LOSTRANS_UP(N,v,Q) * L_CUMSOURCE(Q)
+                    L_cumsource(q) = L_LOSTRANS_UP(N,v,Q) * CUMSOURCE_DSTE(NC-1)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    L_cumsource(q) = LOSTRANS_UP(N,v) * L_CUMSOURCE(Q)
+                  enddo
+                endif
+              ENDDO
+              IF ( Partial_OUTFLAG(UTA) ) THEN
+                UT = Partial_OUTINDEX(UTA) ; np = partial_layeridx(ut)
+                if ( k.eq.np ) then
+!mick fix 3/22/2017 - use CUMSOURCE_DSTE array
+                  do q = 1, Qnums(k)
+                    !LP_Jacobians_DTS_UP(UTA,V,K,q) = L_LOSTRANS_UP_p(UT,v,Q) * L_CUMSOURCE(Q)
+                    LP_Jacobians_DTS_UP(UTA,V,K,q) = L_LOSTRANS_UP_p(UT,v,Q) * CUMSOURCE_DSTE(NC)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    LP_Jacobians_DTS_UP(UTA,V,K,q) = LOSTRANS_UP_p(UT,v) * L_CUMSOURCE(Q) 
+                  enddo
+                endif
+              ELSE
+                do q = 1, Qnums(k)
+                  LP_Jacobians_dts_up(UTA,V,K,Q) = L_CUMSOURCE(Q)
+                enddo
+              endif
+              IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
+              NUT_PREV = NUT
+            ENDDO
+          endif
+        enddo
+      endif
+
+!  Optional code for polarized emissivity (Profile Jacobians).12/11/17 Rob add.
+
+!  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
+!    ==> Must add geometry index to Lostrans
+
+      if ( do_profilewfs .and. do_PolEmiss ) then
+        do k = 1, nlayers
+          if ( Qvary(k) ) then
+            NC = 0
+            LP_CUMSOURCE_QUV = zero
+            NSTART = NLAYERS
+            NUT_PREV = NSTART + 1
+            DO UTA = N_USER_LEVELS, 1, -1
+              NUT  = USER_LEVELS(UTA) + 1
+              DO N = NSTART, NUT, -1
+                NC = NLAYERS + 1 - N
+                if ( k.eq.n ) then
+                  do q = 1, Qnums(k)
+                    LP_CUMSOURCE_QUV(1:ns,q) = L_LOSTRANS_UP(N,v,Q) * CUMSOURCE_DSTEQUV(NC-1,1:ns)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    LP_CUMSOURCE_QUV(1:ns,q) = LOSTRANS_UP(N,v) * LP_CUMSOURCE_QUV(1:ns,q)
+                  enddo
+                endif
+              ENDDO
+              IF ( Partial_OUTFLAG(UTA) ) THEN
+                UT = Partial_OUTINDEX(UTA) ; np = partial_layeridx(ut)
+                if ( k.eq.np ) then
+                  do q = 1, Qnums(k)
+                    LP_QUV_DTS(UTA,1:ns,q) = L_LOSTRANS_UP_p(UT,v,Q) * CUMSOURCE_DSTEQUV(NC,1:ns)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    LP_QUV_DTS(UTA,1:ns,q) = LOSTRANS_UP_p(UT,v) * LP_CUMSOURCE_QUV(1:ns,q) 
+                  enddo
+                endif
+              ELSE
+                do q = 1, Qnums(k)
+                  LP_QUV_DTS(UTA,1:ns,Q) = LP_CUMSOURCE_QUV(1:ns,q) 
+                enddo
+              endif
+              IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1
+              NUT_PREV = NUT
+            ENDDO
+            if ( present(LP_JacobiansQUV_dts_up)) then
+              do q = 1, Qnums(k)
+                LP_JacobiansQUV_dts_up(1:N_USER_LEVELS,1:ns,v,k,q) = LP_QUV_DTS(1:N_USER_LEVELS,1:ns,Q)
               enddo
-            ELSE
-              do q = 1, n_columnwfs
-                LC_QUV_DTS(UTA,1:ns,q) = LC_CUMSOURCE_DSTEQUV(1:ns,q) 
-              enddo
-            ENDIF
-            IF ( NUT .NE. NUT_PREV ) NSTART = NUT - 1; NUT_PREV = NUT
-         ENDDO
-         if ( present(LC_JacobiansQUV_dts_up)) then
-            LC_JacobiansQUV_dts_up(1:N_USER_LEVELS,1:ns,1:nwc,v) = LC_QUV_DTS(1:N_USER_LEVELS,1:ns,1:nwc)
-         endif
+            endif
+          endif
+        enddo
       endif
 
 !  End geometry loop
@@ -825,24 +895,24 @@ subroutine DTE_Integral_ILCS_UP &
 !  Finish
 
    return
-end subroutine DTE_Integral_ILCS_UP
+end subroutine DTE_Integral_ILPS_UP
 
 !
 
-subroutine DTE_Integral_ILCS_DN &
+subroutine DTE_Integral_ILPS_DN &
    ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels, max_atmoswfs, & ! Inputs (dimensioning)
      Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar, do_enhanced_ps,  & ! Inputs (Flags)
-     do_sources_dn, do_sources_dn_p, do_columnwfs, n_columnwfs,                & ! Inputs (Flags/Jac-control)
+     do_sources_dn, do_sources_dn_p, do_profilewfs, Lvaryflags, Lvarynums,     & ! Inputs (Flags/Jac-control)
      ngeoms, nlayers, nfinedivs, n_user_levels, user_levels, npartials,        & ! Inputs (control output)
      nfinedivs_p, partial_outindex, partial_outflag, partial_layeridx,         & ! Inputs (control-partial)
      bb_input, extinction, deltaus, omega, truncfac,                           & ! Inputs (Optical - Regular)
      L_extinction, L_deltaus, L_omega, L_truncfac,                             & ! Inputs (Optical - Linearized)
      Mu1, LosW_paths, LosP_paths,                                              & ! Inputs (Geometry)
      xfine, wfine, hfine, xfine_p, wfine_p, hfine_p,                           & ! Inputs (Geometry)
-     intensity_dta_dn, LC_Jacobians_dta_dn, tcom1, L_tcom1 )                     ! Output
+     intensity_dta_dn, LP_Jacobians_dta_dn, tcom1, L_tcom1 )                     ! Output
 
 !  Stand alone routine for Downwelling Direct-thermal-emission (DTE)
-!    computation of Radiances and LCS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
+!    computation of Radiances and LPS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
 
 !  This version, revised by R. Spurr, 01 June 2012
 !   - Extension to ObsGeom multiple geometries, 29 October 2012   (Version 1.3)
@@ -853,7 +923,7 @@ subroutine DTE_Integral_ILCS_DN &
 !    - Optional calculation using F Matrices directly. NOT RELEVANT HERE for the THERMAL !!!
 
 !  Version 1.5, 8/26/16
-!    - Partial-layer output introduced 
+!    - Partial-layer output introduced
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !    -  Add hfine/hfine_p inputs for correct DT calculation (Outgoing)
@@ -896,8 +966,9 @@ subroutine DTE_Integral_ILCS_DN &
 
 !  Jacobian Flag and control
 
-   LOGICAL, Intent(in) :: do_columnwfs
-   INTEGER, Intent(in) :: n_columnwfs
+   LOGICAL, Intent(in) :: do_profilewfs
+   LOGICAL, Intent(in) :: Lvaryflags(maxlayers)
+   INTEGER, Intent(in) :: Lvarynums (maxlayers)
 
 !  Layer and Level Control Numbers, Number of Moments
 
@@ -952,7 +1023,7 @@ subroutine DTE_Integral_ILCS_DN &
    real(ffp), Intent(in) :: LosW_paths(maxlayers,maxgeoms)
    real(ffp), Intent(in) :: LosP_paths(maxpartials,maxgeoms)
 
-!  LOS Quadratures for Enhanced PS. Partials added 8/25/16.
+!  LOS Quadratures for Enhanced PS. Partials added 8/26/16.
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !     ==> heights (hfine/hfine_p) required for the correct direct-thermal outgoing calculation
@@ -974,7 +1045,7 @@ subroutine DTE_Integral_ILCS_DN &
 
 !  Jacobians
 
-   real(ffp), Intent(Out)  :: LC_Jacobians_dta_dn  ( max_user_levels, maxgeoms, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dta_dn  ( max_user_levels, maxgeoms, maxlayers, max_atmoswfs )
 
 !  Thermal setup
 
@@ -1005,9 +1076,8 @@ subroutine DTE_Integral_ILCS_DN &
 
 !  Help
 
-   integer    :: n, j, q, v, uta, nstart, nc, nut, nut_prev, Qnums(maxlayers), np, ut
+   integer    :: n, j, k, q, v, uta, nstart, nc, nut, nut_prev, Qnums(maxlayers), np, ut
    logical    :: do_regular_PS, layermask_dn(maxlayers), Qvary(maxlayers)
-
 
    real(ffp)  :: help, sum, tran, kn, xjkn, dj, zj, zjkn, zjL_kn, lostau, partau, path_dn
    real(ffp)  :: L_help, L_sum(max_atmoswfs), L_kn, L_partau
@@ -1021,7 +1091,7 @@ subroutine DTE_Integral_ILCS_DN &
 !  Zero the output
 
    INTENSITY_dta_dn    = zero
-   LC_JACOBIANS_dta_dn = zero
+   LP_JACOBIANS_dta_dn = zero
 
 !  Regular_PS or plane-parallel flag
 
@@ -1039,9 +1109,9 @@ subroutine DTE_Integral_ILCS_DN &
 !  Linearization bookkeeping
 
    Qvary = .false. ; QNums = 0
-   if ( do_columnwfs ) then
-      Qvary(1:nlayers) = .true.
-      QNums(1:nlayers) =  n_columnwfs
+   if ( do_profilewfs ) then
+      Qvary(1:nlayers) = Lvaryflags(1:nlayers)
+      QNums(1:nlayers) = Lvarynums (1:nlayers)
    endif
 
 !  Thermal setup factors and linearizations
@@ -1098,7 +1168,7 @@ subroutine DTE_Integral_ILCS_DN &
 
       if ( do_RegPSorPP ) then
         DO n = 1, nlayers
-          if ( layermask_dn(n) .and. do_sources_dn(n,v) ) then
+          if ( layermask_dn(n).and.do_sources_dn(n,v) ) then
             lostau = deltaus(n) / Mu1(v)
             if ( lostau .lt. cutoff ) lostrans_dn(n) = exp( - lostau )
             if ( Qvary(n) ) L_lostrans_dn(n,1:Qnums(n)) = - lostrans_dn(n) * L_deltaus(n,1:Qnums(n)) / Mu1(v)
@@ -1193,7 +1263,6 @@ subroutine DTE_Integral_ILCS_DN &
       endif
 
 !  Partials. 8/26/16.
-
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !     ==> Must use vertical distances in Thermal source terms (not path distances). ZJ instead of DJ
 
@@ -1258,34 +1327,52 @@ subroutine DTE_Integral_ILCS_DN &
          NUT_PREV = NUT
       ENDDO
 
-!  Column Wfs (Atmospheric term)
+!  Profile Wfs (atmospheric term)
 
-      if ( do_columnwfs ) then
-        L_CUMSOURCE = zero
-        NSTART = 1
-        NUT_PREV = NSTART - 1
-        DO UTA = 1, N_USER_LEVELS
-          NUT    = USER_LEVELS(UTA)
-          DO N = NSTART, NUT
-            NC = N
-            do q = 1, n_columnwfs
-              L_cumsource(q) = L_SOURCES_DN(N,Q)  + &
-                L_LOSTRANS_DN(N,Q) * CUMSOURCE_DN(NC-1) + LOSTRANS_DN(N) * L_CUMSOURCE(Q)
-            enddo
-          ENDDO
-          IF ( Partial_OUTFLAG(UTA) ) THEN
-            UT = Partial_OUTINDEX(UTA)
+      if ( do_profilewfs ) then
+        do k = 1, nlayers
+          if ( Qvary(k) ) then
+            L_CUMSOURCE = zero
+            NSTART = 1
+            NUT_PREV = NSTART - 1
+            DO UTA = 1, N_USER_LEVELS
+              NUT    = USER_LEVELS(UTA)
+              DO N = NSTART, NUT
+                NC = N
+                if ( k.eq.n ) then
+                  do q = 1, Qnums(k)
+                    L_cumsource(q) = L_SOURCES_DN(N,Q)  + &
+                                L_LOSTRANS_DN(N,Q) * CUMSOURCE_DN(NC-1) + LOSTRANS_DN(N) * L_CUMSOURCE(Q)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    L_cumsource(q) = LOSTRANS_DN(N) * L_CUMSOURCE(Q)
+                  enddo
+                endif
+              ENDDO
+              IF ( Partial_OUTFLAG(UTA) ) THEN
+                UT = Partial_OUTINDEX(UTA) ; np = partial_layeridx(ut)
+                if ( k.eq.np ) then
 !mick fix 3/22/2017 - added L_SOURCES_DN_P term
-            do q = 1, n_columnwfs
-              LC_Jacobians_DTA_dn(UTA,V,q) = L_SOURCES_DN_P(UT,q) + &
-                 L_cumsource(q) * LOSTRANS_DN_p(UT) +  L_LOSTRANS_DN_P(UT,Q) * CUMSOURCE_DN(NC)
-            enddo
-          ELSE
-            LC_Jacobians_DTA_dn(UTA,V,1:n_columnwfs) = L_cumsource(1:n_columnwfs)
-          ENDIF
-          IF ( NUT .NE. NUT_PREV ) NSTART = NUT + 1
-          NUT_PREV = NUT
-        ENDDO
+                  do q = 1, Qnums(k)
+                    LP_Jacobians_DTA_DN(UTA,V,K,q) = L_cumsource(q) * LOSTRANS_DN_p(UT) &
+                      +  L_LOSTRANS_DN_P(UT,Q) * CUMSOURCE_DN(NC) + L_SOURCES_DN_P(UT,q)
+                  enddo
+                else
+                  do q = 1, Qnums(k)
+                    LP_Jacobians_DTA_DN(UTA,V,K,q) = L_cumsource(q) * LOSTRANS_DN_p(UT)
+                  enddo
+                endif
+              ELSE
+                do q = 1, Qnums(k)
+                  LP_Jacobians_dta_DN(UTA,V,K,Q) = L_CUMSOURCE(Q)
+                enddo
+              endif
+              IF ( NUT .NE. NUT_PREV ) NSTART = NUT + 1
+              NUT_PREV = NUT
+            ENDDO
+          endif
+        enddo
       endif
 
 !  End geometry loop
@@ -1295,16 +1382,16 @@ subroutine DTE_Integral_ILCS_DN &
 !  Finish
 
    return
-end subroutine DTE_Integral_ILCS_DN
+end subroutine DTE_Integral_ILPS_DN
 
 !
 
-subroutine DTE_Integral_ILCS_UPDN &
+subroutine DTE_Integral_ILPS_UPDN &
    ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels,              & ! Inputs (Dimensioning)
      max_atmoswfs, max_surfacewfs, do_upwelling, do_dnwelling,                & ! Inputs (Dimensioning/Flags)
      do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar, do_enhanced_ps, & ! Inputs (Flags)
      do_sources_up, do_sources_up_p, do_sources_dn, do_sources_dn_p,          & ! Inputs (Flags)
-     do_columnwfs, do_surfacewfs, n_columnwfs, n_surfacewfs,                  & ! Inputs (Control, Jacobians)
+     do_profilewfs, do_surfacewfs, Lvaryflags, Lvarynums, n_surfacewfs,       & ! Inputs (Control, Jacobians)
      ngeoms, nlayers, nfinedivs, n_user_levels, user_levels, npartials,       & ! Inputs (control output)
      nfinedivs_p, partial_outindex, partial_outflag, partial_layeridx,        & ! Inputs (control-partial)
      bb_input, surfbb, user_emissivity, LS_user_emissivity,                   & ! Inputs (Thermal)
@@ -1313,14 +1400,14 @@ subroutine DTE_Integral_ILCS_UPDN &
      Mu1, LosW_paths, LosP_paths, xfine_up, wfine_up, hfine_up, xfine_dn, wfine_dn, hfine_dn,  & ! Inputs (Geometry)
      xfine_up_p, wfine_up_p, hfine_up_p, xfine_dn_p, wfine_dn_p, hfine_dn_p,                   & ! Inputs (Geometry)
      intensity_dta_up, intensity_dts, intensity_dta_dn,                       & ! Main Outputs
-     LC_Jacobians_dta_up, LC_Jacobians_dts_up, LS_Jacobians_dts,              & ! Main Outputs
-     LC_Jacobians_dta_dn, tcom1, L_tcom1,                                     & ! Main Outputs
+     LP_Jacobians_dta_up, LP_Jacobians_dts_up, LS_Jacobians_dts,              & ! Main Outputs
+     LP_Jacobians_dta_dn, tcom1, L_tcom1,                                     & ! Main Outputs
      lostrans_up, lostrans_up_p, L_lostrans_up, L_lostrans_up_p,              & ! Other Outputs
      Do_Polarized_Emissivity, nstokes, User_QUVEmissivity, LS_USER_QUVEmissivity, & ! Optional Input.  12/11/17 Rob Add.
-     StokesQUV_dts, LC_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
+     StokesQUV_dts, LP_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
 
 !  Stand alone routine for Upwelling and downwelling Direct-thermal-emission (DTE)
-!    computation of Radiances and LCS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
+!    computation of Radiances and LPS Jacobians. Inputs: geometry, optical properties, Planck functions, emissivity
 
 !  This version, revised by R. Spurr, 01 June 2012
 !   - Extension to ObsGeom multiple geometries, 29 October 2012   (Version 1.3)
@@ -1331,10 +1418,7 @@ subroutine DTE_Integral_ILCS_UPDN &
 !    - Optional calculation using F Matrices directly. NOT RELEVANT HERE for the THERMAL !!!
 
 !  Version 1.5, 8/26/16
-!    - Partial-layer output introduced
-
-!  Version 1.5, 12/11/17 Rob Add.
-!    - Optional I/O for polarized surface emissivity.
+!    - Partial-layer output introduced 
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
 !    -  Add hfine/hfine_p inputs for correct DT calculation (Outgoing)
@@ -1353,9 +1437,9 @@ subroutine DTE_Integral_ILCS_UPDN &
 
    integer, Intent(in) :: maxgeoms
    integer, Intent(in) :: maxlayers
+   integer, Intent(in) :: maxfine
    integer, Intent(in) :: maxpartials
 
-   integer, Intent(in) :: maxfine
    integer, Intent(in) :: max_user_levels
 
    INTEGER, Intent(in) :: max_atmoswfs
@@ -1377,16 +1461,17 @@ subroutine DTE_Integral_ILCS_UPDN &
 
 !  Existence flags. 8/26/16. Criticality enters here
 
-   logical, Intent(in) :: do_sources_up   (maxlayers,maxgeoms)
-   logical, Intent(in) :: do_sources_up_p (maxpartials,maxgeoms)
-   logical, Intent(in) :: do_sources_dn   (maxlayers,maxgeoms)
-   logical, Intent(in) :: do_sources_dn_p (maxpartials,maxgeoms)
+   logical, Intent(in)    :: do_sources_up       (maxlayers,maxgeoms)
+   logical, Intent(in)    :: do_sources_up_p     (maxpartials,maxgeoms)
+   logical, Intent(in)    :: do_sources_dn       (maxlayers,maxgeoms)
+   logical, Intent(in)    :: do_sources_dn_p     (maxpartials,maxgeoms)
 
-!  Jacobian Flags and control
+!  Jacobian flags and control
 
    LOGICAL, Intent(in) :: do_surfacewfs
-   LOGICAL, Intent(in) :: do_columnwfs
-   INTEGER, Intent(in) :: n_columnwfs
+   LOGICAL, Intent(in) :: do_profilewfs
+   LOGICAL, Intent(in) :: Lvaryflags(maxlayers)
+   INTEGER, Intent(in) :: Lvarynums (maxlayers)
    INTEGER, Intent(in) :: n_surfacewfs
 
 !  Layer and Level Control Numbers, Number of Moments
@@ -1399,7 +1484,7 @@ subroutine DTE_Integral_ILCS_UPDN &
 !  Numbers for Version 1.5: -->  Partial Control added, 8/26/16
 
    integer, Intent(in) :: Npartials
-   integer, Intent(in) :: partial_layeridx( maxpartials )
+   integer, Intent(in) :: partial_layeridx(maxpartials)
    logical, Intent(in) :: partial_outflag ( MAX_USER_LEVELS )
    integer, Intent(in) :: partial_outindex( MAX_USER_LEVELS )
    integer, Intent(in) :: NFINEDIVS_P(MAXPARTIALS,MAXGEOMS)
@@ -1474,16 +1559,18 @@ subroutine DTE_Integral_ILCS_UPDN &
 !  outputs
 !  -------
 
-!  Radiances
+!  Upwelling
 
    real(ffp), Intent(Out)  :: intensity_dta_up     ( max_user_levels, maxgeoms )
    real(ffp), Intent(Out)  :: intensity_dts        ( max_user_levels, maxgeoms )
-   real(ffp), Intent(Out)  :: LC_Jacobians_dta_up  ( max_user_levels, maxgeoms, max_atmoswfs )
-   real(ffp), Intent(Out)  :: LC_Jacobians_dts_up  ( max_user_levels, maxgeoms, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dta_up  ( max_user_levels, maxgeoms, maxlayers, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dts_up  ( max_user_levels, maxgeoms, maxlayers, max_atmoswfs )
    real(ffp), Intent(Out)  :: LS_Jacobians_dts     ( max_user_levels, maxgeoms, max_surfacewfs )
 
+!  Downwelling
+
    real(ffp), Intent(Out)  :: intensity_dta_dn     ( max_user_levels, maxgeoms )
-   real(ffp), Intent(Out)  :: LC_Jacobians_dta_dn  ( max_user_levels, maxgeoms, max_atmoswfs )
+   real(ffp), Intent(Out)  :: LP_Jacobians_dta_dn  ( max_user_levels, maxgeoms, max_atmoswfs )
 
 !  Thermal setup
 
@@ -1491,7 +1578,7 @@ subroutine DTE_Integral_ILCS_UPDN &
    real(ffp), Intent(InOut)   :: L_tcom1(maxlayers,2,max_atmoswfs)
 
 !  1/31/21. Version 2.8.3. Following upgrades made 5/5/20 (Version 2.8.1)
-!   ===> Add the Lostrans output
+!   ==> Add the Lostrans output
 
    real(ffp), Intent(Out)  :: lostrans_up      ( maxlayers  , maxgeoms )
    real(ffp), Intent(Out)  :: lostrans_up_p    ( maxpartials, maxgeoms )
@@ -1502,18 +1589,18 @@ subroutine DTE_Integral_ILCS_UPDN &
 !  Optional outputs for polarized emission. 12/11/17 Rob Add.
 
    real(ffp), Intent(Out), optional :: StokesQUV_dts          (max_user_levels,3,maxgeoms)
-   real(ffp), Intent(Out), optional :: LC_JacobiansQUV_dts_up (max_user_levels,3,maxgeoms,max_atmoswfs)
+   real(ffp), Intent(Out), optional :: LP_JacobiansQUV_dts_up (max_user_levels,3,maxgeoms,maxlayers,max_atmoswfs)
    real(ffp), Intent(Out), optional :: LS_JacobiansQUV_dts    (max_user_levels,3,maxgeoms,max_surfacewfs)
 
 !  Upwelling
 
    if ( do_upwelling ) then
-      call DTE_Integral_ILCS_UP &
-        ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels,  & ! Inputs (dimensioning)
-          max_atmoswfs, max_surfacewfs,                                & ! Inputs (dimensioning)
-          Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar,     & ! Inputs (Flags)
-          do_enhanced_ps, do_sources_up, do_sources_up_p,              & ! Inputs (Flags)
-          do_columnwfs, do_surfacewfs, n_columnwfs, n_surfacewfs,            & ! Inputs (Control, Jacobians)
+      call DTE_Integral_ILPS_UP &
+        ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels,        & ! Inputs (dimensioning)
+          max_atmoswfs, max_surfacewfs,                                      & ! Inputs (dimensioning)
+          Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar,           & ! Inputs (Flags)
+          do_enhanced_ps, do_sources_up, do_sources_up_p,                    & ! Inputs (Flags)
+          do_profilewfs, do_surfacewfs, Lvaryflags, Lvarynums, n_surfacewfs, & ! Inputs (Control, Jacobians)
           ngeoms, nlayers, nfinedivs, n_user_levels, user_levels, npartials, & ! Inputs (control output)
           nfinedivs_p, partial_outindex, partial_outflag, partial_layeridx,  & ! Inputs (control-partial)
           bb_input, surfbb, user_emissivity, LS_user_emissivity,             & ! Inputs (Thermal)
@@ -1521,36 +1608,36 @@ subroutine DTE_Integral_ILCS_UPDN &
           L_extinction, L_deltaus, L_omega, L_truncfac,                      & ! Inputs (Optical - Linearized)
           Mu1, LosW_paths, LosP_paths, xfine_up, wfine_up,                   & ! Inputs (Geometry)
           hfine_up, xfine_up_p, wfine_up_p, hfine_up_p,                      & ! Inputs (Geometry)
-          intensity_dta_up, intensity_dts, LC_Jacobians_dta_up,              & ! Main Outputs
-          LC_Jacobians_dts_up, LS_Jacobians_dts, tcom1, L_tcom1,             & ! Main and Other Outputs
+          intensity_dta_up, intensity_dts, LP_Jacobians_dta_up,              & ! Main Outputs
+          LP_Jacobians_dts_up, LS_Jacobians_dts, tcom1, L_tcom1,             & ! Main Outputs
           lostrans_up, lostrans_up_p, L_lostrans_up, L_lostrans_up_p,        & ! Other Outputs
           Do_Polarized_Emissivity, nstokes, User_QUVEmissivity, LS_USER_QUVEmissivity, & ! Optional Input.  12/11/17 Rob Add.
-          StokesQUV_dts, LC_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
+          StokesQUV_dts, LP_JacobiansQUV_dts_up, LS_JacobiansQUV_dts )                   ! Optional Output. 12/11/17 Rob Add.
    endif
 
 !  Downwelling
 
    if ( do_dnwelling ) then
-      call DTE_Integral_ILCS_DN &
+      call DTE_Integral_ILPS_DN &
         ( maxgeoms, maxlayers, maxpartials, maxfine, max_user_levels, max_atmoswfs, & ! Inputs (dimensioning)
           Do_Thermset, do_deltam_scaling, do_Partials, do_PlanPar, do_enhanced_ps,  & ! Inputs (Flags)
-          do_sources_dn, do_sources_dn_p, do_columnwfs, n_columnwfs,                & ! Inputs (Flags/Jac-control)
+          do_sources_dn, do_sources_dn_p, do_profilewfs, Lvaryflags, Lvarynums,     & ! Inputs (Flags/Jac-control)
           ngeoms, nlayers, nfinedivs, n_user_levels, user_levels, npartials,        & ! Inputs (control output)
           nfinedivs_p, partial_outindex, partial_outflag, partial_layeridx,         & ! Inputs (control-partial)
           bb_input, extinction, deltaus, omega, truncfac,                           & ! Inputs (Optical - Regular)
           L_extinction, L_deltaus, L_omega, L_truncfac,                             & ! Inputs (Optical - Linearized)
           Mu1, LosW_paths, LosP_paths, xfine_dn, wfine_dn,                          & ! Inputs (Geometry)
           hfine_dn, xfine_dn_p, wfine_dn_p, hfine_dn_p,                             & ! Inputs (Geometry)
-          intensity_dta_dn, LC_Jacobians_dta_dn, tcom1, L_tcom1 )                     ! Output
+          intensity_dta_dn, LP_Jacobians_dta_dn, tcom1, L_tcom1 )                     ! Output
    endif
 
 !  Finish
 
    return
-end subroutine DTE_Integral_ILCS_UPDN
+end subroutine DTE_Integral_ILPS_UPDN
 
 !  End module
 
-end module FO_Thermal_RTCalcs_ILCS_m
+end module VFO_Thermal_RTCalcs_ILPS_m
 
 
