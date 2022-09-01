@@ -33,9 +33,9 @@ class AlbedoFromSignalLevel(Creator):
         m_to_au = 149597870691
 
         for chan_idx in range(self.num_channels()):
-            if isinstance(solar_distance, rf.ArrayWithUnit):
+            try:
                 chan_solar_distance = solar_distance[chan_idx].value
-            else:
+            except:
                 chan_solar_distance = solar_distance.value
 
             # Account for solar distance Fsun = Fsun0 / (solar_distance_meters/AU)^2
