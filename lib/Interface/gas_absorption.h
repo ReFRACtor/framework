@@ -30,7 +30,12 @@ public:
 /// returns the number of broadeners, if any.
 //-----------------------------------------------------------------------
 
-  virtual int number_broadener() const = 0;
+  virtual int number_broadener() const
+  {
+    // This method can not be pure virtual when defined as a SWIG
+    // director and also using the %python_attribute macro
+    return 0;
+  }
   
 //-----------------------------------------------------------------------
 /// For some tables, we might have a broadener (e.g., "h2o"). This
