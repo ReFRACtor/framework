@@ -14,8 +14,7 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 
 template<class Archive>
-void LidortRtDriver::serialize(Archive & ar,
-                        const unsigned int version)
+void LidortRtDriver::serialize(Archive & ar, const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
     & FP_NVP_(nstream) & FP_NVP_(nmoment)
@@ -26,17 +25,16 @@ void LidortRtDriver::serialize(Archive & ar,
 }
 
 template<class Archive>
-void LidortRtDriver::save(Archive & UNUSED(a),
-                    const unsigned int UNUSED(version)) const
+void LidortRtDriver::save(Archive & UNUSED(a), const unsigned int UNUSED(version)) const
 {
   // Nothing more to do
 }
+
 template<class Archive>
-void LidortRtDriver::load(Archive & UNUSED(ar),
-                          const unsigned int UNUSED(version))
+void LidortRtDriver::load(Archive & UNUSED(ar), const unsigned int UNUSED(version))
 {
-  // Nothing more I think. We can delete save and load if we end up
-  // not needing these
+  // Recreate RT pars, no need to serialize this object
+  rt_pars_.reset( new Lidort_Pars() );
 }
 
 FP_IMPLEMENT(LidortRtDriver);
@@ -61,13 +59,13 @@ LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_onl
 
 void LidortRtDriver::init()
 {
+  rt_pars_.reset( new Lidort_Pars() );
   brdf_driver_.reset( new LidortBrdfDriver(nstream_, nmoment_) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
 
   // Check inputs against sizes allowed by LIDORT
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-  range_check(nstream_, 1, lid_pars.maxstreams()+1);
-  range_check(nmoment_, 2, lid_pars.maxmoments_input()+1);
+  range_check(nstream_, 1, rt_pars_->maxstreams()+1);
+  range_check(nmoment_, 2, rt_pars_->maxmoments_input()+1);
 
   // Initialize BRDF data structure
   brdf_driver()->initialize_brdf_inputs(surface_type_);
@@ -431,9 +429,9 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
                                          bool do_surface_linearization)
 {
   
-  if(od.number_variable() > Lidort_Pars::instance().max_atmoswfs()) {
+  if(od.number_variable() > rt_pars_->max_atmoswfs()) {
     Exception err;
-    err << "LIDORT has been compiled to allow a maximum of " << Lidort_Pars::instance().max_atmoswfs()
+    err << "LIDORT has been compiled to allow a maximum of " << rt_pars_->max_atmoswfs()
         << " atmosphere derivatives to be calculated. We are trying to calculate "
         << od.number_variable() << " atmosphere derivatives";
     throw err;
@@ -573,18 +571,13 @@ void LidortRtDriver::calculate_rt() const
 
 double LidortRtDriver::get_intensity() const
 {
-  // So we know index of intensity
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   // Total Intensity I(t,v,d,T) at output level t, output geometry v,
   // direction d
-  return lidort_interface_->lidort_out().main().ts_intensity()(0,0,lid_pars.upidx()-1);
+  return lidort_interface_->lidort_out().main().ts_intensity()(0,0, rt_pars_->upidx()-1);
 }
 
 void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const
 {
-  Lidort_Pars lid_pars = Lidort_Pars::instance();
-
   Lidort_Linatmos& lpoutputs = lidort_interface_->lidort_linout().atmos();
   Lidort_Linsurf& lsoutputs = lidort_interface_->lidort_linout().surf();
 
@@ -592,17 +585,17 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
 
   // Surface Jacobians KR(r,t,v,d) with respect to surface variable r
   // at output level t, geometry v, direction d
-  jac_surf_param.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, lid_pars.upidx()-1).copy() );
+  jac_surf_param.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, rt_pars_->upidx()-1).copy() );
 
   // Get profile jacobians
   // Jacobians K(q,n,t,v,d) with respect to profile atmospheric variable
   // q in layer n, at output level t, geometry v, direction d
-  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, lid_pars.upidx()-1).copy() );
+  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, rt_pars_->upidx()-1).copy() );
 
   // Get surface temp jacobian if thermal emission is enabled
   if(do_thermal_emission) {
-      jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, lid_pars.upidx()-1);
+      jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, rt_pars_->upidx()-1);
 
-      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, lid_pars.upidx()-1).copy() );
+      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, rt_pars_->upidx()-1).copy() );
   }
 }

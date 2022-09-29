@@ -62,6 +62,7 @@ public:
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
 protected:
+
   void initialize_rt();
   void copy_brdf_sup_outputs() const;
 
@@ -71,17 +72,18 @@ protected:
   blitz::Array<double, 1> zen_;
   bool pure_nadir_;
   bool do_thermal_scattering_;
+
   boost::shared_ptr<Lidort_Lps_Masters> lidort_interface_;
+  boost::shared_ptr<Spurr_Pars_Base> rt_pars_;
+
 private:
   LidortRtDriver() {}
   void init();
+
   friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version);
-  template<class Archive>
-  void save(Archive & ar, const unsigned int version) const;
-  template<class Archive>
-  void load(Archive & ar, const unsigned int version);
+  template<class Archive> void serialize(Archive & ar, const unsigned int version);
+  template<class Archive> void save(Archive & ar, const unsigned int version) const;
+  template<class Archive> void load(Archive & ar, const unsigned int version);
 };
 
 }
