@@ -67,7 +67,7 @@ public:
 %nodefaultctor Spurr_Pars_Base;
 
 class Spurr_Pars_Base {
-
+public:
   virtual const double& bigexp() const = 0;
   virtual const int& bpdfndvi_idx() const = 0;
   virtual const int& bpdfsoil_idx() const = 0;

@@ -62,10 +62,6 @@ REGISTER_LUA_DERIVED_CLASS(LidortRt, RadiativeTransfer)
                           const blitz::Array<double, 1>&, 
                           const blitz::Array<double, 1>&, 
                           bool, int, int, bool>())
-.enum_("constants")
-[
- luabind::value("maxmoments_input", Lidort_Pars::instance().maxmoments_input())
-]
 REGISTER_LUA_END()
 #endif
 
