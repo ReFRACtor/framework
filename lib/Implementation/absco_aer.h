@@ -116,7 +116,7 @@ public:
   virtual bool is_float() const { return is_float_;}
   virtual std::string file_name() const { return hfile->file_name(); } 
   virtual void print(std::ostream& Os) const;
-protected:
+
   virtual blitz::Array<double, 3> read_double(double wn) const;
   virtual blitz::Array<float, 3> read_float(double wn) const;
   virtual blitz::Array<double, 4> read_double_2b(double wn) const;

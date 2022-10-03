@@ -163,7 +163,6 @@ public:
 //-----------------------------------------------------------------------
   template <class T, int D> blitz::Array<T, D> read(double wn) const;
   friend class AbscoInterpolator;
-protected:
 
 //-----------------------------------------------------------------------
 /// Return either a blitz::Array<double, 3> or blitz::Array<float, 3>, 
@@ -176,6 +175,7 @@ protected:
   { throw Exception("Don't support 2 broadners"); }
   virtual blitz::Array<float, 4> read_float_2b(double UNUSED(wn)) const 
   { throw Exception("Don't support 2 broadners"); }
+
 private:
   double interpol(double X, const std::vector<double>& Xv, 
 		  int& i, double& df_dx) const;
