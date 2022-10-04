@@ -2,6 +2,7 @@
 #include "unit_test_support.h"
 #include "ifstream_cs.h"
 #include "spectral_bound.h"
+#include <boost/filesystem.hpp>
 #include <boost/timer/timer.hpp>
 
 using namespace FullPhysics;
@@ -11,8 +12,13 @@ BOOST_FIXTURE_TEST_SUITE(absco_coeff, GlobalFixture)
 
 BOOST_AUTO_TEST_CASE(basic)
 {
+  std::string NO2_absco_coeff_path = absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc";
+  if ( !boost::filesystem::exists(NO2_absco_coeff_path) ) {
+    std::cout << "Test Skipped.\n";
+    return;
+  }
   IfstreamCs expected_data(test_data_dir() + "expected/absco_coeff/basic");
-  AbscoCoeff f(absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc");
+  AbscoCoeff f(NO2_absco_coeff_path);
   // Note scale here is a nonsense value
   double table_scale = 1.2;
   AbscoCoeff fscale(absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc", table_scale);
@@ -109,8 +115,12 @@ BOOST_AUTO_TEST_CASE(serialization)
 {
   if(!have_serialize_supported())
     return;
-  boost::shared_ptr<AbscoCoeff> a =
-    boost::make_shared<AbscoCoeff>(absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc");
+  std::string NO2_absco_coeff_path = absco_data_dir() + "/coeff/NO2_19840-37879_v0.0_init_new.nc";
+  if ( !boost::filesystem::exists(NO2_absco_coeff_path) ) {
+    std::cout << "Test Skipped.\n";
+    return;
+  }
+  boost::shared_ptr<AbscoCoeff> a = boost::make_shared<AbscoCoeff>(NO2_absco_coeff_path);
   std::string d = serialize_write_string(a);
   if(false)
     std::cerr << d;
