@@ -9,6 +9,7 @@
 #include "gas_absorption.h"
 #include "constant.h"
 #include "ground_emissivity_piecewise.h"
+#include <boost/filesystem.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -16,6 +17,8 @@ using namespace blitz;
 
 OssConfigurationFixture::OssConfigurationFixture(const std::string& input_file)
 {
+    if ( !boost::filesystem::exists(oss_run_dir() + input_file) )
+      return;
     input_data = boost::make_shared<HdfFile>(oss_run_dir() + input_file);
 
     /* Pressure */
