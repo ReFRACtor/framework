@@ -1,5 +1,6 @@
 #include "oss_interface.h"
 #include "unit_test_support.h"
+#include <boost/filesystem.hpp>
 #include "hdf_file.h"
 
 using namespace FullPhysics;
@@ -14,6 +15,10 @@ BOOST_AUTO_TEST_CASE(oss_interface)
     std::string sol_file = oss_data_dir() + "newkur.dat";
     std::string fix_file = oss_data_dir() + "default.dat";
     std::string ch_sel_file = "NULL";
+    if ( !boost::filesystem::exists(sel_file) ) {
+      std::cout << "Test Skipped.\n";
+      return;
+    }
 
     std::vector<std::string> gas_names = std::vector<std::string>();
     gas_names.push_back("H2O");

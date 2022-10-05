@@ -1,6 +1,7 @@
 #include "oss_forward_model.h"
 #include "unit_test_support.h"
 #include "oss_configuration_fixture.h"
+#include <boost/filesystem.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -14,6 +15,11 @@ BOOST_AUTO_TEST_CASE(radiance)
   std::string sol_file = oss_data_dir() + "newkur.dat";
   std::string fix_file = oss_data_dir() + "default.dat";
   std::string ch_sel_file = "NULL";
+  if ( !boost::filesystem::exists(sel_file) ) {
+    std::cout << "Test Skipped.\n";
+    return;
+  }
+  
   OssForwardModel fm(config_vmr, config_pressure, config_temperature, config_skin_temperature,
           config_ground, config_obs_zen_ang, config_sol_zen_ang, config_lat, config_surf_alt,
           config_lambertian, sel_file, od_file, sol_file, fix_file, ch_sel_file);
