@@ -72,7 +72,7 @@ class AtmosphereOutputBase(OutputBase):
     
         # Aerosol 
 
-        if self.atm.aerosol is not None:
+        if self.atm.aerosol is not None and self.atm.aerosol.number_particle > 0:
             aerosol_group = self.create_group("Aerosol", atm_group)
 
             aer_name_list = self.atm.aerosol.aerosol_name
