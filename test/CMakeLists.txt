@@ -62,6 +62,7 @@ foreach(test_file ${FP_TEST_FILES})
         set(test_name unit/${suite})
         add_test(NAME ${test_name}
             COMMAND ${CMAKE_CURRENT_BINARY_DIR}/test_all --log_level=test_suite --run_test=${suite})
+        set_property(TEST ${test_name} PROPERTY SKIP_REGULAR_EXPRESSION "Test Skipped")
     endforeach()
 endforeach()
 
