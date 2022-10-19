@@ -119,7 +119,7 @@ class PressureOSP(object):
     def fm_pressure_filename(self):
         "Filename used for accessing the forward model pressure levels"
 
-        press_file = os.path.join(self.base_dir, f"Strategy_Tables/Defaults/TES_baseline_{self.num_fm_levels}.asc")
+        press_file = os.path.join(self.base_dir, f"Strategy_Tables/ops/Defaults/TES_baseline_{self.num_fm_levels}.asc")
 
         if not os.path.exists(press_file):
             raise Exception(f"Could not find forward model pressure file: {press_file}")
@@ -181,7 +181,7 @@ class SpeciesOSP(PressureOSP):
         if self.instrument_name is None:
             raise Exception("No instrument name supplied to constructor, can not use Strategy_Tables based values.")
 
-        strat_base_dir = os.path.join(self.base_dir, "Strategy_Tables", f"OSP-{self.instrument_name}")
+        strat_base_dir = os.path.join(self.base_dir, "Strategy_Tables/ops/", f"OSP-{self.instrument_name}")
         if not os.path.exists(strat_base_dir):
             raise Exception(f"No Strategy Tables directory found at: {strat_base_dir} for instrument name: {self.instrument_name}")
         return strat_base_dir
