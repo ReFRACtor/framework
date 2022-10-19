@@ -53,6 +53,8 @@ AbsorberXSec::AbsorberXSec(const std::vector<boost::shared_ptr<AbsorberVmr> > Vm
     for(auto& alti : alt)
       alti->add_cache_invalidated_observer(cache);
 
+    for(auto& vmri : vmr)
+      vmri->add_cache_invalidated_observer(cache);
 }
 
 void AbsorberXSecCache::fill_cache(const AbsorberXSec& absorber)
