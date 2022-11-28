@@ -185,7 +185,7 @@ class GroundPiecewise(Creator):
                 for idx in range(index_beg, index_end+1):
                     ret_indexes.add(idx)
 
-        return list(ret_indexes)
+        return np.array(list(ret_indexes), dtype=int)
  
 class GroundEmissivityPiecewise(GroundPiecewise):
 
