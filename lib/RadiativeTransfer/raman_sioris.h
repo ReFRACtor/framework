@@ -61,8 +61,8 @@ class RamanSiorisEffect : virtual public SpectrumEffectImpBase,
 
 public:
   RamanSiorisEffect(const SpectralDomain&
-		    Solar_and_odepth_spec_domain,
-		    double scale_factor,
+                    Solar_and_odepth_spec_domain,
+                    double scale_factor,
                     int channel_index, 
                     const DoubleWithUnit& solar_zenith, 
                     const DoubleWithUnit& observation_zenith, 
@@ -95,7 +95,11 @@ public:
     res.push_back(atmosphere_);
     res.push_back(solar_model_);
     return res;
-  }
+  } 
+
+protected:
+
+  void apply_raman_effect(Spectrum& Spec, const blitz::Array<double, 1>& temp_layers, const double albedo) const;
 
 private:
 
@@ -103,6 +107,8 @@ private:
   double evaluate_albedo(double wn, int cindex) const;
 
   SpectralDomain solar_and_odepth_spec_domain_;
+  blitz::Array<double, 1> solar_and_odepth_wn_grid_;
+
   int channel_index_;
   bool do_upwelling_;
 

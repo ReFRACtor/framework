@@ -20,6 +20,8 @@
 %import "atmosphere_standard.i"
 %import "solar_model.i"
 
+%feature("director") RamanSiorisEffect;
+
 %fp_shared_ptr(FullPhysics::RamanSiorisEffect);
 namespace FullPhysics {
   blitz::Array<double, 1> compute_raman_sioris(double solar_zenith,
@@ -37,7 +39,7 @@ class RamanSiorisEffect : public SpectrumEffectImpBase,
 
 public:
   RamanSiorisEffect(const SpectralDomain& Solar_and_odepth_spec_domain,
-		    double scale_factor,
+                    double scale_factor,
                     int channel_index, 
                     const DoubleWithUnit& solar_zenith, 
                     const DoubleWithUnit& observation_zenith, 
@@ -50,15 +52,28 @@ public:
   /// The "edge" we need to the desired range of the Raman calculation
   static const double raman_edge_wavenumber;
   
-  virtual void apply_effect(Spectrum& Spec,
-	      const ForwardModelSpectralGrid& Forward_model_grid) const;
+  virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
+
   virtual void notify_update(const Pressure& pressure);
+
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
+
+  virtual std::string sub_state_identifier() const;
+  virtual std::string state_vector_name_i(int i) const;
+
+  // Indicate this is implemented by this class since defined in SpectrumEffect
+  %python_attribute(name, std::string);
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
+
   %pickle_serialization();
+
+protected:
+
+  void apply_raman_effect(Spectrum& Spec, const blitz::Array<double, 1>& temp_layers, const double albedo) const;
+
 };
 
 const double RamanSiorisEffect::raman_edge_wavenumber = 218;
 
 
 }
-
