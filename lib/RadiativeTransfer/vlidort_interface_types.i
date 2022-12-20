@@ -1631,8 +1631,8 @@ public:
   VLidort_Modified_Control(const VLidort_Modified_Control& src);
   ~VLidort_Modified_Control();
 
-  const int& ts_ngreek_moments_input() const;
-  void ts_ngreek_moments_input(const int& ts_ngreek_moments_input_in);
+  const int& ts_nmoments_input() const;
+  void ts_nmoments_input(const int& ts_ngreek_moments_input_in);
   
   virtual void print(std::ostream &output_stream) const;
 };

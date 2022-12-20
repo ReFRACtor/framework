@@ -1325,7 +1325,7 @@ public:
   /* 
 
    Common methods in derived classes with mismatching signatures: 
-   * bool
+   * f_bool
    * chapman
    * cont
    * optical
@@ -1413,6 +1413,9 @@ public:
 
   Spurr_Modified_Control_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual const int& ts_nmoments_input() const = 0;
+  virtual void ts_nmoments_input(const int& ts_nmoments_input_in) = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
