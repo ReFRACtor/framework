@@ -602,17 +602,16 @@ public:
 
   Spurr_Fixed_Lininputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Fixed_Lincontrol_Base& fixed_lincontrol_base() = 0;
+  virtual const Spurr_Fixed_Lincontrol_Base& fixed_lincontrol_base() const = 0;
+  
+  virtual Spurr_Fixed_Linoptical_Base& fixed_linoptical_base() = 0;
+  virtual const Spurr_Fixed_Linoptical_Base& fixed_linoptical_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * cont
-   * optical
-   
-  */
 };
 
 class Spurr_Modified_Lincontrol_Base : public Spurr_Type_Structure {
@@ -662,16 +661,13 @@ public:
 
   Spurr_Modified_Lininputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Modified_Lincontrol_Base& modified_lincontrol_base() = 0;
+  virtual const Spurr_Modified_Lincontrol_Base& modified_lincontrol_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * mcont
-   
-  */
 };
 
 class Spurr_Linatmos_Base : public Spurr_Type_Structure {
@@ -725,17 +721,16 @@ public:
 
   Spurr_Linoutputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Linatmos_Base& linatmos_base() = 0;
+  virtual const Spurr_Linatmos_Base& linatmos_base() const = 0;
+  
+  virtual Spurr_Linsurf_Base& linsurf_base() = 0;
+  virtual const Spurr_Linsurf_Base& linsurf_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * atmos
-   * surf
-   
-  */
 };
 
 class Spurr_Linsup_Brdf_Base : public Spurr_Type_Structure {
@@ -811,16 +806,13 @@ public:
 
   Spurr_Linsup_Ss_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() = 0;
+  virtual const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * surf
-   
-  */
 };
 
 class Spurr_Linsup_Inout_Base : public Spurr_Type_Structure {
@@ -830,18 +822,19 @@ public:
 
   Spurr_Linsup_Inout_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Linsup_Brdf_Base& linsup_brdf_base() = 0;
+  virtual const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const = 0;
+  
+  virtual Spurr_Linsup_Sleave_Base& linsup_sleave_base() = 0;
+  virtual const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const = 0;
+  
+  virtual Spurr_Linsup_Ss_Base& linsup_ss_base() = 0;
+  virtual const Spurr_Linsup_Ss_Base& linsup_ss_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * brdf
-   * sleave
-   * ss
-   
-  */
 };
 
 class Spurr_Main_Outputs_Base : public Spurr_Type_Structure {
@@ -976,18 +969,19 @@ public:
 
   Spurr_Outputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Main_Outputs_Base& main_outputs_base() = 0;
+  virtual const Spurr_Main_Outputs_Base& main_outputs_base() const = 0;
+  
+  virtual Spurr_Exception_Handling_Base& exception_handling_base() = 0;
+  virtual const Spurr_Exception_Handling_Base& exception_handling_base() const = 0;
+  
+  virtual Spurr_Wladjusted_Outputs_Base& wladjusted_outputs_base() = 0;
+  virtual const Spurr_Wladjusted_Outputs_Base& wladjusted_outputs_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * main
-   * status
-   * wlout
-   
-  */
 };
 
 class Spurr_Sup_Brdf_Base : public Spurr_Type_Structure {
@@ -1063,18 +1057,19 @@ public:
 
   Spurr_Sup_Inout_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Sup_Brdf_Base& sup_brdf_base() = 0;
+  virtual const Spurr_Sup_Brdf_Base& sup_brdf_base() const = 0;
+  
+  virtual Spurr_Sup_Sleave_Base& sup_sleave_base() = 0;
+  virtual const Spurr_Sup_Sleave_Base& sup_sleave_base() const = 0;
+  
+  virtual Spurr_Sup_Ss_Base& sup_ss_base() = 0;
+  virtual const Spurr_Sup_Ss_Base& sup_ss_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * brdf
-   * sleave
-   * ss
-   
-  */
 };
 
 class Spurr_Fixed_Boolean_Base : public Spurr_Type_Structure {
@@ -1318,22 +1313,31 @@ public:
 
   Spurr_Fixed_Inputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Fixed_Boolean_Base& fixed_boolean_base() = 0;
+  virtual const Spurr_Fixed_Boolean_Base& fixed_boolean_base() const = 0;
+  
+  virtual Spurr_Fixed_Chapman_Base& fixed_chapman_base() = 0;
+  virtual const Spurr_Fixed_Chapman_Base& fixed_chapman_base() const = 0;
+  
+  virtual Spurr_Fixed_Control_Base& fixed_control_base() = 0;
+  virtual const Spurr_Fixed_Control_Base& fixed_control_base() const = 0;
+  
+  virtual Spurr_Fixed_Optical_Base& fixed_optical_base() = 0;
+  virtual const Spurr_Fixed_Optical_Base& fixed_optical_base() const = 0;
+  
+  virtual Spurr_Fixed_Sunrays_Base& fixed_sunrays_base() = 0;
+  virtual const Spurr_Fixed_Sunrays_Base& fixed_sunrays_base() const = 0;
+  
+  virtual Spurr_Fixed_Uservalues_Base& fixed_uservalues_base() = 0;
+  virtual const Spurr_Fixed_Uservalues_Base& fixed_uservalues_base() const = 0;
+  
+  virtual Spurr_Fixed_Write_Base& fixed_write_base() = 0;
+  virtual const Spurr_Fixed_Write_Base& fixed_write_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * f_bool
-   * chapman
-   * cont
-   * optical
-   * sunrays
-   * userval
-   * write
-   
-  */
 };
 
 class Spurr_Modified_Boolean_Base : public Spurr_Type_Structure {
@@ -1511,21 +1515,28 @@ public:
 
   Spurr_Modified_Inputs_Base(void* allocated_f_type_c) : Spurr_Type_Structure(allocated_f_type_c) { ; }
 
+  virtual Spurr_Modified_Boolean_Base& modified_boolean_base() = 0;
+  virtual const Spurr_Modified_Boolean_Base& modified_boolean_base() const = 0;
+  
+  virtual Spurr_Modified_Chapman_Base& modified_chapman_base() = 0;
+  virtual const Spurr_Modified_Chapman_Base& modified_chapman_base() const = 0;
+  
+  virtual Spurr_Modified_Control_Base& modified_control_base() = 0;
+  virtual const Spurr_Modified_Control_Base& modified_control_base() const = 0;
+  
+  virtual Spurr_Modified_Optical_Base& modified_optical_base() = 0;
+  virtual const Spurr_Modified_Optical_Base& modified_optical_base() const = 0;
+  
+  virtual Spurr_Modified_Sunrays_Base& modified_sunrays_base() = 0;
+  virtual const Spurr_Modified_Sunrays_Base& modified_sunrays_base() const = 0;
+  
+  virtual Spurr_Modified_Uservalues_Base& modified_uservalues_base() = 0;
+  virtual const Spurr_Modified_Uservalues_Base& modified_uservalues_base() const = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
 
   virtual void check_byte_sizes() = 0;
   
-  /* 
-
-   Common methods in derived classes with mismatching signatures: 
-   * mbool
-   * mchapman
-   * mcont
-   * moptical
-   * msunrays
-   * muserval
-   
-  */
 };
 
 

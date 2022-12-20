@@ -3534,6 +3534,14 @@ public:
     return *cont_;
   }
 
+  Spurr_Fixed_Lincontrol_Base& fixed_lincontrol_base() {
+    return *cont_;
+  }
+
+  const Spurr_Fixed_Lincontrol_Base& fixed_lincontrol_base() const {
+    return *cont_;
+  }
+
   void cont(VLidort_Fixed_Lincontrol& cont_in) {
     void* src_ptr = cont_in.fortran_type_ptr();
     void* dst_ptr = cont_->fortran_type_ptr();
@@ -3546,6 +3554,14 @@ public:
   }
 
   const VLidort_Fixed_Linoptical& optical() const {
+    return *optical_;
+  }
+
+  Spurr_Fixed_Linoptical_Base& fixed_linoptical_base() {
+    return *optical_;
+  }
+
+  const Spurr_Fixed_Linoptical_Base& fixed_linoptical_base() const {
     return *optical_;
   }
 
@@ -3820,6 +3836,14 @@ public:
   }
 
   const VLidort_Modified_Lincontrol& mcont() const {
+    return *mcont_;
+  }
+
+  Spurr_Modified_Lincontrol_Base& modified_lincontrol_base() {
+    return *mcont_;
+  }
+
+  const Spurr_Modified_Lincontrol_Base& modified_lincontrol_base() const {
     return *mcont_;
   }
 
@@ -5023,6 +5047,14 @@ public:
     return *atmos_;
   }
 
+  Spurr_Linatmos_Base& linatmos_base() {
+    return *atmos_;
+  }
+
+  const Spurr_Linatmos_Base& linatmos_base() const {
+    return *atmos_;
+  }
+
   void atmos(VLidort_Linatmos& atmos_in) {
     void* src_ptr = atmos_in.fortran_type_ptr();
     void* dst_ptr = atmos_->fortran_type_ptr();
@@ -5038,6 +5070,7 @@ public:
     return *col_;
   }
 
+  
   void col(VLidort_Lincol& col_in) {
     void* src_ptr = col_in.fortran_type_ptr();
     void* dst_ptr = col_->fortran_type_ptr();
@@ -5053,6 +5086,7 @@ public:
     return *prof_;
   }
 
+  
   void prof(VLidort_Linprof& prof_in) {
     void* src_ptr = prof_in.fortran_type_ptr();
     void* dst_ptr = prof_->fortran_type_ptr();
@@ -5065,6 +5099,14 @@ public:
   }
 
   const VLidort_Linsurf& surf() const {
+    return *surf_;
+  }
+
+  Spurr_Linsurf_Base& linsurf_base() {
+    return *surf_;
+  }
+
+  const Spurr_Linsurf_Base& linsurf_base() const {
     return *surf_;
   }
 
@@ -5846,6 +5888,7 @@ public:
     return *col_;
   }
 
+  
   void col(VLidort_Linsup_Ss_Col& col_in) {
     void* src_ptr = col_in.fortran_type_ptr();
     void* dst_ptr = col_->fortran_type_ptr();
@@ -5861,6 +5904,7 @@ public:
     return *prof_;
   }
 
+  
   void prof(VLidort_Linsup_Ss_Prof& prof_in) {
     void* src_ptr = prof_in.fortran_type_ptr();
     void* dst_ptr = prof_->fortran_type_ptr();
@@ -5873,6 +5917,14 @@ public:
   }
 
   const VLidort_Linsup_Ss_Surf& surf() const {
+    return *surf_;
+  }
+
+  Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() {
+    return *surf_;
+  }
+
+  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const {
     return *surf_;
   }
 
@@ -5971,6 +6023,14 @@ public:
     return *brdf_;
   }
 
+  Spurr_Linsup_Brdf_Base& linsup_brdf_base() {
+    return *brdf_;
+  }
+
+  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const {
+    return *brdf_;
+  }
+
   void brdf(VLidort_Linsup_Brdf& brdf_in) {
     void* src_ptr = brdf_in.fortran_type_ptr();
     void* dst_ptr = brdf_->fortran_type_ptr();
@@ -5986,6 +6046,14 @@ public:
     return *sleave_;
   }
 
+  Spurr_Linsup_Sleave_Base& linsup_sleave_base() {
+    return *sleave_;
+  }
+
+  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const {
+    return *sleave_;
+  }
+
   void sleave(VLidort_Linsup_Sleave& sleave_in) {
     void* src_ptr = sleave_in.fortran_type_ptr();
     void* dst_ptr = sleave_->fortran_type_ptr();
@@ -5998,6 +6066,14 @@ public:
   }
 
   const VLidort_Linsup_Ss& ss() const {
+    return *ss_;
+  }
+
+  Spurr_Linsup_Ss_Base& linsup_ss_base() {
+    return *ss_;
+  }
+
+  const Spurr_Linsup_Ss_Base& linsup_ss_base() const {
     return *ss_;
   }
 
@@ -7074,6 +7150,14 @@ public:
     return *main_;
   }
 
+  Spurr_Main_Outputs_Base& main_outputs_base() {
+    return *main_;
+  }
+
+  const Spurr_Main_Outputs_Base& main_outputs_base() const {
+    return *main_;
+  }
+
   void main(VLidort_Main_Outputs& main_in) {
     void* src_ptr = main_in.fortran_type_ptr();
     void* dst_ptr = main_->fortran_type_ptr();
@@ -7089,6 +7173,14 @@ public:
     return *status_;
   }
 
+  Spurr_Exception_Handling_Base& exception_handling_base() {
+    return *status_;
+  }
+
+  const Spurr_Exception_Handling_Base& exception_handling_base() const {
+    return *status_;
+  }
+
   void status(VLidort_Exception_Handling& status_in) {
     void* src_ptr = status_in.fortran_type_ptr();
     void* dst_ptr = status_->fortran_type_ptr();
@@ -7101,6 +7193,14 @@ public:
   }
 
   const VLidort_Wladjusted_Outputs& wlout() const {
+    return *wlout_;
+  }
+
+  Spurr_Wladjusted_Outputs_Base& wladjusted_outputs_base() {
+    return *wlout_;
+  }
+
+  const Spurr_Wladjusted_Outputs_Base& wladjusted_outputs_base() const {
     return *wlout_;
   }
 
@@ -7694,6 +7794,14 @@ public:
     return *brdf_;
   }
 
+  Spurr_Sup_Brdf_Base& sup_brdf_base() {
+    return *brdf_;
+  }
+
+  const Spurr_Sup_Brdf_Base& sup_brdf_base() const {
+    return *brdf_;
+  }
+
   void brdf(VLidort_Sup_Brdf& brdf_in) {
     void* src_ptr = brdf_in.fortran_type_ptr();
     void* dst_ptr = brdf_->fortran_type_ptr();
@@ -7709,6 +7817,14 @@ public:
     return *sleave_;
   }
 
+  Spurr_Sup_Sleave_Base& sup_sleave_base() {
+    return *sleave_;
+  }
+
+  const Spurr_Sup_Sleave_Base& sup_sleave_base() const {
+    return *sleave_;
+  }
+
   void sleave(VLidort_Sup_Sleave& sleave_in) {
     void* src_ptr = sleave_in.fortran_type_ptr();
     void* dst_ptr = sleave_->fortran_type_ptr();
@@ -7721,6 +7837,14 @@ public:
   }
 
   const VLidort_Sup_Ss& ss() const {
+    return *ss_;
+  }
+
+  Spurr_Sup_Ss_Base& sup_ss_base() {
+    return *ss_;
+  }
+
+  const Spurr_Sup_Ss_Base& sup_ss_base() const {
     return *ss_;
   }
 
@@ -9179,6 +9303,14 @@ public:
     return *bool_;
   }
 
+  Spurr_Fixed_Boolean_Base& fixed_boolean_base() {
+    return *bool_;
+  }
+
+  const Spurr_Fixed_Boolean_Base& fixed_boolean_base() const {
+    return *bool_;
+  }
+
   void f_bool(VLidort_Fixed_Boolean& bool_in) {
     void* src_ptr = bool_in.fortran_type_ptr();
     void* dst_ptr = bool_->fortran_type_ptr();
@@ -9191,6 +9323,14 @@ public:
   }
 
   const VLidort_Fixed_Chapman& chapman() const {
+    return *chapman_;
+  }
+
+  Spurr_Fixed_Chapman_Base& fixed_chapman_base() {
+    return *chapman_;
+  }
+
+  const Spurr_Fixed_Chapman_Base& fixed_chapman_base() const {
     return *chapman_;
   }
 
@@ -9209,6 +9349,14 @@ public:
     return *cont_;
   }
 
+  Spurr_Fixed_Control_Base& fixed_control_base() {
+    return *cont_;
+  }
+
+  const Spurr_Fixed_Control_Base& fixed_control_base() const {
+    return *cont_;
+  }
+
   void cont(VLidort_Fixed_Control& cont_in) {
     void* src_ptr = cont_in.fortran_type_ptr();
     void* dst_ptr = cont_->fortran_type_ptr();
@@ -9221,6 +9369,14 @@ public:
   }
 
   const VLidort_Fixed_Optical& optical() const {
+    return *optical_;
+  }
+
+  Spurr_Fixed_Optical_Base& fixed_optical_base() {
+    return *optical_;
+  }
+
+  const Spurr_Fixed_Optical_Base& fixed_optical_base() const {
     return *optical_;
   }
 
@@ -9239,6 +9395,14 @@ public:
     return *sunrays_;
   }
 
+  Spurr_Fixed_Sunrays_Base& fixed_sunrays_base() {
+    return *sunrays_;
+  }
+
+  const Spurr_Fixed_Sunrays_Base& fixed_sunrays_base() const {
+    return *sunrays_;
+  }
+
   void sunrays(VLidort_Fixed_Sunrays& sunrays_in) {
     void* src_ptr = sunrays_in.fortran_type_ptr();
     void* dst_ptr = sunrays_->fortran_type_ptr();
@@ -9254,6 +9418,14 @@ public:
     return *userval_;
   }
 
+  Spurr_Fixed_Uservalues_Base& fixed_uservalues_base() {
+    return *userval_;
+  }
+
+  const Spurr_Fixed_Uservalues_Base& fixed_uservalues_base() const {
+    return *userval_;
+  }
+
   void userval(VLidort_Fixed_Uservalues& userval_in) {
     void* src_ptr = userval_in.fortran_type_ptr();
     void* dst_ptr = userval_->fortran_type_ptr();
@@ -9266,6 +9438,14 @@ public:
   }
 
   const VLidort_Fixed_Write& write() const {
+    return *write_;
+  }
+
+  Spurr_Fixed_Write_Base& fixed_write_base() {
+    return *write_;
+  }
+
+  const Spurr_Fixed_Write_Base& fixed_write_base() const {
     return *write_;
   }
 
@@ -10312,6 +10492,14 @@ public:
     return *mbool_;
   }
 
+  Spurr_Modified_Boolean_Base& modified_boolean_base() {
+    return *mbool_;
+  }
+
+  const Spurr_Modified_Boolean_Base& modified_boolean_base() const {
+    return *mbool_;
+  }
+
   void mbool(VLidort_Modified_Boolean& mbool_in) {
     void* src_ptr = mbool_in.fortran_type_ptr();
     void* dst_ptr = mbool_->fortran_type_ptr();
@@ -10324,6 +10512,14 @@ public:
   }
 
   const VLidort_Modified_Chapman& mchapman() const {
+    return *mchapman_;
+  }
+
+  Spurr_Modified_Chapman_Base& modified_chapman_base() {
+    return *mchapman_;
+  }
+
+  const Spurr_Modified_Chapman_Base& modified_chapman_base() const {
     return *mchapman_;
   }
 
@@ -10342,6 +10538,14 @@ public:
     return *mcont_;
   }
 
+  Spurr_Modified_Control_Base& modified_control_base() {
+    return *mcont_;
+  }
+
+  const Spurr_Modified_Control_Base& modified_control_base() const {
+    return *mcont_;
+  }
+
   void mcont(VLidort_Modified_Control& mcont_in) {
     void* src_ptr = mcont_in.fortran_type_ptr();
     void* dst_ptr = mcont_->fortran_type_ptr();
@@ -10354,6 +10558,14 @@ public:
   }
 
   const VLidort_Modified_Optical& moptical() const {
+    return *moptical_;
+  }
+
+  Spurr_Modified_Optical_Base& modified_optical_base() {
+    return *moptical_;
+  }
+
+  const Spurr_Modified_Optical_Base& modified_optical_base() const {
     return *moptical_;
   }
 
@@ -10372,6 +10584,14 @@ public:
     return *msunrays_;
   }
 
+  Spurr_Modified_Sunrays_Base& modified_sunrays_base() {
+    return *msunrays_;
+  }
+
+  const Spurr_Modified_Sunrays_Base& modified_sunrays_base() const {
+    return *msunrays_;
+  }
+
   void msunrays(VLidort_Modified_Sunrays& msunrays_in) {
     void* src_ptr = msunrays_in.fortran_type_ptr();
     void* dst_ptr = msunrays_->fortran_type_ptr();
@@ -10384,6 +10604,14 @@ public:
   }
 
   const VLidort_Modified_Uservalues& muserval() const {
+    return *muserval_;
+  }
+
+  Spurr_Modified_Uservalues_Base& modified_uservalues_base() {
+    return *muserval_;
+  }
+
+  const Spurr_Modified_Uservalues_Base& modified_uservalues_base() const {
     return *muserval_;
   }
 
