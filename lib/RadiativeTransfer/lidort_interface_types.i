@@ -635,10 +635,10 @@ public:
   ~Lidort_Fixed_Lininputs();
 
   const Lidort_Fixed_Lincontrol& cont() const;
-  void cont(Lidort_Fixed_Lincontrol& cont_in);
+  const Spurr_Fixed_Lincontrol_Base& fixed_lincontrol_base() const;
   
   const Lidort_Fixed_Linoptical& optical() const;
-  void optical(Lidort_Fixed_Linoptical& optical_in);
+  const Spurr_Fixed_Linoptical_Base& fixed_linoptical_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -686,7 +686,7 @@ public:
   ~Lidort_Modified_Lininputs();
 
   const Lidort_Modified_Lincontrol& mcont() const;
-  void mcont(Lidort_Modified_Lincontrol& mcont_in);
+  const Spurr_Modified_Lincontrol_Base& modified_lincontrol_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -833,10 +833,10 @@ public:
   ~Lidort_Linoutputs();
 
   const Lidort_Linatmos& atmos() const;
-  void atmos(Lidort_Linatmos& atmos_in);
+  const Spurr_Linatmos_Base& linatmos_base() const;
   
   const Lidort_Linsurf& surf() const;
-  void surf(Lidort_Linsurf& surf_in);
+  const Spurr_Linsurf_Base& linsurf_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -932,10 +932,10 @@ public:
   ~Lidort_Linsup_Ss();
 
   const Lidort_Linsup_Ss_Atmos& atmos() const;
-  void atmos(Lidort_Linsup_Ss_Atmos& atmos_in);
+  
   
   const Lidort_Linsup_Ss_Surf& surf() const;
-  void surf(Lidort_Linsup_Ss_Surf& surf_in);
+  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -947,13 +947,13 @@ public:
   ~Lidort_Linsup_Inout();
 
   const Lidort_Linsup_Brdf& brdf() const;
-  void brdf(Lidort_Linsup_Brdf& brdf_in);
+  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const;
   
   const Lidort_Linsup_Sleave& sleave() const;
-  void sleave(Lidort_Linsup_Sleave& sleave_in);
+  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const;
   
   const Lidort_Linsup_Ss& ss() const;
-  void ss(Lidort_Linsup_Ss& ss_in);
+  const Spurr_Linsup_Ss_Base& linsup_ss_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1110,13 +1110,13 @@ public:
   ~Lidort_Outputs();
 
   const Lidort_Main_Outputs& main() const;
-  void main(Lidort_Main_Outputs& main_in);
+  const Spurr_Main_Outputs_Base& main_outputs_base() const;
   
   const Lidort_Exception_Handling& status() const;
-  void status(Lidort_Exception_Handling& status_in);
+  const Spurr_Exception_Handling_Base& exception_handling_base() const;
   
   const Lidort_Wladjusted_Outputs& wlout() const;
-  void wlout(Lidort_Wladjusted_Outputs& wlout_in);
+  const Spurr_Wladjusted_Outputs_Base& wladjusted_outputs_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1197,13 +1197,13 @@ public:
   ~Lidort_Sup_Inout();
 
   const Lidort_Sup_Brdf& brdf() const;
-  void brdf(Lidort_Sup_Brdf& brdf_in);
+  const Spurr_Sup_Brdf_Base& sup_brdf_base() const;
   
   const Lidort_Sup_Sleave& sleave() const;
-  void sleave(Lidort_Sup_Sleave& sleave_in);
+  const Spurr_Sup_Sleave_Base& sup_sleave_base() const;
   
   const Lidort_Sup_Ss& ss() const;
-  void ss(Lidort_Sup_Ss& ss_in);
+  const Spurr_Sup_Ss_Base& sup_ss_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1436,25 +1436,25 @@ public:
   ~Lidort_Fixed_Inputs();
 
   const Lidort_Fixed_Boolean& f_bool() const;
-  void f_bool(Lidort_Fixed_Boolean& bool_in);
+  const Spurr_Fixed_Boolean_Base& fixed_boolean_base() const;
   
   const Lidort_Fixed_Chapman& chapman() const;
-  void chapman(Lidort_Fixed_Chapman& chapman_in);
+  const Spurr_Fixed_Chapman_Base& fixed_chapman_base() const;
   
   const Lidort_Fixed_Control& cont() const;
-  void cont(Lidort_Fixed_Control& cont_in);
+  const Spurr_Fixed_Control_Base& fixed_control_base() const;
   
   const Lidort_Fixed_Optical& optical() const;
-  void optical(Lidort_Fixed_Optical& optical_in);
+  const Spurr_Fixed_Optical_Base& fixed_optical_base() const;
   
   const Lidort_Fixed_Sunrays& sunrays() const;
-  void sunrays(Lidort_Fixed_Sunrays& sunrays_in);
+  const Spurr_Fixed_Sunrays_Base& fixed_sunrays_base() const;
   
   const Lidort_Fixed_Uservalues& userval() const;
-  void userval(Lidort_Fixed_Uservalues& userval_in);
+  const Spurr_Fixed_Uservalues_Base& fixed_uservalues_base() const;
   
   const Lidort_Fixed_Write& write() const;
-  void write(Lidort_Fixed_Write& write_in);
+  const Spurr_Fixed_Write_Base& fixed_write_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1637,22 +1637,22 @@ public:
   ~Lidort_Modified_Inputs();
 
   const Lidort_Modified_Boolean& mbool() const;
-  void mbool(Lidort_Modified_Boolean& mbool_in);
+  const Spurr_Modified_Boolean_Base& modified_boolean_base() const;
   
   const Lidort_Modified_Chapman& mchapman() const;
-  void mchapman(Lidort_Modified_Chapman& mchapman_in);
+  const Spurr_Modified_Chapman_Base& modified_chapman_base() const;
   
   const Lidort_Modified_Control& mcont() const;
-  void mcont(Lidort_Modified_Control& mcont_in);
+  const Spurr_Modified_Control_Base& modified_control_base() const;
   
   const Lidort_Modified_Optical& moptical() const;
-  void moptical(Lidort_Modified_Optical& moptical_in);
+  const Spurr_Modified_Optical_Base& modified_optical_base() const;
   
   const Lidort_Modified_Sunrays& msunrays() const;
-  void msunrays(Lidort_Modified_Sunrays& msunrays_in);
+  const Spurr_Modified_Sunrays_Base& modified_sunrays_base() const;
   
   const Lidort_Modified_Uservalues& muserval() const;
-  void muserval(Lidort_Modified_Uservalues& muserval_in);
+  const Spurr_Modified_Uservalues_Base& modified_uservalues_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
