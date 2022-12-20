@@ -9732,11 +9732,11 @@ public:
       vlidort_modified_control_c_destroy(&fortran_type_c);
   }
 
-  const int& ts_ngreek_moments_input() const {
+  const int& ts_nmoments_input() const {
     return *transfer_struct_c.ts_ngreek_moments_input_;
   }
 
-  void ts_ngreek_moments_input(const int& ts_ngreek_moments_input_in) {
+  void ts_nmoments_input(const int& ts_ngreek_moments_input_in) {
     *transfer_struct_c.ts_ngreek_moments_input_ = ts_ngreek_moments_input_in;
   }
 
@@ -9746,7 +9746,7 @@ public:
   
   virtual void print(std::ostream &output_stream) const {
     output_stream << "VLidort_Modified_Control:" << std::endl
-      << "ts_ngreek_moments_input: " << ts_ngreek_moments_input()  << std::endl;
+      << "ts_ngreek_moments_input: " << ts_nmoments_input()  << std::endl;
 
   }
 

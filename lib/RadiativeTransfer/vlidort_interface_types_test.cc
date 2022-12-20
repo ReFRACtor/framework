@@ -1972,7 +1972,7 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_control)
   
 
   // Test initialization
-  BOOST_CHECK_EQUAL(tst_obj.ts_ngreek_moments_input(), 0);
+  BOOST_CHECK_EQUAL(tst_obj.ts_nmoments_input(), 0);
   
 }
 
