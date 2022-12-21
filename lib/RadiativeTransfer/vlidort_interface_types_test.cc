@@ -1752,7 +1752,7 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_control)
   BOOST_CHECK_CLOSE(tst_obj.ts_tf_criterion(), 0, 1e-10);
   BOOST_CHECK_EQUAL(tst_obj.ts_tf_maxiter(), 0);
   BOOST_CHECK_CLOSE(tst_obj.ts_toa_illumination(), 0, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.ts_vlidort_accuracy(), 0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.ts_fourier_accuracy(), 0, 1e-10);
   
 }
 
@@ -1953,7 +1953,7 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_boolean)
   BOOST_CHECK_EQUAL(tst_obj.ts_do_sscorr_truncation(), false);
   BOOST_CHECK_EQUAL(tst_obj.ts_do_sscorr_usefmat(), false);
   BOOST_CHECK_EQUAL(tst_obj.ts_do_thermal_transonly(), false);
-  BOOST_CHECK_EQUAL(tst_obj.ts_do_user_vzangles(), false);
+  BOOST_CHECK_EQUAL(tst_obj.ts_do_user_streams(), false);
   
 }
 
@@ -1992,7 +1992,7 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_sunrays)
   
 
   // Test initialization
-  BOOST_CHECK_EQUAL(tst_obj.ts_n_szangles(), 0);
+  BOOST_CHECK_EQUAL(tst_obj.ts_nbeams(), 0);
   blitz::Array<double, 1> ts_szangles_exp(tst_obj.ts_szangles().shape());
   ts_szangles_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_szangles(), ts_szangles_exp, 1e-10);
@@ -2025,7 +2025,7 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_uservalues)
   BOOST_CHECK_EQUAL(tst_obj.ts_n_user_doublets(), 0);
   BOOST_CHECK_EQUAL(tst_obj.ts_n_user_obsgeoms(), 0);
   BOOST_CHECK_EQUAL(tst_obj.ts_n_user_relazms(), 0);
-  BOOST_CHECK_EQUAL(tst_obj.ts_n_user_vzangles(), 0);
+  BOOST_CHECK_EQUAL(tst_obj.ts_n_user_streams(), 0);
   blitz::Array<double, 2> ts_user_doublets_exp(tst_obj.ts_user_doublets().shape());
   ts_user_doublets_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_user_doublets(), ts_user_doublets_exp, 1e-10);

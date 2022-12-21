@@ -750,17 +750,17 @@ struct vbrdf_linsup_inputs {
 };
 
 // Links to type: "vbrdf_linsup_inputs" from module: "vbrdf_linsup_inputs_def_m" in file: "vbrdf_lin_sup_inputs_def.f90"
-class VBrdf_Linsup_Inputs : public Brdf_Linsup_Inputs_Base {
+class VBrdf_Linsup_Inputs : public Spurr_Brdf_Lin_Sup_Inputs_Base {
 public:
   // Allocating constructor
-  VBrdf_Linsup_Inputs() : Brdf_Linsup_Inputs_Base() {
+  VBrdf_Linsup_Inputs() : Spurr_Brdf_Lin_Sup_Inputs_Base() {
     vbrdf_linsup_inputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Linsup_Inputs(void* allocated_f_type_c) : Brdf_Linsup_Inputs_Base(allocated_f_type_c) {
+  VBrdf_Linsup_Inputs(void* allocated_f_type_c) : Spurr_Brdf_Lin_Sup_Inputs_Base(allocated_f_type_c) {
     vbrdf_linsup_inputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -964,17 +964,17 @@ struct vbrdf_linsup_outputs {
 };
 
 // Links to type: "vbrdf_linsup_outputs" from module: "vbrdf_linsup_outputs_def_m" in file: "vbrdf_lin_sup_outputs_def.f90"
-class VBrdf_Linsup_Outputs : public Brdf_Linsup_Outputs_Base {
+class VBrdf_Linsup_Outputs : public Spurr_Brdf_Lin_Sup_Outputs_Base {
 public:
   // Allocating constructor
-  VBrdf_Linsup_Outputs() : Brdf_Linsup_Outputs_Base() {
+  VBrdf_Linsup_Outputs() : Spurr_Brdf_Lin_Sup_Outputs_Base() {
     vbrdf_linsup_outputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Linsup_Outputs(void* allocated_f_type_c) : Brdf_Linsup_Outputs_Base(allocated_f_type_c) {
+  VBrdf_Linsup_Outputs(void* allocated_f_type_c) : Spurr_Brdf_Lin_Sup_Outputs_Base(allocated_f_type_c) {
     vbrdf_linsup_outputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -1309,17 +1309,17 @@ struct vbrdf_sup_inputs {
 };
 
 // Links to type: "vbrdf_sup_inputs" from module: "vbrdf_sup_inputs_def_m" in file: "vbrdf_sup_inputs_def.f90"
-class VBrdf_Sup_Inputs : public Brdf_Sup_Inputs_Base {
+class VBrdf_Sup_Inputs : public Spurr_Brdf_Sup_Inputs_Base {
 public:
   // Allocating constructor
-  VBrdf_Sup_Inputs() : Brdf_Sup_Inputs_Base() {
+  VBrdf_Sup_Inputs() : Spurr_Brdf_Sup_Inputs_Base() {
     vbrdf_sup_inputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Sup_Inputs(void* allocated_f_type_c) : Brdf_Sup_Inputs_Base(allocated_f_type_c) {
+  VBrdf_Sup_Inputs(void* allocated_f_type_c) : Spurr_Brdf_Sup_Inputs_Base(allocated_f_type_c) {
     vbrdf_sup_inputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -1986,17 +1986,17 @@ struct vbrdf_sup_outputs {
 };
 
 // Links to type: "vbrdf_sup_outputs" from module: "vbrdf_sup_outputs_def_m" in file: "vbrdf_sup_outputs_def.f90"
-class VBrdf_Sup_Outputs : public Brdf_Sup_Outputs_Base {
+class VBrdf_Sup_Outputs : public Spurr_Brdf_Sup_Outputs_Base {
 public:
   // Allocating constructor
-  VBrdf_Sup_Outputs() : Brdf_Sup_Outputs_Base() {
+  VBrdf_Sup_Outputs() : Spurr_Brdf_Sup_Outputs_Base() {
     vbrdf_sup_outputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Sup_Outputs(void* allocated_f_type_c) : Brdf_Sup_Outputs_Base(allocated_f_type_c) {
+  VBrdf_Sup_Outputs(void* allocated_f_type_c) : Spurr_Brdf_Sup_Outputs_Base(allocated_f_type_c) {
     vbrdf_sup_outputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -2238,17 +2238,17 @@ struct vbrdf_input_exception_handling {
 };
 
 // Links to type: "vbrdf_input_exception_handling" from module: "vbrdf_sup_outputs_def_m" in file: "vbrdf_sup_outputs_def.f90"
-class VBrdf_Input_Exception_Handling : public Brdf_Input_Exception_Handling_Base {
+class VBrdf_Input_Exception_Handling : public Spurr_Brdf_Input_Exception_Handling_Base {
 public:
   // Allocating constructor
-  VBrdf_Input_Exception_Handling() : Brdf_Input_Exception_Handling_Base() {
+  VBrdf_Input_Exception_Handling() : Spurr_Brdf_Input_Exception_Handling_Base() {
     vbrdf_input_exception_handling_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Input_Exception_Handling(void* allocated_f_type_c) : Brdf_Input_Exception_Handling_Base(allocated_f_type_c) {
+  VBrdf_Input_Exception_Handling(void* allocated_f_type_c) : Spurr_Brdf_Input_Exception_Handling_Base(allocated_f_type_c) {
     vbrdf_input_exception_handling_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -2365,17 +2365,17 @@ struct vbrdf_output_exception_handling {
 };
 
 // Links to type: "vbrdf_output_exception_handling" from module: "vbrdf_sup_outputs_def_m" in file: "vbrdf_sup_outputs_def.f90"
-class VBrdf_Output_Exception_Handling : public Brdf_Output_Exception_Handling_Base {
+class VBrdf_Output_Exception_Handling : public Spurr_Brdf_Output_Exception_Handling_Base {
 public:
   // Allocating constructor
-  VBrdf_Output_Exception_Handling() : Brdf_Output_Exception_Handling_Base() {
+  VBrdf_Output_Exception_Handling() : Spurr_Brdf_Output_Exception_Handling_Base() {
     vbrdf_output_exception_handling_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VBrdf_Output_Exception_Handling(void* allocated_f_type_c) : Brdf_Output_Exception_Handling_Base(allocated_f_type_c) {
+  VBrdf_Output_Exception_Handling(void* allocated_f_type_c) : Spurr_Brdf_Output_Exception_Handling_Base(allocated_f_type_c) {
     vbrdf_output_exception_handling_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5197,17 +5197,17 @@ struct vlidort_linsup_brdf {
 };
 
 // Links to type: "vlidort_linsup_brdf" from module: "vlidort_linsup_brdf_def_m" in file: "vlidort_lin_sup_brdf_def.f90"
-class VLidort_Linsup_Brdf : public Spurr_Linsup_Brdf_Base {
+class VLidort_Linsup_Brdf : public Spurr_Lin_Sup_Brdf_Base {
 public:
   // Allocating constructor
-  VLidort_Linsup_Brdf() : Spurr_Linsup_Brdf_Base() {
+  VLidort_Linsup_Brdf() : Spurr_Lin_Sup_Brdf_Base() {
     vlidort_linsup_brdf_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VLidort_Linsup_Brdf(void* allocated_f_type_c) : Spurr_Linsup_Brdf_Base(allocated_f_type_c) {
+  VLidort_Linsup_Brdf(void* allocated_f_type_c) : Spurr_Lin_Sup_Brdf_Base(allocated_f_type_c) {
     vlidort_linsup_brdf_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5413,17 +5413,17 @@ struct vlidort_linsup_sleave {
 };
 
 // Links to type: "vlidort_linsup_sleave" from module: "vlidort_linsup_sleave_def_m" in file: "vlidort_lin_sup_sleave_def.f90"
-class VLidort_Linsup_Sleave : public Spurr_Linsup_Sleave_Base {
+class VLidort_Linsup_Sleave : public Spurr_Lin_Sup_Sleave_Base {
 public:
   // Allocating constructor
-  VLidort_Linsup_Sleave() : Spurr_Linsup_Sleave_Base() {
+  VLidort_Linsup_Sleave() : Spurr_Lin_Sup_Sleave_Base() {
     vlidort_linsup_sleave_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VLidort_Linsup_Sleave(void* allocated_f_type_c) : Spurr_Linsup_Sleave_Base(allocated_f_type_c) {
+  VLidort_Linsup_Sleave(void* allocated_f_type_c) : Spurr_Lin_Sup_Sleave_Base(allocated_f_type_c) {
     vlidort_linsup_sleave_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5769,17 +5769,17 @@ struct vlidort_linsup_ss_surf {
 };
 
 // Links to type: "vlidort_linsup_ss_surf" from module: "vlidort_linsup_ss_def_m" in file: "vlidort_lin_sup_ss_def.f90"
-class VLidort_Linsup_Ss_Surf : public Spurr_Linsup_Ss_Surf_Base {
+class VLidort_Linsup_Ss_Surf : public Spurr_Lin_Sup_Ss_Surf_Base {
 public:
   // Allocating constructor
-  VLidort_Linsup_Ss_Surf() : Spurr_Linsup_Ss_Surf_Base() {
+  VLidort_Linsup_Ss_Surf() : Spurr_Lin_Sup_Ss_Surf_Base() {
     vlidort_linsup_ss_surf_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VLidort_Linsup_Ss_Surf(void* allocated_f_type_c) : Spurr_Linsup_Ss_Surf_Base(allocated_f_type_c) {
+  VLidort_Linsup_Ss_Surf(void* allocated_f_type_c) : Spurr_Lin_Sup_Ss_Surf_Base(allocated_f_type_c) {
     vlidort_linsup_ss_surf_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5858,17 +5858,17 @@ struct vlidort_linsup_ss {
 };
 
 // Links to type: "vlidort_linsup_ss" from module: "vlidort_linsup_ss_def_m" in file: "vlidort_lin_sup_ss_def.f90"
-class VLidort_Linsup_Ss : public Spurr_Linsup_Ss_Base {
+class VLidort_Linsup_Ss : public Spurr_Lin_Sup_Ss_Base {
 public:
   // Allocating constructor
-  VLidort_Linsup_Ss() : Spurr_Linsup_Ss_Base() {
+  VLidort_Linsup_Ss() : Spurr_Lin_Sup_Ss_Base() {
     vlidort_linsup_ss_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VLidort_Linsup_Ss(void* allocated_f_type_c) : Spurr_Linsup_Ss_Base(allocated_f_type_c) {
+  VLidort_Linsup_Ss(void* allocated_f_type_c) : Spurr_Lin_Sup_Ss_Base(allocated_f_type_c) {
     vlidort_linsup_ss_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5920,11 +5920,11 @@ public:
     return *surf_;
   }
 
-  Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() {
+  Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() {
     return *surf_;
   }
 
-  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const {
+  const Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() const {
     return *surf_;
   }
 
@@ -5993,17 +5993,17 @@ struct vlidort_linsup_inout {
 };
 
 // Links to type: "vlidort_linsup_inout" from module: "vlidort_linsup_inout_def_m" in file: "vlidort_lin_sup_def.f90"
-class VLidort_Linsup_Inout : public Spurr_Linsup_Inout_Base {
+class VLidort_Linsup_Inout : public Spurr_Lin_Sup_Inout_Base {
 public:
   // Allocating constructor
-  VLidort_Linsup_Inout() : Spurr_Linsup_Inout_Base() {
+  VLidort_Linsup_Inout() : Spurr_Lin_Sup_Inout_Base() {
     vlidort_linsup_inout_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  VLidort_Linsup_Inout(void* allocated_f_type_c) : Spurr_Linsup_Inout_Base(allocated_f_type_c) {
+  VLidort_Linsup_Inout(void* allocated_f_type_c) : Spurr_Lin_Sup_Inout_Base(allocated_f_type_c) {
     vlidort_linsup_inout_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -6023,11 +6023,11 @@ public:
     return *brdf_;
   }
 
-  Spurr_Linsup_Brdf_Base& linsup_brdf_base() {
+  Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() {
     return *brdf_;
   }
 
-  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const {
+  const Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() const {
     return *brdf_;
   }
 
@@ -6046,11 +6046,11 @@ public:
     return *sleave_;
   }
 
-  Spurr_Linsup_Sleave_Base& linsup_sleave_base() {
+  Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() {
     return *sleave_;
   }
 
-  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const {
+  const Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() const {
     return *sleave_;
   }
 
@@ -6069,11 +6069,11 @@ public:
     return *ss_;
   }
 
-  Spurr_Linsup_Ss_Base& linsup_ss_base() {
+  Spurr_Lin_Sup_Ss_Base& linsup_ss_base() {
     return *ss_;
   }
 
-  const Spurr_Linsup_Ss_Base& linsup_ss_base() const {
+  const Spurr_Lin_Sup_Ss_Base& linsup_ss_base() const {
     return *ss_;
   }
 
@@ -8478,11 +8478,11 @@ public:
   }
 
   
-  const double& ts_vlidort_accuracy() const {
+  const double& ts_fourier_accuracy() const {
     return *transfer_struct_c.ts_vlidort_accuracy_;
   }
 
-  void ts_vlidort_accuracy(const double& ts_vlidort_accuracy_in) {
+  void ts_fourier_accuracy(const double& ts_vlidort_accuracy_in) {
     *transfer_struct_c.ts_vlidort_accuracy_ = ts_vlidort_accuracy_in;
   }
 
@@ -8505,7 +8505,7 @@ public:
       << "    ts_tf_criterion: " << ts_tf_criterion()  << std::endl
       << "      ts_tf_maxiter: " << ts_tf_maxiter()  << std::endl
       << "ts_toa_illumination: " << ts_toa_illumination()  << std::endl
-      << "ts_vlidort_accuracy: " << ts_vlidort_accuracy()  << std::endl;
+      << "ts_vlidort_accuracy: " << ts_fourier_accuracy()  << std::endl;
 
   }
 
@@ -9794,11 +9794,11 @@ public:
   }
 
   
-  const bool ts_do_user_vzangles() const {
+  const bool ts_do_user_streams() const {
     return *transfer_struct_c.ts_do_user_vzangles_ != 0;
   }
 
-  void ts_do_user_vzangles(const bool& ts_do_user_vzangles_in) {
+  void ts_do_user_streams(const bool& ts_do_user_vzangles_in) {
     *transfer_struct_c.ts_do_user_vzangles_ = ts_do_user_vzangles_in ? FORTRAN_TRUE_INT : 0;
   }
 
@@ -9829,7 +9829,7 @@ public:
       << "   ts_do_sscorr_truncation: " << ts_do_sscorr_truncation()  << std::endl
       << "      ts_do_sscorr_usefmat: " << ts_do_sscorr_usefmat()  << std::endl
       << "   ts_do_thermal_transonly: " << ts_do_thermal_transonly()  << std::endl
-      << "       ts_do_user_vzangles: " << ts_do_user_vzangles()  << std::endl;
+      << "       ts_do_user_vzangles: " << ts_do_user_streams()  << std::endl;
 
   }
 
@@ -9992,11 +9992,11 @@ public:
       vlidort_modified_sunrays_c_destroy(&fortran_type_c);
   }
 
-  const int& ts_n_szangles() const {
+  const int& ts_nbeams() const {
     return *transfer_struct_c.ts_n_szangles_;
   }
 
-  void ts_n_szangles(const int& ts_n_szangles_in) {
+  void ts_nbeams(const int& ts_n_szangles_in) {
     *transfer_struct_c.ts_n_szangles_ = ts_n_szangles_in;
   }
 
@@ -10015,7 +10015,7 @@ public:
   
   virtual void print(std::ostream &output_stream) const {
     output_stream << "VLidort_Modified_Sunrays:" << std::endl
-      << "ts_n_szangles: " << ts_n_szangles()  << std::endl
+      << "ts_n_szangles: " << ts_nbeams()  << std::endl
       << "  ts_szangles: " << std::endl << ts_szangles()  << std::endl;
 
   }
@@ -10151,11 +10151,11 @@ public:
   }
 
   
-  const int& ts_n_user_vzangles() const {
+  const int& ts_n_user_streams() const {
     return *transfer_struct_c.ts_n_user_vzangles_;
   }
 
-  void ts_n_user_vzangles(const int& ts_n_user_vzangles_in) {
+  void ts_n_user_streams(const int& ts_n_user_vzangles_in) {
     *transfer_struct_c.ts_n_user_vzangles_ = ts_n_user_vzangles_in;
   }
 
@@ -10214,7 +10214,7 @@ public:
       << "    ts_n_user_doublets: " << ts_n_user_doublets()  << std::endl
       << "    ts_n_user_obsgeoms: " << ts_n_user_obsgeoms()  << std::endl
       << "     ts_n_user_relazms: " << ts_n_user_relazms()  << std::endl
-      << "    ts_n_user_vzangles: " << ts_n_user_vzangles()  << std::endl
+      << "    ts_n_user_vzangles: " << ts_n_user_streams()  << std::endl
       << "      ts_user_doublets: " << std::endl << ts_user_doublets()  << std::endl
       << "        ts_user_levels: " << std::endl << ts_user_levels()  << std::endl
       << "ts_user_obsgeoms_input: " << std::endl << ts_user_obsgeoms_input()  << std::endl

@@ -1557,7 +1557,7 @@ BOOST_AUTO_TEST_CASE(lidort_fixed_control)
   // Test initialization
   BOOST_CHECK_CLOSE(tst_obj.ts_asymtx_tolerance(), 0, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.ts_boa_illumination(), 0, 1e-10);
-  BOOST_CHECK_CLOSE(tst_obj.ts_lidort_accuracy(), 0, 1e-10);
+  BOOST_CHECK_CLOSE(tst_obj.ts_fourier_accuracy(), 0, 1e-10);
   BOOST_CHECK_EQUAL(tst_obj.ts_n_thermal_coeffs(), 0);
   BOOST_CHECK_EQUAL(tst_obj.ts_nfinelayers(), 0);
   BOOST_CHECK_EQUAL(tst_obj.ts_nlayers(), 0);
