@@ -186,7 +186,7 @@ public:
 };
 
 
-class VBrdf_Linsup_Inputs : public Brdf_Linsup_Inputs_Base {
+class VBrdf_Linsup_Inputs : public Spurr_Brdf_Lin_Sup_Inputs_Base {
 public:
   VBrdf_Linsup_Inputs();
   VBrdf_Linsup_Inputs(const VBrdf_Linsup_Inputs& src);
@@ -222,7 +222,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Linsup_Outputs : public Brdf_Linsup_Outputs_Base {
+class VBrdf_Linsup_Outputs : public Spurr_Brdf_Lin_Sup_Outputs_Base {
 public:
   VBrdf_Linsup_Outputs();
   VBrdf_Linsup_Outputs(const VBrdf_Linsup_Outputs& src);
@@ -252,7 +252,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Sup_Inputs : public Brdf_Sup_Inputs_Base {
+class VBrdf_Sup_Inputs : public Spurr_Brdf_Sup_Inputs_Base {
 public:
   VBrdf_Sup_Inputs();
   VBrdf_Sup_Inputs(const VBrdf_Sup_Inputs& src);
@@ -401,7 +401,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Sup_Outputs : public Brdf_Sup_Outputs_Base {
+class VBrdf_Sup_Outputs : public Spurr_Brdf_Sup_Outputs_Base {
 public:
   VBrdf_Sup_Outputs();
   VBrdf_Sup_Outputs(const VBrdf_Sup_Outputs& src);
@@ -443,7 +443,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Input_Exception_Handling : public Brdf_Input_Exception_Handling_Base {
+class VBrdf_Input_Exception_Handling : public Spurr_Brdf_Input_Exception_Handling_Base {
 public:
   VBrdf_Input_Exception_Handling();
   VBrdf_Input_Exception_Handling(const VBrdf_Input_Exception_Handling& src);
@@ -462,7 +462,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VBrdf_Output_Exception_Handling : public Brdf_Output_Exception_Handling_Base {
+class VBrdf_Output_Exception_Handling : public Spurr_Brdf_Output_Exception_Handling_Base {
 public:
   VBrdf_Output_Exception_Handling();
   VBrdf_Output_Exception_Handling(const VBrdf_Output_Exception_Handling& src);
@@ -899,7 +899,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Brdf : public Spurr_Linsup_Brdf_Base {
+class VLidort_Linsup_Brdf : public Spurr_Lin_Sup_Brdf_Base {
 public:
   VLidort_Linsup_Brdf();
   VLidort_Linsup_Brdf(const VLidort_Linsup_Brdf& src);
@@ -929,7 +929,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Sleave : public Spurr_Linsup_Sleave_Base {
+class VLidort_Linsup_Sleave : public Spurr_Lin_Sup_Sleave_Base {
 public:
   VLidort_Linsup_Sleave();
   VLidort_Linsup_Sleave(const VLidort_Linsup_Sleave& src);
@@ -980,7 +980,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Ss_Surf : public Spurr_Linsup_Ss_Surf_Base {
+class VLidort_Linsup_Ss_Surf : public Spurr_Lin_Sup_Ss_Surf_Base {
 public:
   VLidort_Linsup_Ss_Surf();
   VLidort_Linsup_Ss_Surf(const VLidort_Linsup_Ss_Surf& src);
@@ -992,7 +992,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Ss : public Spurr_Linsup_Ss_Base {
+class VLidort_Linsup_Ss : public Spurr_Lin_Sup_Ss_Base {
 public:
   VLidort_Linsup_Ss();
   VLidort_Linsup_Ss(const VLidort_Linsup_Ss& src);
@@ -1005,25 +1005,25 @@ public:
   
   
   const VLidort_Linsup_Ss_Surf& surf() const;
-  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const;
+  const Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
 
-class VLidort_Linsup_Inout : public Spurr_Linsup_Inout_Base {
+class VLidort_Linsup_Inout : public Spurr_Lin_Sup_Inout_Base {
 public:
   VLidort_Linsup_Inout();
   VLidort_Linsup_Inout(const VLidort_Linsup_Inout& src);
   ~VLidort_Linsup_Inout();
 
   const VLidort_Linsup_Brdf& brdf() const;
-  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const;
+  const Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() const;
   
   const VLidort_Linsup_Sleave& sleave() const;
-  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const;
+  const Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() const;
   
   const VLidort_Linsup_Ss& ss() const;
-  const Spurr_Linsup_Ss_Base& linsup_ss_base() const;
+  const Spurr_Lin_Sup_Ss_Base& linsup_ss_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1401,8 +1401,8 @@ public:
   const double& ts_toa_illumination() const;
   void ts_toa_illumination(const double& ts_toa_illumination_in);
   
-  const double& ts_vlidort_accuracy() const;
-  void ts_vlidort_accuracy(const double& ts_vlidort_accuracy_in);
+  const double& ts_fourier_accuracy() const;
+  void ts_fourier_accuracy(const double& ts_vlidort_accuracy_in);
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1619,8 +1619,8 @@ public:
   const bool ts_do_thermal_transonly() const;
   void ts_do_thermal_transonly(const bool& ts_do_thermal_transonly_in);
   
-  const bool ts_do_user_vzangles() const;
-  void ts_do_user_vzangles(const bool& ts_do_user_vzangles_in);
+  const bool ts_do_user_streams() const;
+  void ts_do_user_streams(const bool& ts_do_user_vzangles_in);
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1643,8 +1643,8 @@ public:
   VLidort_Modified_Sunrays(const VLidort_Modified_Sunrays& src);
   ~VLidort_Modified_Sunrays();
 
-  const int& ts_n_szangles() const;
-  void ts_n_szangles(const int& ts_n_szangles_in);
+  const int& ts_nbeams() const;
+  void ts_nbeams(const int& ts_n_szangles_in);
   
   const blitz::Array<double, 1>& ts_szangles() const;
   void ts_szangles(const blitz::Array<double, 1>& ts_szangles_in);
@@ -1670,8 +1670,8 @@ public:
   const int& ts_n_user_relazms() const;
   void ts_n_user_relazms(const int& ts_n_user_relazms_in);
   
-  const int& ts_n_user_vzangles() const;
-  void ts_n_user_vzangles(const int& ts_n_user_vzangles_in);
+  const int& ts_n_user_streams() const;
+  void ts_n_user_streams(const int& ts_n_user_vzangles_in);
   
   const blitz::Array<double, 2>& ts_user_doublets() const;
   void ts_user_doublets(const blitz::Array<double, 2>& ts_user_doublets_in);

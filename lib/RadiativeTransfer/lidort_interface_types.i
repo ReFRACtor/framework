@@ -166,7 +166,7 @@ public:
 };
 
 
-class Brdf_Linsup_Inputs : public Brdf_Linsup_Inputs_Base {
+class Brdf_Linsup_Inputs : public Spurr_Brdf_Lin_Sup_Inputs_Base {
 public:
   Brdf_Linsup_Inputs();
   Brdf_Linsup_Inputs(const Brdf_Linsup_Inputs& src);
@@ -202,7 +202,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Brdf_Linsup_Outputs : public Brdf_Linsup_Outputs_Base {
+class Brdf_Linsup_Outputs : public Spurr_Brdf_Lin_Sup_Outputs_Base {
 public:
   Brdf_Linsup_Outputs();
   Brdf_Linsup_Outputs(const Brdf_Linsup_Outputs& src);
@@ -232,7 +232,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Brdf_Sup_Inputs : public Brdf_Sup_Inputs_Base {
+class Brdf_Sup_Inputs : public Spurr_Brdf_Sup_Inputs_Base {
 public:
   Brdf_Sup_Inputs();
   Brdf_Sup_Inputs(const Brdf_Sup_Inputs& src);
@@ -375,7 +375,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Brdf_Sup_Outputs : public Brdf_Sup_Outputs_Base {
+class Brdf_Sup_Outputs : public Spurr_Brdf_Sup_Outputs_Base {
 public:
   Brdf_Sup_Outputs();
   Brdf_Sup_Outputs(const Brdf_Sup_Outputs& src);
@@ -417,7 +417,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Brdf_Input_Exception_Handling : public Brdf_Input_Exception_Handling_Base {
+class Brdf_Input_Exception_Handling : public Spurr_Brdf_Input_Exception_Handling_Base {
 public:
   Brdf_Input_Exception_Handling();
   Brdf_Input_Exception_Handling(const Brdf_Input_Exception_Handling& src);
@@ -436,7 +436,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Brdf_Output_Exception_Handling : public Brdf_Output_Exception_Handling_Base {
+class Brdf_Output_Exception_Handling : public Spurr_Brdf_Output_Exception_Handling_Base {
 public:
   Brdf_Output_Exception_Handling();
   Brdf_Output_Exception_Handling(const Brdf_Output_Exception_Handling& src);
@@ -843,7 +843,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Brdf : public Spurr_Linsup_Brdf_Base {
+class Lidort_Linsup_Brdf : public Spurr_Lin_Sup_Brdf_Base {
 public:
   Lidort_Linsup_Brdf();
   Lidort_Linsup_Brdf(const Lidort_Linsup_Brdf& src);
@@ -873,7 +873,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Sleave : public Spurr_Linsup_Sleave_Base {
+class Lidort_Linsup_Sleave : public Spurr_Lin_Sup_Sleave_Base {
 public:
   Lidort_Linsup_Sleave();
   Lidort_Linsup_Sleave(const Lidort_Linsup_Sleave& src);
@@ -915,7 +915,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Ss_Surf : public Spurr_Linsup_Ss_Surf_Base {
+class Lidort_Linsup_Ss_Surf : public Spurr_Lin_Sup_Ss_Surf_Base {
 public:
   Lidort_Linsup_Ss_Surf();
   Lidort_Linsup_Ss_Surf(const Lidort_Linsup_Ss_Surf& src);
@@ -927,7 +927,7 @@ public:
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Ss : public Spurr_Linsup_Ss_Base {
+class Lidort_Linsup_Ss : public Spurr_Lin_Sup_Ss_Base {
 public:
   Lidort_Linsup_Ss();
   Lidort_Linsup_Ss(const Lidort_Linsup_Ss& src);
@@ -937,25 +937,25 @@ public:
   
   
   const Lidort_Linsup_Ss_Surf& surf() const;
-  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const;
+  const Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
 
-class Lidort_Linsup_Inout : public Spurr_Linsup_Inout_Base {
+class Lidort_Linsup_Inout : public Spurr_Lin_Sup_Inout_Base {
 public:
   Lidort_Linsup_Inout();
   Lidort_Linsup_Inout(const Lidort_Linsup_Inout& src);
   ~Lidort_Linsup_Inout();
 
   const Lidort_Linsup_Brdf& brdf() const;
-  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const;
+  const Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() const;
   
   const Lidort_Linsup_Sleave& sleave() const;
-  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const;
+  const Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() const;
   
   const Lidort_Linsup_Ss& ss() const;
-  const Spurr_Linsup_Ss_Base& linsup_ss_base() const;
+  const Spurr_Lin_Sup_Ss_Base& linsup_ss_base() const;
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1288,8 +1288,8 @@ public:
   const double& ts_boa_illumination() const;
   void ts_boa_illumination(const double& ts_boa_illumination_in);
   
-  const double& ts_lidort_accuracy() const;
-  void ts_lidort_accuracy(const double& ts_lidort_accuracy_in);
+  const double& ts_fourier_accuracy() const;
+  void ts_fourier_accuracy(const double& ts_lidort_accuracy_in);
   
   const int& ts_n_thermal_coeffs() const;
   void ts_n_thermal_coeffs(const int& ts_n_thermal_coeffs_in);

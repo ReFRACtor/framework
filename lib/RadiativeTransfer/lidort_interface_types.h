@@ -636,17 +636,17 @@ struct brdf_linsup_inputs {
 };
 
 // Links to type: "brdf_linsup_inputs" from module: "brdf_lin_sup_inputs_def_m" in file: "brdf_lin_sup_inputs_def.f90"
-class Brdf_Linsup_Inputs : public Brdf_Linsup_Inputs_Base {
+class Brdf_Linsup_Inputs : public Spurr_Brdf_Lin_Sup_Inputs_Base {
 public:
   // Allocating constructor
-  Brdf_Linsup_Inputs() : Brdf_Linsup_Inputs_Base() {
+  Brdf_Linsup_Inputs() : Spurr_Brdf_Lin_Sup_Inputs_Base() {
     brdf_linsup_inputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Linsup_Inputs(void* allocated_f_type_c) : Brdf_Linsup_Inputs_Base(allocated_f_type_c) {
+  Brdf_Linsup_Inputs(void* allocated_f_type_c) : Spurr_Brdf_Lin_Sup_Inputs_Base(allocated_f_type_c) {
     brdf_linsup_inputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -850,17 +850,17 @@ struct brdf_linsup_outputs {
 };
 
 // Links to type: "brdf_linsup_outputs" from module: "brdf_lin_sup_outputs_def_m" in file: "brdf_lin_sup_outputs_def.f90"
-class Brdf_Linsup_Outputs : public Brdf_Linsup_Outputs_Base {
+class Brdf_Linsup_Outputs : public Spurr_Brdf_Lin_Sup_Outputs_Base {
 public:
   // Allocating constructor
-  Brdf_Linsup_Outputs() : Brdf_Linsup_Outputs_Base() {
+  Brdf_Linsup_Outputs() : Spurr_Brdf_Lin_Sup_Outputs_Base() {
     brdf_linsup_outputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Linsup_Outputs(void* allocated_f_type_c) : Brdf_Linsup_Outputs_Base(allocated_f_type_c) {
+  Brdf_Linsup_Outputs(void* allocated_f_type_c) : Spurr_Brdf_Lin_Sup_Outputs_Base(allocated_f_type_c) {
     brdf_linsup_outputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -1182,17 +1182,17 @@ struct brdf_sup_inputs {
 };
 
 // Links to type: "brdf_sup_inputs" from module: "brdf_sup_inputs_def_m" in file: "brdf_sup_inputs_def.f90"
-class Brdf_Sup_Inputs : public Brdf_Sup_Inputs_Base {
+class Brdf_Sup_Inputs : public Spurr_Brdf_Sup_Inputs_Base {
 public:
   // Allocating constructor
-  Brdf_Sup_Inputs() : Brdf_Sup_Inputs_Base() {
+  Brdf_Sup_Inputs() : Spurr_Brdf_Sup_Inputs_Base() {
     brdf_sup_inputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Sup_Inputs(void* allocated_f_type_c) : Brdf_Sup_Inputs_Base(allocated_f_type_c) {
+  Brdf_Sup_Inputs(void* allocated_f_type_c) : Spurr_Brdf_Sup_Inputs_Base(allocated_f_type_c) {
     brdf_sup_inputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -1837,17 +1837,17 @@ struct brdf_sup_outputs {
 };
 
 // Links to type: "brdf_sup_outputs" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
-class Brdf_Sup_Outputs : public Brdf_Sup_Outputs_Base {
+class Brdf_Sup_Outputs : public Spurr_Brdf_Sup_Outputs_Base {
 public:
   // Allocating constructor
-  Brdf_Sup_Outputs() : Brdf_Sup_Outputs_Base() {
+  Brdf_Sup_Outputs() : Spurr_Brdf_Sup_Outputs_Base() {
     brdf_sup_outputs_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Sup_Outputs(void* allocated_f_type_c) : Brdf_Sup_Outputs_Base(allocated_f_type_c) {
+  Brdf_Sup_Outputs(void* allocated_f_type_c) : Spurr_Brdf_Sup_Outputs_Base(allocated_f_type_c) {
     brdf_sup_outputs_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -2082,17 +2082,17 @@ struct brdf_input_exception_handling {
 };
 
 // Links to type: "brdf_input_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
-class Brdf_Input_Exception_Handling : public Brdf_Input_Exception_Handling_Base {
+class Brdf_Input_Exception_Handling : public Spurr_Brdf_Input_Exception_Handling_Base {
 public:
   // Allocating constructor
-  Brdf_Input_Exception_Handling() : Brdf_Input_Exception_Handling_Base() {
+  Brdf_Input_Exception_Handling() : Spurr_Brdf_Input_Exception_Handling_Base() {
     brdf_input_exception_handling_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Input_Exception_Handling(void* allocated_f_type_c) : Brdf_Input_Exception_Handling_Base(allocated_f_type_c) {
+  Brdf_Input_Exception_Handling(void* allocated_f_type_c) : Spurr_Brdf_Input_Exception_Handling_Base(allocated_f_type_c) {
     brdf_input_exception_handling_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -2209,17 +2209,17 @@ struct brdf_output_exception_handling {
 };
 
 // Links to type: "brdf_output_exception_handling" from module: "brdf_sup_outputs_def_m" in file: "brdf_sup_outputs_def.f90"
-class Brdf_Output_Exception_Handling : public Brdf_Output_Exception_Handling_Base {
+class Brdf_Output_Exception_Handling : public Spurr_Brdf_Output_Exception_Handling_Base {
 public:
   // Allocating constructor
-  Brdf_Output_Exception_Handling() : Brdf_Output_Exception_Handling_Base() {
+  Brdf_Output_Exception_Handling() : Spurr_Brdf_Output_Exception_Handling_Base() {
     brdf_output_exception_handling_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Brdf_Output_Exception_Handling(void* allocated_f_type_c) : Brdf_Output_Exception_Handling_Base(allocated_f_type_c) {
+  Brdf_Output_Exception_Handling(void* allocated_f_type_c) : Spurr_Brdf_Output_Exception_Handling_Base(allocated_f_type_c) {
     brdf_output_exception_handling_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -4807,17 +4807,17 @@ struct lidort_linsup_brdf {
 };
 
 // Links to type: "lidort_linsup_brdf" from module: "lidort_lin_sup_brdf_def_m" in file: "lidort_lin_sup_brdf_def.f90"
-class Lidort_Linsup_Brdf : public Spurr_Linsup_Brdf_Base {
+class Lidort_Linsup_Brdf : public Spurr_Lin_Sup_Brdf_Base {
 public:
   // Allocating constructor
-  Lidort_Linsup_Brdf() : Spurr_Linsup_Brdf_Base() {
+  Lidort_Linsup_Brdf() : Spurr_Lin_Sup_Brdf_Base() {
     lidort_linsup_brdf_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Lidort_Linsup_Brdf(void* allocated_f_type_c) : Spurr_Linsup_Brdf_Base(allocated_f_type_c) {
+  Lidort_Linsup_Brdf(void* allocated_f_type_c) : Spurr_Lin_Sup_Brdf_Base(allocated_f_type_c) {
     lidort_linsup_brdf_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5016,17 +5016,17 @@ struct lidort_linsup_sleave {
 };
 
 // Links to type: "lidort_linsup_sleave" from module: "lidort_lin_sup_sleave_def_m" in file: "lidort_lin_sup_sleave_def.f90"
-class Lidort_Linsup_Sleave : public Spurr_Linsup_Sleave_Base {
+class Lidort_Linsup_Sleave : public Spurr_Lin_Sup_Sleave_Base {
 public:
   // Allocating constructor
-  Lidort_Linsup_Sleave() : Spurr_Linsup_Sleave_Base() {
+  Lidort_Linsup_Sleave() : Spurr_Lin_Sup_Sleave_Base() {
     lidort_linsup_sleave_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Lidort_Linsup_Sleave(void* allocated_f_type_c) : Spurr_Linsup_Sleave_Base(allocated_f_type_c) {
+  Lidort_Linsup_Sleave(void* allocated_f_type_c) : Spurr_Lin_Sup_Sleave_Base(allocated_f_type_c) {
     lidort_linsup_sleave_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5302,17 +5302,17 @@ struct lidort_linsup_ss_surf {
 };
 
 // Links to type: "lidort_linsup_ss_surf" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
-class Lidort_Linsup_Ss_Surf : public Spurr_Linsup_Ss_Surf_Base {
+class Lidort_Linsup_Ss_Surf : public Spurr_Lin_Sup_Ss_Surf_Base {
 public:
   // Allocating constructor
-  Lidort_Linsup_Ss_Surf() : Spurr_Linsup_Ss_Surf_Base() {
+  Lidort_Linsup_Ss_Surf() : Spurr_Lin_Sup_Ss_Surf_Base() {
     lidort_linsup_ss_surf_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Lidort_Linsup_Ss_Surf(void* allocated_f_type_c) : Spurr_Linsup_Ss_Surf_Base(allocated_f_type_c) {
+  Lidort_Linsup_Ss_Surf(void* allocated_f_type_c) : Spurr_Lin_Sup_Ss_Surf_Base(allocated_f_type_c) {
     lidort_linsup_ss_surf_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5387,17 +5387,17 @@ struct lidort_linsup_ss {
 };
 
 // Links to type: "lidort_linsup_ss" from module: "lidort_lin_sup_ss_def_m" in file: "lidort_lin_sup_ss_def.f90"
-class Lidort_Linsup_Ss : public Spurr_Linsup_Ss_Base {
+class Lidort_Linsup_Ss : public Spurr_Lin_Sup_Ss_Base {
 public:
   // Allocating constructor
-  Lidort_Linsup_Ss() : Spurr_Linsup_Ss_Base() {
+  Lidort_Linsup_Ss() : Spurr_Lin_Sup_Ss_Base() {
     lidort_linsup_ss_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Lidort_Linsup_Ss(void* allocated_f_type_c) : Spurr_Linsup_Ss_Base(allocated_f_type_c) {
+  Lidort_Linsup_Ss(void* allocated_f_type_c) : Spurr_Lin_Sup_Ss_Base(allocated_f_type_c) {
     lidort_linsup_ss_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5433,11 +5433,11 @@ public:
     return *surf_;
   }
 
-  Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() {
+  Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() {
     return *surf_;
   }
 
-  const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const {
+  const Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() const {
     return *surf_;
   }
 
@@ -5503,17 +5503,17 @@ struct lidort_linsup_inout {
 };
 
 // Links to type: "lidort_linsup_inout" from module: "lidort_lin_sup_inout_def_m" in file: "lidort_lin_sup_def.f90"
-class Lidort_Linsup_Inout : public Spurr_Linsup_Inout_Base {
+class Lidort_Linsup_Inout : public Spurr_Lin_Sup_Inout_Base {
 public:
   // Allocating constructor
-  Lidort_Linsup_Inout() : Spurr_Linsup_Inout_Base() {
+  Lidort_Linsup_Inout() : Spurr_Lin_Sup_Inout_Base() {
     lidort_linsup_inout_c_alloc_init(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
   }
 
   // Linked to other data structure
-  Lidort_Linsup_Inout(void* allocated_f_type_c) : Spurr_Linsup_Inout_Base(allocated_f_type_c) {
+  Lidort_Linsup_Inout(void* allocated_f_type_c) : Spurr_Lin_Sup_Inout_Base(allocated_f_type_c) {
     lidort_linsup_inout_c_init_only(&transfer_struct_c, &fortran_type_c);
     link_blitz_arrays();
     link_nested_types();
@@ -5533,11 +5533,11 @@ public:
     return *brdf_;
   }
 
-  Spurr_Linsup_Brdf_Base& linsup_brdf_base() {
+  Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() {
     return *brdf_;
   }
 
-  const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const {
+  const Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() const {
     return *brdf_;
   }
 
@@ -5556,11 +5556,11 @@ public:
     return *sleave_;
   }
 
-  Spurr_Linsup_Sleave_Base& linsup_sleave_base() {
+  Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() {
     return *sleave_;
   }
 
-  const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const {
+  const Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() const {
     return *sleave_;
   }
 
@@ -5579,11 +5579,11 @@ public:
     return *ss_;
   }
 
-  Spurr_Linsup_Ss_Base& linsup_ss_base() {
+  Spurr_Lin_Sup_Ss_Base& linsup_ss_base() {
     return *ss_;
   }
 
-  const Spurr_Linsup_Ss_Base& linsup_ss_base() const {
+  const Spurr_Lin_Sup_Ss_Base& linsup_ss_base() const {
     return *ss_;
   }
 
@@ -7787,11 +7787,11 @@ public:
   }
 
   
-  const double& ts_lidort_accuracy() const {
+  const double& ts_fourier_accuracy() const {
     return *transfer_struct_c.ts_lidort_accuracy_;
   }
 
-  void ts_lidort_accuracy(const double& ts_lidort_accuracy_in) {
+  void ts_fourier_accuracy(const double& ts_lidort_accuracy_in) {
     *transfer_struct_c.ts_lidort_accuracy_ = ts_lidort_accuracy_in;
   }
 
@@ -7875,7 +7875,7 @@ public:
     output_stream << "Lidort_Fixed_Control:" << std::endl
       << "ts_asymtx_tolerance: " << ts_asymtx_tolerance()  << std::endl
       << "ts_boa_illumination: " << ts_boa_illumination()  << std::endl
-      << " ts_lidort_accuracy: " << ts_lidort_accuracy()  << std::endl
+      << " ts_lidort_accuracy: " << ts_fourier_accuracy()  << std::endl
       << "ts_n_thermal_coeffs: " << ts_n_thermal_coeffs()  << std::endl
       << "     ts_nfinelayers: " << ts_nfinelayers()  << std::endl
       << "         ts_nlayers: " << ts_nlayers()  << std::endl

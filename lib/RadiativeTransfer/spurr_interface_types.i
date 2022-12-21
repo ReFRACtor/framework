@@ -9,12 +9,12 @@
 %fp_shared_ptr(FullPhysics::Spurr_Type_Structure);
 %fp_shared_ptr(FullPhysics::Spurr_Pars_Base);
 
-%fp_shared_ptr(FullPhysics::Brdf_Linsup_Inputs_Base);
-%fp_shared_ptr(FullPhysics::Brdf_Linsup_Outputs_Base);
-%fp_shared_ptr(FullPhysics::Brdf_Sup_Inputs_Base);
-%fp_shared_ptr(FullPhysics::Brdf_Sup_Outputs_Base);
-%fp_shared_ptr(FullPhysics::Brdf_Input_Exception_Handling_Base);
-%fp_shared_ptr(FullPhysics::Brdf_Output_Exception_Handling_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Lin_Sup_Inputs_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Lin_Sup_Outputs_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Sup_Inputs_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Sup_Outputs_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Input_Exception_Handling_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Brdf_Output_Exception_Handling_Base);
 %fp_shared_ptr(FullPhysics::Sleave_Sup_Inputs_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Fixed_Lincontrol_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Fixed_Linoptical_Base);
@@ -24,11 +24,11 @@
 %fp_shared_ptr(FullPhysics::Spurr_Linatmos_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Linsurf_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Linoutputs_Base);
-%fp_shared_ptr(FullPhysics::Spurr_Linsup_Brdf_Base);
-%fp_shared_ptr(FullPhysics::Spurr_Linsup_Sleave_Base);
-%fp_shared_ptr(FullPhysics::Spurr_Linsup_Ss_Surf_Base);
-%fp_shared_ptr(FullPhysics::Spurr_Linsup_Ss_Base);
-%fp_shared_ptr(FullPhysics::Spurr_Linsup_Inout_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Lin_Sup_Brdf_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Lin_Sup_Sleave_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Lin_Sup_Ss_Surf_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Lin_Sup_Ss_Base);
+%fp_shared_ptr(FullPhysics::Spurr_Lin_Sup_Inout_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Main_Outputs_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Wladjusted_Outputs_Base);
 %fp_shared_ptr(FullPhysics::Spurr_Exception_Handling_Base);
@@ -153,9 +153,9 @@ public:
 };
 
 
-%nodefaultctor Brdf_Linsup_Inputs_Base;
+%nodefaultctor Spurr_Brdf_Lin_Sup_Inputs_Base;
 
-class Brdf_Linsup_Inputs_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Lin_Sup_Inputs_Base : public Spurr_Type_Structure {
 public:
 
   virtual const bool bs_do_bsavalue_wf() const = 0;
@@ -189,9 +189,9 @@ public:
   
 };
 
-%nodefaultctor Brdf_Linsup_Outputs_Base;
+%nodefaultctor Spurr_Brdf_Lin_Sup_Outputs_Base;
 
-class Brdf_Linsup_Outputs_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Lin_Sup_Outputs_Base : public Spurr_Type_Structure {
 public:
 
   virtual void print(std::ostream &output_stream) const = 0;
@@ -210,9 +210,9 @@ public:
   */
 };
 
-%nodefaultctor Brdf_Sup_Inputs_Base;
+%nodefaultctor Spurr_Brdf_Sup_Inputs_Base;
 
-class Brdf_Sup_Inputs_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Sup_Inputs_Base : public Spurr_Type_Structure {
 public:
 
   virtual const blitz::Array<double, 1>& bs_beam_szas() const = 0;
@@ -353,9 +353,9 @@ public:
   
 };
 
-%nodefaultctor Brdf_Sup_Outputs_Base;
+%nodefaultctor Spurr_Brdf_Sup_Outputs_Base;
 
-class Brdf_Sup_Outputs_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Sup_Outputs_Base : public Spurr_Type_Structure {
 public:
 
   virtual const double& bs_bsa_calculated() const = 0;
@@ -386,9 +386,9 @@ public:
   */
 };
 
-%nodefaultctor Brdf_Input_Exception_Handling_Base;
+%nodefaultctor Spurr_Brdf_Input_Exception_Handling_Base;
 
-class Brdf_Input_Exception_Handling_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Input_Exception_Handling_Base : public Spurr_Type_Structure {
 public:
 
   virtual const std::vector< std::string > bs_inputactions() const = 0;
@@ -405,9 +405,9 @@ public:
   
 };
 
-%nodefaultctor Brdf_Output_Exception_Handling_Base;
+%nodefaultctor Spurr_Brdf_Output_Exception_Handling_Base;
 
-class Brdf_Output_Exception_Handling_Base : public Spurr_Type_Structure {
+class Spurr_Brdf_Output_Exception_Handling_Base : public Spurr_Type_Structure {
 public:
 
   virtual const int& bs_noutputmessages() const = 0;
@@ -702,9 +702,9 @@ public:
   
 };
 
-%nodefaultctor Spurr_Linsup_Brdf_Base;
+%nodefaultctor Spurr_Lin_Sup_Brdf_Base;
 
-class Spurr_Linsup_Brdf_Base : public Spurr_Type_Structure {
+class Spurr_Lin_Sup_Brdf_Base : public Spurr_Type_Structure {
 public:
 
   virtual void print(std::ostream &output_stream) const = 0;
@@ -723,9 +723,9 @@ public:
   */
 };
 
-%nodefaultctor Spurr_Linsup_Sleave_Base;
+%nodefaultctor Spurr_Lin_Sup_Sleave_Base;
 
-class Spurr_Linsup_Sleave_Base : public Spurr_Type_Structure {
+class Spurr_Lin_Sup_Sleave_Base : public Spurr_Type_Structure {
 public:
 
   virtual void print(std::ostream &output_stream) const = 0;
@@ -741,9 +741,9 @@ public:
   */
 };
 
-%nodefaultctor Spurr_Linsup_Ss_Surf_Base;
+%nodefaultctor Spurr_Lin_Sup_Ss_Surf_Base;
 
-class Spurr_Linsup_Ss_Surf_Base : public Spurr_Type_Structure {
+class Spurr_Lin_Sup_Ss_Surf_Base : public Spurr_Type_Structure {
 public:
 
   virtual void print(std::ostream &output_stream) const = 0;
@@ -756,31 +756,31 @@ public:
   */
 };
 
-%nodefaultctor Spurr_Linsup_Ss_Base;
+%nodefaultctor Spurr_Lin_Sup_Ss_Base;
 
-class Spurr_Linsup_Ss_Base : public Spurr_Type_Structure {
+class Spurr_Lin_Sup_Ss_Base : public Spurr_Type_Structure {
 public:
 
-  virtual Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() = 0;
-  virtual const Spurr_Linsup_Ss_Surf_Base& linsup_ss_surf_base() const = 0;
+  virtual Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() = 0;
+  virtual const Spurr_Lin_Sup_Ss_Surf_Base& linsup_ss_surf_base() const = 0;
   
   virtual void print(std::ostream &output_stream) const = 0;
   
 };
 
-%nodefaultctor Spurr_Linsup_Inout_Base;
+%nodefaultctor Spurr_Lin_Sup_Inout_Base;
 
-class Spurr_Linsup_Inout_Base : public Spurr_Type_Structure {
+class Spurr_Lin_Sup_Inout_Base : public Spurr_Type_Structure {
 public:
 
-  virtual Spurr_Linsup_Brdf_Base& linsup_brdf_base() = 0;
-  virtual const Spurr_Linsup_Brdf_Base& linsup_brdf_base() const = 0;
+  virtual Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() = 0;
+  virtual const Spurr_Lin_Sup_Brdf_Base& linsup_brdf_base() const = 0;
   
-  virtual Spurr_Linsup_Sleave_Base& linsup_sleave_base() = 0;
-  virtual const Spurr_Linsup_Sleave_Base& linsup_sleave_base() const = 0;
+  virtual Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() = 0;
+  virtual const Spurr_Lin_Sup_Sleave_Base& linsup_sleave_base() const = 0;
   
-  virtual Spurr_Linsup_Ss_Base& linsup_ss_base() = 0;
-  virtual const Spurr_Linsup_Ss_Base& linsup_ss_base() const = 0;
+  virtual Spurr_Lin_Sup_Ss_Base& linsup_ss_base() = 0;
+  virtual const Spurr_Lin_Sup_Ss_Base& linsup_ss_base() const = 0;
   
   virtual void print(std::ostream &output_stream) const = 0;
   
@@ -1059,6 +1059,9 @@ public:
   virtual const double& ts_boa_illumination() const = 0;
   virtual void ts_boa_illumination(const double& ts_boa_illumination_in) = 0;
   
+  virtual const double& ts_fourier_accuracy() const = 0;
+  virtual void ts_fourier_accuracy(const double& ts_lidort_accuracy_in) = 0;
+  
   virtual const int& ts_n_thermal_coeffs() const = 0;
   virtual void ts_n_thermal_coeffs(const int& ts_n_thermal_coeffs_in) = 0;
   
@@ -1283,6 +1286,9 @@ public:
   virtual const bool ts_do_thermal_transonly() const = 0;
   virtual void ts_do_thermal_transonly(const bool& ts_do_thermal_transonly_in) = 0;
   
+  virtual const bool ts_do_user_streams() const = 0;
+  virtual void ts_do_user_streams(const bool& ts_do_user_streams_in) = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
   
 };
@@ -1304,6 +1310,9 @@ public:
 class Spurr_Modified_Sunrays_Base : public Spurr_Type_Structure {
 public:
 
+  virtual const int& ts_nbeams() const = 0;
+  virtual void ts_nbeams(const int& ts_nbeams_in) = 0;
+  
   virtual void print(std::ostream &output_stream) const = 0;
   
 };
@@ -1324,6 +1333,9 @@ public:
   
   virtual const int& ts_n_user_relazms() const = 0;
   virtual void ts_n_user_relazms(const int& ts_n_user_relazms_in) = 0;
+  
+  virtual const int& ts_n_user_streams() const = 0;
+  virtual void ts_n_user_streams(const int& ts_n_user_streams_in) = 0;
   
   virtual const blitz::Array<double, 2>& ts_user_doublets() const = 0;
   virtual void ts_user_doublets(const blitz::Array<double, 2>& ts_user_doublets_in) = 0;
