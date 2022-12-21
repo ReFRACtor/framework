@@ -6,6 +6,7 @@
 
 #include "fp_exception.h"
 #include "lidort_interface_types.h"
+#include "spurr_interface_masters.h"
 
 
 /* This file was auto-generated */
@@ -23,7 +24,7 @@ extern "C" {
   void brdf_lin_sup_masters_m_brdf_lin_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_linsup_in_in, void** brdf_sup_out_in, void** brdf_linsup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Lin_Sup_Masters : public virtual Printable<Brdf_Lin_Sup_Masters> {
+class Brdf_Lin_Sup_Masters : public virtual Spurr_Brdf_Lin_Sup_Masters_Base {
 
 public:
   Brdf_Lin_Sup_Masters() 
@@ -56,12 +57,19 @@ public:
     return *brdf_sup_in_;
   }
 
+  Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() {
+    return *brdf_sup_in_;
+  }
+
+  const Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() const {
+    return *brdf_sup_in_;
+  }
+
   boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_ptr() {
     return brdf_sup_in_;
   }
 
   
-
   Brdf_Linsup_Inputs& brdf_linsup_in() {
     return *brdf_linsup_in_;
   }
@@ -70,12 +78,19 @@ public:
     return *brdf_linsup_in_;
   }
 
+  Spurr_Brdf_Lin_Sup_Inputs_Base& brdf_linsup_inputs_base() {
+    return *brdf_linsup_in_;
+  }
+
+  const Spurr_Brdf_Lin_Sup_Inputs_Base& brdf_linsup_inputs_base() const {
+    return *brdf_linsup_in_;
+  }
+
   boost::shared_ptr<Brdf_Linsup_Inputs>& brdf_linsup_in_ptr() {
     return brdf_linsup_in_;
   }
 
   
-
   Brdf_Input_Exception_Handling& brdf_sup_inputstatus() {
     return *brdf_sup_inputstatus_;
   }
@@ -84,12 +99,19 @@ public:
     return *brdf_sup_inputstatus_;
   }
 
+  Spurr_Brdf_Input_Exception_Handling_Base& brdf_input_exception_handling_base() {
+    return *brdf_sup_inputstatus_;
+  }
+
+  const Spurr_Brdf_Input_Exception_Handling_Base& brdf_input_exception_handling_base() const {
+    return *brdf_sup_inputstatus_;
+  }
+
   boost::shared_ptr<Brdf_Input_Exception_Handling>& brdf_sup_inputstatus_ptr() {
     return brdf_sup_inputstatus_;
   }
 
   
-
   Brdf_Sup_Outputs& brdf_sup_out() {
     return *brdf_sup_out_;
   }
@@ -98,12 +120,19 @@ public:
     return *brdf_sup_out_;
   }
 
+  Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() {
+    return *brdf_sup_out_;
+  }
+
+  const Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() const {
+    return *brdf_sup_out_;
+  }
+
   boost::shared_ptr<Brdf_Sup_Outputs>& brdf_sup_out_ptr() {
     return brdf_sup_out_;
   }
 
   
-
   Brdf_Linsup_Outputs& brdf_linsup_out() {
     return *brdf_linsup_out_;
   }
@@ -112,12 +141,19 @@ public:
     return *brdf_linsup_out_;
   }
 
+  Spurr_Brdf_Lin_Sup_Outputs_Base& brdf_linsup_outputs_base() {
+    return *brdf_linsup_out_;
+  }
+
+  const Spurr_Brdf_Lin_Sup_Outputs_Base& brdf_linsup_outputs_base() const {
+    return *brdf_linsup_out_;
+  }
+
   boost::shared_ptr<Brdf_Linsup_Outputs>& brdf_linsup_out_ptr() {
     return brdf_linsup_out_;
   }
 
   
-
   Brdf_Output_Exception_Handling& brdf_sup_outputstatus() {
     return *brdf_sup_outputstatus_;
   }
@@ -126,11 +162,17 @@ public:
     return *brdf_sup_outputstatus_;
   }
 
+  Spurr_Brdf_Output_Exception_Handling_Base& brdf_output_exception_handling_base() {
+    return *brdf_sup_outputstatus_;
+  }
+
+  const Spurr_Brdf_Output_Exception_Handling_Base& brdf_output_exception_handling_base() const {
+    return *brdf_sup_outputstatus_;
+  }
+
   boost::shared_ptr<Brdf_Output_Exception_Handling>& brdf_sup_outputstatus_ptr() {
     return brdf_sup_outputstatus_;
   }
-
-  
 
   
   void read_config(const std::string& filnam_in) {
@@ -144,7 +186,8 @@ public:
     
 
   }
-void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
+
+  void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     void* brdf_sup_in_lcl = brdf_sup_in_->fortran_type_ptr();
     void* brdf_linsup_in_lcl = brdf_linsup_in_->fortran_type_ptr();
     void* brdf_sup_out_lcl = brdf_sup_out_->fortran_type_ptr();
@@ -155,7 +198,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -171,7 +214,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     brdf_lin_sup_masters_m_read_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &brdf_linsup_in_lcl, &brdf_sup_inputstatus_lcl, &brdf_sup_out_lcl, &brdf_linsup_out_lcl, &brdf_sup_outputstatus_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -187,7 +230,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     brdf_lin_sup_masters_m_write_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &brdf_linsup_in_lcl, &brdf_sup_inputstatus_lcl, &brdf_sup_out_lcl, &brdf_linsup_out_lcl, &brdf_sup_outputstatus_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Brdf_Lin_Sup_Masters:" << std::endl
       << "          brdf_sup_in: " << brdf_sup_in()  << std::endl
@@ -226,7 +269,7 @@ extern "C" {
   void brdf_sup_masters_m_brdf_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_sup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Sup_Masters : public virtual Printable<Brdf_Sup_Masters> {
+class Brdf_Sup_Masters : public virtual Spurr_Brdf_Sup_Masters_Base {
 
 public:
   Brdf_Sup_Masters() 
@@ -257,12 +300,19 @@ public:
     return *brdf_sup_in_;
   }
 
+  Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() {
+    return *brdf_sup_in_;
+  }
+
+  const Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() const {
+    return *brdf_sup_in_;
+  }
+
   boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_ptr() {
     return brdf_sup_in_;
   }
 
   
-
   Brdf_Input_Exception_Handling& brdf_sup_inputstatus() {
     return *brdf_sup_inputstatus_;
   }
@@ -271,12 +321,19 @@ public:
     return *brdf_sup_inputstatus_;
   }
 
+  Spurr_Brdf_Input_Exception_Handling_Base& brdf_input_exception_handling_base() {
+    return *brdf_sup_inputstatus_;
+  }
+
+  const Spurr_Brdf_Input_Exception_Handling_Base& brdf_input_exception_handling_base() const {
+    return *brdf_sup_inputstatus_;
+  }
+
   boost::shared_ptr<Brdf_Input_Exception_Handling>& brdf_sup_inputstatus_ptr() {
     return brdf_sup_inputstatus_;
   }
 
   
-
   Brdf_Sup_Outputs& brdf_sup_out() {
     return *brdf_sup_out_;
   }
@@ -285,12 +342,19 @@ public:
     return *brdf_sup_out_;
   }
 
+  Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() {
+    return *brdf_sup_out_;
+  }
+
+  const Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() const {
+    return *brdf_sup_out_;
+  }
+
   boost::shared_ptr<Brdf_Sup_Outputs>& brdf_sup_out_ptr() {
     return brdf_sup_out_;
   }
 
   
-
   Brdf_Output_Exception_Handling& brdf_sup_outputstatus() {
     return *brdf_sup_outputstatus_;
   }
@@ -299,11 +363,17 @@ public:
     return *brdf_sup_outputstatus_;
   }
 
+  Spurr_Brdf_Output_Exception_Handling_Base& brdf_output_exception_handling_base() {
+    return *brdf_sup_outputstatus_;
+  }
+
+  const Spurr_Brdf_Output_Exception_Handling_Base& brdf_output_exception_handling_base() const {
+    return *brdf_sup_outputstatus_;
+  }
+
   boost::shared_ptr<Brdf_Output_Exception_Handling>& brdf_sup_outputstatus_ptr() {
     return brdf_sup_outputstatus_;
   }
-
-  
 
   
   void read_config(const std::string& filnam_in) {
@@ -316,7 +386,8 @@ public:
     
 
   }
-void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
+
+  void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     void* brdf_sup_in_lcl = brdf_sup_in_->fortran_type_ptr();
     void* brdf_sup_out_lcl = brdf_sup_out_->fortran_type_ptr();
     void* brdf_sup_outputstatus_lcl = brdf_sup_outputstatus_->fortran_type_ptr();
@@ -325,7 +396,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -339,7 +410,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     brdf_sup_masters_m_read_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &brdf_sup_inputstatus_lcl, &brdf_sup_out_lcl, &brdf_sup_outputstatus_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -353,7 +424,7 @@ void run(const bool& do_debug_restoration_in, const int& nmoments_input_in) {
     brdf_sup_masters_m_write_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &brdf_sup_inputstatus_lcl, &brdf_sup_out_lcl, &brdf_sup_outputstatus_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Brdf_Sup_Masters:" << std::endl
       << "          brdf_sup_in: " << brdf_sup_in()  << std::endl
@@ -391,7 +462,7 @@ extern "C" {
   void inputs_m_sup_init_wrap(void** lidort_sup_in);
 }
 
-class Lidort_Inputs : public virtual Printable<Lidort_Inputs> {
+class Lidort_Inputs : public virtual Spurr_Inputs_Base {
 
 public:
   Lidort_Inputs() 
@@ -422,6 +493,14 @@ public:
     return *lidort_sup_;
   }
 
+  Spurr_Sup_Inout_Base& sup_inout_base() {
+    return *lidort_sup_;
+  }
+
+  const Spurr_Sup_Inout_Base& sup_inout_base() const {
+    return *lidort_sup_;
+  }
+
   boost::shared_ptr<Lidort_Sup_Inout>& lidort_sup_ptr() {
     return lidort_sup_;
   }
@@ -433,7 +512,6 @@ public:
   }
 
   
-
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
   }
@@ -442,12 +520,19 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
@@ -456,12 +541,19 @@ public:
     return *lidort_modin_;
   }
 
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
+    return *lidort_modin_;
+  }
+
   boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_ptr() {
     return lidort_modin_;
   }
 
   
-
   Lidort_Input_Exception_Handling& lidort_inputstatus() {
     return *lidort_inputstatus_;
   }
@@ -470,11 +562,17 @@ public:
     return *lidort_inputstatus_;
   }
 
+  Spurr_Input_Exception_Handling_Base& input_exception_handling_base() {
+    return *lidort_inputstatus_;
+  }
+
+  const Spurr_Input_Exception_Handling_Base& input_exception_handling_base() const {
+    return *lidort_inputstatus_;
+  }
+
   boost::shared_ptr<Lidort_Input_Exception_Handling>& lidort_inputstatus_ptr() {
     return lidort_inputstatus_;
   }
-
-  
 
   
   void brdf_sup_init() {
@@ -484,7 +582,8 @@ public:
     
 
   }
-void read_config(const std::string& filnam_in) {
+
+  void read_config(const std::string& filnam_in) {
     const char* filnam_lcl = filnam_in.c_str();
     int filnam_in_len = (int) filnam_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -495,28 +594,31 @@ void read_config(const std::string& filnam_in) {
     
 
   }
-void sleave_sup_init() {
+
+  void sleave_sup_init() {
     void* lidort_sup_lcl = lidort_sup_->fortran_type_ptr();
     
     inputs_m_sleave_sup_init_wrap(&lidort_sup_lcl);
     
 
   }
-void ss_sup_init() {
+
+  void ss_sup_init() {
     void* lidort_sup_lcl = lidort_sup_->fortran_type_ptr();
     
     inputs_m_ss_sup_init_wrap(&lidort_sup_lcl);
     
 
   }
-void sup_init() {
+
+  void sup_init() {
     void* lidort_sup_lcl = lidort_sup_->fortran_type_ptr();
     
     inputs_m_sup_init_wrap(&lidort_sup_lcl);
     
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -530,7 +632,7 @@ void sup_init() {
     inputs_m_read_wrap(filename_lcl, &filename_in_len, &lidort_sup_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_inputstatus_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -544,7 +646,7 @@ void sup_init() {
     inputs_m_write_wrap(filename_lcl, &filename_in_len, &lidort_sup_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_inputstatus_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Inputs:" << std::endl
       << "        lidort_sup: " << lidort_sup()  << std::endl
@@ -578,7 +680,7 @@ extern "C" {
   void masters_m_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in);
 }
 
-class Lidort_Masters : public virtual Printable<Lidort_Masters> {
+class Lidort_Masters : public virtual Spurr_Masters_Base {
 
 public:
   Lidort_Masters() 
@@ -609,6 +711,14 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
@@ -620,12 +730,19 @@ public:
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
 
   const Lidort_Modified_Inputs& lidort_modin() const {
+    return *lidort_modin_;
+  }
+
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
     return *lidort_modin_;
   }
 
@@ -640,12 +757,19 @@ public:
   }
 
   
-
   Lidort_Sup_Inout& lidort_sup() {
     return *lidort_sup_;
   }
 
   const Lidort_Sup_Inout& lidort_sup() const {
+    return *lidort_sup_;
+  }
+
+  Spurr_Sup_Inout_Base& sup_inout_base() {
+    return *lidort_sup_;
+  }
+
+  const Spurr_Sup_Inout_Base& sup_inout_base() const {
     return *lidort_sup_;
   }
 
@@ -660,7 +784,6 @@ public:
   }
 
   
-
   Lidort_Outputs& lidort_out() {
     return *lidort_out_;
   }
@@ -669,11 +792,17 @@ public:
     return *lidort_out_;
   }
 
+  Spurr_Outputs_Base& outputs_base() {
+    return *lidort_out_;
+  }
+
+  const Spurr_Outputs_Base& outputs_base() const {
+    return *lidort_out_;
+  }
+
   boost::shared_ptr<Lidort_Outputs>& lidort_out_ptr() {
     return lidort_out_;
   }
-
-  
 
   
   void run(const bool& do_debug_input_in) {
@@ -697,7 +826,7 @@ public:
     }
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -711,7 +840,7 @@ public:
     masters_m_read_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -725,7 +854,7 @@ public:
     masters_m_write_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Masters:" << std::endl
       << "lidort_fixin: " << lidort_fixin()  << std::endl
@@ -763,7 +892,7 @@ extern "C" {
   void l_inputs_m_ss_linsup_init_wrap(void** lidort_linsup_in);
 }
 
-class Lidort_L_Inputs : public virtual Printable<Lidort_L_Inputs> {
+class Lidort_L_Inputs : public virtual Spurr_L_Inputs_Base {
 
 public:
   Lidort_L_Inputs() 
@@ -796,6 +925,14 @@ public:
     return *lidort_linsup_;
   }
 
+  Spurr_Lin_Sup_Inout_Base& linsup_inout_base() {
+    return *lidort_linsup_;
+  }
+
+  const Spurr_Lin_Sup_Inout_Base& linsup_inout_base() const {
+    return *lidort_linsup_;
+  }
+
   boost::shared_ptr<Lidort_Linsup_Inout>& lidort_linsup_ptr() {
     return lidort_linsup_;
   }
@@ -807,7 +944,6 @@ public:
   }
 
   
-
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
   }
@@ -816,12 +952,19 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
@@ -830,12 +973,19 @@ public:
     return *lidort_modin_;
   }
 
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
+    return *lidort_modin_;
+  }
+
   boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_ptr() {
     return lidort_modin_;
   }
 
   
-
   Lidort_Fixed_Lininputs& lidort_linfixin() {
     return *lidort_linfixin_;
   }
@@ -844,12 +994,19 @@ public:
     return *lidort_linfixin_;
   }
 
+  Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() {
+    return *lidort_linfixin_;
+  }
+
+  const Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() const {
+    return *lidort_linfixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Lininputs>& lidort_linfixin_ptr() {
     return lidort_linfixin_;
   }
 
   
-
   Lidort_Modified_Lininputs& lidort_linmodin() {
     return *lidort_linmodin_;
   }
@@ -858,12 +1015,19 @@ public:
     return *lidort_linmodin_;
   }
 
+  Spurr_Modified_Lininputs_Base& modified_lininputs_base() {
+    return *lidort_linmodin_;
+  }
+
+  const Spurr_Modified_Lininputs_Base& modified_lininputs_base() const {
+    return *lidort_linmodin_;
+  }
+
   boost::shared_ptr<Lidort_Modified_Lininputs>& lidort_linmodin_ptr() {
     return lidort_linmodin_;
   }
 
   
-
   Lidort_Input_Exception_Handling& lidort_inputstatus() {
     return *lidort_inputstatus_;
   }
@@ -872,11 +1036,17 @@ public:
     return *lidort_inputstatus_;
   }
 
+  Spurr_Input_Exception_Handling_Base& input_exception_handling_base() {
+    return *lidort_inputstatus_;
+  }
+
+  const Spurr_Input_Exception_Handling_Base& input_exception_handling_base() const {
+    return *lidort_inputstatus_;
+  }
+
   boost::shared_ptr<Lidort_Input_Exception_Handling>& lidort_inputstatus_ptr() {
     return lidort_inputstatus_;
   }
-
-  
 
   
   void brdf_linsup_init() {
@@ -886,7 +1056,8 @@ public:
     
 
   }
-void read_config(const std::string& filnam_in) {
+
+  void read_config(const std::string& filnam_in) {
     const char* filnam_lcl = filnam_in.c_str();
     int filnam_in_len = (int) filnam_in.size();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -899,28 +1070,31 @@ void read_config(const std::string& filnam_in) {
     
 
   }
-void linsup_init() {
+
+  void linsup_init() {
     void* lidort_linsup_lcl = lidort_linsup_->fortran_type_ptr();
     
     l_inputs_m_linsup_init_wrap(&lidort_linsup_lcl);
     
 
   }
-void sleave_linsup_init() {
+
+  void sleave_linsup_init() {
     void* lidort_linsup_lcl = lidort_linsup_->fortran_type_ptr();
     
     l_inputs_m_sleave_linsup_init_wrap(&lidort_linsup_lcl);
     
 
   }
-void ss_linsup_init() {
+
+  void ss_linsup_init() {
     void* lidort_linsup_lcl = lidort_linsup_->fortran_type_ptr();
     
     l_inputs_m_ss_linsup_init_wrap(&lidort_linsup_lcl);
     
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -936,7 +1110,7 @@ void ss_linsup_init() {
     l_inputs_m_read_wrap(filename_lcl, &filename_in_len, &lidort_linsup_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_inputstatus_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -952,7 +1126,7 @@ void ss_linsup_init() {
     l_inputs_m_write_wrap(filename_lcl, &filename_in_len, &lidort_linsup_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_inputstatus_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_L_Inputs:" << std::endl
       << "     lidort_linsup: " << lidort_linsup()  << std::endl
@@ -990,7 +1164,7 @@ extern "C" {
   void lcs_masters_m_lcs_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lcs_Masters : public virtual Printable<Lidort_Lcs_Masters> {
+class Lidort_Lcs_Masters : public virtual Spurr_Lcs_Masters_Base {
 
 public:
   Lidort_Lcs_Masters() 
@@ -1025,6 +1199,14 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
@@ -1036,12 +1218,19 @@ public:
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
 
   const Lidort_Modified_Inputs& lidort_modin() const {
+    return *lidort_modin_;
+  }
+
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
     return *lidort_modin_;
   }
 
@@ -1056,12 +1245,19 @@ public:
   }
 
   
-
   Lidort_Sup_Inout& lidort_sup() {
     return *lidort_sup_;
   }
 
   const Lidort_Sup_Inout& lidort_sup() const {
+    return *lidort_sup_;
+  }
+
+  Spurr_Sup_Inout_Base& sup_inout_base() {
+    return *lidort_sup_;
+  }
+
+  const Spurr_Sup_Inout_Base& sup_inout_base() const {
     return *lidort_sup_;
   }
 
@@ -1076,7 +1272,6 @@ public:
   }
 
   
-
   Lidort_Outputs& lidort_out() {
     return *lidort_out_;
   }
@@ -1085,17 +1280,32 @@ public:
     return *lidort_out_;
   }
 
+  Spurr_Outputs_Base& outputs_base() {
+    return *lidort_out_;
+  }
+
+  const Spurr_Outputs_Base& outputs_base() const {
+    return *lidort_out_;
+  }
+
   boost::shared_ptr<Lidort_Outputs>& lidort_out_ptr() {
     return lidort_out_;
   }
 
   
-
   Lidort_Fixed_Lininputs& lidort_linfixin() {
     return *lidort_linfixin_;
   }
 
   const Lidort_Fixed_Lininputs& lidort_linfixin() const {
+    return *lidort_linfixin_;
+  }
+
+  Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() {
+    return *lidort_linfixin_;
+  }
+
+  const Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() const {
     return *lidort_linfixin_;
   }
 
@@ -1110,12 +1320,19 @@ public:
   }
 
   
-
   Lidort_Modified_Lininputs& lidort_linmodin() {
     return *lidort_linmodin_;
   }
 
   const Lidort_Modified_Lininputs& lidort_linmodin() const {
+    return *lidort_linmodin_;
+  }
+
+  Spurr_Modified_Lininputs_Base& modified_lininputs_base() {
+    return *lidort_linmodin_;
+  }
+
+  const Spurr_Modified_Lininputs_Base& modified_lininputs_base() const {
     return *lidort_linmodin_;
   }
 
@@ -1130,12 +1347,19 @@ public:
   }
 
   
-
   Lidort_Linsup_Inout& lidort_linsup() {
     return *lidort_linsup_;
   }
 
   const Lidort_Linsup_Inout& lidort_linsup() const {
+    return *lidort_linsup_;
+  }
+
+  Spurr_Lin_Sup_Inout_Base& linsup_inout_base() {
+    return *lidort_linsup_;
+  }
+
+  const Spurr_Lin_Sup_Inout_Base& linsup_inout_base() const {
     return *lidort_linsup_;
   }
 
@@ -1150,7 +1374,6 @@ public:
   }
 
   
-
   Lidort_Linoutputs& lidort_linout() {
     return *lidort_linout_;
   }
@@ -1159,11 +1382,17 @@ public:
     return *lidort_linout_;
   }
 
+  Spurr_Linoutputs_Base& linoutputs_base() {
+    return *lidort_linout_;
+  }
+
+  const Spurr_Linoutputs_Base& linoutputs_base() const {
+    return *lidort_linout_;
+  }
+
   boost::shared_ptr<Lidort_Linoutputs>& lidort_linout_ptr() {
     return lidort_linout_;
   }
-
-  
 
   
   void run(const bool& do_debug_input_in) {
@@ -1191,7 +1420,7 @@ public:
     }
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -1209,7 +1438,7 @@ public:
     lcs_masters_m_read_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -1227,7 +1456,7 @@ public:
     lcs_masters_m_write_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Lcs_Masters:" << std::endl
       << "   lidort_fixin: " << lidort_fixin()  << std::endl
@@ -1269,7 +1498,7 @@ extern "C" {
   void lps_masters_m_lps_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lps_Masters : public virtual Printable<Lidort_Lps_Masters> {
+class Lidort_Lps_Masters : public virtual Spurr_Lps_Masters_Base {
 
 public:
   Lidort_Lps_Masters() 
@@ -1304,6 +1533,14 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
@@ -1315,12 +1552,19 @@ public:
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
 
   const Lidort_Modified_Inputs& lidort_modin() const {
+    return *lidort_modin_;
+  }
+
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
     return *lidort_modin_;
   }
 
@@ -1335,12 +1579,19 @@ public:
   }
 
   
-
   Lidort_Sup_Inout& lidort_sup() {
     return *lidort_sup_;
   }
 
   const Lidort_Sup_Inout& lidort_sup() const {
+    return *lidort_sup_;
+  }
+
+  Spurr_Sup_Inout_Base& sup_inout_base() {
+    return *lidort_sup_;
+  }
+
+  const Spurr_Sup_Inout_Base& sup_inout_base() const {
     return *lidort_sup_;
   }
 
@@ -1355,7 +1606,6 @@ public:
   }
 
   
-
   Lidort_Outputs& lidort_out() {
     return *lidort_out_;
   }
@@ -1364,17 +1614,32 @@ public:
     return *lidort_out_;
   }
 
+  Spurr_Outputs_Base& outputs_base() {
+    return *lidort_out_;
+  }
+
+  const Spurr_Outputs_Base& outputs_base() const {
+    return *lidort_out_;
+  }
+
   boost::shared_ptr<Lidort_Outputs>& lidort_out_ptr() {
     return lidort_out_;
   }
 
   
-
   Lidort_Fixed_Lininputs& lidort_linfixin() {
     return *lidort_linfixin_;
   }
 
   const Lidort_Fixed_Lininputs& lidort_linfixin() const {
+    return *lidort_linfixin_;
+  }
+
+  Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() {
+    return *lidort_linfixin_;
+  }
+
+  const Spurr_Fixed_Lininputs_Base& fixed_lininputs_base() const {
     return *lidort_linfixin_;
   }
 
@@ -1389,12 +1654,19 @@ public:
   }
 
   
-
   Lidort_Modified_Lininputs& lidort_linmodin() {
     return *lidort_linmodin_;
   }
 
   const Lidort_Modified_Lininputs& lidort_linmodin() const {
+    return *lidort_linmodin_;
+  }
+
+  Spurr_Modified_Lininputs_Base& modified_lininputs_base() {
+    return *lidort_linmodin_;
+  }
+
+  const Spurr_Modified_Lininputs_Base& modified_lininputs_base() const {
     return *lidort_linmodin_;
   }
 
@@ -1409,12 +1681,19 @@ public:
   }
 
   
-
   Lidort_Linsup_Inout& lidort_linsup() {
     return *lidort_linsup_;
   }
 
   const Lidort_Linsup_Inout& lidort_linsup() const {
+    return *lidort_linsup_;
+  }
+
+  Spurr_Lin_Sup_Inout_Base& linsup_inout_base() {
+    return *lidort_linsup_;
+  }
+
+  const Spurr_Lin_Sup_Inout_Base& linsup_inout_base() const {
     return *lidort_linsup_;
   }
 
@@ -1429,7 +1708,6 @@ public:
   }
 
   
-
   Lidort_Linoutputs& lidort_linout() {
     return *lidort_linout_;
   }
@@ -1438,11 +1716,17 @@ public:
     return *lidort_linout_;
   }
 
+  Spurr_Linoutputs_Base& linoutputs_base() {
+    return *lidort_linout_;
+  }
+
+  const Spurr_Linoutputs_Base& linoutputs_base() const {
+    return *lidort_linout_;
+  }
+
   boost::shared_ptr<Lidort_Linoutputs>& lidort_linout_ptr() {
     return lidort_linout_;
   }
-
-  
 
   
   void run(const bool& do_debug_input_in) {
@@ -1470,7 +1754,7 @@ public:
     }
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -1488,7 +1772,7 @@ public:
     lps_masters_m_read_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -1506,7 +1790,7 @@ public:
     lps_masters_m_write_wrap(filename_lcl, &filename_in_len, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_sup_lcl, &lidort_out_lcl, &lidort_linfixin_lcl, &lidort_linmodin_lcl, &lidort_linsup_lcl, &lidort_linout_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Lps_Masters:" << std::endl
       << "   lidort_fixin: " << lidort_fixin()  << std::endl
@@ -1550,7 +1834,7 @@ extern "C" {
   void brdf_sup_accessories_m_set_brdf_inputs_wrap(void** brdf_sup_out_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in);
 }
 
-class Lidort_Brdf_Sup_Accessories : public virtual Printable<Lidort_Brdf_Sup_Accessories> {
+class Lidort_Brdf_Sup_Accessories : public virtual Spurr_Brdf_Sup_Accessories_Base {
 
 public:
   Lidort_Brdf_Sup_Accessories(boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_in, boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_in, boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_in) : brdf_sup_in_(brdf_sup_in_in), lidort_fixin_(lidort_fixin_in), lidort_modin_(lidort_modin_in) 
@@ -1580,12 +1864,19 @@ public:
     return *brdf_sup_in_;
   }
 
+  Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() {
+    return *brdf_sup_in_;
+  }
+
+  const Spurr_Brdf_Sup_Inputs_Base& brdf_sup_inputs_base() const {
+    return *brdf_sup_in_;
+  }
+
   boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_ptr() {
     return brdf_sup_in_;
   }
 
   
-
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
   }
@@ -1594,12 +1885,19 @@ public:
     return *lidort_fixin_;
   }
 
+  Spurr_Fixed_Inputs_Base& fixed_inputs_base() {
+    return *lidort_fixin_;
+  }
+
+  const Spurr_Fixed_Inputs_Base& fixed_inputs_base() const {
+    return *lidort_fixin_;
+  }
+
   boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_ptr() {
     return lidort_fixin_;
   }
 
   
-
   Lidort_Modified_Inputs& lidort_modin() {
     return *lidort_modin_;
   }
@@ -1608,12 +1906,19 @@ public:
     return *lidort_modin_;
   }
 
+  Spurr_Modified_Inputs_Base& modified_inputs_base() {
+    return *lidort_modin_;
+  }
+
+  const Spurr_Modified_Inputs_Base& modified_inputs_base() const {
+    return *lidort_modin_;
+  }
+
   boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_ptr() {
     return lidort_modin_;
   }
 
   
-
   Lidort_Exception_Handling& lidort_brdfcheck_status() {
     return *lidort_brdfcheck_status_;
   }
@@ -1622,17 +1927,32 @@ public:
     return *lidort_brdfcheck_status_;
   }
 
+  Spurr_Exception_Handling_Base& exception_handling_base() {
+    return *lidort_brdfcheck_status_;
+  }
+
+  const Spurr_Exception_Handling_Base& exception_handling_base() const {
+    return *lidort_brdfcheck_status_;
+  }
+
   boost::shared_ptr<Lidort_Exception_Handling>& lidort_brdfcheck_status_ptr() {
     return lidort_brdfcheck_status_;
   }
 
   
-
   Brdf_Sup_Outputs& brdf_sup_out() {
     return *brdf_sup_out_;
   }
 
   const Brdf_Sup_Outputs& brdf_sup_out() const {
+    return *brdf_sup_out_;
+  }
+
+  Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() {
+    return *brdf_sup_out_;
+  }
+
+  const Spurr_Brdf_Sup_Outputs_Base& brdf_sup_outputs_base() const {
     return *brdf_sup_out_;
   }
 
@@ -1647,12 +1967,19 @@ public:
   }
 
   
-
   Lidort_Sup_Inout& lidort_sup() {
     return *lidort_sup_;
   }
 
   const Lidort_Sup_Inout& lidort_sup() const {
+    return *lidort_sup_;
+  }
+
+  Spurr_Sup_Inout_Base& sup_inout_base() {
+    return *lidort_sup_;
+  }
+
+  const Spurr_Sup_Inout_Base& sup_inout_base() const {
     return *lidort_sup_;
   }
 
@@ -1667,8 +1994,6 @@ public:
   }
 
   
-
-  
   void brdf_input_check() {
     void* brdf_sup_in_lcl = brdf_sup_in_->fortran_type_ptr();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
@@ -1679,7 +2004,8 @@ public:
     
 
   }
-void brdf_input_check_error(const std::string& errorfile_in) {
+
+  void brdf_input_check_error(const std::string& errorfile_in) {
     const char* errorfile_lcl = errorfile_in.c_str();
     int errorfile_in_len = (int) errorfile_in.size();
     void* lidort_brdfcheck_status_lcl = lidort_brdfcheck_status_->fortran_type_ptr();
@@ -1688,7 +2014,8 @@ void brdf_input_check_error(const std::string& errorfile_in) {
     
 
   }
-void set_brdf_inputs() {
+
+  void set_brdf_inputs() {
     void* brdf_sup_out_lcl = brdf_sup_out_->fortran_type_ptr();
     void* lidort_fixin_lcl = lidort_fixin_->fortran_type_ptr();
     void* lidort_modin_lcl = lidort_modin_->fortran_type_ptr();
@@ -1698,7 +2025,7 @@ void set_brdf_inputs() {
     
 
   }
- 
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void read_fortran_file(const std::string& filename_in) {
@@ -1714,7 +2041,7 @@ void set_brdf_inputs() {
     brdf_sup_accessories_m_read_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_brdfcheck_status_lcl, &brdf_sup_out_lcl, &lidort_sup_lcl);
     
   }
-   
+
   // This routine is meant only for testing purposes and interoperability 
   // with offline tests
   void write_fortran_file(const std::string& filename_in) const {
@@ -1730,7 +2057,7 @@ void set_brdf_inputs() {
     brdf_sup_accessories_m_write_wrap(filename_lcl, &filename_in_len, &brdf_sup_in_lcl, &lidort_fixin_lcl, &lidort_modin_lcl, &lidort_brdfcheck_status_lcl, &brdf_sup_out_lcl, &lidort_sup_lcl);
     
   }
-  
+
   virtual void print(std::ostream &output_stream) const {
     output_stream << "Lidort_Brdf_Sup_Accessories:" << std::endl
       << "            brdf_sup_in: " << brdf_sup_in()  << std::endl

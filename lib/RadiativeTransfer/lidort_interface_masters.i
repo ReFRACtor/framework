@@ -2,6 +2,8 @@
 
 %include "fp_common.i"
 
+%include "spurr_interface_masters.i"
+
 %{
 #include "lidort_interface_masters.h"
 %}
