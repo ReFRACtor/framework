@@ -62,6 +62,13 @@ int MultiScattRtDriver::number_stream() const
   return interface->fixed_inputs_base().fixed_control_base().ts_nstreams();
 }
 
+bool MultiScattRtDriver::do_thermal_scattering() const
+{
+  Spurr_Modified_Boolean_Base& mboolean_inputs = rt_interface()->modified_inputs_base().modified_boolean_base();
+    
+  return do_thermal_emission && !mboolean_inputs.ts_do_thermal_transonly();
+}
+
 void MultiScattRtDriver::notify_update(const RtAtmosphere& atm)
 {
   int stype = atm.ground()->spurr_brdf_type();
@@ -359,4 +366,172 @@ void MultiScattRtDriver::setup_geometry(double sza, double azm, double zen)
   ld_zen(0) = zen;
 }
 
+void MultiScattRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb)
+{
+  Spurr_Fixed_Optical_Base& foptical_inputs = rt_interface()->fixed_inputs_base().fixed_optical_base();
 
+  foptical_inputs.ts_surface_bb_input(surface_bb);
+
+  // Thermal black body atmosphere inputs will be on levels instead of layers
+  Range rlev(0, atmosphere_bb.extent(firstDim) - 1);
+  Array<double, 1> thermal_bb_input( foptical_inputs.ts_thermal_bb_input() );
+  thermal_bb_input(rlev) = atmosphere_bb;
+}
+
+void MultiScattRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
+                                              const blitz::Array<double, 1>& ssa,
+                                              const blitz::Array<double, 2>& pf)
+{
+
+  // Ranges for copying inputs to method
+  Range rlay(0, od.extent(firstDim) - 1);
+
+  // Convienence references
+  Spurr_Fixed_Optical_Base& foptical_inputs = rt_interface()->fixed_inputs_base().fixed_optical_base();
+  Spurr_Modified_Optical_Base& moptical_inputs = rt_interface()->modified_inputs_base().modified_optical_base();
+
+  // Vertical optical depth thicness values for all layers and threads
+  Array<double, 1> deltau( foptical_inputs.ts_deltau_vert_input() );
+  deltau(rlay) = od;
+
+  // Single scattering albedos for all layers and threads
+  Array<double, 1> omega( moptical_inputs.ts_omega_total_input() );
+  omega(rlay) = where(ssa > 0.999, 0.999999, ssa);
+
+  // This will be dependent on the RT model, VLIDORT uses the 
+  // third dimension of phase function moments for the stokes dimension
+  setup_phase_function(pf);
+}
+
+void MultiScattRtDriver::clear_linear_inputs()
+{
+  Spurr_Modified_Lincontrol_Base& mlincontrol = rt_interface()->modified_lininputs_base().modified_lincontrol_base();
+
+  // Flag for output of profile Jacobians
+  mlincontrol.ts_do_profile_linearization(false);
+
+  // Flag for output of surface Jacobians
+  mlincontrol.ts_do_surface_linearization(false);
+}
+
+void MultiScattRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
+                                             const ArrayAd<double, 1>& ssa,
+                                             const ArrayAd<double, 2>& pf,
+                                             bool do_surface_linearization)
+{
+  
+  if(od.number_variable() > rt_pars_->max_atmoswfs()) {
+    Exception err;
+    err << "LIDORT has been compiled to allow a maximum of " << rt_pars_->max_atmoswfs()
+        << " atmosphere derivatives to be calculated. We are trying to calculate "
+        << od.number_variable() << " atmosphere derivatives";
+    throw err;
+  }
+
+  Spurr_Fixed_Lincontrol_Base& lincontrol = rt_interface()->fixed_lininputs_base().fixed_lincontrol_base();
+  Spurr_Modified_Lincontrol_Base& mlincontrol = rt_interface()->modified_lininputs_base().modified_lincontrol_base();
+  Spurr_Fixed_Linoptical_Base& linoptical = rt_interface()->fixed_lininputs_base().fixed_linoptical_base();
+
+  // Number of profile weighting functions in layer n
+  int natm_jac = od.number_variable();
+  Array<int, 1> layer_jac_number( lincontrol.ts_layer_vary_number() );
+  layer_jac_number = natm_jac;
+
+  // Ranges for copying inputs to method
+  Range rlay(0, od.rows() - 1);         // number of layers
+  Range rjac(0, natm_jac - 1);
+
+  // Flag for output of profile Jacobians
+  // Unlikely we won't need these
+  mlincontrol.ts_do_profile_linearization(true);
+
+  // Flag for output of surface Jacobians
+  // Certainly wouldn't need this if not retrieving ground
+  mlincontrol.ts_do_surface_linearization(do_surface_linearization);
+
+  // Enable surface black body jacobian when thermal emission is enabled
+  mlincontrol.ts_do_surface_lbbf(do_thermal_emission);
+
+  // Enable atmosphere black body jacobian when thermal emission is enabled
+  mlincontrol.ts_do_atmos_lbbf(do_thermal_emission);
+
+  // Check that we fit within the LIDORT configuration
+  if(linoptical.ts_l_deltau_vert_input().cols() < od.rows()) {
+    Exception e;
+    e << "The number of layers you are using exceeds the maximum allowed by\n"
+      << "the current build of Lidort. The number requested is "
+      << od.rows() << "\nand the maximum allowed is "
+      << linoptical.ts_l_deltau_vert_input().cols() << "\n"
+      << "\n"
+      << "You might try rebuilding with a larger value given to the configure\n"
+      << "option --with-lidort-maxlayer=value set to a larger value.\n";
+    throw e;
+  }
+  if(linoptical.ts_l_deltau_vert_input().rows() < natm_jac) {
+    Exception e;
+    e << "The number of jacobians you are using exceeds the maximum allowed by\n"
+      << "the current build of Lidort. The number requested is "
+      << natm_jac << "\nand the maximum allowed is "
+      << linoptical.ts_l_deltau_vert_input().rows() << "\n"
+      << "\n"
+      << "This number of jacobians is a function of the number of aerosols\n"
+      << "in your state vector, so you can reduce the number of aerosols\n"
+      << "\n"
+      << "You might also try rebuilding with a larger value given to the configure\n"
+      << "option --with-lidort-maxatmoswfs=value set to a larger value.\n";
+    throw e;
+  }
+
+  // Setup optical linear inputs
+  // LIDORT expects the following:
+  // l_deltau = xi/tau * dtau/dxi
+  // l_omega = xi/omega * domega/dxi
+  // ... etc
+  // The driver is handed dtau/dxi, domega/dxi ... etc
+  // Where it is normally set up for xi being taug, taur, taua[0], taua[1]...
+  //
+  // LIDORT returns to us:
+  // xi * dI/dxi
+  // Therefore you will notice that by not multiplying dtau/dxi by xi and only
+  // dividing by xi, we are cancelling out the xi in the result and hence
+  // the driver really return dI/dxi
+  Array<double, 2> l_deltau( linoptical.ts_l_deltau_vert_input()(rjac,rlay) );
+  Array<double, 2> l_omega( linoptical.ts_l_omega_total_input()(rjac,rlay) );
+
+  // Transpose these to match dimensions used internally
+  l_deltau.transposeSelf(secondDim, firstDim);
+  l_omega.transposeSelf(secondDim, firstDim);
+
+  // Note that LIDORT does *not* take l_deltau etc. Rather it takes
+  // what it calls "normalized derivative inputs". So for an optical
+  // quantity like taug wrt to tau, this would be taug / tau *
+  // dtau/dtaug.
+  //
+  // It then returns a normalized jacobian, which for taug would be
+  // taug * d I /dtaug.
+  //
+  // Note that we actually leave out one of these factors, because it
+  // effectively cancels out. We pass in 1 / tau * dtau / dtaug and
+  // get back d I / dtaug.
+
+  firstIndex i1; secondIndex i2;
+  l_deltau = where(od.value()(i1) != 0, od.jacobian() / od.value()(i1), 0.0);
+
+  Array<double, 1> ssa_limit(ssa.rows());
+  ssa_limit = where(ssa.value() > 0.999, 0.999999, ssa.value());
+  l_omega  = where(ssa_limit(i1) != 0, ssa.jacobian() / ssa_limit(i1), 0.0);
+
+  // This will be dependent on the RT model, VLIDORT uses the 
+  // third dimension of phase function moments for the stokes dimension
+  setup_linear_phase_function(pf);
+
+}
+
+void MultiScattRtDriver::calculate_rt() const
+{
+  // Must copy current BRDF supplement outputs into datastructures used by LIDORT
+  copy_brdf_sup_outputs();
+
+  // Call LIDORT for calculations
+  rt_interface()->run(false);
+}

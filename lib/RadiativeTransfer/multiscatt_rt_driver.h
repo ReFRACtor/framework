@@ -29,6 +29,7 @@ public:
   virtual int number_stream() const;
   virtual int surface_type() const { return surface_type_; }
   virtual bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
+  virtual bool do_thermal_scattering() const;
   virtual bool pure_nadir() const { return pure_nadir_; }
 
   virtual void notify_update(const RtAtmosphere& atm);
@@ -42,6 +43,20 @@ public:
   void setup_height_grid(const blitz::Array<double, 1>& height_grid);
   void setup_geometry(double sza, double azm, double zen);
 
+  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
+
+  void setup_optical_inputs(const blitz::Array<double, 1>& od, 
+                            const blitz::Array<double, 1>& ssa,
+                            const blitz::Array<double, 2>& pf);
+
+  void clear_linear_inputs();
+  void setup_linear_inputs(const ArrayAd<double, 1>& od,
+                           const ArrayAd<double, 1>& ssa,
+                           const ArrayAd<double, 2>& pf,
+                           bool do_surface_linearization);
+
+  void calculate_rt() const;
+
   virtual const boost::shared_ptr<Spurr_Lps_Masters_Base> rt_interface() const = 0;
   virtual const boost::shared_ptr<Spurr_Brdf_Lin_Sup_Masters_Base> brdf_interface() const = 0;
 
@@ -53,6 +68,10 @@ protected:
   virtual void initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering);
 
   virtual void copy_brdf_sup_outputs() const = 0;
+  virtual void setup_phase_function(const blitz::Array<double, 2>& pf) = 0;
+  virtual void setup_linear_phase_function(const ArrayAd<double, 2>& pf) = 0;
+
+  boost::shared_ptr<Spurr_Pars_Base> rt_pars_;
 
 private:
 

@@ -3399,11 +3399,11 @@ public:
   }
 
   
-  const blitz::Array<double, 4>& ts_l_greekmat_total_input() const {
+  const blitz::Array<double, 4>& ts_l_phasmoms_total_input() const {
     return ts_l_greekmat_total_input_;
   }
 
-  void ts_l_greekmat_total_input(const blitz::Array<double, 4>& ts_l_greekmat_total_input_in) {
+  void ts_l_phasmoms_total_input(const blitz::Array<double, 4>& ts_l_greekmat_total_input_in) {
     ts_l_greekmat_total_input_ = ts_l_greekmat_total_input_in;
   }
 
@@ -3425,7 +3425,7 @@ public:
       << "   ts_l_deltau_vert_input: " << std::endl << ts_l_deltau_vert_input()  << std::endl
       << "          ts_l_fmatrix_dn: " << std::endl << ts_l_fmatrix_dn()  << std::endl
       << "          ts_l_fmatrix_up: " << std::endl << ts_l_fmatrix_up()  << std::endl
-      << "ts_l_greekmat_total_input: " << std::endl << ts_l_greekmat_total_input()  << std::endl
+      << "ts_l_greekmat_total_input: " << std::endl << ts_l_phasmoms_total_input()  << std::endl
       << "   ts_l_omega_total_input: " << std::endl << ts_l_omega_total_input()  << std::endl;
 
   }
@@ -8946,11 +8946,11 @@ public:
   }
 
   
-  const blitz::Array<double, 3>& ts_greekmat_total_input() const {
+  const blitz::Array<double, 3>& ts_phasmoms_total_input() const {
     return ts_greekmat_total_input_;
   }
 
-  void ts_greekmat_total_input(const blitz::Array<double, 3>& ts_greekmat_total_input_in) {
+  void ts_phasmoms_total_input(const blitz::Array<double, 3>& ts_greekmat_total_input_in) {
     ts_greekmat_total_input_ = ts_greekmat_total_input_in;
   }
 
@@ -8991,7 +8991,7 @@ public:
       << "   ts_deltau_vert_input: " << std::endl << ts_deltau_vert_input()  << std::endl
       << "          ts_fmatrix_dn: " << std::endl << ts_fmatrix_dn()  << std::endl
       << "          ts_fmatrix_up: " << std::endl << ts_fmatrix_up()  << std::endl
-      << "ts_greekmat_total_input: " << std::endl << ts_greekmat_total_input()  << std::endl
+      << "ts_greekmat_total_input: " << std::endl << ts_phasmoms_total_input()  << std::endl
       << "   ts_lambertian_albedo: " << ts_lambertian_albedo()  << std::endl
       << "    ts_surface_bb_input: " << ts_surface_bb_input()  << std::endl
       << "    ts_thermal_bb_input: " << std::endl << ts_thermal_bb_input()  << std::endl;
