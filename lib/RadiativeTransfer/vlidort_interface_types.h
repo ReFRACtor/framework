@@ -10001,11 +10001,11 @@ public:
   }
 
   
-  const blitz::Array<double, 1>& ts_szangles() const {
+  const blitz::Array<double, 1>& ts_beam_szas() const {
     return ts_szangles_;
   }
 
-  void ts_szangles(const blitz::Array<double, 1>& ts_szangles_in) {
+  void ts_beam_szas(const blitz::Array<double, 1>& ts_szangles_in) {
     ts_szangles_ = ts_szangles_in;
   }
 
@@ -10016,7 +10016,7 @@ public:
   virtual void print(std::ostream &output_stream) const {
     output_stream << "VLidort_Modified_Sunrays:" << std::endl
       << "ts_n_szangles: " << ts_nbeams()  << std::endl
-      << "  ts_szangles: " << std::endl << ts_szangles()  << std::endl;
+      << "  ts_szangles: " << std::endl << ts_beam_szas()  << std::endl;
 
   }
 
@@ -10196,11 +10196,11 @@ public:
   }
 
   
-  const blitz::Array<double, 1>& ts_user_vzangles_input() const {
+  const blitz::Array<double, 1>& ts_user_angles_input() const {
     return ts_user_vzangles_input_;
   }
 
-  void ts_user_vzangles_input(const blitz::Array<double, 1>& ts_user_vzangles_input_in) {
+  void ts_user_angles_input(const blitz::Array<double, 1>& ts_user_vzangles_input_in) {
     ts_user_vzangles_input_ = ts_user_vzangles_input_in;
   }
 
@@ -10219,7 +10219,7 @@ public:
       << "        ts_user_levels: " << std::endl << ts_user_levels()  << std::endl
       << "ts_user_obsgeoms_input: " << std::endl << ts_user_obsgeoms_input()  << std::endl
       << "       ts_user_relazms: " << std::endl << ts_user_relazms()  << std::endl
-      << "ts_user_vzangles_input: " << std::endl << ts_user_vzangles_input()  << std::endl;
+      << "ts_user_vzangles_input: " << std::endl << ts_user_angles_input()  << std::endl;
 
   }
 

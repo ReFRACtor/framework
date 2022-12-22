@@ -1646,8 +1646,8 @@ public:
   const int& ts_nbeams() const;
   void ts_nbeams(const int& ts_n_szangles_in);
   
-  const blitz::Array<double, 1>& ts_szangles() const;
-  void ts_szangles(const blitz::Array<double, 1>& ts_szangles_in);
+  const blitz::Array<double, 1>& ts_beam_szas() const;
+  void ts_beam_szas(const blitz::Array<double, 1>& ts_szangles_in);
   
   virtual void print(std::ostream &output_stream) const;
 };
@@ -1685,8 +1685,8 @@ public:
   const blitz::Array<double, 1>& ts_user_relazms() const;
   void ts_user_relazms(const blitz::Array<double, 1>& ts_user_relazms_in);
   
-  const blitz::Array<double, 1>& ts_user_vzangles_input() const;
-  void ts_user_vzangles_input(const blitz::Array<double, 1>& ts_user_vzangles_input_in);
+  const blitz::Array<double, 1>& ts_user_angles_input() const;
+  void ts_user_angles_input(const blitz::Array<double, 1>& ts_user_vzangles_input_in);
   
   virtual void print(std::ostream &output_stream) const;
 };

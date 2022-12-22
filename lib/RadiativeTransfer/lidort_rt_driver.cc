@@ -118,44 +118,6 @@ void LidortRtDriver::set_line_of_sight()
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
-void LidortRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid)
-{
-  Lidort_Fixed_Chapman& fchapman_inputs = lidort_interface_->lidort_fixin().chapman();
-  Lidort_Modified_Uservalues& muser_inputs = lidort_interface_->lidort_modin().muserval();
-
-  Array<double, 1> lidort_height_grid( fchapman_inputs.ts_height_grid() );
-  int nlayer = in_height_grid.extent(firstDim) - 1;
-  Range lay_range = Range(0,nlayer);
-  lidort_height_grid(lay_range) = in_height_grid;
-
-  // Set GEOMETRY_SPECHEIGHT = HEIGHT_GRID(NLAYERS)
-  muser_inputs.ts_geometry_specheight( lidort_height_grid(nlayer) );
-
-  // Tell LIDORT number of layers
-  lidort_interface_->lidort_fixin().cont().ts_nlayers(nlayer);
-}
-
-void LidortRtDriver::setup_geometry(double sza, double azm, double zen)
-{
-
-  Lidort_Modified_Sunrays& mbeam_inputs = lidort_interface_->lidort_modin().msunrays();
-  Lidort_Modified_Uservalues& muser_inputs = lidort_interface_->lidort_modin().muserval();
-
-  // Solar zenith angles (degrees) [0,90]
-  Array<double, 1> ld_sza( mbeam_inputs.ts_beam_szas() );
-  ld_sza(0) = sza;
-
-  // User-defined relative angles (in degrees) for
-  // off-quadrature output.
-  Array<double, 1> ld_azm( muser_inputs.ts_user_relazms() );
-  ld_azm(0) = azm;
-
-  // User-defined viewing zenith angles (in degrees) for
-  // off quadrature output.
-  Array<double, 1> ld_zen( muser_inputs.ts_user_angles_input() );
-  ld_zen(0) = zen;
-}
-
 void LidortRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb)
 {
   Lidort_Fixed_Optical& foptical_inputs = lidort_interface_->lidort_fixin().optical();
