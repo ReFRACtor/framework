@@ -17,8 +17,6 @@ public:
           const blitz::Array<double, 1>& zen, bool pure_nadir, 
           bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
 
-  bool do_thermal_scattering() const { return do_thermal_scattering_;}
-
   // Implements LIDORT specific extensions to MultiScattRtDriver actions
   void set_plane_parallel();
   void set_pseudo_spherical();
@@ -41,18 +39,6 @@ public:
 
   const boost::shared_ptr<Lidort_Lps_Masters> lidort_interface() const { return lidort_interface_; }
 
-  void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
-
-  void setup_optical_inputs(const blitz::Array<double, 1>& od, 
-                            const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf);
-  void clear_linear_inputs();
-  void setup_linear_inputs(const ArrayAd<double, 1>& od,
-                           const ArrayAd<double, 1>& ssa,
-                           const ArrayAd<double, 2>& pf,
-                           bool do_surface_linearization);
-
-  void calculate_rt() const;
   double get_intensity() const;
   void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
 
@@ -60,11 +46,10 @@ protected:
 
   void initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering);
   void copy_brdf_sup_outputs() const;
-
-  bool do_thermal_scattering_;
+  void setup_phase_function(const blitz::Array<double, 2>& pf);
+  void setup_linear_phase_function(const ArrayAd<double, 2>& pf);
 
   boost::shared_ptr<Lidort_Lps_Masters> lidort_interface_;
-  boost::shared_ptr<Spurr_Pars_Base> rt_pars_;
 
 private:
   LidortRtDriver() {}

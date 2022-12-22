@@ -653,8 +653,8 @@ public:
   const blitz::Array<double, 4>& ts_l_fmatrix_up() const;
   void ts_l_fmatrix_up(const blitz::Array<double, 4>& ts_l_fmatrix_up_in);
   
-  const blitz::Array<double, 4>& ts_l_greekmat_total_input() const;
-  void ts_l_greekmat_total_input(const blitz::Array<double, 4>& ts_l_greekmat_total_input_in);
+  const blitz::Array<double, 4>& ts_l_phasmoms_total_input() const;
+  void ts_l_phasmoms_total_input(const blitz::Array<double, 4>& ts_l_greekmat_total_input_in);
   
   const blitz::Array<double, 2>& ts_l_omega_total_input() const;
   void ts_l_omega_total_input(const blitz::Array<double, 2>& ts_l_omega_total_input_in);
@@ -1473,8 +1473,8 @@ public:
   const blitz::Array<double, 3>& ts_fmatrix_up() const;
   void ts_fmatrix_up(const blitz::Array<double, 3>& ts_fmatrix_up_in);
   
-  const blitz::Array<double, 3>& ts_greekmat_total_input() const;
-  void ts_greekmat_total_input(const blitz::Array<double, 3>& ts_greekmat_total_input_in);
+  const blitz::Array<double, 3>& ts_phasmoms_total_input() const;
+  void ts_phasmoms_total_input(const blitz::Array<double, 3>& ts_greekmat_total_input_in);
   
   const double& ts_lambertian_albedo() const;
   void ts_lambertian_albedo(const double& ts_lambertian_albedo_in);

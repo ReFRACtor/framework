@@ -587,10 +587,10 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_linoptical)
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(1), lid_pars.maxlayers());
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(2), lid_pars.max_geometries());
   BOOST_CHECK_EQUAL(tst_obj.ts_l_fmatrix_up().extent(3), 6);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_greekmat_total_input().extent(0), lid_pars.max_atmoswfs());
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_greekmat_total_input().extent(1), lid_pars.maxmoments_input()+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_greekmat_total_input().extent(2), lid_pars.maxlayers());
-  BOOST_CHECK_EQUAL(tst_obj.ts_l_greekmat_total_input().extent(3), lid_pars.maxstokes_sq());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(0), lid_pars.max_atmoswfs());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(1), lid_pars.maxmoments_input()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(2), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_l_phasmoms_total_input().extent(3), lid_pars.maxstokes_sq());
   BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(0), lid_pars.max_atmoswfs());
   BOOST_CHECK_EQUAL(tst_obj.ts_l_omega_total_input().extent(1), lid_pars.maxlayers());
   
@@ -605,9 +605,9 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_linoptical)
   blitz::Array<double, 4> ts_l_fmatrix_up_exp(tst_obj.ts_l_fmatrix_up().shape());
   ts_l_fmatrix_up_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_l_fmatrix_up(), ts_l_fmatrix_up_exp, 1e-10);
-  blitz::Array<double, 4> ts_l_greekmat_total_input_exp(tst_obj.ts_l_greekmat_total_input().shape());
+  blitz::Array<double, 4> ts_l_greekmat_total_input_exp(tst_obj.ts_l_phasmoms_total_input().shape());
   ts_l_greekmat_total_input_exp = 0;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_l_greekmat_total_input(), ts_l_greekmat_total_input_exp, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_l_phasmoms_total_input(), ts_l_greekmat_total_input_exp, 1e-10);
   blitz::Array<double, 2> ts_l_omega_total_input_exp(tst_obj.ts_l_omega_total_input().shape());
   ts_l_omega_total_input_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_l_omega_total_input(), ts_l_omega_total_input_exp, 1e-10);
@@ -1848,9 +1848,9 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_optical)
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(0), lid_pars.maxlayers());
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(1), lid_pars.max_geometries());
   BOOST_CHECK_EQUAL(tst_obj.ts_fmatrix_up().extent(2), 6);
-  BOOST_CHECK_EQUAL(tst_obj.ts_greekmat_total_input().extent(0), lid_pars.maxmoments_input()+1);
-  BOOST_CHECK_EQUAL(tst_obj.ts_greekmat_total_input().extent(1), lid_pars.maxlayers());
-  BOOST_CHECK_EQUAL(tst_obj.ts_greekmat_total_input().extent(2), lid_pars.maxstokes_sq());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(0), lid_pars.maxmoments_input()+1);
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(1), lid_pars.maxlayers());
+  BOOST_CHECK_EQUAL(tst_obj.ts_phasmoms_total_input().extent(2), lid_pars.maxstokes_sq());
   BOOST_CHECK_EQUAL(tst_obj.ts_thermal_bb_input().extent(0), lid_pars.maxlayers()+1);
   
 
@@ -1865,9 +1865,9 @@ BOOST_AUTO_TEST_CASE(vlidort_fixed_optical)
   blitz::Array<double, 3> ts_fmatrix_up_exp(tst_obj.ts_fmatrix_up().shape());
   ts_fmatrix_up_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_fmatrix_up(), ts_fmatrix_up_exp, 1e-10);
-  blitz::Array<double, 3> ts_greekmat_total_input_exp(tst_obj.ts_greekmat_total_input().shape());
+  blitz::Array<double, 3> ts_greekmat_total_input_exp(tst_obj.ts_phasmoms_total_input().shape());
   ts_greekmat_total_input_exp = 0;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_greekmat_total_input(), ts_greekmat_total_input_exp, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_phasmoms_total_input(), ts_greekmat_total_input_exp, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.ts_lambertian_albedo(), 0, 1e-10);
   BOOST_CHECK_CLOSE(tst_obj.ts_surface_bb_input(), 0, 1e-10);
   blitz::Array<double, 1> ts_thermal_bb_input_exp(tst_obj.ts_thermal_bb_input().shape());

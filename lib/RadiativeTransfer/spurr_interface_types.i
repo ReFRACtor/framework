@@ -586,6 +586,12 @@ public:
   
   virtual void print(std::ostream &output_stream) const = 0;
   
+  /* 
+
+   Common methods in derived classes with mismatching signatures: 
+   * ts_l_phasmoms_total_input
+   
+  */
 };
 
 %nodefaultctor Spurr_Fixed_Lininputs_Base;
@@ -1160,6 +1166,12 @@ public:
   
   virtual void print(std::ostream &output_stream) const = 0;
   
+  /* 
+
+   Common methods in derived classes with mismatching signatures: 
+   * ts_phasmoms_total_input
+   
+  */
 };
 
 %nodefaultctor Spurr_Fixed_Write_Base;

@@ -593,6 +593,12 @@ public:
 
   virtual void check_byte_sizes() = 0;
   
+  /* 
+
+   Common methods in derived classes with mismatching signatures: 
+   * ts_l_phasmoms_total_input
+   
+  */
 };
 
 class Spurr_Fixed_Lininputs_Base : public Spurr_Type_Structure {
@@ -1271,6 +1277,12 @@ public:
 
   virtual void check_byte_sizes() = 0;
   
+  /* 
+
+   Common methods in derived classes with mismatching signatures: 
+   * ts_phasmoms_total_input
+   
+  */
 };
 
 class Spurr_Fixed_Write_Base : public Spurr_Type_Structure {
