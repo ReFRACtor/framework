@@ -1,7 +1,7 @@
 #ifndef LIDORT_RT_DRIVER_H
 #define LIDORT_RT_DRIVER_H
 
-#include "spurr_rt_driver.h"
+#include "multiscatt_rt_driver.h"
 #include "lidort_brdf_driver.h"
 #include "lidort_interface_masters.h"
 
@@ -11,36 +11,34 @@ namespace FullPhysics {
   LIDORT specific Radiative transfer interface implementation
  *******************************************************************/
 
-class LidortRtDriver : public SpurrRtDriver {
+class LidortRtDriver : public MultiScattRtDriver {
 public:
   LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type, 
           const blitz::Array<double, 1>& zen, bool pure_nadir, 
           bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
 
-  virtual void notify_update(const RtAtmosphere& atm);
-  int number_moment() const;
-  int number_stream() const;
+  bool do_thermal_scattering() const { return do_thermal_scattering_;}
 
-  void setup_sphericity(double zen);
+  // Implements LIDORT specific extensions to MultiScattRtDriver actions
   void set_plane_parallel();
   void set_pseudo_spherical();
   void set_plane_parallel_plus_ss_correction();
   void set_line_of_sight();
 
-  bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
+  /// Abstract versions of interfaces
+  const boost::shared_ptr<Spurr_Lps_Masters_Base> rt_interface() const 
+  { return boost::dynamic_pointer_cast<Spurr_Lps_Masters_Base>(lidort_interface_); }
 
-  bool pure_nadir() const { return pure_nadir_; }
-  int surface_type() const { return surface_type_; }
-  bool do_thermal_scattering() const { return do_thermal_scattering_;}
+  const boost::shared_ptr<Spurr_Brdf_Lin_Sup_Masters_Base> brdf_interface() const
+  { return boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)->brdf_interface(); }
 
-  /// Access to BRDF driver
+  /// LIDORT specific interfaces
   const boost::shared_ptr<LidortBrdfDriver> lidort_brdf_driver() const
   { return boost::shared_ptr<LidortBrdfDriver>(boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)); }
 
-  const boost::shared_ptr<Brdf_Lin_Sup_Masters> brdf_interface() const
+  const boost::shared_ptr<Brdf_Lin_Sup_Masters> lidort_brdf_interface() const
   { return boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)->brdf_interface(); }
 
-  /// Interface to LIDORT RT software inputs to allow changing LIDORT configuration to values other than default
   const boost::shared_ptr<Lidort_Lps_Masters> lidort_interface() const { return lidort_interface_; }
 
   void setup_height_grid(const blitz::Array<double, 1>& height_grid);
@@ -63,14 +61,9 @@ public:
 
 protected:
 
-  void initialize_rt();
+  void initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering);
   void copy_brdf_sup_outputs() const;
 
-  int nstream_, nmoment_;
-  bool do_multi_scatt_only_;
-  int surface_type_;
-  blitz::Array<double, 1> zen_;
-  bool pure_nadir_;
   bool do_thermal_scattering_;
 
   boost::shared_ptr<Lidort_Lps_Masters> lidort_interface_;
@@ -78,7 +71,7 @@ protected:
 
 private:
   LidortRtDriver() {}
-  void init();
+  void initialize_interface(int nstream, int nmoment);
 
   friend class boost::serialization::access;
   template<class Archive> void serialize(Archive & ar, const unsigned int version);

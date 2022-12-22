@@ -36,6 +36,7 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    multiscatt_rt_driver.cc
     optical_properties_lsi.cc
     optical_properties_pca.cc
     pca_binning.cc

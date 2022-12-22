@@ -2,11 +2,8 @@
 #include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include "linear_algebra.h"
-#include "old_constant.h"
-#include "wgs84_constant.h"
 #include "ground.h"
 #include "ostream_pad.h"
-#include "fe_disable_exception.h"
 
 using namespace FullPhysics;
 using namespace blitz;
@@ -16,10 +13,8 @@ using namespace blitz;
 template<class Archive>
 void LidortRtDriver::serialize(Archive & ar, const unsigned int version)
 {
-  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
-    & FP_NVP_(nstream) & FP_NVP_(nmoment)
-    & FP_NVP_(do_multi_scatt_only) & FP_NVP_(surface_type)
-    & FP_NVP_(zen) & FP_NVP_(pure_nadir) & FP_NVP_(do_thermal_scattering)
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MultiScattRtDriver)
+    & FP_NVP_(do_thermal_scattering)
     & FP_NVP_(lidort_interface);
   boost::serialization::split_member(ar, *this, version);
 }
@@ -48,287 +43,78 @@ FP_IMPLEMENT(LidortRtDriver);
 LidortRtDriver::LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, 
         int surface_type, const blitz::Array<double, 1>& zen, bool pure_nadir,
         bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering)
-  : SpurrRtDriver(do_solar_sources, do_thermal_emission),
-    nstream_(nstream), nmoment_(nmoment),
-    do_multi_scatt_only_(do_multi_scatt_only), surface_type_(surface_type),
-    zen_(zen.copy()),
-    pure_nadir_(pure_nadir), do_thermal_scattering_(do_thermal_scattering)
+  : MultiScattRtDriver(do_solar_sources, do_thermal_emission),
+    do_thermal_scattering_(do_thermal_scattering)
 {
-  init();
+  initialize_interface(nstream, nmoment);
+  initialize_brdf(surface_type);
+  initialize_rt(nstream, nmoment, do_solar_sources, do_thermal_emission, do_thermal_scattering);
+  
+  // Set up scatting mode based on viewing zenith angle
+  setup_sphericity(zen, do_multi_scatt_only, pure_nadir);
+ 
 }
 
-void LidortRtDriver::init()
+void LidortRtDriver::initialize_interface(int nstream, int nmoment)
 {
   rt_pars_.reset( new Lidort_Pars() );
-  brdf_driver_.reset( new LidortBrdfDriver(nstream_, nmoment_) );
+  brdf_driver_.reset( new LidortBrdfDriver(nstream, nmoment) );
   lidort_interface_.reset( new Lidort_Lps_Masters() );
 
   // Check inputs against sizes allowed by LIDORT
-  range_check(nstream_, 1, rt_pars_->maxstreams()+1);
-  range_check(nmoment_, 2, rt_pars_->maxmoments_input()+1);
+  range_check(nstream, 1, rt_pars_->maxstreams()+1);
+  range_check(nmoment, 2, rt_pars_->maxmoments_input()+1);
 
-  // Initialize BRDF data structure
-  brdf_driver()->initialize_brdf_inputs(surface_type_);
-
-  initialize_rt();
-
-  // Set up scatting mode based on viewing zenith angle
-  setup_sphericity(max(zen_));
 }
 
-void LidortRtDriver::notify_update(const RtAtmosphere& atm)
+void LidortRtDriver::initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering)
 {
-  int stype = atm.ground()->spurr_brdf_type();
-  if(stype != surface_type()) {
-    surface_type_ = stype;
-    brdf_driver()->initialize_brdf_inputs(surface_type_);
-  }
-}
-
-int LidortRtDriver::number_moment() const 
-{
-  if (!lidort_interface_) {
-    throw Exception("Lidort Interface not initialized");
-  }
-  return lidort_interface_->lidort_modin().mcont().ts_nmoments_input();
-}
-
-int LidortRtDriver::number_stream() const
-{
-  if (!lidort_interface_) {
-    throw Exception("Lidort Interface not initialized");
-  }
-  return lidort_interface_->lidort_fixin().cont().ts_nstreams();
-}
-
-void LidortRtDriver::initialize_rt()
-{
-  // Set up these references for convienence
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
-  Lidort_Modified_Control& mcontrol_inputs = lidort_interface_->lidort_modin().mcont();
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-
-  Lidort_Fixed_Control& fcontrol_inputs = lidort_interface_->lidort_fixin().cont();
-  Lidort_Fixed_Sunrays& fbeam_inputs = lidort_interface_->lidort_fixin().sunrays();
-  Lidort_Modified_Sunrays& mbeam_inputs = lidort_interface_->lidort_modin().msunrays();
-  Lidort_Modified_Chapman& mchapman_inputs = lidort_interface_->lidort_modin().mchapman();
-
-  Lidort_Modified_Uservalues& muser_inputs = lidort_interface_->lidort_modin().muserval();
-  Lidort_Fixed_Uservalues& fuser_inputs = lidort_interface_->lidort_fixin().userval();
-
-  Lidort_Fixed_Lincontrol& lincontrol = lidort_interface_->lidort_linfixin().cont();
-
-  // Set values used for all calculations
-  // Number of quadtature streams in the cosine half space
-  fcontrol_inputs.ts_nstreams(nstream_);
-
-  // Number of Legendre expansion coefficients for the phase function
-  mcontrol_inputs.ts_nmoments_input(nmoment_);
-
+  MultiScattRtDriver::initialize_rt(nstream, nmoment, do_solar_sources, do_thermal_emission, do_thermal_scattering);
+  
+  // LIDORT specific
   // Always use BRDF supplement, don't use specialized lambertian_albedo mode
-  brdf_interface()->brdf_sup_in().bs_do_brdf_surface(true);
-  fboolean_inputs.ts_do_brdf_surface(true);
+  Lidort_Fixed_Boolean& lid_fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
+  lid_fboolean_inputs.ts_do_brdf_surface(true);
 
-  // Flags for viewing mode
-  fboolean_inputs.ts_do_upwelling(true);
-  fboolean_inputs.ts_do_dnwelling(false);
-
-  // Fourier azimuth series is examined twice for convergence
-  mboolean_inputs.ts_do_double_convtest(true);
-
-  // Do internal calculation of slanth path optical depths
-  mboolean_inputs.ts_do_chapman_function(true);
-
-  // In most instances this flag for delta-m scaling should be set
-  mboolean_inputs.ts_do_deltam_scaling(true);
-
-  // There will be output at a number of off-quadrature
-  // zenith angles specified by the user, this is the normal case
-  mboolean_inputs.ts_do_user_streams(true);
-  brdf_interface()->brdf_sup_in().bs_do_user_streams(true);
-
-  // Accuracy criterion for convergence of Fourier series in
-  // relative azimuth. Set to recommended value.
-  fcontrol_inputs.ts_lidort_accuracy(1e-8);
-
-  // New value in LIDORT 3.8.3 that if left at zero will cause floating point errors in asymtx
-  fcontrol_inputs.ts_asymtx_tolerance(1e-20);
-
-  // Beam source flux, same value used for all solar angles
-  // Normally set to 1 for "sun-normalized" output
-  fbeam_inputs.ts_flux_factor(1.0);
-
-  // Enable solar sources calculations
-  if (do_solar_sources) {
-      // Needed for atmospheric scattering of sunlight
-      mboolean_inputs.ts_do_solar_sources(true);
-
-      // Do internal calculation of slanth path optical depths
-      // Only needed for solar sources
-      mboolean_inputs.ts_do_chapman_function(true);
-
-      // Enable solar sources in the BRDF driver
-      brdf_interface()->brdf_sup_in().bs_do_solar_sources(true);
-  }
-
-  // Enable thermal emission calculation
-  if (do_thermal_emission) {
-      fboolean_inputs.ts_do_thermal_emission(true);
-      fboolean_inputs.ts_do_surface_emission(true);
-
-      // Number of coefficients used in treatment of blackbody emissions in a layer
-      // 1 implies constant within a layer
-      // 2 implies a lineaer treatment
-      fcontrol_inputs.ts_n_thermal_coeffs(2);
-
-      // Enable solar sources in the BRDF driver
-      brdf_interface()->brdf_sup_in().bs_do_surface_emission(true);
-
-      if(!do_thermal_scattering_) {
-        mboolean_inputs.ts_do_thermal_transonly(true);
-      }
-  }
-
-  // Number of solar beams
-  mbeam_inputs.ts_nbeams(1);
-
-  // Earth's radius in km
-  mchapman_inputs.ts_earth_radius( OldConstant::wgs84_a.
-                                  convert(units::km).value);
-
-  // Number of user-defined relative azimuth angles
-  muser_inputs.ts_n_user_relazms(1);
-
-  // Number of user-defined viewing zenith angles
-  muser_inputs.ts_n_user_streams(1);
-
-  // Number of vertical output levels
-  fuser_inputs.ts_n_user_levels(1);
-
-  // Flag for calculating profile Jacobians in layer n
-  // Calculate jacobians for all layers
-  Array<bool, 1> layer_jac_flag(lincontrol.ts_layer_vary_flag());
-  layer_jac_flag = true;
-  lincontrol.ts_layer_vary_flag(layer_jac_flag);
-
-  // Needs to match the number set in the BRDF structure
-  lincontrol.ts_n_surface_wfs(brdf_interface()->brdf_linsup_in().bs_n_surface_wfs());
-}
-
-/// Set up/reset sphericity mode which may be affected by
-/// the current zenith viewing angle
-void LidortRtDriver::setup_sphericity(double UNUSED(zen))
-{
-
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-  Lidort_Fixed_Control& fcontrol_inputs = lidort_interface_->lidort_fixin().cont();
-
-  if(do_multi_scatt_only_) {
-    // Do not do full reflectance calculation if only multiple scattering needed
-    // These flags should already be false, but just in case..
-
-    // Only return diffuse multiple scattering component
-    fboolean_inputs.ts_do_fullrad_mode(false);
-
-    fboolean_inputs.ts_do_plane_parallel(false);
-
-    // Also SS corr and plane-parallel flags are false
-    mboolean_inputs.ts_do_focorr(false);
-    mboolean_inputs.ts_do_focorr_nadir(false);
-    mboolean_inputs.ts_do_focorr_outgoing(false);
-
-  } else { // if not do multi_scatt_only
-    // Do full SS + MS calculation and use LOS correction
-
-    // Do a full reflectance calculation
-    fboolean_inputs.ts_do_fullrad_mode(true);
-
-    fboolean_inputs.ts_do_plane_parallel(false);
-
-    // Pseudo-spherical + Line of Sight correction
-    mboolean_inputs.ts_do_focorr(true);
-    mboolean_inputs.ts_do_focorr_nadir(false);
-
-    if (do_solar_sources) {
-        mboolean_inputs.ts_do_focorr_outgoing(true);
-    } else {
-        // This must be disabled for thermal only mode
-        mboolean_inputs.ts_do_focorr_outgoing(false);
-    }
-
-    // Number of fine layers subdividing coarse layering
-    // Only used during LOS correction
-    fcontrol_inputs.ts_nfinelayers(4);
-  }
-
-  // Flag for controlling azimuth dependence in the output
-  // LIDORT will complain if user zenith is 0 and this is not
-  // set, when not using ss correction mode
-  if( pure_nadir_ ) {
-    if (mboolean_inputs.ts_do_focorr_outgoing()) {
-      // Use Pseudo-spherical correction instead for these small viewing zenith angles
-      mboolean_inputs.ts_do_focorr_outgoing(false);
-      mboolean_inputs.ts_do_focorr_nadir(true);
-    }
-  }
 }
 
 /// Set plane parallel sphericity
 void LidortRtDriver::set_plane_parallel()
 {
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
+  MultiScattRtDriver::set_plane_parallel();
 
-  mboolean_inputs.ts_do_focorr(false);
-  mboolean_inputs.ts_do_focorr_outgoing(false);
-  mboolean_inputs.ts_do_focorr_nadir(false);
-  fboolean_inputs.ts_do_plane_parallel(true);
+  // LIDORT specific
+  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   mboolean_inputs.ts_do_no_azimuth(true);
 }
 
 /// Set pseudo spherical sphericity
 void LidortRtDriver::set_pseudo_spherical()
 {
-  // Lidort may cause floating point exceptions when doing setup. This
-  // is because it may copy garbage value, which are never used. By
-  // chance the garbage values may cause a overflow. We
-  // suspend floating point exceptions when doing setup
-  FeDisableException disable_fp;
+  MultiScattRtDriver::set_pseudo_spherical();
 
+  // LIDORT specific
   Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
-
-  mboolean_inputs.ts_do_focorr(true);
-  mboolean_inputs.ts_do_focorr_outgoing(false);
-  mboolean_inputs.ts_do_focorr_nadir(true);
-  fboolean_inputs.ts_do_plane_parallel(false);
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
 /// Set plane parallel plus single scattering correction
 void LidortRtDriver::set_plane_parallel_plus_ss_correction()
 {
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
+  MultiScattRtDriver::set_plane_parallel_plus_ss_correction();
 
-  mboolean_inputs.ts_do_focorr(true);
-  mboolean_inputs.ts_do_focorr_outgoing(false);
-  mboolean_inputs.ts_do_focorr_nadir(true);
-  fboolean_inputs.ts_do_plane_parallel(true);
+  // LIDORT specific
+  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
 /// Set line of sight mode
 void LidortRtDriver::set_line_of_sight()
 {
-  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
-  Lidort_Fixed_Boolean& fboolean_inputs = lidort_interface_->lidort_fixin().f_bool();
+  MultiScattRtDriver::set_line_of_sight();
 
-  mboolean_inputs.ts_do_focorr(true);
-  mboolean_inputs.ts_do_focorr_outgoing(true);
-  mboolean_inputs.ts_do_focorr_nadir(false);
-  fboolean_inputs.ts_do_plane_parallel(false);
+  // LIDORT specific
+  Lidort_Modified_Boolean& mboolean_inputs = lidort_interface_->lidort_modin().mbool();
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
@@ -550,14 +336,17 @@ void LidortRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
 void LidortRtDriver::copy_brdf_sup_outputs() const {
 
   // Copy BRDF outputs to LIDORT's BRDF inputs
-  Brdf_Sup_Outputs& brdf_outputs = brdf_interface()->brdf_sup_out();
-  Brdf_Linsup_Outputs& brdf_lin_outputs = brdf_interface()->brdf_linsup_out();
+  // Use LIDORT specific interfaces to ensure copying is done in memory correctly
+  // Cannot mix VLIDORT and LIDORT BRDF objects here
+  Brdf_Sup_Outputs& brdf_outputs = lidort_brdf_interface()->brdf_sup_out();
+  Brdf_Linsup_Outputs& brdf_lin_outputs = lidort_brdf_interface()->brdf_linsup_out();
 
   Lidort_Sup_Brdf& lid_brdf = lidort_interface_->lidort_sup().brdf();
   Lidort_Linsup_Brdf& lid_lin_brdf = lidort_interface_->lidort_linsup().brdf();
 
   lid_brdf.copy_from_sup( brdf_outputs );
   lid_lin_brdf.copy_from_sup( brdf_lin_outputs );
+
 }
 
 void LidortRtDriver::calculate_rt() const
