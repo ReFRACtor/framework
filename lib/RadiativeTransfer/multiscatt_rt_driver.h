@@ -31,13 +31,16 @@ public:
   virtual bool do_multi_scatt_only() const { return do_multi_scatt_only_; }
   virtual bool pure_nadir() const { return pure_nadir_; }
 
+  virtual void notify_update(const RtAtmosphere& atm);
+
   void setup_sphericity(blitz::Array<double, 1> zen, bool do_multi_scatt_only, bool pure_nadir);
   void set_plane_parallel();
   void set_pseudo_spherical();
   void set_plane_parallel_plus_ss_correction();
   void set_line_of_sight();
 
-  virtual void notify_update(const RtAtmosphere& atm);
+  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
+  void setup_geometry(double sza, double azm, double zen);
 
   virtual const boost::shared_ptr<Spurr_Lps_Masters_Base> rt_interface() const = 0;
   virtual const boost::shared_ptr<Spurr_Brdf_Lin_Sup_Masters_Base> brdf_interface() const = 0;

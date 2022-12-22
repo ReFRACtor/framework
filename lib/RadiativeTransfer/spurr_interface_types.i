@@ -1310,6 +1310,9 @@ public:
 class Spurr_Modified_Sunrays_Base : public Spurr_Type_Structure {
 public:
 
+  virtual const blitz::Array<double, 1>& ts_beam_szas() const = 0;
+  virtual void ts_beam_szas(const blitz::Array<double, 1>& ts_beam_szas_in) = 0;
+  
   virtual const int& ts_nbeams() const = 0;
   virtual void ts_nbeams(const int& ts_nbeams_in) = 0;
   
@@ -1336,6 +1339,9 @@ public:
   
   virtual const int& ts_n_user_streams() const = 0;
   virtual void ts_n_user_streams(const int& ts_n_user_streams_in) = 0;
+  
+  virtual const blitz::Array<double, 1>& ts_user_angles_input() const = 0;
+  virtual void ts_user_angles_input(const blitz::Array<double, 1>& ts_user_angles_input_in) = 0;
   
   virtual const blitz::Array<double, 2>& ts_user_doublets() const = 0;
   virtual void ts_user_doublets(const blitz::Array<double, 2>& ts_user_doublets_in) = 0;

@@ -1988,14 +1988,14 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_sunrays)
   tst_obj.check_byte_sizes(); // throws exception on mismatch
 
   // Test variable shapes
-  BOOST_CHECK_EQUAL(tst_obj.ts_szangles().extent(0), lid_pars.max_szangles());
+  BOOST_CHECK_EQUAL(tst_obj.ts_beam_szas().extent(0), lid_pars.max_szangles());
   
 
   // Test initialization
   BOOST_CHECK_EQUAL(tst_obj.ts_nbeams(), 0);
-  blitz::Array<double, 1> ts_szangles_exp(tst_obj.ts_szangles().shape());
+  blitz::Array<double, 1> ts_szangles_exp(tst_obj.ts_beam_szas().shape());
   ts_szangles_exp = 0;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_szangles(), ts_szangles_exp, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_beam_szas(), ts_szangles_exp, 1e-10);
   
 }
 
@@ -2017,7 +2017,7 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_uservalues)
   BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(0), lid_pars.max_user_obsgeoms());
   BOOST_CHECK_EQUAL(tst_obj.ts_user_obsgeoms_input().extent(1), 3);
   BOOST_CHECK_EQUAL(tst_obj.ts_user_relazms().extent(0), lid_pars.max_user_relazms());
-  BOOST_CHECK_EQUAL(tst_obj.ts_user_vzangles_input().extent(0), lid_pars.max_user_vzangles());
+  BOOST_CHECK_EQUAL(tst_obj.ts_user_angles_input().extent(0), lid_pars.max_user_vzangles());
   
 
   // Test initialization
@@ -2038,9 +2038,9 @@ BOOST_AUTO_TEST_CASE(vlidort_modified_uservalues)
   blitz::Array<double, 1> ts_user_relazms_exp(tst_obj.ts_user_relazms().shape());
   ts_user_relazms_exp = 0;
   BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_user_relazms(), ts_user_relazms_exp, 1e-10);
-  blitz::Array<double, 1> ts_user_vzangles_input_exp(tst_obj.ts_user_vzangles_input().shape());
+  blitz::Array<double, 1> ts_user_vzangles_input_exp(tst_obj.ts_user_angles_input().shape());
   ts_user_vzangles_input_exp = 0;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_user_vzangles_input(), ts_user_vzangles_input_exp, 1e-10);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(tst_obj.ts_user_angles_input(), ts_user_vzangles_input_exp, 1e-10);
   
 }
 

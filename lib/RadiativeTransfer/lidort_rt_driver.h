@@ -41,9 +41,6 @@ public:
 
   const boost::shared_ptr<Lidort_Lps_Masters> lidort_interface() const { return lidort_interface_; }
 
-  void setup_height_grid(const blitz::Array<double, 1>& height_grid);
-  void setup_geometry(double sza, double azm, double zen);
-
   void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb);
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 

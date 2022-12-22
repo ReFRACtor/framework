@@ -320,3 +320,43 @@ void MultiScattRtDriver::set_line_of_sight()
   pure_nadir_ = false;
 }
 
+void MultiScattRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_height_grid)
+{
+  Spurr_Fixed_Chapman_Base& fchapman_inputs = rt_interface()->fixed_inputs_base().fixed_chapman_base();
+  Spurr_Modified_Uservalues_Base& muser_inputs = rt_interface()->modified_inputs_base().modified_uservalues_base();
+
+  Array<double, 1> rt_height_grid( fchapman_inputs.ts_height_grid() );
+  int nlayer = in_height_grid.extent(firstDim) - 1;
+  Range lay_range = Range(0,nlayer);
+  rt_height_grid(lay_range) = in_height_grid;
+
+  // Set GEOMETRY_SPECHEIGHT = HEIGHT_GRID(NLAYERS)
+  muser_inputs.ts_geometry_specheight( rt_height_grid(nlayer) );
+
+  // Tell LIDORT number of layers
+  Spurr_Fixed_Control_Base& fcontrol_inputs = rt_interface()->fixed_inputs_base().fixed_control_base();
+  fcontrol_inputs.ts_nlayers(nlayer);
+}
+
+void MultiScattRtDriver::setup_geometry(double sza, double azm, double zen)
+{
+
+  Spurr_Modified_Sunrays_Base& mbeam_inputs = rt_interface()->modified_inputs_base().modified_sunrays_base();
+  Spurr_Modified_Uservalues_Base& muser_inputs = rt_interface()->modified_inputs_base().modified_uservalues_base();
+
+  // Solar zenith angles (degrees) [0,90]
+  Array<double, 1> ld_sza( mbeam_inputs.ts_beam_szas() );
+  ld_sza(0) = sza;
+
+  // User-defined relative angles (in degrees) for
+  // off-quadrature output.
+  Array<double, 1> ld_azm( muser_inputs.ts_user_relazms() );
+  ld_azm(0) = azm;
+
+  // User-defined viewing zenith angles (in degrees) for
+  // off quadrature output.
+  Array<double, 1> ld_zen( muser_inputs.ts_user_angles_input() );
+  ld_zen(0) = zen;
+}
+
+
