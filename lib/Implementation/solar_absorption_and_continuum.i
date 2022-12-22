@@ -18,6 +18,8 @@
 %fp_shared_ptr(FullPhysics::SolarAbsorptionAndContinuum);
 
 namespace FullPhysics {
+%feature("notabstract") SolarAbsorptionAndContinuum;
+
 class SolarAbsorptionAndContinuum : public SolarModel {
 public:
   virtual ~SolarAbsorptionAndContinuum();
