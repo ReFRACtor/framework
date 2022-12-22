@@ -10,7 +10,7 @@ using namespace FullPhysics;
 using namespace blitz;
 
 bool check_brdf_inputs(boost::shared_ptr<LidortRtDriver>& lidort_driver) {
-  Lidort_Brdf_Sup_Accessories brdf_check = Lidort_Brdf_Sup_Accessories(lidort_driver->brdf_interface()->brdf_sup_in_ptr(),
+  Lidort_Brdf_Sup_Accessories brdf_check = Lidort_Brdf_Sup_Accessories(lidort_driver->lidort_brdf_interface()->brdf_sup_in_ptr(),
       lidort_driver->lidort_interface()->lidort_fixin_ptr(),
       lidort_driver->lidort_interface()->lidort_modin_ptr());
   brdf_check.brdf_input_check();
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(solar_sources)
 {
   Fixture1 t;
   t.run_test(t.lidort_driver);
-  t.lidort_driver->brdf_interface()->write_fortran_file("test.txt");
+  t.lidort_driver->lidort_brdf_interface()->write_fortran_file("test.txt");
 }
 
 BOOST_AUTO_TEST_CASE(serialization)
