@@ -19,7 +19,7 @@ import numpy as np
   # Make sure argument is a numpy array to avoid unintented consequences
   if not isinstance(args[0], np.ndarray):
     raise ValueError(f"StateMappingAtIndexes argument 0 must be a numpy array iwth dtype bool or integer, not value with type {type(args[0])}")
-  elif hasattr(args[0], "dtype") and not np.issubdtype(args[0].dtype, np.integer) and not np.issubdtype(args[0].dtype, np.bool):
+  elif hasattr(args[0], "dtype") and not np.issubdtype(args[0].dtype, np.integer) and not np.issubdtype(args[0].dtype, bool):
     raise ValueError(f"StateMappingAtIndexes argument 0 must be a numpy array with dtype bool or integer, not a numpy array with dtype {args[0].dtype}")
 
   # Convert any integer arrays to bool arrays due to operator overloading issues

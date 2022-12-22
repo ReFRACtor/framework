@@ -118,7 +118,7 @@ def test_iterable_param():
             'val': [1,2,3,4,5]
         },
         'item2': {
-            'creator': ParamReturnCreator(param.Iterable, val_type=np.int),
+            'creator': ParamReturnCreator(param.Iterable, val_type=int),
             'val': [1,2,3,4,5]
         },
     }
