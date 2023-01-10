@@ -2,6 +2,7 @@
 
 %{
 #include "lidort_brdf_driver.h"
+#include "spurr_interface_types.h"
 %}
 
 %base_import(spurr_brdf_driver)

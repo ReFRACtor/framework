@@ -5,6 +5,7 @@
 #include "pca_rt.h"
 #include "sub_state_vector_array.h"
 #include "altitude.h"
+#include "spurr_interface_types.h"
 %}
 
 %base_import(radiative_transfer_fixed_stokes_coefficient)

@@ -4,7 +4,6 @@
 %{
 #include "spurr_rt.h"
 #include "sub_state_vector_array.h"
-#include "pressure.h"
 %}
 %base_import(rt_atmosphere)
 %base_import(observer)
