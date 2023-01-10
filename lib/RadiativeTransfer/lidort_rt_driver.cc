@@ -116,9 +116,10 @@ void LidortRtDriver::set_line_of_sight()
   mboolean_inputs.ts_do_no_azimuth(false);
 }
 
-void LidortRtDriver::setup_phase_function(const blitz::Array<double, 2>& pf)
+void LidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)
 {
   // Ranges for copying inputs to method
+  Range rall = Range::all();
   Range rlay(0, pf.extent(secondDim) - 1);
   Range rmom(0, pf.extent(firstDim) - 1);
 
@@ -129,16 +130,19 @@ void LidortRtDriver::setup_phase_function(const blitz::Array<double, 2>& pf)
   // n = moments, L = layers, t = threads
   Lidort_Fixed_Optical& lid_foptical_inputs = lidort_interface_->lidort_fixin().optical();
 
+  Array<double, 2> pf_scalar(pf(rall, rall, 0));
+
   Array<double, 2> phasmoms( lid_foptical_inputs.ts_phasmoms_total_input() );
-  phasmoms(rmom, rlay) = where(abs(pf) > 1e-11, pf, 1e-11);
+  phasmoms(rmom, rlay) = where(abs(pf_scalar) > 1e-11, pf_scalar, 1e-11);
 }
 
-void LidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 2>& pf)
+void LidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
 {
 
   int natm_jac = pf.number_variable();
 
   // Ranges for copying inputs to method
+  Range rall = Range::all();
   Range rmom(0, pf.rows() - 1); // number phase function moments
   Range rlay(0, pf.cols() - 1);
   Range rjac(0, natm_jac - 1);
@@ -150,11 +154,13 @@ void LidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 2>& pf)
   if(pf.is_constant())
     l_phasmoms(rjac, rmom, rlay) = 0.0;
   else {
-    blitz::Array<double, 2> pf_in( where(abs(pf.value()) > 1e-11, pf.value(), 1e-11) );
+    Array<double, 2> pf_val_scalar(pf.value()(rall, rall, 0));
+    blitz::Array<double, 2> pf_in( where(abs(pf_val_scalar) > 1e-11, pf_val_scalar, 1e-11) );
 
     // We need this loop since l_phasmoms and pf variables have jacobian data in different dimensions
+    Array<double, 3> pf_jac_scalar(pf.jacobian()(rall, rall, 0, rall));
     for (int jidx = 0; jidx < pf.number_variable(); jidx++)
-      l_phasmoms(jidx, rmom, rlay) = pf.jacobian()(rmom, rlay, jidx) / pf_in(rmom, rlay)(i1, i2);
+      l_phasmoms(jidx, rmom, rlay) = pf_jac_scalar(rmom, rlay, jidx) / pf_in(rmom, rlay)(i1, i2);
   }
 
 }

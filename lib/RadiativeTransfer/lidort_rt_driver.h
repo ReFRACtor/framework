@@ -46,8 +46,8 @@ protected:
 
   void initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering);
   void copy_brdf_sup_outputs() const;
-  void setup_phase_function(const blitz::Array<double, 2>& pf);
-  void setup_linear_phase_function(const ArrayAd<double, 2>& pf);
+  void setup_phase_function(const blitz::Array<double, 3>& pf);
+  void setup_linear_phase_function(const ArrayAd<double, 3>& pf);
 
   boost::shared_ptr<Lidort_Lps_Masters> lidort_interface_;
 

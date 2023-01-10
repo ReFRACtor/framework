@@ -30,7 +30,7 @@ double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
                                             const Array<double, 1>& surface_parameters,
                                             const Array<double, 1>& od, 
                                             const Array<double, 1>& ssa,
-                                            const Array<double, 2>& pf,
+                                            const Array<double, 3>& pf,
                                             double surface_bb,
                                             const Array<double, 1>& atmosphere_bb)
 {
@@ -69,7 +69,7 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
                                                        ArrayAd<double, 1>& surface_parameters,
                                                        const ArrayAd<double, 1>& od, 
                                                        const ArrayAd<double, 1>& ssa,
-                                                       const ArrayAd<double, 2>& pf,
+                                                       const ArrayAd<double, 3>& pf,
                                                        double& reflectance,
                                                        Array<double, 2>& jac_atm, 
                                                        Array<double, 1>& jac_surf_param,

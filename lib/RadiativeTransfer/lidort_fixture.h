@@ -35,7 +35,7 @@ public:
 
   ArrayAd<double, 1> od;
   ArrayAd<double, 1> ssa;
-  ArrayAd<double, 2> pf;
+  ArrayAd<double, 3> pf;
 
   double taug;
   double taur;
