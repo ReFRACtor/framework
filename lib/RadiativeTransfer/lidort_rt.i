@@ -4,6 +4,7 @@
 #include "lidort_rt.h"
 #include "sub_state_vector_array.h"
 #include "pressure.h"
+#include "spurr_interface_types.h"
 %}
 
 %base_import(observer)
