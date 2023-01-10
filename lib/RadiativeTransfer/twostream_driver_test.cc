@@ -90,15 +90,15 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   } 
 
   // Compute phase function
-  ArrayAd<double, 2> pf(nmoms+1, nlayer, nparam);
+  ArrayAd<double, 3> pf(nmoms+1, nlayer, 1, nparam);
   pf = 0.0;
 
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
-      pf(0, lay_idx) = 1.0;
-      pf(2, lay_idx) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
+      pf(0, lay_idx, 0) = 1.0;
+      pf(2, lay_idx, 0) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf(mom_idx, lay_idx) = pf(mom_idx, lay_idx) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf(mom_idx, lay_idx, 0) = pf(mom_idx, lay_idx, 0) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
   }
 
@@ -157,7 +157,7 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
 
       blitz::Array<double,1> od_pert( od.value().shape() );
       blitz::Array<double,1> ssa_pert( ssa.value().shape() );
-      blitz::Array<double,2> pf_pert( pf.value().copy() );
+      blitz::Array<double,3> pf_pert( pf.value().copy() );
    
      switch (p_idx) {
       case 0:
@@ -177,12 +177,12 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
       double ray_wt_pert = taur_pert(l_idx) / (taur_pert(l_idx) + aer_prop_ssa * taua_pert(l_idx));
       double aer_wt_pert = 1.0 - ray_wt_pert;
 
-      pf_pert(all, l_idx) = 0;
-      pf_pert(0, l_idx) = 1.0;
-      pf_pert(2, l_idx) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
+      pf_pert(all, l_idx, 0) = 0;
+      pf_pert(0, l_idx, 0) = 1.0;
+      pf_pert(2, l_idx, 0) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf_pert(mom_idx, l_idx) = pf_pert(mom_idx, l_idx) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf_pert(mom_idx, l_idx, 0) = pf_pert(mom_idx, l_idx, 0) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
 
       refl_fd = twostream_driver->reflectance_calculate
@@ -647,14 +647,22 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
   blitz::Array<double, 1> jac_atm_temp;
   Array<double, 1> height;
   ArrayAd<double, 1> surface_param, od, ssa;
-  ArrayAd<double, 2> pf;
+  ArrayAd<double, 2> pf_in;
   double sza, zen, azm;
+
   captured_input >> height >> sza >> azm >> zen >> surface_type
-                 >> surface_param >> od >> ssa >> pf;
+                 >> surface_param >> od >> ssa >> pf_in;
+
+  // Resize pf data for interface
+  ArrayAd<double, 3> pf_full;
+  pf_full.resize(pf_in.rows(), pf_in.cols(), 1, pf_in.number_variable());
+  pf_full(Range::all(), Range::all(), 0) = pf_in;
+
   d.reflectance_and_jacobian_calculate(height, sza, azm, zen, 
                                        surface_type, surface_param,
-                                       od, ssa, pf, refl,
+                                       od, ssa, pf_full, refl,
                                        jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
+
   // This will trigger an error when we run with valgrind. Note that
   // we *don't* actually see a NaN here, rather this conditional
   // triggers the unitialized value error

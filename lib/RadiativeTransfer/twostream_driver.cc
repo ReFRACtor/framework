@@ -362,7 +362,7 @@ void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Arr
 
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                              const blitz::Array<double, 1>& ssa,
-                                             const blitz::Array<double, 2>& pf) 
+                                             const blitz::Array<double, 3>& pf) 
 {
   // Ranges for copying inputs to method
   Range rlay(0, od.extent(firstDim) - 1);
@@ -378,13 +378,13 @@ void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
   // Assymetry factor
   // Equal to one third of the first phase function moment
   Array<double, 1> asymm_input( twostream_interface_->asymm_input() );
-  asymm_input(rlay) = pf(1, rlay) / 3.0;
+  asymm_input(rlay) = pf(1, rlay, 0) / 3.0;
 
   // Delta-m scaling factor for 2-stream
   // Equal to one fifth of the second  phase function moment
   if (twostream_interface_->do_d2s_scaling()) {
     Array<double, 1> d2s_scaling( twostream_interface_->d2s_scaling() );
-    d2s_scaling(rlay) = pf(2, rlay) / 5.0;
+    d2s_scaling(rlay) = pf(2, rlay, 0) / 5.0;
   }
 }
 
@@ -397,7 +397,7 @@ void TwostreamRtDriver::clear_linear_inputs()
 
 void TwostreamRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od, 
                                             const ArrayAd<double, 1>& ssa,
-                                            const ArrayAd<double, 2>& pf,
+                                            const ArrayAd<double, 3>& pf,
                                             bool do_surface_linearization) 
 {
   // Number of profile weighting functions in layer n
@@ -457,8 +457,8 @@ void TwostreamRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
   l_deltau = od.jacobian();
   l_omega  = ssa.jacobian();
   
-  l_asymm_input = pf.jacobian()(1, all, all) / 3.0;
-  l_d2s_scaling = pf.jacobian()(2, all, all) / 5.0;
+  l_asymm_input = pf.jacobian()(1, all, 0, all) / 3.0;
+  l_d2s_scaling = pf.jacobian()(2, all, 0, all) / 5.0;
 }
 
 void TwostreamRtDriver::calculate_rt() const

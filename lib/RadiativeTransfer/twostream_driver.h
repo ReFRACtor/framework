@@ -72,12 +72,12 @@ public:
 
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf);
+                            const blitz::Array<double, 3>& pf);
 
   void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
-                           const ArrayAd<double, 2>& pf,
+                           const ArrayAd<double, 3>& pf,
                            bool do_surface_linearization);
 
   void calculate_rt() const;

@@ -380,7 +380,7 @@ void MultiScattRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Ar
 
 void MultiScattRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                               const blitz::Array<double, 1>& ssa,
-                                              const blitz::Array<double, 2>& pf)
+                                              const blitz::Array<double, 3>& pf)
 {
 
   // Ranges for copying inputs to method
@@ -416,7 +416,7 @@ void MultiScattRtDriver::clear_linear_inputs()
 
 void MultiScattRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
                                              const ArrayAd<double, 1>& ssa,
-                                             const ArrayAd<double, 2>& pf,
+                                             const ArrayAd<double, 3>& pf,
                                              bool do_surface_linearization)
 {
   

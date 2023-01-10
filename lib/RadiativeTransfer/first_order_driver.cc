@@ -285,7 +285,7 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
 }
 
 /// Compute truncation factor for use in deltam scaling
-const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 2>& pf) const
+const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 3>& pf) const
 {
     Array<double, 1> truncfac(pf.cols());
 
@@ -297,7 +297,7 @@ const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz:
         truncfac = 0;
     } else {
         double dnm1 = 4 * (num_streams_) + 1;
-        truncfac = pf(2*num_streams_, Range::all()) / dnm1;
+        truncfac = pf(2*num_streams_, Range::all(), 0) / dnm1;
     }
 
     return truncfac;
@@ -305,7 +305,7 @@ const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz:
 
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
-                                            const blitz::Array<double, 2>& pf) 
+                                            const blitz::Array<double, 3>& pf) 
 {
     int nlay = od.rows();
     Range r_all = Range::all();
@@ -342,7 +342,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     // Set phase moments, FO storage is transpose of ReFRACtor ordering
     Array<double, 2> phasmoms(solar_interface_->phasmoms());
-    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim)(r_all, r_mom);
+    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim)(r_all, r_mom, 0);
 
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
@@ -357,8 +357,10 @@ void FirstOrderDriver::clear_linear_inputs()
 }
 
 /// Compute truncation factor for use in deltam scaling
-const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const
+const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const
 {
+    Range r_all = Range::all();
+
     Array<double, 2> l_truncfac(pf.cols(), pf.number_variable());
 
     if(pf.rows() < 2*num_streams_+1) {
@@ -370,8 +372,7 @@ const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const
     } else {
         double dnm1 = 4 * (num_streams_) + 1;
         firstIndex i1; secondIndex i2;
-        Range r_all = Range::all();
-        l_truncfac = pf.jacobian()(2*num_streams_, r_all, r_all)(i1, i2) / dnm1;
+        l_truncfac = pf.jacobian()(2*num_streams_, r_all, 0, r_all)(i1, i2) / dnm1;
     }
 
     return l_truncfac;
@@ -381,7 +382,7 @@ const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const
 void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
- const ArrayAd<double, 2>& pf,
+ const ArrayAd<double, 3>& pf,
  bool do_surface_linearization) 
 {
     // Set which profile layer jacobians are computed
@@ -433,7 +434,7 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set phasmoms jacobian and set correct ordering in copy
     Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
-    l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian().transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
+    l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian()(r_all, r_all, 0, r_all).transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
 
 
     // Check for variation of PHASMOMS associated with Jacobian wrt current atmospheric parameter

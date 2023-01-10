@@ -46,7 +46,7 @@ public:
                                        const blitz::Array<double, 1>& surface_parameters,
                                        const blitz::Array<double, 1>& od, 
                                        const blitz::Array<double, 1>& ssa,
-                                       const blitz::Array<double, 2>& pf,
+                                       const blitz::Array<double, 3>& pf,
                                        double surface_bb = 0,
                                        const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
   
@@ -57,7 +57,7 @@ public:
                                                   ArrayAd<double, 1>& surface_parameters,
                                                   const ArrayAd<double, 1>& od, 
                                                   const ArrayAd<double, 1>& ssa,
-                                                  const ArrayAd<double, 2>& pf,
+                                                  const ArrayAd<double, 3>& pf,
                                                   double& reflectance,
                                                   blitz::Array<double, 2>& jac_atm, 
                                                   blitz::Array<double, 1>& jac_surf_param,
@@ -84,7 +84,7 @@ public:
   /// Should be called per spectral point
   virtual void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                     const blitz::Array<double, 1>& ssa,
-                                    const blitz::Array<double, 2>& pf) = 0;
+                                    const blitz::Array<double, 3>& pf) = 0;
   
   /// Mark that we are not retrieving weighting functions
   virtual void clear_linear_inputs() =  0;
@@ -92,7 +92,7 @@ public:
   /// Set up linearization, weighting functions
   virtual void setup_linear_inputs(const ArrayAd<double, 1>& od,
                                    const ArrayAd<double, 1>& ssa,
-                                   const ArrayAd<double, 2>& pf,
+                                   const ArrayAd<double, 3>& pf,
                                    bool do_surface_linearization) = 0;
 
   /// Perform radiative transfer calculation with the values

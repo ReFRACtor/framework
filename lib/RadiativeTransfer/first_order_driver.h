@@ -36,12 +36,12 @@ public:
   
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf);
+                            const blitz::Array<double, 3>& pf);
   
   void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
-                           const ArrayAd<double, 2>& pf,
+                           const ArrayAd<double, 3>& pf,
                            bool do_surface_linearization);
   
   void calculate_rt() const;
@@ -59,8 +59,8 @@ private:
   void init_interfaces(int nlayers, int surface_type);
   void copy_geometry_flags();
 
-  const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 2>& pf) const;
-  const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const;
+  const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 3>& pf) const;
+  const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const;
 
   int num_layers_;
   int num_moments_;

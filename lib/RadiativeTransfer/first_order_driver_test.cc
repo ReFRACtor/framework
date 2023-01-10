@@ -154,15 +154,15 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   // No aerosols, and depolization factor = 0 
   // so simplified phase function moments:
-  ArrayAd<double, 2> pf(nmoms+1, nlayer, nparam);
+  ArrayAd<double, 3> pf(nmoms+1, nlayer, 1, nparam);
   pf = 0.0;
 
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
-      pf(0, lay_idx) = 1.0;
-      pf(2, lay_idx) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
+      pf(0, lay_idx, 0) = 1.0;
+      pf(2, lay_idx, 0) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf(mom_idx, lay_idx) = pf(mom_idx, lay_idx) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf(mom_idx, lay_idx, 0) = pf(mom_idx, lay_idx, 0) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
   }
 
@@ -224,7 +224,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
       blitz::Array<double,1> od_pert( od.value().shape() );
       blitz::Array<double,1> ssa_pert( ssa.value().shape() );
-      blitz::Array<double,2> pf_pert( pf.value().copy() );
+      blitz::Array<double,3> pf_pert( pf.value().copy() );
    
       switch (p_idx) {
       case 0:
@@ -244,12 +244,12 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       double ray_wt_pert = taur_pert(l_idx) / (taur_pert(l_idx) + aer_prop_ssa * taua_pert(l_idx));
       double aer_wt_pert = 1.0 - ray_wt_pert;
 
-      pf_pert(all, l_idx) = 0;
-      pf_pert(0, l_idx) = 1.0;
-      pf_pert(2, l_idx) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
+      pf_pert(all, l_idx, 0) = 0;
+      pf_pert(0, l_idx, 0) = 1.0;
+      pf_pert(2, l_idx, 0) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf_pert(mom_idx, l_idx) = pf_pert(mom_idx, l_idx) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf_pert(mom_idx, l_idx, 0) = pf_pert(mom_idx, l_idx, 0) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
 
       refl_fd = fo_driver.reflectance_calculate(heights, sza(0), zen(0), azm(0),
