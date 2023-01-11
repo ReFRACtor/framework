@@ -262,7 +262,7 @@ void RamanSiorisEffect::apply_raman_effect(Spectrum& Spec, const blitz::Array<do
     Array<double, 2> total_optical_depth(solar_and_odepth_wn_grid_.rows(), temp_layers.rows());
 
     for(int wn_idx = 0; wn_idx < solar_and_odepth_wn_grid_.rows(); wn_idx++) {
-        total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), channel_index_)->rayleigh_optical_depth().value();
+        total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), channel_index_)->total_optical_depth().value();
     }
     
     // Absolute magnitude of the solar spectrum doesn't matter (we
