@@ -471,9 +471,11 @@ void FirstOrderDriver::calculate_rt() const
     solar_interface_->ss_integral_ilps_up();
 }
 
-double FirstOrderDriver::get_intensity() const
+const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
 {
-    return solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
+    Array<double, 1> intensity(1);
+    intensity(0) = solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
+    return intensity;
 }
 
 void FirstOrderDriver::copy_jacobians

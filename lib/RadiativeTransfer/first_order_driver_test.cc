@@ -35,8 +35,8 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   Range rjac(0,nparam-1);
   Range rlay(0,nlayer-1);
   Range rsurf(0,surface_params.number_variable()-1);
-  double refl_fo;
-  double refl_lid;
+  Array<double, 1> refl_fo(1);
+  Array<double, 1> refl_lid(1);
 
   blitz::Array<double, 2> jac_atm_fo;
   blitz::Array<double, 1> jac_surf_param_fo;
@@ -209,12 +209,12 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
               << "refl_fo  = " << refl_fo << std::endl;
 
   }
-
-  BOOST_CHECK_CLOSE(refl_lid, refl_fo, 6e-3);
+  
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_lid, refl_fo, 6e-3);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
   jac_atm_fd = 0;
-  double refl_fd;
+  Array<double, 1> refl_fd(refl_fo.rows());
 
   for(int l_idx = 0; l_idx < nlayer; l_idx++) {
     for(int p_idx = 0; p_idx < pert_atm.rows(); p_idx++) {
@@ -257,7 +257,8 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                 od_pert, ssa_pert, pf_pert,
                                                 bb_surface, bb_atm);
 
-      jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_fo) / pert_atm(p_idx);
+      // Driver returns array of size 1
+      jac_atm_fd(p_idx, l_idx) = (refl_fd(0) - refl_fo(0)) / pert_atm(p_idx);
     }
   }
 
@@ -286,7 +287,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
                                                 od.value(), ssa.value(), pf.value(),
                                                 bb_surface, bb_atm);
 
-      jac_surf_param_fd(p_idx) = (refl_fd - refl_fo) / pert_surf(p_idx);
+      jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_fo(0)) / pert_surf(p_idx);
 
       // Adjust analytic jacobians to have same meaning as finite difference one
       jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);

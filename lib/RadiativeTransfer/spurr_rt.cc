@@ -169,14 +169,23 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const boost
   rt_driver_->clear_linear_inputs();
   rt_driver_->calculate_rt();
 
-  // Copy values from LIDORT
-  Array<double, 1> stokes(number_stokes());
-  stokes = 0;
-  stokes(0) = rt_driver_->get_intensity();
-  // Check for NaN from lidort
-  if(std::isnan(stokes(0)))
-    throw Exception("SpurrRt encountered a NaN in the radiance");
-  return stokes;
+  // Copy values from RT driver
+  // Number of stokes returned from driver may be less than configuration of RT module
+  Array<double, 1> stokes_in(rt_driver_->get_intensity());
+  Array<double, 1> stokes_out(number_stokes());
+  stokes_out = 0;
+  stokes_out(Range(0, stokes_in.rows()-1)) = stokes_in;
+
+  // Check for NaN values
+  for (int sidx = 0; sidx < stokes_in.rows(); sidx++) {
+      if(std::isnan(stokes_out(sidx))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the radiance for stokes index: " << sidx;
+        throw err_msg;
+      }
+  }
+
+  return stokes_out;
 }
 
 // See base class for description of this
@@ -238,7 +247,7 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   rt_driver_->calculate_rt();
 
   // Copy values from LIDORT
-  double rad = rt_driver_->get_intensity();
+  Array<double, 1> rad_driver(rt_driver_->get_intensity());
 
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf_param;
@@ -294,12 +303,25 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
 
   ArrayAd<double, 1> rad_jac(number_stokes(), jac.rows());
   rad_jac = 0;
-  rad_jac(0) = AutoDerivative<double>(rad, jac);
-  // Check for NaN from lidort
-  if(std::isnan(rad))
-    throw Exception("SpurrRt encountered a NaN in the radiance");
-  if(any(blitz_isnan(jac)))
-    throw Exception("SpurrRt encountered a NaN in the jacobian");
+
+  for (int stokes_idx = 0; stokes_idx < rad_driver.rows(); stokes_idx++) {
+      // Fix for each stokes jacobian when expanding jac dimensions
+      rad_jac(stokes_idx) = AutoDerivative<double>(rad_driver(stokes_idx), jac);
+
+      // Check for NaN from lidort
+      if(std::isnan(rad_driver(stokes_idx))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the radiance for stokes index: " << stokes_idx;
+        throw err_msg;
+      }
+
+      if(any(blitz_isnan(jac))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the jacobian for stokes index" << stokes_idx;
+        throw err_msg;
+      }
+  }
+
   return rad_jac;
 }
 

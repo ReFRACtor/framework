@@ -34,8 +34,8 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   Range rjac(0,nparam-1);
   Range rlay(0,nlayer-1);
   Range rsurf(0,surface_params.number_variable()-1);
-  double refl_ts;
-  double refl_lid;
+  Array<double, 1> refl_ts(1);
+  Array<double, 1> refl_lid(1);
 
   blitz::Array<double, 2> jac_atm_ts;
   blitz::Array<double, 1> jac_surf_param_ts;
@@ -142,12 +142,12 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
               << "refl_ts  = " << refl_ts << std::endl;
   }
 
-  BOOST_CHECK_CLOSE(refl_lid, refl_ts, 7e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_lid, refl_ts, 7e-5);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
   jac_atm_fd = 0.0;
 
-  double refl_fd;
+  Array<double, 1> refl_fd(1);
 
   for(int l_idx = 0; l_idx < nlayer; l_idx++) {
     for(int p_idx = 0; p_idx < pert_atm.rows(); p_idx++) {
@@ -192,7 +192,7 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
          bb_surface, bb_atm);
 
       if (pert_atm(p_idx) != 0.0) {
-        jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_ts) / pert_atm(p_idx);
+        jac_atm_fd(p_idx, l_idx) = (refl_fd(0) - refl_ts(0)) / pert_atm(p_idx);
       }
     }
   }
@@ -223,7 +223,7 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
          od.value(), ssa.value(), pf.value(),
          bb_surface, bb_atm);
 
-      jac_surf_param_fd(p_idx) = (refl_fd - refl_ts) / pert_surf(p_idx);
+      jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_ts(0)) / pert_surf(p_idx);
 
       // Adjust analytic jacobians to have same meaning as finite difference one
       jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
                  >> do_fullquadrature;
   TwostreamRtDriver d(nlayer, surface_type, (do_fullquadrature == 1));
                       
-  double refl;
+  Array<double, 1> refl;
   Array<double, 2> jac_atm;
   Array<double, 1> jac_surf_param;
   double jac_surf_temp;

@@ -49,9 +49,6 @@ public:
   
   void calculate_rt() const;
 
-  double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
-
   %python_attribute_abstract(rt_interface, boost::shared_ptr<Spurr_Lps_Masters_Base>)
   %python_attribute_abstract(brdf_interface, boost::shared_ptr<Spurr_Brdf_Lin_Sup_Masters_Base>)
 

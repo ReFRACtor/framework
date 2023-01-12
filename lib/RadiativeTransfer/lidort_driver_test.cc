@@ -30,8 +30,8 @@ class Fixture1 : public LidortDriverLambertianFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
-  double refl_calc;
-  double refl_expected;
+  Array<double, 1> refl_calc(1);
+  Array<double, 1> refl_expected(1);
 
   ////////////////
   // Surface only
@@ -44,13 +44,13 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   ssa.value() = taur / od.value();
 
   refl_calc = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                   surface_type, surface_params,
-                                                   od.value(), ssa.value(), pf.value());
+                                             surface_type, surface_params,
+                                             od.value(), ssa.value(), pf.value());
   
   // Surface only = 1/pi
   // This checks % differerence, so tol is % diff
   refl_expected = 1/OldConstant::pi * surface_params(0);
-  BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expected, refl_calc, 1e-3);
 
   ////////////////
   // Gas + Surface
@@ -67,7 +67,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    od.value(), ssa.value(), pf.value());
 
   refl_expected = 1/OldConstant::pi * exp(-1/cos(sza(0))) * exp(-1/cos(zen(0)));
-  BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expected, refl_calc, 1e-3);
 
   ////////////////
   // Rayleigh only
@@ -88,7 +88,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   // not going to agree to infinite precision
   // Note the tolerance here is in %
   refl_expected = 2.387246757232095E-003;
-  BOOST_CHECK_CLOSE(refl_expected, refl_calc, 6e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expected, refl_calc, 6e-3);
 }
 };
 
@@ -120,8 +120,8 @@ class Fixture1 : public LidortDriverLambertianThermalFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
-  double refl_calc;
-  double refl_expt;
+  Array<double, 1> refl_calc(1);
+  Array<double, 1> refl_expt(1);
 
   /////////////////////////////////////////////
   // Thermal setup
@@ -150,7 +150,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
 
   // Expected values calculated offline in VLIDORT
   refl_expt = 0.12476970639470732;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
 
   ////////////////////////
   // Thermal gas + surface
@@ -168,7 +168,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    bb_surface, bb_atm);
 
   refl_expt = 0.13751414471789294;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
 
   /////////////////////////////////////////////
   // Thermal rayleigh only, no surface, no gas
@@ -186,7 +186,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    bb_surface, bb_atm);
 
   refl_expt = 1.3967e-002;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 7e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
 
 }
 };
@@ -220,8 +220,8 @@ class Fixture1 : public LidortDriverCoxmunkFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
-  double refl_calc;
-  double refl_expected;
+  Array<double, 1> refl_calc(1);
+  Array<double, 1> refl_expected(1);
 
   ////////////////
   // Surface only
@@ -244,7 +244,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   
   // Value for VLIDORT
   refl_expected = 0.54319850628416033;
-  BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expected, refl_calc, 1e-3);
 
 }
 };
@@ -278,8 +278,8 @@ class Fixture1 : public LidortDriverCoxmunkFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
-  double refl_calc;
-  double refl_expt;
+  Array<double, 1> refl_calc(1);
+  Array<double, 1> refl_expt(1);
 
   ////////////////
   // Surface only
@@ -322,7 +322,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
 
   // Value for VLIDORT
   refl_expt = 0.70235315460259928;
-  BOOST_CHECK_CLOSE(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
 
   // Check surface jacobians against FD
 
@@ -330,7 +330,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   pert_values = 1e-8, 1e-8, 1e-6;
 
   blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
-  double refl_fd;
+  Array<double, 1> refl_fd(1);
 
   jac_surf_param_fd = 0.0;
   refl_fd = 0.0;
@@ -342,10 +342,10 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     surface_params_pert(p_idx) += pert_values(p_idx);
 
     refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                   surface_type, surface_params_pert,
-                                                   od.value(), ssa.value(), pf.value());
+                                             surface_type, surface_params_pert,
+                                             od.value(), ssa.value(), pf.value());
 
-    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
@@ -373,10 +373,10 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     surface_params_pert(p_idx) += pert_values(p_idx);
 
     refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                   surface_type, surface_params_pert,
-                                                   od.value(), ssa.value(), pf.value());
+                                             surface_type, surface_params_pert,
+                                             od.value(), ssa.value(), pf.value());
 
-    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
@@ -407,10 +407,10 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     surface_params_pert(p_idx) += pert_values(p_idx);
 
     refl_fd = ldriver->reflectance_calculate(heights, sza(0), zen(0), azm(0),
-                                                   surface_type, surface_params_pert,
-                                                   od.value(), ssa.value(), pf.value());
+                                             surface_type, surface_params_pert,
+                                             od.value(), ssa.value(), pf.value());
 
-    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
@@ -445,7 +445,7 @@ class Fixture1 : public LidortDriverBrdfVegFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
-  double refl_calc;
+  Array<double, 1> refl_calc(1);
   blitz::Array<double, 2> jac_atm;
   blitz::Array<double, 1> jac_surf_param;
   double jac_surf_temp;
@@ -481,8 +481,9 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                     jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   // Compare against an offline calculated value, or could compare against value from l_rad
-  double refl_expected = 0.035435854422713485;
-  BOOST_CHECK_CLOSE(refl_expected, refl_calc, 1e-3);
+  Array<double, 1> refl_expected(1); 
+  refl_expected = 0.035435854422713485;
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expected, refl_calc, 1e-3);
 
   // Check surface jacobians against FD
 
@@ -490,7 +491,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   pert_values = 1e-8, 1e-8, 1e-6, 1e-6, 1e-6;
 
   blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
-  double refl_fd;
+  Array<double, 1> refl_fd(1);
 
   jac_surf_param_fd = 0.0;
   refl_fd = 0.0;
@@ -505,7 +506,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    surface_type, surface_params_pert,
                                                    od.value(), ssa.value(), pf.value());
 
-    jac_surf_param_fd(p_idx) = (refl_fd - refl_calc) / pert_values(p_idx);
+    jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 2e-7);
