@@ -46,7 +46,7 @@ public:
                                    bool do_surface_linearization);
 
   virtual void calculate_rt() const;
-  virtual double get_intensity() const;
+  virtual const blitz::Array<double, 1> get_intensity() const;
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm,
                               blitz::Array<double, 1>& jac_surf_param,
                               double& jac_surf_temp,

@@ -22,15 +22,15 @@ public:
 
   std::string print_to_string() const;
   virtual void notify_update(const RtAtmosphere& atm);
-  virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
-                                       double sza, double azm, double zen,
-                                       int surface_type,
-                                       const blitz::Array<double, 1>& surface_parameters,
-                                       const blitz::Array<double, 1>& od, 
-                                       const blitz::Array<double, 1>& ssa,
-                                       const blitz::Array<double, 3>& pf,
-                                       double surface_bb = 0,
-                                       const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
+  virtual const blitz::Array<double, 1> reflectance_calculate(const blitz::Array<double, 1>& height_grid,
+                                                              double sza, double azm, double zen,
+                                                              int surface_type,
+                                                              const blitz::Array<double, 1>& surface_parameters,
+                                                              const blitz::Array<double, 1>& od, 
+                                                              const blitz::Array<double, 1>& ssa,
+                                                              const blitz::Array<double, 3>& pf,
+                                                              double surface_bb = 0,
+                                                              const blitz::Array<double, 1>& atmosphere_bb = blitz::Array<double,1>());
 
   virtual void reflectance_and_jacobian_calculate(const blitz::Array<double, 1>& height_grid,
                                                   double sza, double azm, double zen,
@@ -39,7 +39,7 @@ public:
                                                   const ArrayAd<double, 1>& od, 
                                                   const ArrayAd<double, 1>& ssa,
                                                   const ArrayAd<double, 3>& pf,
-                                                  double& reflectance,
+                                                  blitz::Array<double, 1>& reflectance,
                                                   blitz::Array<double, 2>& jac_atm, 
                                                   blitz::Array<double, 1>& jac_surf_param,
                                                   double &jac_surf_temp,
@@ -60,7 +60,7 @@ public:
                                    const ArrayAd<double, 3>& pf,
                                    bool do_surface_linearization) = 0;
   virtual void calculate_rt() const = 0;
-  virtual double get_intensity() const = 0;
+  virtual const blitz::Array<double, 1> get_intensity() const = 0;
   virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_params, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const = 0;
   %pickle_serialization();
 };

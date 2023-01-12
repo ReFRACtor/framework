@@ -182,11 +182,13 @@ void LidortRtDriver::copy_brdf_sup_outputs() const {
 
 }
 
-double LidortRtDriver::get_intensity() const
+const blitz::Array<double, 1> LidortRtDriver::get_intensity() const
 {
   // Total Intensity I(t,v,d,T) at output level t, output geometry v,
   // direction d
-  return lidort_interface_->lidort_out().main().ts_intensity()(0,0, rt_pars_->upidx()-1);
+  Array<double, 1> intensity(1);
+  intensity(0) = lidort_interface_->lidort_out().main().ts_intensity()(0,0, rt_pars_->upidx()-1);
+  return intensity;
 }
 
 void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const

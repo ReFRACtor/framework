@@ -24,15 +24,15 @@ FP_IMPLEMENT(SpurrRtDriver);
 /// Calculates intensity value with the given inputs
 //-----------------------------------------------------------------------
 
-double SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
-                                            double sza, double azm, double zen,
-                                            int surface_type,
-                                            const Array<double, 1>& surface_parameters,
-                                            const Array<double, 1>& od, 
-                                            const Array<double, 1>& ssa,
-                                            const Array<double, 3>& pf,
-                                            double surface_bb,
-                                            const Array<double, 1>& atmosphere_bb)
+const Array<double,1> SpurrRtDriver::reflectance_calculate(const Array<double, 1>& height_grid,
+                                                           double sza, double azm, double zen,
+                                                           int surface_type,
+                                                           const Array<double, 1>& surface_parameters,
+                                                           const Array<double, 1>& od, 
+                                                           const Array<double, 1>& ssa,
+                                                           const Array<double, 3>& pf,
+                                                           double surface_bb,
+                                                           const Array<double, 1>& atmosphere_bb)
 {
   // Initialize scene 
   setup_height_grid(height_grid);
@@ -70,7 +70,7 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
                                                        const ArrayAd<double, 1>& od, 
                                                        const ArrayAd<double, 1>& ssa,
                                                        const ArrayAd<double, 3>& pf,
-                                                       double& reflectance,
+                                                       Array<double, 1>& reflectance,
                                                        Array<double, 2>& jac_atm, 
                                                        Array<double, 1>& jac_surf_param,
                                                        double& jac_surf_temp,
@@ -97,6 +97,6 @@ void SpurrRtDriver::reflectance_and_jacobian_calculate(const Array<double, 1>& h
   calculate_rt();
 
   // Copy values from LIDORT
-  reflectance = get_intensity();
+  reflectance.reference(get_intensity());
   copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 }

@@ -486,9 +486,11 @@ void TwostreamRtDriver::calculate_rt() const
 
 }
 
-double TwostreamRtDriver::get_intensity() const
+const Array<double, 1> TwostreamRtDriver::get_intensity() const
 {
-  return twostream_interface_->intensity_toa()(0);
+  Array<double, 1> intensity(1);
+  intensity(0) = twostream_interface_->intensity_toa()(0);
+  return intensity;
 }
 
 void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp), blitz::Array<double, 1>& UNUSED(jac_atm_temp) ) const
