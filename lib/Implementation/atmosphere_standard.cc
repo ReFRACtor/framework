@@ -283,6 +283,7 @@ AtmosphereStandard::AtmosphereStandard()
   can_cache_channel = false;
 
   // Make sure caches are in a consistent state
+  n_cache_calls = 0;
   invalidate_local_cache();
 }
 
