@@ -479,10 +479,10 @@ const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
 }
 
 void FirstOrderDriver::copy_jacobians
-(blitz::Array<double, 2>& jac_atm,
- blitz::Array<double, 1>& jac_surf_param,
- double& UNUSED(jac_surf_temp),
- blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
+(blitz::Array<double, 3>& jac_atm,
+ blitz::Array<double, 2>& jac_surf_param,
+ blitz::Array<double, 1>& UNUSED(jac_surf_temp),
+ blitz::Array<double, 2>& UNUSED(jac_atm_temp)) const
 {
     Range ra(Range::all());
 
@@ -491,10 +491,11 @@ void FirstOrderDriver::copy_jacobians
     Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, 0, ra, ra) + solar_interface_->lp_jacobians_db()(0, 0, ra, ra));
     // Need to transpose output to be in the expected order of njac, nlay
     jac_total.transposeSelf(secondDim, firstDim);
-    jac_atm.reference(jac_total);
+    jac_atm.resize(jac_total.rows(), jac_total.cols(), 1);
+    jac_atm(ra, ra, 0) = jac_total;
 
-    jac_surf_param.resize(solar_interface_->max_surfacewfs());
+    jac_surf_param.resize(solar_interface_->max_surfacewfs(), 1);
 
     // Output array size is: max_user_levels, maxgeoms, max_surfacewfs
-    jac_surf_param = solar_interface_->ls_jacobians_db()(0, 0, ra);
+    jac_surf_param(ra, 0) = solar_interface_->ls_jacobians_db()(0, 0, ra);
 }

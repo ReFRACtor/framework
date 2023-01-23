@@ -82,7 +82,7 @@ public:
 
   void calculate_rt() const;
   const blitz::Array<double, 1> get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
   boost::shared_ptr<TwostreamBrdfDriver> twostream_brdf_driver() const { 
     return boost::shared_ptr<TwostreamBrdfDriver>(boost::dynamic_pointer_cast<TwostreamBrdfDriver>(brdf_driver_)); 
