@@ -46,7 +46,7 @@ public:
   
   void calculate_rt() const;
   const blitz::Array<double, 1> get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
   const boost::shared_ptr<Fo_Sswpgeometry_Master> geometry_interface() const { return geometry; }
   const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }

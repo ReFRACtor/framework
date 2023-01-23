@@ -278,6 +278,9 @@ class Fixture1 : public LidortDriverCoxmunkFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
+
+  Range ra = Range::all();
+
   Array<double, 1> refl_calc(1);
   Array<double, 1> refl_expt(1);
 
@@ -299,10 +302,10 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   // Plane-parallel
   ldriver->set_plane_parallel();
 
-  blitz::Array<double, 2> jac_atm;
-  blitz::Array<double, 1> jac_surf_param;
-  double jac_surf_temp;
-  blitz::Array<double, 1> jac_atm_temp;
+  blitz::Array<double, 3> jac_atm;
+  blitz::Array<double, 2> jac_surf_param;
+  blitz::Array<double, 1> jac_surf_temp;
+  blitz::Array<double, 2> jac_atm_temp;
 
   ArrayAd<double, 1> lidort_surface(surface_params.shape(), 1);
 
@@ -317,8 +320,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0, 0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1, 0) *= lidort_surface.jacobian()(1,0);
 
   // Value for VLIDORT
   refl_expt = 0.70235315460259928;
@@ -329,7 +332,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   blitz::Array<double, 1> pert_values(surface_params.extent(firstDim)-1);
   pert_values = 1e-8, 1e-8, 1e-6;
 
-  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
+  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.rows() );
   Array<double, 1> refl_fd(1);
 
   jac_surf_param_fd = 0.0;
@@ -348,7 +351,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param(ra, 0), jac_surf_param_fd, 1e-7);
 
   // Pseudo-spherical mode FD test
   ldriver->set_pseudo_spherical();
@@ -364,8 +367,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0, 0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1, 0) *= lidort_surface.jacobian()(1,0);
 
   for(int p_idx = 0; p_idx < pert_values.extent(firstDim); p_idx++) {
     blitz::Array<double,1> surface_params_pert( surface_params.extent() );
@@ -379,7 +382,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param(ra, 0), jac_surf_param_fd, 1e-7);
 
   // Line-of-site mode FD test
   sza = sza + 1e-3; // or else risk divide by zero
@@ -398,8 +401,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   BOOST_CHECK_EQUAL(check_brdf_inputs(lidort_driver), true);
 
   // Adjust analytic jacobians have same meaning as fd jacobians
-  jac_surf_param(0) *= lidort_surface.jacobian()(0,0);
-  jac_surf_param(1) *= lidort_surface.jacobian()(1,0);
+  jac_surf_param(0, 0) *= lidort_surface.jacobian()(0,0);
+  jac_surf_param(1, 0) *= lidort_surface.jacobian()(1,0);
 
   for(int p_idx = 0; p_idx < pert_values.extent(firstDim); p_idx++) {
     blitz::Array<double,1> surface_params_pert( surface_params.extent() );
@@ -413,7 +416,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 1e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param(ra, 0), jac_surf_param_fd, 1e-7);
 
 }
 };
@@ -445,11 +448,14 @@ class Fixture1 : public LidortDriverBrdfVegFixture
 {
 public:
 void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
+
+  Range ra = Range::all();
+
   Array<double, 1> refl_calc(1);
-  blitz::Array<double, 2> jac_atm;
-  blitz::Array<double, 1> jac_surf_param;
-  double jac_surf_temp;
-  blitz::Array<double, 1> jac_atm_temp;
+  blitz::Array<double, 3> jac_atm;
+  blitz::Array<double, 2> jac_surf_param;
+  blitz::Array<double, 1> jac_surf_temp;
+  blitz::Array<double, 2> jac_atm_temp;
 
   ////////////////
   // Surface only
@@ -490,7 +496,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
   blitz::Array<double, 1> pert_values(surface_params.rows());
   pert_values = 1e-8, 1e-8, 1e-6, 1e-6, 1e-6;
 
-  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.extent() );
+  blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param.rows() );
   Array<double, 1> refl_fd(1);
 
   jac_surf_param_fd = 0.0;
@@ -509,7 +515,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
     jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_calc(0)) / pert_values(p_idx);
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param, jac_surf_param_fd, 2e-7);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param(ra, 0), jac_surf_param_fd, 2e-7);
 
 }
 };

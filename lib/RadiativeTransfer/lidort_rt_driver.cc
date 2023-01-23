@@ -191,7 +191,7 @@ const blitz::Array<double, 1> LidortRtDriver::get_intensity() const
   return intensity;
 }
 
-void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const
+void LidortRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const
 {
   Lidort_Linatmos& lpoutputs = lidort_interface_->lidort_linout().atmos();
   Lidort_Linsurf& lsoutputs = lidort_interface_->lidort_linout().surf();
@@ -200,17 +200,24 @@ void LidortRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Arr
 
   // Surface Jacobians KR(r,t,v,d) with respect to surface variable r
   // at output level t, geometry v, direction d
-  jac_surf_param.reference( lsoutputs.ts_surfacewf()(ra, 0, 0, rt_pars_->upidx()-1).copy() );
+  Array<double, 1> jac_surf_param_interface( lsoutputs.ts_surfacewf()(ra, 0, 0, rt_pars_->upidx()-1) );
+  jac_surf_param.resize(jac_surf_param_interface.rows(), 1);
+  jac_surf_param(ra, 0) = jac_surf_param_interface;
 
   // Get profile jacobians
   // Jacobians K(q,n,t,v,d) with respect to profile atmospheric variable
   // q in layer n, at output level t, geometry v, direction d
-  jac_atm.reference( lpoutputs.ts_profilewf()(ra, ra, 0, 0, rt_pars_->upidx()-1).copy() );
+  Array<double, 2> jac_atm_interface( lpoutputs.ts_profilewf()(ra, ra, 0, 0, rt_pars_->upidx()-1) );
+  jac_atm.resize(jac_atm_interface.rows(), jac_atm_interface.cols(), 1);
+  jac_atm(ra, ra, 0) = jac_atm_interface;
 
   // Get surface temp jacobian if thermal emission is enabled
   if(do_thermal_emission) {
-      jac_surf_temp = lsoutputs.ts_sbbwfs_jacobians()(0, 0, rt_pars_->upidx()-1);
+      jac_surf_temp.resize(1);
+      jac_surf_temp(0) = lsoutputs.ts_sbbwfs_jacobians()(0, 0, rt_pars_->upidx()-1);
 
-      jac_atm_temp.reference( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, rt_pars_->upidx()-1).copy() );
+      Array<double, 1> jac_atm_temp_interface( lpoutputs.ts_abbwfs_jacobians()(0, 0, ra, rt_pars_->upidx()-1) );
+      jac_atm_temp.resize(jac_atm_temp_interface.rows(), 1);
+      jac_atm_temp(ra, 0) = jac_atm_temp_interface;
   }
 }

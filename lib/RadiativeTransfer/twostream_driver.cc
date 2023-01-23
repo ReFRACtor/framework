@@ -493,14 +493,19 @@ const Array<double, 1> TwostreamRtDriver::get_intensity() const
   return intensity;
 }
 
-void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp), blitz::Array<double, 1>& UNUSED(jac_atm_temp) ) const
+void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, Array<double, 1>& UNUSED(jac_surf_temp), blitz::Array<double, 2>& UNUSED(jac_atm_temp) ) const
 {
   // Copy out jacobian values
   Range ra(Range::all());
-  jac_atm.reference( twostream_interface_->profilewf_toa()(0, ra, ra).copy() );
-  jac_atm.transposeSelf(secondDim, firstDim); // swap to same ordering as lidort
-    
-  jac_surf_param.reference( twostream_interface_->surfacewf_toa()(0, ra).copy() );
+
+  Array<double, 2> jac_atm_interface(twostream_interface_->profilewf_toa()(0, ra, ra));
+  jac_atm_interface.transposeSelf(secondDim, firstDim); // swap to same ordering as lidort
+  jac_atm.resize(jac_atm_interface.rows(), jac_atm_interface.cols(), 1);
+  jac_atm(ra, ra, 0) = jac_atm_interface;
+
+  Array<double, 1> jac_surf_param_interface(twostream_interface_->surfacewf_toa()(0, ra));
+  jac_surf_param.resize(jac_surf_param_interface.rows(), 1);
+  jac_surf_param(ra, 0) = jac_surf_param_interface;
 
   // jac_surf_temp, jac_atm_temp not available yet
 }

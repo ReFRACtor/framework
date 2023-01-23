@@ -249,10 +249,10 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   // Copy values from LIDORT
   Array<double, 1> rad_driver(rt_driver_->get_intensity());
 
-  Array<double, 2> jac_atm;
-  Array<double, 1> jac_surf_param;
-  double jac_surf_temp;
-  Array<double, 1> jac_atm_temp;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param;
+  Array<double, 1> jac_surf_temp;
+  Array<double, 2> jac_atm_temp;
   rt_driver_->copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   //-----------------------------------------------------------------------
@@ -264,48 +264,50 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   /// the layers and add in the surface Jacobian to give us the total
   /// Jacobian to the reflectance with respect to the state vector.
   //-----------------------------------------------------------------------
-  Array<double, 1> jac(jac_iv.depth());
-  for(int st_idx = 0; st_idx < jac.rows(); ++st_idx) {
-    double val = 0;
 
-    // dimensions swapped on jac_iv and jac_atm
-    // jac_atm is njac x nlayer 
-    // jac_iv  is nlayer x njac
-    for(int lay_idx = 0; lay_idx < jac_iv.rows(); ++lay_idx) {
-      for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
-        val += jac_atm(var_idx, lay_idx) * jac_iv(lay_idx, var_idx, st_idx);
-      }
-
-      if(do_thermal_emission and !atmos_bb.is_constant()) {
-        val += jac_atm_temp(lay_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
-      }
-    }
-
-    if(do_surface_pd) {
-      // The min() here ensures that we only loop over the number of parameters that
-      // either the RT or source parameters both have
-      // LIDORT will have a jac_surf_param larger insize (hardcoded allocation) than 
-      // lidort_surface.jacobian()
-      // 2stream has a jac_surf_param smaller than lidort_surface because due to the way
-      // it is set up no parameter index is available for shadowing when using
-      // coxmunk mode
-      for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
-        val += jac_surf_param(m) * lidort_surface.jacobian()(m, st_idx);
-      }
-    }
-
-    if(do_thermal_emission and !surface_bb.is_constant()) {
-      val += surface_bb.gradient()(st_idx) * jac_surf_temp;
-    }
-
-    jac(st_idx) = val;
-  }
-
-  ArrayAd<double, 1> rad_jac(number_stokes(), jac.rows());
+  ArrayAd<double, 1> rad_jac(number_stokes(), jac_iv.depth());
   rad_jac = 0;
 
   for (int stokes_idx = 0; stokes_idx < rad_driver.rows(); stokes_idx++) {
-      // Fix for each stokes jacobian when expanding jac dimensions
+
+      Array<double, 1> jac(jac_iv.depth());
+      for(int st_idx = 0; st_idx < jac.rows(); ++st_idx) {
+        double val = 0;
+
+        // dimensions swapped on jac_iv and jac_atm
+        // jac_atm is njac x nlayer 
+        // jac_iv  is nlayer x njac
+        for(int lay_idx = 0; lay_idx < jac_iv.rows(); ++lay_idx) {
+          for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
+            val += jac_atm(var_idx, lay_idx, stokes_idx) * jac_iv(lay_idx, var_idx, st_idx);
+          }
+
+          if(do_thermal_emission and !atmos_bb.is_constant()) {
+            val += jac_atm_temp(lay_idx, stokes_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
+          }
+        }
+
+        if(do_surface_pd) {
+          // The min() here ensures that we only loop over the number of parameters that
+          // either the RT or source parameters both have
+          // LIDORT will have a jac_surf_param larger insize (hardcoded allocation) than 
+          // lidort_surface.jacobian()
+          // 2stream has a jac_surf_param smaller than lidort_surface because due to the way
+          // it is set up no parameter index is available for shadowing when using
+          // coxmunk mode
+          for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
+            val += jac_surf_param(m, stokes_idx) * lidort_surface.jacobian()(m, st_idx);
+          }
+        }
+
+        if(do_thermal_emission and !surface_bb.is_constant()) {
+          val += surface_bb.gradient()(st_idx) * jac_surf_temp(stokes_idx);
+        }
+
+        jac(st_idx) = val;
+      }
+
+      // Assign value for each stokes index
       rad_jac(stokes_idx) = AutoDerivative<double>(rad_driver(stokes_idx), jac);
 
       // Check for NaN from lidort

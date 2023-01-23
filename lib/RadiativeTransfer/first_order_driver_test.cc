@@ -38,15 +38,15 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   Array<double, 1> refl_fo(1);
   Array<double, 1> refl_lid(1);
 
-  blitz::Array<double, 2> jac_atm_fo;
-  blitz::Array<double, 1> jac_surf_param_fo;
-  double jac_surf_temp_fo;
-  blitz::Array<double, 1> jac_atm_temp_fo;
+  blitz::Array<double, 3> jac_atm_fo;
+  blitz::Array<double, 2> jac_surf_param_fo;
+  blitz::Array<double, 1> jac_surf_temp_fo;
+  blitz::Array<double, 2> jac_atm_temp_fo;
 
-  blitz::Array<double, 2> jac_atm_lid;
-  blitz::Array<double, 1> jac_surf_param_lid;
-  double jac_surf_temp_lid;
-  blitz::Array<double, 1> jac_atm_temp_lid;
+  blitz::Array<double, 3> jac_atm_lid;
+  blitz::Array<double, 2> jac_surf_param_lid;
+  blitz::Array<double, 1> jac_surf_temp_lid;
+  blitz::Array<double, 2> jac_atm_temp_lid;
 
   FirstOrderDriver fo_driver = FirstOrderDriver(nlayer, surface_type, nstreams, nmoms, do_solar, do_thermal);
 
@@ -201,8 +201,8 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   // Unnormalize jacobians
   firstIndex lay_idx; secondIndex jac_idx;
-  jac_atm_lid(rjac, rlay) /=  jac_normalization;
-  jac_atm_fo(rjac, rlay) /=  jac_normalization;
+  jac_atm_lid(rjac, rlay, 0) /=  jac_normalization;
+  jac_atm_fo(rjac, rlay, 0) /=  jac_normalization;
 
   if(debug_output) {
     std::cerr << "refl_lid = " << refl_lid << std::endl
@@ -264,13 +264,13 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   if(debug_output) {
     std::cerr << setprecision(8)
-              << "jac_atm_lid = " << jac_atm_lid(rjac,rlay).transpose(1,0)
+              << "jac_atm_lid = " << jac_atm_lid(rjac,rlay, 0).transpose(1,0)
               << "jac_atm_fd = " << jac_atm_fd(rjac, rlay).transpose(1,0)
-              << "jac_atm_fo = " << jac_atm_fo(rjac,rlay).transpose(1,0) << std::endl;
+              << "jac_atm_fo = " << jac_atm_fo(rjac,rlay, 0).transpose(1,0) << std::endl;
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_fo(rjac,rlay), 3e-4);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay, 0), jac_atm_fo(rjac,rlay, 0), 3e-4);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay, 0), jac_atm_fd(rjac,rlay, 0), 5e-4);
 
   if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
@@ -290,18 +290,18 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
       jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_fo(0)) / pert_surf(p_idx);
 
       // Adjust analytic jacobians to have same meaning as finite difference one
-      jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
-      jac_surf_param_fo(p_idx) *= fo_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_lid(p_idx, 0) *= lid_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_fo(p_idx, 0) *= fo_surface_params.jacobian()(p_idx, 0);
     }
 
     if(debug_output) {
-      std::cerr << "jac_surf_param_lid = " << jac_surf_param_lid(rsurf) << std::endl
+      std::cerr << "jac_surf_param_lid = " << jac_surf_param_lid(rsurf, 0) << std::endl
                 << "jac_surf_param_fd = " << jac_surf_param_fd << std::endl
-                << "jac_surf_param_fo = " << jac_surf_param_fo << std::endl;
+                << "jac_surf_param_fo = " << jac_surf_param_fo(rsurf, 0) << std::endl;
     } 
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf), jac_surf_param_fo(rsurf), 1e-7);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo, jac_surf_param_fd, 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf, 0), jac_surf_param_fo(rsurf, 0), 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo(rsurf, 0), jac_surf_param_fd, 1e-7);
   }
 
 }
