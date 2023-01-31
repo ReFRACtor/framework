@@ -47,10 +47,10 @@ public:
 
   virtual void calculate_rt() const;
   virtual const blitz::Array<double, 1> get_intensity() const;
-  virtual void copy_jacobians(blitz::Array<double, 2>& jac_atm,
-                              blitz::Array<double, 1>& jac_surf_param,
-                              double& jac_surf_temp,
-                              blitz::Array<double, 1>& jac_atm_temp) const;
+  virtual void copy_jacobians(blitz::Array<double, 3>& jac_atm,
+                              blitz::Array<double, 2>& jac_surf_param,
+                              blitz::Array<double, 1>& jac_surf_temp,
+                              blitz::Array<double, 2>& jac_atm_temp) const;
 
   %python_attribute(geometry_interface, boost::shared_ptr<Fo_Sswpgeometry_Master>);
   %python_attribute(solar_interface, boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps>);
