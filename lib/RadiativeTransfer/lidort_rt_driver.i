@@ -34,7 +34,7 @@ public:
   %python_attribute(lidort_interface, boost::shared_ptr<Lidort_Lps_Masters>)
 
   const blitz::Array<double, 1> get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
   %pickle_serialization();
 };
