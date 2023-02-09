@@ -36,6 +36,7 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    multiscatt_brdf_driver.cc
     multiscatt_rt_driver.cc
     optical_properties_lsi.cc
     optical_properties_pca.cc
@@ -59,6 +60,7 @@ set(DIR_SOURCES
     twostream_interface.F90
     twostream_interface_serialization.cc
     twostream_rt.cc
+    vlidort_brdf_driver.cc
     vlidort_interface_masters.F90
     vlidort_interface_masters_io.F90
     vlidort_interface_masters_serialization.cc
