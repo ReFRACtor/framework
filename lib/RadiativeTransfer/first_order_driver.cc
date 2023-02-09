@@ -119,7 +119,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
   l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
-  Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
+  Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->lidort_brdf_interface()->brdf_sup_in();
   
   // Only use 1 beam meaning only one set of sza, azm
   brdf_inputs.bs_nbeams(1);
@@ -346,7 +346,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
-    reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
+    reflectance(0) = l_brdf_driver->lidort_brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
 void FirstOrderDriver::clear_linear_inputs() 
@@ -459,7 +459,7 @@ void FirstOrderDriver::setup_linear_inputs
         Array<double, 1> reflectance(solar_interface_->reflec());
         Array<double, 2> ls_reflec( solar_interface_->ls_reflec() );
 
-        ls_reflec(0, r_surf_wfs) = l_brdf_driver->brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
+        ls_reflec(0, r_surf_wfs) = l_brdf_driver->lidort_brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
     }
  
 }

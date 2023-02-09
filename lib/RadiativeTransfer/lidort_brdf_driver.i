@@ -5,8 +5,9 @@
 #include "spurr_interface_types.h"
 %}
 
-%base_import(spurr_brdf_driver)
+%base_import(multiscatt_brdf_driver)
 
+%import "spurr_interface_masters.i"
 %import "lidort_interface_masters.i"
 %import "lidort_interface_types.i"
 
@@ -14,21 +15,13 @@
 
 namespace FullPhysics {
 
-class LidortBrdfDriver : public SpurrBrdfDriver {
+class LidortBrdfDriver : public MultiScattBrdfDriver {
 public:
   LidortBrdfDriver(int nstream, int nmoment);
-  virtual ~LidortBrdfDriver();
 
-  %python_attribute(brdf_interface, boost::shared_ptr<Brdf_Lin_Sup_Masters>)
+  %python_attribute(brdf_interface, boost::shared_ptr<Spurr_Brdf_Lin_Sup_Masters_Base>)
+  %python_attribute(lidort_brdf_interface, boost::shared_ptr<Brdf_Lin_Sup_Masters>)
 
-  virtual void setup_geometry(double sza, double azm, double zen);
-
-  %python_attribute(n_brdf_kernels, int)
-  %python_attribute(n_kernel_factor_wfs, int)
-  %python_attribute(n_kernel_params_wfs, int)
-  %python_attribute(n_surface_wfs, int)
-  %python_attribute(do_shadow_effect, bool)
-  virtual bool do_kparams_derivs(const int kernel_index) const;
   %pickle_serialization();
 };
 

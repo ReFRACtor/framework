@@ -35,7 +35,7 @@ public:
   { return boost::shared_ptr<LidortBrdfDriver>(boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)); }
 
   const boost::shared_ptr<Brdf_Lin_Sup_Masters> lidort_brdf_interface() const
-  { return boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)->brdf_interface(); }
+  { return boost::dynamic_pointer_cast<LidortBrdfDriver>(brdf_driver_)->lidort_brdf_interface(); }
 
   const boost::shared_ptr<Lidort_Lps_Masters> lidort_interface() const { return lidort_interface_; }
 
