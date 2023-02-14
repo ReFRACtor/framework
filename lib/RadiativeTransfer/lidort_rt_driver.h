@@ -14,8 +14,8 @@ namespace FullPhysics {
 class LidortRtDriver : public MultiScattRtDriver {
 public:
   LidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type, 
-          const blitz::Array<double, 1>& zen, bool pure_nadir, 
-          bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
+                 const blitz::Array<double, 1>& zen, bool pure_nadir, 
+                 bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
 
   // Implements LIDORT specific extensions to MultiScattRtDriver actions
   void set_plane_parallel();

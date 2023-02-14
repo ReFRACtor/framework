@@ -61,6 +61,7 @@ set(DIR_SOURCES
     twostream_interface_serialization.cc
     twostream_rt.cc
     vlidort_brdf_driver.cc
+    vlidort_rt_driver.cc
     vlidort_interface_masters.F90
     vlidort_interface_masters_io.F90
     vlidort_interface_masters_serialization.cc
