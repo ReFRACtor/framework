@@ -160,7 +160,7 @@ public:
 class VLidort_Vbrdf_Sup_Accessories {
 
 public:
-  VLidort_Vbrdf_Sup_Accessories();
+  VLidort_Vbrdf_Sup_Accessories(boost::shared_ptr<VLidort_Fixed_Inputs>& vlidort_fixin_in, boost::shared_ptr<VLidort_Modified_Inputs>& vlidort_modin_in, boost::shared_ptr<VBrdf_Sup_Inputs>& vbrdf_sup_in_in);
   virtual ~VLidort_Vbrdf_Sup_Accessories();
   std::string print_to_string() const;
 

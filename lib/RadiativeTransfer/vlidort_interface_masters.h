@@ -1837,15 +1837,12 @@ extern "C" {
 class VLidort_Vbrdf_Sup_Accessories : public virtual Spurr_Brdf_Sup_Accessories_Base {
 
 public:
-  VLidort_Vbrdf_Sup_Accessories() 
+  VLidort_Vbrdf_Sup_Accessories(boost::shared_ptr<VLidort_Fixed_Inputs>& vlidort_fixin_in, boost::shared_ptr<VLidort_Modified_Inputs>& vlidort_modin_in, boost::shared_ptr<VBrdf_Sup_Inputs>& vbrdf_sup_in_in) : vlidort_fixin_(vlidort_fixin_in), vlidort_modin_(vlidort_modin_in), vbrdf_sup_in_(vbrdf_sup_in_in) 
   { 
     
     // Initialize type pointers
     vbrdf_sup_out_.reset( new VBrdf_Sup_Outputs() );
-    vlidort_fixin_.reset( new VLidort_Fixed_Inputs() );
-    vlidort_modin_.reset( new VLidort_Modified_Inputs() );
     vlidort_sup_.reset( new VLidort_Sup_Inout() );
-    vbrdf_sup_in_.reset( new VBrdf_Sup_Inputs() );
     vlidort_vbrdfcheck_status_.reset( new VLidort_Exception_Handling() );
     
   }
@@ -1906,12 +1903,6 @@ public:
     return vlidort_fixin_;
   }
 
-  void vlidort_fixin(VLidort_Fixed_Inputs& vlidort_fixin_in) {
-    void* src_ptr = vlidort_fixin_in.fortran_type_ptr();
-    void* dst_ptr = vlidort_fixin_->fortran_type_ptr();
-    vlidort_fixed_inputs_c_copy(&src_ptr, &dst_ptr);
-  }
-
   
   VLidort_Modified_Inputs& vlidort_modin() {
     return *vlidort_modin_;
@@ -1931,12 +1922,6 @@ public:
 
   boost::shared_ptr<VLidort_Modified_Inputs>& vlidort_modin_ptr() {
     return vlidort_modin_;
-  }
-
-  void vlidort_modin(VLidort_Modified_Inputs& vlidort_modin_in) {
-    void* src_ptr = vlidort_modin_in.fortran_type_ptr();
-    void* dst_ptr = vlidort_modin_->fortran_type_ptr();
-    vlidort_modified_inputs_c_copy(&src_ptr, &dst_ptr);
   }
 
   
@@ -1985,12 +1970,6 @@ public:
 
   boost::shared_ptr<VBrdf_Sup_Inputs>& vbrdf_sup_in_ptr() {
     return vbrdf_sup_in_;
-  }
-
-  void vbrdf_sup_in(VBrdf_Sup_Inputs& vbrdf_sup_in_in) {
-    void* src_ptr = vbrdf_sup_in_in.fortran_type_ptr();
-    void* dst_ptr = vbrdf_sup_in_->fortran_type_ptr();
-    vbrdf_sup_inputs_c_copy(&src_ptr, &dst_ptr);
   }
 
   
@@ -2099,7 +2078,7 @@ private:
   boost::shared_ptr<VLidort_Exception_Handling> vlidort_vbrdfcheck_status_;
 
   // Serialization support
-  
+  VLidort_Vbrdf_Sup_Accessories() {}
   friend class boost::serialization::access;
   template<class Archive> void serialize(Archive & ar, const unsigned int version);
   template<class Archive> void save(Archive & ar, const unsigned int version) const;
