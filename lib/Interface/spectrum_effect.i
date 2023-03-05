@@ -47,5 +47,8 @@ public:
 %template(SubStateVectorArraySpectrumEffect) FullPhysics::SubStateVectorArray<SpectrumEffect>;
 }
 
+%fp_shared_ptr(std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> >);
+%fp_shared_ptr(std::vector<std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> > >);
+
 %template(vector_spectrum_effect) std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> >;
 %template(vector_vector_spectrum_effect) std::vector<std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> > >;

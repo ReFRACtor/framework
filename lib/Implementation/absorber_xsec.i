@@ -11,11 +11,11 @@
 %import "xsec_table.i"
 
 %fp_shared_ptr(FullPhysics::AbsorberXSec);
-
 namespace FullPhysics {
 
 // Allow these classes to be derived from in Python.
 %feature("director") AbsorberXSec;
+
   
 class AbsorberXSec: virtual public Absorber {
  public:

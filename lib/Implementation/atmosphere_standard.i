@@ -5,7 +5,6 @@
 #include "rayleigh.h"
 #include "altitude.h"
 %}
-%fp_shared_ptr(FullPhysics::AtmosphereStandard);
 %base_import(rt_atmosphere)
 %base_import(aerosol)
 %import "absorber.i"
@@ -16,13 +15,15 @@
 %import "relative_humidity.i"
 %import "altitude.i"
 %import "constant.i"
+
 namespace FullPhysics {
 class AtmosphereStandard;
 }
 
+%fp_shared_ptr(FullPhysics::AtmosphereStandard);
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::AtmosphereStandard>);
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::AtmosphereStandard>);
-
+  
 namespace FullPhysics {
 %template(ObserverAtmosphereStandard) FullPhysics::Observer<AtmosphereStandard>;
 

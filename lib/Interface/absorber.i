@@ -17,13 +17,12 @@
 %import "altitude.i"
 %import "absorber_vmr.i"
 
-%fp_shared_ptr(FullPhysics::Absorber)
-
 namespace FullPhysics {
   class Absorber;
 }
 
 %nodefaultctor FullPhysics::SubStateVectorArray<FullPhysics::Absorber>;
+%fp_shared_ptr(FullPhysics::Absorber)
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Absorber>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::Absorber>)
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::Absorber>);

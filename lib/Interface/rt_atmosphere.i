@@ -14,7 +14,8 @@
 %import "ground.i"
 %import "optical_properties.i"
 
-%fp_shared_ptr(FullPhysics::RtAtmosphere)
+%fp_shared_ptr(FullPhysics::RtAtmosphere);
+
 namespace FullPhysics {
   class RtAtmosphere;
 }

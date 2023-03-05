@@ -98,6 +98,15 @@ public:
 };
 }
 
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 1>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 2>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 3>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<double, 4>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 1>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 2>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 3>);
+%fp_shared_ptr(FullPhysics::ArrayWithUnit<float, 4>);
+
 %template(ArrayWithUnit_double_1) FullPhysics::ArrayWithUnit<double, 1>;
 %template(ArrayWithUnit_double_2) FullPhysics::ArrayWithUnit<double, 2>;
 %template(ArrayWithUnit_double_3) FullPhysics::ArrayWithUnit<double, 3>;
