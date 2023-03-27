@@ -15,12 +15,13 @@ namespace FullPhysics {
 class GroundWithCloudHandling: public Ground, public Observer<Ground>,
   public GenericObjectWithCloudHandling {
 public:
-  GroundWithCloudHandling(const boost::shared_ptr<Ground> Ground_clear,
-			  double Cloud_albedo, bool Do_cloud = false);
+  GroundWithCloudHandling(const boost::shared_ptr<Ground>& Ground_clear,
+			  const boost::shared_ptr<Ground>& Ground_cloud,
+			  bool Do_cloud = false);
   virtual ArrayAd<double, 1> surface_parameter
     (const double wn, const int spec_index) const;
   %python_attribute_with_set(do_cloud, bool);
   %python_attribute(ground_clear, boost::shared_ptr<Ground>);
-  %python_attribute_with_set(cloud_albedo, double);
+  %python_attribute(ground_cloud, boost::shared_ptr<Ground>);
 };
 }

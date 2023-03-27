@@ -13,7 +13,7 @@ void GroundWithCloudHandling::serialize(Archive & ar,
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Ground)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverGround)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GenericObjectWithCloudHandling)
-    & FP_NVP_(ground_clear)  & FP_NVP_(cloud_albedo);
+    & FP_NVP_(ground_clear)  & FP_NVP_(ground_cloud);
 }
 
 FP_IMPLEMENT(GroundWithCloudHandling);
@@ -24,38 +24,40 @@ FP_IMPLEMENT(GroundWithCloudHandling);
 //-----------------------------------------------------------------------
   
 GroundWithCloudHandling::GroundWithCloudHandling
-(const boost::shared_ptr<Ground> Ground_clear,
- double Cloud_albedo, bool Do_cloud)
+(const boost::shared_ptr<Ground>& Ground_clear,
+ const boost::shared_ptr<Ground>& Ground_cloud,
+ bool Do_cloud)
 : GenericObjectWithCloudHandling(Do_cloud),
-  ground_clear_(Ground_clear), cloud_albedo_(Cloud_albedo)
+  ground_clear_(Ground_clear), ground_cloud_(Ground_cloud)
 {
   ground_clear_->add_observer(*this);
+  ground_cloud_->add_observer(*this);
 }
 
 ArrayAd<double, 1> GroundWithCloudHandling::surface_parameter
 (const double wn, const int spec_index) const
 {
-  if(do_cloud()) {
-    ArrayAd<double, 1> spars(1, 0);
-    spars(0) = cloud_albedo_;
-    return spars;
-  }
+  if(do_cloud())
+    return ground_cloud_->surface_parameter(wn, spec_index);
   return ground_clear_->surface_parameter(wn, spec_index);
 }
 
 boost::shared_ptr<Ground> GroundWithCloudHandling::clone() const
 {
   return boost::make_shared<GroundWithCloudHandling>(ground_clear_->clone(),
-						     cloud_albedo_, do_cloud());
+						     ground_cloud_->clone(),
+						     do_cloud());
 }
 
 void GroundWithCloudHandling::print(std::ostream& Os) const
 {
   OstreamPad opad(Os, "  ");
   Os << "GroundWithCloudHandling:\n"
-     << "  cloud albedo:    " << cloud_albedo() << "\n"
      << "  do_cloud: " << do_cloud() << "\n"
-     << "  ground clear: \n";
+     << "  ground cloud: \n";
+  opad << *ground_cloud() << "\n";
+  opad.strict_sync();
+  Os << "  ground clear: \n";
   opad << *ground_clear() << "\n";
   opad.strict_sync();
 }

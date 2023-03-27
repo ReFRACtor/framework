@@ -15,8 +15,9 @@ class GroundWithCloudHandling: virtual public Ground,
 			       public Observer<Ground>,
 			       public GenericObjectWithCloudHandling {
 public:
-  GroundWithCloudHandling(const boost::shared_ptr<Ground> Ground_clear,
-			  double Cloud_albedo, bool Do_cloud = false);
+  GroundWithCloudHandling(const boost::shared_ptr<Ground>& Ground_clear,
+			  const boost::shared_ptr<Ground>& Ground_cloud,
+			  bool Do_cloud = false);
   virtual ~GroundWithCloudHandling() {}
 
   virtual void notify_do_cloud_update()
@@ -31,16 +32,13 @@ public:
   const boost::shared_ptr<Ground> ground_clear() const
   { return ground_clear_; }
 
+
 //-----------------------------------------------------------------------
-/// The cloud albedo.
+/// The cloud ground object
 //-----------------------------------------------------------------------
 
-  double cloud_albedo() const { return cloud_albedo_; }
-  void cloud_albedo(double V)
-  {
-    cloud_albedo_ = V;
-    Observable<Ground>::notify_update_do(*this);
-  }
+  const boost::shared_ptr<Ground> ground_cloud() const
+  { return ground_cloud_; }
 
   virtual void notify_update(const Ground& UNUSED(G) )
   {
@@ -52,7 +50,7 @@ public:
   virtual SpurrBrdfType spurr_brdf_type() const
   {
     if(do_cloud())
-      return SpurrBrdfType::LAMBERTIAN;
+      return ground_cloud_->spurr_brdf_type();
     return ground_clear_->spurr_brdf_type();
   }
   virtual ArrayAd<double, 1> surface_parameter
@@ -61,7 +59,7 @@ public:
   virtual void print(std::ostream& Os) const;
 private:
   boost::shared_ptr<Ground> ground_clear_;
-  double cloud_albedo_;
+  boost::shared_ptr<Ground> ground_cloud_;
   GroundWithCloudHandling() {}
   friend class boost::serialization::access;
   template<class Archive>

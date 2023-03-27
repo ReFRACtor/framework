@@ -276,7 +276,10 @@ albedo[0, 0] = surface_albedo
 which_retrieved = np.array([[True, True],], dtype = bool)
 ground_clear = rf.GroundLambertian(albedo, band_reference, ["UV2"],
                rf.StateMappingAtIndexes(np.ravel(which_retrieved)))
-ground = rf.GroundWithCloudHandling(ground_clear, cloud_albedo, False)
+ground_cloud = rf.GroundLambertian(np.array([[cloud_albedo,]]),
+                                   rf.ArrayWithUnit(np.array([1000,]), "nm"),
+                                   ["dummy",])
+ground = rf.GroundWithCloudHandling(ground_clear, ground_cloud, False)
 
 # --------------
 # Relative humidity
