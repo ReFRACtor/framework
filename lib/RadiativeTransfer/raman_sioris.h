@@ -77,6 +77,11 @@ public:
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
   virtual void notify_update(const Pressure& pressure) { compute_temp_layers(pressure); };
+  virtual void notify_update(const StateVector& Sv)
+  {
+    // Call base notify to handle SV stuff
+    SubStateVectorObserver::notify_update(Sv);
+  };
 
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
 

@@ -55,6 +55,7 @@ public:
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const;
 
   virtual void notify_update(const Pressure& pressure);
+  virtual void notify_update(const StateVector& Sv);
 
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
 
