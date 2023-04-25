@@ -26,5 +26,6 @@ public:
    SpectralRange& Radiance) const;
   virtual void print(std::ostream& Os) const;
   %python_attribute(radiance_scaling_coeff_uncertainty, blitz::Array<double, 1>)
+  %pickle_serialization();
 };
 }

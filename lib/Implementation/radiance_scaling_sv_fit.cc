@@ -1,9 +1,21 @@
 #include "radiance_scaling_sv_fit.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RadianceScalingSvFit::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadianceScaling)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayInstrumentCorrection);
+}
+
+FP_IMPLEMENT(RadianceScalingSvFit);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

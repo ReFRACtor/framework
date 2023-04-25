@@ -1,11 +1,23 @@
 #include "radiance_scaling_linear_fit.h"
 #include "ostream_pad.h"
 #include "linear_algebra.h"
+#include "fp_serialize_support.h"
 
 #include <fstream>
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RadianceScalingLinearFit::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RadianceScaling)
+    & FP_NVP(measured_radiance) & FP_NVP(do_offset);
+}
+
+FP_IMPLEMENT(RadianceScalingLinearFit);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"

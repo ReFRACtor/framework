@@ -57,6 +57,12 @@ public:
 private:
   SpectralRange measured_radiance;
   bool do_offset;
+  RadianceScalingLinearFit() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(RadianceScalingLinearFit);
 #endif

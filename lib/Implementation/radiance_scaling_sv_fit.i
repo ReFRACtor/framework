@@ -38,6 +38,7 @@ public:
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const StateVector& Sv);
   %python_attribute(radiance_scaling_coeff_uncertainty, blitz::Array<double, 1>)
+  %pickle_serialization();
 };
 }
 
