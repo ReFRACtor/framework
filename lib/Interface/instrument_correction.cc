@@ -3,6 +3,8 @@
 using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
+SUB_STATE_VECTOR_ARRAY_SERIALIZE(InstrumentCorrection, SubStateVectorArrayInstrumentCorrection);
+
 template<class Archive>
 void InstrumentCorrection::serialize(Archive& ar,
 			 const unsigned int UNUSED(version))

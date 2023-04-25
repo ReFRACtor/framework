@@ -99,6 +99,7 @@ set(DIR_SOURCES
     radiance_scaling.cc
     radiance_scaling_linear_fit.cc
     radiance_scaling_sv_fit.cc
+    radiance_scaling_sv_muses_fit.cc
     rayleigh_bodhaine.cc
     rayleigh_young.cc
     rayleigh_young.f90
@@ -213,6 +214,7 @@ set(TEST_SOURCES
     pressure_with_cloud_handling_test.cc
     radiance_scaling_linear_fit_test.cc
     radiance_scaling_sv_fit_test.cc
+    radiance_scaling_sv_muses_fit_test.cc
     rayleigh_bodhaine_test.cc
     rayleigh_only_test.cc
     rayleigh_young_test.cc

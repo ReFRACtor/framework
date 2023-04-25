@@ -31,5 +31,6 @@ public:
   %python_attribute(radiance_scaling_coeff, blitz::Array<double, 1>)
   %python_attribute(radiance_scaling_coeff_uncertainty, blitz::Array<double, 1>)
   %python_attribute(radiance_offset, double)
+  %pickle_serialization();
 };
 }

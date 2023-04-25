@@ -94,6 +94,12 @@ protected:
   mutable AutoDerivative<double> offset;
   DoubleWithUnit band_ref;
   std::string band_name;
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(RadianceScaling);
 #endif

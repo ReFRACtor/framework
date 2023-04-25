@@ -1,9 +1,23 @@
 #include "radiance_scaling.h"
 #include "polynomial_eval.h"
 #include "ostream_pad.h"
+#include "fp_serialize_support.h"
 
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void RadianceScaling::serialize(Archive& ar,
+			 const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(InstrumentCorrection)
+    & FP_NVP(scaling_coeff) & FP_NVP(offset) & FP_NVP(band_ref)
+    & FP_NVP(band_name);
+}
+
+FP_IMPLEMENT(RadianceScaling);
+#endif
 
 void RadianceScaling::apply_scaling(const SpectralDomain& Grid, SpectralRange& Radiance) const
 {

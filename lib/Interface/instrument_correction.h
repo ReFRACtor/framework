@@ -1,6 +1,7 @@
 #ifndef INSTRUMENT_CORRECTION_H
 #define INSTRUMENT_CORRECTION_H
 #include "state_vector_observer.h"
+#include "sub_state_vector_array.h"
 #include "spectral_range.h"
 #include "spectral_domain.h"
 
@@ -61,8 +62,11 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
+
+typedef SubStateVectorArray<InstrumentCorrection> SubStateVectorArrayInstrumentCorrection;
 }
 
 FP_EXPORT_KEY(InstrumentCorrection);
 FP_EXPORT_OBSERVER_KEY(InstrumentCorrection);
+FP_EXPORT_KEY(SubStateVectorArrayInstrumentCorrection);
 #endif
