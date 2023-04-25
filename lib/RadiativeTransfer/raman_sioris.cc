@@ -39,6 +39,7 @@ template<class Archive>
 void RamanSiorisEffect::load(Archive &UNUSED(ar),
 			     const unsigned int UNUSED(version))
 {
+  solar_and_odepth_wn_grid_.reference(solar_and_odepth_spec_domain_.wavenumber());
   compute_temp_layers(*atmosphere_->pressure_ptr());
 }
 
