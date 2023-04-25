@@ -46,6 +46,8 @@ public:
   (const SpectralDomain& Pixel_grid,
    const std::vector<int>& Pixel_list,
    SpectralRange& Radiance) const;
+  virtual void apply_scaling(const SpectralDomain& Grid, SpectralRange& Radiance) const;
+  
   virtual void print(std::ostream& Os) const;
 
   virtual void notify_update(const StateVector& Sv)

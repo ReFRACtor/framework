@@ -112,6 +112,7 @@ public:
   }
 
   blitz::Array<double, 1> convert_wave(const Unit& Units) const;
+  ArrayAd<double, 1> convert_wave_ad(const Unit& Units) const;
   blitz::Array<double, 1> wavenumber(const Unit& Units = units::inv_cm) const;
   blitz::Array<double, 1> wavelength(const Unit& Units = units::micron) const;
   ArrayWithUnit<double, 1> photon_to_radiance_factor() const;

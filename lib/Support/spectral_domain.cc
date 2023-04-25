@@ -176,6 +176,23 @@ Array<double, 1> SpectralDomain::convert_wave(const Unit& Units) const
 }
 
 //-----------------------------------------------------------------------
+/// Return data as the supplied the units, including the Jacobian
+//-----------------------------------------------------------------------
+
+ArrayAd<double, 1> SpectralDomain::convert_wave_ad(const Unit& Units) const
+{
+  if(units_.is_commensurate(Units)) {
+    blitz::Array<AutoDerivative<double>, 1> res(data_.rows());
+    res = FullPhysics::conversion(units_, Units) * data_.to_array();
+    return ArrayAd<double, 1>(res);
+  } else {
+    blitz::Array<AutoDerivative<double>, 1> res(data_.rows());
+    res = FullPhysics::conversion(1 / units_, Units) / data_.to_array();
+    return ArrayAd<double, 1>(res);
+  }
+}
+
+//-----------------------------------------------------------------------
 /// Return data as wavenumbers. You can optionally supply the units to
 /// use.
 /// Throws an error if the the optionally supplied units are not

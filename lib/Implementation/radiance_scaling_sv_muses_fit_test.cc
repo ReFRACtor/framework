@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_CASE(basic)
 {
   blitz::Array<double, 1> coeff(2);
   coeff = 0.5, 0.0;
-  DoubleWithUnit band_ref(0.77, "cm^-1");
+  DoubleWithUnit band_ref(765, "nm");
   std::string band_name = "ABand";
   RadianceScalingSvMusesFit rs1(coeff, band_ref, band_name);
   
@@ -50,15 +50,17 @@ BOOST_AUTO_TEST_CASE(basic)
 
   rs2.apply_correction(pixel_grid, pixel_list, radiance2);
 
-  double band_ref_conv = band_ref.convert_wave(pixel_grid.units()).value;
+  double band_ref_conv = band_ref.convert_wave(Unit("nm")).value;
+  Array<double, 1> gd = pixel_grid.convert_wave(Unit("nm"));
   
   for(int i = 0; i < pixel_grid.data().rows(); i++)
-    rad_expect(i) = coeff(0) + coeff(1) * (pixel_grid.data()(i) - band_ref_conv);
+    rad_expect(i) = coeff(0) + coeff(1) * (1 - gd(i) / band_ref_conv);
+  for(int i = 0; i < pixel_grid.data().rows(); i++)
   BOOST_CHECK_MATRIX_CLOSE_TOL(radiance2.data(), rad_expect, 1e-8);
   
   for(int i = 0; i < pixel_grid.data().rows(); i++) {
     BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 0), 1, 1e-7);
-    BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 1), pixel_grid.data()(i) - band_ref_conv, 1e-7);
+    BOOST_CHECK_CLOSE(radiance2.data_ad().jacobian()(i, 1), 1 - gd(i)/ band_ref_conv, 1e-7);
   }
 }
 

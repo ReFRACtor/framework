@@ -1,4 +1,5 @@
 #include "radiance_scaling_sv_muses_fit.h"
+#include "polynomial_eval.h"
 #include "ostream_pad.h"
 #include "fp_serialize_support.h"
 #include <boost/lexical_cast.hpp>
@@ -30,6 +31,30 @@ void RadianceScalingSvMusesFit::apply_correction
   grid_ad.jacobian() = 0;
   SpectralDomain grid_sd(grid_ad, Pixel_grid.units());
   apply_scaling(grid_sd, Radiance);
+}
+
+void RadianceScalingSvMusesFit::apply_scaling
+(const SpectralDomain& Grid, SpectralRange& Radiance) const
+{
+  double band_ref_conv = band_ref.convert_wave(Unit("nm")).value;
+  if(Radiance.data_ad().number_variable() == 0) { 
+    Poly1d scaling_poly(scaling_coeff.value(), false);
+    Array<double, 1> gd = Grid.convert_wave(Unit("nm"));
+    for(int i = 0; i < Radiance.data().rows(); ++i) {
+      double scale_factor = scaling_poly(1 - gd(i) / band_ref_conv);
+      Radiance.data()(i) = Radiance.data()(i) * scale_factor + offset.value();
+    }
+
+  } else {
+    Poly1d scaling_poly(scaling_coeff, false);
+    ArrayAd<double, 1> gd = Grid.convert_wave_ad(Unit("nm"));
+
+    for(int i = 0; i < Radiance.data_ad().rows(); ++i) {
+      AutoDerivative<double> scale_factor = scaling_poly(1 - gd(i) / band_ref_conv);
+      Radiance.data_ad()(i) = Radiance.data_ad()(i) * scale_factor + offset;
+    }
+  }
+
 }
 
 boost::shared_ptr<InstrumentCorrection> RadianceScalingSvMusesFit::clone() const
