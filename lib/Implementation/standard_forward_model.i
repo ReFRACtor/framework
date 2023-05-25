@@ -5,22 +5,28 @@
 #include "standard_forward_model.h"
 #include "ils_instrument.h"
 #include "pressure.h"
+#include "spectrum.h"
 
 // Needed for type conversions in SWIG
 #include "sub_state_vector_array.h"
 %}
 %base_import(forward_model)
 %base_import(named_spectrum)
+%import "forward_model_spectral_grid.i"
 %import "instrument.i"
-%import "spectral_window.i"
 %import "radiative_transfer.i"
+%import "spectral_window.i"
+%import "spectrum.i"
 %import "spectrum_sampling.i"
 %import "spectrum_effect.i"
-%import "forward_model_spectral_grid.i"
 
 %fp_shared_ptr(FullPhysics::StandardForwardModel);
 
 namespace FullPhysics {
+
+// Allow these classes to be derived from in Python.
+%feature("director") StandardForwardModel;
+
 class StandardForwardModel : public ForwardModel,
    public Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> > {
 public:

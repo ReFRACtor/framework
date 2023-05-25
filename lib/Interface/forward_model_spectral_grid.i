@@ -20,6 +20,10 @@
 %fp_shared_ptr(FullPhysics::ForwardModelSpectralGrid);
 
 namespace FullPhysics {
+
+// Allow these classes to be derived from in Python.
+%feature("director") ForwardModelSpectralGrid;
+
 class ForwardModelSpectralGrid  : public GenericObject {
 public:
   ForwardModelSpectralGrid(
