@@ -27,6 +27,13 @@ namespace FullPhysics {
 // Allow these classes to be derived from in Python.
 %feature("director") StandardForwardModel;
 
+// Note, a class that is derived from in python needs to declare every virtual function that
+// can be called on it, even if all that happens is the base class
+// to a director is called. This is because this class is used to
+// create the SwigDirector class, and this class needs each of the member functions to
+// direct things properly. It is *not* necessary to add these function to the underlying
+// C++, only that you declare them here.
+  
 class StandardForwardModel : public ForwardModel,
    public Observable<boost::shared_ptr<FullPhysics::NamedSpectrum> > {
 public:
@@ -40,12 +47,17 @@ public:
   virtual ~StandardForwardModel();
   virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) 
     const;
+  virtual Spectrum radiance_all(bool skip_jacobian = false) const;
+  virtual void setup_grid();
+  virtual SpectralDomain spectral_domain(int channel_index) const;
   %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>)
   %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>)
   %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
   %python_attribute(spectrum_sampling, boost::shared_ptr<SpectrumSampling>)
   %python_attribute(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>)
+  %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
+  virtual int num_channels() const;
 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
