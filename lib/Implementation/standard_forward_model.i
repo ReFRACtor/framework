@@ -57,7 +57,7 @@ public:
   %python_attribute(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>)
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
-  virtual int num_channels() const;
+  %python_attribute(num_channels, virtual int)
 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
