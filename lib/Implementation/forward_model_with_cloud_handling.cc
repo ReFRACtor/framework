@@ -55,18 +55,18 @@ ForwardModelWithCloudHandling::ForwardModelWithCloudHandling
 }
 
 Spectrum ForwardModelWithCloudHandling::radiance
-(int channel_index, bool skip_jacobian) const
+(int sensor_index, bool skip_jacobian) const
 {
-  Logger::info() << "Computing Forward Model Clear Radiances: Channel" << (channel_index+1) << "\n";
+  Logger::info() << "Computing Forward Model Clear Radiances: Sensor index" << (sensor_index+1) << "\n";
   set_do_cloud(false);
-  Spectrum rclear = fmodel_->radiance(channel_index, skip_jacobian);
-  notify_spectrum_update(rclear, "clear", channel_index);
+  Spectrum rclear = fmodel_->radiance(sensor_index, skip_jacobian);
+  notify_spectrum_update(rclear, "clear", sensor_index);
   auto dclear = rclear.spectral_range().data_ad();
 
-  Logger::info() << "Computing Forward Model Cloudy Radiances: Channel" << (channel_index+1) << "\n";
+  Logger::info() << "Computing Forward Model Cloudy Radiances: Sensor index" << (sensor_index+1) << "\n";
   set_do_cloud(true);
-  Spectrum rcloud = fmodel_->radiance(channel_index, skip_jacobian);
-  notify_spectrum_update(rcloud, "cloud", channel_index);
+  Spectrum rcloud = fmodel_->radiance(sensor_index, skip_jacobian);
+  notify_spectrum_update(rcloud, "cloud", sensor_index);
   auto dcloud = rcloud.spectral_range().data_ad();
   set_do_cloud(false);
 
@@ -81,7 +81,7 @@ Spectrum ForwardModelWithCloudHandling::radiance
 
   Spectrum rcfrac(rclear.spectral_domain(),
                   SpectralRange(dcfrac, rclear.spectral_range().units()));
-  notify_spectrum_update(rcfrac, "cloud fraction", channel_index);
+  notify_spectrum_update(rcfrac, "cloud fraction", sensor_index);
 
   return rcfrac;
 }
@@ -103,8 +103,8 @@ void ForwardModelWithCloudHandling::set_do_cloud(bool do_cloud) const
     f->do_cloud(do_cloud);
 }
 
-void ForwardModelWithCloudHandling::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
+void ForwardModelWithCloudHandling::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const
 {
   if (olist.size() > 0)
-    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, sensor_index));
 }

@@ -30,7 +30,7 @@ public:
                           const std::vector<ArrayAd<double, 3> >& aerosol_pf_moments,
                           const int num_jacobians = -1);
   virtual void initialize(const DoubleWithUnit spectral_point,
-                          const int channel_index,
+                          const int sensor_index,
                           const boost::shared_ptr<Absorber>& absorber,
                           const boost::shared_ptr<Rayleigh>& rayleigh,
                           const boost::shared_ptr<Aerosol>& aerosol,

@@ -24,7 +24,7 @@ public:
   //-----------------------------------------------------------------------
 
   virtual AutoDerivativeWithUnit<double>
-  surface_temperature(int channel_index) const;
+  surface_temperature(int sensor_index) const;
   virtual boost::shared_ptr<SurfaceTemperature> clone() const;
 
   virtual std::string sub_state_identifier() const

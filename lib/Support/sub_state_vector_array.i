@@ -25,6 +25,7 @@ public:
   virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
   virtual void update_sub_state_hook();
   %python_attribute(coefficient, ArrayAd<double, 1>);
+  %python_attribute(mapped_state, ArrayAd<double, 1>);
   %python_attribute(state_mapping, const boost::shared_ptr<StateMapping>);
   %python_attribute(statevector_covariance, blitz::Array<double, 2>);
 protected:

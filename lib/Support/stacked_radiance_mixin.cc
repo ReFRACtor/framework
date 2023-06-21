@@ -23,16 +23,16 @@ void StackedRadianceMixin::serialize(Archive & ar,
 FP_IMPLEMENT(StackedRadianceMixin);
 #endif
 
-boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int channel_index) const
+boost::optional<Range> StackedRadianceMixin::stacked_pixel_range(int sensor_index) const
 {
-    range_check(channel_index, 0, num_channels());
+    range_check(sensor_index, 0, num_channels());
     int sind = 0;
 
-    for(int i = 0; i < channel_index; ++i) {
+    for(int i = 0; i < sensor_index; ++i) {
         sind += spectral_domain(i).data().rows();
     }
 
-    int nrow = spectral_domain(channel_index).data().rows();
+    int nrow = spectral_domain(sensor_index).data().rows();
 
     if(nrow > 0) {
         return boost::optional<Range>(Range(sind, sind + nrow - 1));

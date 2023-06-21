@@ -32,19 +32,19 @@ public:
    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect = 
 		  std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
   virtual ~StandardForwardModel();
-  virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) 
+  virtual Spectrum radiance(int sensor_index, bool Skip_jacobian = false) 
     const;
   %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>)
   %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>)
   %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
   %python_attribute(spectrum_sampling, boost::shared_ptr<SpectrumSampling>)
   %python_attribute(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>)
-  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
+  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const;
 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
 
-  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
 
   // vector of vector for SpectrumEffect is kind of a pain in
   // python. So just brute force a conversion.

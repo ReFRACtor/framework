@@ -55,7 +55,7 @@ void OssForwardModel::setup_grid() {
 
 }
 
-Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const {
+Spectrum OssForwardModel::radiance(int sensor_index, bool skip_jacobian) const {
     if (!is_setup) {
         throw Exception("Call setup_grid() to initialize before asking for radiances.");
     }
@@ -74,7 +74,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
         oss_temperature(i) = static_cast<float>(temperature_grid.value.value()(level_index));
     }
 
-    float oss_skin_temp = skin_temperature->surface_temperature(channel_index).convert(units::K).value.value();
+    float oss_skin_temp = skin_temperature->surface_temperature(sensor_index).convert(units::K).value.value();
 
     Array<float, 2> vmr_gas(vmr.size(), pressure->number_level());
     for (int gas_index = 0; gas_index < vmr.size(); gas_index++) {
@@ -86,7 +86,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
     Array<float, 1> oss_emiss(surface_grid.value.rows());
     for (int point_index = 0; point_index < surface_grid.value.rows(); point_index++) {
         oss_emiss(point_index) = static_cast<float>(ground->surface_parameter(
-                surface_grid.value(point_index), channel_index).value()(0));
+                surface_grid.value(point_index), sensor_index).value()(0));
     }
     Array<float, 1> oss_refl(1.0 - oss_emiss);
 
@@ -108,7 +108,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
             scale_cld, pressure_cld, ext_cld, oss_surface_grid,cld_grid,
             oss_obs_zen_ang, oss_sol_zen_ang, oss_lat, oss_surf_alt, lambertian);
 
-    boost::shared_ptr<OssModifiedOutputs> modified_outputs(oss_master->run_fwd_model(channel_index, modified_inputs));
+    boost::shared_ptr<OssModifiedOutputs> modified_outputs(oss_master->run_fwd_model(sensor_index, modified_inputs));
     cached_outputs = modified_outputs;
     Array<double, 1> rad(cast<double>(modified_outputs->y.value(Range::all())));
 
@@ -132,7 +132,7 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
                 // If we are not currently modeling the radiance for a given sensor channel
                 // then set the jacobians to zero since it still is part of the retrieval
                 // vector structure
-                if(channel_index == skin_temp_sensor_idx) {
+                if(sensor_index == skin_temp_sensor_idx) {
                     res.jacobian()(Range::all(), sv_idx) = modified_outputs->xk_tskin.value;
                 } else {
                     res.jacobian()(Range::all(), sv_idx) = 0.0;
@@ -171,8 +171,8 @@ Spectrum OssForwardModel::radiance(int channel_index, bool skip_jacobian) const 
 
     }
     res.value() = rad;
-    Spectrum convolved_spec(spectral_domain(channel_index), SpectralRange(res, Unit("W / (m^2 sr cm^{-1})")));
-    notify_spectrum_update(convolved_spec, "convolved", channel_index);
+    Spectrum convolved_spec(spectral_domain(sensor_index), SpectralRange(res, Unit("W / (m^2 sr cm^{-1})")));
+    notify_spectrum_update(convolved_spec, "convolved", sensor_index);
     return convolved_spec;
 }
 
@@ -185,8 +185,8 @@ void OssForwardModel::setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>
 }
 
 
-void OssForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
+void OssForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const
 {
   if (olist.size() > 0)
-    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, sensor_index));
 }

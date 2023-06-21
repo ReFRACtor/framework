@@ -20,8 +20,8 @@ public:
   std::string print_to_string() const;
   virtual void setup_grid();
   %python_attribute(num_channels, virtual int)
-  virtual SpectralDomain spectral_domain(int channel_index) const;
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index) const;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
 };
 }

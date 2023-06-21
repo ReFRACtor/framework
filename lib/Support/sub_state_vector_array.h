@@ -112,12 +112,23 @@ public:
   virtual void update_sub_state_hook()
   {
   }
+
+  //-----------------------------------------------------------------------
+  /// The retrieval view of the coefficients.
+  //-----------------------------------------------------------------------
   
   const ArrayAd<double, 1>& coefficient() const
   {
     return coeff;
   }
 
+  //-----------------------------------------------------------------------
+  /// The forward model view of the coefficients with the mapping applied.
+  //-----------------------------------------------------------------------
+
+  ArrayAd<double, 1> mapped_state() const
+  { return state_mapping()->mapped_state(coefficient()); }
+  
   virtual ArrayAd<double, 1> sub_state_vector_values() const
   {
     return coeff;

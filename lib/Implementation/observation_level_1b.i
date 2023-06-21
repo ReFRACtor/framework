@@ -20,9 +20,9 @@ public:
 
     int num_channels() const;
 
-    SpectralDomain spectral_domain(int channel_index) const;
+    SpectralDomain spectral_domain(int sensor_index) const;
 
-    Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+    Spectrum radiance(int sensor_index, bool skip_jacobian = false) const;
 
     %pickle_serialization();
 };

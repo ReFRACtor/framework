@@ -43,13 +43,13 @@ public:
     return swin->number_spectrometer();
   }
 
-  virtual SpectralDomain spectral_domain(int channel_index) const
+  virtual SpectralDomain spectral_domain(int sensor_index) const
   {
     if(!g) {
       throw Exception ("setup_grid needs to be called before calling spectral_domain");
     }
 
-    return g->low_resolution_grid(channel_index);
+    return g->low_resolution_grid(sensor_index);
   }
 
   virtual SpectralDomain::TypePreference spectral_domain_type_preference() const
@@ -57,7 +57,7 @@ public:
     return inst->pixel_spectral_domain(0).type_preference();
   }
 
-  virtual Spectrum radiance(int channel_index, bool Skip_jacobian = false) const;
+  virtual Spectrum radiance(int sensor_index, bool Skip_jacobian = false) const;
 
   virtual void print(std::ostream& Os) const;
 
@@ -106,7 +106,7 @@ public:
     spectrum_sampling_ = V;
   }
 
-  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const;
+  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const;
 
   const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grid() const
   {
@@ -124,7 +124,7 @@ public:
     remove_observer_do(Obs);
   }
 
-  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
 
   virtual std::vector<boost::shared_ptr<GenericObject> >
   subobject_list() const;

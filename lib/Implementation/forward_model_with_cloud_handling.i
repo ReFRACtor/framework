@@ -63,11 +63,11 @@ public:
   cloud_handling_vector() const; 
   void add_cloud_handling_object 
   (const boost::shared_ptr<GenericObjectWithCloudHandling> & Obj); 
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const; 
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const; 
   void set_do_cloud(bool do_cloud) const; 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
-  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
   %python_attribute(underlying_forward_model, boost::shared_ptr<ForwardModel>); 
   %python_attribute(cloud_fraction, boost::shared_ptr<CloudFraction>); 
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >); 

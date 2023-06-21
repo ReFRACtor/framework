@@ -29,10 +29,10 @@ public:
   virtual DoubleWithUnit sounding_azimuth(int i) const;
   virtual blitz::Array<double, 1> stokes_coefficient(int i) const;
   virtual DoubleWithUnit relative_velocity(int i) const;
-  virtual int number_sample(int channel_index) const;
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int channel_index)
+  virtual int number_sample(int sensor_index) const;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int sensor_index)
     const;
-  virtual blitz::Array<double, 1> spectral_variable(int channel_index)
+  virtual blitz::Array<double, 1> spectral_variable(int sensor_index)
     const;
   Time time(int i) const;
   SpectralRange radiance(int Spec_index) const;

@@ -58,9 +58,9 @@ REGISTER_LUA_END()
 
 #endif
 
-SpectralDomain Level1bSampleCoefficient::sample_grid(int channel_index) const {
-    ArrayWithUnit<double, 1> spec_coeffs = this->spectral_coefficient(channel_index);
-    Array<double, 1> var_values = this->spectral_variable(channel_index);
+SpectralDomain Level1bSampleCoefficient::sample_grid(int sensor_index) const {
+    ArrayWithUnit<double, 1> spec_coeffs = this->spectral_coefficient(sensor_index);
+    Array<double, 1> var_values = this->spectral_variable(sensor_index);
 
     Poly1d spectral_poly = Poly1d(spec_coeffs.value, false);
     SpectralDomain sample_grid = SpectralDomain(spectral_poly(var_values), spec_coeffs.units);

@@ -63,21 +63,21 @@ StandardForwardModel::StandardForwardModel(
 
 // See bass class for description.
 Spectrum StandardForwardModel::radiance
-(int channel_index, bool Skip_jacobian) const
+(int sensor_index, bool Skip_jacobian) const
 {
     if(!g) {
         throw Exception ("setup_grid needs to be called before calling radiance");
     }
 
-    range_check(channel_index, 0, num_channels());
+    range_check(sensor_index, 0, num_channels());
     Spectrum highres_spec =
-        rt->reflectance(g->high_resolution_grid(channel_index), channel_index,
+        rt->reflectance(g->high_resolution_grid(sensor_index), sensor_index,
                         Skip_jacobian);
-    notify_spectrum_update(highres_spec, "high_res_rt", channel_index);
+    notify_spectrum_update(highres_spec, "high_res_rt", sensor_index);
 
-    Spectrum convolved_spec = apply_spectrum_corrections(highres_spec, channel_index);
+    Spectrum convolved_spec = apply_spectrum_corrections(highres_spec, sensor_index);
 
-    notify_spectrum_update(convolved_spec, "convolved", channel_index);
+    notify_spectrum_update(convolved_spec, "convolved", sensor_index);
    
     return convolved_spec;
 }
@@ -89,31 +89,31 @@ Spectrum StandardForwardModel::radiance
 /// * Application of instrument model
 //-----------------------------------------------------------------------
 
-Spectrum StandardForwardModel::apply_spectrum_corrections(const Spectrum& highres_spec, int channel_index) const
+Spectrum StandardForwardModel::apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const
 {
     if(!g) {
         throw Exception ("setup_grid needs to be called before calling apply_spectrum_corrections");
     }
 
     Spectrum highres_spec_intepolated =
-        g->interpolate_spectrum(highres_spec, channel_index);
-    notify_spectrum_update(highres_spec_intepolated, "high_res_interpolated", channel_index);
+        g->interpolate_spectrum(highres_spec, sensor_index);
+    notify_spectrum_update(highres_spec_intepolated, "high_res_interpolated", sensor_index);
 
-    BOOST_FOREACH(const boost::shared_ptr<SpectrumEffect>& i, spec_effect[channel_index]) {
+    BOOST_FOREACH(const boost::shared_ptr<SpectrumEffect>& i, spec_effect[sensor_index]) {
         if (i) {
             i->apply_effect(highres_spec_intepolated, *g);
-            notify_spectrum_update(highres_spec_intepolated, "high_res_spec_effect_" + i->name(), channel_index);
+            notify_spectrum_update(highres_spec_intepolated, "high_res_spec_effect_" + i->name(), sensor_index);
         }
     }
 
     return inst->apply_instrument_model(highres_spec_intepolated,
-                                        g->pixel_list(channel_index), channel_index);
+                                        g->pixel_list(sensor_index), sensor_index);
 }
 
-void StandardForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const
+void StandardForwardModel::notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const
 {
   if (olist.size() > 0)
-    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, channel_index));
+    notify_update_do(boost::make_shared<NamedSpectrum>(updated_spec, spec_name, sensor_index));
 }
 
 void StandardForwardModel::print(std::ostream& Os) const

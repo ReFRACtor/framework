@@ -63,7 +63,7 @@ public:
   RamanSiorisEffect(const SpectralDomain&
                     Solar_and_odepth_spec_domain,
                     double scale_factor,
-                    int channel_index, 
+                    int sensor_index, 
                     const DoubleWithUnit& solar_zenith, 
                     const DoubleWithUnit& observation_zenith, 
                     const DoubleWithUnit& relative_azimuth,
@@ -86,10 +86,10 @@ public:
   virtual boost::shared_ptr<SpectrumEffect> clone() const;
 
   virtual std::string sub_state_identifier() const 
-  { return "raman_sioris_" + boost::lexical_cast<std::string>(channel_index_ + 1); }
+  { return "raman_sioris_" + boost::lexical_cast<std::string>(sensor_index_ + 1); }
 
   virtual std::string state_vector_name_i(int UNUSED(i)) const
-  { return "Raman Sioris Scale Factor, Channel #" + boost::lexical_cast<std::string>(channel_index_ + 1); }
+  { return "Raman Sioris Scale Factor, Channel #" + boost::lexical_cast<std::string>(sensor_index_ + 1); }
 
   virtual void print(std::ostream& Os) const;
 
@@ -114,7 +114,7 @@ private:
   SpectralDomain solar_and_odepth_spec_domain_;
   blitz::Array<double, 1> solar_and_odepth_wn_grid_;
 
-  int channel_index_;
+  int sensor_index_;
   bool do_upwelling_;
 
   double solar_zenith_;

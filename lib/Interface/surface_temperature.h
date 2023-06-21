@@ -33,7 +33,7 @@ public:
   /// the temperature grid.
   //-----------------------------------------------------------------------
 
-  virtual AutoDerivativeWithUnit<double> surface_temperature(int channel_index) const = 0;
+  virtual AutoDerivativeWithUnit<double> surface_temperature(int sensor_index) const = 0;
 
   //-----------------------------------------------------------------------
   /// Clone a SurfaceTemperature object. Note that the cloned version will *not*

@@ -122,11 +122,11 @@ public:
   virtual ~ForwardModelWithCloudHandling() {}
   virtual void setup_grid() { fmodel_->setup_grid(); }
   virtual int num_channels() const { return fmodel_->num_channels(); }
-  virtual SpectralDomain spectral_domain(int channel_index) const
-  { return fmodel_->spectral_domain(channel_index); }
+  virtual SpectralDomain spectral_domain(int sensor_index) const
+  { return fmodel_->spectral_domain(sensor_index); }
   virtual SpectralDomain::TypePreference spectral_domain_type_preference()
     const { return fmodel_->spectral_domain_type_preference(); }
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false)
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
     const;
   virtual void print(std::ostream& Os) const;
 
@@ -165,7 +165,7 @@ public:
     remove_observer_do(Obs);
   }
 
-  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+  void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
 
   //-----------------------------------------------------------------------
 /// We have some fairly nested object hierarchies. It can be useful to

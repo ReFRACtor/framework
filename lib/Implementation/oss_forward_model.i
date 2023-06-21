@@ -42,12 +42,12 @@ public:
     virtual int num_channels() const;
     virtual SpectralDomain spectral_domain(int Spec_index) const;
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
-    virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+    virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const;
     virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const;
     virtual void add_observer(Observer<boost::shared_ptr<NamedSpectrum> > & Obs);
     virtual void remove_observer(Observer<boost::shared_ptr<NamedSpectrum> >& Obs);
-    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;    
+    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;    
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;
     mutable boost::shared_ptr<OssModifiedOutputs> cached_outputs;

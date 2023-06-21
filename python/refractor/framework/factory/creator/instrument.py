@@ -255,7 +255,7 @@ class InstrumentCorrectionList(Creator):
             for correction_name in self.corrections():
                 # Dynamically request a InstrumentCorrection object for the desired name for the desired instrument channel index
                 self.register_parameter(correction_name, param.InstanceOf(rf.InstrumentCorrection))
-                per_channel_corr.push_back(self.param(correction_name, channel_index=chan_index, channel_name=channel_names[chan_index]))
+                per_channel_corr.push_back(self.param(correction_name, sensor_index=chan_index, channel_name=channel_names[chan_index]))
 
             inst_corr.push_back(per_channel_corr)
 
@@ -276,7 +276,7 @@ class EmpiricalOrthogonalFunction(Creator):
     uncertainty = param.Iterable(rf.ArrayWithUnit_double_1, required=False)
     scale_to_stddev = param.Scalar(float, required=False)
 
-    def create(self, channel_index=None, channel_name=None, **kwargs):
+    def create(self, sensor_index=None, channel_name=None, **kwargs):
 
         scale_factors = self.scale_factors()
         sounding_number = self.sounding_number()
@@ -297,24 +297,24 @@ class EmpiricalOrthogonalFunction(Creator):
         eof_hdf = rf.HdfFile(self.eof_file())
         
         if (scale_uncertainty):
-            return rf.EmpiricalOrthogonalFunction(scale_factors[channel_index], eof_hdf, uncertainty[channel_index],
-                    channel_index, sounding_number, order, channel_name, hdf_group, scale_to_stddev)
+            return rf.EmpiricalOrthogonalFunction(scale_factors[sensor_index], eof_hdf, uncertainty[sensor_index],
+                    sensor_index, sounding_number, order, channel_name, hdf_group, scale_to_stddev)
         else:
-            eof_obj = rf.EmpiricalOrthogonalFunction(scale_factors[channel_index], 
-                eof_hdf, channel_index, sounding_number, order, channel_name, hdf_group)
+            eof_obj = rf.EmpiricalOrthogonalFunction(scale_factors[sensor_index], 
+                eof_hdf, sensor_index, sounding_number, order, channel_name, hdf_group)
 
 class RadianceScaling(Creator):
 
     scaling_params = param.Array(dims=2)
     band_reference = param.ArrayWithUnit(dims=1)
 
-    def create(self, channel_index=None, channel_name=None, **kwargs):
+    def create(self, sensor_index=None, channel_name=None, **kwargs):
 
         params = self.scaling_params()
         band_ref = self.band_reference()
         band_name = self.desc_band_name()
 
-        return rf.RadianceScalingSvFit(params[channel_index, :], band_ref[channel_index], channel_name)
+        return rf.RadianceScalingSvFit(params[sensor_index, :], band_ref[sensor_index], channel_name)
 
 
 class ApplyInstrumentUnits(Creator):
@@ -322,6 +322,6 @@ class ApplyInstrumentUnits(Creator):
     units = param.InstanceOf(rf.Unit)
     scale_factor = param.Scalar(float)
 
-    def create(self, channel_index=None, channel_name=None, **kwargs):
+    def create(self, sensor_index=None, channel_name=None, **kwargs):
 
        return rf.ApplyInstrumentUnits(self.units(), self.scale_factor())

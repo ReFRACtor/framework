@@ -212,10 +212,10 @@ double PCARt::bin_effective_wavenumber(const Array<double, 1> &win_wavenumbers, 
     return avg_wn;
 }
 
-Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEigenSolver>& pca_solver, boost::shared_ptr<PCABinOpticalProperties>& bin_opt_props, double bin_wn, int channel_index) const
+Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEigenSolver>& pca_solver, boost::shared_ptr<PCABinOpticalProperties>& bin_opt_props, double bin_wn, int sensor_index) const
 {
-    Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
-    Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+    Array<double, 1> lidort_mean(lidort_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->mean));
+    Array<double, 1> twostream_mean(twostream_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->mean));
 
     // Compute bin mean plus eof and mean minus eof intensity from each RT
     Array<double, 2> lidort_plus(num_eofs, number_stokes());
@@ -229,21 +229,21 @@ Array<double, 2> PCARt::compute_bin_correction_factors(boost::shared_ptr<PCAEige
     Array<double, 2> first_order_minus;
 
     if (do_3m_correction) { 
-        first_order_mean.reference(first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->mean));
+        first_order_mean.reference(first_order_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->mean));
         first_order_plus.resize(num_eofs, number_stokes());
         first_order_minus.resize(num_eofs, number_stokes());
     }
 
     for(int eof_idx = 0; eof_idx < num_eofs; eof_idx++) {
-        lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
-        lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+        lidort_plus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_plus[eof_idx]);
+        lidort_minus(eof_idx, Range::all()) = lidort_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_minus[eof_idx]);
 
-        twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
-        twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+        twostream_plus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_plus[eof_idx]);
+        twostream_minus(eof_idx, Range::all()) = twostream_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_minus[eof_idx]);
 
         if (do_3m_correction) { 
-          first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_plus[eof_idx]);
-          first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, channel_index, bin_opt_props->eof_minus[eof_idx]);
+          first_order_plus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_plus[eof_idx]);
+          first_order_minus(eof_idx, Range::all()) = first_order_rt->stokes_single_wn(bin_wn, sensor_index, bin_opt_props->eof_minus[eof_idx]);
         }
     }
 

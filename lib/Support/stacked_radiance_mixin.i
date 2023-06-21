@@ -16,9 +16,9 @@ namespace FullPhysics {
 class StackedRadianceMixin : public GenericObject {
 public:
   virtual int num_channels() const = 0;
-  virtual SpectralDomain spectral_domain(int channel_index) const = 0;
-  boost::optional<blitz::Range> stacked_pixel_range(int Spec_index) const;
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false)
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
     const = 0;
   virtual Spectrum radiance_all(bool skip_jacobian = false) const;
   std::string print_to_string() const;

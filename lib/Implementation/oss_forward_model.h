@@ -43,7 +43,7 @@ public:
     virtual SpectralDomain::TypePreference spectral_domain_type_preference() const {
         return SpectralDomain::PREFER_WAVENUMBER;
     }
-    virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+    virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const;
     virtual void setup_retrieval(const boost::shared_ptr<OssRetrievalFlags>& Retrieval_flags);
     virtual void print(std::ostream& Os) const { Os << "OssForwardModel"; }
 
@@ -58,7 +58,7 @@ public:
         remove_observer_do(Obs);
     }
 
-    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int channel_index) const;
+    void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
 
     boost::shared_ptr<OssFixedInputs> fixed_inputs;
     boost::shared_ptr<OssMasters> oss_master;

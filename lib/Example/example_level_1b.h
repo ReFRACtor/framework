@@ -63,7 +63,7 @@ public:
   { return read_array_with_unit(group_name + "/spectral_coefficient", i,
 				units::micron); }
 
-  virtual blitz::Array<double, 1> spectral_variable(int channel_index) const;
+  virtual blitz::Array<double, 1> spectral_variable(int sensor_index) const;
 
   virtual void print(std::ostream& Os) const { Os << "ExampleL1b"; };
 

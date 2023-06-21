@@ -28,9 +28,9 @@ SurfaceTemperatureDirect::SurfaceTemperatureDirect(const ArrayWithUnit<double, 1
     init(surf_temp.value);
 }
 
-AutoDerivativeWithUnit<double> SurfaceTemperatureDirect::surface_temperature(int channel_index) const
+AutoDerivativeWithUnit<double> SurfaceTemperatureDirect::surface_temperature(int sensor_index) const
 {
-    return AutoDerivativeWithUnit<double>(coeff(channel_index), units);
+    return AutoDerivativeWithUnit<double>(coeff(sensor_index), units);
 }
 
 boost::shared_ptr<SurfaceTemperature> SurfaceTemperatureDirect::clone() const

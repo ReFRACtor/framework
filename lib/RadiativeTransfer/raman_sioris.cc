@@ -21,7 +21,7 @@ void RamanSiorisEffect::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpectrumEffectImpBase)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
-    & FP_NVP_(solar_and_odepth_spec_domain) & FP_NVP_(channel_index)
+    & FP_NVP_(solar_and_odepth_spec_domain) & FP_NVP_(sensor_index)
     & FP_NVP_(do_upwelling) & FP_NVP_(solar_zenith)
     & FP_NVP_(obs_zenith) & FP_NVP_(relative_azimuth)
     & FP_NVP_(scattering_angle) & FP_NVP_(atmosphere)
@@ -192,7 +192,7 @@ Array<double, 1> FullPhysics::compute_raman_sioris(double solar_zenith, double v
 RamanSiorisEffect::RamanSiorisEffect
 (const SpectralDomain& Solar_and_odepth_spec_domain,
  double scale_factor,
- int channel_index,
+ int sensor_index,
  const DoubleWithUnit& solar_zenith, 
  const DoubleWithUnit& observation_zenith, 
  const DoubleWithUnit& relative_azimuth,
@@ -202,7 +202,7 @@ RamanSiorisEffect::RamanSiorisEffect
  bool do_upwelling)
 : 
   solar_and_odepth_spec_domain_(Solar_and_odepth_spec_domain),
-  channel_index_(channel_index),
+  sensor_index_(sensor_index),
   do_upwelling_(do_upwelling),
   atmosphere_(atmosphere),
   solar_model_(solar_model)
@@ -240,7 +240,7 @@ RamanSiorisEffect::RamanSiorisEffect
 void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)) const
 {
     double wn_middle = (solar_and_odepth_wn_grid_(0) + solar_and_odepth_wn_grid_(solar_and_odepth_wn_grid_.rows() - 1)) / 2;
-    double albedo = evaluate_albedo(wn_middle, channel_index_);
+    double albedo = evaluate_albedo(wn_middle, sensor_index_);
 
     apply_raman_effect(Spec, temperature_layers_, albedo);
 }
@@ -257,13 +257,13 @@ void RamanSiorisEffect::apply_raman_effect(Spectrum& Spec, const blitz::Array<do
     secondIndex i2;
 
     // Convert dry air number density to the necessary units of molecules/cm^2
-    Array<double, 1> dry_air_density = atmosphere_->absorber_ptr()->total_air_number_density_layer(channel_index_).convert(Unit("cm^-2")).value.value();
+    Array<double, 1> dry_air_density = atmosphere_->absorber_ptr()->total_air_number_density_layer(sensor_index_).convert(Unit("cm^-2")).value.value();
 
     // Compute total optical depth
     Array<double, 2> total_optical_depth(solar_and_odepth_wn_grid_.rows(), temp_layers.rows());
 
     for(int wn_idx = 0; wn_idx < solar_and_odepth_wn_grid_.rows(); wn_idx++) {
-        total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), channel_index_)->total_optical_depth().value();
+        total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), sensor_index_)->total_optical_depth().value();
     }
     
     // Absolute magnitude of the solar spectrum doesn't matter (we
@@ -357,7 +357,7 @@ boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
 
     return boost::make_shared<RamanSiorisEffect>
       (solar_and_odepth_spec_domain_, coefficient().value()(0),
-       channel_index_,
+       sensor_index_,
        DoubleWithUnit(solar_zenith_, units::deg),
        DoubleWithUnit(obs_zenith_, units::deg),
        DoubleWithUnit(relative_azimuth_, units::deg),

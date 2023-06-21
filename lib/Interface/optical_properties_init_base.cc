@@ -75,7 +75,7 @@ void OpticalPropertiesInitBase::initialize(const ArrayAd<double, 1>& rayleigh_od
 //-----------------------------------------------------------------------
 
 void OpticalPropertiesInitBase::initialize(const DoubleWithUnit spectral_point,
-                                           const int channel_index,
+                                           const int sensor_index,
                                            const boost::shared_ptr<Absorber>& absorber,
                                            const boost::shared_ptr<Rayleigh>& rayleigh,
                                            const boost::shared_ptr<Aerosol>& aerosol,
@@ -84,10 +84,10 @@ void OpticalPropertiesInitBase::initialize(const DoubleWithUnit spectral_point,
 
     double wn = spectral_point.convert_wave(units::inv_cm).value;
 
-    ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, channel_index));
+    ArrayAd<double, 1> rayleigh_od(rayleigh->optical_depth_each_layer(wn, sensor_index));
     ArrayAd<double, 2> gas_od;
     if(absorber->number_species() > 0)
-      gas_od.reference(absorber->optical_depth_each_layer(wn, channel_index));
+      gas_od.reference(absorber->optical_depth_each_layer(wn, sensor_index));
 
     ArrayAd<double, 2> aerosol_ext_od;
     ArrayAd<double, 2> aerosol_sca_od;

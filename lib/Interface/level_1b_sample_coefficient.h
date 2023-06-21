@@ -32,7 +32,7 @@ public:
 //  a given instrument channel
 //-----------------------------------------------------------------------
 
-  virtual int number_sample(int channel_index) const = 0;
+  virtual int number_sample(int sensor_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Returns coefficients for an equation describing the special domain
@@ -42,7 +42,7 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual ArrayWithUnit<double, 1> spectral_coefficient(int channel_index) const = 0;
+  virtual ArrayWithUnit<double, 1> spectral_coefficient(int sensor_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Return the spectral coefficient variable values that should be 
@@ -50,7 +50,7 @@ public:
 /// a zero based or one based indexing of the samples.
 //-----------------------------------------------------------------------
 
-  virtual blitz::Array<double, 1> spectral_variable(int channel_index) const = 0;
+  virtual blitz::Array<double, 1> spectral_variable(int sensor_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// Returns the sample grid (ie wavenumber, wavelength, etc) for the
@@ -59,7 +59,7 @@ public:
 /// that measured the data.
 //-----------------------------------------------------------------------
 
-  virtual SpectralDomain sample_grid(int channel_index) const;
+  virtual SpectralDomain sample_grid(int sensor_index) const;
 
 //-----------------------------------------------------------------------
 /// Print description of object.

@@ -14,7 +14,7 @@ public:
   FdForwardModel(const boost::shared_ptr<ForwardModel>& Real_Forward_model,
   		 const boost::shared_ptr<StateVector>& Sv,
   		 const blitz::Array<double, 1>& Perturbation);
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const;
   %python_attribute(state_vector, boost::shared_ptr<StateVector>);
   %pickle_serialization();
 };

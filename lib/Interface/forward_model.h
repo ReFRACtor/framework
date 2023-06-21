@@ -32,7 +32,7 @@ public:
   /// empty.
   //-----------------------------------------------------------------------
 
-  virtual SpectralDomain spectral_domain(int channel_index) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
 
   //-----------------------------------------------------------------------
   /// Type preference for spectral domain. This may seem an odd thing to
@@ -44,13 +44,13 @@ public:
   //-----------------------------------------------------------------------
   /// Spectrum for the given spectral band. Note that this may be empty.
   ///
-  /// \param channel_index Band to give value for
+  /// \param sensor_index Band to give value for
   /// \param skip_jacobian If true, don't do the Jacobian
   /// calculation. Often this is significantly faster to calculate.
   /// \return The set of radiances, possibly empty.
   //-----------------------------------------------------------------------
 
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false) const = 0;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
 
   virtual void print(std::ostream& Os) const
   {

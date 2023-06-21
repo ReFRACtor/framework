@@ -169,9 +169,9 @@ SpectralBound SpectralWindowRange::spectral_bound() const
 // See base class for a description.
 
 std::vector<int>
-SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int channel_index) const
+SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int sensor_index) const
 {
-    range_check(channel_index, 0, number_spectrometer());
+    range_check(sensor_index, 0, number_spectrometer());
     std::vector<int> res;
     Array<double, 1> g;
 
@@ -191,10 +191,10 @@ SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int channel_index)
 
         // Check if sample is bad first, if it is not then check if
         // it falls within the spectral ranges
-        if(bad_sample_mask_.size() == 0 || !bad_sample_mask_[channel_index](samp_idx)) {
+        if(bad_sample_mask_.size() == 0 || !bad_sample_mask_[sensor_index](samp_idx)) {
             for(int win_idx = 0; win_idx < range_.value.cols(); ++win_idx) {
-                if( g(samp_idx) >= range_.value(channel_index, win_idx, 0) &&
-                    g(samp_idx) <= range_.value(channel_index, win_idx, 1)) {
+                if( g(samp_idx) >= range_.value(sensor_index, win_idx, 0) &&
+                    g(samp_idx) <= range_.value(sensor_index, win_idx, 1)) {
 
                     ok = true;
                 }

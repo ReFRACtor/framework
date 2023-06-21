@@ -38,18 +38,18 @@ int ObservationLevel1b::num_channels() const
     return grids->number_spectrometer();
 }
 
-SpectralDomain ObservationLevel1b::spectral_domain(int channel_index) const
+SpectralDomain ObservationLevel1b::spectral_domain(int sensor_index) const
 {
-    return grids->low_resolution_grid(channel_index);
+    return grids->low_resolution_grid(sensor_index);
 }
 
-Spectrum ObservationLevel1b::radiance(int channel_index, bool skip_jacobian) const
+Spectrum ObservationLevel1b::radiance(int sensor_index, bool skip_jacobian) const
 {
-    range_check(channel_index, 0, num_channels());
+    range_check(sensor_index, 0, num_channels());
 
-    Spectrum full(inst->pixel_spectral_domain(channel_index), l1b->radiance(channel_index));
+    Spectrum full(inst->pixel_spectral_domain(sensor_index), l1b->radiance(sensor_index));
 
-    const std::vector<int>& plist = grids->pixel_list(channel_index);
+    const std::vector<int>& plist = grids->pixel_list(sensor_index);
     Array<double, 1> res_d((int) plist.size());
 
     int num_jac;

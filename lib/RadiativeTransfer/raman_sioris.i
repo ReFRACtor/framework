@@ -40,7 +40,7 @@ class RamanSiorisEffect : public SpectrumEffectImpBase,
 public:
   RamanSiorisEffect(const SpectralDomain& Solar_and_odepth_spec_domain,
                     double scale_factor,
-                    int channel_index, 
+                    int sensor_index, 
                     const DoubleWithUnit& solar_zenith, 
                     const DoubleWithUnit& observation_zenith, 
                     const DoubleWithUnit& relative_azimuth,

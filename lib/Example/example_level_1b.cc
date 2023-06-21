@@ -64,9 +64,9 @@ int ExampleLevel1b::number_sample(int Spec_index) const
 }
 
 blitz::Array<double, 1> ExampleLevel1b::spectral_variable
-(int channel_index) const
+(int sensor_index) const
 { 
-  blitz::Array<double, 1> var_vals(number_sample(channel_index));
+  blitz::Array<double, 1> var_vals(number_sample(sensor_index));
   blitz::firstIndex i1; 
   var_vals = i1 + 1;
   return var_vals;

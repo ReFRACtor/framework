@@ -23,7 +23,7 @@ public:
 /// inheriting class
 //-----------------------------------------------------------------------
   
-  virtual SpectralDomain spectral_domain(int channel_index) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
 
 //-----------------------------------------------------------------------
 /// The range of indicies that corresponds to a particular
@@ -36,14 +36,14 @@ public:
 /// empty.
 //-----------------------------------------------------------------------
   
-  virtual boost::optional<blitz::Range> stacked_pixel_range(int channel_index)
+  virtual boost::optional<blitz::Range> stacked_pixel_range(int sensor_index)
     const;
 
 //-----------------------------------------------------------------------
 /// Per channel radiance data, implemented by inheriting class
 //-----------------------------------------------------------------------
 
-  virtual Spectrum radiance(int channel_index, bool skip_jacobian = false)
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
     const = 0;
 
 //-----------------------------------------------------------------------

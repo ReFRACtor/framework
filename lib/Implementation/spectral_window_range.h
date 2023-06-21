@@ -50,7 +50,7 @@ public:
 
   virtual SpectralBound spectral_bound() const;
 
-  virtual std::vector<int> grid_indexes(const SpectralDomain& Grid, int channel_index) const;
+  virtual std::vector<int> grid_indexes(const SpectralDomain& Grid, int sensor_index) const;
 
   void print(std::ostream& Os) const;
 
@@ -64,19 +64,19 @@ public:
     range_ = Ran;
   }
 
-  const blitz::Array<bool, 1>& bad_sample_mask(int channel_index) const
+  const blitz::Array<bool, 1>& bad_sample_mask(int sensor_index) const
   {
-    if (channel_index < 0 || channel_index >= (int) bad_sample_mask_.size()) {
+    if (sensor_index < 0 || sensor_index >= (int) bad_sample_mask_.size()) {
       Exception err;
-      err << "Bad channel index " << channel_index << ", out of range of bad sample mask size: "
+      err << "Bad sensor index " << sensor_index << ", out of range of bad sample mask size: "
 	  << bad_sample_mask_.size();
       throw err;
     }
 
-    return bad_sample_mask_[channel_index];
+    return bad_sample_mask_[sensor_index];
   }
 
-  void bad_sample_mask(const blitz::Array<bool, 1>& M, int channel_index)
+  void bad_sample_mask(const blitz::Array<bool, 1>& M, int sensor_index)
   {
     // Populate with empty arrays for all channels
     if (bad_sample_mask_.size() == 0) {
@@ -85,7 +85,7 @@ public:
       }
     }
 
-    bad_sample_mask_[channel_index].reference(M.copy());
+    bad_sample_mask_[sensor_index].reference(M.copy());
   }
 
 private:

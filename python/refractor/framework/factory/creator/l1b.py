@@ -23,7 +23,7 @@ class ValueFromLevel1b(Creator):
         'number_sample',
     ]
 
-    # Fields that can become ArrayWithUnit if no channel_index supplied
+    # Fields that can become ArrayWithUnit if no sensor_index supplied
     array_with_unit_fields = [
         'latitude',
         'longitude',
@@ -73,7 +73,7 @@ class ValueFromLevel1b(Creator):
         else:
             raise param.ParamError("Unhandled return value size from L1b class")
 
-    def create(self, channel_index=None, **kwargs):
+    def create(self, sensor_index=None, **kwargs):
         field_val = getattr(self.l1b(), self.field(), None)
 
         if field_val is None:
@@ -82,8 +82,8 @@ class ValueFromLevel1b(Creator):
         if np.isscalar(field_val):
             return np.full(1, field_val)
         elif callable(field_val):
-            if channel_index is not None:
-                return field_val(channel_index)
+            if sensor_index is not None:
+                return field_val(sensor_index)
             elif self.field() in self.array_with_unit_fields:
                 return self._as_array_with_unit(field_val)
             elif self.field() in self.array_fields:
@@ -100,7 +100,7 @@ class RelativeAzimuthFromLevel1b(Creator):
 
     l1b = param.InstanceOf(rf.Level1b)
 
-    def create(self, channel_index=None, **kwargs):
+    def create(self, sensor_index=None, **kwargs):
         # Azimuth is modified because the convention used by the OCO L1B file is to
         # take both solar and observation angles as viewed from an observer
         # standing in the FOV.  In this convention, the convention for glint
