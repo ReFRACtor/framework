@@ -39,8 +39,8 @@ set(DIR_SOURCES
     level_1b_sample_coefficient.cc
     max_a_posteriori.cc
     max_likelihood.cc
-    measured_radiance_field.cc
-    measured_radiance_field_imp_base.cc
+    observation_sv.cc
+    observation_sv_imp_base.cc
     meteorology.cc
     model_measure.cc
     model_state.cc

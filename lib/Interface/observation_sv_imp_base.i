@@ -1,24 +1,24 @@
 %include "fp_common.i"
 
 %{
-#include "measured_radiance_field_imp_base.h"
+#include "observation_sv_imp_base.h"
 %}
 
 %base_import(state_vector)
 %base_import(sub_state_vector_array)
-%base_import(measured_radiance_field)
+%base_import(observation_sv)
 %base_import(state_mapping)
 %base_import(state_mapping_linear)
 %import "state_mapping_linear.i"
 
-%fp_shared_ptr(FullPhysics::MeasuredRadianceFieldImpBase);
-%fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::MeasuredRadianceField>);
+%fp_shared_ptr(FullPhysics::ObservationSvImpBase);
+%fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::ObservationSv>);
 namespace FullPhysics {
-%template(SubStateVectorArrayMeasuredRadianceField) 
-     FullPhysics::SubStateVectorArray<MeasuredRadianceField>;
+%template(SubStateVectorArrayObservationSv) 
+     FullPhysics::SubStateVectorArray<ObservationSv>;
 
 // Allow these classes to be derived from in Python.
-%feature("director") MeasuredRadianceFieldImpBase;
+%feature("director") ObservationSvImpBase;
 
 // Note, at least for SWIG 2.0.4 a class that is derived from in python 
 // needs to declare every virtual function that can be called on it, even 
@@ -36,16 +36,20 @@ namespace FullPhysics {
 // it should know to make them itself. So perhaps a future version of SWIG
 // won't have this same constraint. But for now, this is required.
   
-class MeasuredRadianceFieldImpBase: public SubStateVectorArray<MeasuredRadianceField> {
+class ObservationSvImpBase: public SubStateVectorArray<ObservationSv> {
 public:
-  virtual boost::shared_ptr<Spectrum> measured_radiance_field(int spec_index) const = 0;
-  virtual boost::shared_ptr<MeasuredRadianceField> clone() const = 0;
+  %python_attribute_abstract(num_channels, int);
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
+    const = 0;
+  virtual Spectrum radiance_all(bool skip_jacobian = false) const;
   virtual std::string desc() const;
   %python_attribute(state_used, blitz::Array<bool, 1>)
-  %sub_state_virtual_func(MeasuredRadianceField);
+  %sub_state_virtual_func(ObservationSv);
   %pickle_serialization();
 protected:
-  MeasuredRadianceFieldImpBase(const blitz::Array<double, 1>& Coeff,
+  ObservationSvImpBase(const blitz::Array<double, 1>& Coeff,
                 boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };
 }

@@ -1,6 +1,6 @@
-#ifndef MEASURED_RADIANCE_FIELD_IMP_BASE_H
-#define MEASURED_RADIANCE_FIELD_IMP_BASE_H
-#include "measured_radiance_field.h"
+#ifndef OBSERVATION_SV_IMP_BASE_H
+#define OBSERVATION_SV_IMP_BASE_H
+#include "observation_sv.h"
 #include "sub_state_vector_array.h"
 
 namespace FullPhysics {
@@ -13,10 +13,10 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class MeasuredRadianceFieldImpBase: virtual public SubStateVectorArray<MeasuredRadianceField> {
+class ObservationSvImpBase: virtual public SubStateVectorArray<ObservationSv> {
 public:
-  virtual ~MeasuredRadianceFieldImpBase() {}
-  virtual boost::shared_ptr<MeasuredRadianceField> clone() const = 0;
+  virtual ~ObservationSvImpBase() {}
+  virtual boost::shared_ptr<ObservationSv> clone() const = 0;
   virtual void update_sub_state_hook() 
   { // Nothing to do
   }
@@ -33,7 +33,7 @@ public:
 /// Description of object, to be printed to stream. This gives a cleaner
 /// interface for deriving from python.
 //-----------------------------------------------------------------------
-  virtual std::string desc() const { return "MeasuredRadianceFieldImpBase"; }
+  virtual std::string desc() const { return "ObservationSvImpBase"; }
 
   virtual blitz::Array<bool, 1> state_used() const
   {
@@ -44,21 +44,21 @@ public:
            state_vector_start_index() + sub_vector_size() - 1)) = true;
     return res;
   }
-  MeasuredRadianceFieldImpBase(const MeasuredRadianceFieldImpBase& V) = default;
+  ObservationSvImpBase(const ObservationSvImpBase& V) = default;
 protected:
 //-----------------------------------------------------------------------
 /// Default constructor, derived class should call init if they use this
 /// constructor.
 //-----------------------------------------------------------------------
 
-  MeasuredRadianceFieldImpBase() { }
+  ObservationSvImpBase() { }
 
 //-----------------------------------------------------------------------
 /// Constructor that sets the coefficient() values.
 /// See SubStateVectorArray for a discussion of Mark_according_to_press and
 /// Pdep_start.
 //-----------------------------------------------------------------------
-  MeasuredRadianceFieldImpBase(const blitz::Array<double, 1>& Coeff, 
+  ObservationSvImpBase(const blitz::Array<double, 1>& Coeff, 
                 boost::shared_ptr<StateMapping> in_map =
                   boost::make_shared<StateMappingLinear>())
   {
@@ -69,9 +69,9 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
-typedef SubStateVectorArray<MeasuredRadianceField> SubStateVectorArrayMeasuredRadianceField;
+typedef SubStateVectorArray<ObservationSv> SubStateVectorArrayObservationSv;
 }
 
-FP_EXPORT_KEY(MeasuredRadianceFieldImpBase);
-FP_EXPORT_KEY(SubStateVectorArrayMeasuredRadianceField);
+FP_EXPORT_KEY(ObservationSvImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayObservationSv);
 #endif
