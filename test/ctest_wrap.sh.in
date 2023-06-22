@@ -11,6 +11,10 @@ export L2_FP=@L2_FP_BIN@
 export LUA_PATH="@PROJECT_SOURCE_DIR@/input/common/config/?.lua;@PROJECT_SOURCE_DIR@/test/unit/data/lua/?.lua"
 export INSTALL_PREFIX=@CMAKE_INSTALL_PREFIX@
 
+# We want to see the output for failed unit tests, otherwise it is just about impossible
+# to figure out why a jenkins job fails
+export CTEST_OUTPUT_ON_FAILURE=1
+
 # Set up conditional options to ctest passed through make
 addl_ctest_commands=""
 if [ ! -z "$RUN_TESTS" ]; then
