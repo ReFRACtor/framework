@@ -36,9 +36,16 @@ void check_cost_func(const boost::shared_ptr<ConnorCostFunction>& cost_func, con
     IfstreamCs fm_cost_expected(test_data_dir + "expected/connor_cost_function/all_pixels");
     fm_cost_expected >> residual_expt >> se_expt >> jacobian_expt;
 
-    BOOST_CHECK_MATRIX_CLOSE(residual_expt, residual);
-    BOOST_CHECK_MATRIX_CLOSE(se_expt, se);
-    BOOST_CHECK_MATRIX_CLOSE(jacobian_expt, jacobian);
+    // These have really big numbers in them, so adjust the tolerances
+    // here to be more in line with the size (e.g., we don't want to
+    // compare 1e23 to be with 1e-8 of the expected value).
+
+    // Numbers like 1e18
+    BOOST_CHECK_MATRIX_CLOSE_TOL(residual_expt, residual, 1e18*1e-6);
+    // Numbers like 1e34
+    BOOST_CHECK_MATRIX_CLOSE_TOL(se_expt, se, 1e34*1e-6);
+    // Number like 1e26
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jacobian_expt, jacobian, 1e26*1e-6);
 }
 
 BOOST_AUTO_TEST_CASE(all_pixels)
