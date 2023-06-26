@@ -2,6 +2,7 @@
 set(DIR_SOURCES
     state_mapping.cc
     state_mapping_at_indexes.cc
+    state_mapping_basis_matrix.cc
     state_mapping_composite.cc
     state_mapping_gaussian.cc
     state_mapping_interpolate.cc
@@ -13,6 +14,7 @@ set(DIR_SOURCES
 
 set(TEST_SOURCES
     state_mapping_at_indexes_test.cc
+    state_mapping_basis_matrix_test.cc
     state_mapping_interpolate_test.cc
     state_mapping_composite_test.cc
 )
