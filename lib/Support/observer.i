@@ -8,9 +8,15 @@
 %}
 %base_import(generic_object)
 
+namespace FullPhysics {
+  class CacheInvalidatedObserver;
+}
+
 %fp_shared_ptr(FullPhysics::CacheInvalidatedObserver);
 
 namespace FullPhysics {
+%feature("director") CacheInvalidatedObserver;
+  
 template<class T> class Observable;
 template<class T> class Observer : public GenericObject {
 public:
@@ -27,6 +33,7 @@ public:
   CacheInvalidatedObserver();
   virtual void invalidate_cache();
   %pickle_serialization();
+  %python_attribute_with_set_virtual(cache_valid_flag, bool);
 protected:
   bool cache_valid;
 };

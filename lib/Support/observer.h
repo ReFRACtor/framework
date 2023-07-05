@@ -93,6 +93,10 @@ public:
   boost::shared_ptr<CacheInvalidatedObserver>& this_obj()
   { return this_obj_; }
 
+  // Python is happier with functions vs accessing cache_valid. So
+  // return and allow setting of cache_valid
+  virtual bool cache_valid_flag() const { return cache_valid; }
+  virtual void cache_valid_flag(bool V) { cache_valid = V; }
 protected:
   bool cache_valid;
   // Shared ptr that we can use to get weak_ptr to. This object has
