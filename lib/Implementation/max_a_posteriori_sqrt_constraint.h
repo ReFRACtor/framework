@@ -24,6 +24,41 @@ namespace FullPhysics {
   a priori matrix. Note that the sqrt_constraint we take is the
   transpose of what py-retrieve has - for some reason it transposes
   this after calculating it.
+
+  Note by the way that despite the name, sqrt_constraint *isn't*
+  actually the sqrt of the constraint matrix. The
+
+  constraint_matrix = a_priori_cov^-1
+
+  And the matrix is decomposed so
+
+  sqrt_constraint * sqrt_constraint^T = constraint_matrix
+
+  The decomposition by something like scipy.linalg.sqrtm is also
+  a common way to handle the a priori augmentation, but this has
+
+  r * r = constraint_matrix
+
+  if r = sqrtm(constraint_matrix).
+
+  sqrt_constraint is *not* equal to r, py-retrieve doesn't actually
+  do a sqrtm.
+
+  Instead the sqrt_constraint is like a cholesky decomposition of the
+  constraint_matrix, it just isn't confined to being a lower
+  triangular matrix. I don't believe the decomposition is unique
+  either (although I'm not sure about that) - but since we take the
+  decomposition as an input there isn't any ambiguity in this class.
+
+  Note if you use this class then the calls to a_priori_cov_chol_inv()
+  and a_priori_cov_chol() actually returns sqrt_constraint and
+  sqrt_constraint^-1. I briefly considered overriding these functions
+  to raise an Exception, since these aren't actually lower triangular
+  matrices you get from a Cholesky decomposition. But I decide against
+  that, for most uses I could think of you probably don't actually
+  care that this is a different decomposition. But we can reconsider
+  that if needed in the future - we really do have function names here
+  that lie.
 *******************************************************************/
 class MaxAPosterioriSqrtConstraint : 
   virtual public MaxAPosteriori, virtual public ModelMeasureStandard {
