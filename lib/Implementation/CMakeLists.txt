@@ -69,6 +69,7 @@ set(DIR_SOURCES
     level_1b_cache.cc
     level_1b_scale_radiance.cc
     log_timing.cc
+    max_a_posteriori_sqrt_constraint.cc
     max_a_posteriori_standard.cc
     merra_aerosol.cc
     meyer_ml_problem.cc
