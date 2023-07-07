@@ -59,8 +59,9 @@ public:
 ///            be diagonal
 //-----------------------------------------------------------------------
 
-  ModelMeasure(const blitz::Array<double, 1>& measurement, 
+  ModelMeasure(const blitz::Array<double, 1>& measurement,
                const blitz::Array<double, 1>& measurement_error_cov)
+    : msrmnt_does_not_change(true)
   { set_measurement(measurement, measurement_error_cov); }
 
 
@@ -68,11 +69,22 @@ public:
 /// \brief Default Constructor
 //-----------------------------------------------------------------------
 
-  ModelMeasure() {}
+  ModelMeasure()
+    : msrmnt_does_not_change(true)
+  {}
 
 
   virtual ~ModelMeasure() {}
 
+  virtual void clear()
+  {
+    ModelState::clear();
+    if(msrmnt_does_not_change)
+      return;
+    msrmnt.free();
+    msrmnt_jacobian.free();
+    Se.free();
+  }
 
 //-----------------------------------------------------------------------
 /// \brief For setting measurement and the error covariance matrix
@@ -85,10 +97,9 @@ public:
 ///            be diagonal (hence simply a vector containing the diagonal)
 //-----------------------------------------------------------------------
 
-  void set_measurement(const blitz::Array<double, 1>& measurement, 
-                       const blitz::Array<double, 1>& measurement_error_cov);
-
-
+  void set_measurement(const blitz::Array<double, 1>& measurement,
+		       const blitz::Array<double, 1>& measurement_error_cov);
+  
 //-----------------------------------------------------------------------
 /// \brief Evaluates the model at the currently set parameter values
 ///
@@ -111,6 +122,30 @@ public:
 
   virtual void model_eval() = 0;
 
+//-----------------------------------------------------------------------
+/// \brief Evaluates the measurement at the currently set parameter values
+///
+/// This method must be implemented by the classes derived from 
+/// this class.
+///
+/// The parameters (the point in the parameter space) must have
+/// already been set before calling this method.  The parameters are
+/// already set if one of the following methods is already called
+/// successfully:
+///   - parameters() (see ProblemState class)
+///   - model_x() (see CostFunc class)
+///   - jacobian_x()
+///   - model_jacobian_x()
+/// 
+/// If the parameters are already set, then this method evaluate the
+/// model at the currently set parameter values (point in the 
+/// parameter space).
+//-----------------------------------------------------------------------
+
+  virtual void measurement_eval()
+  {
+    //default is do nothing
+  }
 
 //-----------------------------------------------------------------------
 /// \brief Evaluates and returns the model at the currently set
@@ -171,6 +206,31 @@ public:
 
   virtual void jacobian_eval() = 0;
 
+//-----------------------------------------------------------------------
+/// \brief Evaluates the Jacobian of the measurement at the currently set
+///        parameter values
+///
+/// This method must be implemented by the classes derived from 
+/// this class.
+///
+/// The parameters (the point in the parameter space) must have
+/// already been set before calling this method.  The parameters are
+/// already set if one of the following methods is already called
+/// successfully:
+///   - parameters() (see ProblemState class)
+///   - model_x() (see CostFunc class)
+///   - jacobian_x()
+///   - model_jacobian_x()
+/// 
+/// If the parameters are already set, then this method evaluate the
+/// Jacobian of the model at the currently set parameter values
+/// (point in the parameter space).
+//-----------------------------------------------------------------------
+
+  virtual void measurement_jacobian_eval()
+  {
+    //default is do nothing
+  }
 
 //-----------------------------------------------------------------------
 /// \brief Evaluates and returns the Jacobian of the model at the
@@ -280,9 +340,17 @@ public:
 /// \return The measurement vector.
 //-----------------------------------------------------------------------
 
-  virtual blitz::Array<double, 1> measurement() const
-  { return msrmnt.copy(); }
+  virtual blitz::Array<double, 1> measurement() 
+  { measurement_eval(); return msrmnt.copy(); }
 
+//-----------------------------------------------------------------------
+/// \brief Returns the jacobian of the measured data, to which the model is fit.
+///
+/// \return The measurement jacobian.
+//-----------------------------------------------------------------------
+
+  virtual blitz::Array<double, 2> measurement_jacobian() 
+  { measurement_jacobian_eval(); return msrmnt_jacobian.copy(); }
 
 //-----------------------------------------------------------------------
 /// \brief Returns the measurement error covariance
@@ -291,8 +359,8 @@ public:
 /// \return The measurement error covariance.
 //-----------------------------------------------------------------------
 
-  virtual blitz::Array<double, 1> measurement_error_cov() const
-  { return Se.copy(); }
+  virtual blitz::Array<double, 1> measurement_error_cov() 
+  { measurement_eval(); return Se.copy(); }
 
 
 //-----------------------------------------------------------------------
@@ -309,8 +377,8 @@ public:
 /// \return The size of the measurement data vector
 //-----------------------------------------------------------------------
 
-  virtual int measurement_size() const
-  { return msrmnt.rows(); }
+  virtual int measurement_size() 
+  { measurement_eval(); return msrmnt.rows(); }
 
 
 //-----------------------------------------------------------------------
@@ -358,6 +426,28 @@ public:
 
 
 //-----------------------------------------------------------------------
+/// \brief A boolean function to check whether or not the measurement
+///        is computed.
+///
+/// \return true if measurement is computed false otherwise
+///
+//-----------------------------------------------------------------------
+
+  bool measurement_computed() const
+  { return (msrmnt.size() > 0); }
+
+//-----------------------------------------------------------------------
+/// \brief A boolean function to check whether or not the measurement
+///        jacobian is computed.
+///
+/// \return true if measurement jacobian is computed false otherwise
+///
+//-----------------------------------------------------------------------
+
+  bool measurement_jacobian_computed() const
+  { return (msrmnt_jacobian.size() > 0); }
+  
+//-----------------------------------------------------------------------
 /// \brief A boolean function to check whether or not the Jacobean
 ///        of the model is computed.
 ///
@@ -374,8 +464,6 @@ public:
 
   virtual void print(std::ostream& Os) const 
   { Os << "ModelMeasure"; }
-
-
 
 
 //-----------------------------------------------------------------------
@@ -449,20 +537,26 @@ public:
 //-----------------------------------------------------------------------
 
   virtual blitz::Array<double, 1> uncert_weighted_model_measure_diff()
-  { return blitz::Array<double, 1>(model_measure_diff()/Se_chol); }
+  { blitz::Array<double, 1> res(model_measure_diff());
+    res /= sqrt(Se);
+    return res;
+  }
 
 
 //-----------------------------------------------------------------------
-/// \brief Returns the model Jacobian weighted by the inverse of the
+/// \brief Returns the Jacobian of the model - measurement weighted
+///        by the inverse of the
 ///        Cholesky decomposition of the error covariance matrix
 ///
-/// This method is for convenience.  It returns the model Jacobian
+/// This method is for convenience.  It returns the Jacobian
+/// of the model - measurement
 /// weighted by the Cholesky decomposition (roughly speaking the 
 /// square root) of the error covariance matrix.
 ///
-/// Let the following be the computed model Jacobian and
-/// the measurement error covariance matrix respectively:
+/// Let the following be the computed model Jacobian, measurment Jacobian 
+/// and the measurement error covariance matrix respectively:
 ///   - K
+///   - M_K  
 ///   - Se
 ///
 /// Then the Cholesky decomposition of the error covariance matrix is 
@@ -471,7 +565,7 @@ public:
 /// \f]
 /// and this method returns
 /// \f[
-///     C_e^{-1}K
+///     C_e^{-1} (K - M_K)
 /// \f]
 ///
 /// The method uncert_weighted_model_measure_diff() is another 
@@ -479,7 +573,7 @@ public:
 /// uncert_weighted_jacobian() is the Jacobian of 
 /// uncert_weighted_model_measure_diff().
 ///
-/// \return Model Jacobian weighted by the inverse of the Cholesky
+/// \return Model - Measurement Jacobian weighted by the inverse of the Cholesky
 ///         decomposition of the error covariance matrix
 //-----------------------------------------------------------------------
 
@@ -508,12 +602,15 @@ public:
 
 
 protected:
-
+  // Original behavior was that measurements didn't change. We
+  // extended this to allow this to have the msrmnt depend on the
+  // parameters (like py-retrieve does), but we want also support this
+  // not changing. This boolean needs to be set to false for us to
+  // treat the msrmnt as depending on the parameters.
+  bool msrmnt_does_not_change;
   blitz::Array<double, 1> msrmnt;
+  blitz::Array<double, 2> msrmnt_jacobian;
   blitz::Array<double, 1> Se;
-
-  // For convenience
-  blitz::Array<double, 1> Se_chol;
 private:
   friend class boost::serialization::access;
   template<class Archive>

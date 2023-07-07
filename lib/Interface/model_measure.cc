@@ -12,7 +12,8 @@ void ModelMeasure::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelState)
-    & FP_NVP(msrmnt) & FP_NVP(Se) & FP_NVP(Se_chol);
+    & FP_NVP(msrmnt_does_not_change) 
+    & FP_NVP(msrmnt) & FP_NVP(msrmnt_jacobian) & FP_NVP(Se);
 }
 
 FP_IMPLEMENT(ModelMeasure);
@@ -29,11 +30,10 @@ void ModelMeasure::set_measurement( const blitz::Array<double, 1>& measurement,
   msrmnt.resize(measurement.shape());
   msrmnt = measurement;
 
+  msrmnt_jacobian.free();
+  
   Se.resize(measurement_error_cov.shape());
   Se = measurement_error_cov;
-
-  Se_chol.resize(Se.shape());
-  Se_chol = sqrt(Se);
 }
 
 
@@ -58,7 +58,16 @@ Array<double, 2> ModelMeasure::uncert_weighted_jacobian()
 { 
   firstIndex i1; secondIndex i2;
   Array<double, 2> result(measurement_size(), parameter_size());
-  result = jacobian()(i1, i2) / Se_chol(i1);
+  Array<double, 2> mjac(measurement_jacobian());
+  Array<double, 2> jac(jacobian());
+  if(mjac.size() > 0) {
+    if(jac.rows() != mjac.rows() ||
+       jac.cols() != mjac.cols())
+      throw Exception("Model jacobian and measurement jacobian need to be the same size");
+    result = (jac(i1, i2) - mjac(i1, i2)) / sqrt(Se(i1));
+  } else {
+    result = jac(i1, i2) / sqrt(Se(i1));
+  }
   return result;
 }
 
