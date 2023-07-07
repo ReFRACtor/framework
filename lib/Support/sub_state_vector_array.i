@@ -33,6 +33,29 @@ protected:
   blitz::Array<double, 2> cov;
   boost::shared_ptr<StateMapping> mapping;
 };
+
+template<class Base, class ObservableBase> class SubStateVectorArray2: 
+    public Base,
+    public SubStateVectorObserver {
+public:
+  SubStateVectorArray2();
+  void init(const blitz::Array<double, 1>& Coeff, 
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  void init(double Coeff,
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  virtual std::string state_vector_name_i(int i) const;
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
+  virtual void update_sub_state(const ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
+  virtual void update_sub_state_hook();
+  %python_attribute(coefficient, ArrayAd<double, 1>);
+  %python_attribute(mapped_state, ArrayAd<double, 1>);
+  %python_attribute(state_mapping, const boost::shared_ptr<StateMapping>);
+  %python_attribute(statevector_covariance, blitz::Array<double, 2>);
+protected:
+  ArrayAd<double, 1> coeff;
+  blitz::Array<double, 2> cov;
+  boost::shared_ptr<StateMapping> mapping;
+};
 }
 
 // When we create directors, at least for SWIG 2.0.4 we need to explicitly

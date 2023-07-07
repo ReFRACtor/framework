@@ -5,7 +5,7 @@ using namespace FullPhysics;
 
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 
-SUB_STATE_VECTOR_ARRAY_SERIALIZE(ObservationSv, SubStateVectorArrayObservationSv);
+SUB_STATE_VECTOR_ARRAY2_SERIALIZE(ObservationSv, Observation, SubStateVectorArrayObservationSv);
 
 template<class Archive>
 void ObservationSvImpBase::serialize(Archive & ar,

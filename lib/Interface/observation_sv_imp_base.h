@@ -13,7 +13,7 @@ namespace FullPhysics {
   However, almost always you will want to derive from this class 
   instead. See PressureImpBase for a more complete discussion of this.
 *******************************************************************/
-class ObservationSvImpBase: virtual public SubStateVectorArray<ObservationSv> {
+class ObservationSvImpBase: virtual public SubStateVectorArray2<ObservationSv, Observation> {
 public:
   virtual ~ObservationSvImpBase() {}
   virtual boost::shared_ptr<ObservationSv> clone() const = 0;
@@ -69,7 +69,7 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);
 };
-typedef SubStateVectorArray<ObservationSv> SubStateVectorArrayObservationSv;
+  typedef SubStateVectorArray2<ObservationSv, Observation> SubStateVectorArrayObservationSv;
 }
 
 FP_EXPORT_KEY(ObservationSvImpBase);

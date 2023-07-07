@@ -2,7 +2,6 @@
 #define OBSERVATION_SV_H
 #include "state_vector_observer.h"
 #include "observation.h"
-#include "observer.h"
 #include "spectrum.h"
 
 namespace FullPhysics {
@@ -32,14 +31,10 @@ namespace FullPhysics {
   notified when the ObservationSv is updated.
  *******************************************************************/
 class ObservationSv : virtual public Observation,
-		      virtual public StateVectorObserver, public Observable<ObservationSv> {
+		      virtual public StateVectorObserver {
 public:
   virtual ~ObservationSv() {}
-  virtual void add_observer(Observer<ObservationSv>& Obs) 
-  { add_observer_do(Obs, *this);}
-  virtual void remove_observer(Observer<ObservationSv>& Obs) 
-  { remove_observer_do(Obs, *this);}
-
+  
 //-----------------------------------------------------------------------
 /// Clone a ObservationSv object. Note that the cloned version
 /// will *not* be attached to a StateVector, although you can of
@@ -62,5 +57,4 @@ private:
 }
 
 FP_EXPORT_KEY(ObservationSv);
-FP_EXPORT_OBSERVER_KEY(ObservationSv);
 #endif

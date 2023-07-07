@@ -10,11 +10,9 @@ void ObservationSv::serialize(Archive& ar,
 			 const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(StateVectorObserver)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableObservationSv)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Observation);
 }
 
 FP_IMPLEMENT(ObservationSv);
-FP_OBSERVER_SERIALIZE(ObservationSv);
 #endif
 

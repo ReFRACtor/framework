@@ -3,6 +3,7 @@
 
 #include "printable.h"
 #include "stacked_radiance_mixin.h"
+#include "observer.h"
 
 namespace FullPhysics {
 /****************************************************************//**
@@ -11,8 +12,16 @@ namespace FullPhysics {
   from a ForwardModel during a retrieval.
  *******************************************************************/
 
-class Observation : public StackedRadianceMixin {
+class Observation : public StackedRadianceMixin,
+		    public Observable<Observation> {
 public:
+  virtual ~Observation() {}
+  
+  virtual void add_observer(Observer<Observation>& Obs) 
+  { add_observer_do(Obs, *this);}
+  virtual void remove_observer(Observer<Observation>& Obs) 
+  { remove_observer_do(Obs, *this);}
+
   /// Number of spectral channels
   virtual int num_channels() const = 0;
 
@@ -38,4 +47,6 @@ private:
 }
 
 FP_EXPORT_KEY(Observation);
+FP_CLASS_VERSION(Observation, 1);
+FP_EXPORT_OBSERVER_KEY(Observation);
 #endif
