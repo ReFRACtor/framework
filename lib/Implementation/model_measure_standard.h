@@ -78,6 +78,8 @@ public:
 
   const boost::shared_ptr<StateVector>& state_vector() const { return sv; };
 
+  virtual void measurement_eval();
+  virtual void measurement_jacobian_eval();
 protected:
 
 //-----------------------------------------------------------------------

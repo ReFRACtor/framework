@@ -46,9 +46,7 @@ ModelMeasureStandard::ModelMeasureStandard
 {
   fm.push_back(forward_model);
   obs.push_back(observation);
-  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
-  set_measurement(s0.data(),
-		  Array<double, 1>(sqr(s0.uncertainty())));
+  msrmnt_does_not_change = false;
 }
 
 ModelMeasureStandard::ModelMeasureStandard
@@ -62,18 +60,49 @@ ModelMeasureStandard::ModelMeasureStandard
   if(forward_model.size() != observation.size())
     throw Exception("forward_model and observation vectors need to be the same size");
   
-  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
-  Array<double, 1> a1(s0.data());
-  Array<double, 1> a2(sqr(s0.uncertainty()));
-  for(int i = 1; i < (int) obs.size(); ++i) {
-    SpectralRange s1 = obs[i]->radiance_all().spectral_range();
-    append_array(a1, s1.data());
-    Array<double, 1> a3(sqr(s1.uncertainty()));
-    append_array(a2, a3);
-  }
-  set_measurement(a1, a2);
+  msrmnt_does_not_change = false;
 }
 
+void ModelMeasureStandard::measurement_eval()
+{
+  if(msrmnt.size() > 0)
+    return;
+  Range rall = Range::all();
+  SpectralRange s0 = obs[0]->radiance_all().spectral_range();
+  msrmnt.reference(s0.data());
+  Se.resize(s0.uncertainty().rows());
+  Se = sqr(s0.uncertainty());
+  msrmnt_jacobian.reference(s0.data_ad().jacobian());
+  for(int i = 1; i < (int) obs.size(); ++i) {
+    SpectralRange s1 = obs[i]->radiance_all().spectral_range();
+    append_array(msrmnt, s1.data());
+    Range r_to(Se.rows(), msrmnt.rows()-1);
+    // Some of the observations might have a zero sized jacobian, so
+    // handle combining
+    Array<double, 2> j2(s1.data_ad().jacobian());
+    if(msrmnt_jacobian.size() == 0 and j2.size() > 0) {
+      msrmnt_jacobian.resize(msrmnt.rows(), j2.cols());
+      msrmnt_jacobian = 0;
+      msrmnt_jacobian(r_to, rall) = j2;
+    } else {
+      if(msrmnt_jacobian.size() > 0 and j2.size() == 0) {
+	msrmnt_jacobian.resizeAndPreserve(msrmnt.rows(),
+					  msrmnt_jacobian.cols());
+	msrmnt_jacobian(r_to, rall) = 0;
+      } else {
+	append_array(msrmnt_jacobian, j2);
+      }
+    }
+    Array<double, 1> a3(sqr(s1.uncertainty()));
+    append_array(Se, a3);
+  }
+}
+
+void ModelMeasureStandard::measurement_jacobian_eval()
+{
+  // We just do both in measurement_eval()
+  measurement_eval();
+}
 
 void ModelMeasureStandard::model_eval()
 {
@@ -106,34 +135,20 @@ void ModelMeasureStandard::radiance_from_fm()
   assert_parameter_set_correctly();
 
   SpectralRange s0 = obs[0]->radiance_all().spectral_range();
-  Array<double, 1> temp_msrmnt(s0.data());
   Spectrum rad_spec = fm[0]->radiance_all(false);
   SpectralRange rad_mod = rad_spec.spectral_range().convert(s0.units());
   M.reference(rad_mod.data_ad().value());
   K.reference(rad_mod.data_ad().jacobian());
   for(int i = 1; i < (int) obs.size(); ++i) {
     SpectralRange s1 = obs[i]->radiance_all().spectral_range();
-    append_array(temp_msrmnt, s1.data());
     Spectrum s2 = fm[i]->radiance_all(false);
     SpectralRange s3 = s2.spectral_range().convert(s1.units());
     append_array(M, s3.data_ad().value());
     append_array(K, s3.data_ad().jacobian());
   }
 
-  //  TEMPORARY
-  //
-  //  There should be no need for this error check block.
-  //  The problem is that with our current model code 
-  //  measurement may change.
-  //
-  if(msrmnt.rows() != temp_msrmnt.rows())
-    throw Exception("Measurement has changed during the retrieval. :( ");
-  double msrmnt_L1_norm = sum(abs(msrmnt));
-  if(msrmnt_L1_norm <= 0.0)
-    throw Exception("Measurement has no signal (just 0). :( ");
-  if( sum(abs(temp_msrmnt-msrmnt))/msrmnt_L1_norm > 0.0000001 )
-    throw Exception("Measurement has changed during the retrieval. :( ");
-
+  measurement_eval();
+  measurement_jacobian_eval();
   assert_model_correct(M);
   M.makeUnique();
   assert_jacobian_correct(K);
