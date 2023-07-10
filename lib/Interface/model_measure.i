@@ -41,6 +41,7 @@ public:
   %python_attribute(jacobean_computed, bool)
 
   %python_attribute_nonconst(model_measure_diff, blitz::Array<double, 1>)
+  %python_attribute_nonconst(model_measure_diff_jacobian, blitz::Array<double, 2>)
   %python_attribute_nonconst(uncert_weighted_model_measure_diff, 
 			     blitz::Array<double, 1>)
   %python_attribute_nonconst(uncert_weighted_jacobian,

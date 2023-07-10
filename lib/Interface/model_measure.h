@@ -498,6 +498,18 @@ public:
   virtual blitz::Array<double, 1> model_measure_diff()
   { return blitz::Array<double, 1>(model() - measurement()); }
 
+//-----------------------------------------------------------------------
+/// \brief Returns jacobian of model and measurement difference
+///        (model - measurement)
+///
+/// This method is for convenience.  It returns the difference of the
+/// computed model jacobian and the measurement jacobian.
+/// The difference is not called
+/// residual on purpose.  The term residual will be used in the 
+/// context of the Non-Linear (or Linear) Least Squares optimization.
+//-----------------------------------------------------------------------
+
+  virtual blitz::Array<double, 2> model_measure_diff_jacobian();
 
 //-----------------------------------------------------------------------
 /// \brief Returns model and measurement difference weighted by the
