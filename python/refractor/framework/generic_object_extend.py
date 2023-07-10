@@ -9,9 +9,10 @@ def _subobject(self, recursive=True):
     if(hasattr(self, "subobject_list")):
         for obj in self.subobject_list:
             obj_sp = GenericObject.convert_to_most_specific_class(obj)
-            yield obj_sp
-            if(recursive):
-                yield from obj_sp.subobject(recursive=True)
+            if(obj_sp is not None):
+                yield obj_sp
+                if(recursive):
+                    yield from obj_sp.subobject(recursive=True)
 
 GenericObject.subobject = _subobject
 

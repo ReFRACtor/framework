@@ -139,11 +139,20 @@ void AbsorberVmrLevel::calc_vmr() const
 
 std::string AbsorberVmrLevel::state_vector_name_i(int coeff_idx) const
 {
-  // Output the pressure associated with the retrieval value in millibars
-  double press_val = coeff_pressure->pressure_grid(Pressure::NATIVE_ORDER)(coeff_idx).value.value();
+  blitz::Array<double, 1> press_grid(coeff_pressure->pressure_grid(Pressure::NATIVE_ORDER).value.value());
   std::stringstream sv_name;
-  sv_name << gas_name() << " " << mapping->name() << " VMR at "
-	  << std::fixed << std::setprecision(3) << (press_val / 100) << " hPa";
+  if(coeff.rows() == press_grid.rows()) {
+    // Output the pressure associated with the retrieval value in millibars
+    double press_val = coeff_pressure->pressure_grid(Pressure::NATIVE_ORDER)(coeff_idx).value.value();
+    sv_name << gas_name() << " " << mapping->name() << " VMR at "
+	    << std::fixed << std::setprecision(3) << (press_val / 100) << " hPa";
+  } else {
+    // If coefficient doesn't match the number of grid levels, we might
+    // have something like StateMappingBasisMatrix. In any case, the
+    // state vector isn't in terms of our pgrid, so use a more generic
+    // description
+    sv_name << gas_name() << " " << mapping->name() << " VMR at Level " << coeff_idx;
+  }
   return sv_name.str();
 }
 
@@ -158,13 +167,12 @@ void AbsorberVmrLevel::print(std::ostream& Os) const
      << "  StateMapping:  " << mapping->name() << "\n\n"
      << "      Pressure          VMR\n"
      << "  ------------ ------------\n";
-
-  for(int coeff_idx = 0; coeff_idx < coeff.rows(); coeff_idx++) {
+  for(int i = 0; i < press_grid.rows(); i++) {
     Os << "  "
        << std::fixed << std::setprecision(3) << setw(8)
-       << (press_grid(coeff_idx) / 100) << " hPa" << " "
+       << (press_grid(i) / 100) << " hPa" << " "
        << std::scientific << std::setprecision(5) << setw(12)
-       << vmr_grid(coeff_idx) << "\n";
+       << vmr_grid(i) << "\n";
   }
   opad.strict_sync();
 }
