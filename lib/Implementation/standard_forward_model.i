@@ -31,9 +31,12 @@ public:
    const boost::shared_ptr<SpectrumSampling>& Spectrum_sampling,
    const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& Spectrum_effect = 
 		  std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >());
-  virtual ~StandardForwardModel();
   virtual Spectrum radiance(int sensor_index, bool Skip_jacobian = false) 
     const;
+  %python_attribute(num_channels, virtual int)
+  virtual SpectralDomain spectral_domain(int sensor_index) const;
+  virtual void setup_grid();
+  virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
   %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>)
   %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>)
   %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)

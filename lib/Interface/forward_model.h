@@ -52,10 +52,21 @@ public:
 
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
 
-  virtual void print(std::ostream& Os) const
-  {
-    Os << "ForwardModel";
-  }
+//-----------------------------------------------------------------------
+/// Print to stream. The default calls the function "desc" that returns
+/// a string. This gives cleaner interface for deriving from this class
+/// in python, but most C++ classes will want to override this function
+/// rather than using desc.
+//-----------------------------------------------------------------------
+
+  virtual void print(std::ostream& Os) const { Os << desc(); }
+
+//-----------------------------------------------------------------------
+/// Description of object, to be printed to stream. This gives a cleaner
+/// interface for deriving from python.
+//-----------------------------------------------------------------------
+
+  virtual std::string desc() const { return "ForwardModel"; }
 
 //-----------------------------------------------------------------------
 /// We have some fairly nested object hierarchies. It can be useful to

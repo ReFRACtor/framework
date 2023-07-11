@@ -62,7 +62,12 @@ public:
   const std::vector<boost::shared_ptr<GenericObjectWithCloudHandling> >& 
   cloud_handling_vector() const; 
   void add_cloud_handling_object 
-  (const boost::shared_ptr<GenericObjectWithCloudHandling> & Obj); 
+  (const boost::shared_ptr<GenericObjectWithCloudHandling> & Obj);
+  %python_attribute(num_channels, int);
+  virtual SpectralDomain spectral_domain(int sensor_index) const;
+  virtual void setup_grid();
+  virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
+  
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const; 
   void set_do_cloud(bool do_cloud) const; 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 

@@ -9,20 +9,29 @@
 
 %base_import(stacked_radiance_mixin)
 %import "spectrum.i"
+%import "spectral_domain.i"
 
 %fp_shared_ptr(FullPhysics::ForwardModel)
 
+
 namespace FullPhysics {
+  
+// Allow these classes to be derived from in Python.
+%feature("director") ForwardModel;
 
 class ForwardModel : public StackedRadianceMixin {
 public:
-  virtual ~ForwardModel();
+  %python_attribute_abstract(num_channels, int);
   std::string print_to_string() const;
-  virtual void setup_grid();
-  %python_attribute(num_channels, virtual int)
-  virtual SpectralDomain spectral_domain(int sensor_index) const;
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
+  virtual Spectrum radiance_all(bool skip_jacobian = false) const;
+  virtual void setup_grid() = 0;
+  virtual std::string desc() const;
+  virtual SpectralDomain::TypePreference spectral_domain_type_preference() const = 0;
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
+  %pickle_serialization();
 };
 }
 
