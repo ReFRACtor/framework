@@ -30,7 +30,8 @@ public:
     if((int) sv_name_.size() != Sv_name.rows())
       throw Exception("sv_name_ and Sv_name need to be the same size");
     for(int i = 0; i < Sv_name.rows(); ++i)
-      Sv_name(i) = sv_name_[i];
+      if(sv_name_[i] != "")
+	Sv_name(i) = sv_name_[i];
   }
 			 
 //-----------------------------------------------------------------------
