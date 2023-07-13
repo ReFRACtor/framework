@@ -17,6 +17,9 @@ class StateVectorObserver : public Observer<StateVector> {
 public:
   virtual void state_vector_name(const StateVector& Sv, 
                                  blitz::Array<std::string, 1>& Sv_name) const;
+  virtual void notify_update(const StateVector& Observed_object);
+  virtual void notify_add(StateVector& Observed_object);
+  virtual void notify_remove(StateVector& Observed_object);
   %python_attribute_with_set(sv_name, std::vector<std::string>);
   %pickle_serialization();
 };
