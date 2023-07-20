@@ -1,12 +1,14 @@
+# Cmake will complain unless this is before project
 cmake_minimum_required(VERSION 3.2)
 
+# This must be called before project() since it sets this variable as empty into the cache
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
+
+# Define the name of our project
 project(refractor)
 
 # Version number
 set(REFRACTOR_MAJOR_VERSION "8.0.0")
-
-# This must be called before project() since it sets this variable as empty into the cache
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
 
 # Mark that we are using
 enable_language(Fortran)
