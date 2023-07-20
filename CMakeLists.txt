@@ -1,12 +1,19 @@
-# This must be called before project() since it sets this variable as empty into the cache
-set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
-
 cmake_minimum_required(VERSION 3.2)
-enable_language(Fortran)
+
 project(refractor)
 
 # Version number
 set(REFRACTOR_MAJOR_VERSION "8.0.0")
+
+# This must be called before project() since it sets this variable as empty into the cache
+set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
+
+# Mark that we are using
+enable_language(Fortran)
+
+# Force the compiler ID detection early, so it will already know to load GNU.cmake in an effort to detect use of --sysroot under Conda
+set(CMAKE_C_COMPILER_ID GNU CACHE STRING "")
+set(CMAKE_CXX_COMPILER_ID GNU CACHE STRING "")
 
 # Global setting: Use C++14
 set(CMAKE_CXX_STANDARD 14)
