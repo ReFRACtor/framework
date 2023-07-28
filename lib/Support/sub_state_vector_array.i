@@ -63,8 +63,12 @@ protected:
 // SubStateVectorArray, so we have this utility macro to define all those
 // virtual functions.
 %define %sub_state_virtual_func(TYPE)
+    void add_observer_and_keep_reference(boost::shared_ptr<Observer<TYPE> >& Obs);
+    void add_cache_invalidated_observer(CacheInvalidatedObserver& Obs);
+    void remove_cache_invalidated_observer(CacheInvalidatedObserver& Obs);
     virtual void add_observer(Observer<TYPE>& Obs);
     virtual void remove_observer(Observer<TYPE>& Obs);
+    void clear_observers();
     virtual void update_sub_state_hook();
     virtual void print(std::ostream& Os) const;
     virtual void state_vector_name(const StateVector& Sv, blitz::Array<std::string, 1>& Sv_name) const;
