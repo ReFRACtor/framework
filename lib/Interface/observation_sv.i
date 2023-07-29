@@ -17,7 +17,8 @@ namespace FullPhysics {
 class ObservationSv : public Observation,
 		      public StateVectorObserver {
 public:
-  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index,
+				 bool include_bad_sample=false) const = 0;
   virtual boost::shared_ptr<ObservationSv> clone() const;
   %pickle_serialization();
 };

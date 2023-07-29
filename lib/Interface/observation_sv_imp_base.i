@@ -40,11 +40,11 @@ namespace FullPhysics {
 class ObservationSvImpBase: public SubStateVectorArray2<ObservationSv, Observation> {
 public:
   %python_attribute_abstract(num_channels, int);
-  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index, bool include_bad_sample=false) const = 0;
   boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
-  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false, bool include_bad_sample=false)
     const = 0;
-  virtual Spectrum radiance_all(bool skip_jacobian = false) const;
+  virtual Spectrum radiance_all(bool skip_jacobian = false, bool include_bad_sample=false) const;
   virtual std::string desc() const;
   %python_attribute(state_used, blitz::Array<bool, 1>)
   %sub_state_virtual_func(Observation);

@@ -78,6 +78,13 @@ public:
 
   const boost::shared_ptr<StateVector>& state_vector() const { return sv; };
 
+//-----------------------------------------------------------------------
+/// Measurement including bad pixels
+//-----------------------------------------------------------------------
+  void measurement_with_bad_pixel(blitz::Array<double, 1>& M,
+				  blitz::Array<double, 2>& M_jacobian,
+				  blitz::Array<double, 1>& M_error_cov) const;
+  
   virtual void measurement_eval();
   virtual void measurement_jacobian_eval();
 protected:
