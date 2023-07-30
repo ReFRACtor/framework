@@ -98,42 +98,6 @@ void ModelMeasureStandard::measurement_eval()
   }
 }
 
-void ModelMeasureStandard::measurement_with_bad_pixel
-(blitz::Array<double, 1>& M,
- blitz::Array<double, 2>& M_jacobian,
- blitz::Array<double, 1>& M_error_cov) const
-{
-  Range rall = Range::all();
-  SpectralRange s0 = obs[0]->radiance_all(false, true).spectral_range();
-  M.reference(s0.data());
-  M_error_cov.resize(s0.uncertainty().rows());
-  M_error_cov = sqr(s0.uncertainty());
-  M_jacobian.reference(s0.data_ad().jacobian());
-  for(int i = 1; i < (int) obs.size(); ++i) {
-    SpectralRange s1 = obs[i]->radiance_all().spectral_range();
-    append_array(M, s1.data());
-    Range r_to(M_error_cov.rows(), M.rows()-1);
-    // Some of the observations might have a zero sized jacobian, so
-    // handle combining
-    Array<double, 2> j2(s1.data_ad().jacobian());
-    if(M_jacobian.size() == 0 and j2.size() > 0) {
-      M_jacobian.resize(M.rows(), j2.cols());
-      M_jacobian = 0;
-      M_jacobian(r_to, rall) = j2;
-    } else {
-      if(M_jacobian.size() > 0 and j2.size() == 0) {
-	M_jacobian.resizeAndPreserve(M.rows(),
-					  M_jacobian.cols());
-	M_jacobian(r_to, rall) = 0;
-      } else {
-	append_array(M_jacobian, j2);
-      }
-    }
-    Array<double, 1> a3(sqr(s1.uncertainty()));
-    append_array(M_error_cov, a3);
-  }
-}
-
 void ModelMeasureStandard::measurement_jacobian_eval()
 {
   // We just do both in measurement_eval()

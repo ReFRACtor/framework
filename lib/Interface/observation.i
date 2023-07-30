@@ -9,8 +9,7 @@
 
 %base_import(observer)
 %base_import(observation)
-%import "spectral_domain.i"
-%import "spectrum.i"
+%base_import(stacked_radiance_mixin)
 
 %fp_shared_ptr(FullPhysics::Observation)
 namespace FullPhysics {
@@ -23,18 +22,13 @@ namespace FullPhysics {
 %template(ObservableObservation) FullPhysics::Observable<FullPhysics::Observation>;
 %template(ObserverObservation) FullPhysics::Observer<FullPhysics::Observation>;
 
-class Observation : public Observable<Observation>
-{
+class Observation : public Observable<Observation>, public StackedRadianceMixin {
 public:
   %python_attribute_abstract(num_channels, int)
   virtual void add_observer(Observer<Observation>& Obs); 
   virtual void remove_observer(Observer<Observation>& Obs);
-  virtual SpectralDomain spectral_domain(int sensor_index,
-				 bool include_bad_sample=false) const = 0;
-  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false,
-			    bool include_bad_sample=false) const = 0;
-  virtual Spectrum radiance_all(bool skip_jacobian = false,
-				bool include_bad_sample=false) const;
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
   %pickle_serialization();
 };
 }

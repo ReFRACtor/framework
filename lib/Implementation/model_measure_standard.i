@@ -17,9 +17,6 @@
 namespace FullPhysics {
 class ModelMeasureStandard : virtual public ModelMeasure {
 public:
-  void measurement_with_bad_pixel(blitz::Array<double, 1>& OUTPUT,
-				  blitz::Array<double, 2>& OUTPUT,
-				  blitz::Array<double, 1>& OUTPUT) const;
   virtual ~ModelMeasureStandard();
   virtual void model_eval();
   virtual void jacobian_eval();

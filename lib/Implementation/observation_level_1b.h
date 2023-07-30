@@ -16,11 +16,9 @@ public:
 
     int num_channels() const;
 
-  SpectralDomain spectral_domain(int sensor_index,
-				 bool include_bad_sample=false) const;
+    SpectralDomain spectral_domain(int sensor_index) const;
 
-  Spectrum radiance(int sensor_index, bool skip_jacobian = false,
-		    bool include_bad_sample=false) const;
+    Spectrum radiance(int sensor_index, bool skip_jacobian = false) const;
 
     virtual void print(std::ostream& Os) const
     {

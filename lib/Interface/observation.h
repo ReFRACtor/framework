@@ -2,10 +2,7 @@
 #define OBSERVATION_H
 
 #include "printable.h"
-#include "spectral_domain.h"
-#include "spectrum.h"
-#include <blitz/array.h>
-#include <boost/optional.hpp>
+#include "stacked_radiance_mixin.h"
 #include "observer.h"
 
 namespace FullPhysics {
@@ -15,7 +12,8 @@ namespace FullPhysics {
   from a ForwardModel during a retrieval.
  *******************************************************************/
 
-class Observation : public Observable<Observation> {
+class Observation : public StackedRadianceMixin,
+		    public Observable<Observation> {
 public:
   virtual ~Observation() {}
   
@@ -28,19 +26,15 @@ public:
   virtual int num_channels() const = 0;
 
   /// The spectral grid of the radiance values, implemented by inheriting class
-  virtual SpectralDomain spectral_domain(int sensor_index,
-				 bool include_bad_sample=false) const = 0;
+  virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
 
   /// Measured spectrum for the given spectral channel. Note that this may be empty.
   ///
   /// \param sensor_index Band to give value for
   /// \param skip_jacobian If true, don't do the Jacobian
   /// \return The set of radiances, possibly empty.
-  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false, bool include_bad_sample=false) const = 0;
+  virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;
 
-  virtual boost::optional<blitz::Range> stacked_pixel_range(int sensor_index, bool include_bad_sample=false) const;
-  virtual Spectrum radiance_all(bool skip_jacobian = false,
-				bool include_bad_sample=false) const;
   virtual void print(std::ostream& Os) const
   {
     Os << "Observation";

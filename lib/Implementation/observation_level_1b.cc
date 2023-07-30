@@ -38,12 +38,12 @@ int ObservationLevel1b::num_channels() const
     return grids->number_spectrometer();
 }
 
-SpectralDomain ObservationLevel1b::spectral_domain(int sensor_index, bool include_bad_sample) const
+SpectralDomain ObservationLevel1b::spectral_domain(int sensor_index) const
 {
     return grids->low_resolution_grid(sensor_index);
 }
 
-Spectrum ObservationLevel1b::radiance(int sensor_index, bool skip_jacobian, bool include_bad_sample) const
+Spectrum ObservationLevel1b::radiance(int sensor_index, bool skip_jacobian) const
 {
     range_check(sensor_index, 0, num_channels());
 
