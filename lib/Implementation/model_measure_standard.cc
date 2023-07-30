@@ -30,8 +30,12 @@ template<class T> void append_array(blitz::Array<T, 1>& A, const blitz::Array<T,
 
 template<class T> void append_array(blitz::Array<T, 2>& A, const blitz::Array<T, 2>& A_to_append)
 {
-  if(A.cols() != A_to_append.cols())
-    throw Exception("Matrices need to have the same number of columns");
+  if(A.cols() != A_to_append.cols()) {
+    Exception e("Matrices need to have the same number of column\n");
+    e << "  A.cols():           " << A.cols() << "\n"
+      << "  A_to_append.cols(): " << A_to_append.cols() << "\n";
+    throw e;
+  }
   Range r_to(A.rows(), A.rows() + A_to_append.rows()-1);
   A.resizeAndPreserve(A.rows() + A_to_append.rows(), A.cols());
   A(r_to, Range::all()) = A_to_append(Range::all(), Range::all());
@@ -72,25 +76,30 @@ void ModelMeasureStandard::measurement_eval()
   msrmnt.reference(s0.data());
   Se.resize(s0.uncertainty().rows());
   Se = sqr(s0.uncertainty());
-  msrmnt_jacobian.reference(s0.data_ad().jacobian());
+  bool obs_const = s0.data_ad().is_constant();
+  if(!s0.data_ad().is_constant())
+    msrmnt_jacobian.reference(s0.data_ad().jacobian());
   for(int i = 1; i < (int) obs.size(); ++i) {
     SpectralRange s1 = obs[i]->radiance_all().spectral_range();
     append_array(msrmnt, s1.data());
     Range r_to(Se.rows(), msrmnt.rows()-1);
     // Some of the observations might have a zero sized jacobian, so
     // handle combining
-    Array<double, 2> j2(s1.data_ad().jacobian());
-    if(msrmnt_jacobian.size() == 0 and j2.size() > 0) {
+    if(obs_const && !s1.data_ad().is_constant()) {
+      Array<double, 2> j2(s1.data_ad().jacobian());
       msrmnt_jacobian.resize(msrmnt.rows(), j2.cols());
       msrmnt_jacobian = 0;
       msrmnt_jacobian(r_to, rall) = j2;
+      obs_const = false;
     } else {
-      if(msrmnt_jacobian.size() > 0 and j2.size() == 0) {
+      if(!obs_const and s1.data_ad().is_constant()) {
 	msrmnt_jacobian.resizeAndPreserve(msrmnt.rows(),
 					  msrmnt_jacobian.cols());
 	msrmnt_jacobian(r_to, rall) = 0;
       } else {
+	Array<double, 2> j2(s1.data_ad().jacobian());
 	append_array(msrmnt_jacobian, j2);
+	obs_const = false;
       }
     }
     Array<double, 1> a3(sqr(s1.uncertainty()));
