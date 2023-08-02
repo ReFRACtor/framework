@@ -108,6 +108,8 @@ void FullPhysics::svd(const blitz::Array<double, 2>& A,
   int m = A.rows();
   int n = A.cols();
   range_min_check(m, n);
+  if(m == 0)
+    throw Exception("svd called on 0 size matrix");
   S.resize(n);
   U.reference(Array<double,2>(A.shape()));
   U = A;                        // This is calculated in place.
