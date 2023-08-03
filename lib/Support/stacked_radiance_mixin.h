@@ -47,6 +47,14 @@ public:
     const = 0;
 
 //-----------------------------------------------------------------------
+/// The spectral domain as one long SpectrumDomain. This is the same
+/// as the SpectrumDomain in radiance_all, but without needing to
+/// do the actual radiance calculation.
+//-----------------------------------------------------------------------
+  
+  virtual SpectralDomain spectral_domain_all() const;
+
+//-----------------------------------------------------------------------
 /// Radiance data all stacked together as one long
 /// spectrum (so band 0, followed by band 1, etc.).
 //-----------------------------------------------------------------------

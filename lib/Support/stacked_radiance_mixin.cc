@@ -104,3 +104,42 @@ Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
 
     return Spectrum(SpectralDomain(sd, ud), SpectralRange(sr, ur, uncer));
 }
+
+
+SpectralDomain StackedRadianceMixin::spectral_domain_all() const
+{
+    std::vector<SpectralDomain> sall;
+    std::vector<Range> prall;
+
+    for(int i = 0; i < num_channels(); ++i) {
+        boost::optional<Range> pr = stacked_pixel_range(i);
+
+        if(pr) {
+            sall.push_back(spectral_domain(i));
+            prall.push_back(*pr);
+        }
+    }
+
+    if(sall.size() == 0) {
+        throw Exception("Measured radiance Spectrum empty, pixel ranges must be empty");
+    }
+
+    int nrow = 0;
+    BOOST_FOREACH(const SpectralDomain & s, sall) {
+        nrow += s.data().rows();
+    }
+    Unit ud;
+
+    if(sall.size() > 0) {
+        ud = sall[0].units();
+    }
+
+    Array<double, 1> sd(nrow);
+
+    for(int i = 0; i < (int) sall.size(); ++i) {
+        sd(prall[i]) = sall[i].data() *
+                       FullPhysics::conversion(sall[i].units(), ud);
+    }
+
+    return SpectralDomain(sd, ud);
+}

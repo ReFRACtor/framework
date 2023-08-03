@@ -92,11 +92,11 @@ void ModelMeasureStandard::measurement_eval()
       msrmnt_jacobian(r_to, rall) = j2;
       obs_const = false;
     } else {
-      if(!obs_const and s1.data_ad().is_constant()) {
+      if(!obs_const && s1.data_ad().is_constant()) {
 	msrmnt_jacobian.resizeAndPreserve(msrmnt.rows(),
 					  msrmnt_jacobian.cols());
 	msrmnt_jacobian(r_to, rall) = 0;
-      } else {
+      } else if(!s1.data_ad().is_constant()) {
 	Array<double, 2> j2(s1.data_ad().jacobian());
 	append_array(msrmnt_jacobian, j2);
 	obs_const = false;
@@ -142,20 +142,37 @@ int ModelMeasureStandard::expected_parameter_size() const
 void ModelMeasureStandard::radiance_from_fm()
 {
   assert_parameter_set_correctly();
-
+  Range rall = Range::all();
   SpectralRange s0 = obs[0]->radiance_all().spectral_range();
   Spectrum rad_spec = fm[0]->radiance_all(false);
   SpectralRange rad_mod = rad_spec.spectral_range().convert(s0.units());
   M.reference(rad_mod.data_ad().value());
-  K.reference(rad_mod.data_ad().jacobian());
+  bool k_const = rad_mod.data_ad().is_constant();
+  if(!rad_mod.data_ad().is_constant())
+    K.reference(rad_mod.data_ad().jacobian());
   for(int i = 1; i < (int) obs.size(); ++i) {
     SpectralRange s1 = obs[i]->radiance_all().spectral_range();
     Spectrum s2 = fm[i]->radiance_all(false);
     SpectralRange s3 = s2.spectral_range().convert(s1.units());
+    Range r_to(M.rows(), M.rows() + s3.data_ad().value().rows()-1);
     append_array(M, s3.data_ad().value());
-    append_array(K, s3.data_ad().jacobian());
+    if(k_const && !s3.data_ad().is_constant()) {
+      Array<double, 2> j2(s3.data_ad().jacobian());
+      K.resize(M.rows(), j2.cols());
+      K = 0;
+      K(r_to, rall) = j2;
+      k_const = false;
+    } else {
+      if(!k_const && s3.data_ad().is_constant()) {
+	K.resizeAndPreserve(M.rows(), K.cols());
+	K(r_to,rall)  = 0;
+      } else if(!s3.data_ad().is_constant()) {
+	Array<double, 2> j2(s3.data_ad().jacobian());
+	append_array(K, j2);
+	k_const = false;
+      }
+    }
   }
-
   measurement_eval();
   measurement_jacobian_eval();
   assert_model_correct(M);

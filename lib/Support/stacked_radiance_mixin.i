@@ -20,6 +20,7 @@ public:
   boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
     const = 0;
+  virtual SpectralDomain spectral_domain_all() const;
   virtual Spectrum radiance_all(bool skip_jacobian = false) const;
   std::string print_to_string() const;
   %pickle_serialization();
