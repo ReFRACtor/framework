@@ -28,6 +28,8 @@ StateMappingBasisMatrix::StateMappingBasisMatrix
 (const blitz::Array<double, 2> Basis_matrix)
   :  basis_matrix_(Basis_matrix.copy())
 {
+  if(Basis_matrix.rows() == 0 || Basis_matrix.cols() ==0)
+    throw Exception("Basis matrix is size 0");
   inverse_basis_matrix_.reference(generalized_inverse(basis_matrix_));
 }
 
