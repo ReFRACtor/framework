@@ -92,7 +92,7 @@ protected:
   
   ModelMeasureStandard() {}
 
-  void radiance_from_fm();
+  virtual void radiance_from_fm(bool skip_check=false);
 
   std::vector<boost::shared_ptr<ForwardModel> > fm;
   std::vector<boost::shared_ptr<Observation> > obs;

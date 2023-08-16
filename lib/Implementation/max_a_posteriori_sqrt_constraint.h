@@ -1,12 +1,25 @@
 #ifndef MAX_A_POSTERIORI_SQRT_CONSTRAINT_H
 #define MAX_A_POSTERIORI_SQRT_CONSTRAINT_H
-#include <max_a_posteriori.h>
-#include <model_measure_standard.h>
+#include "max_a_posteriori.h"
+#include "model_measure_standard.h"
+#include "state_mapping_linear.h"
+#include <boost/make_shared.hpp>
 
 namespace FullPhysics {
 /******************************************************************
   This is a variation of MaxAPosterioriStandard, where we supply
   a "sqrt_constraint" to use instead of the a_priori matrix.
+
+  In addition, we take a StateMapping that maps between our "retrieval
+  vector" and "full state vector". We can support most of the
+  functionality by just using StateMapping in the various pieces that
+  make up the StateVector, however muses actually needs access to
+  jacobian on the full forward model grid, K_x. So we need to track
+  this in this class, the forward model generates K_x and we then
+  handle calculating K_z. For a discussion of this, see section
+  III.A.1 of "Tropospheric Emission Spectrometer: Retrieval Method and
+  Error Analysis" (IEEE TRANSACTIONS ON GEOSCIENCE AND REMOTE SENSING,
+  VOL. 44, NO. 5, MAY 2006).
 
   Our original MaxAPosterioriStandard uses a Cholesky decomposition,
   while py-retrieve uses a different decomposition based on SVD
@@ -67,16 +80,52 @@ public:
           const boost::shared_ptr<Observation>& observation, 
           const boost::shared_ptr<StateVector>& state_vector,
           const blitz::Array<double, 1> a_priori_params,
-          const blitz::Array<double, 2> sqrt_constraint);
+          const blitz::Array<double, 2> sqrt_constraint,
+          const boost::shared_ptr<StateMapping>& in_map = boost::make_shared<StateMappingLinear>());
 
   MaxAPosterioriSqrtConstraint(const std::vector<boost::shared_ptr<ForwardModel> >& fm,
           const std::vector<boost::shared_ptr<Observation> >& observation, 
           const boost::shared_ptr<StateVector>& state_vector,
           const blitz::Array<double, 1> a_priori_params,
-          const blitz::Array<double, 2> sqrt_constraint);
+          const blitz::Array<double, 2> sqrt_constraint,
+          const boost::shared_ptr<StateMapping>& in_map =
+          boost::make_shared<StateMappingLinear>());
   
   virtual ~MaxAPosterioriSqrtConstraint() {}
 
+//-----------------------------------------------------------------------
+/// Jacobian on full state grid (K_x in nomenclature of TES paper)
+//-----------------------------------------------------------------------
+  
+  virtual blitz::Array<double, 2> jacobian_fm()
+  { jacobian_eval(); return K_x.copy(); }
+
+//-----------------------------------------------------------------------
+/// Measurment jacobian on full state grid (K_x in nomenclature of TES paper)
+//-----------------------------------------------------------------------
+  
+  virtual blitz::Array<double, 2> measurement_jacobian_fm()
+  { measurement_jacobian_eval(); return msrmnt_jacobian_x.copy(); }
+  
+//-----------------------------------------------------------------------
+/// Jacobian of model - measurement on full state grid.
+//-----------------------------------------------------------------------
+
+  virtual blitz::Array<double, 2> model_measure_diff_jacobian_fm();
+  
+//-----------------------------------------------------------------------
+/// StateMapping to go to and from
+//-----------------------------------------------------------------------
+
+  const boost::shared_ptr<StateMapping>& mapping() const
+  { return mapping_;}
+
+  virtual void parameters(const blitz::Array<double, 1>& x);
+  virtual blitz::Array<double, 1> parameters() const
+  { return ModelMeasureStandard::parameters(); }
+  
+  virtual int expected_parameter_size() const { return Xa.rows(); }
+  
 //-----------------------------------------------------------------------
 /// Print description of object.
 //-----------------------------------------------------------------------
@@ -84,7 +133,13 @@ public:
   virtual void print(std::ostream& Os) const 
   { Os << "MaxAPosterioriSqrtConstraint"; }
 
+protected:
+  virtual void radiance_from_fm(bool skip_check=false);
+  virtual void measurement_eval();
 private:
+  blitz::Array<double, 2> K_x;
+  blitz::Array<double, 2> msrmnt_jacobian_x;
+  boost::shared_ptr<StateMapping> mapping_;
   MaxAPosterioriSqrtConstraint() {}
   friend class boost::serialization::access;
   template<class Archive>

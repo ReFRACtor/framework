@@ -139,7 +139,7 @@ int ModelMeasureStandard::expected_parameter_size() const
 }
 
 
-void ModelMeasureStandard::radiance_from_fm()
+void ModelMeasureStandard::radiance_from_fm(bool skip_check)
 {
   assert_parameter_set_correctly();
   Range rall = Range::all();
@@ -175,9 +175,11 @@ void ModelMeasureStandard::radiance_from_fm()
   }
   measurement_eval();
   measurement_jacobian_eval();
-  assert_model_correct(M);
+  if(!skip_check)
+    assert_model_correct(M);
   M.makeUnique();
-  assert_jacobian_correct(K);
+  if(!skip_check)
+    assert_jacobian_correct(K);
   K.makeUnique();
 }
 

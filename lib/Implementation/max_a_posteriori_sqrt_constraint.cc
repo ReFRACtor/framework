@@ -11,7 +11,8 @@ void MaxAPosterioriSqrtConstraint::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasureStandard)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MaxAPosteriori);
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MaxAPosteriori)
+    & FP_NVP(K_x) & FP_NVP(msrmnt_jacobian_x) & FP_NVP_(mapping);
 }
 
 FP_IMPLEMENT(MaxAPosterioriSqrtConstraint);
@@ -26,10 +27,12 @@ MaxAPosterioriSqrtConstraint::MaxAPosterioriSqrtConstraint
  const boost::shared_ptr<Observation>& observation, 
  const boost::shared_ptr<StateVector>& state_vector,
  const Array<double, 1> a_priori_params,
- const blitz::Array<double, 2> sqrt_constraint)
-: ModelMeasureStandard(forward_model, observation, state_vector) 
+ const blitz::Array<double, 2> sqrt_constraint,
+ const boost::shared_ptr<StateMapping>& in_map)
+: ModelMeasureStandard(forward_model, observation, state_vector),
+  mapping_(in_map)
 {
-  blitz::firstIndex i1; blitz::secondIndex i2; blitz:thirdIndex i3;
+  blitz::firstIndex i1; blitz::secondIndex i2; blitz::thirdIndex i3;
   
   if(a_priori_params.rows() <= 0)
     throw Exception("The size of the a priori parameter values array is zero.");
@@ -45,8 +48,11 @@ MaxAPosterioriSqrtConstraint::MaxAPosterioriSqrtConstraint
   Sa_chol.reference(generalized_inverse(Sa_chol_inv, 1e-20));
   Sa.resize(Xa.rows(), Xa.rows());
   Sa = blitz::sum(Sa_chol(i1, i3) * Sa_chol(i2,i3), i3);
-  if(Xa.rows() != sv->observer_claimed_size())
-    throw Exception("A priori state vector size and state vector size expected by the model are not equal. :( ");
+  blitz::Array<double, 1> x(sv->observer_claimed_size());
+  x(blitz::Range::all()) = 0;
+  blitz::Array<double, 1> z = mapping_->retrieval_state(x).value();
+  if(Xa.rows() != z.rows())
+    throw Exception("A priori state vector size and retrieval vector size expected by the model are not equal. :( ");
 }
 
 //-----------------------------------------------------------------------
@@ -58,10 +64,12 @@ MaxAPosterioriSqrtConstraint::MaxAPosterioriSqrtConstraint
  const std::vector<boost::shared_ptr<Observation> >& observation, 
  const boost::shared_ptr<StateVector>& state_vector,
  const Array<double, 1> a_priori_params,
- const blitz::Array<double, 2> sqrt_constraint)
-: ModelMeasureStandard(forward_model, observation, state_vector) 
+ const blitz::Array<double, 2> sqrt_constraint,
+ const boost::shared_ptr<StateMapping>& in_map)
+: ModelMeasureStandard(forward_model, observation, state_vector),
+  mapping_(in_map)
 {
-  blitz::firstIndex i1; blitz::secondIndex i2; blitz:thirdIndex i3;
+  blitz::firstIndex i1; blitz::secondIndex i2; blitz::thirdIndex i3;
   
   if(a_priori_params.rows() <= 0)
     throw Exception("The size of the a priori parameter values array is zero.");
@@ -77,6 +85,66 @@ MaxAPosterioriSqrtConstraint::MaxAPosterioriSqrtConstraint
   Sa_chol.reference(generalized_inverse(Sa_chol_inv, 1e-20));
   Sa.resize(Xa.rows(), Xa.rows());
   Sa = blitz::sum(Sa_chol(i1, i3) * Sa_chol(i2,i3), i3);
-  if(Xa.rows() != sv->observer_claimed_size())
-    throw Exception("A priori state vector size and state vector size expected by the model are not equal. :( ");
+  blitz::Array<double, 1> x(sv->observer_claimed_size());
+  x(blitz::Range::all()) = 0;
+  blitz::Array<double, 1> z = mapping_->retrieval_state(x).value();
+  std::cerr << "x.rows(): " << x.rows() << "\n"
+	    << "z.rows(): " << z.rows() << "\n"
+	    << "Xa.rows(): " << Xa.rows() << "\n";
+  if(Xa.rows() != z.rows())
+    throw Exception("A priori state vector size and retrieval vector size expected by the model are not equal. :( ");
 }
+
+void MaxAPosterioriSqrtConstraint::parameters(const blitz::Array<double, 1>& z)
+{
+  if(!parameters_different(z)) return;
+  ModelMeasure::parameters(z);
+  blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
+  sv->update_state(z);
+}
+
+blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobian_fm()
+{
+  Array<double, 2> mjac(measurement_jacobian_fm());
+  Array<double, 2> jac(jacobian_fm());
+  Array<double, 2> result(measurement_size(), jac.cols());
+  if(mjac.size() > 0) {
+    if(jac.rows() != mjac.rows() ||
+       jac.cols() != mjac.cols())
+      throw Exception("Model jacobian_x and measurement jacobian_x need to be the same size");
+    result = jac - mjac;
+  } else {
+    result = jac;
+  }
+  return result;
+}
+
+void MaxAPosterioriSqrtConstraint::measurement_eval()
+{
+  blitz::Array<double, 1> z = parameters();
+  blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
+  ModelMeasureStandard::measurement_eval();
+  msrmnt_jacobian_x.reference(msrmnt_jacobian.copy());
+  ArrayAd<double, 1> m_x(x, msrmnt_jacobian_x);
+  ArrayAd<double, 1> m_z = mapping_->retrieval_state(m_x);
+  msrmnt_jacobian.reference(m_z.jacobian());
+}
+
+void MaxAPosterioriSqrtConstraint::radiance_from_fm(bool skip_check)
+{
+  // ModelMeasureStandard gets the model and jacobian value for the
+  // full state grid. Go ahead and call that, skipping the check on M
+  // and K since they aren't the right size here.
+  blitz::Array<double, 1> z = parameters();
+  blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
+  ModelMeasureStandard::radiance_from_fm(true);
+  K_x.reference(K.copy());
+  ArrayAd<double, 1> m_x(x, K_x);
+  ArrayAd<double, 1> m_z = mapping_->retrieval_state(m_x);
+  K.reference(m_z.jacobian());
+  if(!skip_check)
+    assert_model_correct(M);
+  if(!skip_check)
+    assert_jacobian_correct(K);
+}
+
