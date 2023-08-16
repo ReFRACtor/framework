@@ -42,6 +42,13 @@ StateMappingBasisMatrix::mapped_state(const ArrayAd<double, 1>& retrieval_values
 {
   blitz::firstIndex i1;
   blitz::secondIndex i2;
+  if(retrieval_values.rows() != basis_matrix_.cols()) {
+    Exception e("retrieval_values size needs to match basis matrix cols\n");
+    e << "retrieval_values shape: " << retrieval_values.rows() << "\n"
+      << "basis_matrix shape: " << basis_matrix_.rows() << " x "
+      << basis_matrix_.cols() << "\n";
+    throw e;
+  }
   blitz::Array<AutoDerivative<double>, 1> r(basis_matrix_.rows());
   blitz::Array<AutoDerivative<double>, 2> a(basis_matrix_.shape());
   a = auto_derivative(basis_matrix_);
@@ -59,6 +66,13 @@ ArrayAd<double, 1> StateMappingBasisMatrix::retrieval_state
 {
   blitz::firstIndex i1;
   blitz::secondIndex i2;
+  if(initial_values.rows() !=inverse_basis_matrix_.cols()) {
+    Exception e("initial_values size needs to match inverse basis matrix cols\n");
+    e << "initial_values shape: " << initial_values.rows() << "\n"
+      << "inverse_basis_matrix shape: " << inverse_basis_matrix_.rows() << " x "
+      << inverse_basis_matrix_.cols() << "\n";
+    throw e;
+  }
   blitz::Array<AutoDerivative<double>, 1> r(inverse_basis_matrix_.rows());
   blitz::Array<AutoDerivative<double>, 2> a(inverse_basis_matrix_.shape());
   a = auto_derivative(inverse_basis_matrix_);
@@ -66,3 +80,4 @@ ArrayAd<double, 1> StateMappingBasisMatrix::retrieval_state
   r = blitz::sum(a(i1,i2) * b(i2), i2);
   return r;
 }
+

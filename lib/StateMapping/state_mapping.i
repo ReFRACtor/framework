@@ -16,6 +16,9 @@ public:
   virtual ~StateMapping();
   virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& updated_coeff) const;
   virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const;
+  virtual blitz::Array<double, 2> jacobian_retrieval
+  (const blitz::Array<double, 1>& x,
+   const blitz::Array<double, 2>& jacobian_mapped) const;
   virtual int initial_values_index(const int retrieval_state_index) const;
   %python_attribute(name, std::string);
   virtual boost::shared_ptr<StateMapping> clone() = 0;

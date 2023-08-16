@@ -578,6 +578,12 @@ template<class T> inline blitz::Array<T, 5> jacobian
 inline blitz::Array<AutoDerivative<double>, 1> auto_derivative
 (const blitz::Array<double, 1>& Val, const blitz::Array<double, 2>& Jac)
 {
+  if(Val.rows() != Jac.rows()) {
+    Exception e("Val and Jac need to have the same number of rows.");
+    e << "Val rows: " << Val.rows() <<"\n"
+      << "Jac rows: " << Jac.rows() << "\n";
+    throw e;
+  }
   blitz::Array<AutoDerivative<double>, 1> res(Val.shape());
   for(int i = 0; i < Val.rows(); ++i) {
     res(i).value() = Val(i);
@@ -600,6 +606,16 @@ inline blitz::Array<AutoDerivative<double>, 2> auto_derivative
 (const blitz::Array<double, 2>& Val, const blitz::Array<double, 3>& Jac)
 {
   blitz::Array<AutoDerivative<double>, 2> res(Val.shape());
+  if(Val.rows() != Jac.rows() ||
+     Val.cols() != Jac.rows()) {
+    Exception e("Val and Jac need to have the same number of rows and cols.");
+    e << "Val rows: " << Val.rows() <<"\n"
+      << "Val cols: " << Val.cols() <<"\n"
+      << "Jac rows: " << Jac.rows() << "\n"
+      << "Jac cols: " << Jac.rows() << "\n";
+    throw e;
+  }
+  
   for(int i = 0; i < Val.rows(); ++i)
     for(int j = 0; j < Val.cols(); ++j) {
       res(i, j).value() = Val(i, j);
@@ -613,6 +629,18 @@ inline blitz::Array<AutoDerivative<double>, 3> auto_derivative
 (const blitz::Array<double, 3>& Val, const blitz::Array<double, 4>& Jac)
 {
   blitz::Array<AutoDerivative<double>, 3> res(Val.shape());
+  if(Val.rows() != Jac.rows() ||
+     Val.cols() != Jac.cols() ||
+     Val.depth() != Jac.depth()) {
+    Exception e("Val and Jac need to have the same number of rows, cols and depth.");
+    e << "Val rows: " << Val.rows() <<"\n"
+      << "Val cols: " << Val.cols() <<"\n"
+      << "Val depth: " << Val.depth() <<"\n"
+      << "Jac rows: " << Jac.rows() << "\n"
+      << "Jac cols: " << Jac.rows() << "\n"
+      << "Jac depth: " << Jac.depth() << "\n";
+    throw e;
+  }
   for(int i = 0; i < Val.rows(); ++i)
     for(int j = 0; j < Val.cols(); ++j)
       for(int k = 0; k < Val.extent(blitz::thirdDim); ++k) {

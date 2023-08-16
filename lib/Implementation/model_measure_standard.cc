@@ -76,7 +76,7 @@ void ModelMeasureStandard::measurement_eval()
   msrmnt.reference(s0.data());
   Se.resize(s0.uncertainty().rows());
   Se = sqr(s0.uncertainty());
-  bool obs_const = s0.data_ad().is_constant();
+  msrmnt_is_const = s0.data_ad().is_constant();
   if(!s0.data_ad().is_constant())
     msrmnt_jacobian.reference(s0.data_ad().jacobian());
   for(int i = 1; i < (int) obs.size(); ++i) {
@@ -85,21 +85,21 @@ void ModelMeasureStandard::measurement_eval()
     Range r_to(Se.rows(), msrmnt.rows()-1);
     // Some of the observations might have a zero sized jacobian, so
     // handle combining
-    if(obs_const && !s1.data_ad().is_constant()) {
+    if(msrmnt_is_const && !s1.data_ad().is_constant()) {
       Array<double, 2> j2(s1.data_ad().jacobian());
       msrmnt_jacobian.resize(msrmnt.rows(), j2.cols());
       msrmnt_jacobian = 0;
       msrmnt_jacobian(r_to, rall) = j2;
-      obs_const = false;
+      msrmnt_is_const = false;
     } else {
-      if(!obs_const && s1.data_ad().is_constant()) {
+      if(!msrmnt_is_const && s1.data_ad().is_constant()) {
 	msrmnt_jacobian.resizeAndPreserve(msrmnt.rows(),
 					  msrmnt_jacobian.cols());
 	msrmnt_jacobian(r_to, rall) = 0;
       } else if(!s1.data_ad().is_constant()) {
 	Array<double, 2> j2(s1.data_ad().jacobian());
 	append_array(msrmnt_jacobian, j2);
-	obs_const = false;
+	msrmnt_is_const = false;
       }
     }
     Array<double, 1> a3(sqr(s1.uncertainty()));

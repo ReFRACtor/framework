@@ -33,6 +33,13 @@ public:
   virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const = 0;
 
   //-----------------------------------------------------------------------
+  /// Convert a jacobian in the mapped state to the retrieval state.
+  //-----------------------------------------------------------------------
+  virtual blitz::Array<double, 2> jacobian_retrieval
+  (const blitz::Array<double, 1>& x,
+   const blitz::Array<double, 2>& jacobian_mapped) const;
+						     
+  //-----------------------------------------------------------------------
   /// Index into initial values for each retrieval state entry if applicable
   //-----------------------------------------------------------------------
   virtual int initial_values_index(const int retrieval_state_index) const = 0;

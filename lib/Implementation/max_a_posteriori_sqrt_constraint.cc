@@ -88,9 +88,6 @@ MaxAPosterioriSqrtConstraint::MaxAPosterioriSqrtConstraint
   blitz::Array<double, 1> x(sv->observer_claimed_size());
   x(blitz::Range::all()) = 0;
   blitz::Array<double, 1> z = mapping_->retrieval_state(x).value();
-  std::cerr << "x.rows(): " << x.rows() << "\n"
-	    << "z.rows(): " << z.rows() << "\n"
-	    << "Xa.rows(): " << Xa.rows() << "\n";
   if(Xa.rows() != z.rows())
     throw Exception("A priori state vector size and retrieval vector size expected by the model are not equal. :( ");
 }
@@ -108,7 +105,7 @@ blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobia
   Array<double, 2> mjac(measurement_jacobian_fm());
   Array<double, 2> jac(jacobian_fm());
   Array<double, 2> result(measurement_size(), jac.cols());
-  if(mjac.size() > 0) {
+  if(!msrmnt_is_const) {
     if(jac.rows() != mjac.rows() ||
        jac.cols() != mjac.cols())
       throw Exception("Model jacobian_x and measurement jacobian_x need to be the same size");
@@ -122,12 +119,11 @@ blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobia
 void MaxAPosterioriSqrtConstraint::measurement_eval()
 {
   blitz::Array<double, 1> z = parameters();
-  blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
   ModelMeasureStandard::measurement_eval();
-  msrmnt_jacobian_x.reference(msrmnt_jacobian.copy());
-  ArrayAd<double, 1> m_x(x, msrmnt_jacobian_x);
-  ArrayAd<double, 1> m_z = mapping_->retrieval_state(m_x);
-  msrmnt_jacobian.reference(m_z.jacobian());
+  if(!msrmnt_is_const) {
+    msrmnt_jacobian_x.reference(msrmnt_jacobian.copy());
+    msrmnt_jacobian.reference(mapping_->jacobian_retrieval(z, msrmnt_jacobian_x));
+  }
 }
 
 void MaxAPosterioriSqrtConstraint::radiance_from_fm(bool skip_check)
@@ -136,12 +132,9 @@ void MaxAPosterioriSqrtConstraint::radiance_from_fm(bool skip_check)
   // full state grid. Go ahead and call that, skipping the check on M
   // and K since they aren't the right size here.
   blitz::Array<double, 1> z = parameters();
-  blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
   ModelMeasureStandard::radiance_from_fm(true);
   K_x.reference(K.copy());
-  ArrayAd<double, 1> m_x(x, K_x);
-  ArrayAd<double, 1> m_z = mapping_->retrieval_state(m_x);
-  K.reference(m_z.jacobian());
+  K.reference(mapping_->jacobian_retrieval(z, K_x));
   if(!skip_check)
     assert_model_correct(M);
   if(!skip_check)

@@ -12,7 +12,8 @@ void ModelMeasure::serialize(Archive & ar,
 			const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelState)
-    & FP_NVP(msrmnt_does_not_change) 
+    & FP_NVP(msrmnt_does_not_change)
+    & FP_NVP(msrmnt_is_const)
     & FP_NVP(msrmnt) & FP_NVP(msrmnt_jacobian) & FP_NVP(Se);
 }
 
@@ -54,10 +55,10 @@ void ModelMeasure::assert_jacobian_correct(const blitz::Array<double, 2>& k) con
 
 Array<double, 2> ModelMeasure::model_measure_diff_jacobian()
 {
+  Array<double, 2> jac(jacobian());
   Array<double, 2> result(measurement_size(), parameter_size());
   Array<double, 2> mjac(measurement_jacobian());
-  Array<double, 2> jac(jacobian());
-  if(mjac.size() > 0) {
+  if(!msrmnt_is_const) {
     if(jac.rows() != mjac.rows() ||
        jac.cols() != mjac.cols())
       throw Exception("Model jacobian and measurement jacobian need to be the same size");
@@ -74,7 +75,7 @@ Array<double, 2> ModelMeasure::uncert_weighted_jacobian()
   Array<double, 2> result(measurement_size(), parameter_size());
   Array<double, 2> mjac(measurement_jacobian());
   Array<double, 2> jac(jacobian());
-  if(mjac.size() > 0) {
+  if(!msrmnt_is_const) {
     if(jac.rows() != mjac.rows() ||
        jac.cols() != mjac.cols())
       throw Exception("Model jacobian and measurement jacobian need to be the same size");

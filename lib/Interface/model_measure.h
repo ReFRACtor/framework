@@ -620,6 +620,7 @@ protected:
   // not changing. This boolean needs to be set to false for us to
   // treat the msrmnt as depending on the parameters.
   bool msrmnt_does_not_change;
+  bool msrmnt_is_const;
   blitz::Array<double, 1> msrmnt;
   blitz::Array<double, 2> msrmnt_jacobian;
   blitz::Array<double, 1> Se;
