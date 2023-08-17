@@ -61,7 +61,8 @@ public:
 
   ModelMeasure(const blitz::Array<double, 1>& measurement,
                const blitz::Array<double, 1>& measurement_error_cov)
-    : msrmnt_does_not_change(true)
+    : msrmnt_does_not_change(true),
+      msrmnt_is_const(true)
   { set_measurement(measurement, measurement_error_cov); }
 
 
@@ -70,7 +71,8 @@ public:
 //-----------------------------------------------------------------------
 
   ModelMeasure()
-    : msrmnt_does_not_change(true)
+    : msrmnt_does_not_change(true),
+      msrmnt_is_const(true)
   {}
 
 
