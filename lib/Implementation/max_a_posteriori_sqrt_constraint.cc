@@ -97,7 +97,7 @@ void MaxAPosterioriSqrtConstraint::parameters(const blitz::Array<double, 1>& z)
   if(!parameters_different(z)) return;
   ModelMeasure::parameters(z);
   blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
-  sv->update_state(z);
+  sv->update_state(x);
 }
 
 blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobian_fm()
@@ -118,6 +118,8 @@ blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobia
 
 void MaxAPosterioriSqrtConstraint::measurement_eval()
 {
+  if(msrmnt.size() > 0)
+    return;
   blitz::Array<double, 1> z = parameters();
   ModelMeasureStandard::measurement_eval();
   if(!msrmnt_is_const) {
