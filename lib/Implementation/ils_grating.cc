@@ -53,8 +53,10 @@ blitz::Array<double, 1> IlsGrating::apply_ils
         // wn_center +- high_res_extension
 
         double wn_center = disp_wn(Pixel_list[i]);
-        double wn_center_left = wn_center - high_res_extension().value;
-        double wn_center_right = wn_center + high_res_extension().value;
+        double wn_center_left = wn_center - high_res_extension().convert_wave
+            (sample_grid()->pixel_grid().units()).value;
+        double wn_center_right = wn_center + high_res_extension().convert_wave
+            (sample_grid()->pixel_grid().units()).value;
 
         if (wn_center_left < Hres_wn.data()[0] || wn_center_right > Hres_wn.data()[Hres_wn.rows() - 1]) {
             std::cout << "At sample grid index: " << i << ", ILS center range: ["
@@ -167,8 +169,11 @@ ArrayAd<double, 1> IlsGrating::apply_ils
         // wn_center +- high_res_extension
 
         AutoDerivative<double> wn_center = disp_wn(Pixel_list[i]);
-        double wn_center_left = wn_center.value() - high_res_extension().value;
-        double wn_center_right = wn_center.value() + high_res_extension().value;
+        double wn_center_left = wn_center.value() - high_res_extension().convert_wave
+            (sample_grid()->pixel_grid().units()).value;
+        double wn_center_right = wn_center.value() + high_res_extension().convert_wave
+            (sample_grid()->pixel_grid().units()).value;
+
 
         if (wn_center_left < Hres_wn.data()[0] || wn_center_right > Hres_wn.data()[Hres_wn.rows() - 1]) {
             Logger::warning() << "At sample grid index: " << i << ", ILS center range: [" 
