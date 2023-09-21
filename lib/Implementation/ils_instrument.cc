@@ -81,27 +81,42 @@ Spectrum IlsInstrument::apply_instrument_model(
   for(int i = 0; i < res_sd.rows(); ++i)
     res_sd(i) = full.data()(Pixel_list[i]);
   SpectralDomain res_dom(res_sd, full.units());
+  // Pixel_list is relative to pixel_spectral_domain, so we prefer those units
+  // This avoids the potential re-ordering associated with wavelength / wavenumber conversion
+  // Convert High_resolution_spectrum to pixel_spectral_domain units
+  // Re-order High_resolution_spectrum if needed
+  blitz::Array<double, 1> hr_sd_data(High_resolution_spectrum.spectral_domain().data().rows());
+  ArrayAd<double, 1> hr_sr_data(High_resolution_spectrum.spectral_range().data().rows(), 0);
+  if (High_resolution_spectrum.spectral_domain().units() != full.units()) {
+    hr_sd_data = High_resolution_spectrum.spectral_domain().convert_wave(full.units());
+    hr_sr_data = High_resolution_spectrum.spectral_range().data_ad();
+    hr_sr_data.resize_number_variable(High_resolution_spectrum.spectral_range().data_ad().number_variable());
+
+    // SpectralDomain expected to be ascending
+    if (hr_sd_data(0) > hr_sd_data(1)) {
+      hr_sd_data = hr_sd_data.copy().reverse(firstDim)(Range::all());
+      hr_sr_data = hr_sr_data.value().copy().reverse(firstDim)(Range::all());
+      // assignment operator resets jac = 0
+      hr_sr_data.resize_number_variable(High_resolution_spectrum.spectral_range().data_ad().number_variable());
+    }
+  } else {
+    hr_sd_data.reference(High_resolution_spectrum.spectral_domain().data());
+    hr_sr_data = High_resolution_spectrum.spectral_range().data_ad();
+  }
+  SpectralDomain hres_sd(hr_sd_data);
+  SpectralRange hres_sr(hr_sr_data, High_resolution_spectrum.spectral_range().units());
 
   // Gain some speed advantages when running things without autoderivatives
   // if they are not needed.
   SpectralRange res_sr;
-  if(High_resolution_spectrum.spectral_range().data_ad().
-       number_variable() > 0) {
+  if(hres_sr.data_ad().number_variable() > 0) {
     ArrayAd<double, 1> rad_ad =
-      ils_[Spec_index]->apply_ils
-      (High_resolution_spectrum.spectral_domain().data(), 
-       High_resolution_spectrum.spectral_range().data_ad(),
-       Pixel_list);
-    res_sr = SpectralRange(rad_ad, 
-                           High_resolution_spectrum.spectral_range().units());
+      ils_[Spec_index]->apply_ils(hres_sd.data(), hres_sr.data_ad(), Pixel_list);
+    res_sr = SpectralRange(rad_ad, hres_sr.units());
   } else {
     Array<double, 1> rad =
-      ils_[Spec_index]->apply_ils
-      (High_resolution_spectrum.spectral_domain().data(), 
-       High_resolution_spectrum.spectral_range().data(),
-       Pixel_list);
-    res_sr = SpectralRange(rad, 
-                           High_resolution_spectrum.spectral_range().units());
+      ils_[Spec_index]->apply_ils(hres_sd.data(), hres_sr.data(), Pixel_list);
+    res_sr = SpectralRange(rad, hres_sr.units());
   }
   BOOST_FOREACH(const boost::shared_ptr<InstrumentCorrection>& i, inst_corr[Spec_index]) {
     if(i) {
