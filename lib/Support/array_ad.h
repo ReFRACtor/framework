@@ -422,7 +422,29 @@ public:
   }
   inline bool operator!=(const ArrayAd<T, D>& A) const
   { return !(A == *this);  }
-
+  ArrayAd<T, D> reverse(int dimension) const
+  {
+    blitz::Array<T, D> v(value());
+    if(is_const)
+      return ArrayAd<T,D>(v.reverse(dimension));
+    blitz::Array<T, D+1> j(jacobian());
+    return ArrayAd<T, D>(v.reverse(dimension),
+			 j.reverse(dimension));
+  }
+  /// Reverse the ArrayAd, and generate copy so the data is
+  /// contiguous in ascending order if needed.
+  ArrayAd<T, D> reverse_and_copy(int dimension) const
+  {
+    blitz::Array<T, D> v(value().shape());
+    blitz::Array<T, D> v2(value());
+    v = v2.reverse(dimension);
+    if(is_const)
+      return ArrayAd<T,D>(v);
+    blitz::Array<T, D+1> j(jacobian().shape());
+    blitz::Array<T, D+1> j2(jacobian());
+    j = j2.reverse(dimension);
+    return ArrayAd<T, D>(v, j);
+  }
 private:
   blitz::Array<T, D> val;
   blitz::Array<T, D + 1> jac;

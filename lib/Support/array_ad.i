@@ -66,6 +66,8 @@ public:
   void resize(int n1, int n2, int n3, int nvar);
   void resize(int n1, int n2, int n3, int n4, int nvar);
   void resize(int n1, int n2, int n3, int n4, int n5, int nvar);
+  ArrayAd<TYPE, DIM> reverse(int dimension) const;
+  ArrayAd<TYPE, DIM> reverse_and_copy(int dimension) const;
   %python_attribute(value, blitz::Array<TYPE, DIM>)
   %python_attribute(jacobian, blitz::Array<TYPE, DIMP1>)
   %python_attribute(rows, int)
