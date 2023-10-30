@@ -185,6 +185,14 @@ SpectralWindowRange::grid_indexes(const SpectralDomain& Grid, int sensor_index) 
     else {
         g.reference(Grid.wavelength(range_.units));
     }
+    if(bad_sample_mask_.size() != 0 && g.rows() > bad_sample_mask(sensor_index).rows()) {
+      Exception err;
+      err << "Bad sample mask and input SpectralDomain have a size mismatch.\n"
+	  << "  sensor index:         " << sensor_index << "\n"
+	  << "  SpectralDomain size:  " << g.rows() << "\n"
+	  << "  Bad sample mask size: " << bad_sample_mask(sensor_index).rows() << "\n";
+      throw err;
+    }
 
     for(int samp_idx = 0; samp_idx < g.rows(); ++samp_idx) {
         bool ok = false;

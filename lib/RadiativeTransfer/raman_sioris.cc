@@ -207,26 +207,32 @@ RamanSiorisEffect::RamanSiorisEffect
   atmosphere_(atmosphere),
   solar_model_(solar_model)
 {
-    // Convert angles to degrees since these should not change
-    solar_zenith_ = solar_zenith.convert(units::deg).value;
-    obs_zenith_ = observation_zenith.convert(units::deg).value;
-    relative_azimuth_ = relative_azimuth.convert(units::deg).value; // stored for use in cloning
-    scattering_angle_ = scattering_angle(observation_zenith, solar_zenith, relative_azimuth).convert(units::deg).value;
-
-    // Precompute this once since it never changes
-    solar_and_odepth_wn_grid_.reference(solar_and_odepth_spec_domain_.wavenumber());
-
-    // Initialize the temperature levels
-    compute_temp_layers(*atmosphere_->pressure_ptr());
-
-    // Attach ourselves to get updates from the Pressure class to recompute the temperature layers whenever
-    // the pressure updates
-    atmosphere_->pressure_ptr()->add_observer(*this);
-
-    // Initialize SubStateVectorArray portions of the class
-    // Use this instead of a SubStateVectorArray constructor during class initialization
-    // due to it causing issues when this class is used as a director
-    SubStateVectorArray::init(scale_factor, mapping);
+  if(solar_and_odepth_spec_domain_.rows() < 2) {
+    Exception e;
+    e << "Solar_and_odepth_spec_domain too small, must be at least 2 points\n"
+      << "   Solar_and_odepth_spec_domain size: " << solar_and_odepth_spec_domain_.rows() << "\n";
+    throw e;
+  }
+  // Convert angles to degrees since these should not change
+  solar_zenith_ = solar_zenith.convert(units::deg).value;
+  obs_zenith_ = observation_zenith.convert(units::deg).value;
+  relative_azimuth_ = relative_azimuth.convert(units::deg).value; // stored for use in cloning
+  scattering_angle_ = scattering_angle(observation_zenith, solar_zenith, relative_azimuth).convert(units::deg).value;
+  
+  // Precompute this once since it never changes
+  solar_and_odepth_wn_grid_.reference(solar_and_odepth_spec_domain_.wavenumber());
+  
+  // Initialize the temperature levels
+  compute_temp_layers(*atmosphere_->pressure_ptr());
+  
+  // Attach ourselves to get updates from the Pressure class to recompute the temperature layers whenever
+  // the pressure updates
+  atmosphere_->pressure_ptr()->add_observer(*this);
+  
+  // Initialize SubStateVectorArray portions of the class
+  // Use this instead of a SubStateVectorArray constructor during class initialization
+  // due to it causing issues when this class is used as a director
+  SubStateVectorArray::init(scale_factor, mapping);
 }
 
 //-----------------------------------------------------------------------
@@ -239,10 +245,10 @@ RamanSiorisEffect::RamanSiorisEffect
 
 void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& UNUSED(Forward_model_grid)) const
 {
-    double wn_middle = (solar_and_odepth_wn_grid_(0) + solar_and_odepth_wn_grid_(solar_and_odepth_wn_grid_.rows() - 1)) / 2;
-    double albedo = evaluate_albedo(wn_middle, sensor_index_);
+  double wn_middle = (solar_and_odepth_wn_grid_(0) + solar_and_odepth_wn_grid_(solar_and_odepth_wn_grid_.rows() - 1)) / 2;
+  double albedo = evaluate_albedo(wn_middle, sensor_index_);
 
-    apply_raman_effect(Spec, temperature_layers_, albedo);
+  apply_raman_effect(Spec, temperature_layers_, albedo);
 }
 
 //-----------------------------------------------------------------------
@@ -252,60 +258,60 @@ void RamanSiorisEffect::apply_effect(Spectrum& Spec, const ForwardModelSpectralG
 
 void RamanSiorisEffect::apply_raman_effect(Spectrum& Spec, const blitz::Array<double, 1>& temp_layers, const double albedo) const
 {
-    Range ra = Range::all();
-    firstIndex i1;
-    secondIndex i2;
+  Range ra = Range::all();
+  firstIndex i1;
+  secondIndex i2;
 
-    // Convert dry air number density to the necessary units of molecules/cm^2
-    Array<double, 1> dry_air_density = atmosphere_->absorber_ptr()->total_air_number_density_layer(sensor_index_).convert(Unit("cm^-2")).value.value();
-
-    // Compute total optical depth
-    Array<double, 2> total_optical_depth(solar_and_odepth_wn_grid_.rows(), temp_layers.rows());
-
-    for(int wn_idx = 0; wn_idx < solar_and_odepth_wn_grid_.rows(); wn_idx++) {
-        total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), sensor_index_)->total_optical_depth().value();
-    }
+  // Convert dry air number density to the necessary units of molecules/cm^2
+  Array<double, 1> dry_air_density = atmosphere_->absorber_ptr()->total_air_number_density_layer(sensor_index_).convert(Unit("cm^-2")).value.value();
+  
+  // Compute total optical depth
+  Array<double, 2> total_optical_depth(solar_and_odepth_wn_grid_.rows(), temp_layers.rows());
+  
+  for(int wn_idx = 0; wn_idx < solar_and_odepth_wn_grid_.rows(); wn_idx++) {
+    total_optical_depth(wn_idx, ra) = atmosphere_->optical_properties(solar_and_odepth_wn_grid_(wn_idx), sensor_index_)->total_optical_depth().value();
+  }
+  
+  // Absolute magnitude of the solar spectrum doesn't matter (we
+  // calculate a ratio, so magnitude cancels out). No need to
+  // convert to a certain unit;
+  Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(solar_and_odepth_spec_domain_).spectral_range().data();
+  
+  // Compute raman spectrum
+  // Copy temp_layers to ensure memory is on the C++ side if being called from Python when passed to Fortran
+  // Passing memory pointed to on the Python side can cause NaN's to be generated by get_raman
+  Array<double, 1> raman_spec =
+    compute_raman_sioris(solar_zenith_, obs_zenith_,
+			 scattering_angle_, albedo, do_upwelling_,
+			 temp_layers.copy(), dry_air_density, solar_and_odepth_spec_domain_,
+			 Spec.spectral_domain(), solar_spectrum, total_optical_depth);
+  
+  // Load scale factor
+  AutoDerivative<double> scale_factor = coefficient()(0);
+  
+  // Apply raman scattering scaling.
+  ArrayAd<double, 1> spec_rad = Spec.spectral_range().data_ad();
+  
+  // Chain rule for derivatives. We could just convert to and from
+  // auto_derivative to do this automatically, but it isn't too hard
+  // to just write out the explicit rule, which is faster to run.
+  if(!spec_rad.is_constant() && !scale_factor.is_constant() &&
+     spec_rad.number_variable() != scale_factor.number_variable()) {
     
-    // Absolute magnitude of the solar spectrum doesn't matter (we
-    // calculate a ratio, so magnitude cancels out). No need to
-    // convert to a certain unit;
-    Array<double, 1> solar_spectrum = solar_model_->solar_spectrum(solar_and_odepth_spec_domain_).spectral_range().data();
+    throw Exception("Need to have the same number of variables for Spec jacobian and scale_factor"); 
+  }
+  
+  if(!spec_rad.is_constant() || !scale_factor.is_constant()) {
+    spec_rad.resize_number_variable(std::max(spec_rad.number_variable(), scale_factor.number_variable()));
 
-    // Compute raman spectrum
-    // Copy temp_layers to ensure memory is on the C++ side if being called from Python when passed to Fortran
-    // Passing memory pointed to on the Python side can cause NaN's to be generated by get_raman
-    Array<double, 1> raman_spec =
-       compute_raman_sioris(solar_zenith_, obs_zenith_,
-         scattering_angle_, albedo, do_upwelling_,
-         temp_layers.copy(), dry_air_density, solar_and_odepth_spec_domain_,
-         Spec.spectral_domain(), solar_spectrum, total_optical_depth);
+    spec_rad.jacobian() = spec_rad.jacobian()(i1, i2) * (raman_spec(i1) * scale_factor.value() + 1.0);
 
-    // Load scale factor
-    AutoDerivative<double> scale_factor = coefficient()(0);
-
-    // Apply raman scattering scaling.
-    ArrayAd<double, 1> spec_rad = Spec.spectral_range().data_ad();
-
-    // Chain rule for derivatives. We could just convert to and from
-    // auto_derivative to do this automatically, but it isn't too hard
-    // to just write out the explicit rule, which is faster to run.
-    if(!spec_rad.is_constant() && !scale_factor.is_constant() &&
-       spec_rad.number_variable() != scale_factor.number_variable()) {
-        
-        throw Exception("Need to have the same number of variables for Spec jacobian and scale_factor"); 
+    if(!scale_factor.is_constant()) {
+      spec_rad.jacobian() += spec_rad.value()(i1) * raman_spec(i1) * scale_factor.gradient()(i2);
     }
-
-    if(!spec_rad.is_constant() || !scale_factor.is_constant()) {
-       spec_rad.resize_number_variable(std::max(spec_rad.number_variable(), scale_factor.number_variable()));
-
-       spec_rad.jacobian() = spec_rad.jacobian()(i1, i2) * (raman_spec(i1) * scale_factor.value() + 1.0);
-
-        if(!scale_factor.is_constant()) {
-            spec_rad.jacobian() += spec_rad.value()(i1) * raman_spec(i1) * scale_factor.gradient()(i2);
-        }
-    }
-
-    spec_rad.value() *= (raman_spec * scale_factor.value() + 1.0);
+  }
+  
+  spec_rad.value() *= (raman_spec * scale_factor.value() + 1.0);
 }
 
 //-----------------------------------------------------------------------
@@ -315,15 +321,15 @@ void RamanSiorisEffect::apply_raman_effect(Spectrum& Spec, const blitz::Array<do
 
 void RamanSiorisEffect::compute_temp_layers(const Pressure& pressure)
 {
-    ArrayAd<double, 1> pgrid_lev = pressure.pressure_grid().value;
+  ArrayAd<double, 1> pgrid_lev = pressure.pressure_grid().value;
 
-    temperature_layers_.resize(pgrid_lev.rows()-1);
+  temperature_layers_.resize(pgrid_lev.rows()-1);
 
-    for(int lay_idx = 0; lay_idx < temperature_layers_.rows(); lay_idx++) {
-        AutoDerivativeWithUnit<double> press_lay( (pgrid_lev(lay_idx) + pgrid_lev(lay_idx+1)) / 2, pressure.pressure_grid().units );
+  for(int lay_idx = 0; lay_idx < temperature_layers_.rows(); lay_idx++) {
+    AutoDerivativeWithUnit<double> press_lay( (pgrid_lev(lay_idx) + pgrid_lev(lay_idx+1)) / 2, pressure.pressure_grid().units );
 
-        temperature_layers_(lay_idx) = atmosphere_->temperature_ptr()->temperature(press_lay).value.value();
-    }
+    temperature_layers_(lay_idx) = atmosphere_->temperature_ptr()->temperature(press_lay).value.value();
+  }
 }
 
 //-----------------------------------------------------------------------
@@ -354,17 +360,16 @@ double RamanSiorisEffect::evaluate_albedo(double wn, int cindex) const
 
 boost::shared_ptr<SpectrumEffect> RamanSiorisEffect::clone() const
 {
-
-    return boost::make_shared<RamanSiorisEffect>
-      (solar_and_odepth_spec_domain_, coefficient().value()(0),
-       sensor_index_,
-       DoubleWithUnit(solar_zenith_, units::deg),
-       DoubleWithUnit(obs_zenith_, units::deg),
-       DoubleWithUnit(relative_azimuth_, units::deg),
-       atmosphere_,
-       solar_model_,
-       mapping,
-       do_upwelling_);
+  return boost::make_shared<RamanSiorisEffect>
+    (solar_and_odepth_spec_domain_, coefficient().value()(0),
+     sensor_index_,
+     DoubleWithUnit(solar_zenith_, units::deg),
+     DoubleWithUnit(obs_zenith_, units::deg),
+     DoubleWithUnit(relative_azimuth_, units::deg),
+     atmosphere_,
+     solar_model_,
+     mapping,
+     do_upwelling_);
 }
 
 //-----------------------------------------------------------------------
