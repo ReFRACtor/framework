@@ -116,7 +116,8 @@ ArrayAd<double, 2> OpticalPropertiesPca::pack(const boost::shared_ptr<OpticalPro
 
     int packed_idx = 0;
 
-    packed_v.value()(ra, packed_idx) = gas_od.value();
+    if(source_properties->number_gas_particles() > 0)
+      packed_v.value()(ra, packed_idx) = gas_od.value();
     packed_idx += 1;
 
     packed_v.value()(ra, packed_idx) = ray_od.value();

@@ -59,9 +59,12 @@ void PCABinning::compute_bins()
     Array<double, 2> omega(nlayer, ndat, ColumnMajorArray<2>());
 
     for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
-        taug(ra, dom_idx) = opt_props_[dom_idx]->gas_optical_depth_per_layer().value();
-        tau_tot(ra, dom_idx) = opt_props_[dom_idx]->total_optical_depth().value();
-        omega(ra, dom_idx) = opt_props_[dom_idx]->total_single_scattering_albedo().value();
+      if(opt_props_[dom_idx]->number_gas_particles() == 0)
+	taug(ra, dom_idx) = 0;
+      else
+	taug(ra, dom_idx) = opt_props_[dom_idx]->gas_optical_depth_per_layer().value();
+      tau_tot(ra, dom_idx) = opt_props_[dom_idx]->total_optical_depth().value();
+      omega(ra, dom_idx) = opt_props_[dom_idx]->total_single_scattering_albedo().value();
     }
 
     // Only used for UVVSWIR_V4, resized there
@@ -86,20 +89,22 @@ void PCABinning::compute_bins()
             }
 
             primary_gas_dominates.resize(ndat);
-
-            for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
+	    // Handle case of primary_gas not actually being in the
+	    // optical properties
+	    if(primary_abs_index_ < 0)
+	      primary_gas_dominates = 0;
+	    else
+	      for(int dom_idx = 0; dom_idx < ndat; dom_idx++) {
                 Array<double, 2> gas_od(opt_props_[dom_idx]->gas_optical_depth_per_particle().value());
                 Array<double, 1> gas_col_tot(gas_od.cols());
-                for(int gas_idx = 0; gas_idx < gas_od.cols(); gas_idx++) {
-                    gas_col_tot(gas_idx) = sum(gas_od(ra, gas_idx));
-                }
-
-                if ((gas_col_tot(primary_abs_index_)/sum(gas_col_tot)) > 0.75) {
-                    primary_gas_dominates(dom_idx) = 1;
-                } else {
-                    primary_gas_dominates(dom_idx) = 0;
-                }
-            }
+                for(int gas_idx = 0; gas_idx < gas_od.cols(); gas_idx++)
+		  gas_col_tot(gas_idx) = sum(gas_od(ra, gas_idx));
+		
+                if ((gas_col_tot(primary_abs_index_)/sum(gas_col_tot)) > 0.75)
+		  primary_gas_dominates(dom_idx) = 1;
+		else
+		  primary_gas_dominates(dom_idx) = 0;
+	      }
 
             create_bin_uvvswir_v4(
                 &nlayer, &ndat, &num_bins_, &ndat, &nlayer, &num_bins_, 
