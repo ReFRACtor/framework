@@ -1,7 +1,8 @@
 #include "serialize_function.h"
 #include "weak_ptr_serialize_support.h"
 #include <boost/serialization/shared_ptr.hpp>
-#include "fstream_compress.h"
+#include <boost/regex.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
@@ -18,6 +19,60 @@
 #include <boost/archive/polymorphic_binary_oarchive.hpp>
 #endif
 using namespace SWIG_MAPPER_NAMESPACE;
+
+/****************************************************************//**
+/// This opens a file for writing, possibly with automatic
+/// compression. We look at the File name, and if ends if ".gz" then
+/// we automatically gzip the file.
+*******************************************************************/
+
+class OstreamCompress : public FilteringOstream {
+public:
+//-----------------------------------------------------------------------
+/// This opens a file for writing, possibly with automatic
+/// compression. We look at the File name, and if ends if ".gz" then
+/// we automatically gzip the file.
+//-----------------------------------------------------------------------
+  OstreamCompress(const std::string& Fname)
+    : FilteringOstream(Fname)
+  {
+    if(boost::regex_search(Fname, boost::regex("\\.gz$")))
+      sb.push(boost::iostreams::gzip_compressor());
+    sb.push(f);
+  }    
+  virtual ~OstreamCompress() {}
+};
+
+/****************************************************************//**
+/// This opens a file for reading, possibly with automatic
+/// decompression. We look at the File name, and if ends if ".gz" then
+/// we automatically gunzip the file.
+///
+/// See all also IfstreamCs which both handles decompression and
+/// stripping out comments.
+*******************************************************************/
+
+class IstreamCompress : public FilteringIstream {
+public:
+//-----------------------------------------------------------------------
+/// This opens a file for reading, possibly with automatic
+/// decompression. We look at the File name, and if ends if ".gz" then
+/// we automatically gunzip the file.
+///
+/// See all also IfstreamCs which both handles decompression and
+/// stripping out comments.
+//-----------------------------------------------------------------------
+  IstreamCompress(const std::string& Fname)
+    : FilteringIstream(Fname)
+  {
+    if(boost::regex_search(Fname, boost::regex("\\.gz$")))
+      sb.push(boost::iostreams::gzip_decompressor());
+    sb.push(f);
+  }
+  virtual ~IstreamCompress() {}
+};
+
+
 
 //-----------------------------------------------------------------------
 /// Utility class. This changes to a new directory, and on destruction
