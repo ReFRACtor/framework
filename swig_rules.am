@@ -78,6 +78,7 @@ vpath %.i $(srcdir)/@swigrules@/lib
 SWIG_FLAG += -O
 
 pkgpythonswig_PYTHON = @swigrules@/__init__.py
+pkgpythonswig_PYTHON += @swigrules@/all.py
 
 EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(FULL_SWIG_SRC))
 EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(ADDITONAL_SWIG_SRC))
