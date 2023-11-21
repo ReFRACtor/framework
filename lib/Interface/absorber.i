@@ -58,7 +58,7 @@ public:
   virtual ArrayAd<double, 2> optical_depth_each_layer(double wn, int spec_index) const = 0;
   virtual boost::shared_ptr<AbsorberVmr> absorber_vmr(const std::string& gas_name) const = 0;
   virtual boost::shared_ptr<Absorber> clone() const = 0;
-  virtual void print(std::ostream& Os) const;
+  %director_python_print();
 
   // Functions so StateVectorObserver base class, see note above
   virtual void notify_update(const StateVector& Sv);

@@ -11,3 +11,14 @@
 // interacts incorrectly with our ostream swig rules in swig_iostream
 //%rename(print_desc) print;
 %rename ("$ignore") print;
+
+// Trying to override print in python through a director doesn't
+// really work very well. So we instroduce a desc function that can be
+// overriden.
+%define %director_python_print()
+%extend {
+  virtual std::string desc() const { return "SwigObject"; }
+  virtual void print(std::ostream& Os) const { Os << desc(); }
+}
+%enddef
+

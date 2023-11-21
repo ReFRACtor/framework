@@ -647,6 +647,13 @@ AbsorberAbsco::AbsorberAbsco
   gas_absorption(Gas_absorption), c(C), nsub(Nsub), 
   cache_tau_gas_stale(true)
 {
+  if(Vmr.size() != Gas_absorption.size()) {
+    Exception e;
+    e << "VMR and Gas_absorption need to be the same size.\n"
+      << "   VMR size:            " << Vmr.size() << "\n"
+      << "   Gas_absorption size: " << Gas_absorption.size() << "\n";
+    throw e;
+  }
   Range ra(Range::all());
   press->add_observer(*this);
   temp->add_observer(*this);
