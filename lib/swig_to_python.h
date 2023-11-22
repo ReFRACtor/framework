@@ -35,8 +35,11 @@ swig_to_python(const boost::shared_ptr<T>& V)
 //-----------------------------------------------------------------------
 
   Swig::Director* d = dynamic_cast<Swig::Director*>(V.get());
-  if(d)
-    return d->swig_get_self();
+  if(d) {
+    PyObject* p = d->swig_get_self();
+    Py_INCREF(p);
+    return p;
+  }
 
 //-----------------------------------------------------------------------
 // See if underlying type is registered in swig_type_map. If so, return the
@@ -72,8 +75,11 @@ swig_to_python_or_none(const boost::shared_ptr<GenericObject>& V)
 //-----------------------------------------------------------------------
 
   Swig::Director* d = dynamic_cast<Swig::Director*>(V.get());
-  if(d) 
-    return d->swig_get_self();
+  if(d) {
+    PyObject* p = d->swig_get_self();
+    Py_INCREF(p);
+    return p;
+  }
 
 //-----------------------------------------------------------------------
 // See if underlying type is registered in swig_type_map. If so, return the

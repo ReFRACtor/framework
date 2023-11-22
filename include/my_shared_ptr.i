@@ -20,8 +20,23 @@
 // so we don't actually delete the pointer p
   class PythonRefPtrCleanup {
   public:
-    PythonRefPtrCleanup(PyObject* Obj) : obj(Obj) {}
-    void operator()(void* p) { Py_DECREF(obj);}
+    PythonRefPtrCleanup(PyObject* Obj) : obj(Obj)
+      { Py_INCREF(obj); 
+	std::cerr << "In PythonRefPtrCleanup constructor " << obj << " has count "
+		  << Py_REFCNT(obj) << "\n";
+      }
+    PythonRefPtrCleanup(const PythonRefPtrCleanup& V)
+      : obj(V.obj)
+      {
+	//Py_INCREF(obj);
+	std::cerr << "In PythonRefPtrCleanup copy " << obj << " has count "
+		  << Py_REFCNT(obj) << "\n";
+      }
+    void operator()(void* p) {
+      std::cerr << "Start PythonRefPtrCleanup operator() " << obj << " has count "
+		<< Py_REFCNT(obj) << "\n";
+      Py_DECREF(obj);
+    }
   private:
     PyObject* obj;
   };
@@ -233,7 +248,6 @@
   // object. 
   Swig::Director* dp = dynamic_cast<Swig::Director*>($1.get());
   if(dp) {
-      Py_INCREF(dp->swig_get_self());
       $1.reset($1.get(), PythonRefPtrCleanup(dp->swig_get_self()));
   }
 }
@@ -257,7 +271,6 @@
   // object. 
   Swig::Director* dp = dynamic_cast<Swig::Director*>($result.get());
   if(dp) {
-      Py_INCREF(dp->swig_get_self());
       $result.reset($result.get(), PythonRefPtrCleanup(dp->swig_get_self()));
     }
   if (newmem & SWIG_CAST_NEW_MEMORY) %delete(%reinterpret_cast(swig_argp, $&ltype));
@@ -321,7 +334,6 @@
   // object. 
   Swig::Director* dp = dynamic_cast<Swig::Director*>($1->get());
   if(dp) {
-      Py_INCREF(dp->swig_get_self());
       temp2shared.reset($1->get(), PythonRefPtrCleanup(dp->swig_get_self()));
       $1 = &temp2shared;
     }
