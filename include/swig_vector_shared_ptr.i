@@ -29,6 +29,7 @@ namespace swig {
 	    vtype *pseq = new vtype();
 	    PyObject *iterator = PyObject_GetIter(obj);
 	    PyObject *item;
+	    typename std::vector< boost::shared_ptr<T > >::value_type temp2shared2;
 	    while((item = PyIter_Next(iterator))) {
 	      boost::shared_ptr<T> *itemp;
 	      int newmem = 0;
@@ -38,6 +39,17 @@ namespace swig {
 		Py_DECREF(item);
 		Py_DECREF(iterator);
 		return SWIG_ERROR;
+	      }
+	      // Added mms
+	      // Special handling if this is a director class. In that case, we
+	      // don't own the underlying python object. Instead,
+	      // we tell python we have a reference to the underlying object, and
+	      // when this gets destroyed we decrement the reference to the python
+	      // object. 
+	      Swig::Director* dp = dynamic_cast<Swig::Director*>(itemp->get());
+	      if(dp) {
+		temp2shared2.reset(itemp->get(), PythonRefPtrCleanup(dp->swig_get_self()));
+		itemp = &temp2shared2;
 	      }
 	      pseq->push_back(*itemp);
 	      Py_DECREF(item);
