@@ -12,6 +12,8 @@
 %include <shared_ptr.i>
 
 %{
+//#define PTR_DEBUG 1
+  
 // If the object passed in actually a python director, we don't own
 // it. Instead, when the reference count goes to 0 we just decrement
 // our reference to it.
@@ -21,20 +23,26 @@
   class PythonRefPtrCleanup {
   public:
     PythonRefPtrCleanup(PyObject* Obj) : obj(Obj)
-      { Py_INCREF(obj); 
+      { Py_INCREF(obj);
+#ifdef 	PTR_DEBUG
 	std::cerr << "In PythonRefPtrCleanup constructor " << obj << " has count "
 		  << Py_REFCNT(obj) << "\n";
+#endif	
       }
     PythonRefPtrCleanup(const PythonRefPtrCleanup& V)
       : obj(V.obj)
       {
-	//Py_INCREF(obj);
+	// Place for debug message, don't otherwise need anything here
+#ifdef 	PTR_DEBUG
 	std::cerr << "In PythonRefPtrCleanup copy " << obj << " has count "
 		  << Py_REFCNT(obj) << "\n";
+#endif	
       }
     void operator()(void* p) {
+#ifdef 	PTR_DEBUG
       std::cerr << "Start PythonRefPtrCleanup operator() " << obj << " has count "
 		<< Py_REFCNT(obj) << "\n";
+#endif    
       Py_DECREF(obj);
     }
   private:
