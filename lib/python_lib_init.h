@@ -94,17 +94,19 @@ std::string parse_python_exception() {
     if(err_str) {
         PyObject * temp_bytes = PyUnicode_AsEncodedString(err_str, "ASCII", 
 	"strict");
-	if(temp_bytes)
+	if(temp_bytes) {
 	  ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-        Py_DECREF(temp_bytes);
+	  Py_DECREF(temp_bytes);
+	}
     }
     Py_XDECREF(err_str);
   } else if(value) {
     PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
 	"ignore");
-    if(temp_bytes)
+    if(temp_bytes) {
       ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-    Py_DECREF(temp_bytes);
+      Py_DECREF(temp_bytes);
+    }
   }
   Py_XDECREF(mod);
   Py_XDECREF(err_str_list);
