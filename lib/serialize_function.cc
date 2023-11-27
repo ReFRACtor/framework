@@ -1,6 +1,7 @@
+#include <iostream>
 #include "serialize_function.h"
+#include "serialize_shared_ptr.h"
 #include "weak_ptr_serialize_support.h"
-#include <boost/serialization/shared_ptr.hpp>
 #include <boost/regex.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
@@ -22,7 +23,7 @@
 using namespace SWIG_MAPPER_NAMESPACE;
 
 /****************************************************************//**
-   This allows filtering stream to created on top of an 
+   This allows filtering stream to be created on top of an 
    underlying ofstream. See boost::iostream documentation for details
    on how to create these. This class is intended to be used as a base
    class for other classes that assemble the proper filters.
@@ -140,8 +141,6 @@ public:
   }
   virtual ~IstreamCompress() {}
 };
-
-
 
 //-----------------------------------------------------------------------
 /// Utility class. This changes to a new directory, and on destruction

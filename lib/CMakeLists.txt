@@ -6,6 +6,7 @@ list(APPEND SWIG_EXTRA_SOURCE_FILES
   )
 list(APPEND SWIG_EXTRA_HEADER_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/serialize_function.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/serialize_shared_ptr.h
   ${CMAKE_CURRENT_SOURCE_DIR}/swig_to_python.h
   ${CMAKE_CURRENT_SOURCE_DIR}/swig_type_mapper_base.h
   ${CMAKE_CURRENT_SOURCE_DIR}/swig_type_mapper.h
