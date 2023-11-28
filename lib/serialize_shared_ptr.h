@@ -1,3 +1,4 @@
+#include <iostream>
 #include "swig_type_mapper_base.h"
 #include <boost/serialization/shared_ptr_helper.hpp>
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
@@ -43,14 +44,6 @@ inline void save(
   BOOST_STATIC_ASSERT((tracking_level< T >::value != track_never));
   const T * t_ptr = t.get();
   ar << boost::serialization::make_nvp("px", t_ptr);
-  // This rest of this was added to our copy to support swig python directors
-  boost::shared_ptr<SWIG_MAPPER_NAMESPACE::GenericObject> v2 =
-    boost::dynamic_pointer_cast<SWIG_MAPPER_NAMESPACE::GenericObject>(t);
-  if(v2) {
-    std::string python_object = SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::swig_python_save_string(v2);
-    if(python_object != "")
-      ar << boost::serialization::make_nvp("python_object", python_object);
-  }
 }
 
 template<class Archive, class T>
@@ -76,8 +69,7 @@ inline void load(
     boost::dynamic_pointer_cast<SWIG_MAPPER_NAMESPACE::GenericObject>(t);
   if(v2) {
     if(SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::is_python_director(v2)) {
-      std::string python_object;
-      ar >> boost::serialization::make_nvp("python_object", python_object);
+      SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::swig_python_director_setup(v2);
     }
   }
 }

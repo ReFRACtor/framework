@@ -86,7 +86,7 @@ private:
 class SwigTypeMapperBase {
 public:
   virtual bool is_python_director_check(const boost::shared_ptr<GenericObject>& V) const = 0;
-  virtual std::string get_swig_python_save_string(const boost::shared_ptr<GenericObject>& V) const = 0;
+  virtual void do_swig_python_director_setup(const boost::shared_ptr<GenericObject>& V) const = 0;
   virtual void* to_python(const boost::shared_ptr<GenericObject>& V) const = 0;
   virtual ~SwigTypeMapperBase() {}
 
@@ -112,16 +112,15 @@ public:
   }
 
 //-----------------------------------------------------------------------
-/// Return a string to save a pickled version of the "self" object in
-/// a Swig::Director. Returns an empty string if this isn't a Swig::Director.
+/// Finish setting up python director by setting "this" to the object
 //-----------------------------------------------------------------------
-  static std::string swig_python_save_string(const boost::shared_ptr<GenericObject>& V)
+  
+  static void swig_python_director_setup(const boost::shared_ptr<GenericObject>& V)
   {
     GenericObject& t(*V.get());
     type_index tid(typeid(t));
     if(swig_type_map.count(tid) != 0)
-      return swig_type_map[tid]->get_swig_python_save_string(V);
-    return "";
+      swig_type_map[tid]->do_swig_python_director_setup(V);
   }
   
 //-----------------------------------------------------------------------
@@ -148,6 +147,13 @@ public:
   map_to_python(const boost::shared_ptr<GenericObject>& V, std::type_info const& id)
   {
     type_index tid(id);
+    if(swig_type_map.count(tid) != 0)
+      return swig_type_map[tid]->to_python(V);
+    throw std::runtime_error("Unknown type");
+  }
+  static void*
+  map_to_python(const boost::shared_ptr<GenericObject>& V, const type_index& tid)
+  {
     if(swig_type_map.count(tid) != 0)
       return swig_type_map[tid]->to_python(V);
     throw std::runtime_error("Unknown type");

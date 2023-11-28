@@ -20,7 +20,14 @@ namespace SWIG_MAPPER_NAMESPACE {
 
 template<class T> class SwigTypeMapper : public SwigTypeMapperBase {
 public:
-  SwigTypeMapper(const char* Typename) {
+  SwigTypeMapper(const char* Typename)
+    : base_type_index(typeid(T))
+  {
+    sinfo = SWIG_TypeQuery(Typename);
+  }
+  SwigTypeMapper(const char* Typename, const std::type_info& Base_type_info)
+    : base_type_index(Base_type_info)
+  {
     sinfo = SWIG_TypeQuery(Typename);
   }
   // We have the definition of this function in shared_ptr_type_mapper.i
@@ -32,20 +39,14 @@ public:
       return true;
     return false;
   }
-
-  virtual std::string get_swig_python_save_string(const boost::shared_ptr<GenericObject>& V) const
+  virtual void do_swig_python_director_setup(const boost::shared_ptr<GenericObject>& V) const
   {
     boost::shared_ptr<Swig::Director> v2 = boost::dynamic_pointer_cast<Swig::Director>(V);
     if(!v2)
-      return "";
+      return;
     PyObject* pobj = v2->swig_get_self();
-    PyObject* this_save = PyObject_GetAttr(pobj, PyString_FromString("this"));
-    PyObject_SetAttr(pobj, PyString_FromString("this"), Py_None);
-    std::string python_object = cpickle_dumps(pobj);
-    PyObject_SetAttr(pobj, PyString_FromString("this"), this_save);
-    return python_object;
+    PyObject_SetAttr(pobj, PyString_FromString("this"), (PyObject*) map_to_python(V, base_type_index));
   }
-  
   virtual void* to_python(const boost::shared_ptr<GenericObject>& V) const
   {
     boost::shared_ptr<T> v2 = boost::dynamic_pointer_cast<T>(V);
@@ -56,6 +57,7 @@ public:
   virtual ~SwigTypeMapper() {}
 private:
   swig_type_info* sinfo;
+  type_index base_type_index;
   inline PyObject* cpickle_module() const
   {
     static PyObject* mod = 0;
