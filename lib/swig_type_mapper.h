@@ -45,7 +45,11 @@ public:
     if(!v2)
       return;
     PyObject* pobj = v2->swig_get_self();
-    PyObject_SetAttr(pobj, PyString_FromString("this"), (PyObject*) map_to_python(V, base_type_index));
+    PyObject* thisproxyobj = (PyObject*) map_to_python(V, base_type_index);
+    PyObject* thisobj = PyObject_GetAttr(thisproxyobj, PyString_FromString("this"));
+    PyObject_SetAttr(pobj, PyString_FromString("this"), thisobj);
+    Py_DECREF(thisproxyobj);
+    Py_DECREF(thisobj);
   }
   virtual void* to_python(const boost::shared_ptr<GenericObject>& V) const
   {
