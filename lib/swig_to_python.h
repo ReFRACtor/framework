@@ -57,6 +57,13 @@ swig_to_python(const boost::shared_ptr<T>& V)
   return (PyObject*) SwigTypeMapperBase::map_to_python(V, typeid(T));
 }
 
+// The lifetime of the python director object is a little different for things
+// like handling serialization, because we *create* the python
+// director object at the C++ level. So we don't want the extra
+// Py_INCREF. I think the only place this gets used is
+// serialize_function.i, but you might have other examples of this
+  
+  
 inline PyObject* 
 swig_to_python_or_none(const boost::shared_ptr<GenericObject>& V)
 {
@@ -77,6 +84,8 @@ swig_to_python_or_none(const boost::shared_ptr<GenericObject>& V)
   Swig::Director* d = dynamic_cast<Swig::Director*>(V.get());
   if(d) {
     PyObject* p = d->swig_get_self();
+    std::cerr << "In swig_to_python_or_none\n";
+    std::cerr << "p refcnt: " << p->ob_refcnt << " address " << p->ob_type << "\n";
     Py_INCREF(p);
     return p;
   }

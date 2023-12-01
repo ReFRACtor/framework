@@ -32,6 +32,10 @@ struct tracking_level< ::boost::shared_ptr< T > > {
 
 void * const shared_ptr_helper_id = 0;
 
+struct null_deleter {
+    void operator()(void const *) const {}
+};
+    
 template<class Archive, class T>
 inline void save(
 		 Archive & ar,
@@ -59,18 +63,21 @@ inline void load(
   T* r;
   ar >> boost::serialization::make_nvp("px", r);
 
-  boost::serialization::shared_ptr_helper<boost::shared_ptr> & h =
-    ar.template get_helper<shared_ptr_helper<boost::shared_ptr> >(
-            shared_ptr_helper_id);
-  h.reset(t,r);
+  // We'll put in a proper deleter shortly.
+  boost::shared_ptr<T> t2(r, null_deleter());
   
   // This rest of this was added to our copy to support swig python directors
   boost::shared_ptr<SWIG_MAPPER_NAMESPACE::GenericObject> v2 =
-    boost::dynamic_pointer_cast<SWIG_MAPPER_NAMESPACE::GenericObject>(t);
-  if(v2) {
-    if(SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::is_python_director(v2)) {
-      SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::swig_python_director_setup(v2);
-    }
+    boost::dynamic_pointer_cast<SWIG_MAPPER_NAMESPACE::GenericObject>(t2);
+  if(v2 && SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::is_python_director(v2)) {
+    t = boost::dynamic_pointer_cast<T>(SWIG_MAPPER_NAMESPACE::SwigTypeMapperBase::swig_python_director_setup(v2));
+  } else {
+    // If we don't need the special PythonRefPtrCleanup, fall back to
+    // normal boost serialization handler.
+    boost::serialization::shared_ptr_helper<boost::shared_ptr> & h =
+      ar.template get_helper<shared_ptr_helper<boost::shared_ptr> >(
+            shared_ptr_helper_id);
+    h.reset(t,r);
   }
 }
     

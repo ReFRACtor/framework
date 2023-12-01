@@ -2,6 +2,7 @@
 #define SWIG_TYPE_MAPPER_H
 #include "swig_type_mapper_base.h"
 #include "swig_to_python.h"
+#include "python_ref_ptr_cleanup.h"
 
 std::string parse_python_exception();
 
@@ -21,35 +22,33 @@ namespace SWIG_MAPPER_NAMESPACE {
 template<class T> class SwigTypeMapper : public SwigTypeMapperBase {
 public:
   SwigTypeMapper(const char* Typename)
-    : base_type_index(typeid(T))
-  {
-    sinfo = SWIG_TypeQuery(Typename);
-  }
-  SwigTypeMapper(const char* Typename, const std::type_info& Base_type_info)
-    : base_type_index(Base_type_info)
   {
     sinfo = SWIG_TypeQuery(Typename);
   }
   // We have the definition of this function in shared_ptr_type_mapper.i
-  virtual bool is_python_director_check(const boost::shared_ptr<GenericObject>& V)
-    const
+  virtual bool
+  is_python_director_check(const boost::shared_ptr<GenericObject>& V) const
   {
-    boost::shared_ptr<Swig::Director> v2 = boost::dynamic_pointer_cast<Swig::Director>(V);
+    boost::shared_ptr<Swig::Director> v2 =
+      boost::dynamic_pointer_cast<Swig::Director>(V);
     if(v2)
       return true;
     return false;
   }
-  virtual void do_swig_python_director_setup(const boost::shared_ptr<GenericObject>& V) const
+  virtual boost::shared_ptr<GenericObject> do_swig_python_director_setup
+  (const boost::shared_ptr<GenericObject>& V) const
   {
-    boost::shared_ptr<Swig::Director> v2 = boost::dynamic_pointer_cast<Swig::Director>(V);
+    boost::shared_ptr<Swig::Director> v2 =
+      boost::dynamic_pointer_cast<Swig::Director>(V);
     if(!v2)
-      return;
+      return boost::shared_ptr<GenericObject>(V.get());
     PyObject* pobj = v2->swig_get_self();
-    PyObject* thisproxyobj = (PyObject*) map_to_python(V, base_type_index);
-    PyObject* thisobj = PyObject_GetAttr(thisproxyobj, PyString_FromString("this"));
-    PyObject_SetAttr(pobj, PyString_FromString("this"), thisobj);
-    Py_DECREF(thisproxyobj);
-    Py_DECREF(thisobj);
+    // Transfer ownership of pobj to r.
+    boost::shared_ptr<GenericObject> r(V.get(), PythonRefPtrCleanup(pobj));
+    Py_DECREF(pobj);
+    std::cerr << "in do_swig_python_director_setup\n";
+    std::cerr << "pobj refcnt: " << pobj->ob_refcnt << " address " << pobj->ob_type << "\n";
+    return r;
   }
   virtual void* to_python(const boost::shared_ptr<GenericObject>& V) const
   {
@@ -61,7 +60,6 @@ public:
   virtual ~SwigTypeMapper() {}
 private:
   swig_type_info* sinfo;
-  type_index base_type_index;
   inline PyObject* cpickle_module() const
   {
     static PyObject* mod = 0;
