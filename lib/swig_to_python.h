@@ -2,6 +2,8 @@
 #define SWIG_TO_PYTHON_H
 #include "swig_type_mapper_base.h"
 
+//#define PTR_DEBUG 1
+
 namespace SWIG_MAPPER_NAMESPACE {
 /****************************************************************//**
   Important - you can only include this header file if you have
@@ -84,8 +86,10 @@ swig_to_python_or_none(const boost::shared_ptr<GenericObject>& V)
   Swig::Director* d = dynamic_cast<Swig::Director*>(V.get());
   if(d) {
     PyObject* p = d->swig_get_self();
+#ifdef PTR_DEBUG    
     std::cerr << "In swig_to_python_or_none\n";
     std::cerr << "p refcnt: " << p->ob_refcnt << " address " << p->ob_type << "\n";
+#endif    
     Py_INCREF(p);
     return p;
   }

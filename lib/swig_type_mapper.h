@@ -4,6 +4,8 @@
 #include "swig_to_python.h"
 #include "python_ref_ptr_cleanup.h"
 
+//#define PTR_DEBUG 1
+
 std::string parse_python_exception();
 
 namespace SWIG_MAPPER_NAMESPACE {
@@ -46,8 +48,10 @@ public:
     // Transfer ownership of pobj to r.
     boost::shared_ptr<GenericObject> r(V.get(), PythonRefPtrCleanup(pobj));
     Py_DECREF(pobj);
+#ifdef PTR_DEBUG    
     std::cerr << "in do_swig_python_director_setup\n";
     std::cerr << "pobj refcnt: " << pobj->ob_refcnt << " address " << pobj->ob_type << "\n";
+#endif
     return r;
   }
   virtual void* to_python(const boost::shared_ptr<GenericObject>& V) const
