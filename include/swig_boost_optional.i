@@ -1,6 +1,10 @@
 // -*- mode: c++; -*-
 // (Not really c++, but closest emacs mode)
 
+#ifndef SWIG_MODULE_ALREADY_DONE
+%module(moduleimport="from ._swig_wrap import $module", directors="1", allprotected="1") foo
+#endif
+
 %{
 #include <boost/optional.hpp>
 %}

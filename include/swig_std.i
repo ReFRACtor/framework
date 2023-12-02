@@ -1,4 +1,8 @@
 // Include code for mappings from std library to python
+#ifndef SWIG_MODULE_ALREADY_DONE
+%module(moduleimport="from ._swig_wrap import $module", directors="1", allprotected="1") foo
+#endif
+  
 %include <std_string.i>
 %include <std_vector.i>
 %include <typemaps.i>
