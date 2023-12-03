@@ -55,3 +55,8 @@
 %import "swig_iostream.i"
 %include "swig_vector_shared_ptr.i"
 %import "swig_rational.i"
+%include "director_serialization.i"
+%define %skeleton_director_serialization(TYPE...)
+  %director_serialization(Skeleton, TYPE)
+%enddef
+

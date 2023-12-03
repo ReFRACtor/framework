@@ -27,6 +27,7 @@
 # DOXYGEN the program doxygen
 
 swiginc_HEADERS = 
+swiginc_HEADERS += @swigrules@/include/director_serialization.i
 swiginc_HEADERS += @swigrules@/include/my_shared_ptr.i
 swiginc_HEADERS += @swigrules@/include/shared_ptr_type_mapper.i
 swiginc_HEADERS += @swigrules@/include/swig_array.i

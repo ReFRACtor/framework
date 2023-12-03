@@ -45,10 +45,8 @@ namespace swig {
 	      }
 	      // Added mms
 	      // Special handling if this is a director class. In that case, we
-	      // don't own the underlying python object. Instead,
-	      // we tell python we have a reference to the underlying object, and
-	      // when this gets destroyed we decrement the reference to the python
-	      // object. 
+	      // don't own the underlying python object. See
+	      // DirectorNotes.md for details.
 	      Swig::Director* dp = dynamic_cast<Swig::Director*>(itemp->get());
 	      if(dp) {
 		temp2shared2.reset(itemp->get(), PythonRefPtrCleanup(dp->swig_get_self()));
@@ -87,9 +85,13 @@ namespace swig {
     typename SwigPySeq::const_iterator it = swigpyseq.begin();
     for (;it != swigpyseq.end(); ++it) {
       value_type itemp = (value_type)(*it);
+      // Added mms
+      // Special handling if this is a director class. In that case, we
+      // don't own the underlying python object. See
+      // DirectorNotes.md for details.
       Swig::Director* dp = dynamic_cast<Swig::Director*>(itemp.get());
       if(dp) {
-	// Diagnostic to make sure we end up here
+	// Diagnostic to make sure we end up here when we should
 	//std::cerr << "Setting up PythonRefPtrCleanup\n";
       	itemp.reset(itemp.get(), PythonRefPtrCleanup(dp->swig_get_self()));
       }
