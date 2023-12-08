@@ -25,7 +25,7 @@ public:
     fh(Fh), fis(Fis) {}
   std::streamsize read(char* s, std::streamsize n)
   {
-    PyObject* res = PyObject_CallMethod(fh, "read", "(i)", (int) n);
+    PyObject* res = PyObject_CallMethod(fh, "read", "(i)", (Py_ssize_t) n);
     if(res == NULL) {
       throw std::runtime_error("Call to FileHandle read failed");
     }
@@ -42,9 +42,9 @@ public:
   {
     // Different format strings for python 2 vs 3.
 #if PY_MAJOR_VERSION > 2
-    PyObject* res = PyObject_CallMethod(fh, "write", "(y#)", s, (int) n);
+    PyObject* res = PyObject_CallMethod(fh, "write", "(y#)", s, (Py_ssize_t) n);
 #else
-    PyObject* res = PyObject_CallMethod(fh, "write", "(s#)", s, (int) n);
+    PyObject* res = PyObject_CallMethod(fh, "write", "(s#)", s, (Py_ssize_t) n);
 #endif    
     if(res == NULL) {
       throw std::runtime_error("Call to FileHandle write failed");

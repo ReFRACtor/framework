@@ -20,7 +20,11 @@
 // The effect of this is just to change the "import" line in the swig
 // generated python code.
 
+#if SWIG_VERSION < 0x040000  
+%module(directors="1", allprotected="1") foo
+#else
 %module(moduleimport="from ._swig_wrap import $module", directors="1", allprotected="1") foo
+#endif
 #define SWIG_MODULE_ALREADY_DONE 1
 #define SWIG_MODULE skeleton_swig
 
