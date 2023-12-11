@@ -3,6 +3,13 @@
 
 // This defines some classes for making python objects look like
 // ostream or istream objects.
+#ifndef SWIG_MODULE_ALREADY_DONE
+#if SWIG_VERSION < 0x040000  
+%module(directors="1", allprotected="1") foo
+#else
+%module(moduleimport="from ._swig_wrap import $module", directors="1", allprotected="1") foo
+#endif
+#endif
 
 %include "swig_iostream_inc.i"
 

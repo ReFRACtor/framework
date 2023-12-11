@@ -33,14 +33,17 @@ inline std::string cpickle_dumps(PyObject* obj)
   if(PyErr_Occurred()) {
     throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
   }
-  return std::string(PyString_AsString(res));
+  char *buf;
+  Py_ssize_t len;
+  PyBytes_AsStringAndSize(res, &buf, &len);
+  return std::string(buf, len);
 }
 
 inline PyObject* cpickle_loads(const std::string& S)
 {
   PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
 					     PyString_FromString("loads"),
-					     PyString_FromString(S.c_str()), 
+					     PyBytes_FromStringAndSize(S.c_str(), S.size()), 
 					     NULL);
   if(PyErr_Occurred()) {
     throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
@@ -66,13 +69,13 @@ def _new_from_init(cls, version, *args):
     return inst
  
 def _new_from_serialization(data):
-    return SWIG_MODULE.serialize_read_binary(data)
+    return SWIG_MODULE.serialize_function.serialize_read_binary(data)
 
 def _new_from_serialization_dir(dir, data):
     curdir = os.getcwd()
     try:
       os.chdir(dir)
-      return SWIG_MODULE.serialize_read_binary(data)
+      return SWIG_MODULE.serialize_function.serialize_read_binary(data)
     finally:
       os.chdir(curdir)
 	
@@ -110,21 +113,25 @@ def __reduce__(self):
 %enddef
 
 %define %pickle_serialization()
-  %pythoncode {
+  %pythoncode %{
 def __reduce__(self):
-  return _new_from_serialization, (SWIG_MODULE.serialize_write_binary(self),)
-}
+  # Special handling for when we are doing boost serialization, we set
+  # "this" to None
+  if(self.this is None):
+    return super().__reduce__()
+  return _new_from_serialization, (SWIG_MODULE.serialize_function.serialize_write_binary(self),)
+%}
 %enddef
 
 %define %pickle_serialization_dir()
-  %pythoncode {
+  %pythoncode %{
 def __reduce__(self):
-  return _new_from_serialization_dir, (os.getcwd(), SWIG_MODULE.serialize_write_binary(self),)
-}
+  return _new_from_serialization_dir, (os.getcwd(), SWIG_MODULE.serialize_function.serialize_write_binary(self),)
+%}
 %enddef
 
 %define %pickle_vector()
-  %pythoncode {
+  %pythoncode %{
 @classmethod
 def pickle_format_version(cls):
   return 1
@@ -137,5 +144,5 @@ def to_list(self):
 
 def __reduce__(self):
   return _new_vector, (self.__class__, 1, self.to_list())
-}
+%}
 %enddef

@@ -15,6 +15,7 @@
 #include <boost/make_shared.hpp>
 %}
 
+
 %define %shared_ptr_type_mapper(NAMESPACE, TYPE...)
 %shared_ptr(TYPE)
 %init {

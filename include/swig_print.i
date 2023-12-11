@@ -6,5 +6,9 @@
 
 %rename(__str__) print_to_string;
 
-%rename(print_desc) print;
+// Ignore the print function. Python can't really override this
+// effectively, instead it should override desc. The print function
+// interacts incorrectly with our ostream swig rules in swig_iostream
+%rename ("$ignore") print;
+
 

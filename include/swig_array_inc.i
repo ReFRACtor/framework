@@ -138,6 +138,32 @@ template<> inline int type_to_npy<char>() {return NPY_BYTE;}
 template<> inline int type_to_npy<unsigned char>() {return NPY_UBYTE;}
 template<> inline int type_to_npy<bool>() {return NPY_BOOL;}
 
+inline const char* npy_type_str(int type_enum)
+{
+    switch (type_enum) {
+        case NPY_DOUBLE:
+            return "double";
+        case NPY_FLOAT:
+            return "float";
+        case NPY_INT:
+            return "int";
+        case NPY_UINT:
+            return "unsigned int";
+        case NPY_SHORT:
+            return "short int";
+        case NPY_USHORT:
+            return "unsigned short int";
+        case NPY_BYTE:
+            return "char";
+        case NPY_UBYTE:
+            return "unsigned char";
+        case NPY_BOOL:
+            return "bool";
+        default:
+            return "Unknown";
+    }
+}
+
 //--------------------------------------------------------------
 // Custom exception for throwing errors we encounter when
 // converting values that can be caught by typemaps and used
@@ -263,12 +289,20 @@ inline blitz::Array<T, D> to_blitz_array(PyObject* numpy_obj)
 {
   PyArrayObject* numpy = (PyArrayObject*) numpy_obj;
   if(PyArray_NDIM(numpy) != D) {
-    std::cerr << PyArray_NDIM(numpy) << "\n"
-              << D << "\n";
-    throw std::runtime_error("Dimension of array is not the expected size");
+    std::stringstream err;
+    err << "Error converting PyObject to Blitz array. "
+        << "Dimension of array passed: " << PyArray_NDIM(numpy) 
+        << " is not the expected size: " << D
+        << " for blitz::Array<" << npy_type_str(type_to_npy<T>()) << ", " << D << ">";
+    throw std::runtime_error(err.str().c_str());
   }
   if(PyArray_TYPE(numpy) != type_to_npy<T>()) {
-    throw std::runtime_error("Type of array not the expected type");
+    std::stringstream err;
+    err << "Error converting PyObject to Blitz array. "
+        << "Type of array passed: " << npy_type_str(PyArray_TYPE(numpy))
+        << " is not the expected type: " << npy_type_str(type_to_npy<T>())
+        << " for blitz::Array<" << npy_type_str(type_to_npy<T>()) << ", " << D << ">";
+    throw std::runtime_error(err.str().c_str());
   }
   blitz::TinyVector<int, D> shape, stride;
   for(int i = 0; i < D; ++i) {
@@ -277,7 +311,7 @@ inline blitz::Array<T, D> to_blitz_array(PyObject* numpy_obj)
     // of type T.
     stride(i) = PyArray_STRIDE(numpy, i) / sizeof(T);
     if((int) (stride(i) * sizeof(T)) != (int) PyArray_STRIDE(numpy, i)) {
-      throw std::runtime_error("blitz::Array can't handle strides that aren't an even multiple of sizeof(T)");
+      throw std::runtime_error("Error converting PyObject to Blitz array. blitz::Array can't handle strides that aren't an even multiple of sizeof(T)");
     }
   }
   blitz::Array<T, D> a((T*)PyArray_DATA(numpy), shape, stride, 
