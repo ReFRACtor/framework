@@ -41,16 +41,30 @@ public:
     std::string buf("blah");
     buf.reserve(1000);
     std::ostringstream os(buf);
-    ((T*) this)->print(os);
+    ((T*) this)->print_wrapper(os);
     return os.str();
   }
 
+  // Alternative to print, this works better with python. If this
+  // is an empty string we fall back to print - so C++ classes work
+  // without change but python can intercept this by overriding desc.
+  virtual std::string desc() const { return ""; }
+
+  void print_wrapper(std::ostream& Os) const
+  {
+    std::string d = desc();
+    if(d != "")
+      Os << d;
+    else
+      ((T*) this)->print(Os);
+  }
+  
 //-----------------------------------------------------------------------
 /// Print to stream.
 //-----------------------------------------------------------------------
 
   friend std::ostream& operator<<(std::ostream& Os, const T& P)
-  { P.print(Os); return Os;}
+  { P.print_wrapper(Os); return Os;}
 };
 
 }

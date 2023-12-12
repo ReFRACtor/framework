@@ -27,7 +27,7 @@
        PyObject* this_save = PyObject_GetAttr(pobj, PyString_FromString("this"));
        PyObject_SetAttr(pobj, PyString_FromString("this"), Py_None);
        std::string python_object = cpickle_dumps(pobj);
-       ar & SKELETON_NVP(python_object);
+       ar & BOOST_SERIALIZATION_NVP(python_object);
        PyObject_SetAttr(pobj, PyString_FromString("this"), this_save);
        Py_DECREF(this_save);
      }
@@ -36,7 +36,7 @@
  			     const unsigned int version)
      {
        std::string python_object;
-       ar & SKELETON_NVP(python_object);
+       ar & BOOST_SERIALIZATION_NVP(python_object);
        PyObject* pobj = cpickle_loads(python_object);
        ::new(d)SwigDirector_ ## TYPE(pobj);
        boost::shared_ptr<NAMESPACE::TYPE> *smartresult = d ? new boost::shared_ptr<NAMESPACE::TYPE>(d) : 0;
