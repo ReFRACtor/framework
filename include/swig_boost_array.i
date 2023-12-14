@@ -103,13 +103,13 @@ public:
 
 %define %python_attribute_boost_array(NAME, TYPE, LEN)
    %extend {
-    blitz::Array<TYPE, 1> _ ## NAME() const {
+    blitz::Array<TYPE, 1> _v_ ## NAME() const {
       blitz::Array<TYPE, 1> res(LEN);
       for(int i = 0; i < LEN; ++i)
         res(i) = $self->NAME[i];
       return res;
     }
-    void _ ## NAME(const blitz::Array<TYPE, 1>& V) {
+    void _v_ ## NAME(const blitz::Array<TYPE, 1>& V) {
       if(V.rows() != LEN)
 	throw std::runtime_error("Array not expeced size");
       for(int i = 0; i < LEN; ++i)
@@ -119,11 +119,11 @@ public:
 %pythoncode {
 @property
 def NAME(self):
-    return self._ ## NAME()
+    return self._v_ ## NAME()
 
 @NAME.setter
 def NAME(self, value):
-  self._ ## NAME(value)
+  self._v_ ## NAME(value)
 }
 %enddef
 
