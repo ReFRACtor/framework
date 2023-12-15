@@ -77,6 +77,7 @@ extern "C" {
 std::string parse_python_exception() {
   PyObject *type = NULL, *value = NULL, *tb = NULL;
   PyErr_Fetch(&type, &value, &tb);
+  PyErr_NormalizeException(&type, &value, &tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
   if(tb) {
@@ -93,17 +94,19 @@ std::string parse_python_exception() {
     if(err_str) {
         PyObject * temp_bytes = PyUnicode_AsEncodedString(err_str, "ASCII", 
 	"strict");
-	if(temp_bytes)
+	if(temp_bytes) {
 	  ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-        Py_DECREF(temp_bytes);
+	  Py_DECREF(temp_bytes);
+	}
     }
     Py_XDECREF(err_str);
   } else if(value) {
     PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
 	"ignore");
-    if(temp_bytes)
+    if(temp_bytes) {
       ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-    Py_DECREF(temp_bytes);
+      Py_DECREF(temp_bytes);
+    }
   }
   Py_XDECREF(mod);
   Py_XDECREF(err_str_list);

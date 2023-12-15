@@ -27,6 +27,7 @@
 # DOXYGEN the program doxygen
 
 swiginc_HEADERS = 
+swiginc_HEADERS += @swigrules@/include/director_serialization.i
 swiginc_HEADERS += @swigrules@/include/my_shared_ptr.i
 swiginc_HEADERS += @swigrules@/include/shared_ptr_type_mapper.i
 swiginc_HEADERS += @swigrules@/include/swig_array.i
@@ -60,6 +61,7 @@ EXTRA_DIST+= @swigrules@/lib/generic_object_map.h.sample
 EXTRA_DIST+= @swigrules@/lib/generic_object_map.i.sample
 EXTRA_DIST+= @swigrules@/lib/common.i.sample
 EXTRA_DIST+= @swigrules@/lib/printable.h.sample
+EXTRA_DIST+= @swigrules@/lib/DirectorNotes.md
 EXTRA_DIST+= @swigrules@/lib/serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.h.sample
 EXTRA_DIST+= @swigrules@/lib/blitz_array_serialize_support.cc.sample
@@ -78,6 +80,7 @@ vpath %.i $(srcdir)/@swigrules@/lib
 SWIG_FLAG += -O
 
 pkgpythonswig_PYTHON = @swigrules@/__init__.py
+pkgpythonswig_PYTHON += @swigrules@/all.py
 
 EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(FULL_SWIG_SRC))
 EXTRA_DIST+= $(patsubst %_wrap.cc, %.py, $(ADDITONAL_SWIG_SRC))
