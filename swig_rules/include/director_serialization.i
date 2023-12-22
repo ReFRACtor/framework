@@ -3,13 +3,27 @@
 // serialization
 //--------------------------------------------------------------
 
-%define %director_serialization(NAMESPACE, INCLUDEFILE, TYPE...)
+%define %director_serialization(NAMESPACE, INCLUDEFILE, BNAME, TYPE...)
 %shared_ptr(SwigDirector_ ## TYPE)
 %init {
   NAMESPACE::SwigTypeMapperBase::add(typeid(SwigDirector_ ## TYPE), boost::make_shared<NAMESPACE::SwigTypeMapper< SwigDirector_ ## TYPE > > ("boost::shared_ptr< SwigDirector" "TYPE > *"));
 }
 
 %{
+#ifndef QUOTE  
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+#endif
+  
+// CMAKE unfortunately uses a different name for the wrapper file that
+// the standard SWIG convention. So we set up CMAKE ot pass in a
+// CMAKE_SWIG_FILE_NAMES to get the right inclusion file.  
+#ifndef CMAKE_SWIG_FILE_NAMES  
+ #include QUOTE(BNAME ## _wrap.h)
+#else  
+ #include QUOTE(BNAME ## PYTHON_wrap.h)
+#endif  
+  
  #include "INCLUDEFILE"
  namespace boost {
    namespace serialization {
