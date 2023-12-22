@@ -20,6 +20,7 @@ namespace FullPhysics {
 class Ils : public StateVectorObserver {
 public:
   virtual ~Ils();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   virtual blitz::Array<double, 1> apply_ils
   (const blitz::Array<double, 1>& High_resolution_wave_number,
@@ -41,3 +42,15 @@ public:
 }
 
 %template(vector_ils) std::vector<boost::shared_ptr<FullPhysics::Ils> >;
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "ils_wrap.h"
+%}
+%fp_director_serialization(Ils)
+
+// List of things "import *" will include
+%python_export("Ils");

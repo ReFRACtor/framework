@@ -38,6 +38,7 @@ class AerosolExtinctionImpBase: public SubStateVectorArray<AerosolExtinction> {
 public:
   // From AerosolExtinctionImpBase
   virtual ~AerosolExtinctionImpBase();
+  virtual std::string desc() const;
   virtual boost::shared_ptr<AerosolExtinction> clone() const = 0;
   virtual AutoDerivative<double> extinction_for_layer(int i) const;
   %python_attribute(aerosol_name, virtual std::string);
@@ -60,3 +61,15 @@ protected:
 }
 
 %template(vector_aerosol_extinction_imp_base) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinctionImpBase> >;
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "aerosol_extinction_imp_base_wrap.h"
+%}
+%fp_director_serialization(AerosolExtinctionImpBase)
+
+// List of things "import *" will include
+%python_export("AerosolExtinctionImpBase");

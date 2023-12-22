@@ -22,6 +22,7 @@ namespace FullPhysics {
 class Absco : public GasAbsorption {
 public:
   int number_broadener_vmr(int Broadener_index) const;
+  virtual std::string desc() const;
   %python_attribute(number_layer, int)
   %python_attribute(number_temperature, int)
   virtual blitz::Array<double, 1> broadener_vmr_grid(int Broadner_index) const = 0;
@@ -49,5 +50,14 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "absco_wrap.h"
+%}
+%fp_director_serialization(Absco)
 
 %template(vector_absco) std::vector<boost::shared_ptr<FullPhysics::Absco> >;

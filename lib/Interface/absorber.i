@@ -45,6 +45,7 @@ class Absorber : virtual public StateVectorObserver,
 		 public Observable<Absorber> {
 public:
   virtual ~Absorber();
+  virtual std::string desc() const;
   virtual void add_observer(Observer<Absorber>& Obs);
   virtual void remove_observer(Observer<Absorber>& Obs);
   std::string print_to_string() const;
@@ -70,3 +71,15 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "absorber_wrap.h"
+%}
+%fp_director_serialization(Absorber)
+
+// List of things "import *" will include
+%python_export("Absorber");

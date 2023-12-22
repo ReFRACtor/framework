@@ -16,6 +16,7 @@ namespace FullPhysics {
 class Level1bSampleCoefficient : public Level1b {
 public:
   virtual ~Level1bSampleCoefficient();
+  virtual std::string desc() const;
   virtual int number_sample(int sensor_index) const = 0;
   virtual ArrayWithUnit<double, 1> spectral_coefficient(int sensor_index)
     const = 0;
@@ -25,3 +26,15 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "level_1lb_sample_coefficient_wrap.h"
+%}
+%fp_director_serialization(Level1bSampleCoefficient)
+
+// List of things "import *" will include
+%python_export("Level1bSampleCoefficient");

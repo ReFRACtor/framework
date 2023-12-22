@@ -38,6 +38,7 @@ class AbsorberVmrImpBase: public SubStateVectorArray<AbsorberVmr> {
 public:
   // From AbsorberVmrImpBase
   virtual ~AbsorberVmrImpBase();
+  virtual std::string desc() const;
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
   %python_attribute(gas_name, std::string)
   virtual AutoDerivative<double> 
@@ -57,3 +58,14 @@ protected:
 };
 }
 
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "absorber_vmr_imp_base_wrap.h"
+%}
+%fp_director_serialization(AbsorberVmrImpBase)
+
+// List of things "import *" will include
+%python_export("AbsorberVmrImpBase");

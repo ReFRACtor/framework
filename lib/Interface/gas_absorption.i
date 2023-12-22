@@ -25,6 +25,7 @@ namespace FullPhysics {
 class GasAbsorption : public GenericObject {
 public:
   virtual ~GasAbsorption();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   virtual bool have_data(double wn) const = 0;
   %python_attribute(number_broadener, virtual int);
@@ -44,3 +45,15 @@ public:
 }
 
 %template(vector_gas_absorption) std::vector<boost::shared_ptr<FullPhysics::GasAbsorption> >;
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "gas_absorption_wrap.h"
+%}
+%fp_director_serialization(GasAbsorption)
+
+// List of things "import *" will include
+%python_export("GasAbsorption");

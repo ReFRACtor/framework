@@ -46,6 +46,7 @@ namespace FullPhysics {
 class Altitude : public Observable<Altitude> {
 public:
   virtual ~Altitude();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   virtual void print(std::ostream& Os) const;
   virtual void add_observer(Observer<Altitude>& Obs);
@@ -61,3 +62,15 @@ public:
 };
 }
 %template(vector_altitude) std::vector<boost::shared_ptr<FullPhysics::Altitude> >;
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "altitude_wrap.h"
+%}
+%fp_director_serialization(Altitude)
+
+// List of things "import *" will include
+%python_export("Altitude");

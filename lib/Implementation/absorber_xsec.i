@@ -27,6 +27,7 @@ class AbsorberXSec: virtual public Absorber {
 
     virtual ~AbsorberXSec() = default;
 
+    virtual std::string desc() const;
     virtual int number_species() const;
     virtual int number_spectrometer() const;
     virtual int number_layer() const;
@@ -50,3 +51,15 @@ class AbsorberXSec: virtual public Absorber {
     %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "absorder_xsec_wrap.h"
+%}
+%fp_director_serialization(AbsorberXSec)
+
+// List of things "import *" will include
+%python_export("AbsorberXSec");

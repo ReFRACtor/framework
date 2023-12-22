@@ -21,6 +21,7 @@ namespace FullPhysics {
 class Level1b : public GenericObject {
 public:
   virtual ~Level1b();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   virtual int number_spectrometer() const = 0;
   virtual DoubleWithUnit latitude(int i) const = 0;
@@ -41,3 +42,15 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "level_l1b_wrap.h"
+%}
+%fp_director_serialization(Level1b)
+
+// List of things "import *" will include
+%python_export("Level1b");

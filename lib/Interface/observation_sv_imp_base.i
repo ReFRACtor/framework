@@ -40,6 +40,7 @@ namespace FullPhysics {
 class ObservationSvImpBase: public SubStateVectorArray2<ObservationSv, Observation> {
 public:
   %python_attribute_abstract(num_channels, int);
+  virtual std::string desc() const;
   virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
   boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false)
@@ -56,3 +57,14 @@ protected:
 };
 }
 
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "observation_sv_imp_base_wrap.h"
+%}
+%fp_director_serialization(ObservationSvImpBase)
+
+// List of things "import *" will include
+%python_export("ObservationSvImpBase", "SubStateVectorArrayObservationSv");

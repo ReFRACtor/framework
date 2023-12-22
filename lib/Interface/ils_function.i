@@ -17,6 +17,7 @@ namespace FullPhysics {
 class IlsFunction : public GenericObject {
 public:
   virtual ~IlsFunction();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   virtual void ils
   (const AutoDerivative<double>& wn_center,
@@ -29,3 +30,15 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%{
+// Needed by code below, can't easily figure these names out
+// automatically so just include here
+#include "ils_function_wrap.h"
+%}
+%fp_director_serialization(IlsFunction)
+
+// List of things "import *" will include
+%python_export("IlsFunction");

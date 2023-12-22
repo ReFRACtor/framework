@@ -22,7 +22,7 @@ extern "C" {
   void brdf_lin_sup_masters_m_brdf_lin_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_linsup_in_in, void** brdf_sup_out_in, void** brdf_linsup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Lin_Sup_Masters : public virtual Printable<Brdf_Lin_Sup_Masters> {
+class Brdf_Lin_Sup_Masters : public Printable<Brdf_Lin_Sup_Masters> {
 
 public:
   Brdf_Lin_Sup_Masters() 
@@ -39,13 +39,6 @@ public:
   }
 
   virtual ~Brdf_Lin_Sup_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
@@ -225,7 +218,7 @@ extern "C" {
   void brdf_sup_masters_m_brdf_mainmaster_wrap(const bool* do_debug_restoration_in, const int* nmoments_input_in, void** brdf_sup_in_in, void** brdf_sup_out_in, void** brdf_sup_outputstatus_in);
 }
 
-class Brdf_Sup_Masters : public virtual Printable<Brdf_Sup_Masters> {
+class Brdf_Sup_Masters : public Printable<Brdf_Sup_Masters> {
 
 public:
   Brdf_Sup_Masters() 
@@ -240,13 +233,6 @@ public:
   }
 
   virtual ~Brdf_Sup_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;
@@ -390,7 +376,7 @@ extern "C" {
   void inputs_m_sup_init_wrap(void** lidort_sup_in);
 }
 
-class Lidort_Inputs : public virtual Printable<Lidort_Inputs> {
+class Lidort_Inputs : public Printable<Lidort_Inputs> {
 
 public:
   Lidort_Inputs() 
@@ -405,13 +391,6 @@ public:
   }
 
   virtual ~Lidort_Inputs() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Sup_Inout& lidort_sup() {
     return *lidort_sup_;
@@ -577,7 +556,7 @@ extern "C" {
   void masters_m_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in);
 }
 
-class Lidort_Masters : public virtual Printable<Lidort_Masters> {
+class Lidort_Masters : public Printable<Lidort_Masters> {
 
 public:
   Lidort_Masters() 
@@ -592,13 +571,6 @@ public:
   }
 
   virtual ~Lidort_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -762,7 +734,7 @@ extern "C" {
   void l_inputs_m_ss_linsup_init_wrap(void** lidort_linsup_in);
 }
 
-class Lidort_L_Inputs : public virtual Printable<Lidort_L_Inputs> {
+class Lidort_L_Inputs : public Printable<Lidort_L_Inputs> {
 
 public:
   Lidort_L_Inputs() 
@@ -779,13 +751,6 @@ public:
   }
 
   virtual ~Lidort_L_Inputs() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Linsup_Inout& lidort_linsup() {
     return *lidort_linsup_;
@@ -989,7 +954,7 @@ extern "C" {
   void lcs_masters_m_lcs_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lcs_Masters : public virtual Printable<Lidort_Lcs_Masters> {
+class Lidort_Lcs_Masters : public Printable<Lidort_Lcs_Masters> {
 
 public:
   Lidort_Lcs_Masters() 
@@ -1008,13 +973,6 @@ public:
   }
 
   virtual ~Lidort_Lcs_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -1268,7 +1226,7 @@ extern "C" {
   void lps_masters_m_lps_master_wrap(const bool* do_debug_input_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in, void** lidort_out_in, void** lidort_linfixin_in, void** lidort_linmodin_in, void** lidort_linsup_in, void** lidort_linout_in);
 }
 
-class Lidort_Lps_Masters : public virtual Printable<Lidort_Lps_Masters> {
+class Lidort_Lps_Masters : public Printable<Lidort_Lps_Masters> {
 
 public:
   Lidort_Lps_Masters() 
@@ -1287,13 +1245,6 @@ public:
   }
 
   virtual ~Lidort_Lps_Masters() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Lidort_Fixed_Inputs& lidort_fixin() {
     return *lidort_fixin_;
@@ -1549,7 +1500,7 @@ extern "C" {
   void brdf_sup_accessories_m_set_brdf_inputs_wrap(void** brdf_sup_out_in, void** lidort_fixin_in, void** lidort_modin_in, void** lidort_sup_in);
 }
 
-class Lidort_Brdf_Sup_Accessories : public virtual Printable<Lidort_Brdf_Sup_Accessories> {
+class Lidort_Brdf_Sup_Accessories : public Printable<Lidort_Brdf_Sup_Accessories> {
 
 public:
   Lidort_Brdf_Sup_Accessories(boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_in, boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_in, boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_in) : brdf_sup_in_(brdf_sup_in_in), lidort_fixin_(lidort_fixin_in), lidort_modin_(lidort_modin_in) 
@@ -1563,13 +1514,6 @@ public:
   }
 
   virtual ~Lidort_Brdf_Sup_Accessories() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   Brdf_Sup_Inputs& brdf_sup_in() {
     return *brdf_sup_in_;

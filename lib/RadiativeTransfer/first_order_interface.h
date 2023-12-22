@@ -19,7 +19,7 @@ extern "C" {
   void fo_dtwpgeometry_master_m_fo_dtwpgeometry_master_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const double* dtr_in, const double* eradius_in, const bool* do_upwelling_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_partials_in, const int* ngeoms_in, const int* nlayers_in, const int* npartials_in, const int* nfine_in, const int* partial_layeridx_in, const double* heights_in, const double* alpha_boa_in, const double* partial_heights_in, const double* mu1_in, const double* radii_in, const double* losw_paths_in, const double* alpha_in, const double* sina_in, const double* cosa_in, const double* radii_p_in, const double* losp_paths_in, const double* alpha_p_in, const double* sina_p_in, const double* cosa_p_in, const int* nfinedivs_in, const double* xfine_in, const double* wfine_in, const double* radiifine_in, const double* alphafine_in, const double* sinfine_in, const double* cosfine_in, const int* nfinedivs_p_in, const double* xfine_p_in, const double* wfine_p_in, const double* radiifine_p_in, const double* alphafine_p_in, const double* sinfine_p_in, const double* cosfine_p_in, const bool* fail_in, const int* message_len, const char* message_in, const int* trace_len, const char* trace_in);
 }
 
-class Fo_Dtwpgeometry_Master : public virtual Printable<Fo_Dtwpgeometry_Master> {
+class Fo_Dtwpgeometry_Master : public Printable<Fo_Dtwpgeometry_Master> {
 
 public:
   Fo_Dtwpgeometry_Master(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& ngeoms_in, const int& nlayers_in, const int& npartials_in, const int& nfine_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), npartials_(npartials_in), nfine_(nfine_in) 
@@ -98,13 +98,6 @@ public:
   }
 
   virtual ~Fo_Dtwpgeometry_Master() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -638,7 +631,7 @@ extern "C" {
   void fo_sswpgeometry_master_m_fo_sswpgeometry_master_wrap(const int* maxgeoms_in, const int* maxszas_in, const int* maxvzas_in, const int* maxazms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const bool* do_obsgeom_in, const bool* do_doublet_in, const bool* do_chapman_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_partials_in, const int* ngeoms_in, const int* nszas_in, const int* nvzas_in, const int* nazms_in, const int* nlayers_in, const int* nfine_in, const int* npartials_in, const int* partial_layeridx_in, const double* dtr_in, const double* pie_in, const double* vsign_in, const double* eradius_in, const int* nv_offset_in, const int* na_offset_in, const int* nd_offset_in, const double* heights_in, const double* partial_heights_in, const double* obsgeom_boa_in, const double* alpha_boa_in, const double* theta_boa_in, const double* phi_boa_in, const bool* donadir_in, const double* raycon_in, const double* mu0_in, const double* mu1_in, const double* cosscat_in, const double* radii_in, const double* losw_paths_in, const double* alpha_in, const double* sina_in, const double* cosa_in, const double* sunpaths_in, const int* ntraverse_in, const double* chapfacs_in, const double* theta_all_in, const double* radii_p_in, const double* losp_paths_in, const double* alpha_p_in, const double* sina_p_in, const double* cosa_p_in, const double* sunpaths_p_in, const int* ntraverse_p_in, const double* chapfacs_p_in, const int* nfinedivs_in, const double* xfine_in, const double* wfine_in, const double* radiifine_in, const double* alphafine_in, const double* sinfine_in, const double* cosfine_in, const double* sunpathsfine_in, const int* ntraversefine_in, const int* nfinedivs_p_in, const double* xfine_p_in, const double* wfine_p_in, const double* radiifine_p_in, const double* alphafine_p_in, const double* sinfine_p_in, const double* cosfine_p_in, const double* sunpathsfine_p_in, const int* ntraversefine_p_in, const bool* fail_in, const int* message_len, const char* message_in, const int* trace_len, const char* trace_in);
 }
 
-class Fo_Sswpgeometry_Master : public virtual Printable<Fo_Sswpgeometry_Master> {
+class Fo_Sswpgeometry_Master : public Printable<Fo_Sswpgeometry_Master> {
 
 public:
   Fo_Sswpgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in, const int& npartials_in) : maxgeoms_(maxgeoms_in), maxszas_(maxszas_in), maxvzas_(maxvzas_in), maxazms_(maxazms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), ngeoms_(ngeoms_in), nszas_(nszas_in), nvzas_(nvzas_in), nazms_(nazms_in), nlayers_(nlayers_in), nfine_(nfine_in), npartials_(npartials_in) 
@@ -763,13 +756,6 @@ public:
   }
 
   virtual ~Fo_Sswpgeometry_Master() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -1601,7 +1587,7 @@ extern "C" {
   void fo_scalarss_rtcalcs_i_m_ss_integral_i_updn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const int* maxmoments_input_in, const int* max_user_levels_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_deltam_scaling_in, const bool* do_phasfunc_in, const bool* do_surface_leaving_in, const bool* do_water_leaving_in, const bool* do_partials_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_sources_up_in, const bool* do_sources_up_p_in, const bool* do_sources_dn_in, const bool* do_sources_dn_p_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* nmoments_input_in, const int* n_user_levels_in, const int* user_levels_in, const int* npartials_in, const int* nfinedivs_p_in, const int* partial_outindex_in, const bool* partial_outflag_in, const int* partial_layeridx_in, const double* flux_in, const double* extinction_in, const double* deltaus_in, const double* omega_in, const double* truncfac_in, const double* phasmoms_in, const double* phasfunc_up_in, const double* phasfunc_dn_in, const double* reflec_in, const double* slterm_in, const double* mu0_in, const double* mu1_in, const double* legpoly_up_in, const double* legpoly_dn_in, const double* losw_paths_in, const double* losp_paths_in, const double* xfine_up_in, const double* wfine_up_in, const double* sunpaths_up_in, const int* ntraverse_up_in, const double* sunpathsfine_up_in, const int* ntraversefine_up_in, const double* xfine_dn_in, const double* wfine_dn_in, const double* sunpaths_dn_in, const int* ntraverse_dn_in, const double* sunpathsfine_dn_in, const int* ntraversefine_dn_in, const double* xfine_up_p_in, const double* wfine_up_p_in, const double* sunpaths_up_p_in, const int* ntraverse_up_p_in, const double* sunpathsfine_up_p_in, const int* ntraversefine_up_p_in, const double* xfine_dn_p_in, const double* wfine_dn_p_in, const double* sunpaths_dn_p_in, const int* ntraverse_dn_p_in, const double* sunpathsfine_dn_p_in, const int* ntraversefine_dn_p_in, const double* intensity_up_in, const double* intensity_db_in, const double* cumsource_up_in, const double* cumtrans_in, const double* lostrans_up_in, const double* intensity_dn_in, const double* cumsource_dn_in, const double* lostrans_dn_in);
 }
 
-class Fo_Scalarss_Rtcalcs_I : public virtual Printable<Fo_Scalarss_Rtcalcs_I> {
+class Fo_Scalarss_Rtcalcs_I : public Printable<Fo_Scalarss_Rtcalcs_I> {
 
 public:
   Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), nmoments_input_(nmoments_input_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in) 
@@ -1759,13 +1745,6 @@ public:
   }
 
   virtual ~Fo_Scalarss_Rtcalcs_I() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -2816,7 +2795,7 @@ extern "C" {
   void fo_scalarss_rtcalcs_ilps_m_ss_integral_ilps_updn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const int* maxmoments_input_in, const int* max_user_levels_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const int* max_sleavewfs_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_deltam_scaling_in, const bool* do_phasfunc_in, const bool* do_surface_leaving_in, const bool* do_water_leaving_in, const bool* do_partials_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_sources_up_in, const bool* do_sources_up_p_in, const bool* do_sources_dn_in, const bool* do_sources_dn_p_in, const bool* do_profilewfs_in, const bool* do_surfacewfs_in, const bool* do_sleavewfs_in, const int* n_reflecwfs_in, const int* n_sleavewfs_in, const int* n_surfacewfs_in, const bool* lvaryflags_in, const int* lvarynums_in, const bool* lvarymoms_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* nmoments_input_in, const int* n_user_levels_in, const int* user_levels_in, const int* npartials_in, const int* nfinedivs_p_in, const int* partial_outindex_in, const bool* partial_outflag_in, const int* partial_layeridx_in, const double* flux_in, const double* extinction_in, const double* deltaus_in, const double* omega_in, const double* truncfac_in, const double* phasmoms_in, const double* phasfunc_up_in, const double* phasfunc_dn_in, const double* reflec_in, const double* slterm_in, const double* ls_reflec_in, const double* lssl_slterm_in, const double* l_extinction_in, const double* l_deltaus_in, const double* l_omega_in, const double* l_truncfac_in, const double* l_phasmoms_in, const double* l_phasfunc_up_in, const double* l_phasfunc_dn_in, const double* mu0_in, const double* mu1_in, const double* legpoly_up_in, const double* legpoly_dn_in, const double* losw_paths_in, const double* losp_paths_in, const double* xfine_up_in, const double* wfine_up_in, const double* sunpaths_up_in, const int* ntraverse_up_in, const double* sunpathsfine_up_in, const int* ntraversefine_up_in, const double* xfine_dn_in, const double* wfine_dn_in, const double* sunpaths_dn_in, const int* ntraverse_dn_in, const double* sunpathsfine_dn_in, const int* ntraversefine_dn_in, const double* xfine_up_p_in, const double* wfine_up_p_in, const double* sunpaths_up_p_in, const int* ntraverse_up_p_in, const double* sunpathsfine_up_p_in, const int* ntraversefine_up_p_in, const double* xfine_dn_p_in, const double* wfine_dn_p_in, const double* sunpaths_dn_p_in, const int* ntraverse_dn_p_in, const double* sunpathsfine_dn_p_in, const int* ntraversefine_dn_p_in, const double* intensity_up_in, const double* intensity_db_in, const double* lp_jacobians_up_in, const double* lp_jacobians_db_in, const double* ls_jacobians_db_in, const double* lostrans_up_in, const double* lp_lostrans_up_in, const double* intensity_dn_in, const double* lp_jacobians_dn_in, const double* cumtrans_in, const double* lp_cumtrans_in, const double* lostrans_dn_in, const double* lp_lostrans_dn_in);
 }
 
-class Fo_Scalarss_Rtcalcs_Ilps : public virtual Printable<Fo_Scalarss_Rtcalcs_Ilps> {
+class Fo_Scalarss_Rtcalcs_Ilps : public Printable<Fo_Scalarss_Rtcalcs_Ilps> {
 
 public:
   Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), maxmoments_input_(maxmoments_input_in), max_user_levels_(max_user_levels_in), max_atmoswfs_(max_atmoswfs_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), nmoments_input_(nmoments_input_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in), max_surfacewfs_(max_surfacewfs_in), max_sleavewfs_(max_sleavewfs_in), n_sleavewfs_(n_sleavewfs_in), n_surfacewfs_(n_surfacewfs_in) 
@@ -3012,13 +2991,6 @@ public:
   }
 
   virtual ~Fo_Scalarss_Rtcalcs_Ilps() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -4339,7 +4311,7 @@ extern "C" {
   void fo_scalarss_spherfuncs_m_fo_scalarss_spherfuncs_wrap(const int* maxmoments_in, const int* maxgeoms_in, const int* nmoments_in, const int* ngeoms_in, const bool* starter_in, const bool* do_spherfunc_in, const double* cosscat_in, const double* df1_in, const double* df2_in, const double* ss_pleg_in);
 }
 
-class Fo_Scalarss_Spherfuncs : public virtual Printable<Fo_Scalarss_Spherfuncs> {
+class Fo_Scalarss_Spherfuncs : public Printable<Fo_Scalarss_Spherfuncs> {
 
 public:
   Fo_Scalarss_Spherfuncs(const int& maxmoments_in, const int& maxgeoms_in, const int& nmoments_in, const int& ngeoms_in) : maxmoments_(maxmoments_in), maxgeoms_(maxgeoms_in), nmoments_(nmoments_in), ngeoms_(ngeoms_in) 
@@ -4359,13 +4331,6 @@ public:
   }
 
   virtual ~Fo_Scalarss_Spherfuncs() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxmoments() const {
     return maxmoments_;
@@ -4500,7 +4465,7 @@ extern "C" {
   void fo_thermal_rtcalcs_i_m_dte_integral_i_updn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const int* max_user_levels_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_thermset_in, const bool* do_deltam_scaling_in, const bool* do_partials_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_sources_up_in, const bool* do_sources_up_p_in, const bool* do_sources_dn_in, const bool* do_sources_dn_p_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* n_user_levels_in, const int* user_levels_in, const int* npartials_in, const int* nfinedivs_p_in, const int* partial_outindex_in, const bool* partial_outflag_in, const int* partial_layeridx_in, const double* bb_input_in, const double* surfbb_in, const double* user_emissivity_in, const double* extinction_in, const double* deltaus_in, const double* omega_in, const double* truncfac_in, const double* mu1_in, const double* losw_paths_in, const double* losp_paths_in, const double* xfine_up_in, const double* wfine_up_in, const double* hfine_up_in, const double* xfine_dn_in, const double* wfine_dn_in, const double* hfine_dn_in, const double* xfine_up_p_in, const double* wfine_up_p_in, const double* hfine_up_p_in, const double* xfine_dn_p_in, const double* wfine_dn_p_in, const double* hfine_dn_p_in, const double* intensity_dta_up_in, const double* intensity_dts_in, const double* intensity_dta_dn_in, const double* cumsource_up_in, const double* cumsource_dn_in, const double* tcom1_in, const double* lostrans_up_in, const double* lostrans_up_p_in);
 }
 
-class Fo_Thermal_Rtcalcs_I : public virtual Printable<Fo_Thermal_Rtcalcs_I> {
+class Fo_Thermal_Rtcalcs_I : public Printable<Fo_Thermal_Rtcalcs_I> {
 
 public:
   Fo_Thermal_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), max_user_levels_(max_user_levels_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in) 
@@ -4608,13 +4573,6 @@ public:
   }
 
   virtual ~Fo_Thermal_Rtcalcs_I() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
@@ -5341,7 +5299,7 @@ extern "C" {
   void fo_thermal_rtcalcs_ilps_m_dte_integral_ilps_updn_wrap(const int* maxgeoms_in, const int* maxlayers_in, const int* maxpartials_in, const int* maxfine_in, const int* max_user_levels_in, const int* max_atmoswfs_in, const int* max_surfacewfs_in, const bool* do_upwelling_in, const bool* do_dnwelling_in, const bool* do_thermset_in, const bool* do_deltam_scaling_in, const bool* do_partials_in, const bool* do_planpar_in, const bool* do_enhanced_ps_in, const bool* do_sources_up_in, const bool* do_sources_up_p_in, const bool* do_sources_dn_in, const bool* do_sources_dn_p_in, const bool* do_profilewfs_in, const bool* do_surfacewfs_in, const bool* lvaryflags_in, const int* lvarynums_in, const int* n_surfacewfs_in, const int* ngeoms_in, const int* nlayers_in, const int* nfinedivs_in, const int* n_user_levels_in, const int* user_levels_in, const int* npartials_in, const int* nfinedivs_p_in, const int* partial_outindex_in, const bool* partial_outflag_in, const int* partial_layeridx_in, const double* bb_input_in, const double* surfbb_in, const double* user_emissivity_in, const double* ls_user_emissivity_in, const double* extinction_in, const double* deltaus_in, const double* omega_in, const double* truncfac_in, const double* l_extinction_in, const double* l_deltaus_in, const double* l_omega_in, const double* l_truncfac_in, const double* mu1_in, const double* losw_paths_in, const double* losp_paths_in, const double* xfine_up_in, const double* wfine_up_in, const double* hfine_up_in, const double* xfine_dn_in, const double* wfine_dn_in, const double* hfine_dn_in, const double* xfine_up_p_in, const double* wfine_up_p_in, const double* hfine_up_p_in, const double* xfine_dn_p_in, const double* wfine_dn_p_in, const double* hfine_dn_p_in, const double* intensity_dta_up_in, const double* intensity_dts_in, const double* intensity_dta_dn_in, const double* lp_jacobians_dta_up_in, const double* lp_jacobians_dts_up_in, const double* ls_jacobians_dts_in, const double* lp_jacobians_dta_dn_in, const double* tcom1_in, const double* l_tcom1_in, const double* lostrans_up_in, const double* lostrans_up_p_in, const double* l_lostrans_up_in, const double* l_lostrans_up_p_in);
 }
 
-class Fo_Thermal_Rtcalcs_Ilps : public virtual Printable<Fo_Thermal_Rtcalcs_Ilps> {
+class Fo_Thermal_Rtcalcs_Ilps : public Printable<Fo_Thermal_Rtcalcs_Ilps> {
 
 public:
   Fo_Thermal_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& n_surfacewfs_in) : maxgeoms_(maxgeoms_in), maxlayers_(maxlayers_in), maxpartials_(maxpartials_in), maxfine_(maxfine_in), max_user_levels_(max_user_levels_in), max_atmoswfs_(max_atmoswfs_in), ngeoms_(ngeoms_in), nlayers_(nlayers_in), n_user_levels_(n_user_levels_in), npartials_(npartials_in), max_surfacewfs_(max_surfacewfs_in), n_surfacewfs_(n_surfacewfs_in) 
@@ -5475,13 +5433,6 @@ public:
   }
 
   virtual ~Fo_Thermal_Rtcalcs_Ilps() = default;
-
-  std::string print_to_string() const
-  {
-      std::ostringstream output;
-      output << *this;
-      return output.str();
-  }
 
   const int& maxgeoms() const {
     return maxgeoms_;
