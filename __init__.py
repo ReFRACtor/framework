@@ -10,8 +10,8 @@ from ._swig_wrap import *
 # Geocal is set up to assume everything is in the top module. Not sure how
 # to sort this out, but for now just continue doing this. It isn't clear
 # how useful the "all.py" is anyways.
-#if False:
-if True:
+if False:
+#if True:
     import os as _os
     import glob as _glob
 
