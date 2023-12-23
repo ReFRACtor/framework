@@ -49,17 +49,15 @@ class AbsorberXSec: virtual public Absorber {
     %python_attribute(temperature, boost::shared_ptr<Temperature>);
  
     %pickle_serialization();
+protected:  
+  // Only meant for swig serialization
+  AbsorberXSec();
 };
 }
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "absorder_xsec_wrap.h"
-%}
-%fp_director_serialization(AbsorberXSec)
+%fp_director_serialization(absorber_xsec, AbsorberXSec)
 
 // List of things "import *" will include
 %python_export("AbsorberXSec");

@@ -53,11 +53,6 @@ public:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "absco_wrap.h"
-%}
-%fp_director_serialization(Absco)
+%fp_director_serialization(absco, Absco)
 
 %template(vector_absco) std::vector<boost::shared_ptr<FullPhysics::Absco> >;

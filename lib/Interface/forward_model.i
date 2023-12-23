@@ -41,12 +41,7 @@ public:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "forward_model_wrap.h"
-%}
-%fp_director_serialization(ForwardModel)
+%fp_director_serialization(forward_model, ForwardModel)
 
 // List of things "import *" will include
 %python_export("ForwardModel");

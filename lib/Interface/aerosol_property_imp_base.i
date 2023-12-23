@@ -65,12 +65,7 @@ protected:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "aerosol_property_imp_base_wrap.h"
-%}
-%fp_director_serialization(AerosolPropertyImpBase)
+%fp_director_serialization(aerosol_property_imp_base, AerosolPropertyImpBase)
 
 // List of things "import *" will include
 %python_export("AerosolPropertyImpBase");

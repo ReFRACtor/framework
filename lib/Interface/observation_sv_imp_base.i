@@ -1,6 +1,7 @@
 %include "fp_common.i"
 
 %{
+#include "array_ad.h"
 #include "observation_sv_imp_base.h"
 %}
 
@@ -11,7 +12,7 @@
 %base_import(state_mapping)
 %base_import(state_mapping_linear)
 %import "state_mapping_linear.i"
-
+%import "array_ad.i"
 %fp_shared_ptr(FullPhysics::ObservationSvImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray2<FullPhysics::ObservationSv, FullPhysics::Observation>);
 namespace FullPhysics {
@@ -39,6 +40,20 @@ namespace FullPhysics {
   
 class ObservationSvImpBase: public SubStateVectorArray2<ObservationSv, Observation> {
 public:
+  void init
+  (const blitz::Array<double, 1>& Coeff,
+   boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  void init(double Coeff,
+            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  virtual std::string state_vector_name_i(int i) const;
+  virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const;
+  virtual void update_sub_state(const FullPhysics::ArrayAd<double, 1>& Sv_sub, const blitz::Array<double, 2>& Cov);
+  virtual void update_sub_state_hook();
+  %python_attribute(coefficient, FullPhysics::ArrayAd<double, 1>);
+  %python_attribute(mapped_state, FullPhysics::ArrayAd<double, 1>);
+  %python_attribute(sub_state_vector_values, FullPhysics::ArrayAd<double, 1>);
+  %python_attribute(state_mapping, boost::shared_ptr<StateMapping>);
+  %python_attribute(statevector_covariance, blitz::Array<double, 2>);
   %python_attribute_abstract(num_channels, int);
   virtual std::string desc() const;
   virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
@@ -52,6 +67,10 @@ public:
   %sub_state_virtual_func(Observation);
   %pickle_serialization();
 protected:
+  FullPhysics::ArrayAd<double, 1> coeff;
+  blitz::Array<double, 2> cov;
+  boost::shared_ptr<StateMapping> mapping;  
+  ObservationSvImpBase() {}
   ObservationSvImpBase(const blitz::Array<double, 1>& Coeff,
                 boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };
@@ -59,12 +78,7 @@ protected:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "observation_sv_imp_base_wrap.h"
-%}
-%fp_director_serialization(ObservationSvImpBase)
+%fp_director_serialization(observation_sv_imp_base, ObservationSvImpBase)
 
 // List of things "import *" will include
 %python_export("ObservationSvImpBase", "SubStateVectorArrayObservationSv");

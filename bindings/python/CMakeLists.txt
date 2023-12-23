@@ -107,6 +107,11 @@ target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
 # Give namespace information for generic swig_rules code
 target_compile_definitions(_swig_wrap PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
 
+# Need to tell swig code if we are using cmake, because the wrapper files
+# generated use a different name convention than the standard swig file naming
+# convention
+target_compile_definitions(_swig_wrap PRIVATE CMAKE_SWIG_FILE_NAMES)
+
 # If GPerftools is in use, add -DGperftools_FOUND to allow conditional compilation
 if(Gperftools_FOUND)
     message(STATUS "Adding -DGperftools to _swig_wrap target")

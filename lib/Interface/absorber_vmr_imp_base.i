@@ -51,21 +51,27 @@ protected:
   mutable bool cache_stale;
   mutable boost::function<AutoDerivative<double>(AutoDerivative<double>)> vmr;
   virtual void calc_vmr() const = 0;
+  AbsorberVmrImpBase();
+  void init
+  (const std::string Gas_name,
+   const blitz::Array<double, 1>& Coeff, 
+   const boost::shared_ptr<Pressure>& Mapped_Press);
+  void init
+  (const std::string Gas_name,
+   const blitz::Array<double, 1>& Coeff, 
+   const boost::shared_ptr<Pressure>& Mapped_Press,
+   boost::shared_ptr<StateMapping> in_map);
   AbsorberVmrImpBase(const std::string& Gas_name,
                      const blitz::Array<double, 1>& Coeff,
                      const boost::shared_ptr<Pressure>& Press,
                      boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  boost::shared_ptr<Pressure> mapped_pressure;
 };
 }
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "absorber_vmr_imp_base_wrap.h"
-%}
-%fp_director_serialization(AbsorberVmrImpBase)
+%fp_director_serialization(absorber_vmr_imp_base, AbsorberVmrImpBase)
 
 // List of things "import *" will include
 %python_export("AbsorberVmrImpBase");

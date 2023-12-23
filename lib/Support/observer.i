@@ -57,9 +57,4 @@ protected:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "observer_wrap.h"
-%}
-%fp_director_serialization(CacheInvalidatedObserver)
+%fp_director_serialization(observer, CacheInvalidatedObserver)

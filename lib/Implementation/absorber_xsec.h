@@ -122,6 +122,9 @@ public:
         return temp;
     }
 
+protected:
+  // Directors with swig seems to need to have this available
+  AbsorberXSec() = default;
 private:
     // Objects used to calculate the optical depth
     boost::shared_ptr<Pressure> press;
@@ -135,8 +138,6 @@ private:
     // Cached values that only get recomputed when the cache is invalidated
     friend AbsorberXSecCache;
     mutable AbsorberXSecCache cache;
-
-    AbsorberXSec() = default;
 
     friend class boost::serialization::access;
     template<class Archive> void serialize(Archive & ar, const unsigned int version);

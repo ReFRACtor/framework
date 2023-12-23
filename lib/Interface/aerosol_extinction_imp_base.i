@@ -53,10 +53,19 @@ protected:
   mutable ArrayAd<double, 1> aext;
   virtual void calc_aerosol_extinction() const = 0;
   %python_attribute(total_aod, AutoDerivative<double>);
+  void init(const std::string Aerosol_name,
+            const blitz::Array<double, 1>& Coeff, 
+            const boost::shared_ptr<Pressure>& Press);
+  void init(const std::string Aerosol_name,
+            const blitz::Array<double, 1>& Coeff, 
+            const boost::shared_ptr<Pressure>& Press,
+            boost::shared_ptr<StateMapping> in_map);
+  AerosolExtinctionImpBase();
   AerosolExtinctionImpBase(const std::string& Aerosol_name,
                            const blitz::Array<double, 1>& Coeff,
                            const boost::shared_ptr<Pressure>& Press,
                            boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
+  boost::shared_ptr<Pressure> press;
 };
 }
 
@@ -64,12 +73,7 @@ protected:
 
 // Extra code for handling boost serialization/python pickle of
 // director classes
-%{
-// Needed by code below, can't easily figure these names out
-// automatically so just include here
-#include "aerosol_extinction_imp_base_wrap.h"
-%}
-%fp_director_serialization(AerosolExtinctionImpBase)
+%fp_director_serialization(aerosol_extinction_imp_base, AerosolExtinctionImpBase)
 
 // List of things "import *" will include
 %python_export("AerosolExtinctionImpBase");
