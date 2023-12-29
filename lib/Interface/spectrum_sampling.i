@@ -21,6 +21,7 @@ namespace FullPhysics {
 class SpectrumSampling : public GenericObject {
 public:
   virtual ~SpectrumSampling();
+  virtual std::string desc() const;
   std::string print_to_string() const;
   %python_attribute(number_spectrometer, int);
   virtual SpectralDomain spectral_domain(int spec_index,
@@ -37,6 +38,7 @@ protected:
   SpectrumSampling();
   SpectrumSampling(int num_spectrometer);
 };
+
 class IdentitySpectrumSampling: public SpectrumSampling {
 public:
   IdentitySpectrumSampling(int nspec);
@@ -46,3 +48,10 @@ public:
   %pickle_serialization();
 };  
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(spectrum_sampling, SpectrumSampling)
+
+// List of things "import *" will include
+%python_export("SpectrumSampling", "IdentitySpectrumSampling");

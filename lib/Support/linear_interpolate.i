@@ -48,7 +48,10 @@ public:
 };
 
 %template(LinearInterpolateAutoDerivative) FullPhysics::LinearInterpolateWrap<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> >;
+
 }
+
+%template(VectorLinearInterpolatetoDouble) std::vector<boost::shared_ptr<FullPhysics::LinearInterpolate<double, double> > >;
 
 
 

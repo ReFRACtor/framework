@@ -45,6 +45,8 @@ public:
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const = 0;
 
   %sub_state_virtual_func(SpectrumEffect);
+  virtual std::string desc() const;
+  std::string print_to_string() const;
   %pickle_serialization();
 protected:
   SpectrumEffectImpBase();
@@ -52,4 +54,12 @@ protected:
   SpectrumEffectImpBase(double Coeff, boost::shared_ptr<StateMapping> Mapping);
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(spectrum_effect_imp_base, SpectrumEffectImpBase)
+
+// List of things "import *" will include
+%python_export("SpectrumEffectImpBase");
+
 

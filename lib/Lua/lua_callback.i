@@ -25,6 +25,7 @@ public:
        const boost::shared_ptr<LuabindObject>& Obj9,
        const boost::shared_ptr<LuabindObject>& Obj10
        ) = 0;
+  virtual std::string desc() const;
   std::string print_to_string() const;
 };
 
