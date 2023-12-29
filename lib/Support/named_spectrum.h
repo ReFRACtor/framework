@@ -56,10 +56,13 @@ private:
 
 typedef boost::shared_ptr<NamedSpectrum> NamedSpectrumPtr;
 typedef std::vector<boost::shared_ptr<NamedSpectrum> > NamedSpectrumPtrVec;
-  
+typedef Observer<NamedSpectrum> ObserverNamedSpectrum;  
+typedef Observer<boost::shared_ptr<NamedSpectrum> > ObserverPtrNamedSpectrum;  
+typedef Observer<std::vector<boost::shared_ptr<NamedSpectrum> > > ObserverNamedSpectrumVector;
 }
 
 FP_EXPORT_KEY(NamedSpectrum);
+FP_EXPORT_OBSERVER_KEY(NamedSpectrum);
 FP_EXPORT_OBSERVER_KEY(NamedSpectrumPtr);
 FP_EXPORT_OBSERVER_KEY(NamedSpectrumPtrVec);
 #endif

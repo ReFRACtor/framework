@@ -35,19 +35,8 @@ public:
     return res;
   }
 
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-  virtual void print(std::ostream& Os, bool Short_form = false) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-  virtual std::string desc() const { return "RadiativeTransferImpBase"; }
+  virtual void print(std::ostream& Os, bool Short_form = false) const
+  { Os << "RadiativeTransferImpBase"; }
 
 protected:
 
@@ -66,6 +55,13 @@ protected:
   }
 
 private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
+typedef SubStateVectorArray<RadiativeTransferRetrievable> SubStateVectorArrayRadiativeTransferRetrievable;
 }
+
+FP_EXPORT_KEY(RadiativeTransferImpBase);
+FP_EXPORT_KEY(SubStateVectorArrayRadiativeTransferRetrievable);
 #endif

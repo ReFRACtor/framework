@@ -15,6 +15,7 @@ class RadiativeTransferRetrievable : public RadiativeTransfer,
 				     virtual public StateVectorObserver,
 				     public Observable<RadiativeTransferRetrievable> {
 public:
+  RadiativeTransferRetrievable() {}
   virtual ~RadiativeTransferRetrievable() {}
 
   virtual void add_observer(Observer<RadiativeTransferRetrievable>& Obs) 
@@ -28,8 +29,14 @@ public:
 
   virtual void print(std::ostream& Os, bool Short_form = false) const 
   { Os << "RadiativeTransferRetrievable";}
-
+private:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 
 }
+
+FP_EXPORT_KEY(RadiativeTransferRetrievable);
+FP_EXPORT_OBSERVER_KEY(RadiativeTransferRetrievable);
 #endif

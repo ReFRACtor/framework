@@ -23,6 +23,7 @@ public:
   OutputDouble();
   virtual ~OutputDouble();
   virtual double f() const = 0;
+  %pickle_serialization();
 };
 
 class OutputBlitz1d  : public GenericObject {
@@ -30,6 +31,7 @@ public:
   OutputBlitz1d();
   virtual ~OutputBlitz1d();
   virtual blitz::Array<double,1> f() const = 0;
+  %pickle_serialization();
 };
 
 class OutputBlitz2d  : public GenericObject {
@@ -37,6 +39,7 @@ public:
   OutputBlitz2d();
   virtual ~OutputBlitz2d();
   virtual blitz::Array<double,2> f() const = 0;
+  %pickle_serialization();
 };
 
 %pythoncode %{
@@ -98,3 +101,12 @@ def register_array_2d(self, nm, f):
 
 
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(output, OutputDouble)
+%fp_director_serialization(output, OutputBlitz1d);
+%fp_director_serialization(output, OutputBlitz2d);
+
+// List of things "import *" will include
+%python_export("Output", "OutputDouble", "OutputBlitz1d", "OutputBlitz2d");

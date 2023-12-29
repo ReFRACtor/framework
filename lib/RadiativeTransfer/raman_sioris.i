@@ -66,10 +66,12 @@ public:
   %python_attribute(name, std::string);
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
 
+  virtual std::string desc() const;
+  std::string print_to_string() const;
   %pickle_serialization();
 
 protected:
-
+  RamanSiorisEffect();
   void apply_raman_effect(Spectrum& Spec, const blitz::Array<double, 1>& temp_layers, const double albedo) const;
 
 };
@@ -78,3 +80,10 @@ const double RamanSiorisEffect::raman_edge_wavenumber = 218;
 
 
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(raman_sioris, RamanSiorisEffect)
+
+// List of things "import *" will include
+%python_export("RamanSiorisEffect", "compute_raman_sioris");

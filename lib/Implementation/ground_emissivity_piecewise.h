@@ -24,7 +24,6 @@ public:
   virtual std::string sub_state_identifier() const;
   virtual std::string state_vector_name_i(int i) const;
   virtual void print(std::ostream& Os) const;
-  virtual std::string desc() const;
 private:
   GroundEmissivityPiecewise() {}
   friend class boost::serialization::access;

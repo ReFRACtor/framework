@@ -52,6 +52,8 @@ public:
   virtual ArrayAdWithUnit<double, 1> pressure_grid(Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   %python_attribute_derived(type_preference, Pressure::TypePreference);
   %sub_state_virtual_func(Pressure);
+  virtual std::string desc() const;
+  std::string print_to_string() const;
   %pickle_serialization();
 protected:
   mutable PressureImpBaseCache cache;
@@ -63,3 +65,9 @@ protected:
 };
 }
 
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(pressure_imp_base, PressureImpBase)
+
+// List of things "import *" will include
+%python_export("PressureImpBase");

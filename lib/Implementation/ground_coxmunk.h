@@ -30,8 +30,6 @@ public:
   virtual std::string state_vector_name_i(int i) const;
 
   virtual void print(std::ostream& Os) const;
-
-  virtual std::string desc() const { return "GroundCoxmunk"; }
   
   virtual void update_sub_state_hook();
 

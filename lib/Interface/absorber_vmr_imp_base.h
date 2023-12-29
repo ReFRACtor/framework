@@ -25,20 +25,7 @@ public:
   virtual boost::shared_ptr<AbsorberVmr> clone() const = 0;
   virtual void update_sub_state_hook() 
   { cache_stale = true; }
-  
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-  virtual void print(std::ostream& Os) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-  virtual std::string desc() const { return "AbsorberVmrImpBase"; }
+  virtual void print(std::ostream& Os) const { Os << "AbsorberVmrImpBase"; }
 
   virtual blitz::Array<bool, 1> state_used() const  {
     if (state_vector_start_index() == -1) {

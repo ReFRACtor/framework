@@ -23,5 +23,12 @@ public:
   %python_attribute_with_set(sv_name, std::vector<std::string>);
   %pickle_serialization();
 };
-
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(state_vector_observer, StateVectorObserver);
+
+// List of things "import *" will include
+%python_export("StateVectorObserver");
+

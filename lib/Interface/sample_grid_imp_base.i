@@ -24,15 +24,26 @@ namespace FullPhysics {
 class SampleGridImpBase: public SubStateVectorArray<SampleGrid> {
 public:
   virtual boost::shared_ptr<SampleGrid> clone() const = 0;
-
+  %sub_state_virtual_func(SampleGrid);
   // In Python you need to override the renamed function _v_sample_grid
   %python_attribute_abstract(sample_grid, SpectralDomain);
-
-  %sub_state_virtual_func(SampleGrid);
+  %python_attribute(pixel_grid, SpectralDomain);
+  %python_attribute_with_set(sv_name, std::vector<std::string>);
+  virtual std::string desc() const;
+  std::string print_to_string() const;
   %pickle_serialization();
 protected:
+  SampleGridImpBase();
   SampleGridImpBase(const blitz::Array<double, 1>& Coeff,
                     boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
 };
 
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(sample_grid_imp_base, SampleGridImpBase)
+
+// List of things "import *" will include
+%python_export("SampleGridImpBase",  "SubStateVectorArraySampleGrid");
+

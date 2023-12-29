@@ -48,7 +48,3 @@ void GroundLambertianPiecewise::print(std::ostream& Os) const
 
     opad.strict_sync();
 }
-
-std::string GroundLambertianPiecewise::desc() const {
-    return "GroundLambertianPiecewise";
-}

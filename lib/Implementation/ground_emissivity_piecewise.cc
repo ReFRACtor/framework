@@ -49,6 +49,3 @@ void GroundEmissivityPiecewise::print(std::ostream& Os) const
     opad.strict_sync();
 }
 
-std::string GroundEmissivityPiecewise::desc() const {
-    return "GroundEmissivityPiecewise";
-}

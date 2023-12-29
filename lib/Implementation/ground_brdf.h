@@ -76,8 +76,6 @@ public:
   
   virtual void print(std::ostream& Os) const;
   
-  virtual std::string desc() const { return "GroundBrdf"; }
-
   GroundBrdf(const GroundBrdf&) = default;
 protected:
 

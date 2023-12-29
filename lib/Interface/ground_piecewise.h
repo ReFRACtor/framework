@@ -34,9 +34,7 @@ public:
   virtual std::string sub_state_identifier() const = 0;
   virtual std::string state_vector_name_i(int i) const = 0;
 
-  virtual void print(std::ostream& Os) const = 0;
-
-  virtual std::string desc() const = 0;
+  virtual void print(std::ostream& Os) const {Os << "GroundPiecewise";}
   GroundPiecewise(const GroundPiecewise& V) = default;
 protected:
   ArrayWithUnit<double, 1> spectral_points_;

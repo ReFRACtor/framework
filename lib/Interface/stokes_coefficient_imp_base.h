@@ -33,19 +33,8 @@ public:
   virtual void update_sub_state_hook() 
   { cache_stale = true; }
 
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-  virtual void print(std::ostream& Os) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-  virtual std::string desc() const { return "StokesCoefficientImpBase"; }
+  virtual void print(std::ostream& Os) const
+  { Os << "StokesCoefficientImpBase"; }
 protected:
 //-----------------------------------------------------------------------
 /// If this is true, the recalculate the stokes_coeff the next time we

@@ -47,8 +47,16 @@ public:
   %python_attribute(max_number_level, virtual int)
   %pickle_serialization();
   virtual boost::shared_ptr<Pressure> clone() const = 0;
+  virtual std::string desc() const;
   std::string print_to_string() const;
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(pressure, Pressure)
+
+// List of things "import *" will include
+%python_export("Pressure");
 

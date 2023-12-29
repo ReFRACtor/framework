@@ -54,12 +54,6 @@ public:
   virtual std::string state_vector_name_i(int i) const;
 
   virtual void print(std::ostream& Os) const;
-
-  virtual std::string desc() const
-  {
-    return "GroundEmissivityPolynomial";
-  }
-
 protected:
 
   GroundEmissivityPolynomial(const blitz::Array<double, 1>& Spec_coeffs,

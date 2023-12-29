@@ -19,20 +19,8 @@ public:
   virtual ~SpectrumEffectImpBase() {}
   virtual boost::shared_ptr<SpectrumEffect> clone() const = 0;
 
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-  virtual std::string desc() const { return "SpectrumEffectImpBase"; }
-
+  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const
+  { Os << "SpectrumEffectImpBase"; }
 protected:
 
 //-----------------------------------------------------------------------

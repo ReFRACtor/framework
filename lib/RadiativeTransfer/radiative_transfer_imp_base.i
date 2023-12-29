@@ -57,9 +57,20 @@ public:
 						 int Spec_index) const = 0;
 
   %sub_state_virtual_func(RadiativeTransferRetrievable);
+  virtual std::string desc() const;
+  std::string print_to_string() const;
+  
 protected:
   RadiativeTransferImpBase();
   RadiativeTransferImpBase(const blitz::Array<double, 1>& Coeff);
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(radiative_transfer_imp_base, RadiativeTransferImpBase)
+
+// List of things "import *" will include
+%python_export("RadiativeTransferImpBase");
+
 

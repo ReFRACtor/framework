@@ -35,22 +35,8 @@ public:
   {
       return "Aerosol Property Coeff " + boost::lexical_cast<std::string>(i + 1);
   }
-
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-
-  virtual void print(std::ostream& Os) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-
-  virtual std::string desc() const { return "AerosolPropertyImpBase"; }
+  virtual void print(std::ostream& Os) const
+  { Os << "AerosolPropertyImpBase"; }
 
 //-----------------------------------------------------------------------
 /// Returns the value of the coefficients used to generate the aerosol

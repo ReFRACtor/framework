@@ -31,20 +31,7 @@ public:
 /// implemented
 //-----------------------------------------------------------------------
   virtual std::string model_short_name() const = 0;
-  
-//-----------------------------------------------------------------------
-/// Print to stream. The default calls the function "desc" that returns
-/// a string. This gives cleaner interface for deriving from this class
-/// in python, but most C++ classes will want to override this function
-/// rather than using desc.
-//-----------------------------------------------------------------------
-  virtual void print(std::ostream& Os) const { Os << desc(); }
-
-//-----------------------------------------------------------------------
-/// Description of object, to be printed to stream. This gives a cleaner
-/// interface for deriving from python.
-//-----------------------------------------------------------------------
-  virtual std::string desc() const { return "AerosolExtinctionImpBase"; }
+  virtual void print(std::ostream& Os) const { Os << "AerosolExtinctionImpBase"; }
 
 //-----------------------------------------------------------------------
 /// Returns the value of the coefficients used to generate the aerosol

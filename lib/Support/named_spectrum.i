@@ -51,6 +51,7 @@ public:
   NamedSpectrum(const Spectrum& Spec, const std::string& Name, int Index);
   %python_attribute(name, virtual const std::string&);
   %python_attribute(index, virtual int);
+  virtual std::string desc() const;
   std::string print_to_string() const;
   %pickle_serialization();
   %pythoncode {
@@ -61,3 +62,12 @@ def copy(self):
   }
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(named_spectrum, ObserverNamedSpectrum)
+%fp_director_serialization(named_spectrum, ObserverPtrNamedSpectrum)
+%fp_director_serialization(named_spectrum, ObserverNamedSpectrumVector)
+
+// List of things "import *" will include
+%python_export("ObservableNamedSpectrum", "ObserverNamedSpectrum", "ObservablePtrNamedSpectrum", "ObserverPtrNamedSpectrum", "vector_named_spectrum", "ObservableNamedSpectrumVector", "ObserverNamedSpectrum", "NamedSpectrum");

@@ -46,6 +46,8 @@ set(DIR_SOURCES
     radiant2.8_direct.F90
     radiant_driver.cc
     radiative_transfer.cc
+    radiative_transfer_imp_base.cc
+    radiative_transfer_retrievable.cc
     radiative_transfer_fixed_stokes_coefficient.cc
     radiative_transfer_single_wn.cc
     raman_sioris.cc

@@ -104,6 +104,7 @@ public:
 
 protected:
 
+  RamanSiorisEffect() {}
   void apply_raman_effect(Spectrum& Spec, const blitz::Array<double, 1>& temp_layers, const double albedo) const;
 
 private:
@@ -127,7 +128,6 @@ private:
   boost::shared_ptr<AtmosphereStandard> atmosphere_;
   boost::shared_ptr<SolarModel> solar_model_;
 
-  RamanSiorisEffect() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

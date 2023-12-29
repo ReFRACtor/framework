@@ -30,8 +30,6 @@ public:
 
   virtual void print(std::ostream& Os) const;
 
-  virtual std::string desc() const { return "GroundCoxmunkPlusLambertian"; }
-  
 private:
   boost::shared_ptr<GroundCoxmunk> coxmunk_;
   boost::shared_ptr<GroundLambertian> lambertian_;
