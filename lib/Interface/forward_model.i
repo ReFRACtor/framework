@@ -30,7 +30,6 @@ public:
   virtual SpectralDomain spectral_domain_all() const;
   virtual Spectrum radiance_all(bool skip_jacobian = false) const;
   virtual void setup_grid() = 0;
-  virtual std::string desc() const;
   virtual SpectralDomain::TypePreference spectral_domain_type_preference() const = 0;
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
   %pickle_serialization();

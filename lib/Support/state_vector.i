@@ -55,16 +55,6 @@ public:
       }
       return res;
     }
-
-    // Support shared pointers from other languages for add/remove observer
-    void add_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
-      $self->add_observer(*Obs);
-    }
-
-    void remove_observer(const boost::shared_ptr<Observer<StateVector> >& Obs) {
-      $self->remove_observer(*Obs);
-    }
-
   }
 
     %pythoncode {

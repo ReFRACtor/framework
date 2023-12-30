@@ -42,7 +42,6 @@ class AerosolPropertyImpBase: public SubStateVectorArray<AerosolProperty> {
 public:
   // From AerosolPropertyImpBase
   virtual ~AerosolPropertyImpBase();
-  virtual std::string desc() const;
   virtual boost::shared_ptr<AerosolProperty> clone() const = 0;
   virtual ArrayAd<double, 1> extinction_coefficient_each_layer(double wn) 
     const = 0;
@@ -52,6 +51,7 @@ public:
   phase_function_moment_each_layer(double wn, int nmom = -1, 
 				   int nscatt = -1) const = 0;
   virtual std::string desc() const;
+  std::string print_to_string() const;
   %sub_state_virtual_func(AerosolProperty);
   %python_attribute(aerosol_parameter, blitz::Array<double, 1>);
   %python_attribute(aerosol_parameter_uncertainty, blitz::Array<double, 1>);
