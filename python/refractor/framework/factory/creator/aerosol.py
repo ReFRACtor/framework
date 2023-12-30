@@ -26,8 +26,8 @@ class AerosolOptical(Creator):
 
     def create(self, **kwargs):
 
-        vec_extinction = rf.vector_aerosol_extinction()
-        vec_properties = rf.vector_aerosol_property()
+        vec_extinction = []
+        vec_properties = []
 
         for aerosol_name in self.aerosols():
             self.register_parameter(aerosol_name, param.Dict())
@@ -39,8 +39,8 @@ class AerosolOptical(Creator):
             if not "properties" in aerosol_def:
                 raise param.ParamError("peroperties value not in aerosol definition for aerosol: %s" % aerosol_name)
 
-            vec_extinction.push_back(aerosol_def['extinction'])
-            vec_properties.push_back(aerosol_def['properties'])
+            vec_extinction.append(aerosol_def['extinction'])
+            vec_properties.append(aerosol_def['properties'])
 
         return rf.AerosolOptical(vec_extinction, vec_properties, self.pressure(), self.relative_humidity(), self.reference_wn())
 

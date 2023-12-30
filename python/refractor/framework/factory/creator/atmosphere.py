@@ -183,10 +183,10 @@ class AltitudeHydrostatic(Creator):
         latitudes = self.latitude()
         surface_heights = self.surface_height()
 
-        altitude = rf.vector_altitude()
+        altitude = []
         for chan_idx in range(self.num_channels()):
             chan_alt = rf.AltitudeHydrostatic(self.pressure(), self.temperature(), latitudes[chan_idx], surface_heights[chan_idx])
-            altitude.push_back(chan_alt)
+            altitude.append(chan_alt)
 
         return altitude
 

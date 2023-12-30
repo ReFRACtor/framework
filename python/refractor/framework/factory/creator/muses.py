@@ -173,9 +173,9 @@ class AbsorberVmrMUSES(CreatorMUSES, absorber.AbsorberVmrLevel):
 
             mapping_interp = rf.StateMappingInterpolateLogLog(self.pressure(), pressure_from)
 
-            mappings = rf.vector_state_mapping()
-            mappings.push_back(mapping_first)
-            mappings.push_back(mapping_interp)
+            mappings = []
+            mappings.append(mapping_first)
+            mappings.append(mapping_interp)
 
             mapping_composite = rf.StateMappingComposite(mappings)
 

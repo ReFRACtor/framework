@@ -373,8 +373,8 @@ class AbsorberAbsco(AbsorberBase):
 
     def create(self, **kwargs):
 
-        vmrs = rf.vector_absorber_vmr()
-        absorptions = rf.vector_gas_absorption()
+        vmrs = []
+        absorptions = []
 
         for gas_name, gas_def in zip(self.gases(), self.gas_definitions()):
             if not "vmr" in gas_def:
@@ -383,8 +383,8 @@ class AbsorberAbsco(AbsorberBase):
             if not "absorption" in gas_def:
                 raise param.ParamError("absorption value not in gas definition for gas: %s" % gas_name)
 
-            vmrs.push_back(gas_def['vmr'])
-            absorptions.push_back(gas_def['absorption'])
+            vmrs.append(gas_def['vmr'])
+            absorptions.append(gas_def['absorption'])
 
         if self.num_sub_layers() is not None:
             return rf.AbsorberAbsco(vmrs, self.pressure(), self.temperature(), self.altitude(), absorptions, self.constants(), self.num_sub_layers())
@@ -406,8 +406,8 @@ class AbsorberXSec(AbsorberBase):
 
     def create(self, **kwargs):
 
-        vmrs = rf.vector_absorber_vmr()
-        xsec_tables = rf.vector_xsec_table()
+        vmrs = []
+        xsec_tables = []
 
         for gas_name, gas_def in zip(self.gases(), self.gas_definitions()):
             if not "vmr" in gas_def:
@@ -416,7 +416,7 @@ class AbsorberXSec(AbsorberBase):
             if not "cross_section" in gas_def:
                 raise param.ParamError("cross_section value not in gas definition for gas: %s" % gas_name)
 
-            vmrs.push_back(gas_def['vmr'])
-            xsec_tables.push_back(gas_def['cross_section'])
+            vmrs.append(gas_def['vmr'])
+            xsec_tables.append(gas_def['cross_section'])
 
         return rf.AbsorberXSec(vmrs, self.pressure(), self.temperature(), self.altitude(), xsec_tables)

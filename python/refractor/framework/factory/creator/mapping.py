@@ -88,10 +88,10 @@ class Composite(Creator):
     def create(self, **kwargs):
 
         mappings_inp = self.mappings()
-        mappings_vec = rf.vector_state_mapping()
+        mappings_vec = []
 
         for map_obj in mappings_inp:
-            mappings_vec.push_back(map_obj)
+            mappings_vec.append(map_obj)
         
         return rf.StateMappingComposite(mappings_vec)
 

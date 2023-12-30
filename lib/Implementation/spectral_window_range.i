@@ -8,6 +8,7 @@
 
 %import "array_with_unit.i"
 %import "double_with_unit.i"
+%import "sample_grid.i"
 
 %fp_shared_ptr(FullPhysics::SpectralWindowRange);
 

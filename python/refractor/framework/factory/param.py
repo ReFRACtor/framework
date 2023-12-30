@@ -245,7 +245,7 @@ class ObjectVector(ConfigParam):
 
         type_str = str(type(value))
 
-        if not re.search(check_str, type_str):
+        if not re.search(check_str, type_str) and not re.search("list", type_str):
             raise ParamError("Value with type string %s is not a C++ vector with type vector_%s" % (type_str, self.vec_type and self.vec_type or ""))
 
     def __str__(self):

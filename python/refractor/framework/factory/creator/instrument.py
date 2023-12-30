@@ -20,9 +20,9 @@ class IlsGratingInstrument(Creator):
         dispersion = self.common_store["dispersion"] = self.dispersion()
         instrument_correction = self.instrument_correction()
 
-        ils_vec = rf.vector_ils()
+        ils_vec = []
         for disp, ils_func, half_width in zip(dispersion, self.ils_function(), self.ils_half_width()):
-            ils_vec.push_back(rf.IlsGrating(disp, ils_func, half_width))
+            ils_vec.append(rf.IlsGrating(disp, ils_func, half_width))
         return rf.IlsInstrument(ils_vec, instrument_correction)
 
 class SampleGridCreator(Creator):
@@ -39,9 +39,9 @@ class SampleGridCreator(Creator):
         # gets sets into the SpectralWindowRange matters.
 
         # Convert to a vector of SampleGrid objects
-        vec_sample_grid = rf.vector_sample_grid()
+        vec_sample_grid = []
         for obj in sample_grid_objs:
-            vec_sample_grid.push_back(obj)
+            vec_sample_grid.append(obj)
 
         spec_win = self.spec_win()
         if hasattr(spec_win, "dispersion"):
@@ -248,16 +248,16 @@ class InstrumentCorrectionList(Creator):
         channel_names = self.desc_band_name()
 
         # For each channel get all instrument corrections
-        inst_corr = rf.vector_vector_instrument_correction()
+        inst_corr = []
         for chan_index in range(self.num_channels()):
-            per_channel_corr = rf.vector_instrument_correction()
+            per_channel_corr = []
 
             for correction_name in self.corrections():
                 # Dynamically request a InstrumentCorrection object for the desired name for the desired instrument channel index
                 self.register_parameter(correction_name, param.InstanceOf(rf.InstrumentCorrection))
-                per_channel_corr.push_back(self.param(correction_name, sensor_index=chan_index, channel_name=channel_names[chan_index]))
+                per_channel_corr.append(self.param(correction_name, sensor_index=chan_index, channel_name=channel_names[chan_index]))
 
-            inst_corr.push_back(per_channel_corr)
+            inst_corr.append(per_channel_corr)
 
         return inst_corr
 

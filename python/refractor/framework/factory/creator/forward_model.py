@@ -163,14 +163,14 @@ class SpectrumEffectList(Creator):
             previous_effects[effect_name] = per_chan_effects
 
         # Map these into an outer vector for each channel, with an inner vector for each effect
-        spec_eff = rf.vector_vector_spectrum_effect()
+        spec_eff = []
         for chan_index in range(self.num_channels()):
-            per_channel_eff = rf.vector_spectrum_effect()
+            per_channel_eff = []
 
             for effect in all_effects:
-                per_channel_eff.push_back(effect[chan_index])
+                per_channel_eff.append(effect[chan_index])
 
-            spec_eff.push_back(per_channel_eff)
+            spec_eff.append(per_channel_eff)
 
         return spec_eff
 
@@ -467,9 +467,9 @@ class OssForwardModel(Creator):
 
     def create(self, **kwargs):
 
-        vmrs = rf.vector_absorber_vmr()
+        vmrs = []
         for vmr_obj in self.absorber():
-            vmrs.push_back(vmr_obj)
+            vmrs.append(vmr_obj)
 
         # TODO: discuss support for multiple channels/bands
         chan_idx = 0
