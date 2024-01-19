@@ -94,7 +94,7 @@ Spectrum IlsInstrument::apply_instrument_model(
   else
     hres_sd = boost::make_shared<SpectralDomain>(High_resolution_spectrum.spectral_domain().data(), full.units());
   // SpectralDomain expected to be ascending
-  if (hres_sd->data()(0) > hres_sd->data()(1)) {
+  if (hres_sd->data().rows() >= 2 && hres_sd->data()(0) > hres_sd->data()(1)) {
     // We copy the data because ils_grating assumes the data is
     // contiguous and in the same order as the ils
     hres_sd = boost::make_shared<SpectralDomain>
