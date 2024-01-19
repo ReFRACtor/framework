@@ -10,9 +10,9 @@ include_directories(${PYTHON_INCLUDE_PATH})
 find_package(NumPy REQUIRED)
 include_directories(${NUMPY_INCLUDE_DIRS})
 
-# Find SWIG, need at least 3.0.10 because of bugs in
-# 3.0.8 related to shared pointers and issues with 3.0.9 importing built code
-find_package(SWIG 3.0.10 REQUIRED)
+# Find SWIG, need at least 4.0.2 because of bugs in
+# 3.0.12 related to shared pointers
+find_package(SWIG 4.0.2 REQUIRED)
 
 # Check for Doxygen for adding documentation to SWIG files
 find_package(Doxygen)
