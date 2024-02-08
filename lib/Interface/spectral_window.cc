@@ -50,7 +50,10 @@ SpectralDomain SpectralWindow::apply(const SpectralDomain& Grid,
     if(sind.rows() > 0)
       sind(i) = Grid.sample_index()(gi[i]);
   }
-  return SpectralDomain(res, sind, Grid.units());
+  if(sind.rows() > 0)
+    return SpectralDomain(res, sind, Grid.units());
+  else
+    return SpectralDomain(res, Grid.units());
 }
 
 //-----------------------------------------------------------------------
@@ -79,8 +82,13 @@ Spectrum SpectralWindow::apply(const Spectrum& Spec,
     if(sind.rows() > 0)
       sind(i) = Spec.spectral_domain().sample_index()(gi[i]);
   }
-  return Spectrum(SpectralDomain(res_d, sind, Spec.spectral_domain().units()),
-		  SpectralRange(res_r, Spec.spectral_range().units(),
-				uncer));
+  if(sind.rows() > 0)
+    return Spectrum(SpectralDomain(res_d, sind, Spec.spectral_domain().units()),
+		    SpectralRange(res_r, Spec.spectral_range().units(),
+				  uncer));
+  else
+    return Spectrum(SpectralDomain(res_d, Spec.spectral_domain().units()),
+		    SpectralRange(res_r, Spec.spectral_range().units(),
+				  uncer));
 }
 
