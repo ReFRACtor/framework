@@ -12,10 +12,12 @@ void MaxAPosterioriSqrtConstraint::serialize(Archive & ar,
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ModelMeasureStandard)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MaxAPosteriori)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObservableMaxAPosterioriSqrtConstraint)
     & FP_NVP(K_x) & FP_NVP(msrmnt_jacobian_x) & FP_NVP_(mapping);
 }
 
 FP_IMPLEMENT(MaxAPosterioriSqrtConstraint);
+FP_OBSERVER_SERIALIZE(MaxAPosterioriSqrtConstraint);
 #endif
 
 //-----------------------------------------------------------------------

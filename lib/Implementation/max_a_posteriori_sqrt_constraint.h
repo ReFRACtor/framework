@@ -3,6 +3,7 @@
 #include "max_a_posteriori.h"
 #include "model_measure_standard.h"
 #include "state_mapping_linear.h"
+#include "observer.h"
 #include <boost/make_shared.hpp>
 
 namespace FullPhysics {
@@ -74,7 +75,8 @@ namespace FullPhysics {
   that lie.
 *******************************************************************/
 class MaxAPosterioriSqrtConstraint : 
-  virtual public MaxAPosteriori, virtual public ModelMeasureStandard {
+    virtual public MaxAPosteriori, virtual public ModelMeasureStandard,
+    public Observable<MaxAPosterioriSqrtConstraint> {
 public:
   MaxAPosterioriSqrtConstraint(const boost::shared_ptr<ForwardModel>& fm,
           const boost::shared_ptr<Observation>& observation, 
@@ -93,6 +95,11 @@ public:
   
   virtual ~MaxAPosterioriSqrtConstraint() {}
 
+  virtual void add_observer(Observer<MaxAPosterioriSqrtConstraint>& Obs) 
+  { add_observer_do(Obs, *this);}
+  virtual void remove_observer(Observer<MaxAPosterioriSqrtConstraint>& Obs) 
+  { remove_observer_do(Obs, *this);}
+  
 //-----------------------------------------------------------------------
 /// Jacobian on full state grid (K_x in nomenclature of TES paper)
 //-----------------------------------------------------------------------
@@ -148,4 +155,5 @@ private:
 }
 
 FP_EXPORT_KEY(MaxAPosterioriSqrtConstraint);
+FP_EXPORT_OBSERVER_KEY(MaxAPosterioriSqrtConstraint);
 #endif
