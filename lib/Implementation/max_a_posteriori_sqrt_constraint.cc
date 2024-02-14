@@ -100,6 +100,7 @@ void MaxAPosterioriSqrtConstraint::parameters(const blitz::Array<double, 1>& z)
   ModelMeasure::parameters(z);
   blitz::Array<double, 1> x = mapping_->mapped_state(z).value();
   sv->update_state(x);
+  notify_update_do(*this);
 }
 
 blitz::Array<double, 2> MaxAPosterioriSqrtConstraint::model_measure_diff_jacobian_fm()
