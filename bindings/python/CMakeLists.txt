@@ -106,6 +106,7 @@ target_compile_definitions(_swig_wrap PRIVATE SWIG_TYPE_TABLE=refractor)
 
 # Give namespace information for generic swig_rules code
 target_compile_definitions(_swig_wrap PRIVATE SWIG_MAPPER_NAMESPACE=FullPhysics)
+target_compile_definitions(_swig_wrap PRIVATE SWIG_HAVE_BOOST_SERIALIZATION)
 
 # Need to tell swig code if we are using cmake, because the wrapper files
 # generated use a different name convention than the standard swig file naming

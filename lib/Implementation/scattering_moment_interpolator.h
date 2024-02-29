@@ -16,7 +16,7 @@ namespace FullPhysics {
   uses this class to speed up its calculations.
 *******************************************************************/
 
-class ScatteringMomentInterpolate2Point {
+class ScatteringMomentInterpolate2Point : public Printable<ScatteringMomentInterpolate2Point> {
 public:
 //-----------------------------------------------------------------------
 /// Constructor, this takes the two wave numbers and scattering
@@ -64,6 +64,7 @@ public:
     res(r1, ra) = pf0(r1, r2) + delta_pf0(r1, r2) * (wn - wn0);
     return res;
   }
+  void print(std::ostream& Os) const { Os << "ScatteringMomentInterpolate2Point"; }
 private:
   double wn0;
   blitz::Array<double, 2> pf0;
@@ -74,7 +75,7 @@ private:
   void serialize(Archive & ar, const unsigned int version);
 };
 
-class ScatteringMomentInterpolate {
+class ScatteringMomentInterpolate : public Printable<ScatteringMomentInterpolate> {
 public:
   template<class I1, class I2> ScatteringMomentInterpolate(I1 xstart, I1 xend,
 							   I2 ystart)
@@ -104,6 +105,7 @@ public:
     else
       return (*i->second)(x, nummom, nscatt);
   }
+  void print(std::ostream& Os) const { Os << "ScatteringMomentInterpolate"; }
 private:
   std::map<double, boost::shared_ptr<ScatteringMomentInterpolate2Point> > inter;
   ScatteringMomentInterpolate() {}
