@@ -2,10 +2,8 @@
 #include "swig_type_mapper_base.h"
 #include <boost/serialization/shared_ptr_helper.hpp>
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
-#include <boost/archive/polymorphic_xml_iarchive.hpp>
-#include <boost/archive/polymorphic_xml_oarchive.hpp>
-#include <boost/archive/polymorphic_binary_iarchive.hpp>
-#include <boost/archive/polymorphic_binary_oarchive.hpp>
+#include <boost/archive/polymorphic_iarchive.hpp>
+#include <boost/archive/polymorphic_oarchive.hpp>
 #endif
 
 //-----------------------------------------------------------------------
