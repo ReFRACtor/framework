@@ -311,6 +311,68 @@
   %set_output(SWIG_NewPointerObj(%as_voidptr(smartresult), $descriptor(SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< TYPE > *), SWIG_POINTER_OWN));
 }
 
+// shared_ptr by reference, where we pass the underlying object
+// pointed to in python for a director object. This is the same for a
+// shared pointer that is not a director, but in the case of the
+// director we pass back the shared_ptr contained in the underlying
+// python object. Note that this should *not* be used for anything
+// that we keep a copy for (e.g., use to set a shared_ptr in an
+// object). The primary used of this is weak_ptr - since we normally
+// return a *different* shared_ptr (although pointing to the same
+// object) this breaks the weak_ptr semantics. See
+// DirectorNotes.md for a bit more of a discussion of this,
+// and the DirectorExampleWeakPtr unit test in swig-rules-skeleton
+// repository pythnon unit tests for an example illustrating the
+// issue.
+//
+// Note that it is important that SHARED_PTR_NO_OWN not actually be copied to a persistent 
+// shared_ptr. If you do, then you are likely to get a seg fault - this is one of those
+// "giving you enough rope to hang yourself" sort of thing. This
+// handles a corner case, but by *breaking* in a controlled way the
+// lifetime management that we have in place.
+
+
+%typemap(in) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > & SHARED_PTR_NO_OWN (void *argp, int res = 0, $*1_ltype tempshared) {
+  int newmem = 0;
+  res = SWIG_ConvertPtrAndOwn($input, &argp, $descriptor(SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< TYPE > *), %convertptr_flags, &newmem);
+  if (!SWIG_IsOK(res)) {
+    %argument_fail(res, "$type", $symname, $argnum);
+  }
+  if (newmem & SWIG_CAST_NEW_MEMORY) {
+    if (argp) tempshared = *%reinterpret_cast(argp, $ltype);
+    delete %reinterpret_cast(argp, $ltype);
+    $1 = &tempshared;
+  } else {
+    $1 = (argp) ? %reinterpret_cast(argp, $ltype) : &tempshared;
+  }
+  // Added mms
+  // Special handling if this is a director class.
+  // See DirectorNotes.md for discussion of this.
+  //
+  // Note that it is important that SHARED_PTR_NO_OWN not actually be copied to a persistent 
+  // shared_ptr. If you do, then you are likely to get a seg fault - this is one of those
+  // "giving you enough rope to hang yourself" sort of thing. This
+  // handles a corner case, but by *breaking* in a controlled way the
+  // lifetime management that we have in place.
+  
+  Swig::Director* dp = dynamic_cast<Swig::Director*>($1->get());
+  if(dp) {
+    PyObject* this_pobj = PyObject_GetAttr($input, PyString_FromString("this"));
+    res = SWIG_ConvertPtrAndOwn(this_pobj, &argp, $descriptor(SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< TYPE > *), %convertptr_flags, &newmem);
+    Py_DECREF(this_pobj);
+    if (!SWIG_IsOK(res)) {
+      %argument_fail(res, "$type", $symname, $argnum);
+    }
+    if (newmem & SWIG_CAST_NEW_MEMORY) {
+      if (argp) tempshared = *%reinterpret_cast(argp, $ltype);
+      delete %reinterpret_cast(argp, $ltype);
+      $1 = &tempshared;
+    } else {
+      $1 = (argp) ? %reinterpret_cast(argp, $ltype) : &tempshared;
+    }
+  }    
+}
+
 %typemap(varin) SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > & %{
 #error "varin typemap not implemented"
 %}

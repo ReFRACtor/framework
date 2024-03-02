@@ -33,6 +33,27 @@ directly deleted. Instead, the python reference is decremented, results in
 a count of 0, which then results in the python object cleaning of "this"
 and finally deleting the actual C++ SWIG object.
 
+There is a corner case that needs to be handled. Since we normally return a *different* 
+shared_ptr, this breaks the handling of weak_ptr. Without special handling, a
+shared_ptr is passed to a function setting a weak_ptr. This shared_ptr has a ref_count
+of 1. The weak_ptr is set to point to this. The function ends, and the shared_ptr has
+its ref_count set to 0. The underlying object still existing, PythonRefPtrCleanup handles
+the lifetime and python still have references to it so the object isn't deleted. However,
+the C++ weak_ptr sees a shared_ptr with a 0 reference count, so it drops the reference to
+the object. We have a unit test illustrating this problem in swig-rules-skeleton, see
+DirectorExampleWeakPtr.
+
+So we have a special typemap that triggers off the variable name SHARED_PTR_NO_OWN. This 
+returns the shared_ptr owned by the python object for Director. This shared pointer should
+not be used for anything we keep a copy of because this will break the lifetime issues. But
+it can be used to set a weak_ptr. For a normal C++ object that isn't a python object
+Director this is handled the same as the normal typemap rule for shared_ptr.
+
+Note that it is important that SHARED_PTR_NO_OWN not actually be copied to a persistent 
+shared_ptr. If you do, then you are likely to get a seg fault - this is one of those
+"giving you enough rope to hang yourself" sort of thing. This handles a corner case, but
+by *breaking* in a controlled way the lifetime management that we have in place.
+
 We modify both the swig code (so my_shared_ptr.i) and the boost serialization
 code of directors to handle this.
 
