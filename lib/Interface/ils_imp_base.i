@@ -11,6 +11,7 @@
 %import "array_ad.i"
 %import "spectral_domain.i"
 %import "double_with_unit.i"
+%import "state_vector.i"
 
 %base_import(ils)
 %base_import(observer)
@@ -25,6 +26,8 @@ namespace FullPhysics {
 class IlsImpBase : public Ils, public Observer<SampleGrid> {
 public:
   IlsImpBase(const boost::shared_ptr<SampleGrid>& Sample_grid, const DoubleWithUnit& Edge_extension);
+  virtual void add_observer(Observer<Ils>& Obs);
+  virtual void remove_observer(Observer<Ils>& Obs);
   virtual void notify_update(const SampleGrid& D);
   virtual blitz::Array<double, 1> apply_ils
     (const blitz::Array<double, 1>& High_resolution_wave_number,
@@ -42,6 +45,8 @@ public:
   boost::shared_ptr<SampleGrid> sample_grid() const;
   virtual boost::shared_ptr<Ils> clone() const = 0;
   virtual std::string desc() const;
+  virtual void state_vector_name(const StateVector& Sv, 
+				 blitz::Array<std::string, 1>& Sv_name) const;
   %pickle_serialization();
 protected:
   IlsImpBase();

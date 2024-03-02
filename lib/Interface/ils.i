@@ -13,14 +13,21 @@
 
 %fp_shared_ptr(FullPhysics::Ils);
 
+%fp_shared_ptr(FullPhysics::Observable<FullPhysics::Ils>)
+%fp_shared_ptr(FullPhysics::Observer<FullPhysics::Ils>)
+
+%template(ObservableIls) FullPhysics::Observable<FullPhysics::Ils>;
+%template(ObserverIls) FullPhysics::Observer<FullPhysics::Ils>;
+
 namespace FullPhysics {
 
 %feature("director") Ils;
 
-class Ils : public StateVectorObserver {
+class Ils : public StateVectorObserver, public Observable<Ils> {
 public:
   virtual ~Ils();
-  virtual std::string desc() const;
+  virtual void add_observer(Observer<Ils>& Obs);
+  virtual void remove_observer(Observer<Ils>& Obs);
   std::string print_to_string() const;
   virtual blitz::Array<double, 1> apply_ils
   (const blitz::Array<double, 1>& High_resolution_wave_number,
@@ -48,4 +55,4 @@ public:
 %fp_director_serialization(ils, Ils)
 
 // List of things "import *" will include
-%python_export("Ils");
+%python_export("Ils", "ObservableIls", "ObserverIls");
