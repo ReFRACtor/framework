@@ -33,6 +33,15 @@ directly deleted. Instead, the python reference is decremented, results in
 a count of 0, which then results in the python object cleaning of "this"
 and finally deleting the actual C++ SWIG object.
 
+We modify both the swig code (so my_shared_ptr.i) and the boost serialization
+code of directors to handle this.
+
+See the [swig-rules-skeleton](https://github.jpl.nasa.gov/Cartography/swig-rules-skeleton) for an example of this in use, and in particular py-tests to
+check that the object lifetimes are handled correctly.
+
+Handling weak_ptr
+-----------------
+
 There is a corner case that needs to be handled. Since we normally return a *different* 
 shared_ptr, this breaks the handling of weak_ptr. Without special handling, a
 shared_ptr is passed to a function setting a weak_ptr. This shared_ptr has a ref_count
@@ -54,9 +63,15 @@ shared_ptr. If you do, then you are likely to get a seg fault - this is one of t
 "giving you enough rope to hang yourself" sort of thing. This handles a corner case, but
 by *breaking* in a controlled way the lifetime management that we have in place.
 
-We modify both the swig code (so my_shared_ptr.i) and the boost serialization
-code of directors to handle this.
-
-See the [swig-rules-skeleton](https://github.jpl.nasa.gov/Cartography/swig-rules-skeleton) for an example of this in use, and in particular py-tests to
-check that the object lifetimes are handled correctly.
+BTW, we orignally put the weak_ptr handling in place for being able to
+have ReFRACtor framework Observer working correctly. Turns out this
+wasn't actually needed there. We *already* handled this a different
+way in Observer, I had forgotten this. In that case the handling was
+accidental, we wanted to be able to have Observer passed in as
+something other than a shared_ptr, so we added a "this_obj" in it that
+had the same lifetime as the containing object - and made a weak_ptr
+to this. So although we have this fixed in our swig rules now with a
+special typemap, it turns out we didn't actually need this for
+ReFRACtor. Might be useful in some other context though, so it was
+still a worthwhile excercise.
 
