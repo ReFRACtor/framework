@@ -40,8 +40,12 @@ void ModelMeasure::set_measurement( const blitz::Array<double, 1>& measurement,
 
 void ModelMeasure::assert_model_correct(const blitz::Array<double, 1>& m) const
 {
-  if( m.rows() != msrmnt.rows() )
-    throw Exception("Model data and measured data need to be the same size.");
+  if( m.rows() != msrmnt.rows() ) {
+    Exception e("Model data and measured data need to be the same size.\n");
+    e << "  Model size:       " << m.rows() << "\n"
+      << "  Measurement size: " << msrmnt.rows() << "\n";
+    throw e;
+  }
 }
 
 
