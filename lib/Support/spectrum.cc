@@ -23,3 +23,21 @@ REGISTER_LUA_CLASS(Spectrum)
 .def("spectral_range", ((f2) &Spectrum::spectral_range))
 REGISTER_LUA_END()
 #endif
+
+//-----------------------------------------------------------------------
+/// Constructor.
+//-----------------------------------------------------------------------
+
+Spectrum::Spectrum(const SpectralDomain& Spec_domain, 
+		   const SpectralRange& Spec_range)
+: spec_domain_(Spec_domain), spec_range_(Spec_range)
+{
+  if(spectral_domain().data().rows() !=
+     spectral_range().data().rows()) {
+    Exception e;
+    e << "Spectral domain and range aren't the same size\m"
+      << "  Spectral domain size: " << spectral_domain().data().rows() << "\n"
+      << "  Spectral raunge size: " << spectral_range().data().rows() << "\n";
+    throw e;
+  }
+}

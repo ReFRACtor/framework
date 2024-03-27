@@ -17,13 +17,8 @@ namespace FullPhysics {
 *******************************************************************/
 class Spectrum: public Printable<Spectrum> {
 public:
-//-----------------------------------------------------------------------
-/// Constructor.
-//-----------------------------------------------------------------------
-
   Spectrum(const SpectralDomain& Spec_domain, 
-	   const SpectralRange& Spec_range)
-    : spec_domain_(Spec_domain), spec_range_(Spec_range) {}
+	   const SpectralRange& Spec_range);
 
 //-----------------------------------------------------------------------
 /// Spectral domain (i.e., wavenumber or wavelength).
