@@ -27,6 +27,9 @@ public:
     
   virtual void add_observer(Observer<StateVector>& Obs);
   virtual void remove_observer(Observer<StateVector>& Obs);
+  virtual void remove_observer(Observer<StateVector>& Obs, bool Keep_state_when_removed);
+  void clear_observers(bool Keep_state_when_removed=false);
+  %python_attribute(keep_state_when_removed, bool);
 
   %python_attribute(state, blitz::Array<double, 1>);
   %python_attribute(state_with_derivative, ArrayAd<double, 1>);

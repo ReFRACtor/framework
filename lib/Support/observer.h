@@ -42,6 +42,14 @@ public:
 //-----------------------------------------------------------------------
 /// Called when an object is added to an Observable. Default is to 
 /// do nothing.
+///
+/// Note it may seem a bit confusing to have both a notify_add that
+/// takes the Observed_object and that doesn't, but this is to support
+/// our CacheInvalidatedObserver which doesn't want to care about the
+/// type of object that is being updated. So a
+/// CacheInvalidatedObserver will typically pay attention to
+/// notify_add, while a normal Observer would pay attention to
+/// notify_add(T& UNUSED(Observed_object)).  
 //-----------------------------------------------------------------------
 
   virtual void notify_add(T& UNUSED(Observed_object)) {}
@@ -50,6 +58,9 @@ public:
 //-----------------------------------------------------------------------
 /// Called when an object is removed from an Observable. Default is to 
 /// do nothing.
+///
+/// See description above for notify_add for why there are two
+/// versions of notify_remove.
 //-----------------------------------------------------------------------
 
   virtual void notify_remove(T& UNUSED(Observed_object)) {}

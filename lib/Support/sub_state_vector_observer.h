@@ -64,15 +64,33 @@ public:
     Sv.observer_claimed_size(pstart + plen);
   }
 
-  virtual void notify_remove(StateVector& UNUSED(Sv))
+  virtual void notify_remove(StateVector& Sv)
   {
     pstart = -1;
 
-    // Object is no longer part of the state vector there for the sub state arrays
-    // are now empty.
-    ArrayAd<double, 1> sv_sub(0, 0);
-    blitz::Array<double, 2> cov_sub(0, 0);
-    update_sub_state(sv_sub, cov_sub);
+    // Note that desired semantics of what to do when the state vector
+    // goes away isn't clear. A reasonable thing is to zero out the
+    // coefficients and update_sub_state to zero size, or we can just
+    // leave the existing state alone. i.e., do we consider being
+    // detached from a state vector as an update to the state or not?
+    //
+    // The original behavior was to have the state zeroed out. However
+    // for muses-py we want to be able to detach from the state vector
+    // of one retrieval step and attach to a new state vector for a
+    // new retrieval step. Detaching isn't a state change, we just
+    // want to keep our state and detach so we can reattach to a new
+    // state vector.
+    //
+    // We handle this by just directly passing the desired behavior
+    // through a "Sv.keep_state_when_removed" variable.
+
+    if(!Sv.keep_state_when_removed()) {
+      // Object is no longer part of the state vector there for the sub state arrays
+      // are now empty.
+      ArrayAd<double, 1> sv_sub(0, 0);
+      blitz::Array<double, 2> cov_sub(0, 0);
+      update_sub_state(sv_sub, cov_sub);
+    }
   }
 
   //-----------------------------------------------------------------------
