@@ -80,11 +80,23 @@ public:
   {
     // Populate with empty arrays for all channels
     if (bad_sample_mask_.size() == 0) {
+      if (sensor_index < 0 || sensor_index >= (int) range_.rows()) {
+	Exception err;
+	err << "Bad sensor index " << sensor_index << ", out of range of bad sample mask size: "
+	    << range_.rows();
+	throw err;
+      }
       for(int chan_idx = 0; chan_idx < range_.rows(); chan_idx++) {
 	bad_sample_mask_.push_back( blitz::Array<bool, 1>() );
       }
     }
 
+    if (sensor_index < 0 || sensor_index >= (int) bad_sample_mask_.size()) {
+      Exception err;
+      err << "Bad sensor index " << sensor_index << ", out of range of bad sample mask size: "
+	  << bad_sample_mask_.size();
+      throw err;
+    }
     bad_sample_mask_[sensor_index].reference(M.copy());
   }
 
