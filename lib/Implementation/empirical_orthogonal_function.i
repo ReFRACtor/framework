@@ -57,7 +57,7 @@ public:
   %python_attribute(scale, double)
   %python_attribute(hdf_group_name, std::string)
   %sub_state_virtual_func(InstrumentCorrection);
-
+  %pickle_serialization();
   %extend {
       // Add ability to convert InstrumentCorrection objects from an instrument_correction list into this class
       static boost::shared_ptr<FullPhysics::EmpiricalOrthogonalFunction> convert_from_instrument_correction(const boost::shared_ptr<FullPhysics::InstrumentCorrection>& ic) {

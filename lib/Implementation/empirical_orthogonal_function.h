@@ -154,6 +154,12 @@ private:
   bool eof_scale_uncertainty_;
   double scale_to_stddev_;
   ArrayWithUnit<double, 1> eof_;
+  EmpiricalOrthogonalFunction() {}
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version);
 };
 }
+
+FP_EXPORT_KEY(EmpiricalOrthogonalFunction);
 #endif

@@ -1,8 +1,22 @@
 #include "empirical_orthogonal_function.h"
 #include "linear_interpolate.h"
+#include "fp_serialize_support.h"
 #include <boost/make_shared.hpp>
 using namespace FullPhysics;
 using namespace blitz;
+
+#ifdef FP_HAVE_BOOST_SERIALIZATION
+template<class Archive>
+void EmpiricalOrthogonalFunction::serialize(Archive & ar, const unsigned int UNUSED(version))
+{
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SubStateVectorArrayInstrumentCorrection)
+    & FP_NVP(band_name) & FP_NVP(hdf_group) & FP_NVP_(order) & FP_NVP_(sounding_number)
+    & FP_NVP_(spec_index) & FP_NVP_(eof_depend_on_sounding_number)
+    & FP_NVP_(eof_scale_uncertainty) & FP_NVP_(scale_to_stddev) & FP_NVP_(eof);
+}
+
+FP_IMPLEMENT(EmpiricalOrthogonalFunction);
+#endif
 
 #ifdef HAVE_LUA
 #include "register_lua.h"
