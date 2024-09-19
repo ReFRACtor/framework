@@ -35,7 +35,7 @@ Spectrum::Spectrum(const SpectralDomain& Spec_domain,
   if(spectral_domain().data().rows() !=
      spectral_range().data().rows()) {
     Exception e;
-    e << "Spectral domain and range aren't the same size\m"
+    e << "Spectral domain and range aren't the same size\n"
       << "  Spectral domain size: " << spectral_domain().data().rows() << "\n"
       << "  Spectral raunge size: " << spectral_range().data().rows() << "\n";
     throw e;
