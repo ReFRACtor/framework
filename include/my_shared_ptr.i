@@ -54,7 +54,7 @@
   }
 }
 %typemap(out) CONST TYPE {
-#if SWIG_VERSION < 0x041000
+#if SWIG_VERSION < 0x040100
   SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > *smartresult = new SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >(new $1_ltype(($1_ltype &)$1));
 #else
   SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > *smartresult = new SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >(new $1_ltype(($1_ltype &&)$1));
@@ -77,7 +77,7 @@
   }
 }
 %typemap(varout) CONST TYPE {
-#if SWIG_VERSION < 0x041000
+#if SWIG_VERSION < 0x040100
   SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > *smartresult = new SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >(new $1_ltype(($1_ltype &)$1));
 #else
   SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE > *smartresult = new SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< CONST TYPE >(new $1_ltype(($1_ltype &&)$1));
