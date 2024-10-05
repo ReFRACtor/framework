@@ -4,7 +4,7 @@
 %{
 #ifndef CMAKE_KLUDGE_QUOTE  
 #define CMAKE_KLUDGE_Q(x) #x
-#define CMAKE_KLUDGE_QUOTE(x) Q(x)
+#define CMAKE_KLUDGE_QUOTE(x) CMAKE_KLUDGE_Q(x)
 #endif
 
 // CMAKE unfortunately uses a different name for the wrapper file that
