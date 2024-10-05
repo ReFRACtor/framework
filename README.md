@@ -66,3 +66,13 @@ or similar defined when compiled.
 It is not required, but it is very useful to be able to serialize the 
 swig python classes. There is sample code lib/serialize_support.h.sample
 that can be used to give serialization support.
+
+Developer notes
+---------------
+Note that we have our own copy of boost_shared_ptr.i that properly handles
+directors (see swig_rules/lib/DirectorNotes.md). We have 
+swig_rules/nclude/my_shared_ptr.i that adds this extra fixes. This should
+work up to SWIG 4.2.1 (the current latest), but there are occasional changes
+as SWIG changes versions. For newer versions of SWIG, you can directly do
+a diff between my_shared_ptr.i and boost_shared_ptr.i to see any changes that
+need to be incorporated back in.
