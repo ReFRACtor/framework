@@ -1,3 +1,23 @@
+// We use to have this in the %define below, but swig 4.2 has a bug
+// where it prematurely expands the macros, even though it shouldn't.
+// It is confused because we have a %{ inside of a %define.
+%{
+#ifndef QUOTE  
+#define Q(x) #x
+#define QUOTE(x) Q(x)
+#endif
+
+// CMAKE unfortunately uses a different name for the wrapper file that
+// the standard SWIG convention. So we set up CMAKE ot pass in a
+// CMAKE_SWIG_FILE_NAMES to get the right inclusion file.  
+#ifndef CMAKE_SWIG_FILE_NAMES  
+  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) QUOTE(x ## _wrap.h)
+#else  
+  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) QUOTE(x ## PYTHON_wrap.h)
+#endif  
+  
+%}
+
 //--------------------------------------------------------------
 // Function to add the code needed to support director class
 // serialization
@@ -10,19 +30,7 @@
 }
 
 %{
-#ifndef QUOTE  
-#define Q(x) #x
-#define QUOTE(x) Q(x)
-#endif
-  
-// CMAKE unfortunately uses a different name for the wrapper file that
-// the standard SWIG convention. So we set up CMAKE ot pass in a
-// CMAKE_SWIG_FILE_NAMES to get the right inclusion file.  
-#ifndef CMAKE_SWIG_FILE_NAMES  
- #include QUOTE(BNAME ## _wrap.h)
-#else  
- #include QUOTE(BNAME ## PYTHON_wrap.h)
-#endif  
+ #include CMAKE_KLUDGE_INCLUDE_HEADER(BNAME)
   
  #include "INCLUDEFILE"
  namespace boost {
