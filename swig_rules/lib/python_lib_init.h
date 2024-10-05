@@ -176,7 +176,7 @@ static struct module_state _state;
 #endif
 
 static PyObject *
-error_out(PyObject *m. PyObject *args) {
+error_out(PyObject *m, PyObject *args) {
     struct module_state *st = GETSTATE(m);
     PyErr_SetString(st->error, "something bad happened");
     return NULL;
