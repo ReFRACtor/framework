@@ -2,18 +2,18 @@
 // where it prematurely expands the macros, even though it shouldn't.
 // It is confused because we have a %{ inside of a %define.
 %{
-#ifndef QUOTE  
-#define Q(x) #x
-#define QUOTE(x) Q(x)
+#ifndef CMAKE_KLUDGE_QUOTE  
+#define CMAKE_KLUDGE_Q(x) #x
+#define CMAKE_KLUDGE_QUOTE(x) CMAKE_KLUDGE_Q(x)
 #endif
 
 // CMAKE unfortunately uses a different name for the wrapper file that
 // the standard SWIG convention. So we set up CMAKE ot pass in a
 // CMAKE_SWIG_FILE_NAMES to get the right inclusion file.  
 #ifndef CMAKE_SWIG_FILE_NAMES  
-  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) QUOTE(x ## _wrap.h)
+  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) CMAKE_KLUDGE_QUOTE(x ## _wrap.h)
 #else  
-  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) QUOTE(x ## PYTHON_wrap.h)
+  #define CMAKE_KLUDGE_INCLUDE_HEADER(x) CMAKE_KLUDGE_QUOTE(x ## PYTHON_wrap.h)
 #endif  
   
 %}
