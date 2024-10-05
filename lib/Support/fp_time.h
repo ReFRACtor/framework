@@ -113,8 +113,6 @@ private:
 };
 
 //-----------------------------------------------------------------------
-/// \ingroup Miscellaneous
-///
 /// Subtract two Times, giving the interval between them in seconds.
 //-----------------------------------------------------------------------
 
@@ -122,7 +120,6 @@ inline double operator-(const Time& T1, const Time& T2)
 { return T1.unix_time() - T2.unix_time(); }
 
 //-----------------------------------------------------------------------
-/// \ingroup Miscellaneous
 /// Compare Times
 ///
 /// We define <=, >= and > in terms of this operator.

@@ -27,7 +27,7 @@ public:
 /// Print to stream.
 //-----------------------------------------------------------------------
 
-  virtual void print(std::ostream& Os, bool Short_form = false) const 
+  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const 
   { Os << "RadiativeTransferRetrievable";}
 private:
   friend class boost::serialization::access;

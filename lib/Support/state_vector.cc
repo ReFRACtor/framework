@@ -223,7 +223,7 @@ Array<std::string, 1> StateVector::state_vector_name() const
     Array<std::string, 1> res(std::max(state().rows(), observer_claimed_size()));
 
     for(int i = 0; i < res.rows(); ++i) {
-        if (i < default_sv_names.size()) {
+        if (i < (int) default_sv_names.size()) {
             res(i) = default_sv_names[i];
         } else {
             res(i) = "State vector " + boost::lexical_cast<std::string>(i + 1);

@@ -72,7 +72,6 @@ private:
 };
 
 //-----------------------------------------------------------------------
-/// \ingroup Miscellaneous
 // Compare DoubleWithUnits
 ///
 /// We define <=, >= and > in terms of this operator.

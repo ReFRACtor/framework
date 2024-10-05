@@ -236,7 +236,7 @@ ArrayAd<double, 1> RadiantDriver::stokes_and_maybe_jacobian
 /// Print to a stream.
 //-----------------------------------------------------------------------
 
-void RadiantDriver::print(std::ostream& Os) const
+void RadiantDriver::print(std::ostream& Os, bool UNUSED(Short_form)) const
 {
   Os << "RadiantDriver";
 }

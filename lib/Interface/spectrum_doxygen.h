@@ -1,7 +1,4 @@
-namespace FullPhysics {
-// This contains documentation for use by doxygen.
-/****************************************************************//**
- \page spectrum_doxygen Spectrum related classes
+/*! \page spectrumdoxygen Spectrum related classes
  
   Note that there are a few closely related classes, with similar 
   sounding names. To keep everything straight, here is a list of
@@ -35,5 +32,4 @@ namespace FullPhysics {
     spacing), and the high resolution grid interpolated to supply what
     is needed by the Ils (which might be identical the noninterpolated
     grid if we aren't doing nonuniform spacing.
-*******************************************************************/
-}
+*/

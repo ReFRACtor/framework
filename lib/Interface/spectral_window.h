@@ -21,7 +21,7 @@ namespace FullPhysics {
   that range are returned.
 
   Note that there are a few closely related classes, with similar 
-  sounding names. See \ref spectrum_doxygen for a description of each
+  sounding names. See \ref spectrumdoxygen for a description of each
   of these.
 *******************************************************************/
 class SpectralWindow : public Printable<SpectralWindow> {

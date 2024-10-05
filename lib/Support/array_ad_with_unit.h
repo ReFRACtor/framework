@@ -22,6 +22,10 @@ public:
     : value(V), units(U) {}
   ArrayAdWithUnit(const ArrayAd<T, D>& V)
     : value(V), units(units::dimensionless) {}
+  ArrayAdWithUnit(const ArrayAdWithUnit<T, D>& V)
+  {
+    reference(V);
+  }
   ArrayAdWithUnit& operator=(const ArrayAdWithUnit<T, D>& V)
   {
     reference(V);

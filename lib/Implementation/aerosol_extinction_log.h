@@ -18,9 +18,6 @@ public:
 //-----------------------------------------------------------------------
 /// Constructor.
 /// \param Press The pressure to use
-/// \param Flag Boolean flag indicating which levels are to be set by
-///   the state vector. A value of false means the level is held fixed
-///   when the state vector changes.
 /// \param Aext The aerosol extinction value.
 /// \param Aerosol_name The name of the aerosol. This is used to
 ///   generate the state vector name metadata, so it should be

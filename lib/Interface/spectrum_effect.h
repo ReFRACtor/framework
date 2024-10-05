@@ -62,7 +62,7 @@ public:
   { std::vector<boost::shared_ptr<GenericObject> > res;
     return res;
   }
-  virtual void print(std::ostream& Os) const
+  virtual void print(std::ostream& Os, bool UNUSED(Short_form) = false) const
   { Os << "SpectrumEffect";}
 private:
   friend class boost::serialization::access;

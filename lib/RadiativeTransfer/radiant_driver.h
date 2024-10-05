@@ -35,7 +35,7 @@ public:
   
   virtual int number_stream() const {return 0;}
 
-  virtual void print(std::ostream& Os) const;
+  virtual void print(std::ostream& Os, bool Short_form = false) const;
 
   virtual blitz::Array<double, 1> stokes_single_wn
     (double Wn, int Spec_index, const boost::shared_ptr<OpticalProperties>& Opt_prop = NULL) const;

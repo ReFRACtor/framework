@@ -72,12 +72,13 @@ IlsFastApply::~IlsFastApply()
 // Apply the ILS using SVD components
 //-----------------------------------------------------------------------
 
-blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& high_resolution_wave_number,
-                                                const blitz::Array<double, 1>& high_resolution_radiance,
-                                                const std::vector<int>& pixel_list) const
+blitz::Array<double, 1> IlsFastApply::apply_ils
+(const blitz::Array<double, 1>& UNUSED(high_resolution_wave_number),
+ const blitz::Array<double, 1>& high_resolution_radiance,
+ const std::vector<int>& pixel_list) const
 {
     // Check that the number of extract indexes is the same length as the pixel list
-    if (pixel_list.size() != extract_indices.rows()) {
+    if ((int) pixel_list.size() != extract_indices.rows()) {
         Exception err;
         err << "The number of samples in the pixel_list: " << pixel_list.size() << " "
             << "must match the number of extract_indices: " << extract_indices.rows();
@@ -118,7 +119,7 @@ blitz::Array<double, 1> IlsFastApply::apply_ils(const blitz::Array<double, 1>& h
             throw err;
         }
 
-        for(int list_idx = 0; list_idx < pixel_list.size(); list_idx++) {
+        for(int list_idx = 0; list_idx < (int) pixel_list.size(); list_idx++) {
             int pix_idx = pixel_list[list_idx];
             int hr_idx = extract_indices(pix_idx);
             conv_rad(list_idx) += scaled_uh_isrf(pix_idx, s_idx) * inv_fft[0](hr_idx);

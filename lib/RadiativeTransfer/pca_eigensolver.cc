@@ -47,7 +47,6 @@ blitz::Array<double, 2> PCAEigenSolver::correction_2m(const blitz::Array<double,
                                                       const blitz::Array<double, 2>& lidort_minus,
                                                       const blitz::Array<double, 2>& twostream_minus)
 {
-    Range all = Range::all();
     int num_eofs = principal_components().rows();
     int num_points = principal_components().cols();
     int num_stokes = lidort_mean.rows();
@@ -117,7 +116,6 @@ blitz::Array<double, 2> PCAEigenSolver::correction_3m(const blitz::Array<double,
                                                       const blitz::Array<double, 2>& twostream_minus,
                                                       const blitz::Array<double, 2>& first_order_minus)
 {
-    Range all = Range::all();
     int num_eofs = principal_components().rows();
     int num_points = principal_components().cols();
     int num_stokes = lidort_mean.rows();

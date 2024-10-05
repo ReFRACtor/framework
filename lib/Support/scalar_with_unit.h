@@ -70,7 +70,6 @@ public:
 };
 
 //-----------------------------------------------------------------------
-/// \ingroup Miscellaneous
 // Compare ScalarWithUnits
 ///
 /// We define <=, >= and > in terms of this operator.
