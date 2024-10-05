@@ -6,8 +6,9 @@
 // python, rather than the most general type. This maps better to the
 // standard duck typing done in python.
 
-// There appears to be a bug in the shared_ptr handler of SWIG, as of
-// version 3.0.12. This is the normal handler, with some fixes added.
+// The SWIG handler for shared_ptr doesn't properly handle directors
+// that are python classes (see swig_rules/lib/DirectorNotes.md. This
+// is our version of share_ptr.i that adds proper handling of this.
 %include "my_shared_ptr.i"
 
 %{
