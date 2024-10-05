@@ -1,7 +1,6 @@
 import os
 import warnings
 
-from attrdict import AttrDict
 import numpy as np
 
 from .base import Creator, ParamPassThru, CreatorError
@@ -247,7 +246,7 @@ class AtmosphereDictCreator(Creator):
             return self.cached_alt_grid
 
 
-        return  AttrDict({
+        return {
             'pressure': pressure,
             'temperature': temperature,
             'absorber': absorber,
@@ -256,4 +255,4 @@ class AtmosphereDictCreator(Creator):
             'surface_temperature': surf_temp,
             'altitude': altitude,
             'alt_grid': alt_grid
-        })
+        }

@@ -2,10 +2,6 @@ import logging
 import inspect
 from collections import OrderedDict
 
-# Use AttrDict as the dictionary class used to store config instantiation
-# to make accessing config values easier
-from attrdict import AttrDict as ConfigDict
-
 from ..param import ConfigParam, ParamError, AnyValue, Iterable, InstanceOf, Scalar
 
 logger = logging.getLogger('factory.creator.base')
@@ -94,7 +90,8 @@ class Creator(object):
     def _process_config(self, in_config_def):
         "Process config definition, create nested Creators"
 
-        out_config_def = ConfigDict()
+        #out_config_def = ConfigDict()
+        out_config_def = {}
 
         for config_name, config_val in in_config_def.items():
 
@@ -257,7 +254,8 @@ class ParamPassThru(ParamIterateCreator):
 
     def create(self, **kwargs):
 
-        result = ConfigDict()
+        #result = ConfigDict()
+        result = {}
         for param_name in self.param_names:
             if len(kwargs) > 0:
                 logger.debug(f"Passing through parameter {param_name} with arguments: {kwargs}")
@@ -274,7 +272,8 @@ class SaveToCommon(ParamPassThru):
 
     def create(self, **kwargs):
 
-        result = ConfigDict()
+        #result = ConfigDict()
+        result = {}
         for param_name in self.param_names:
             logger.debug("Saving to the common store parameter %s" % param_name)
             ret_obj = self.param(param_name, **kwargs)
