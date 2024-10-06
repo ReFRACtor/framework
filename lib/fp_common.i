@@ -28,6 +28,14 @@
 #define SWIG_MODULE_ALREADY_DONE 1
 #define SWIG_MODULE refractor.framework_swig
 
+// Starting with swig 4.2, we get messages about memory leaks of
+// pointers to some types. Not really clear what is going on
+// here. but we really just want this silenced
+%begin %{
+// Don't report memory leaks that we can't do anything about
+#define SWIG_PYTHON_SILENT_MEMLEAK 1  
+%}
+
 %{
 #include <boost/shared_ptr.hpp>
 #include <boost/rational.hpp>

@@ -3,7 +3,7 @@ import warnings
 
 import numpy as np
 
-from .base import Creator, ParamPassThru, CreatorError
+from .base import Creator, ParamPassThru, CreatorError, ConfigDict
 from .. import param
 
 import refractor.framework as rf
@@ -246,7 +246,7 @@ class AtmosphereDictCreator(Creator):
             return self.cached_alt_grid
 
 
-        return {
+        return ConfigDict({
             'pressure': pressure,
             'temperature': temperature,
             'absorber': absorber,
@@ -255,4 +255,4 @@ class AtmosphereDictCreator(Creator):
             'surface_temperature': surf_temp,
             'altitude': altitude,
             'alt_grid': alt_grid
-        }
+        })

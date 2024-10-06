@@ -20,6 +20,17 @@ RESERVED_PARAM_NAMES = [
 class CreatorError(Exception):
     pass
 
+class ConfigDict(dict):
+    '''Simple replacement for the attrdict, which has been depracated'''
+    def __getattr__(self, name):
+        if(name in self):
+            return self[name]
+        raise AttributeError(f"{name} not found")
+
+    def __setattr__(self, name, v):
+        self[name] = v
+    
+
 class ParameterAccessor(object):
     "Proxy class to stand in place of ConfigParam defitions in Creator instances, to allow accessing as if a method of the creator class"
 
@@ -90,8 +101,7 @@ class Creator(object):
     def _process_config(self, in_config_def):
         "Process config definition, create nested Creators"
 
-        #out_config_def = ConfigDict()
-        out_config_def = {}
+        out_config_def = ConfigDict()
 
         for config_name, config_val in in_config_def.items():
 
@@ -254,8 +264,7 @@ class ParamPassThru(ParamIterateCreator):
 
     def create(self, **kwargs):
 
-        #result = ConfigDict()
-        result = {}
+        result = ConfigDict()
         for param_name in self.param_names:
             if len(kwargs) > 0:
                 logger.debug(f"Passing through parameter {param_name} with arguments: {kwargs}")
@@ -272,8 +281,7 @@ class SaveToCommon(ParamPassThru):
 
     def create(self, **kwargs):
 
-        #result = ConfigDict()
-        result = {}
+        result = ConfigDict()
         for param_name in self.param_names:
             logger.debug("Saving to the common store parameter %s" % param_name)
             ret_obj = self.param(param_name, **kwargs)
