@@ -19,13 +19,13 @@ namespace FullPhysics {
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Pressure>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::Pressure>)
 
-%template(ObservablePressure) FullPhysics::Observable<FullPhysics::Pressure>;
-%template(ObserverPressure) FullPhysics::Observer<FullPhysics::Pressure>;
 
 namespace FullPhysics {
 // Allow this class to be derived from in Python.
 %feature("director") Pressure;
 
+%template(ObservablePressure) FullPhysics::Observable<Pressure>;
+%template(ObserverPressure) FullPhysics::Observer<Pressure>;
 
 class Pressure : virtual public StateVectorObserver, 
 		 public Observable<Pressure> {

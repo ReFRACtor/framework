@@ -7,10 +7,10 @@
 #include "pressure.h"
 %}
 
-%base_import(radiative_transfer_single_wn)
-%base_import(radiative_transfer_fixed_stokes_coefficient)
 %base_import(rt_atmosphere)
 %base_import(observer)
+%base_import(radiative_transfer_single_wn)
+%base_import(radiative_transfer_fixed_stokes_coefficient)
 %import "spectral_bound.i"
 %import "rt_atmosphere.i"
 %import "array_ad.i"
@@ -24,7 +24,7 @@ namespace FullPhysics {
 %feature("notabstract") LRadRt;
 %feature("notabstract") LRadRtFixedStokesCoefficient;
 
-class LRadRtBase : public FullPhysics::Observer<FullPhysics::RtAtmosphere> {
+class LRadRtBase : public Observer<RtAtmosphere> {
 public:
   LRadRtBase(const boost::shared_ptr<RtAtmosphere>& Atm,
 	     const SpectralBound& Spec_bound,

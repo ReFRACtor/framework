@@ -8,6 +8,7 @@
 %base_import(pressure)
 %base_import(altitude)
 %base_import(rayleigh)
+%base_import(observer)
 
 %import "constant.i"
 %import "double_with_unit.i"

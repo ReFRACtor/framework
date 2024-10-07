@@ -7,6 +7,7 @@
 #include "observation_sv.h"
 %}
 
+%base_import(observation)
 %base_import(state_vector)
 %base_import(state_vector_observer)
 %import "spectrum.i"

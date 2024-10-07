@@ -24,8 +24,8 @@ namespace FullPhysics {
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::RtAtmosphere>);
 
 namespace FullPhysics {
-%template(ObservableRtAtmosphere) Observable<RtAtmosphere>;
-%template(ObserverRtAtmosphere) Observer<RtAtmosphere>;
+%template(ObservableRtAtmosphere) FullPhysics::Observable<RtAtmosphere>;
+%template(ObserverRtAtmosphere) FullPhysics::Observer<RtAtmosphere>;
 
 class RtAtmosphere : virtual public StateVectorObserver, 
                  public Observable<RtAtmosphere> {

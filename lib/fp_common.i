@@ -28,11 +28,29 @@
 #define SWIG_MODULE_ALREADY_DONE 1
 #define SWIG_MODULE refractor.framework_swig
 
-// Starting with swig 4.2, we get messages about memory leaks of
-// pointers to some types. Not really clear what is going on
-// here. but we really just want this silenced
 %begin %{
 // Don't report memory leaks that we can't do anything about
+//
+// Starting with swig 4.2, we get messages about memory leaks of
+// pointers to some types.
+//
+// I tracked this down, and for example the
+// state_vectorPYTHON_wrap.cxx module is
+// being deleted before all the objects have been deleted. This
+// removes the type information needed for deleting (so
+// SwigPyObject_dealloc that gets called after doesn't have the
+// information about the deleter for state vector, because
+// ((SwigPyClientData *) ((SwigPyObject*) v)->ty)->clientdata
+// is null (the type is
+// SWIGTYPE_p_boost__shared_ptrT_FullPhysics__StateVector_t,
+// but SWIG_Python_DestroyModule has deleted all the clientdata.
+//
+// This looks just like a bug in swig, it should keep the modules
+// around until the last object is deleted. But this is at the end of
+// the python program anyways, so not cleaning up is harmless. But we
+// don't want to see the warning, since it isn't anything we are doing
+// wrong.  
+  
 #define SWIG_PYTHON_SILENT_MEMLEAK 1  
 %}
 
