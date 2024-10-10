@@ -108,8 +108,9 @@ PyObject* numpy_dot_uint8()
 PyObject* numpy_dot_bool()
 {
   static PyObject* res = 0;
+  // np.bool got replaced with np.bool_ in later versions of numpy.
   if(!res)
-    res = PyObject_GetAttrString(numpy_module(), "bool");
+    res = PyObject_GetAttrString(numpy_module(), "bool_");
   return res;
 }
 
