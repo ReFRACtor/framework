@@ -42,9 +42,6 @@ public:
     return ArrayAd<double, 1>(val);
   }
 
-  virtual int initial_values_index(const int UNUSED(retrieval_state_index)) const
-  { throw Exception("Initial values not used in retrieval vector by this map class"); }
-
   virtual std::string name() const { return map_name; }
 
   virtual boost::shared_ptr<StateMapping> clone() const

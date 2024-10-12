@@ -42,7 +42,13 @@ public:
   //-----------------------------------------------------------------------
   /// Index into initial values for each retrieval state entry if applicable
   //-----------------------------------------------------------------------
-  virtual int initial_values_index(const int retrieval_state_index) const = 0;
+  virtual int initial_values_index(const int retrieval_state_index) const
+  {
+    // For most classes, this is just retrieval_state_index. Derived
+    // classes can override this, see for example
+    // StateMappingAtIndexes
+    return retrieval_state_index;
+  }
 
   //-----------------------------------------------------------------------
   /// Assigned mapping name

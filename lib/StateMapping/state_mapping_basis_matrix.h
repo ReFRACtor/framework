@@ -27,8 +27,6 @@ public:
   virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const;
   virtual ArrayAd<double, 1> retrieval_state
   (const ArrayAd<double, 1>& initial_values) const;
-  virtual int initial_values_index(const int retrieval_state_index) const
-  { return retrieval_state_index; }
   virtual std::string name() const { return "basis matrix"; }
   virtual boost::shared_ptr<StateMapping> clone() const
   { return boost::make_shared<StateMappingBasisMatrix>(basis_matrix()); }
