@@ -45,3 +45,11 @@ boost::shared_ptr<AbsorberVmr> AbsorberVmrLevelScaled::clone() const
     return boost::shared_ptr<AbsorberVmr>
     (new AbsorberVmrLevelScaled(mapped_pressure->clone(), vmr_profile(), coeff(0).value(), gas_name()));
 }
+
+std::string AbsorberVmrLevelScaled::state_vector_name_i(int coeff_idx) const
+{
+  range_check(coeff_idx, 0, 1);
+  std::stringstream sv_name;
+  sv_name << gas_name() << " Scaled VMR";
+  return sv_name.str();
+}

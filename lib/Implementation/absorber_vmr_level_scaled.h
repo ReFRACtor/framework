@@ -19,6 +19,7 @@ public:
   virtual ~AbsorberVmrLevelScaled() {}
   virtual double scale_factor() const;
   virtual boost::shared_ptr<AbsorberVmr> clone() const;
+  virtual std::string state_vector_name_i(int coeff_idx) const;
 protected:
   AbsorberVmrLevelScaled() {}
 private:
