@@ -40,9 +40,11 @@ public:
    const blitz::Array<double, 2>& jacobian_mapped) const;
 						     
   //-----------------------------------------------------------------------
-  /// Index into initial values for each retrieval state entry if applicable
+  /// Index for the state vector name. Most of the time this is the
+  /// same as the retrieval_state_index, but this might be different
+  /// for mapping that a subset (e.g., StateMappingAtIndexes).
   //-----------------------------------------------------------------------
-  virtual int initial_values_index(const int retrieval_state_index) const
+  virtual int state_vector_name_index(const int retrieval_state_index) const
   {
     // For most classes, this is just retrieval_state_index. Derived
     // classes can override this, see for example

@@ -83,7 +83,7 @@ public:
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
     for (int i = 0; i < coeff.rows(); ++i) {
-      Sv_name(i) = state_vector_name_i(mapping->initial_values_index(i));
+      Sv_name(i) = state_vector_name_i(mapping->state_vector_name_index(i));
     }
   }
   
@@ -239,7 +239,7 @@ public:
   virtual void state_vector_name_sub(blitz::Array<std::string, 1>& Sv_name) const
   {
     for (int i = 0; i < coeff.rows(); ++i) {
-      Sv_name(i) = state_vector_name_i(mapping->initial_values_index(i));
+      Sv_name(i) = state_vector_name_i(mapping->state_vector_name_index(i));
     }
   }
   

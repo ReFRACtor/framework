@@ -53,13 +53,15 @@ public:
   }
 
   //-----------------------------------------------------------------------
-  /// Index into initial values for each retrieval state entry
+  /// Index for the state vector name. Most of the time this is the
+  /// same as the retrieval_state_index, but this might be different
+  /// for mapping that a subset (e.g., StateMappingAtIndexes).
   //-----------------------------------------------------------------------
-  virtual int initial_values_index(const int retrieval_state_index) const
+  virtual int state_vector_name_index(const int retrieval_state_index) const
   {
       int initial_index = retrieval_state_index;
       BOOST_FOREACH(boost::shared_ptr<StateMapping> map, mappings) {
-          initial_index = map->initial_values_index(initial_index);
+          initial_index = map->state_vector_name_index(initial_index);
       }
       return initial_index;
   }

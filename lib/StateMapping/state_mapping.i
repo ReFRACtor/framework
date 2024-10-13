@@ -19,7 +19,7 @@ public:
   virtual blitz::Array<double, 2> jacobian_retrieval
   (const blitz::Array<double, 1>& x,
    const blitz::Array<double, 2>& jacobian_mapped) const;
-  virtual int initial_values_index(const int retrieval_state_index) const;
+  virtual int state_vector_name_index(const int retrieval_state_index) const;
   %python_attribute(name, std::string);
   virtual boost::shared_ptr<StateMapping> clone() = 0;
   std::string print_to_string();

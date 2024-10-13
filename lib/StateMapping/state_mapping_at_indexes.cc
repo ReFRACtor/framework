@@ -71,7 +71,7 @@ ArrayAd<double, 1> StateMappingAtIndexes::retrieval_state(const ArrayAd<double, 
     return retrieval_subset;
 }
 
-int StateMappingAtIndexes::initial_values_index(const int retrieval_state_index) const
+int StateMappingAtIndexes::state_vector_name_index(const int retrieval_state_index) const
 {
     return retrieval_indexes_(retrieval_state_index);
 }
