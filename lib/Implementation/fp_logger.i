@@ -50,19 +50,11 @@ public:
     default:
       throw Exception("Unknown log level");
     }
-    // Ignore errors, it isn't the end of the world if we can't log
-    // to the python logger
-    //if(PyErr_Occurred())
-      //throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
+    if(PyErr_Occurred())
+      throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
   }
   virtual std::ostream* stream() {return 0;}
-  // We have a life time issue, where PyFpLogger gets destroyed after most
-  // of python is done, including the logger code. We take a weakref to this,
-  // the logger is allowed to be destroyed at the right time and we just have
-  // a weakref that raises a ReferenceError when used. Since we also ignore python
-  // errors, this works fine. We have python code below for
-  // turn_on_logger that sets up the weakref.
-  static void _v_turn_on_logger(PyObject* Obj)
+  static void turn_on_logger(PyObject* Obj)
   {
     FullPhysics::Logger::set_implementation(new FullPhysics::PythonFpLogger(Obj));
   }
@@ -96,18 +88,24 @@ public:
   }
 };
 
+// Note that there are issues with the lifetime of PythonFpLogger.
+// The C++ code normally has destructors called after
+// python has shut down, which means that our cleanup of the logger PyObject can
+// seg fault (a race conditon, so doesn't always seg fault). We can avoid this
+// by making the clean up part of the python cleanup, so it happens earlier than
+// the C++ destructors.
+// This can be done by manually cleaning up. This can be done
+// automatically using python atexit, e.g.
+// @atexit.register
+// def python_fp_logger_cleanup():
+//    PythonFpLogger.turn_off_logger()
+  
 class PythonFpLogger : public LogImp {
 public:
   PythonFpLogger(PyObject* Obj);
   virtual void flush(log_level l);
-  static void _v_turn_on_logger(PyObject* Obj);
+  static void turn_on_logger(PyObject* Obj);
   static void turn_off_logger();
-%pythoncode {
-@classmethod  
-def turn_on_logger(cls, obj):
-    import weakref
-    return cls._v_turn_on_logger(weakref.proxy(obj))
-}
 };
 }
 
