@@ -68,4 +68,4 @@ public:
 %fp_director_serialization(altitude, Altitude)
 
 // List of things "import *" will include
-%python_export("Altitude");
+%python_export("Altitude", "vector_altitude");
