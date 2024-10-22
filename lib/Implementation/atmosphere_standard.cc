@@ -19,12 +19,15 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void AtmosphereStandard::serialize(Archive & ar,
-				   const unsigned int UNUSED(version))
+				   const unsigned int version)
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(RtAtmosphere)
     & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAerosol)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure)
-    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver)
+    & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverPressure);
+  // Older version didn't ObserverAbsorber. 
+  if(version > 0)
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ObserverAbsorber);
+  ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CacheInvalidatedObserver)
     & FP_NVP(absorber)
     & FP_NVP(pressure)
     & FP_NVP(temperature)
@@ -233,6 +236,7 @@ void AtmosphereStandard::initialize()
 {
   if(!absorber)
     throw Exception("Absorber is not allowed to be null in AtmosphereStandard");
+  absorber->add_observer(*this);
   absorber->add_cache_invalidated_observer(*this);
   if(!pressure)
     throw Exception("Pressure is not allowed to be null in AtmosphereStandard");

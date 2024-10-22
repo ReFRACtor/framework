@@ -41,6 +41,7 @@ namespace FullPhysics {
 class AtmosphereStandard : public RtAtmosphere,
 			   public Observer<Aerosol>,
 			   public Observer<Pressure>,
+			   public Observer<Absorber>,
 			   public CacheInvalidatedObserver {
 public:
   // Supply all atmospheric consituent classes
@@ -190,6 +191,11 @@ public:
 
   virtual void print(std::ostream& Os) const;
   virtual void notify_update(const Aerosol& A);
+  virtual void notify_update(const Absorber& UNUSED(A))
+  {
+    invalidate_local_cache();
+    notify_update_do(*this);
+  }
   virtual void notify_update(const Pressure& UNUSED(P))
   {
     if(nlay != pressure->number_layer()) {
@@ -336,5 +342,5 @@ private:
 }
 
 FP_EXPORT_KEY(AtmosphereStandard);
-
+FP_CLASS_VERSION(AtmosphereStandard, 1);
 #endif
