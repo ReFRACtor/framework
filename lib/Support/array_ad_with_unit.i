@@ -14,6 +14,15 @@
 %fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 2>);
 %fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 3>);
 %fp_shared_ptr(FullPhysics::ArrayAdWithUnit<double, 4>);
+
+%pythoncode %{
+import numpy as np
+from .auto_derivative_with_unit import AutoDerivativeWithUnitDouble
+from .auto_derivative import AutoDerivativeDouble
+from .array_ad import (ArrayAd_double_1, ArrayAd_double_2, ArrayAd_double_3)
+from .unit import Unit
+%}
+
 namespace FullPhysics {
 template<class T, int D> class ArrayAdWithUnit: public GenericObject
 {
@@ -52,6 +61,23 @@ def units(self):
 @units.setter
 def units(self,val):
     self._units_set(val)
+
+def __getitem__(self, index):
+    sel_vals = self._value()[index]
+
+    if isinstance(sel_vals, AutoDerivativeDouble):
+        return AutoDerivativeWithUnitDouble(sel_vals, self.units)
+    elif(isinstance(sel_vals, ArrayAd_double_1)):
+        return ArrayAdWithUnit_double_1(sel_vals, self.units)
+    elif(isinstance(sel_vals, ArrayAd_double_2)):
+        return ArrayAdWithUnit_double_2(sel_vals, self.units)
+    elif(isinstance(sel_vals, ArrayAd_double_3)):
+        return ArrayAdWithUnit_double_3(sel_vals, self.units)
+    else:
+        raise NonImplementedError("__getitem__ limited to extracting slices of up to 3 dimensions, for type AutoDerivativeDouble")
+  
+def __setitem__(self, index, val):
+    raise NotImplementedError("Setting values not yet implemented as it would require multiple data copies")
   }
   std::string print_to_string() const;
   %pickle_serialization();
