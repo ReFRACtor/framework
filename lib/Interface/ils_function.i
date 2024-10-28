@@ -19,6 +19,7 @@ public:
   virtual ~IlsFunction();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void ils
   (const AutoDerivative<double>& wn_center,
    const blitz::Array<double, 1>& wn, ArrayAd<double, 1>& OUTPUT) const = 0;

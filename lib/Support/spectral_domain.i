@@ -52,6 +52,7 @@ public:
     ArrayWithUnit<double, 1> photon_to_radiance_factor() const;
     SpectralDomain add_padding(const DoubleWithUnit& padding);
     std::string print_to_string() const;
+    std::string print_parent() const;
     %pickle_serialization();
 
     %pythoncode {

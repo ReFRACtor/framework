@@ -37,6 +37,7 @@ public:
       Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   %python_attribute(state_used, virtual blitz::Array<bool, 1>);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

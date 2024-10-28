@@ -54,6 +54,7 @@ public:
     %python_attribute(cols, int);
     %python_attribute(depth, int);
     std::string print_to_string() const;
+    std::string print_parent() const;
 
     %pythoncode {
         @property

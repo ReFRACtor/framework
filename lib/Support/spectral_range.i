@@ -39,6 +39,7 @@ public:
   SpectralRange convert(const Unit& R) const;
   SpectralRange convert(const std::string& R) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 
   %pythoncode {

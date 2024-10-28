@@ -19,5 +19,6 @@ public:
   AutoDerivative<double> operator()(const AutoDerivative<double>& Value) const;
   ArrayAd<double, 1> operator()(const ArrayAd<double, 1>& Array) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 }

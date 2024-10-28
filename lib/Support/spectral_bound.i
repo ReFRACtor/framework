@@ -20,6 +20,7 @@ public:
 		const std::vector<DoubleWithUnit>& Upper_bound);
   SpectralBound(const ArrayWithUnit<double, 2>& Bound);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(number_spectrometer, int);
   DoubleWithUnit center(int Spec_index, const Unit& U) const;
   DoubleWithUnit lower_bound(int Spec_index) const;

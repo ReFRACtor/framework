@@ -14,6 +14,7 @@ class RadiativeTransfer : public GenericObject {
 public:
   virtual ~RadiativeTransfer();
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute_abstract(number_stokes, int)
   %python_attribute_abstract(number_spectrometer, int)
   virtual Spectrum reflectance

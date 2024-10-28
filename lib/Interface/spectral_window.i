@@ -24,6 +24,7 @@ public:
   virtual ~SpectralWindow();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   SpectralDomain apply(const SpectralDomain& Grid, int Spec_index) const;
   Spectrum apply(const Spectrum& Spec, int Spec_index) const;
   virtual std::vector<int> grid_indexes(const SpectralDomain& Grid, 

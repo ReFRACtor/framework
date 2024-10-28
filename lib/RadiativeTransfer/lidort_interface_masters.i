@@ -27,6 +27,7 @@ public:
   Brdf_Lin_Sup_Masters();
   virtual ~Brdf_Lin_Sup_Masters();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)
   %python_attribute(brdf_linsup_in, Brdf_Linsup_Inputs&)
@@ -46,6 +47,7 @@ public:
   Brdf_Sup_Masters();
   virtual ~Brdf_Sup_Masters();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)
   %python_attribute(brdf_sup_inputstatus, Brdf_Input_Exception_Handling&)
@@ -63,6 +65,7 @@ public:
   Lidort_Inputs();
   virtual ~Lidort_Inputs();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(lidort_sup, Lidort_Sup_Inout&)
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
@@ -83,6 +86,7 @@ public:
   Lidort_Masters();
   virtual ~Lidort_Masters();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -99,6 +103,7 @@ public:
   Lidort_L_Inputs();
   virtual ~Lidort_L_Inputs();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(lidort_linsup, Lidort_Linsup_Inout&)
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
@@ -121,6 +126,7 @@ public:
   Lidort_Lcs_Masters();
   virtual ~Lidort_Lcs_Masters();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -141,6 +147,7 @@ public:
   Lidort_Lps_Masters();
   virtual ~Lidort_Lps_Masters();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)
   %python_attribute(lidort_modin, Lidort_Modified_Inputs&)
@@ -161,6 +168,7 @@ public:
   Lidort_Brdf_Sup_Accessories(boost::shared_ptr<Brdf_Sup_Inputs>& brdf_sup_in_in, boost::shared_ptr<Lidort_Fixed_Inputs>& lidort_fixin_in, boost::shared_ptr<Lidort_Modified_Inputs>& lidort_modin_in);
   virtual ~Lidort_Brdf_Sup_Accessories();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(brdf_sup_in, Brdf_Sup_Inputs&)
   %python_attribute(lidort_fixin, Lidort_Fixed_Inputs&)

@@ -14,6 +14,7 @@ class LuaState {
 public:
   LuaState(const std::string& Dir_name = "./");
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   static boost::shared_ptr<LuaState> load_file(const std::string& Fname);
   void do_file(const std::string& Fname);

@@ -15,6 +15,7 @@ class InitialGuess : public GenericObject {
 public:
   virtual ~InitialGuess();
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute_abstract(initial_guess, blitz::Array<double, 1>)
   %python_attribute(apriori, virtual blitz::Array<double, 1>)
   %python_attribute(apriori_covariance, virtual blitz::Array<double, 2>)

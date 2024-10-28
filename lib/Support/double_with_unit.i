@@ -14,6 +14,7 @@ namespace FullPhysics {
 class DoubleWithUnit : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   DoubleWithUnit();
   DoubleWithUnit(double V, const Unit& U);
   DoubleWithUnit(double V, const std::string& U);

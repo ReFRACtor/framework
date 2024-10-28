@@ -16,5 +16,6 @@ namespace FullPhysics {
     SolverIterationLog(const boost::shared_ptr<StateVector>& Sv);
     void notify_update(const IterativeSolver& solver);
     std::string print_to_string() const;
+    std::string print_parent() const;
 };
 }

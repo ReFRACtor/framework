@@ -19,6 +19,7 @@ public:
   virtual void notify_do_cloud_update();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

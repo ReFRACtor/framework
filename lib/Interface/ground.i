@@ -53,6 +53,7 @@ public:
   virtual void add_observer(Observer<Ground>& Obs); 
   virtual void remove_observer(Observer<Ground>& Obs);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(spurr_brdf_type, SpurrBrdfType);
   virtual ArrayAd<double, 1> surface_parameter
     (const double wn, const int spec_index) const = 0;

@@ -73,6 +73,7 @@ class Output {
 public:
   virtual ~Output();
   std::string print_to_string() const;
+  std::string print_parent() const;
   void write();
   void write_best_attempt();
   %extend {

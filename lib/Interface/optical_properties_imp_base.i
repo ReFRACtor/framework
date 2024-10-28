@@ -29,6 +29,7 @@ public:
   phase_function_moments_per_particle(int num_moments = -1,
 				      int num_scattering = -1) const = 0;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 

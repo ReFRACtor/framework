@@ -47,6 +47,7 @@ public:
   %python_attribute_with_set(default_state_vector_name, std::vector<std::string>);
 
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %extend {
     std::vector<std::string> _state_vector_name() const 

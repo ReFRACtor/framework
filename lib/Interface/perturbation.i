@@ -15,6 +15,7 @@ class Perturbation : public GenericObject {
 public:
   virtual ~Perturbation();
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute_abstract(perturbation, blitz::Array<double, 1>);
   %pickle_serialization();
 };

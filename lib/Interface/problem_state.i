@@ -24,6 +24,7 @@ public:
   virtual void assert_parameter_set_correctly() const;
   virtual void assert_parameter_correct(const blitz::Array<double, 1>& x) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

@@ -18,6 +18,7 @@ class SolarDopplerShift  : public GenericObject {
 public:
   virtual ~SolarDopplerShift();
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute_abstract(solar_distance, DoubleWithUnit);
   virtual SpectralDomain doppler_stretch(
      const SpectralDomain& Spec_domain) const = 0;

@@ -13,6 +13,7 @@ class Meteorology : public GenericObject {
 public:
     virtual ~Meteorology();
     std::string print_to_string() const;
+    std::string print_parent() const;
     %python_attribute(pressure_levels,  blitz::Array<double, 1>);
     %python_attribute(specific_humidity,  blitz::Array<double, 1>);
     virtual blitz::Array<double, 1> specific_humidity(const blitz::Array<double, 1>& Pressure_level) const;

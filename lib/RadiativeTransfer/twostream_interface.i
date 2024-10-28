@@ -27,6 +27,7 @@ class Twostream_Ls_Brdf_Supplement : public GenericObject {
 public:
   Twostream_Ls_Brdf_Supplement(const int& maxbeams_in, const int& max_user_streams_in, const int& max_user_obsgeoms_in, const int& maxstreams_brdf_in, const int& max_brdf_kernels_in, const int& max_brdf_parameters_in, const int& max_surfacewfs_in, const int& nbeams_in, const int& n_user_streams_in, const int& nstreams_brdf_in);
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxbeams, int&)
   %python_attribute(max_user_streams, int&)
@@ -89,6 +90,7 @@ public:
   Twostream_Lps_Master(const int& maxlayers_in, const int& maxtotal_in, const int& maxmessages_in, const int& maxbeams_in, const int& max_geometries_in, const int& max_user_streams_in, const int& max_user_relazms_in, const int& max_user_obsgeoms_in, const int& max_atmoswfs_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& nlayers_in, const int& ntotal_in, const int& n_user_streams_in, const int& n_user_relazms_in, const int& nbeams_in, const double& earth_radius_in, const int& n_geometries_in);
   virtual ~Twostream_Lps_Master();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxlayers, int&)
   %python_attribute(maxtotal, int&)

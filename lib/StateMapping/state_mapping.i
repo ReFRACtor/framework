@@ -23,6 +23,7 @@ public:
   %python_attribute(name, std::string);
   virtual boost::shared_ptr<StateMapping> clone() = 0;
   std::string print_to_string();
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

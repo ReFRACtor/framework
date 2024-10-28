@@ -39,6 +39,7 @@ public:
 class LuabindObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   bool is_nil() const;
   bool is_boolean() const;
   bool is_number() const;

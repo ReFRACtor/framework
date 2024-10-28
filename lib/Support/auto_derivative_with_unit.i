@@ -22,6 +22,7 @@ public:
   AutoDerivativeWithUnit<T> convert(const Unit& R) const;
   AutoDerivativeWithUnit<T> convert(const std::string& R) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %extend {
     FullPhysics::AutoDerivative<T> _value() const { return $self->value;}
     void _value_set(const FullPhysics::AutoDerivative<T>& V) { $self->value = V;}

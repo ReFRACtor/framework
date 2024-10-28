@@ -11,6 +11,7 @@ namespace FullPhysics {
 class LogTiming : public Observer<ConnorSolver> {
 public:
   std::string print_to_string();
+  std::string print_parent() const;
   LogTiming();
   virtual void notify_update(const ConnorSolver& Solver);
   virtual void write_to_log(const std::string& Prefix = "") const;

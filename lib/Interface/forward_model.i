@@ -24,6 +24,7 @@ public:
   %python_attribute_abstract(num_channels, int);
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual SpectralDomain spectral_domain(int sensor_index) const = 0;
   boost::optional<blitz::Range> stacked_pixel_range(int sensor_index) const;
   virtual Spectrum radiance(int sensor_index, bool skip_jacobian = false) const = 0;

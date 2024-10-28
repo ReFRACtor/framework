@@ -35,6 +35,7 @@ class SpectrumEffect : virtual public StateVectorObserver,
 public:
   virtual ~SpectrumEffect();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void apply_effect(Spectrum& Spec, const ForwardModelSpectralGrid& Forward_model_grid) const = 0;
   virtual boost::shared_ptr<SpectrumEffect> clone() const = 0;
   %python_attribute_abstract(name, std::string);

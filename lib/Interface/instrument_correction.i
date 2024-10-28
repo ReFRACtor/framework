@@ -33,6 +33,7 @@ class InstrumentCorrection : virtual public StateVectorObserver,
 public:
   virtual ~InstrumentCorrection();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void apply_correction
   (const SpectralDomain& Pixel_grid,
    const std::vector<int>& Pixel_list,

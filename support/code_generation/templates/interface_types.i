@@ -30,6 +30,7 @@ public:
   void* fortran_type_ptr();
 
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 
 {% for type in type_classes -%}

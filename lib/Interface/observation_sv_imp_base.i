@@ -59,6 +59,7 @@ public:
   virtual Spectrum radiance_all(bool skip_jacobian = false) const;
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(state_used, blitz::Array<bool, 1>)
   %sub_state_virtual_func(Observation);
   %pickle_serialization();

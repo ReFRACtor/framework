@@ -29,6 +29,7 @@ class Instrument : virtual public StateVectorObserver,
 public:
   virtual ~Instrument();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void add_observer(Observer<Instrument>& Obs);
   virtual void remove_observer(Observer<Instrument>& Obs);
   virtual boost::shared_ptr<Instrument> clone() const = 0;

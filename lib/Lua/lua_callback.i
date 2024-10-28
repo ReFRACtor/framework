@@ -27,6 +27,7 @@ public:
        ) = 0;
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 
 }

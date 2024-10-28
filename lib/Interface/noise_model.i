@@ -15,6 +15,7 @@ class NoiseModel : public GenericObject {
 public:
   virtual blitz::Array<double, 1> uncertainty(int Spec_index, const blitz::Array<double, 1>& Radiance) const = 0;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

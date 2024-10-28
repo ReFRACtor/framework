@@ -32,6 +32,7 @@ public:
   virtual AutoDerivative<double> extinction_for_layer(int i) const = 0;
   %python_attribute_abstract(aerosol_name, std::string)
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void print(std::ostream& Os) const;
   %pickle_serialization();
 };

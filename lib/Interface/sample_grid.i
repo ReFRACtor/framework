@@ -46,6 +46,7 @@ public:
   %python_attribute_with_set(sv_name, std::vector<std::string>);
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

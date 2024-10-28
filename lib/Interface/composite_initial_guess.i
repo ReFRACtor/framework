@@ -23,6 +23,7 @@ public:
   virtual void build_apriori_covariance(blitz::Array<double, 2>& m, 
 					int index) const = 0;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 

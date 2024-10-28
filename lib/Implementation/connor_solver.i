@@ -88,6 +88,7 @@ public:
 		    const blitz::Array<double, 1>& Dx, 
 		    const FitStatistic& Fstat);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(x_i, blitz::Array<double, 1>)
   %python_attribute(x_a, blitz::Array<double, 1>)
   %python_attribute(apriori_cov_scaled, blitz::Array<double, 2>)

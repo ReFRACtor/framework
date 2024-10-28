@@ -28,6 +28,7 @@ class Aerosol: public StateVectorObserver,
 	       public Observable<Aerosol> {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void add_observer(Observer<Aerosol>& Obs);
   virtual void remove_observer(Observer<Aerosol>& Obs);
 

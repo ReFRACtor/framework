@@ -13,6 +13,7 @@ namespace FullPhysics {
 class Unit : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   const int number_base_unit = 11;
   Unit(const std::string& Name, double Conversion_to_si, 
 	      const boost::rational<int>& Length_power,

@@ -15,6 +15,7 @@ namespace FullPhysics {
 class Constant : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute_abstract(rayleigh_depolarization_factor, double);
   %python_attribute_abstract(rayleigh_a, DoubleWithUnit);
   %python_attribute_abstract(rayleigh_b, DoubleWithUnit);

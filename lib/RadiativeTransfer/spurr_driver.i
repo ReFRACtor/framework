@@ -15,6 +15,7 @@ namespace FullPhysics {
   class SpurrBrdfDriver : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void initialize_brdf_inputs(int surface_type);
   virtual void setup_geometry(double sza, double azm, double zen) = 0;
   virtual ArrayAd<double, 1> setup_brdf_inputs(int surface_type, const ArrayAd<double, 1>& surface_parameters);
@@ -33,6 +34,7 @@ public:
   SpurrRtDriver(bool do_solar = true, bool do_thermal = false);
 
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void notify_update(const RtAtmosphere& atm);
   virtual double reflectance_calculate(const blitz::Array<double, 1>& height_grid,
                                        double sza, double azm, double zen,

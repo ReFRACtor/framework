@@ -49,6 +49,7 @@ public:
   virtual void add_observer(Observer<Absorber>& Obs);
   virtual void remove_observer(Observer<Absorber>& Obs);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(number_species, virtual int);
   virtual std::string gas_name(int Species_index) const = 0;
   virtual int gas_index(const std::string& Name) const;

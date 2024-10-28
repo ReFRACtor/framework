@@ -42,6 +42,7 @@ public:
   double residual_rel_rms(const blitz::Array<double, 1>& Residual,
 			  const blitz::Array<double, 1>& Rad_measure) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 
@@ -50,6 +51,7 @@ public:
   ConvergenceCheck();
   virtual ~ConvergenceCheck();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void initialize_check();
   virtual void convergence_check(const FitStatistic& fit_stat_last,
 				 FitStatistic& fit_stat,

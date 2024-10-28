@@ -23,6 +23,7 @@ public:
   virtual ~Level1b();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual int number_spectrometer() const = 0;
   virtual DoubleWithUnit latitude(int i) const = 0;
   virtual DoubleWithUnit longitude(int i) const = 0;

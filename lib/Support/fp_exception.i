@@ -22,6 +22,7 @@ namespace FullPhysics {
   public:
     Exception(const std::string& W);
     std::string print_to_string() const;
+    std::string print_parent() const;
     const char* what();
   };
 

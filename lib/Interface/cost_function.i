@@ -15,6 +15,7 @@ class CostFunction : public GenericObject {
 public:
   virtual ~CostFunction();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void cost_function(const blitz::Array<double, 1>& X,
 			blitz::Array<double, 1>& OUTPUT,
 			blitz::Array<double, 1>& OUTPUT,

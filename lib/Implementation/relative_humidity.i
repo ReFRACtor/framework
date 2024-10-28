@@ -24,6 +24,7 @@ public:
   %python_attribute(relative_humidity_layer, ArrayAd<double, 1>);
   %python_attribute(specific_humidity_grid, ArrayAd<double, 1>);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }

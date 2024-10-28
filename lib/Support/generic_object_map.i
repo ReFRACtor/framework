@@ -19,6 +19,7 @@ public:
 		   const boost::shared_ptr<GenericObject>& V);
   boost::shared_ptr<GenericObject> get_generic(const std::string& Key) const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
   %pythoncode {
 def __contains__(self, key):

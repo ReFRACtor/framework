@@ -37,6 +37,7 @@ public:
   virtual void remove_observer(Observer<CloudFraction>& Obs); 
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >); 
   std::string print_to_string() const; 
+  std::string print_parent() const;
   %pickle_serialization(); 
 }; 
 

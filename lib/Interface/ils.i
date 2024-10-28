@@ -29,6 +29,7 @@ public:
   virtual void add_observer(Observer<Ils>& Obs);
   virtual void remove_observer(Observer<Ils>& Obs);
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual blitz::Array<double, 1> apply_ils
   (const blitz::Array<double, 1>& High_resolution_wave_number,
    const blitz::Array<double, 1>& High_resolution_radiance,

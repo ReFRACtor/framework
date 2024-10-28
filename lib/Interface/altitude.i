@@ -48,6 +48,7 @@ public:
   virtual ~Altitude();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual void print(std::ostream& Os) const;
   virtual void add_observer(Observer<Altitude>& Obs);
   virtual void remove_observer(Observer<Altitude>& Obs);

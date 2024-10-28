@@ -14,6 +14,7 @@ public:
     AsciiTableFile(const std::string& filename, int skip_rows = 0);
     ~AsciiTableFile() = default;
     std::string print_to_string() const;
+    std::string print_parent() const;
     %python_attribute(data, blitz::Array<double, 2>);
 };
 }

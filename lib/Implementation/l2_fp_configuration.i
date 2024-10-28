@@ -24,6 +24,7 @@ public:
   virtual void output(boost::shared_ptr<Output>& OUTPUT,
 		      boost::shared_ptr<Output>& OUTPUT) const = 0;
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 }
 

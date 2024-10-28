@@ -118,6 +118,7 @@ public:
   void* fortran_type_ptr();
 
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 
 class Brdf_Linsup_Inputs : public Lidort_Structure {

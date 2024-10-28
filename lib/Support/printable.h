@@ -1,6 +1,7 @@
 #ifndef PRINTABLE_H
 #define PRINTABLE_H
 #include "generic_object.h"
+#include "ostream_pad.h"
 #include <sstream>
 
 namespace FullPhysics {
@@ -50,6 +51,17 @@ public:
   // without change but python can intercept this by overriding desc.
   virtual std::string desc() const { return ""; }
 
+  // Desc causes a infinite loop if we try to print the base class in
+  // python. So give a member function to do this directly
+  std::string print_parent() const
+  {
+    std::string buf("blah");
+    buf.reserve(1000);
+    std::ostringstream os(buf);
+    OstreamPad opad(os, "    ");
+    ((T*) this)->print(opad);
+    return os.str();
+  }
   void print_wrapper(std::ostream& Os) const
   {
     std::string d = desc();

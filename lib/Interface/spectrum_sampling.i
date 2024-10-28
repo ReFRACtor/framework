@@ -23,6 +23,7 @@ public:
   virtual ~SpectrumSampling();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %python_attribute(number_spectrometer, int);
   virtual SpectralDomain spectral_domain(int spec_index,
 		 const SpectralDomain& Lowres_grid, 

@@ -80,6 +80,7 @@ def __setitem__(self, index, val):
     raise NotImplementedError("Setting values not yet implemented as it would require multiple data copies")
   }
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 %template(ArrayAdWithUnit_double_1) FullPhysics::ArrayAdWithUnit<double, 1>;

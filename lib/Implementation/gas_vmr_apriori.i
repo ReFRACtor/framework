@@ -46,5 +46,6 @@ public:
     %python_attribute(tropopause_pressure, double)
 
     std::string print_to_string() const;
+    std::string print_parent() const;
 };
 }

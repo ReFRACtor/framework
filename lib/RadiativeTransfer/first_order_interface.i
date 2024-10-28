@@ -26,6 +26,7 @@ public:
   Fo_Dtwpgeometry_Master(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& ngeoms_in, const int& nlayers_in, const int& npartials_in, const int& nfine_in);
   virtual ~Fo_Dtwpgeometry_Master();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
@@ -84,6 +85,7 @@ public:
   Fo_Sswpgeometry_Master(const int& maxgeoms_in, const int& maxszas_in, const int& maxvzas_in, const int& maxazms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& ngeoms_in, const int& nszas_in, const int& nvzas_in, const int& nazms_in, const int& nlayers_in, const int& nfine_in, const int& npartials_in);
   virtual ~Fo_Sswpgeometry_Master();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxszas, int&)
@@ -173,6 +175,7 @@ public:
   Fo_Scalarss_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in);
   virtual ~Fo_Scalarss_Rtcalcs_I();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
@@ -277,6 +280,7 @@ public:
   Fo_Scalarss_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& maxmoments_input_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& nmoments_input_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& max_sleavewfs_in, const int& n_sleavewfs_in, const int& n_surfacewfs_in);
   virtual ~Fo_Scalarss_Rtcalcs_Ilps();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
@@ -407,6 +411,7 @@ public:
   Fo_Scalarss_Spherfuncs(const int& maxmoments_in, const int& maxgeoms_in, const int& nmoments_in, const int& ngeoms_in);
   virtual ~Fo_Scalarss_Spherfuncs();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxmoments, int&)
   %python_attribute(maxgeoms, int&)
@@ -429,6 +434,7 @@ public:
   Fo_Thermal_Rtcalcs_I(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& max_user_levels_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in);
   virtual ~Fo_Thermal_Rtcalcs_I();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)
@@ -505,6 +511,7 @@ public:
   Fo_Thermal_Rtcalcs_Ilps(const int& maxgeoms_in, const int& maxlayers_in, const int& maxpartials_in, const int& maxfine_in, const int& max_user_levels_in, const int& max_atmoswfs_in, const int& ngeoms_in, const int& nlayers_in, const int& n_user_levels_in, const int& npartials_in, const int& max_surfacewfs_in, const int& n_surfacewfs_in);
   virtual ~Fo_Thermal_Rtcalcs_Ilps();
   std::string print_to_string() const;
+  std::string print_parent() const;
 
   %python_attribute(maxgeoms, int&)
   %python_attribute(maxlayers, int&)

@@ -68,6 +68,7 @@ public:
 
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 
 protected:

@@ -19,6 +19,7 @@ public:
   %python_attribute(value, T)
   %python_attribute(gradient, blitz::Array<T, 1>)
   std::string print_to_string() const;
+  std::string print_parent() const;
 };
 
 template<class T> class AutoDerivative : public GenericObject
@@ -48,6 +49,7 @@ public:
   AutoDerivative<T> operator/=(const AutoDerivative<T>& V);
   AutoDerivative<T> operator/=(const T& V);
   std::string print_to_string() const;
+  std::string print_parent() const;
   %extend {
     T _value() const { return $self->value();}
     void _value_set(T V) { $self->value() = V;}

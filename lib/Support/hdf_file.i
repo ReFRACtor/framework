@@ -27,6 +27,7 @@ public:
     static bool is_hdf(const std::string& Fname);
   
     std::string print_to_string();
+    std::string print_parent() const;
   
     %extend {
       void write_double_1d(const std::string& fname, const blitz::Array<double, 1>& D)

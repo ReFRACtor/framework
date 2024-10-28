@@ -37,6 +37,7 @@ public:
       Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   virtual boost::shared_ptr<Temperature> clone() const = 0;
   std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 } 

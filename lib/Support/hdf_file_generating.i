@@ -19,6 +19,7 @@ public:
   void abandon();
   HdfFile& hdf_file();
   std::string print_to_string();
+  std::string print_parent() const;
 };
 
 }

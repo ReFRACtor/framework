@@ -33,5 +33,6 @@ public:
     const blitz::Array<double, 1> apriori_vmr(const blitz::Array<double, 1>& vmr, std::string& gas_name) const;
 
     std::string print_to_string() const;
+    std::string print_parent() const;
 };
 }

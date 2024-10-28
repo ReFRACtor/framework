@@ -15,6 +15,7 @@ namespace FullPhysics {
 class Spectrum : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   Spectrum(const SpectralDomain& Spec_domain, 
            const SpectralRange& Spec_range);
   %python_attribute(spectral_domain, SpectralDomain)

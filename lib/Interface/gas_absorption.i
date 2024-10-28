@@ -27,6 +27,7 @@ public:
   virtual ~GasAbsorption();
   virtual std::string desc() const;
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual bool have_data(double wn) const = 0;
   %python_attribute(number_broadener, virtual int);
   virtual std::string broadener_name(int Broadner_index) const = 0;

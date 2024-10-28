@@ -14,6 +14,7 @@ namespace FullPhysics {
 template<class T> class ScalarWithUnit : public GenericObject {
 public:
   std::string print_to_string() const;
+  std::string print_parent() const;
   ScalarWithUnit();
   ScalarWithUnit(const ScalarWithUnit<T>& V);
   ScalarWithUnit(T V, const Unit& U);

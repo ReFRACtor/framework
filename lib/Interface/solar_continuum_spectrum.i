@@ -18,6 +18,7 @@ class SolarContinuumSpectrum : public GenericObject {
 public:
   virtual ~SolarContinuumSpectrum();
   std::string print_to_string() const;
+  std::string print_parent() const;
   virtual Spectrum solar_continuum_spectrum(
      const SpectralDomain& spec_domain) const = 0;
   %pickle_serialization();
