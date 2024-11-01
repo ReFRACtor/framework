@@ -52,4 +52,4 @@ public:
 %fp_director_serialization(gas_absorption, GasAbsorption)
 
 // List of things "import *" will include
-%python_export("GasAbsorption");
+%python_export("GasAbsorption", "vector_gas_absorption");
