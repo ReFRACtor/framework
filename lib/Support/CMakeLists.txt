@@ -12,6 +12,7 @@ set(DIR_SOURCES
     constant.cc
     constants.F90
     default_constant.cc
+    director_example.cc
     double_with_unit.cc
     expandvars.cc
     float_with_unit.h
