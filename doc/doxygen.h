@@ -45,7 +45,7 @@ design along with more detailed description of the design
 /********************************************************************//**
 \page toplevel Top level view of system.
 
-\image html overall.png
+\image html high_level_data_flow.png
 ***********************************************************************/
 
 // Allow share pointers to appear in collaboration diagrams

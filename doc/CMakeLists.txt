@@ -10,6 +10,10 @@ if(DOXYGEN_FOUND)
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen_api.cfg
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    add_custom_command(TARGET doc
+        COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/high_level_data_flow.png ${PROJECT_BINARY_DIR}/doc/api/html/
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM)
     add_custom_command(TARGET doc 
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen_fortran.cfg
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

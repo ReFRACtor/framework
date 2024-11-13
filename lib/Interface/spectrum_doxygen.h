@@ -1,3 +1,4 @@
+namespace FullPhysics {
 /*! \page spectrumdoxygen Spectrum related classes
  
   Note that there are a few closely related classes, with similar 
@@ -33,3 +34,4 @@
     is needed by the Ils (which might be identical the noninterpolated
     grid if we aren't doing nonuniform spacing.
 */
+}
