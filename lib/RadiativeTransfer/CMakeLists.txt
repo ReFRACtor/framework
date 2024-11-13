@@ -67,6 +67,8 @@ set(DIR_SOURCES
     vlidort_interface_masters_serialization.cc
     vlidort_interface_types.F90
     vlidort_interface_types_io.F90
+    rt_driver_compare.cc
+    rt_driver_scenario.cc
 )
 
 set(TEST_SOURCES
