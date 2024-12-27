@@ -132,7 +132,24 @@ public:
   { return ModelMeasureStandard::parameters(); }
   
   virtual int expected_parameter_size() const { return Xa.rows(); }
+
+  void get_state(bool& msrmnt_is_const_v,
+		 blitz::Array<double, 1>& M_v,
+		 blitz::Array<double, 2>& K_v,
+		 blitz::Array<double, 1>& msrmnt_v,
+		 blitz::Array<double, 2>& msrmnt_jacobian_v,
+		 blitz::Array<double, 2>& K_x_v,
+		 blitz::Array<double, 2>& msrmnt_jacobian_x_v) const;
   
+  void set_state(const bool& msrmnt_is_const_v,
+		 const blitz::Array<double, 1>& M_v,
+		 const blitz::Array<double, 2>& K_v,
+		 const blitz::Array<double, 1>& msrmnt_v,
+		 const blitz::Array<double, 2>& msrmnt_jacobian_v,
+		 const blitz::Array<double, 2>& K_x_v,
+		 const blitz::Array<double, 2>& msrmnt_jacobian_x_v);
+		 
+		 
 //-----------------------------------------------------------------------
 /// Print description of object.
 //-----------------------------------------------------------------------

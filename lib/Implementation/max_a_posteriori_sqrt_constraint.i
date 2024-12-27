@@ -51,6 +51,22 @@ public:
           const boost::shared_ptr<StateMapping>& in_map = boost::make_shared<StateMappingLinear>());
   virtual void add_observer(Observer<MaxAPosterioriSqrtConstraint>& Obs);
   virtual void remove_observer(Observer<MaxAPosterioriSqrtConstraint>& Obs);
+  void get_state(bool& OUTPUT,
+		 blitz::Array<double, 1>& OUTPUT,
+		 blitz::Array<double, 2>& OUTPUT,
+		 blitz::Array<double, 1>& OUTPUT,
+		 blitz::Array<double, 2>& OUTPUT,
+		 blitz::Array<double, 2>& OUTPUT,
+		 blitz::Array<double, 2>& OUTPUT) const;
+  
+  void set_state(const bool& msrmnt_is_const_v,
+		 const blitz::Array<double, 1>& M_v,
+		 const blitz::Array<double, 2>& K_v,
+		 const blitz::Array<double, 1>& msrmnt_v,
+		 const blitz::Array<double, 2>& msrmnt_jacobian_v,
+		 const blitz::Array<double, 2>& K_x_v,
+		 const blitz::Array<double, 2>& msrmnt_jacobian_x_v);
+  
   %python_attribute(mapping, boost::shared_ptr<StateMapping>);
   %python_attribute_nonconst(jacobian_fm, blitz::Array<double,2>);
   %python_attribute_nonconst(measurement_jacobian_fm, blitz::Array<double,2>);

@@ -146,3 +146,66 @@ void MaxAPosterioriSqrtConstraint::radiance_from_fm(bool skip_check)
     assert_jacobian_correct(K);
 }
 
+
+//-----------------------------------------------------------------------
+/// For testing, it can be useful to run the forward model in one
+/// setting, save the results, and then restore the results.
+///
+/// This is similar to doing a full serialization (which this class
+/// also supports). However this is *only* the things determined by
+/// the various _eval functions, this doesn't include the forward
+/// model etc. Depending on the application, you may either want the
+/// full boost serialization or just the state (e.g., we want to test
+/// that MaxAPosterioriSqrtConstraint gets created correctly, just
+/// skip the actual forward model calculation.
+//-----------------------------------------------------------------------
+
+void MaxAPosterioriSqrtConstraint::get_state
+(
+ bool& msrmnt_is_const_v,
+ blitz::Array<double, 1>& M_v,
+ blitz::Array<double, 2>& K_v,
+ blitz::Array<double, 1>& msrmnt_v,
+ blitz::Array<double, 2>& msrmnt_jacobian_v,
+ blitz::Array<double, 2>& K_x_v,
+ blitz::Array<double, 2>& msrmnt_jacobian_x_v) const
+{
+  msrmnt_is_const_v = msrmnt_is_const;
+  M_v.reference(M.copy());
+  K_v.reference(K.copy());
+  msrmnt_v.reference(msrmnt.copy());
+  msrmnt_jacobian_v.reference(msrmnt_jacobian.copy());
+  K_x_v.reference(K_x.copy());
+  msrmnt_jacobian_x_v.reference(msrmnt_jacobian_x.copy());
+}
+
+//-----------------------------------------------------------------------
+/// For testing, it can be useful to run the forward model in one
+/// setting, save the results, and then restore the results.
+///
+/// This is similar to doing a full serialization (which this class
+/// also supports). However this is *only* the things determined by
+/// the various _eval functions, this doesn't include the forward
+/// model etc. Depending on the application, you may either want the
+/// full boost serialization or just the state (e.g., we want to test
+/// that MaxAPosterioriSqrtConstraint gets created correctly, just
+/// skip the actual forward model calculation.
+//-----------------------------------------------------------------------
+
+void MaxAPosterioriSqrtConstraint::set_state
+(const bool& msrmnt_is_const_v,
+ const blitz::Array<double, 1>& M_v,
+ const blitz::Array<double, 2>& K_v,
+ const blitz::Array<double, 1>& msrmnt_v,
+ const blitz::Array<double, 2>& msrmnt_jacobian_v,
+ const blitz::Array<double, 2>& K_x_v,
+ const blitz::Array<double, 2>& msrmnt_jacobian_x_v)
+{
+  msrmnt_is_const = msrmnt_is_const_v;
+  M.reference(M_v.copy());
+  K.reference(K_v.copy());
+  msrmnt.reference(msrmnt_v.copy());
+  msrmnt_jacobian.reference(msrmnt_jacobian_v.copy());
+  K_x.reference(K_x_v.copy());
+  msrmnt_jacobian_x.reference(msrmnt_jacobian_x_v.copy());
+}
