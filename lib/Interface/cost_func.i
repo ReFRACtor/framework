@@ -13,11 +13,10 @@ class CostFunc : virtual public ProblemState {
 public:
   enum message_t {NONE, SOLVED, ERROR};
   CostFunc();
-  virtual ~CostFunc();
   virtual double cost() = 0;
-  virtual double cost_x(const blitz::Array<double, 1>& x);
+  double cost_x(const blitz::Array<double, 1>& x);
   %python_attribute(num_cost_evaluations, int);
-  virtual void zero_num_evaluations();
+  void zero_num_evaluations();
   %python_attribute(message, message_t)
   %python_attribute(message_str, std::string)
   %pickle_serialization();

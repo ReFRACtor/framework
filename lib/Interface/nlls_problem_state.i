@@ -12,9 +12,6 @@ class NLLSProblemState : virtual public ProblemState {
 public:
   NLLSProblemState();
   NLLSProblemState(const NLLSProblemState& s);
-  virtual ~NLLSProblemState();
-  virtual void set(const NLLSProblemState& s);
-  virtual void clear();
   %pickle_serialization();
 };
 }

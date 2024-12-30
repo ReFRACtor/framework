@@ -12,7 +12,6 @@ namespace FullPhysics {
 class NLLSProblem : public CostFuncDiff {
 public:
   NLLSProblem();
-  virtual ~NLLSProblem();
   %python_attribute_nonconst(cost, double);
   %python_attribute_nonconst(residual, blitz::Array<double, 1>);
   virtual blitz::Array<double, 1> residual_x(const blitz::Array<double, 1>& x);

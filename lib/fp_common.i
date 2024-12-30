@@ -89,3 +89,8 @@
 %define %fp_director_serialization(BNAME, TYPE...)
 %director_serialization(FullPhysics, fp_serialize_support.h, BNAME, TYPE)
 %enddef
+%define %python_attribute_derived_nonconst(NAME, TYPE...)
+  %rename(_v_ ## NAME) NAME;
+  virtual TYPE NAME();
+%enddef
+  
