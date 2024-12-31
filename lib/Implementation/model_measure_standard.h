@@ -66,11 +66,39 @@ public:
   { return fm; }
 
 //-----------------------------------------------------------------------
+/// Underlying forward model.
+//-----------------------------------------------------------------------
+
+  const boost::shared_ptr<ForwardModel>& forward_model_i(int i) const
+  {
+    range_check(i, 0, (int) fm.size());
+    return fm[i];
+  }
+  int number_forward_model() const
+  {
+    return (int) fm.size();
+  }
+  
+//-----------------------------------------------------------------------
 /// Underlying observation.
 //-----------------------------------------------------------------------
 
   const std::vector<boost::shared_ptr<Observation> >& observation() const
   { return obs; }
+
+//-----------------------------------------------------------------------
+/// Underlying observation.
+//-----------------------------------------------------------------------
+
+  const boost::shared_ptr<Observation>& observation_i(int i) const
+  {
+    range_check(i, 0, (int) obs.size());
+    return obs[i];
+  }
+  int number_observation() const
+  {
+    return (int) obs.size();
+  }
   
 //-----------------------------------------------------------------------
 /// Underlying 
