@@ -7,9 +7,13 @@
 %base_import(nlls_solver)
 %import "nlls_problem.i"
 
+namespace FullPhysics {
+  class NLLSSolverLMOptions;
+  class NLLSSolverLMAlgParams;
+}
 %fp_shared_ptr(FullPhysics::NLLSSolverLM);
-%fp_shared_ptr(FullPhysics::NLLSSolverLMOptions);
-%fp_shared_ptr(FullPhysics::NLLSSolverLMAlgParams);
+%shared_ptr(FullPhysics::NLLSSolverLMOptions);
+%shared_ptr(FullPhysics::NLLSSolverLMAlgParams);
 
 namespace FullPhysics {
 

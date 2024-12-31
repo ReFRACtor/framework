@@ -17,7 +17,7 @@ class CompositePerturbation;
   before finishing the construction of the initial guess.
 *******************************************************************/
 
-class PerturbationBuilder {
+class PerturbationBuilder : public Printable<PerturbationBuilder> {
 public:
   virtual ~PerturbationBuilder() {}
 
@@ -48,6 +48,9 @@ public:
 //-----------------------------------------------------------------------  
 
   virtual void build_perturbation(blitz::Array<double, 1>& v, int index) const = 0;
+
+  virtual void print(std::ostream& Os) const {Os << "PerturbationBuilder";}
+  
 };
 
 /****************************************************************//**

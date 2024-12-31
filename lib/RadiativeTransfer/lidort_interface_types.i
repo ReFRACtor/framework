@@ -6,7 +6,9 @@
 #include "lidort_interface_types.h"
 %}
 
-%fp_shared_ptr(FullPhysics::Lidort_Pars);
+// Not fp_shared_ptr, because this doesn't come from GenericObject
+//%fp_shared_ptr(FullPhysics::Lidort_Pars);
+/%shared_ptr(FullPhysics::Lidort_Pars);
 
 namespace FullPhysics {
 

@@ -10,7 +10,7 @@
 
 namespace FullPhysics {
 
-class PerturbationBuilder {
+class PerturbationBuilder : public GenericObject {
 public:
   virtual ~PerturbationBuilder();
   %python_attribute_abstract(number_element, int)

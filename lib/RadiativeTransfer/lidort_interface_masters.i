@@ -8,14 +8,15 @@
 
 %import "lidort_interface_types.i"
 
-%fp_shared_ptr(FullPhysics::Brdf_Lin_Sup_Masters);
-%fp_shared_ptr(FullPhysics::Brdf_Sup_Masters);
-%fp_shared_ptr(FullPhysics::Lidort_Inputs);
-%fp_shared_ptr(FullPhysics::Lidort_Masters);
-%fp_shared_ptr(FullPhysics::Lidort_L_Inputs);
-%fp_shared_ptr(FullPhysics::Lidort_Lcs_Masters);
-%fp_shared_ptr(FullPhysics::Lidort_Lps_Masters);
-%fp_shared_ptr(FullPhysics::Lidort_Brdf_Sup_Accessories);
+// Not fp_shared_ptr, because this doesn't come from GenericObject
+%shared_ptr(FullPhysics::Brdf_Lin_Sup_Masters);
+%shared_ptr(FullPhysics::Brdf_Sup_Masters);
+%shared_ptr(FullPhysics::Lidort_Inputs);
+%shared_ptr(FullPhysics::Lidort_Masters);
+%shared_ptr(FullPhysics::Lidort_L_Inputs);
+%shared_ptr(FullPhysics::Lidort_Lcs_Masters);
+%shared_ptr(FullPhysics::Lidort_Lps_Masters);
+%shared_ptr(FullPhysics::Lidort_Brdf_Sup_Accessories);
 
 namespace FullPhysics {
 

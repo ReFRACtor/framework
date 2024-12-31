@@ -8,13 +8,14 @@
 
 
 
-%fp_shared_ptr(FullPhysics::Fo_Dtwpgeometry_Master);
-%fp_shared_ptr(FullPhysics::Fo_Sswpgeometry_Master);
-%fp_shared_ptr(FullPhysics::Fo_Scalarss_Rtcalcs_I);
-%fp_shared_ptr(FullPhysics::Fo_Scalarss_Rtcalcs_Ilps);
-%fp_shared_ptr(FullPhysics::Fo_Scalarss_Spherfuncs);
-%fp_shared_ptr(FullPhysics::Fo_Thermal_Rtcalcs_I);
-%fp_shared_ptr(FullPhysics::Fo_Thermal_Rtcalcs_Ilps);
+// Not fp_shared_ptr, because this doesn't come from GenericObject
+%shared_ptr(FullPhysics::Fo_Dtwpgeometry_Master);
+%shared_ptr(FullPhysics::Fo_Sswpgeometry_Master);
+%shared_ptr(FullPhysics::Fo_Scalarss_Rtcalcs_I);
+%shared_ptr(FullPhysics::Fo_Scalarss_Rtcalcs_Ilps);
+%shared_ptr(FullPhysics::Fo_Scalarss_Spherfuncs);
+%shared_ptr(FullPhysics::Fo_Thermal_Rtcalcs_I);
+%shared_ptr(FullPhysics::Fo_Thermal_Rtcalcs_Ilps);
 
 namespace FullPhysics {
 

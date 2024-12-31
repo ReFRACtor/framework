@@ -5,7 +5,6 @@
 #include "nlls_solver_gsl_lmder.h"
 %}
 %base_import(nlls_solver_gsl)
-%fp_shared_ptr(FullPhysics::NLLSSolverGSLLMDER);
 %import "nlls_problem.i"
 
 %fp_shared_ptr(FullPhysics::NLLSSolverGSLLMDER);

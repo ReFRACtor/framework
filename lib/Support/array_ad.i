@@ -178,11 +178,6 @@ def to_list(self):
 
 %enddef
 
-%fp_shared_ptr(FullPhysics::ArrayAd<double, 1>);
-%fp_shared_ptr(FullPhysics::ArrayAd<double, 2>);
-%fp_shared_ptr(FullPhysics::ArrayAd<double, 3>);
-%fp_shared_ptr(FullPhysics::ArrayAd<double, 4>);
-
 %array_ad_template(ArrayAd_double_1, double, 1, 2);
 %array_ad_template(ArrayAd_double_2, double, 2, 3);
 %array_ad_template(ArrayAd_double_3, double, 3, 4);
