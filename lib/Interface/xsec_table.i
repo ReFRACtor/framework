@@ -9,6 +9,8 @@
 %import "array_ad_with_unit.i"
 %import "double_with_unit.i"
 
+%template(vector_xsec_table) std::vector<boost::shared_ptr<FullPhysics::XSecTable> >;
+
 %fp_shared_ptr(FullPhysics::XSecTable);
 
 namespace FullPhysics {
@@ -29,8 +31,6 @@ public:
   %pickle_serialization();
 };
 }
-
-%template(vector_xsec_table) std::vector<boost::shared_ptr<FullPhysics::XSecTable> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

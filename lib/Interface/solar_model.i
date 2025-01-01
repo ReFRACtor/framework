@@ -15,6 +15,7 @@
 
 %base_import(spectrum_effect)
 
+%template(vector_solar_model) std::vector<boost::shared_ptr<FullPhysics::SolarModel> >;
 %fp_shared_ptr(FullPhysics::SolarModel);
 
 namespace FullPhysics {
@@ -28,4 +29,3 @@ public:
   %pickle_serialization();
 };
 }
-%template(vector_solar_model) std::vector<boost::shared_ptr<FullPhysics::SolarModel> >;

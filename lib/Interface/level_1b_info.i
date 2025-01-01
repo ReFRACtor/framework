@@ -11,6 +11,7 @@
 %import "fp_time.i"
 %import "level_1b.i"
 %import "double_with_unit.i"
+%template(vector_level1b) std::vector<boost::shared_ptr<FullPhysics::Level1b>>;
 %fp_shared_ptr(FullPhysics::Level1bInfo);
 
 
@@ -36,4 +37,3 @@ public:
 };
 }
 
-%template(vector_level1b) std::vector<boost::shared_ptr<FullPhysics::Level1b>>;

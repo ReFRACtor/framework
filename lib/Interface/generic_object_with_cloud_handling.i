@@ -6,6 +6,8 @@
 %}
 
 %base_import(generic_object)
+%template(vector_generic_object_with_cloud_handling) std::vector<boost::shared_ptr<FullPhysics::GenericObjectWithCloudHandling> >;
+
 %fp_shared_ptr(FullPhysics::GenericObjectWithCloudHandling);
 
 namespace FullPhysics {
@@ -23,8 +25,6 @@ public:
   %pickle_serialization();
 };
 }
-
-%template(vector_generic_object_with_cloud_handling) std::vector<boost::shared_ptr<FullPhysics::GenericObjectWithCloudHandling> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

@@ -8,6 +8,8 @@
 #include "sub_state_vector_array.h"
 %}
 
+%template(vector_sample_grid) std::vector<boost::shared_ptr<FullPhysics::SampleGrid> >;
+
 %fp_shared_ptr(FullPhysics::SampleGrid)
 namespace FullPhysics {
     class SampleGrid;
@@ -50,8 +52,6 @@ public:
   %pickle_serialization();
 };
 }
-
-%template(vector_sample_grid) std::vector<boost::shared_ptr<FullPhysics::SampleGrid> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

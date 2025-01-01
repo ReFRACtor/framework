@@ -124,4 +124,3 @@ public:
 };
 }
 
-%template(vector_spectral_domain) std::vector<boost::shared_ptr<FullPhysics::SpectralDomain> >;

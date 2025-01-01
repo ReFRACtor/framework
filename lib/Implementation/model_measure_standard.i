@@ -21,10 +21,6 @@ public:
   virtual void model_eval();
   virtual void jacobian_eval();
   virtual void model_jacobian_eval();
-  const boost::shared_ptr<Observation>& observation_i(int i) const;
-  %python_attribute(number_observation, int);
-  const boost::shared_ptr<ForwardModel>& forward_model_i(int i) const;
-  %python_attribute(number_forward_model, int);
   %python_attribute(expected_parameter_size, int)
   %python_attribute_with_set(parameters,blitz::Array<double, 1>)
   %python_attribute(forward_model, std::vector<boost::shared_ptr<ForwardModel> >)

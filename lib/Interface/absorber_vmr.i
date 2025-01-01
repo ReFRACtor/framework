@@ -11,6 +11,7 @@
 %import "pressure.i"
 %import "auto_derivative.i"
 
+%template(vector_absorber_vmr) std::vector<boost::shared_ptr<FullPhysics::AbsorberVmr> >;
 %fp_shared_ptr(FullPhysics::AbsorberVmr)
 namespace FullPhysics {
   class AbsorberVmr;
@@ -42,4 +43,3 @@ public:
 };
 }
 
-%template(vector_absorber_vmr) std::vector<boost::shared_ptr<FullPhysics::AbsorberVmr> >;

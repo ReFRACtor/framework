@@ -10,6 +10,7 @@
 %import "pressure.i"
 %import "auto_derivative.i"
 
+%template(vector_aerosol_extinction) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinction> >;
 %fp_shared_ptr(FullPhysics::AerosolExtinction)
 
 namespace FullPhysics {
@@ -38,4 +39,3 @@ public:
 };
 }
 
-%template(vector_aerosol_extinction) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinction> >;

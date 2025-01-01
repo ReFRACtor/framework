@@ -11,6 +11,12 @@
 %base_import(observation)
 %base_import(stacked_radiance_mixin)
 
+// Note we need the template before its first use, so we have all
+// the typemaps in place.
+%template(Vector_Observation) std::vector<boost::shared_ptr<FullPhysics::Observation> >;
+
+// We also need the shared ptr after the templates, so we override the
+// output type maps for std::vector<boost::shared_ptr<T> >
 %fp_shared_ptr(FullPhysics::Observation)
 namespace FullPhysics {
   class Observation;
@@ -33,4 +39,3 @@ public:
 };
 }
 
-%template(Vector_Observation) std::vector<boost::shared_ptr<FullPhysics::Observation> >;

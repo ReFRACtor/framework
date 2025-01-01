@@ -10,6 +10,7 @@
 %import "spectral_domain.i"
 %import "spectral_range.i"
 
+%template(vector_spectrum) std::vector<FullPhysics::Spectrum>;
 %fp_shared_ptr(FullPhysics::Spectrum)
 namespace FullPhysics {
 class Spectrum : public GenericObject {
@@ -46,4 +47,3 @@ def copy(self):
 };
 }
 
-%template(vector_spectrum) std::vector<FullPhysics::Spectrum>;

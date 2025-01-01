@@ -9,6 +9,8 @@
 %base_import(state_mapping)
 %base_import(state_mapping_linear)
 
+%template(vector_aerosol_extinction_imp_base) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinctionImpBase> >;
+
 %fp_shared_ptr(FullPhysics::AerosolExtinctionImpBase);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::AerosolExtinction>);
 namespace FullPhysics {
@@ -68,8 +70,6 @@ protected:
   boost::shared_ptr<Pressure> press;
 };
 }
-
-%template(vector_aerosol_extinction_imp_base) std::vector<boost::shared_ptr<FullPhysics::AerosolExtinctionImpBase> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

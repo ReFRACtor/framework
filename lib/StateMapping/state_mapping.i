@@ -7,6 +7,7 @@
 %base_import(generic_object)
 %import "array_ad.i"
 %import "pressure.i"
+%template(vector_state_mapping) std::vector<boost::shared_ptr<FullPhysics::StateMapping> >;
 %fp_shared_ptr(FullPhysics::StateMapping);
 
 namespace FullPhysics {
@@ -28,4 +29,3 @@ public:
 };
 }
 
-%template(vector_state_mapping) std::vector<boost::shared_ptr<FullPhysics::StateMapping> >;

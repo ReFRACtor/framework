@@ -10,6 +10,7 @@
 %import "array_with_unit.i"
 %import "array_ad.i"
 
+%template(vector_SpectralRange) std::vector<boost::shared_ptr<FullPhysics::SpectralRange> >;
 %fp_shared_ptr(FullPhysics::SpectralRange)
 namespace FullPhysics {
 class SpectralRange : public GenericObject {
@@ -50,4 +51,3 @@ def copy(self):
 };
 }
 
-%template(vector_SpectralRange) std::vector<boost::shared_ptr<FullPhysics::SpectralRange> >;

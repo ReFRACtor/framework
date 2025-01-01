@@ -11,6 +11,7 @@
 %base_import(spectrum)
 %import "observer.i"
 
+%template(vector_named_spectrum) std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
 %fp_shared_ptr(FullPhysics::NamedSpectrum)
 
 // Observers of NamedSpectrum
@@ -35,7 +36,6 @@
 %fp_shared_ptr(FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
 %fp_shared_ptr(FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >)
 
-%template(vector_named_spectrum) std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> >;
 %template(ObservableNamedSpectrumVector) FullPhysics::Observable<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;
 
 %feature("director") FullPhysics::Observer<std::vector<boost::shared_ptr<FullPhysics::NamedSpectrum> > >;

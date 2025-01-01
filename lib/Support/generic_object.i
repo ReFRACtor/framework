@@ -7,6 +7,8 @@
 #include <cstdint>  
 %}
 
+%template(vector_GenericObject) std::vector<boost::shared_ptr<FullPhysics::GenericObject> >;
+
 %shared_ptr(FullPhysics::GenericObject)
 
 %typemap(out) const boost::shared_ptr< FullPhysics::GenericObject >& {
@@ -47,8 +49,6 @@ public:
   }
 };
 }
-
-%template(vector_GenericObject) std::vector<boost::shared_ptr<FullPhysics::GenericObject> >;
 
 // List of things "import *" will include
 %python_export("GenericObject", "vector_GenericObject")

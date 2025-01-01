@@ -122,6 +122,10 @@ def test_director_example(serial):
     print(euser.value_vec()[1])
     print(euser.value_vec()[2])
     print(euser.value_vec()[3])
+    assert euser.value_vec()[0].__class__ == rf.DirectorExample
+    assert euser.value_vec()[1].__class__ == rf.DirectorExample
+    assert euser.value_vec()[2].__class__ == DirectorPythonExample
+    assert euser.value_vec()[3].__class__ == DirectorPythonExample
     print("Should see e2 and v1 through vp4 deleted", flush=True)
     assert len(DirectorPythonExample.deleted_list) == 0
     euser = None
@@ -135,6 +139,11 @@ def test_director_example(serial):
     euser.set_vec_vec(v2)
     v2 = None
     print(euser.value_vec_vec())
+    assert euser.value_vec_vec()[0][0].__class__ == rf.DirectorExample
+    assert euser.value_vec_vec()[0][1].__class__ == DirectorPythonExample
+    assert euser.value_vec_vec()[1][0].__class__ == rf.DirectorExample
+    assert euser.value_vec_vec()[1][1].__class__ == DirectorPythonExample
+    assert euser.value_vec_vec()[1][2].__class__ == DirectorPythonExample
     assert euser.apply_func(10, 0, 0) == 5+10
     assert euser.apply_func(10, 1, 0) == 6+10
     assert euser.apply_func(10, 0, 1) == 5+10+2*6

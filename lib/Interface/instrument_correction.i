@@ -15,6 +15,8 @@
 %import "spectral_range.i"
 %import "sub_state_vector_array.i"
 
+%template(vector_instrument_correction) std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> >;
+%template(vector_vector_instrument_correction) std::vector<std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> > >;
 %nodefaultctor FullPhysics::SubStateVectorArray<InstrumentCorrection>;
 %fp_shared_ptr(FullPhysics::InstrumentCorrection);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::InstrumentCorrection>);
@@ -45,5 +47,3 @@ public:
 %template(SubStateVectorArrayInstrumentCorrection) FullPhysics::SubStateVectorArray<InstrumentCorrection>;
 }
 
-%template(vector_instrument_correction) std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> >;
-%template(vector_vector_instrument_correction) std::vector<std::vector<boost::shared_ptr<FullPhysics::InstrumentCorrection> > >;

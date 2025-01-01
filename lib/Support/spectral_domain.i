@@ -11,6 +11,12 @@
 %import "array_with_unit.i"
 %import "double_with_unit.i"
 
+// Note we need the template before its first use, so we have all
+// the typemaps in place.
+%template(vector_SpectralDomain) std::vector<boost::shared_ptr<FullPhysics::SpectralDomain> >;
+
+// We also need the shared ptr after the templates, so we override the
+// output type maps for std::vector<boost::shared_ptr<T> >
 %fp_shared_ptr(FullPhysics::SpectralDomain)
 namespace FullPhysics {
 class SpectralDomain : public GenericObject {
@@ -63,4 +69,3 @@ def copy(self):
 };
 }
 
-%template(vector_SpectralDomain) std::vector<boost::shared_ptr<FullPhysics::SpectralDomain> >;

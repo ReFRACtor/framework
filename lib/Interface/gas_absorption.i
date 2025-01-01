@@ -15,6 +15,8 @@
 %import "array_with_unit.i"
 %import "array_ad_with_unit.i"
 
+%template(vector_gas_absorption) std::vector<boost::shared_ptr<FullPhysics::GasAbsorption> >;
+
 %fp_shared_ptr(FullPhysics::GasAbsorption);
 
 namespace FullPhysics {
@@ -44,8 +46,6 @@ public:
   %pickle_serialization();
 };
 }
-
-%template(vector_gas_absorption) std::vector<boost::shared_ptr<FullPhysics::GasAbsorption> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

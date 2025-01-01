@@ -7,15 +7,18 @@
 %}
 
 %base_import(generic_object)
-%fp_shared_ptr(FullPhysics::DirectorExample);
-%fp_shared_ptr(FullPhysics::DirectorExampleUser);
-%fp_shared_ptr(FullPhysics::DirectorExampleWeakPtr);
-
 // Note we need the template before its first use, so we have all
 // the typemaps in place.
 %template(Vector_DirectorExample) std::vector<boost::shared_ptr<FullPhysics::DirectorExample> >;
 %template(Vector_Vector_DirectorExample) std::vector<std::vector<boost::shared_ptr<FullPhysics::DirectorExample> > >;
 %template(Vector_Vector_int) std::vector<std::vector<int> >;
+
+// We also need the shared ptr after the templates, so we override the
+// output type maps for std::vector<boost::shared_ptr<T> >
+%fp_shared_ptr(FullPhysics::DirectorExample);
+%fp_shared_ptr(FullPhysics::DirectorExampleUser);
+%fp_shared_ptr(FullPhysics::DirectorExampleWeakPtr);
+
 
 namespace FullPhysics {
 %feature("director") DirectorExample;

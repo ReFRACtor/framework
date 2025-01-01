@@ -21,6 +21,7 @@ namespace FullPhysics {
 %import "temperature.i"
 %import "observer.i"
 
+%template(vector_altitude) std::vector<boost::shared_ptr<FullPhysics::Altitude> >;
 %fp_shared_ptr(FullPhysics::Altitude)
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Altitude>)
 %fp_shared_ptr(FullPhysics::Observer<FullPhysics::Altitude>)
@@ -58,7 +59,6 @@ public:
   %pickle_serialization();
 };
 }
-%template(vector_altitude) std::vector<boost::shared_ptr<FullPhysics::Altitude> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

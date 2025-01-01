@@ -11,6 +11,7 @@
 %import "spectral_domain.i"
 %import "double_with_unit.i"
 
+%template(vector_ils) std::vector<boost::shared_ptr<FullPhysics::Ils> >;
 %fp_shared_ptr(FullPhysics::Ils);
 
 %fp_shared_ptr(FullPhysics::Observable<FullPhysics::Ils>)
@@ -49,7 +50,6 @@ public:
 };
 }
 
-%template(vector_ils) std::vector<boost::shared_ptr<FullPhysics::Ils> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

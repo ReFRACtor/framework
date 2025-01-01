@@ -17,6 +17,7 @@
 %import "absorber.i"
 %import "relative_humidity.i"
 
+%template(vector_aerosol_property) std::vector<boost::shared_ptr<FullPhysics::AerosolProperty> >;
 %fp_shared_ptr(FullPhysics::AerosolProperty)
 namespace FullPhysics {
   class AerosolProperty;
@@ -48,4 +49,3 @@ public:
   %pickle_serialization();
 };
 }
-%template(vector_aerosol_property) std::vector<boost::shared_ptr<FullPhysics::AerosolProperty> >;

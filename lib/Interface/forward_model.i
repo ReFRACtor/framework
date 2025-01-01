@@ -11,6 +11,12 @@
 %import "spectrum.i"
 %import "spectral_domain.i"
 
+// Note we need the template before its first use, so we have all
+// the typemaps in place.
+%template(Vector_ForwardModel) std::vector<boost::shared_ptr<FullPhysics::ForwardModel> >;
+
+// We also need the shared ptr after the templates, so we override the
+// output type maps for std::vector<boost::shared_ptr<T> >
 %fp_shared_ptr(FullPhysics::ForwardModel)
 
 
@@ -36,8 +42,6 @@ public:
   %pickle_serialization();
 };
 }
-
-%template(Vector_ForwardModel) std::vector<boost::shared_ptr<FullPhysics::ForwardModel> >;
 
 // Extra code for handling boost serialization/python pickle of
 // director classes

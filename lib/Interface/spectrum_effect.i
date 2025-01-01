@@ -17,6 +17,8 @@
 %import "spectrum.i"
 %import "forward_model_spectral_grid.i"
 
+%template(vector_spectrum_effect) std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> >;
+%template(vector_vector_spectrum_effect) std::vector<std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> > >;
 %nodefaultctor FullPhysics::SubStateVectorArray<SpectrumEffect>;
 %fp_shared_ptr(FullPhysics::SpectrumEffect);
 %fp_shared_ptr(FullPhysics::SubStateVectorArray<FullPhysics::SpectrumEffect>);
@@ -51,5 +53,3 @@ public:
 //%fp_shared_ptr(std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> >);
 //%fp_shared_ptr(std::vector<std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> > >);
 
-%template(vector_spectrum_effect) std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> >;
-%template(vector_vector_spectrum_effect) std::vector<std::vector<boost::shared_ptr<FullPhysics::SpectrumEffect> > >;

@@ -12,6 +12,12 @@
 
 %base_import(gas_absorption)
 
+// Note we need the template before its first use, so we have all
+// the typemaps in place.
+%template(vector_absco) std::vector<boost::shared_ptr<FullPhysics::Absco> >;
+
+// We also need the shared ptr after the templates, so we override the
+// output type maps for std::vector<boost::shared_ptr<T> >
 %fp_shared_ptr(FullPhysics::Absco);
 
 namespace FullPhysics {
@@ -55,4 +61,3 @@ public:
 // director classes
 %fp_director_serialization(absco, Absco)
 
-%template(vector_absco) std::vector<boost::shared_ptr<FullPhysics::Absco> >;
