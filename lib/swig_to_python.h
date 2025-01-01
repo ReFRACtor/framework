@@ -134,6 +134,12 @@ swig_to_python(const std::vector<boost::shared_ptr<T> >& V)
 }
 
 template<typename T> inline PyObject* 
+swig_to_python(const std::vector<boost::shared_ptr<T> >* V)
+{
+  return swig_to_python(*V);
+}
+  
+template<typename T> inline PyObject* 
 swig_to_python(const std::vector<std::vector<boost::shared_ptr<T> > >& V)
 {
   PyObject* res = PyList_New(V.size());
@@ -141,6 +147,11 @@ swig_to_python(const std::vector<std::vector<boost::shared_ptr<T> > >& V)
     PyList_SetItem(res, i, swig_to_python(V[i]));
   return res;
 }
-  
+
+template<typename T> inline PyObject* 
+swig_to_python(const std::vector<std::vector<boost::shared_ptr<T> > >* V)
+{
+  return swig_to_python(*V);
+}
 } // End namespace
 #endif

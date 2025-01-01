@@ -48,15 +48,15 @@
 }
 
 %typemap(out) const std::vector<boost::shared_ptr< TYPE > >& {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<boost::shared_ptr< TYPE > >& {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<boost::shared_ptr< TYPE > > {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<boost::shared_ptr< TYPE > >* {
@@ -72,15 +72,15 @@
 }
 
 %typemap(out) const std::vector<std::vector<boost::shared_ptr< TYPE > > >& {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<std::vector<boost::shared_ptr< TYPE > > >& {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<std::vector<boost::shared_ptr< TYPE > > > {
-  %set_output(NAMESPACE::swig_to_python(*$1));
+  %set_output(NAMESPACE::swig_to_python($1));
 }
 
 %typemap(out) std::vector<std::vector<boost::shared_ptr< TYPE > > >* {
