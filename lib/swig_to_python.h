@@ -1,6 +1,7 @@
 #ifndef SWIG_TO_PYTHON_H
 #define SWIG_TO_PYTHON_H
 #include "swig_type_mapper_base.h"
+#include <vector>
 
 //#define PTR_DEBUG 1
 
@@ -119,5 +120,27 @@ inline PyObject*
 swig_to_python_or_none(const boost::shared_ptr<GenericObject>* V)
 { return swig_to_python_or_none(*V); }
 
+//-----------------------------------------------------------------------
+/// Function to map from a vector shared point to a python object.
+//-----------------------------------------------------------------------
+
+template<typename T> inline PyObject* 
+swig_to_python(const std::vector<boost::shared_ptr<T> >& V)
+{
+  PyObject* res = PyList_New(V.size());
+  for(int i = 0; i < V.size(); ++i)
+    PyList_SetItem(res, i, swig_to_python(V[i]));
+  return res;
+}
+
+template<typename T> inline PyObject* 
+swig_to_python(const std::vector<std::vector<boost::shared_ptr<T> > >& V)
+{
+  PyObject* res = PyList_New(V.size());
+  for(int i = 0; i < V.size(); ++i)
+    PyList_SetItem(res, i, swig_to_python(V[i]));
+  return res;
+}
+  
 } // End namespace
 #endif
