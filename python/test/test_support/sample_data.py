@@ -52,3 +52,27 @@ def sample_aerosol(sample_forward_model):
     '''Sample aerosol, to use in tests that need one.'''
 
     return sample_forward_model.find_subobject_of_type(rf.Aerosol)
+
+@pytest.fixture(scope="function")
+def sample_instrument(sample_forward_model):
+    '''Sample instrument, to use in tests that need one.'''
+
+    return sample_forward_model.find_subobject_of_type(rf.Instrument)
+
+@pytest.fixture(scope="function")
+def sample_spectral_window(sample_forward_model):
+    '''Sample spectral window, to use in tests that need one.'''
+
+    return sample_forward_model.find_subobject_of_type(rf.SpectralWindow)
+
+@pytest.fixture(scope="function")
+def sample_low_stream_rt(lambertian_objects):
+    '''Low stream RT, to use in tests that need one.'''
+
+    return lambertian_objects.rt.low_stream_radiative_transfer
+
+@pytest.fixture(scope="function")
+def sample_high_stream_rt(lambertian_objects):
+    '''High stream RT, to use in tests that need one.'''
+
+    return lambertian_objects.rt.high_stream_radiative_transfer

@@ -106,11 +106,16 @@ public:
     spectrum_sampling_ = V;
   }
 
-  Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const;
+virtual Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const;
 
   const boost::shared_ptr<ForwardModelSpectralGrid>& spectral_grid() const
   {
     return g;
+  }
+
+  void spectral_grid(const boost::shared_ptr<ForwardModelSpectralGrid>& V)
+  {
+    g = V;
   }
 
   /// Required observable functions
@@ -128,6 +133,8 @@ public:
 
   virtual std::vector<boost::shared_ptr<GenericObject> >
   subobject_list() const;
+protected:
+  StandardForwardModel() {}
 private:
   std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > > spec_effect;
   boost::shared_ptr<Instrument> inst;
@@ -135,7 +142,6 @@ private:
   boost::shared_ptr<RadiativeTransfer> rt;
   boost::shared_ptr<SpectrumSampling> spectrum_sampling_;
   boost::shared_ptr<ForwardModelSpectralGrid> g;
-  StandardForwardModel() {}
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version);

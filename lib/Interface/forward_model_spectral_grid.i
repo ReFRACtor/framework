@@ -20,6 +20,10 @@
 %fp_shared_ptr(FullPhysics::ForwardModelSpectralGrid);
 
 namespace FullPhysics {
+
+// Allow these classes to be derived from in Python.
+%feature("director") ForwardModelSpectralGrid;
+
 class ForwardModelSpectralGrid  : public GenericObject {
 public:
   ForwardModelSpectralGrid(
@@ -39,3 +43,10 @@ public:
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(forward_model_spectral_grid, ForwardModelSpectralGrid)
+
+// List of things "import *" will include
+%python_export("ForwardModelSpectralGrid");
