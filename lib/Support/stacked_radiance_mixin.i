@@ -22,6 +22,7 @@ public:
     const = 0;
   virtual SpectralDomain spectral_domain_all() const;
   virtual Spectrum radiance_all(bool skip_jacobian = false) const;
+  virtual void print(std::ostream& Os) const;
   std::string print_to_string() const;
   std::string print_parent() const;
   %pickle_serialization();

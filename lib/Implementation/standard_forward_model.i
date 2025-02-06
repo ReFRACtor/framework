@@ -64,6 +64,8 @@ public:
 
   void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
 
+  virtual void print(std::ostream& Os) const;
+
   // vector of vector for SpectrumEffect is kind of a pain in
   // python. So just brute force a conversion.
   %extend {

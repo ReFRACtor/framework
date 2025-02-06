@@ -91,7 +91,7 @@ void ForwardModelWithCloudHandling::print(std::ostream& Os) const
   OstreamPad opad(Os, "  ");
   Os << "FowardModelWithCloudHandling:\n"
      << "  cloud fraction:    " << cfrac_->cloud_fraction() << " \n"
-     << "  underlying forward mode: \n";
+     << "  underlying forward model: \n";
   opad << *fmodel_ << "\n";
   opad.strict_sync();
 }
