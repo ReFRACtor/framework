@@ -34,7 +34,7 @@ class OSSForwardModel(rf.StandardForwardModel):
             raise RuntimeError("setup_grid needs to be called before calling spectral_domain")
         return self.oss_spectral_grid.low_resolution_grid(sensor_index)
 
-    def spectral_grid():
+    def spectral_grid(self):
         return self.oss_spectral_grid
 
     def radiance(self, sensor_index, skip_jacobian=False):
@@ -117,3 +117,20 @@ class OSSForwardModel(rf.StandardForwardModel):
                 f"high_res_spec_effect_{effect.name}",
                 sensor_index)
         return highres_spec
+
+    def print(self, ostream):
+        breakpoint()
+        print("OSSForwardModel:", file=ostream)
+        print(f"  OSS training fname: {self.train_fname}", file=ostream)
+        print("  underlying forward model: ", file=ostream)
+        # super().print(ostream)
+
+    def __str__(self):
+        # TODO: If this method is used instead of print, add output from super().print()
+        breakpoint()
+        str_repr = (
+            "OSSForwardModel:\n"
+            f"  OSS training fname: {self.train_fname}\n"
+            "  underlying forward model: "
+        )
+        return str_repr
