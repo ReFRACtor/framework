@@ -13,21 +13,21 @@ class OSSForwardModel(rf.StandardForwardModel):
     def __init__(self, inst, swin, rt, spectrum_sampling, spectrum_effect, train_fname):
         print("OSS python full constr")
         self.train_fname = train_fname
-        self.train_data = np.load(self.train_fname)
         super().__init__(inst, swin, rt, spectrum_sampling, spectrum_effect)
 
     def setup_grid(self):
         print("OSS setup_grid")
+        train_data = np.load(self.train_fname)
 
         # 'radvec_conv_vec_mult', 'radvec_mat', 'radiance_nesr_mat', 'radiance_noise_mat_2', 'radiance_error_mat_2', 'wlvec_conv_vec_mult'
         # TODO: Fixup spectrum sampling / windows to match OSS wvl (wlvec_conv_vec_mult)
-        self.rt_sd = rf.SpectralDomain(self.train_data['wl_hires_nm'], rf.Unit("nm"))
-        self.oss_sd = rf.SpectralDomain(self.train_data['instr_grid_nm'], rf.Unit("nm"))
+        self.rt_sd = rf.SpectralDomain(train_data['wl_hires_nm'], rf.Unit("nm"))
+        self.oss_sd = rf.SpectralDomain(train_data['instr_grid_nm'], rf.Unit("nm"))
         self.oss_spectral_grid = rf.director.OSSForwardModelSpectralGrid(self.instrument,
                                                                      self.spectral_window,
                                                                      self.spectrum_sampling,
                                                                      self.oss_sd)
-        self.oss_interp = self.train_data['OSS_mat_default']
+        self.oss_interp = train_data['OSS_mat_default']
 
     def spectral_domain(self, sensor_index):
         if not self.oss_spectral_grid:
