@@ -28,6 +28,7 @@ class OSSForwardModel(rf.StandardForwardModel):
                                                                      self.spectrum_sampling,
                                                                      self.oss_sd)
         self.oss_interp = self.train_data['OSS_mat_default']
+        super().setup_grid()
 
     def spectral_domain(self, sensor_index):
         if not self.oss_spectral_grid:
@@ -71,7 +72,9 @@ class OSSForwardModel(rf.StandardForwardModel):
         # convolved_spec = self.apply_spectrum_corrections(highres_spec, sensor_index)
 
         # self.notify_spectrum_update(convolved_spec, "convolved", sensor_index)
-        inst_sample_grid = self.instrument.pixel_spectral_domain(sensor_index)
+
+        inst_wvl_nm = self.spectral_grid().low_resolution_grid(sensor_index).convert_wave(rf.Unit("nm"))
+        inst_sample_grid = rf.SpectralDomain(inst_wvl_nm, rf.Unit("nm"))
 
         convolved_range = np.interp(inst_sample_grid.data,
                                     self.oss_sd.data,
@@ -118,19 +121,15 @@ class OSSForwardModel(rf.StandardForwardModel):
                 sensor_index)
         return highres_spec
 
-    def print(self, ostream):
-        breakpoint()
-        print("OSSForwardModel:", file=ostream)
-        print(f"  OSS training fname: {self.train_fname}", file=ostream)
-        print("  underlying forward model: ", file=ostream)
-        # super().print(ostream)
-
     def __str__(self):
         # TODO: If this method is used instead of print, add output from super().print()
-        breakpoint()
         str_repr = (
             "OSSForwardModel:\n"
             f"  OSS training fname: {self.train_fname}\n"
-            "  underlying forward model: "
+            "  underlying forward model: \n"
+            f"{self.print_parent()}"
         )
         return str_repr
+
+    def desc(self):
+        return self.__str__()
