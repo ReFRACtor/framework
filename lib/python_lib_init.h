@@ -76,16 +76,22 @@ extern "C" {
 // Used throughout SWIG wrapper, define here because it is convenient.
 std::string parse_python_exception() {
   PyObject *type = NULL, *value = NULL, *tb = NULL;
+  std::string ret = "Python error that I can't parse";
   PyErr_Fetch(&type, &value, &tb);
+  PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
+						    "ignore");
+  if(temp_bytes) {
+    ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+    Py_DECREF(temp_bytes);
+  }
+  // Try to get a traceback if we can
   PyErr_NormalizeException(&type, &value, &tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
   if(tb) {
-    PyErr_NormalizeException(&type, &value, &tb);
     err_str_list = PyObject_CallMethodObjArgs(mod,
 	      Text_FromUTF8("format_exception"), type, value, tb, NULL);
   }
-  std::string ret = "Python error that I can't parse";
   if(err_str_list) {
     PyObject* err_str = 
       PyObject_CallMethodObjArgs(Text_FromUTF8(""),
@@ -100,13 +106,6 @@ std::string parse_python_exception() {
 	}
     }
     Py_XDECREF(err_str);
-  } else if(value) {
-    PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
-	"ignore");
-    if(temp_bytes) {
-      ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-      Py_DECREF(temp_bytes);
-    }
   }
   Py_XDECREF(mod);
   Py_XDECREF(err_str_list);
