@@ -18,9 +18,6 @@ class OSSForwardModel(rf.StandardForwardModel):
     def setup_grid(self):
         print("OSS setup_grid")
         train_data = np.load(self.train_fname)
-
-        # 'radvec_conv_vec_mult', 'radvec_mat', 'radiance_nesr_mat', 'radiance_noise_mat_2', 'radiance_error_mat_2', 'wlvec_conv_vec_mult'
-        # TODO: Fixup spectrum sampling / windows to match OSS wvl (wlvec_conv_vec_mult)
         self.rt_sd = rf.SpectralDomain(train_data['wl_hires_nm'], rf.Unit("nm"))
         self.oss_sd = rf.SpectralDomain(train_data['instr_grid_nm'], rf.Unit("nm"))
         self.oss_spectral_grid = rf.director.OSSForwardModelSpectralGrid(self.instrument,
@@ -28,13 +25,14 @@ class OSSForwardModel(rf.StandardForwardModel):
                                                                      self.spectrum_sampling,
                                                                      self.oss_sd)
         self.oss_interp = train_data['OSS_mat_default']
+        super().setup_grid()
 
     def spectral_domain(self, sensor_index):
         if not self.oss_spectral_grid:
             raise RuntimeError("setup_grid needs to be called before calling spectral_domain")
         return self.oss_spectral_grid.low_resolution_grid(sensor_index)
 
-    def spectral_grid():
+    def spectral_grid(self):
         return self.oss_spectral_grid
 
     def radiance(self, sensor_index, skip_jacobian=False):
@@ -71,7 +69,9 @@ class OSSForwardModel(rf.StandardForwardModel):
         # convolved_spec = self.apply_spectrum_corrections(highres_spec, sensor_index)
 
         # self.notify_spectrum_update(convolved_spec, "convolved", sensor_index)
-        inst_sample_grid = self.instrument.pixel_spectral_domain(sensor_index)
+
+        inst_wvl_nm = self.spectral_grid().low_resolution_grid(sensor_index).convert_wave(rf.Unit("nm"))
+        inst_sample_grid = rf.SpectralDomain(inst_wvl_nm, rf.Unit("nm"))
 
         convolved_range = np.interp(inst_sample_grid.data,
                                     self.oss_sd.data,
@@ -117,3 +117,16 @@ class OSSForwardModel(rf.StandardForwardModel):
                 f"high_res_spec_effect_{effect.name}",
                 sensor_index)
         return highres_spec
+
+    def __str__(self):
+        # TODO: If this method is used instead of print, add output from super().print()
+        str_repr = (
+            "OSSForwardModel:\n"
+            f"  OSS training fname: {self.train_fname}\n"
+            "  underlying forward model: \n"
+            f"{self.print_parent()}"
+        )
+        return str_repr
+
+    def desc(self):
+        return self.__str__()

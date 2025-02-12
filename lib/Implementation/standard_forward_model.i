@@ -51,18 +51,22 @@ public:
   virtual SpectralDomain spectral_domain(int sensor_index) const;
   virtual void setup_grid();
   virtual SpectralDomain::TypePreference spectral_domain_type_preference() const;
-  %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>)
-  %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>)
-  %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>)
-  %python_attribute(spectrum_sampling, boost::shared_ptr<SpectrumSampling>)
+  %python_attribute_with_set(instrument, boost::shared_ptr<Instrument>);
+  %python_attribute_with_set(spectral_window, boost::shared_ptr<SpectralWindow>);
+  %python_attribute_with_set(radiative_transfer, boost::shared_ptr<RadiativeTransfer>);
+  %python_attribute_with_set(spectrum_sampling, boost::shared_ptr<SpectrumSampling>);
+  %python_attribute_with_set(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>);
   %python_attribute(subobject_list, std::vector<boost::shared_ptr<GenericObject> >);
-  %python_attribute(spectral_grid, boost::shared_ptr<ForwardModelSpectralGrid>)
+
   Spectrum apply_spectrum_corrections(const Spectrum& highres_spec, int sensor_index) const;
 
   virtual void add_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs); 
   virtual void remove_observer(Observer<boost::shared_ptr<FullPhysics::NamedSpectrum> >& Obs);
 
   void notify_spectrum_update(const Spectrum& updated_spec, const std::string& spec_name, int sensor_index) const;
+
+  std::string print_to_string() const;
+  virtual std::string desc() const;
 
   // vector of vector for SpectrumEffect is kind of a pain in
   // python. So just brute force a conversion.
