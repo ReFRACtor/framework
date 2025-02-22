@@ -162,7 +162,7 @@ class SpectrumEffectList(Creator):
             # Store effects as they are encountered so that subsequent steps can utilize previous ones
             previous_effects[effect_name] = per_chan_effects
         
-        # To allow for transformation to a list of vectors of SpectrumList objects replace None
+        # To allow for transformation to a list of vectors of SpectrumEffect objects replace None
         all_effects = [
             [
                 chan_eff if chan_eff is not None else rf.SpectrumEffectNone()
