@@ -161,6 +161,15 @@ class SpectrumEffectList(Creator):
             all_effects.append(per_chan_effects)
             # Store effects as they are encountered so that subsequent steps can utilize previous ones
             previous_effects[effect_name] = per_chan_effects
+        
+        # To allow for transformation to a list of vectors of SpectrumList objects replace None
+        all_effects = [
+            [
+                chan_eff if chan_eff is not None else rf.SpectrumEffectNone()
+                for chan_eff in channel_effects
+            ]
+            for channel_effects in all_effects
+        ]
 
         # Map these into an outer vector for each channel, with an inner vector for each effect
         spec_eff = []
