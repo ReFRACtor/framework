@@ -1,3 +1,7 @@
+import re
+
+from collections import defaultdict
+
 import numpy as np
 
 import refractor.framework as rf
@@ -10,9 +14,10 @@ class OSSForwardModel(rf.StandardForwardModel):
         print("OSS python default const")
         super().__init__()
 
-    def __init__(self, inst, swin, rt, spectrum_sampling, spectrum_effect, train_fname):
+    def __init__(self, inst, swin, rt, spectrum_sampling, spectrum_effect, train_fname, jacobian_ids = []):
         print("OSS python full constr")
         self.train_fname = train_fname
+        self.jacobian_ids = jacobian_ids
         super().__init__(inst, swin, rt, spectrum_sampling, spectrum_effect)
 
     def setup_grid(self):
@@ -25,6 +30,16 @@ class OSSForwardModel(rf.StandardForwardModel):
                                                                      self.spectrum_sampling,
                                                                      self.oss_sd)
         self.oss_interp = train_data['OSS_mat_default']
+
+        self.jacobian_interp = {}
+        self.jacobians_supported = []
+        for fname in train_data.files:
+            if "OSS_mat_jacrow" in fname:
+                self.jacobian_interp[fname] = train_data[fname]
+                jac_name = re.search(r"OSS_mat_jacrow_([^_]+)", fname).group(1)
+                if jac_name not in self.jacobians_supported:
+                    self.jacobians_supported.append(jac_name)
+
         super().setup_grid()
 
     def spectral_domain(self, sensor_index):
@@ -53,11 +68,16 @@ class OSSForwardModel(rf.StandardForwardModel):
         oss_jacobs = np.empty((num_oss_pts,
                                oss_spec.spectral_range.data_ad.number_variable))
 
-        if oss_spec.spectral_range.data_ad.number_variable > 0:
+        if oss_spec.spectral_range.data_ad.number_variable > 0 and len(self.jacobian_ids):
+            if oss_spec.spectral_range.data_ad.number_variable != len(self.jacobian_ids):
+                raise RuntimeError("High resolution jacobian length != self.jacobian_ids: \n"
+                    f"{oss_spec.spectral_range.data_ad.number_variable} != {len(self.jacobian_ids)}")
+
+            jacobian_counter = defaultdict(int)
             oss_spec_range_jacob = oss_spec.spectral_range.data_ad.jacobian
             for i in range(oss_spec_range_jacob.shape[1]):
-                # TODO: need to identify correct OSS_mat_jacrow_<sv>_linear_level_<level>
-                oss_jacobs[:, i] = np.matmul(oss_spec_range_jacob[:, i], self.oss_interp)
+                jac_interp = self.get_jacobian_interp(self.jacobian_ids[i], jacobian_counter)
+                oss_jacobs[:, i] = np.matmul(oss_spec_range_jacob[:, i], jac_interp)
 
         highres_range_ad = rf.ArrayAd_double_1(highres_range, oss_jacobs)
 
@@ -117,6 +137,19 @@ class OSSForwardModel(rf.StandardForwardModel):
                 f"high_res_spec_effect_{effect.name}",
                 sensor_index)
         return highres_spec
+
+    def get_jacobian_interp(self, jac_name, jac_level_counter):
+        jac_interp = self.oss_interp # default interpolator
+        if jac_name in self.jacobians_supported:
+            jac_level = jac_level_counter[jac_name]
+            jac_level_counter[jac_name] = jac_level_counter[jac_name] + 1
+            jac_match = [
+                jac_interp_id
+                for jac_interp_id in self.jacobian_interp
+                if re.match(rf'OSS_mat_jacrow_{jac_name}_.*_{jac_level}$', jac_interp_id)]
+            if len(jac_match):
+                jac_interp = self.jacobian_interp[jac_match[0]]
+        return jac_interp
 
     def __str__(self):
         # TODO: If this method is used instead of print, add output from super().print()
