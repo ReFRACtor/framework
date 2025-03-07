@@ -25,10 +25,10 @@ class OSSForwardModel(rf.StandardForwardModel):
         train_data = np.load(self.train_fname)
         self.rt_sd = rf.SpectralDomain(train_data['wl_hires_nm'], rf.Unit("nm"))
         self.oss_sd = rf.SpectralDomain(train_data['instr_grid_nm'], rf.Unit("nm"))
-        self.oss_spectral_grid = rf.director.OSSForwardModelSpectralGrid(self.instrument,
-                                                                     self.spectral_window,
-                                                                     self.spectrum_sampling,
-                                                                     self.oss_sd)
+        self.oss_spectral_grid = rf.OSSForwardModelSpectralGrid(self.instrument,
+                                                                self.spectral_window,
+                                                                self.spectrum_sampling,
+                                                                self.oss_sd)
         self.oss_interp = train_data['OSS_mat_default']
 
         self.jacobian_interp = {}
