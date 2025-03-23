@@ -78,8 +78,10 @@ std::string parse_python_exception() {
   PyObject *type = NULL, *value = NULL, *tb = NULL;
   std::string ret = "Python error that I can't parse";
   PyErr_Fetch(&type, &value, &tb);
-  PyObject * temp_bytes = PyUnicode_AsEncodedString(value, "ASCII", 
+  PyObject * val_str = PyObject_Str(value);
+  PyObject * temp_bytes = PyUnicode_AsEncodedString(val_str, "ASCII", 
 						    "ignore");
+  Py_DECREF(val_str);
   if(temp_bytes) {
     ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
     Py_DECREF(temp_bytes);
