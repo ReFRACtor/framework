@@ -56,7 +56,7 @@ public:
   /// Assigned mapping name
   //-----------------------------------------------------------------------
 
-  virtual std::string name() const = 0;
+  virtual std::string name() const { return "state mapping"; }
 
   virtual boost::shared_ptr<StateMapping> clone() const = 0;
 

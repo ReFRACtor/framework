@@ -22,6 +22,8 @@ namespace FullPhysics {
 class StateMappingBasisMatrix : public StateMapping  {
 public:
   StateMappingBasisMatrix(const blitz::Array<double, 2> Basis_matrix);
+  StateMappingBasisMatrix(const blitz::Array<double, 2> Basis_matrix,
+			  const blitz::Array<double, 2>& Inverse_basis_matrix);
   virtual ~StateMappingBasisMatrix() {}
   
   virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const;
@@ -29,7 +31,7 @@ public:
   (const ArrayAd<double, 1>& initial_values) const;
   virtual std::string name() const { return "basis matrix"; }
   virtual boost::shared_ptr<StateMapping> clone() const
-  { return boost::make_shared<StateMappingBasisMatrix>(basis_matrix()); }
+  { return boost::make_shared<StateMappingBasisMatrix>(basis_matrix(), inverse_basis_matrix()); }
 
   //-----------------------------------------------------------------------
   /// Matrix that takes us from the retrieval grid to the forward

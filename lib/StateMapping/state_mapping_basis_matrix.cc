@@ -34,6 +34,25 @@ StateMappingBasisMatrix::StateMappingBasisMatrix
 }
 
 //-----------------------------------------------------------------------
+/// Most of the time you want to have StateMappingBasisMatrix
+/// calculate the inverse. However for comparing against old muses-py
+/// it can be useful to use the muses-py inverse. This typically has
+/// round off differences, and by using the same matrix we can
+/// directly compare results without needing to account for the
+/// differences in the matrixes.
+//-----------------------------------------------------------------------
+
+StateMappingBasisMatrix::StateMappingBasisMatrix
+(const blitz::Array<double, 2> Basis_matrix,
+ const blitz::Array<double, 2>& Inverse_basis_matrix)
+  :  basis_matrix_(Basis_matrix.copy()),
+     inverse_basis_matrix_(Inverse_basis_matrix.copy())
+{
+  if(Basis_matrix.rows() == 0 || Basis_matrix.cols() ==0)
+    throw Exception("Basis matrix is size 0");
+}
+
+//-----------------------------------------------------------------------
 /// Go to forward model grid
 //-----------------------------------------------------------------------
 
