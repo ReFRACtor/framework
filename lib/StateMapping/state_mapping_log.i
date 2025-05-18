@@ -13,7 +13,7 @@ namespace FullPhysics {
 class StateMappingLog : public StateMapping {
 public:
   StateMappingLog();
-  virtual boost::shared_ptr<StateMapping> clone();
+  virtual boost::shared_ptr<StateMapping> clone() const;
   %pickle_serialization();
 };
 }

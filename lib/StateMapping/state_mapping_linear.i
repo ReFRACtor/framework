@@ -14,7 +14,7 @@ namespace FullPhysics {
 class StateMappingLinear : public StateMapping  {
 public:
   StateMappingLinear();
-  virtual boost::shared_ptr<StateMapping> clone();
+  virtual boost::shared_ptr<StateMapping> clone() const;
   %pickle_serialization();
 };
 }

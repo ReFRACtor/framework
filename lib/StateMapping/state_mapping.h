@@ -24,13 +24,21 @@ public:
   //-----------------------------------------------------------------------
   /// Calculation of forward model view of coeffs with mapping applied
   //-----------------------------------------------------------------------
-  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const = 0;
+  virtual ArrayAd<double, 1> mapped_state(const ArrayAd<double, 1>& retrieval_values) const
+  {
+    // default is do nothing.
+    return retrieval_values;
+  }
 
   //-----------------------------------------------------------------------
   /// Calculation of initial retrieval view of coeffs with mapping applied
   //-----------------------------------------------------------------------
 
-  virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const = 0;
+  virtual ArrayAd<double, 1> retrieval_state(const ArrayAd<double, 1>& initial_values) const
+  {
+    // default is do nothing.
+    return initial_values;
+  }
 
   //-----------------------------------------------------------------------
   /// Convert a jacobian in the mapped state to the retrieval state.

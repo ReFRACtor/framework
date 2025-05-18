@@ -15,7 +15,7 @@ class StateMappingComposite : public StateMapping  {
 public:
     virtual ~StateMappingComposite() {};
     StateMappingComposite(const std::vector<boost::shared_ptr<StateMapping> >& Mappings);
-    virtual boost::shared_ptr<StateMapping> clone();
+    virtual boost::shared_ptr<StateMapping> clone() const;
     %pickle_serialization();
 };
 }

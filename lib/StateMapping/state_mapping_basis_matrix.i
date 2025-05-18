@@ -14,7 +14,7 @@ public:
   StateMappingBasisMatrix(const blitz::Array<double, 2> Basis_matrix);
   StateMappingBasisMatrix(const blitz::Array<double, 2> Basis_matrix,
 			  const blitz::Array<double, 2>& Inverse_basis_matrix);
-  virtual boost::shared_ptr<StateMapping> clone();
+  virtual boost::shared_ptr<StateMapping> clone() const;
   %python_attribute(basis_matrix, blitz::Array<double, 2>);
   %python_attribute(inverse_basis_matrix, blitz::Array<double, 2>);
   %pickle_serialization();

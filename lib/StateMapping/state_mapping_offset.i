@@ -15,7 +15,7 @@ namespace FullPhysics {
 class StateMappingOffset : public StateMapping {
 public:
   StateMappingOffset(double Offset, blitz::Array<double, 1> Offsetee);
-  virtual boost::shared_ptr<StateMapping> clone();
+  virtual boost::shared_ptr<StateMapping> clone() const;
   %python_attribute(initial_offset, double);
   %python_attribute(offsetee, blitz::Array<double, 1>);
   %pickle_serialization();

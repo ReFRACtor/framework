@@ -27,7 +27,7 @@ public:
     virtual ~StateMappingInterpolate() {}
     StateMappingInterpolate(const boost::shared_ptr<Pressure>& PressTo,
                             const boost::shared_ptr<Pressure>& PressFrom);
-    virtual boost::shared_ptr<StateMapping> clone();
+    virtual boost::shared_ptr<StateMapping> clone() const;
     %pickle_serialization();
 };
 
