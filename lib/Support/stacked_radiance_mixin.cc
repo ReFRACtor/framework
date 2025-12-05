@@ -65,10 +65,14 @@ Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
     bool have_uncertainty = true;
     BOOST_FOREACH(const Spectrum & s, sall) {
         nrow += s.spectral_domain().data().rows();
-        nvar = std::max(nvar, s.spectral_range().data_ad().number_variable());
-
+	if(!s.spectral_range().data_ad().is_constant()) {
+	  if(nvar == 0)
+	    nvar = s.spectral_range().data_ad().number_variable();
+	  if(nvar != s.spectral_range().data_ad().number_variable())
+	    throw Exception("Spectrum Jacobians need to be constant or all the same size");
+	}
         if(s.spectral_range().uncertainty().rows() == 0) {
-            have_uncertainty = false;
+	  have_uncertainty = false;
         }
     }
     Unit ud, ur;
@@ -96,10 +100,14 @@ Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
             uncer(prall[i]) = sall[i].spectral_range().uncertainty() *
                               FullPhysics::conversion(sall[i].spectral_range().units(), ur);
 
-        if(nvar > 0)
-            sr.jacobian()(prall[i], Range::all()) =
-                sall[i].spectral_range().data_ad().jacobian() *
-                FullPhysics::conversion(sall[i].spectral_range().units(), ur);
+        if(nvar > 0) {
+	  if(sall[i].spectral_range().data_ad().is_constant())
+	    sr.jacobian()(prall[i], Range::all()) = 0;
+	  else
+	    sr.jacobian()(prall[i], Range::all()) =
+	      sall[i].spectral_range().data_ad().jacobian() *
+	      FullPhysics::conversion(sall[i].spectral_range().units(), ur);
+	}
     }
 
     return Spectrum(SpectralDomain(sd, ud), SpectralRange(sr, ur, uncer));
