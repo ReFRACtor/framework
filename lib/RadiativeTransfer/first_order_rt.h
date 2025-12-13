@@ -53,4 +53,5 @@ private:
 }
 
 FP_EXPORT_KEY(FirstOrderRt);
+FP_CLASS_VERSION(FirstOrderRt, 1);
 #endif

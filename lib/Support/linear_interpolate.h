@@ -18,6 +18,7 @@ template<> class InterpolatePoint<AutoDerivative<double>,
 
 template<class TX, class TY> class InterpolatePoint {
 public:
+  virtual ~InterpolatePoint() {}
   virtual const TX& x_min() const = 0;
   virtual const TX& x_max() const = 0;
   virtual TY operator()(const TX& x) const = 0;
@@ -41,6 +42,7 @@ public:
   Return1Point(const TX& x0, const TY& y0)
     : x0_(x0), y0_(y0) 
   {}
+  virtual ~Return1Point() {}
   const TX& x_min() const {return x0_; }
   const TX& x_max() const {return x0_; }
   TY operator()(const TX& UNUSED(x)) const { return y0_; }
@@ -73,6 +75,7 @@ public:
   {
     range_max_check(x0, x1);
   }
+  virtual ~LinearInterpolate2Point() {}
   const TX& x_min() const {return x0_; }
   const TX& x_max() const {return x1_; }
   TY operator()(const TX& x) const { return TY(y0_ + delta_y0_ * (x - x0_)); }

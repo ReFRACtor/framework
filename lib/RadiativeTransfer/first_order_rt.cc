@@ -23,20 +23,24 @@ void FirstOrderRt::save(Archive &ar,
   if(!SpurrRt::serialize_full_state) {
     int number_stream_ = number_stream();
     int number_moment_ = number_moment();
-    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment);
+    int number_layer_ = atm->number_layer();
+    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment) & FP_NVP_(number_layer);
   }
 }
 
 template<class Archive>
 void FirstOrderRt::load(Archive &ar,
-			const unsigned int UNUSED(version)) 
+			const unsigned int version) 
 {
+  if(version < 1)
+    throw Exception("Note there was a bug with the older version of FirstOrderRt serialization, we tried using the atmosphere before it was fully constructed. We have fixed this, but the older version can't be supported. Recreate your boost serialization.");
   if(!rt_driver_) {
     int number_stream_;
     int number_moment_;
-    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment);
+    int number_layer_;
+    ar & FP_NVP_(number_stream) & FP_NVP_(number_moment) & FP_NVP_(number_layer);
     rt_driver_.reset(new FirstOrderDriver
-     (atm->number_layer(), surface_type(), number_stream_, number_moment_,
+     (number_layer_, surface_type(), number_stream_, number_moment_,
       do_solar_sources, do_thermal_emission));
   }
 }
