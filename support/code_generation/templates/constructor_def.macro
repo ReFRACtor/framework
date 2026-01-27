@@ -1,3 +1,0 @@
-{% macro constructor(class_name, arguments=[], inits=[]) -%}
-{{ class_name }}({{ arguments|join(", ") }}){% if inits|count > 0 %} : {{ inits|join(", ") }}{% endif %}
-{%- endmacro %}
