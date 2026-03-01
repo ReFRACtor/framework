@@ -18,14 +18,8 @@ namespace FullPhysics {
 class SurfaceTemperatureDirect : public SubStateVectorArray<SurfaceTemperature> {
 public:
   SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp);
+  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp, boost::shared_ptr<StateMapping> in_map);
   virtual ~SurfaceTemperatureDirect() {}
-
-  //-----------------------------------------------------------------------
-  /// Return the temperature of the surface. This is different than the
-  /// temperature near the surface which would be the lowest level of
-  /// the temperature grid.
-  //-----------------------------------------------------------------------
-
   virtual AutoDerivativeWithUnit<double>
     surface_temperature(int sensor_index) const;
   virtual boost::shared_ptr<SurfaceTemperature> clone() const;
@@ -34,3 +28,6 @@ public:
   %pickle_serialization();
 };
 }
+
+// List of things "import *" will include
+%python_export("SurfaceTemperatureDirect");

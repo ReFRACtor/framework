@@ -53,6 +53,7 @@ set(DIR_SOURCES
     optical_properties_imp_base.cc
     optical_properties_init_base.cc
     output.cc
+    pcloud.cc
     perturbation.cc
     pressure.cc
     pressure_imp_base.cc
@@ -62,6 +63,7 @@ set(DIR_SOURCES
     rt_atmosphere.cc
     sample_grid.cc
     sample_grid_imp_base.cc
+    scale_cloud.cc
     solar_absorption_spectrum.cc
     solar_continuum_spectrum.cc
     solar_doppler_shift.cc

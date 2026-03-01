@@ -19,13 +19,17 @@
 namespace FullPhysics {
 class SurfaceTemperature : virtual public StateVectorObserver, public Observable<SurfaceTemperature> {
 public:
-    virtual ~SurfaceTemperature() {}
-    virtual void add_observer(Observer<SurfaceTemperature>& Obs);
-    virtual void remove_observer(Observer<SurfaceTemperature>& Obs);
-    virtual AutoDerivativeWithUnit<double> surface_temperature(int sensor_index) const = 0;
-    virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
+  virtual void add_observer(Observer<SurfaceTemperature>& Obs);
+  virtual void remove_observer(Observer<SurfaceTemperature>& Obs);
+  virtual AutoDerivativeWithUnit<double> surface_temperature(int sensor_index) const = 0;
+  virtual boost::shared_ptr<SurfaceTemperature> clone() const = 0;
+  virtual std::string desc() const;
+  std::string print_to_string() const;
+  std::string print_parent() const;
   %pickle_serialization();
 };
 }
 
+// List of things "import *" will include
+%python_export("SurfaceTemperature");
 

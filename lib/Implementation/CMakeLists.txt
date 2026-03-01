@@ -91,6 +91,7 @@ set(DIR_SOURCES
     optical_properties_wrt_rt.cc
     output_hdf.cc
     output_hdf_iteration.cc
+    pcloud_direct.cc
     planck.F90
     planck.cc
     powell_nlls_problem.cc
@@ -109,6 +110,7 @@ set(DIR_SOURCES
     relative_humidity.cc
     rosenbrock2_nlls_problem.cc
     sample_grid_spectral_domain.cc
+    scale_cloud_direct.cc
     scattering_moment_interpolator.cc
     simple_fixed_spectrum_sampling.cc
     solar_absorption_and_continuum.cc
