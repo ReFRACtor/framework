@@ -27,6 +27,7 @@
 
 #include <Python.h>
 #include <iostream>
+#include "python_exception.h"
 
 // The double macros such as XINIT_NAME_PYTHON3 and INIT_NAME_PYTHON3
 // are needed to get PYTHON_MODULE_NAME to expand before the macro
@@ -74,20 +75,21 @@ extern "C" {
 }
 
 // Used throughout SWIG wrapper, define here because it is convenient.
-std::string parse_python_exception() {
-  PyObject *type = NULL, *value = NULL, *tb = NULL;
-  std::string ret = "Python error that I can't parse";
-  PyErr_Fetch(&type, &value, &tb);
-  PyObject * val_str = PyObject_Str(value);
+PythonException::PythonException()
+  : std::runtime_error(""),
+    type(NULL), value(NULL), tb(NULL), desc("Python error that I can't parse")
+{
+  PyErr_Fetch((PyObject**) &type, (PyObject**)&value, (PyObject**)&tb);
+  PyObject * val_str = PyObject_Str((PyObject*) value);
   PyObject * temp_bytes = PyUnicode_AsEncodedString(val_str, "ASCII", 
-						    "ignore");
+						      "ignore");
   Py_DECREF(val_str);
   if(temp_bytes) {
-    ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+    desc = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
     Py_DECREF(temp_bytes);
   }
   // Try to get a traceback if we can
-  PyErr_NormalizeException(&type, &value, &tb);
+  PyErr_NormalizeException((PyObject**)&type, (PyObject**)&value, (PyObject**)&tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
   if(tb) {
@@ -100,21 +102,65 @@ std::string parse_python_exception() {
 				 Text_FromUTF8("join"), 
 				 err_str_list, NULL);
     if(err_str) {
-        PyObject * temp_bytes = PyUnicode_AsEncodedString(err_str, "ASCII", 
-	"strict");
-	if(temp_bytes) {
-	  ret = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
-	  Py_DECREF(temp_bytes);
-	}
+      PyObject * temp_bytes = PyUnicode_AsEncodedString(err_str, "ASCII", 
+							"strict");
+      if(temp_bytes) {
+	desc = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
+	Py_DECREF(temp_bytes);
+      }
     }
     Py_XDECREF(err_str);
   }
   Py_XDECREF(mod);
   Py_XDECREF(err_str_list);
-  Py_XDECREF(type);
-  Py_XDECREF(value);
-  Py_XDECREF(tb);
-  return ret;
+  desc = "Python error occured:\n" + desc;
+}
+
+PythonException::PythonException(const PythonException& other)
+  : std::runtime_error(other)
+{
+  type = other.type;
+  value = other.value;
+  tb = other.tb;
+  desc = other.desc;
+  Py_XINCREF((PyObject*)type);
+  Py_XINCREF((PyObject*)value);
+  Py_XINCREF((PyObject*)tb);
+}
+
+PythonException& PythonException::operator=(const PythonException& other)
+{
+  Py_XDECREF((PyObject*)type);
+  Py_XDECREF((PyObject*)value);
+  Py_XDECREF((PyObject*)tb);
+  type = other.type;
+  value = other.value;
+  tb = other.tb;
+  desc = other.desc;
+  Py_XINCREF((PyObject*)type);
+  Py_XINCREF((PyObject*)value);
+  Py_XINCREF((PyObject*)tb);
+  return *this;
+}
+
+PythonException::~PythonException()
+{
+  Py_XDECREF((PyObject*)type);
+  Py_XDECREF((PyObject*)value);
+  Py_XDECREF((PyObject*)tb);
+}
+
+const char* PythonException::what() const noexcept
+{ return desc.c_str(); }
+
+void PythonException::restore_python_exception() const
+{
+  PyErr_Restore((PyObject *)type, (PyObject *)value, (PyObject *)tb);
+  // After restore, we no longer own these objects. Set to 0 so we
+  // don't try to delete these in the destructor
+  type = NULL;
+  value = NULL;
+  tb = NULL;
 }
 
 #if PY_MAJOR_VERSION > 2
