@@ -237,6 +237,7 @@ struct base_unit_ : qi::symbols<char, Unit>
       ("Ph", ph)
       ("sample_index", sample_index)
       ("dimensionless", dimensionless)
+      ("mixed_units", mixed_units)
       ("N", N)
       ("Pa", Pa)
       ("bar", bar)

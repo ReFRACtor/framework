@@ -21,6 +21,14 @@ namespace FullPhysics {
   photon count, which doesn't really have units either. But it is
   useful to track because we can determine the photon count at a
   particular wavelength to convert to cm^-1.
+
+  We occasionally have a set of data that isn't really one set o
+  units - py-retrieve does this when mixing OSS and VLIDORT forward
+  models. It can be useful to still group the data, but we have
+  a "mixed_units" to mark this. This is just dimensionless with
+  another more descriptive name. This means you need to get the
+  units through some other process, e.g. knowing where you are in
+  a spectrum to know which data you are looking at.
 *******************************************************************/
 class Unit : public Printable<Unit>,
 	     boost::equality_comparable<Unit>,
@@ -127,6 +135,8 @@ inline Unit operator/(double Scale_factor, const Unit& Unit)
     const Unit sample_index("sample_index", 
                           1.0, 0,0,0,0,0,0,0,0,0,0,1);
     const Unit dimensionless("dimensionless", 
+                          1.0, 0,0,0,0,0,0,0,0,0,0,0);
+    const Unit mixed_units("mixed_units", 
                           1.0, 0,0,0,0,0,0,0,0,0,0,0);
 
 //-----------------------------------------------------------------------
