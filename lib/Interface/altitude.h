@@ -3,10 +3,11 @@
 #include "observer.h"
 #include "array_ad.h"
 #include "auto_derivative_with_unit.h"
+#include "array_ad_with_unit.h"
+#include "pressure.h"
 
 namespace FullPhysics {
 class Temperature;
-class Pressure;
 /****************************************************************//**
    The class handles the calculation of the altitude and gravity
    constants. 
@@ -31,6 +32,9 @@ public:
   virtual AutoDerivativeWithUnit<double> 
   altitude(const AutoDerivativeWithUnit<double>& P) const = 0;
 
+  virtual ArrayAdWithUnit<double, 1> altitude_grid(const Pressure& P,
+      Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
+  
 //-----------------------------------------------------------------------
 /// Return gravity constant for the given pressure. 
 //-----------------------------------------------------------------------
