@@ -3,10 +3,9 @@
 #include "swig_type_mapper_base.h"
 #include "swig_to_python.h"
 #include "python_ref_ptr_cleanup.h"
+#include "python_exception.h"
 
 //#define PTR_DEBUG 1
-
-std::string parse_python_exception();
 
 namespace SWIG_MAPPER_NAMESPACE {
 
@@ -77,7 +76,7 @@ private:
 					       PyString_FromString("dumps"),
 					       obj, NULL);
     if(PyErr_Occurred()) {
-      throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
+      throw PythonException();
     }
     char *buf;
     Py_ssize_t len;
@@ -91,7 +90,7 @@ private:
 					       PyBytes_FromStringAndSize(S.c_str(), S.size()), 
 					       NULL);
     if(PyErr_Occurred()) {
-      throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
+      throw PythonException();
     }
     return res;
   }

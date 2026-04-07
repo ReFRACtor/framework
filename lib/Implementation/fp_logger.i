@@ -3,6 +3,7 @@
 %include "fp_common.i"
 %{
 #include "fp_logger.h"
+#include "python_exception.h"
 %}
 
 %{
@@ -51,7 +52,7 @@ public:
       throw Exception("Unknown log level");
     }
     if(PyErr_Occurred())
-      throw std::runtime_error("Python error occurred:\n" + parse_python_exception());
+      throw PythonException();
   }
   virtual std::ostream* stream() {return 0;}
   static void turn_on_logger(PyObject* Obj)

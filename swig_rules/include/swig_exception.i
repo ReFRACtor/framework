@@ -7,23 +7,28 @@
 
 %include "exception.i"
 
+%{
+  // This is defined in swig_wrap.tmpl, so it gets put into
+  // swig_wrap.cc
+  #include "python_exception.h"
+%}
+
 %exception {
   try {
     $action
   } catch (Swig::DirectorException &e) { 
+    SWIG_fail; 
+  } catch (const PythonException& e) {
+    e.restore_python_exception();
     SWIG_fail; 
   } catch (const std::exception& e) {
     SWIG_exception(SWIG_RuntimeError, e.what());
   }
 }
 
-%{
-  // This is defined in swig_wrap.tmpl, so it gets put into swig_wrap.cc
-  std::string parse_python_exception();
-%}
 %feature("director:except") {
     if ($error != NULL) {
-      throw std::runtime_error("Python error occured:\n" + parse_python_exception());
+      throw PythonException();
     }
 }
 

@@ -35,3 +35,17 @@ REGISTER_LUA_CLASS_NAME(std::vector<boost::shared_ptr<Altitude> >, VectorAltitud
 .def("value", ((vt1) &std::vector<boost::shared_ptr<Altitude> >::operator[]))
 REGISTER_LUA_END()
 #endif
+
+//-----------------------------------------------------------------------
+/// Return altitude at the pressure grid.
+//-----------------------------------------------------------------------
+ArrayAdWithUnit<double, 1> Altitude::altitude_grid(const Pressure& P, Pressure::PressureGridType Gtype) 
+const
+{
+  ArrayAdWithUnit<double, 1> pgrid = P.pressure_grid(Gtype);
+  blitz::Array<AutoDerivative<double>, 1> res(pgrid.rows());
+  Unit u = altitude(pgrid(0)).units;
+  for(int i = 0; i < res.rows(); ++i)
+    res(i) = altitude(pgrid(i)).convert(u).value;
+  return ArrayAdWithUnit<double, 1>(ArrayAd<double, 1>(res), u);
+}

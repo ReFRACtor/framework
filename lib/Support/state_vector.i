@@ -70,6 +70,7 @@ public:
 };
 }
 
-// This silences  warning messages. Not sure if the message are important
-// or not, but good to have them be quiet
-%rename(ObserverStateVector2) FullPhysics::Observer<FullPhysics::StateVector>;
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(state_vector, ObserverStateVector)
+

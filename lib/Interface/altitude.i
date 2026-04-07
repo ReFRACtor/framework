@@ -16,6 +16,7 @@ namespace FullPhysics {
 }
 
 %import "observer.i"
+%import "array_with_unit.i"
 %import "auto_derivative_with_unit.i"
 %import "pressure.i"
 %import "temperature.i"
@@ -52,6 +53,8 @@ public:
   virtual AutoDerivativeWithUnit<double> 
   altitude(const AutoDerivativeWithUnit<double>& P) 
     const = 0;
+  virtual ArrayAdWithUnit<double, 1> altitude_grid(const Pressure& P,
+      Pressure::PressureGridType Gtype = Pressure::INCREASING_PRESSURE) const;
   virtual AutoDerivativeWithUnit<double> 
   gravity(const AutoDerivativeWithUnit<double>& P) 
     const = 0;

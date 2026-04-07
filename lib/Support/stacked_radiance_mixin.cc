@@ -86,28 +86,26 @@ Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
     Array<double, 1> sd(nrow);
     Array<double, 1> uncer;
 
-    if(have_uncertainty) {
-        uncer.resize(nrow);
-    }
+    if(have_uncertainty)
+      uncer.resize(nrow);
 
     for(int i = 0; i < (int) sall.size(); ++i) {
-        sd(prall[i]) = sall[i].spectral_domain().data() *
-                       FullPhysics::conversion(sall[i].spectral_domain().units(), ud);
-        sr.value()(prall[i]) = sall[i].spectral_range().data() *
-                               FullPhysics::conversion(sall[i].spectral_range().units(), ur);
+      sd(prall[i]) = sall[i].spectral_domain().convert_wave(ud);
+      sr.value()(prall[i]) = sall[i].spectral_range().data() *
+	FullPhysics::conversion(sall[i].spectral_range().units(), ur);
 
-        if(have_uncertainty)
-            uncer(prall[i]) = sall[i].spectral_range().uncertainty() *
-                              FullPhysics::conversion(sall[i].spectral_range().units(), ur);
+      if(have_uncertainty)
+	uncer(prall[i]) = sall[i].spectral_range().uncertainty() *
+	  FullPhysics::conversion(sall[i].spectral_range().units(), ur);
 
-        if(nvar > 0) {
-	  if(sall[i].spectral_range().data_ad().is_constant())
-	    sr.jacobian()(prall[i], Range::all()) = 0;
-	  else
-	    sr.jacobian()(prall[i], Range::all()) =
-	      sall[i].spectral_range().data_ad().jacobian() *
-	      FullPhysics::conversion(sall[i].spectral_range().units(), ur);
-	}
+      if(nvar > 0) {
+	if(sall[i].spectral_range().data_ad().is_constant())
+	  sr.jacobian()(prall[i], Range::all()) = 0;
+	else
+	  sr.jacobian()(prall[i], Range::all()) =
+	    sall[i].spectral_range().data_ad().jacobian() *
+	    FullPhysics::conversion(sall[i].spectral_range().units(), ur);
+      }
     }
 
     return Spectrum(SpectralDomain(sd, ud), SpectralRange(sr, ur, uncer));
@@ -116,38 +114,34 @@ Spectrum StackedRadianceMixin::radiance_all(bool skip_jacobian) const
 
 SpectralDomain StackedRadianceMixin::spectral_domain_all() const
 {
-    std::vector<SpectralDomain> sall;
-    std::vector<Range> prall;
+  std::vector<SpectralDomain> sall;
+  std::vector<Range> prall;
 
-    for(int i = 0; i < num_channels(); ++i) {
-        boost::optional<Range> pr = stacked_pixel_range(i);
+  for(int i = 0; i < num_channels(); ++i) {
+    boost::optional<Range> pr = stacked_pixel_range(i);
 
-        if(pr) {
-            sall.push_back(spectral_domain(i));
-            prall.push_back(*pr);
-        }
+    if(pr) {
+      sall.push_back(spectral_domain(i));
+      prall.push_back(*pr);
     }
+  }
 
-    if(sall.size() == 0) {
-        throw Exception("Measured radiance Spectrum empty, pixel ranges must be empty");
-    }
+  if(sall.size() == 0)
+    throw Exception("Measured radiance Spectrum empty, pixel ranges must be empty");
 
-    int nrow = 0;
-    BOOST_FOREACH(const SpectralDomain & s, sall) {
-        nrow += s.data().rows();
-    }
-    Unit ud;
+  int nrow = 0;
+  BOOST_FOREACH(const SpectralDomain & s, sall)
+    nrow += s.data().rows();
+  Unit ud;
 
-    if(sall.size() > 0) {
-        ud = sall[0].units();
-    }
+  if(sall.size() > 0) {
+    ud = sall[0].units();
+  }
 
-    Array<double, 1> sd(nrow);
+  Array<double, 1> sd(nrow);
 
-    for(int i = 0; i < (int) sall.size(); ++i) {
-        sd(prall[i]) = sall[i].data() *
-                       FullPhysics::conversion(sall[i].units(), ud);
-    }
+  for(int i = 0; i < (int) sall.size(); ++i)
+    sd(prall[i]) = sall[i].convert_wave(ud);
 
-    return SpectralDomain(sd, ud);
+  return SpectralDomain(sd, ud);
 }

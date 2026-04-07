@@ -14,7 +14,8 @@ namespace FullPhysics {
 class SurfaceTemperatureDirect :
     virtual public SubStateVectorArray<SurfaceTemperature> {
 public:
-  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp);
+  SurfaceTemperatureDirect(const ArrayWithUnit<double, 1>& surf_temp,
+			   boost::shared_ptr<StateMapping> in_map = boost::make_shared<StateMappingLinear>());
   virtual ~SurfaceTemperatureDirect() {}
 
   //-----------------------------------------------------------------------
@@ -31,7 +32,8 @@ public:
   { return "surface_temperature"; }
 
   std::string state_vector_name_i(int i) const;
-
+  virtual void print(std::ostream& Os) const
+  { Os << "SurfaceTemperatureDirect";}
 private:
   Unit units;
   SurfaceTemperatureDirect() {}
