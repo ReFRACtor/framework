@@ -32,7 +32,8 @@ REGISTER_LUA_DERIVED_CLASS(StandardForwardModel, ForwardModel)
      const boost::shared_ptr<RadiativeTransfer>&,
      const boost::shared_ptr<SpectrumSampling>&,
      const std::vector<std::vector<boost::shared_ptr<SpectrumEffect> > >& > ())
-.def("spectral_grid", &StandardForwardModel::spectral_grid)
+.def("spectral_grid", (const boost::shared_ptr<ForwardModelSpectralGrid>& (StandardForwardModel::*)() const)&StandardForwardModel::spectral_grid)
+.def("spectral_grid", (void (StandardForwardModel::*)(const boost::shared_ptr<ForwardModelSpectralGrid>&))&StandardForwardModel::spectral_grid)
 REGISTER_LUA_END()
 #endif
 
