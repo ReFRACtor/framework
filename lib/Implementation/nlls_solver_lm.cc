@@ -396,7 +396,8 @@ NLLSSolver::status_t NLLSSolverLM::iterate()
         VectorXd QTRes_extra = VectorXd::Zero(n);
         MatrixXd Rnn = MatrixXd::Zero(n,n);
         Rnn.topRows(r) = Rrn;
-        MatrixXd diag = (sqrt(Ap.lambda)*(j_QR.colsPermutation().transpose()*W)).asDiagonal();
+        VectorXd temp_perm_W = j_QR.colsPermutation().transpose()*W;
+        MatrixXd diag = (sqrt(Ap.lambda)*temp_perm_W).asDiagonal();
         for(uint32_t i=0; i<n; i++) {
           double cs, sn;
 
