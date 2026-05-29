@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import numpy as np
 
-from .base import Creator
+from .base import Creator, ConfigDict
 from .types import RetrievalComponents
 from .. import param
 
@@ -28,11 +28,11 @@ class RetrievalBaseCreator(Creator):
         state_vector = self.common_store["state_vector"] = self.state_vector()
         initial_guess = self.common_store["initial_guess"] = self.initial_guess()
 
-        return {
+        return ConfigDict({
             'retrieval_components': retrieval_components,
             'state_vector': state_vector,
             'initial_guess': initial_guess,
-        }
+        })
   
 class NLLSRetrieval(RetrievalBaseCreator):
 
