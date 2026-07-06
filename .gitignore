@@ -52,3 +52,12 @@ lib/Implementation/*.mod
 
 # crash core dumps
 core.*
+
+# graphify local files
+graphify-out/cost.json
+graphify-out/cache/
+lib/graphify-out/cache/
+
+# User settings
+.vscode
+.claude

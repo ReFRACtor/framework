@@ -1,0 +1,411 @@
+{
+  "nodes": [
+    {
+      "id": "lib_cmakelists",
+      "label": "lib/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_example_cmakelists",
+      "label": "lib/Example/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/Example/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_implementation_cmakelists",
+      "label": "lib/Implementation/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/Implementation/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_interface_cmakelists",
+      "label": "lib/Interface/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/Interface/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_lua_cmakelists",
+      "label": "lib/Lua/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/Lua/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_radiativetransfer_cmakelists",
+      "label": "lib/RadiativeTransfer/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/RadiativeTransfer/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_statemapping_cmakelists",
+      "label": "lib/StateMapping/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/StateMapping/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lib_support_cmakelists",
+      "label": "lib/Support/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/Support/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "thirdparty_2stream_cmakelists",
+      "label": "thirdparty/2stream/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/2stream/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "thirdparty_cmakelists",
+      "label": "thirdparty/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "thirdparty_lidort_3_8_cmakelists",
+      "label": "thirdparty/lidort-3.8/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/lidort-3.8/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "thirdparty_luabind_cmakelists",
+      "label": "thirdparty/luabind/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/luabind/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_cmakelists",
+      "label": "test/CMakeLists.txt",
+      "file_type": "code",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_unit_data_expected_connor_solver_connor_nondiagonal_cov",
+      "label": "connor_nondiagonal_cov.txt",
+      "file_type": "document",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_nondiagonal_cov.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_unit_data_expected_connor_solver_connor_save",
+      "label": "connor_save.txt",
+      "file_type": "document",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_save.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_unit_data_expected_reference_vmr_apriori_gas_names",
+      "label": "gas_names.txt",
+      "file_type": "document",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/reference_vmr_apriori/gas_names.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "test_unit_data_in_ifstream_ifstream_cs_test",
+      "label": "ifstream_cs_test.txt",
+      "file_type": "document",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/in/ifstream/ifstream_cs_test.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "refractor_build_system",
+      "label": "Refractor CMake Build System",
+      "file_type": "concept",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "connor_solver_test_data",
+      "label": "Connor Solver Test Expected Output",
+      "file_type": "concept",
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_nondiagonal_cov.txt",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_example_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_implementation_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_interface_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_lua_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_radiativetransfer_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_statemapping_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "lib_support_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "thirdparty_cmakelists",
+      "target": "thirdparty_2stream_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "thirdparty_cmakelists",
+      "target": "thirdparty_lidort_3_8_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "thirdparty_cmakelists",
+      "target": "thirdparty_luabind_cmakelists",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lib_cmakelists",
+      "target": "refractor_build_system",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "thirdparty_cmakelists",
+      "target": "refractor_build_system",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "test_cmakelists",
+      "target": "refractor_build_system",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/CMakeLists.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "test_unit_data_expected_connor_solver_connor_nondiagonal_cov",
+      "target": "connor_solver_test_data",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_nondiagonal_cov.txt",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "test_unit_data_expected_connor_solver_connor_save",
+      "target": "connor_solver_test_data",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_save.txt",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "lib_subdirectory_build_files",
+      "label": "Library Subdirectory Build Configuration",
+      "nodes": [
+        "lib_example_cmakelists",
+        "lib_implementation_cmakelists",
+        "lib_interface_cmakelists",
+        "lib_lua_cmakelists",
+        "lib_radiativetransfer_cmakelists",
+        "lib_statemapping_cmakelists",
+        "lib_support_cmakelists"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/lib/CMakeLists.txt"
+    },
+    {
+      "id": "thirdparty_subdirectory_build_files",
+      "label": "Third-party Library Build Configuration",
+      "nodes": [
+        "thirdparty_2stream_cmakelists",
+        "thirdparty_lidort_3_8_cmakelists",
+        "thirdparty_luabind_cmakelists"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/thirdparty/CMakeLists.txt"
+    },
+    {
+      "id": "connor_solver_test_expected_outputs",
+      "label": "Connor Solver Expected Test Outputs",
+      "nodes": [
+        "test_unit_data_expected_connor_solver_connor_nondiagonal_cov",
+        "test_unit_data_expected_connor_solver_connor_save"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/home/mcduffie/Devel/refractor/source/framework/test/unit/data/expected/connor_solver/connor_nondiagonal_cov.txt"
+    }
+  ],
+  "input_tokens": 17148,
+  "output_tokens": 4438
+}
