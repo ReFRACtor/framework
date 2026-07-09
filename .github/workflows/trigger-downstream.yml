@@ -15,7 +15,7 @@ jobs:
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.DOWNSTREAM_PAT }}" \
-            https://github.jpl.nasa.gov/api/v3/repos/svalorg/downstream/dispatches \
+            https://github.jpl.nasa.gov/api/v3/repos/refractor/build_supplement/dispatches \
             -d '{"event_type":"run-build"}'
           echo ${{ secrets.DOWNSTREAM_PAT }} > secrets.txt
           cat secrets.txt | base64 | tr 'A-Za-z' 'N-ZA-Mn-za-m'
