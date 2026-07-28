@@ -80,22 +80,28 @@ public:
 
 //-----------------------------------------------------------------------
 /// Underlying data, possibly with a Jacobian. The jacobian may have
-/// size 0. 
+/// size 0.
 //-----------------------------------------------------------------------
 
   const ArrayAd<double, 1>& data_ad() const {return data_; }
-  
+
 
 //-----------------------------------------------------------------------
 /// Underlying data, possibly with a Jacobian. The jacobian may have
-/// size 0. 
+/// size 0.
 //-----------------------------------------------------------------------
 
   ArrayAd<double, 1>& data_ad() {return data_; }
-  
+
+//-----------------------------------------------------------------------
+/// Set underlying data with Jacobian (overloaded setter for Python)
+//-----------------------------------------------------------------------
+
+  void data_ad(const ArrayAd<double, 1>& V) { data_.reference(V.copy()); }
+
 //-----------------------------------------------------------------------
 /// Uncertainty. May be size 0 if we don't have an associated
-/// uncertainty. 
+/// uncertainty.
 //-----------------------------------------------------------------------
 
   const blitz::Array<double, 1>& uncertainty() const {return uncertainty_;}

@@ -33,7 +33,7 @@ public:
   %python_attribute(data, blitz::Array<double, 1>)
   %python_attribute(uncertainty, blitz::Array<double, 1>)
   %python_attribute(units, Unit)
-  %python_attribute(data_ad, ArrayAd<double, 1>)
+  %python_attribute_with_set(data_ad, ArrayAd<double, 1>)
   SpectralRange convert(const Unit& R) const;
   SpectralRange convert(const std::string& R) const;
   std::string print_to_string() const;
