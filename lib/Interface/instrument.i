@@ -21,7 +21,11 @@ namespace FullPhysics {
 namespace FullPhysics {
 %template(ObservableInstrument) FullPhysics::Observable<Instrument>;
 %template(ObserverInstrument) FullPhysics::Observer<Instrument>;
-class Instrument : virtual public StateVectorObserver, 
+
+// Allow this class to be derived from in Python.
+%feature("director") Instrument;
+
+class Instrument : virtual public StateVectorObserver,
 		   public Observable<Instrument> {
 public:
   virtual ~Instrument();
@@ -34,10 +38,20 @@ public:
     const Spectrum& High_resolution_spectrum,
     const std::vector<int>& Pixel_list,
     int Spec_index) const = 0;
-  %python_attribute(number_spectrometer, virtual int);
+
+  // When implementing directors can not use %python_attribute here or else there will
+  // be missing symbol problems in the director
+  virtual int number_spectrometer() const = 0;
   virtual SpectralDomain pixel_spectral_domain(int Spec_index) const = 0;
-  virtual DoubleWithUnit high_res_extension(int Spec_index) const;
-  virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension);
+  virtual DoubleWithUnit high_res_extension(int Spec_index) const = 0;
+  virtual void high_res_extension(int Spec_index, DoubleWithUnit& extension) = 0;
   %pickle_serialization();
 };
 }
+
+// Extra code for handling boost serialization/python pickle of
+// director classes
+%fp_director_serialization(instrument, Instrument)
+
+// List of things "import *" will include
+%python_export("Instrument", "ObservableInstrument", "ObserverInstrument");
