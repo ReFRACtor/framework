@@ -1270,9 +1270,9 @@
     "semantic_hash": "e75fbc59b891e94896af19a0ad5d2208"
   },
   "lib/Implementation/nlls_solver_lm.cc": {
-    "mtime": 1611693082.0116243,
-    "ast_hash": "e90f6b35c56e532e72a337be3e614c25",
-    "semantic_hash": "e90f6b35c56e532e72a337be3e614c25"
+    "mtime": 1783461010.8308842,
+    "ast_hash": "978d7bbefa7916ec5e9a595ab3dad0aa",
+    "semantic_hash": ""
   },
   "lib/Implementation/nlls_solver_lm.h": {
     "mtime": 1611693082.0116243,
@@ -1900,9 +1900,9 @@
     "semantic_hash": "473b52e2625a82b70d5286fe23dfc40c"
   },
   "lib/Implementation/standard_forward_model.cc": {
-    "mtime": 1731516882.7912207,
-    "ast_hash": "9938ddbf79b3a00d329412f8f55802b5",
-    "semantic_hash": "9938ddbf79b3a00d329412f8f55802b5"
+    "mtime": 1783461010.8308842,
+    "ast_hash": "292fadd9cea884ac6b3aedb302a865c4",
+    "semantic_hash": ""
   },
   "lib/Implementation/standard_forward_model.h": {
     "mtime": 1760398670.2587664,
@@ -5245,9 +5245,9 @@
     "semantic_hash": "4b876c7cab39d6a1b560c59c49516cb5"
   },
   "python/refractor/framework/factory/creator/retrieval.py": {
-    "mtime": 1633471791.7224684,
-    "ast_hash": "4e607babb682c77151f89e8391e9ee24",
-    "semantic_hash": "4e607babb682c77151f89e8391e9ee24"
+    "mtime": 1783461010.8308842,
+    "ast_hash": "ba7478bbd5cb555399aa81d8f8f61439",
+    "semantic_hash": ""
   },
   "python/refractor/framework/factory/creator/rt.py": {
     "mtime": 1644963622.8164587,
@@ -5735,9 +5735,9 @@
     "semantic_hash": "f9022d27425464d89ca3c0d67cc38b09"
   },
   "thirdparty/CMakeLists.txt": {
-    "mtime": 1731516878.9432118,
-    "ast_hash": "406da0cfa1ff6be442b48340adfba363",
-    "semantic_hash": "406da0cfa1ff6be442b48340adfba363"
+    "mtime": 1783462965.668895,
+    "ast_hash": "ad653f31e93aaef73609a19e8b226e6e",
+    "semantic_hash": ""
   },
   "thirdparty/lidort-3.8/CMakeLists.txt": {
     "mtime": 1641325271.668705,
@@ -5773,5 +5773,555 @@
     "mtime": 1505771294.7679813,
     "ast_hash": "e5f7bfc38c01692b0baf76704dd34d5d",
     "semantic_hash": "e5f7bfc38c01692b0baf76704dd34d5d"
+  },
+  "bin/construct_config_diagram.py": {
+    "mtime": 1623098529.6555052,
+    "ast_hash": "d66c5f0015bf39912711aa73c7c23a18",
+    "semantic_hash": ""
+  },
+  "bin/run_rf_config.py": {
+    "mtime": 1633539899.2447884,
+    "ast_hash": "595242b635ac017d8a39022a47d65669",
+    "semantic_hash": ""
+  },
+  "bin/write_optical_properties.py": {
+    "mtime": 1614028457.5862541,
+    "ast_hash": "7f8edc3d30a4574d4cb94a600b43bcc6",
+    "semantic_hash": ""
+  },
+  "bindings/python/setup.py": {
+    "mtime": 1638379811.350788,
+    "ast_hash": "abc823c7bbc373432c449f0a754a6d48",
+    "semantic_hash": ""
+  },
+  "cmake-variants.json": {
+    "mtime": 1731516878.9322119,
+    "ast_hash": "e11638e5875415579036f2d784e7f75d",
+    "semantic_hash": ""
+  },
+  "conda_recipe/first_order/build.sh": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "47ee246c1230dcc61a20f8f90bec580c",
+    "semantic_hash": ""
+  },
+  "conda_recipe/libblitz/build.sh": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "552a25f62c3c750a79c37d2bc1a15684",
+    "semantic_hash": ""
+  },
+  "conda_recipe/lidort/build.sh": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "63971ca14980a525897bd39bed8d0b1a",
+    "semantic_hash": ""
+  },
+  "conda_recipe/luabind/build.sh": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "d0dae0271ff5c94378163fd403f39b9e",
+    "semantic_hash": ""
+  },
+  "conda_recipe/ninja-build/build.sh": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "3798a7ab7ca7d5ee4d44bcd408d9986e",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-cris/build.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "517df35bfe9d941006428b9ac471011b",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-development-tools/build.sh": {
+    "mtime": 1731517070.0256493,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/build.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "3a8147eb39c480600bdb88337baad4d7",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/framework-post-link.py": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "bde114b5c2d1990630179ed061320af2",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/framework-post-link.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "c965310c9089dd96fecc88ef4658b297",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/scripts/activate.sh": {
+    "mtime": 1614023653.151628,
+    "ast_hash": "bd68705ec3058991f20ee79c77ca9279",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/scripts/deactivate.sh": {
+    "mtime": 1614023692.5757542,
+    "ast_hash": "3ef72632b42b5b9c8ac854609e697cc6",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-oco/build.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "e7afd21b5212c0479f18473c83df9a6e",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-omps-nm/build.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "65adfbf4b5dda1baf29e0e6d58441528",
+    "semantic_hash": ""
+  },
+  "conda_recipe/twostream/build.sh": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "0f124ecf45798a294d71b2ee5425bde1",
+    "semantic_hash": ""
+  },
+  "configure.sh": {
+    "mtime": 1731516878.9322119,
+    "ast_hash": "bb7730c7d3d5cd2ded921c79c458b0c7",
+    "semantic_hash": ""
+  },
+  "doc/doxygen.h": {
+    "mtime": 1760398670.2557664,
+    "ast_hash": "d756d0a751af30bf0e29ab801a6ba62f",
+    "semantic_hash": ""
+  },
+  "doc/doxygen_python.h": {
+    "mtime": 1526923095.647334,
+    "ast_hash": "beca7abe7c0b7eb77d6108fecf090d27",
+    "semantic_hash": ""
+  },
+  "input/common/config/config_common.lua": {
+    "mtime": 1642534707.4525986,
+    "ast_hash": "d32a281561d0f937055520811a0d4d34",
+    "semantic_hash": ""
+  },
+  "input/common/config/helper_functions.lua": {
+    "mtime": 1505771291.4758615,
+    "ast_hash": "4ee951884d26e9b6587a64531541f54f",
+    "semantic_hash": ""
+  },
+  "link-absco.sh": {
+    "mtime": 1731516878.9422119,
+    "ast_hash": "d27464adb58613ff8037b00089b64e14",
+    "semantic_hash": ""
+  },
+  "python.sh": {
+    "mtime": 1731516878.9422119,
+    "ast_hash": "0d6f8d80dd058e678d595dd622ace7ae",
+    "semantic_hash": ""
+  },
+  "script/usercustomize.py": {
+    "mtime": 1638379811.3787882,
+    "ast_hash": "07359cc01f23af918db165c36c0f23cf",
+    "semantic_hash": ""
+  },
+  "setup.py": {
+    "mtime": 1783483276.2085924,
+    "ast_hash": "7e51e61320610e55bdde8844b04603a6",
+    "semantic_hash": ""
+  },
+  "support/code_generation/class_wrappers.py": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "d3d845fd718170d615818f47358eb2b4",
+    "semantic_hash": ""
+  },
+  "support/code_generation/create_2stream_interface.py": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "f8eb0f0e14d92d982d4322f4f3910d5e",
+    "semantic_hash": ""
+  },
+  "support/code_generation/create_lidort_interface-3.5.py": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "32e53fdffdc9803809f28d8cc2d3bfb6",
+    "semantic_hash": ""
+  },
+  "support/code_generation/create_lidort_interface-3.6.py": {
+    "mtime": 1526923095.647334,
+    "ast_hash": "8ebc737af05f7322fe9bcb2d1d804bf9",
+    "semantic_hash": ""
+  },
+  "support/code_generation/fp_interface_tools.py": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "6dc93b1a65c94aae130b624503dcf933",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_masters.f90": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "08d948db018fc5e62b8dd5c1ea8f1268",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_masters.h": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "27b52a15e9c4fcbda4f97831fae100a7",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_masters_io.f90": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "0780ee3be8bf60867108153034da07b4",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_types.f90": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "134e714b165b07faf834149edaf2154c",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_types.h": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "4a6b801d3ffaaa1ea1c8e7da3b2a4323",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_types_io.f90": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "17e3823a05fe2d2b069a998aebd6eb0c",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/interface_types_test.cc": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "d184501851eb56fbae5f24d267b539b2",
+    "semantic_hash": ""
+  },
+  "support/code_generation/templates/lidort_masters.h": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "40bacaeef1db66b603f0bdeb377ec4ca",
+    "semantic_hash": ""
+  },
+  "support/code_generation/variable_wrappers.py": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "d7f0318d196e6f47035c7f3ef6ae2851",
+    "semantic_hash": ""
+  },
+  "support/utils/compare_hdf": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "e3c6d6ec6c1f34a89e16fe28588f43d1",
+    "semantic_hash": ""
+  },
+  "support/utils/compute_ils_svd_fft.py": {
+    "mtime": 1643923596.2597663,
+    "ast_hash": "9cf793eb90d7c9771a9552c95bdfd02f",
+    "semantic_hash": ""
+  },
+  "support/utils/create_solar_tables.py": {
+    "mtime": 1527204170.5077403,
+    "ast_hash": "b01d5c559c039294fd96675e34ccd2b9",
+    "semantic_hash": ""
+  },
+  "support/utils/h5diff_git_wrap": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "8e25478b4103a3e66ba81b2715f4adf6",
+    "semantic_hash": ""
+  },
+  "support/utils/l2_fp.py": {
+    "mtime": 1507677648.123132,
+    "ast_hash": "58cce5ffc248fce186925a8824ac2b8a",
+    "semantic_hash": ""
+  },
+  "support/utils/l2_fp_fm_errors.py": {
+    "mtime": 1507677538.2072108,
+    "ast_hash": "1a893d14dd1bcfc25f737d20ed966004",
+    "semantic_hash": ""
+  },
+  "support/utils/offline_ils.py": {
+    "mtime": 1507677641.870909,
+    "ast_hash": "a84fc27d0f61d3659e9115b42d82e345",
+    "semantic_hash": ""
+  },
+  "support/utils/timing_summary": {
+    "mtime": 1505771293.411932,
+    "ast_hash": "c817a94ffa7662ac89422d8ed24d9cb2",
+    "semantic_hash": ""
+  },
+  "swig_rules/__init__.py": {
+    "mtime": 1731516882.8062205,
+    "ast_hash": "319a586b1008f5c03d3011a64e88e806",
+    "semantic_hash": ""
+  },
+  "swig_rules/all.py": {
+    "mtime": 1638379811.3787882,
+    "ast_hash": "dc59d0e7a03dc1da943ca1af354f1fd2",
+    "semantic_hash": ""
+  },
+  "swig_rules/create_python_init.py": {
+    "mtime": 1561563216.971238,
+    "ast_hash": "30f763bc938be3bed08fcdc95487293e",
+    "semantic_hash": ""
+  },
+  "swig_rules/doxy2swig.py": {
+    "mtime": 1611693082.0996244,
+    "ast_hash": "5e379689e3fc3394dce2055a5033091a",
+    "semantic_hash": ""
+  },
+  "swig_rules/interface_file_with_doc.sh": {
+    "mtime": 1561563216.971238,
+    "ast_hash": "b4eccad930e99bef5a7d7c3692a48046",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/python_exception.h": {
+    "mtime": 1783018126.7641823,
+    "ast_hash": "30eaa29c5d382b597a3b2ca531c9dd27",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/python_lib_init.h": {
+    "mtime": 1783018126.7641823,
+    "ast_hash": "37d9f18e975fb317627446f6b7048491",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/python_ref_ptr_cleanup.h": {
+    "mtime": 1731516882.8072207,
+    "ast_hash": "544aa25dbc24e9e789f519d84f081046",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/serialize_function.cc": {
+    "mtime": 1731516882.8072207,
+    "ast_hash": "7028f5b765b9c0f74b952c866f90f1e6",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/serialize_function.h": {
+    "mtime": 1611693082.1036243,
+    "ast_hash": "e17867ab7edee269967bf9c188384293",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/serialize_shared_ptr.h": {
+    "mtime": 1731516882.8072207,
+    "ast_hash": "d3406337bd800a72b81012c026015b7b",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/swig_to_python.h": {
+    "mtime": 1783018126.7651823,
+    "ast_hash": "a66fe8e8c6581e1a12c2e262209e2ae0",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/swig_type_mapper.h": {
+    "mtime": 1783018126.7651823,
+    "ast_hash": "9a0ff571c95f734092c0a4f1a658791f",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/swig_type_mapper_base.cc": {
+    "mtime": 1561563216.971238,
+    "ast_hash": "ca37ce0e03c52498472050d9a63481dd",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/swig_type_mapper_base.h": {
+    "mtime": 1731516882.8082206,
+    "ast_hash": "e2ea43524d3113700ce0b174198296c4",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/weak_ptr_serialize_support.cc": {
+    "mtime": 1611693082.1036243,
+    "ast_hash": "cec6d2545860ae73d8158f56c9543543",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/weak_ptr_serialize_support.h": {
+    "mtime": 1611693082.1036243,
+    "ast_hash": "77f924466db04ef2c75afcc74983590e",
+    "semantic_hash": ""
+  },
+  ".devin/workflows/clear.md": {
+    "mtime": 1783370742.105007,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  ".devin/workflows/graphify.md": {
+    "mtime": 1783371073.5910647,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  ".devin/workflows/skills.md": {
+    "mtime": 1783370820.3972542,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  ".travis.yml": {
+    "mtime": 1543448474.7105842,
+    "ast_hash": "b9be7df2906e2934d508e8dd53937f7b",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1783461008.5648766,
+    "ast_hash": "6d5b6457763a9a061befd900452d203c",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1783461008.5648766,
+    "ast_hash": "5c27369b226fcf2be8a6cfe52224e767",
+    "semantic_hash": ""
+  },
+  "CMakeLists.txt": {
+    "mtime": 1783461010.8308842,
+    "ast_hash": "79ddf3e6df6ce5e29b89066afe235739",
+    "semantic_hash": ""
+  },
+  "LICENSE.txt": {
+    "mtime": 1612480512.787871,
+    "ast_hash": "4652a99c105ef38743d681ac60815e4f",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1760398670.2557664,
+    "ast_hash": "5f12ce4f7a87d489280abe057f4efd50",
+    "semantic_hash": ""
+  },
+  "bindings/python/CMakeLists.txt": {
+    "mtime": 1731516882.7842207,
+    "ast_hash": "a709acb77144c9881a7a30a78d5f45e2",
+    "semantic_hash": ""
+  },
+  "conda_recipe/Manifest_linux.yml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "53b6b3bc783a46cf0347b3b8a11011a7",
+    "semantic_hash": ""
+  },
+  "conda_recipe/Manifest_osx.yml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "c5dc423059007531436335855a7f61b4",
+    "semantic_hash": ""
+  },
+  "conda_recipe/first_order/meta.yaml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "0043c8f5f070d48cf29bdb593f51c6eb",
+    "semantic_hash": ""
+  },
+  "conda_recipe/libblitz/meta.yaml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "4634881e41eed240d7457f738caccf8f",
+    "semantic_hash": ""
+  },
+  "conda_recipe/lidort/meta.yaml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "21a7bad0c3384c151d9621021a9d94ef",
+    "semantic_hash": ""
+  },
+  "conda_recipe/luabind/meta.yaml": {
+    "mtime": 1556910157.9912148,
+    "ast_hash": "1f10fd31a7210cbcc83756910aea0309",
+    "semantic_hash": ""
+  },
+  "conda_recipe/ninja-build/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "23b300f9010d829388f4a3593b072510",
+    "semantic_hash": ""
+  },
+  "conda_recipe/ptpython/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "6f956d11e38ff2d6055ea42139919c77",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-cris/config_build_config.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "7e8b69060b83c7161f5936cd22842707",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-cris/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "f29f0ced92b7300cea02faa702f58b42",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-development-tools/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "053d69c19b8e29929cb2af807f6c98d9",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/config_build_config.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "7e8b69060b83c7161f5936cd22842707",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-framework/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "a3ac639466aa6c81e7a336cc6eae5915",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-oco/config_build_config.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "7e8b69060b83c7161f5936cd22842707",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-oco/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "62caac0ce3232c080f6c6ecd795f8719",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-omps-nm/config_build_config.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "7e8b69060b83c7161f5936cd22842707",
+    "semantic_hash": ""
+  },
+  "conda_recipe/refractor-omps-nm/meta.yaml": {
+    "mtime": 1556910157.9952147,
+    "ast_hash": "c01aea5ec5603b5b243d428ba2da5535",
+    "semantic_hash": ""
+  },
+  "conda_recipe/twostream/meta.yaml": {
+    "mtime": 1556910157.9992146,
+    "ast_hash": "6924a2f7181780b0e656cd2b370e598b",
+    "semantic_hash": ""
+  },
+  "doc/CMakeLists.txt": {
+    "mtime": 1760398670.2557664,
+    "ast_hash": "ed00638cd5c1702ffdd45a8f6b61fe89",
+    "semantic_hash": ""
+  },
+  "doc/doc_footer.html": {
+    "mtime": 1760398670.2557664,
+    "ast_hash": "143d6f83ad4efccb01f8efc0f958f840",
+    "semantic_hash": ""
+  },
+  "environment.yml": {
+    "mtime": 1631639593.3788483,
+    "ast_hash": "d9bc6d8978a7abfb67b37cc3aea83c28",
+    "semantic_hash": ""
+  },
+  "input/CMakeLists.txt": {
+    "mtime": 1623098529.6555052,
+    "ast_hash": "805e76f5371f6a008d9548c6733aa70b",
+    "semantic_hash": ""
+  },
+  "input/common/input/solspec.composite.atl1_1.txt": {
+    "mtime": 1527014248.524344,
+    "ast_hash": "568dae227419c25efd6248123cceeba1",
+    "semantic_hash": ""
+  },
+  "input/cross_sections/H2CO_Meller_Moortgat_MPI.txt": {
+    "mtime": 1623098529.6835053,
+    "ast_hash": "0ef88f6c288d530603834346d35dbff3",
+    "semantic_hash": ""
+  },
+  "requirements.txt": {
+    "mtime": 1783483276.2085924,
+    "ast_hash": "020b55fb26a173fcca1023038605b9c0",
+    "semantic_hash": ""
+  },
+  "swig_rules/CMakeLists.txt": {
+    "mtime": 1561563216.971238,
+    "ast_hash": "bf0c540eb0256f03cae66238533b805b",
+    "semantic_hash": ""
+  },
+  "swig_rules/README.md": {
+    "mtime": 1731516882.8062205,
+    "ast_hash": "532173ac1958d56b04dd47d62ee1b7a3",
+    "semantic_hash": ""
+  },
+  "swig_rules/include/CMakeLists.txt": {
+    "mtime": 1561563216.971238,
+    "ast_hash": "1809450a2f8d40f52aad2916117d4b8c",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/CMakeLists.txt": {
+    "mtime": 1783461010.8318841,
+    "ast_hash": "856b04a25863a01f9592962f74eb6d95",
+    "semantic_hash": ""
+  },
+  "swig_rules/lib/DirectorNotes.md": {
+    "mtime": 1731516882.8072207,
+    "ast_hash": "9d843aac505bd74b1821a0de3380fe69",
+    "semantic_hash": ""
+  },
+  "doc/high_level_data_flow.png": {
+    "mtime": 1612480512.7918708,
+    "ast_hash": "6d0d3591db35b0821d425c2354f7cc79",
+    "semantic_hash": ""
+  },
+  "doc/logo.png": {
+    "mtime": 1505771291.4758615,
+    "ast_hash": "1f9feccde5473aa98e626a0c05917ee7",
+    "semantic_hash": ""
   }
 }
