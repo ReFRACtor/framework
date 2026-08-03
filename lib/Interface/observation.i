@@ -9,6 +9,8 @@
 %base_import(observation)
 %base_import(stacked_radiance_mixin)
 
+%feature("director") Observation;
+
 // Note we need the template before its first use, so we have all
 // the typemaps in place.
 %template(Vector_Observation) std::vector<boost::shared_ptr<FullPhysics::Observation> >;
