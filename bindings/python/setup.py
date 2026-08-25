@@ -12,7 +12,7 @@ setup(
     author_email='James.McDuffie@jpl.nasa.gov',
     packages=find_namespace_packages(include=["refractor.*"],),
     install_requires=[
-        'numpy', 
+        "refractor-framework",
     ],
     package_data={'' : ['_swig_wrap.so']},
 )
