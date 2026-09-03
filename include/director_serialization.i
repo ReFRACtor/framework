@@ -48,8 +48,19 @@
        PyObject* pobj = d->swig_get_self();
        PyObject* this_save = PyObject_GetAttr(pobj, PyUnicode_FromString("this"));
        PyObject_SetAttr(pobj, PyUnicode_FromString("this"), Py_None);
-       std::string python_object = cpickle_dumps(pobj);
-       ar & BOOST_SERIALIZATION_NVP(python_object);
+       // If cpickle_dumps or the archive write throws (e.g., the python
+       // object has an unpicklable attribute), we still need to restore
+       // "this" before letting the exception propagate. Otherwise pobj is
+       // left permanently with this=None, breaking it for the rest of its
+       // lifetime.
+       try {
+         std::string python_object = cpickle_dumps(pobj);
+         ar & BOOST_SERIALIZATION_NVP(python_object);
+       } catch (...) {
+         PyObject_SetAttr(pobj, PyUnicode_FromString("this"), this_save);
+         Py_DECREF(this_save);
+         throw;
+       }
        PyObject_SetAttr(pobj, PyUnicode_FromString("this"), this_save);
        Py_DECREF(this_save);
      }
