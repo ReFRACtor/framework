@@ -46,6 +46,11 @@ add_subdirectory(swig_rules)
 include_directories(${SWIG_INCLUDE_DIR})
 
 install(FILES  ${SWIG_EXTRA_HEADER_FILES} DESTINATION include/refractor)
+# Boost >= 1.70 ships its own CMake package config; use that instead of
+# CMake's bundled (and now removed-in-a-future-version) FindBoost module.
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization timer)
 add_library(refractor SHARED ${FP_SOURCE_FILES} ${SWIG_EXTRA_SOURCE_FILES})
 target_link_libraries(refractor ${THIRDPARTY_LIBRARIES})

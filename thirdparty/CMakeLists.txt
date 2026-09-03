@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.12)
 enable_language(Fortran)
 
 include(ExternalProject)
@@ -75,6 +75,20 @@ list(APPEND THIRDPARTY_LIBRARIES ${HDF5_LIBRARIES})
 if(NOT BOOST_ROOT AND DEFINED ENV{CONDA_PREFIX})
   set(BOOST_ROOT $ENV{CONDA_PREFIX})
 endif(NOT BOOST_ROOT AND DEFINED ENV{CONDA_PREFIX})
+# CMake >= 3.27 (CMP0144 NEW) only honors the mixed-case Boost_ROOT hint
+# variable, not the legacy upper-case BOOST_ROOT set above. Mirror it so
+# Boost is found the same way on old and new CMake.
+if(BOOST_ROOT AND NOT Boost_ROOT)
+  set(Boost_ROOT ${BOOST_ROOT})
+endif()
+if(POLICY CMP0144)
+  cmake_policy(SET CMP0144 NEW)
+endif()
+# Boost >= 1.70 ships its own CMake package config; use that instead of
+# CMake's bundled (and now removed-in-a-future-version) FindBoost module.
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 NEW)
+endif()
 find_package(Boost 1.72 REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization timer)
 list(APPEND THIRDPARTY_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})

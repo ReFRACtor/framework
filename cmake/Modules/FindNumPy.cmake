@@ -38,19 +38,23 @@
 #
 #============================================================================
 
-# Finding NumPy involves calling the Python interpreter
-if(NumPy_FIND_REQUIRED)
-    find_package(PythonInterp REQUIRED)
-else()
-    find_package(PythonInterp)
+# Finding NumPy involves calling the Python interpreter. If the caller
+# has not already found Python3 (e.g., via find_package(Python3
+# COMPONENTS Interpreter)), do so now.
+if(NOT Python3_Interpreter_FOUND)
+    if(NumPy_FIND_REQUIRED)
+        find_package(Python3 REQUIRED COMPONENTS Interpreter)
+    else()
+        find_package(Python3 COMPONENTS Interpreter)
+    endif()
 endif()
 
-if(NOT PYTHONINTERP_FOUND)
+if(NOT Python3_Interpreter_FOUND)
     set(NUMPY_FOUND FALSE)
     return()
 endif()
 
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c"
+execute_process(COMMAND "${Python3_EXECUTABLE}" "-c"
     "import numpy as n; print(n.__version__); print(n.get_include());"
     RESULT_VARIABLE _NUMPY_SEARCH_SUCCESS
     OUTPUT_VARIABLE _NUMPY_VALUES_OUTPUT

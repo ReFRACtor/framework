@@ -1,5 +1,5 @@
 # Cmake will complain unless this is before project
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
 # This must be called before project() since it sets this variable as empty into the cache
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (optimized) by default")
@@ -222,7 +222,7 @@ set(INSTALL_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/share")
 
 # Add refractor (and python if building) targets to the build-tree export set
 if(BUILD_PYTHON_BINDING) 
-    export(TARGETS refractor _swig_wrap FILE "${PROJECT_BINARY_DIR}/RefractorTargets.cmake")
+    export(TARGETS refractor swig_wrap FILE "${PROJECT_BINARY_DIR}/RefractorTargets.cmake")
 else()
     export(TARGETS refractor FILE "${PROJECT_BINARY_DIR}/RefractorTargets.cmake")
 endif()

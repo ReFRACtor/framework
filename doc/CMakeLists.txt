@@ -6,15 +6,15 @@ add_custom_target(doc)
 if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen_api.cfg.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen_api.cfg @ONLY)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen_fortran.cfg.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen_fortran.cfg @ONLY)
-    add_custom_command(TARGET doc 
+    add_custom_command(TARGET doc POST_BUILD
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen_api.cfg
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
-    add_custom_command(TARGET doc
+    add_custom_command(TARGET doc POST_BUILD
         COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/high_level_data_flow.png ${PROJECT_BINARY_DIR}/doc/api/html/
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
-    add_custom_command(TARGET doc 
+    add_custom_command(TARGET doc POST_BUILD
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen_fortran.cfg
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating Fortran documentation with Doxygen" VERBATIM)
@@ -29,7 +29,7 @@ if(DOXYGEN_FOUND)
     find_program(GHP_IMPORT ghp-import)
     if (EXISTS ${GHP_IMPORT})
         add_custom_target(gh-pages)
-        add_custom_command(TARGET gh-pages
+        add_custom_command(TARGET gh-pages POST_BUILD
             COMMAND ${GHP_IMPORT} -n -p "${CMAKE_BINARY_DIR}/doc/api/html"
             COMMENT "Importing API documentation into ghp-pages branch"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
