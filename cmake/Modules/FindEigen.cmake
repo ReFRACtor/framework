@@ -150,7 +150,7 @@ if (EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION)
                       NO_MODULE
                       NO_CMAKE_PACKAGE_REGISTRY
                       NO_CMAKE_BUILDS_PATH)
-  if (EIGEN3_FOUND)
+  if (Eigen3_FOUND)
     message(STATUS "Found installed version of Eigen: ${Eigen3_DIR}")
   else()
     # Failed to find an installed version of Eigen, repeat search allowing
@@ -162,14 +162,20 @@ if (EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION)
     find_package(Eigen3 QUIET
                         NO_MODULE
                         NO_CMAKE_BUILDS_PATH)
-    if (EIGEN3_FOUND)
+    if (Eigen3_FOUND)
       message(STATUS "Found exported Eigen build directory: ${Eigen3_DIR}")
     endif()
   endif()
-  if (EIGEN3_FOUND)
+  if (Eigen3_FOUND)
     set(FOUND_INSTALLED_EIGEN_CMAKE_CONFIGURATION TRUE)
-    set(EIGEN_FOUND ${EIGEN3_FOUND})
-    set(EIGEN_INCLUDE_DIR "${EIGEN3_INCLUDE_DIR}" CACHE STRING
+    set(EIGEN_FOUND TRUE)
+    # Eigen >= 5.0 no longer exports the legacy EIGEN3_INCLUDE_DIR variable
+    # from its CMake package config (only the Eigen3::Eigen target), so
+    # pull the include directory from the target itself. This works for
+    # both old and new Eigen, since the target has always been exported.
+    get_target_property(EIGEN_INCLUDE_DIR Eigen3::Eigen
+      INTERFACE_INCLUDE_DIRECTORIES)
+    set(EIGEN_INCLUDE_DIR "${EIGEN_INCLUDE_DIR}" CACHE STRING
       "Eigen include directory" FORCE)
   else()
     message(STATUS "Failed to find an installed/exported CMake configuration "
@@ -212,9 +218,15 @@ if (NOT EIGEN_FOUND)
   set(EIGEN_FOUND TRUE)
 endif()
 
-# Extract Eigen version from Eigen/src/Core/util/Macros.h
+# Extract Eigen version. Eigen >= 5.0 moved the EIGEN_WORLD_VERSION /
+# EIGEN_MAJOR_VERSION / EIGEN_MINOR_VERSION defines out of Macros.h and
+# into a dedicated Eigen/Version header; fall back to the old location
+# for Eigen < 5.0, which has no Eigen/Version file.
 if (EIGEN_INCLUDE_DIR)
-  set(EIGEN_VERSION_FILE ${EIGEN_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h)
+  set(EIGEN_VERSION_FILE ${EIGEN_INCLUDE_DIR}/Eigen/Version)
+  if (NOT EXISTS ${EIGEN_VERSION_FILE})
+    set(EIGEN_VERSION_FILE ${EIGEN_INCLUDE_DIR}/Eigen/src/Core/util/Macros.h)
+  endif()
   if (NOT EXISTS ${EIGEN_VERSION_FILE})
     eigen_report_not_found(
       "Could not find file: ${EIGEN_VERSION_FILE} "
