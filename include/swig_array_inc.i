@@ -193,7 +193,7 @@ template<class T> PyObject* to_numpy(PyObject* obj);
 template<> inline PyObject* to_numpy<double>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                             PyString_FromString("asarray"), 
+                                             PyUnicode_FromString("asarray"), 
                                              obj, numpy_dot_float64(), NULL);
   // Don't worry about errors , since we just return a null
   PyErr_Clear();
@@ -203,7 +203,7 @@ template<> inline PyObject* to_numpy<double>(PyObject* obj)
 template<> inline PyObject* to_numpy<float>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                             PyString_FromString("asarray"), 
+                                             PyUnicode_FromString("asarray"), 
                                              obj, numpy_dot_float32(), NULL);
   // Don't worry about errors , since we just return a null
   PyErr_Clear();
@@ -213,7 +213,7 @@ template<> inline PyObject* to_numpy<float>(PyObject* obj)
 template<> inline PyObject* to_numpy<bool>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_bool(), NULL);
   PyErr_Clear();
   return res;
@@ -222,7 +222,7 @@ template<> inline PyObject* to_numpy<bool>(PyObject* obj)
 template<> inline PyObject* to_numpy<int>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_int32(), NULL);
   PyErr_Clear();
   return res;
@@ -231,7 +231,7 @@ template<> inline PyObject* to_numpy<int>(PyObject* obj)
 template<> inline PyObject* to_numpy<unsigned int>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_uint32(), NULL);
   PyErr_Clear();
   return res;
@@ -240,7 +240,7 @@ template<> inline PyObject* to_numpy<unsigned int>(PyObject* obj)
 template<> inline PyObject* to_numpy<short int>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_int16(), NULL);
   PyErr_Clear();
   return res;
@@ -249,7 +249,7 @@ template<> inline PyObject* to_numpy<short int>(PyObject* obj)
 template<> inline PyObject* to_numpy<unsigned short int>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_uint16(), NULL);
   PyErr_Clear();
   return res;
@@ -258,7 +258,7 @@ template<> inline PyObject* to_numpy<unsigned short int>(PyObject* obj)
 template<> inline PyObject* to_numpy<char>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_int8(), NULL);
   PyErr_Clear();
   return res;
@@ -267,7 +267,7 @@ template<> inline PyObject* to_numpy<char>(PyObject* obj)
 template<> inline PyObject* to_numpy<unsigned char>(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(numpy_module(), 
-                                    PyString_FromString("asarray"), 
+                                    PyUnicode_FromString("asarray"), 
                                     obj, numpy_dot_uint8(), NULL);
   PyErr_Clear();
   return res;

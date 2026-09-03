@@ -46,11 +46,11 @@
 			      const unsigned int version)
      {
        PyObject* pobj = d->swig_get_self();
-       PyObject* this_save = PyObject_GetAttr(pobj, PyString_FromString("this"));
-       PyObject_SetAttr(pobj, PyString_FromString("this"), Py_None);
+       PyObject* this_save = PyObject_GetAttr(pobj, PyUnicode_FromString("this"));
+       PyObject_SetAttr(pobj, PyUnicode_FromString("this"), Py_None);
        std::string python_object = cpickle_dumps(pobj);
        ar & BOOST_SERIALIZATION_NVP(python_object);
-       PyObject_SetAttr(pobj, PyString_FromString("this"), this_save);
+       PyObject_SetAttr(pobj, PyUnicode_FromString("this"), this_save);
        Py_DECREF(this_save);
      }
      template<class Archive>

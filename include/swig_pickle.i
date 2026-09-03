@@ -27,7 +27,7 @@ inline PyObject* cpickle_module()
 inline std::string cpickle_dumps(PyObject* obj)
 {
   PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					     PyString_FromString("dumps"),
+					     PyUnicode_FromString("dumps"),
 					     obj, NULL);
   if(PyErr_Occurred()) {
     throw PythonException();
@@ -41,7 +41,7 @@ inline std::string cpickle_dumps(PyObject* obj)
 inline PyObject* cpickle_loads(const std::string& S)
 {
   PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					     PyString_FromString("loads"),
+					     PyUnicode_FromString("loads"),
 					     PyBytes_FromStringAndSize(S.c_str(), S.size()), 
 					     NULL);
   if(PyErr_Occurred()) {

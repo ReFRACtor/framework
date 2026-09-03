@@ -168,6 +168,33 @@ void PythonException::restore_python_exception() const
 static void init_extension_module3(PyObject* package, const char *modulename,
 				  PyObject * (*initfunction)(void)) {
   PyObject *module = initfunction();
+  // Starting with SWIG 4.4/4.5, the generated PyInit_X function uses PEP 489
+  // multi-phase initialization, so it returns a PyModuleDef wrapper (a
+  // "moduledef" object) rather than a fully executed module. Since we call
+  // initfunction() directly instead of going through python's normal import
+  // machinery, we need to finish that initialization ourselves. Older SWIG
+  // versions return an already-executed module here, which is not a
+  // PyModuleDef, so this is a no-op in that case.
+  if (module && PyObject_TypeCheck(module, &PyModuleDef_Type)) {
+    PyModuleDef *def = (PyModuleDef *)module;
+    // PyModule_FromDefAndSpec reads attributes off the spec, so a NULL spec
+    // segfaults here rather than being handled gracefully -- build a
+    // minimal real ModuleSpec (no loader) instead.
+    PyObject *machinery = PyImport_ImportModule("importlib.machinery");
+    PyObject *spec_cls = machinery ? PyObject_GetAttrString(machinery, "ModuleSpec") : NULL;
+    PyObject *spec = spec_cls ? PyObject_CallFunctionObjArgs(spec_cls, Text_FromUTF8(modulename), Py_None, NULL) : NULL;
+    module = spec ? PyModule_FromDefAndSpec(def, spec) : NULL;
+    if (module && PyModule_ExecDef(module, def) < 0) {
+      Py_CLEAR(module);
+    }
+    Py_XDECREF(spec);
+    Py_XDECREF(spec_cls);
+    Py_XDECREF(machinery);
+  }
+  if (!module) {
+    std::cerr << "Initialisation failed for module " << modulename << "\n";
+    return;
+  }
   PyObject *module_dic = PyImport_GetModuleDict();
   PyDict_SetItem(module_dic, Text_FromUTF8(modulename), module);
 #ifdef DO_CYTHON

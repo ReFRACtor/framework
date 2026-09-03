@@ -397,7 +397,7 @@
   
   Swig::Director* dp = dynamic_cast<Swig::Director*>($1->get());
   if(dp) {
-    PyObject* this_pobj = PyObject_GetAttr($input, PyString_FromString("this"));
+    PyObject* this_pobj = PyObject_GetAttr($input, PyUnicode_FromString("this"));
     res = SWIG_ConvertPtrAndOwn(this_pobj, &argp, $descriptor(SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< TYPE > *), %convertptr_flags, &newmem);
     Py_DECREF(this_pobj);
     if (!SWIG_IsOK(res)) {
