@@ -193,6 +193,9 @@ static void init_extension_module3(PyObject* package, const char *modulename,
   }
   if (!module) {
     std::cerr << "Initialisation failed for module " << modulename << "\n";
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+    }
     return;
   }
   PyObject *module_dic = PyImport_GetModuleDict();

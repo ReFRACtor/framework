@@ -25,14 +25,18 @@ public:
     fh(Fh), fis(Fis) {}
   std::streamsize read(char* s, std::streamsize n)
   {
-    PyObject* res = PyObject_CallMethod(fh, "read", "(i)", (Py_ssize_t) n);
+    PyObject* res = PyObject_CallMethod(fh, "read", "(n)", (Py_ssize_t) n);
     if(res == NULL) {
       throw std::runtime_error("Call to FileHandle read failed");
     }
-    char *rescp = PyBytes_AsString(res);
-    std::copy(rescp, rescp + n, s);
+    char *rescp;
+    Py_ssize_t reslen;
+    PyBytes_AsStringAndSize(res, &rescp, &reslen);
+    // Python's read(n) can return fewer than n bytes (e.g., near EOF), so
+    // only copy what was actually returned.
+    std::copy(rescp, rescp + reslen, s);
     Py_DECREF(res);
-    return n;
+    return reslen;
   }
   std::streamoff seek(std::streamoff off, std::ios_base::seekdir way)
   {
@@ -40,12 +44,15 @@ public:
   }
   std::streamsize write(const char* s, std::streamsize n)
   {
-    // Different format strings for python 2 vs 3.
+    // Different format strings for python 2 vs 3. The "#" length argument
+    // is a plain int here (PY_SSIZE_T_CLEAN isn't defined), so cast down
+    // rather than passing a Py_ssize_t -- passing the wrong size is
+    // undefined behavior even though it happens to work on common ABIs.
 #if PY_MAJOR_VERSION > 2
-    PyObject* res = PyObject_CallMethod(fh, "write", "(y#)", s, (Py_ssize_t) n);
+    PyObject* res = PyObject_CallMethod(fh, "write", "(y#)", s, (int) n);
 #else
-    PyObject* res = PyObject_CallMethod(fh, "write", "(s#)", s, (Py_ssize_t) n);
-#endif    
+    PyObject* res = PyObject_CallMethod(fh, "write", "(s#)", s, (int) n);
+#endif
     if(res == NULL) {
       throw std::runtime_error("Call to FileHandle write failed");
     } else {

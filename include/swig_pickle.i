@@ -26,24 +26,29 @@ inline PyObject* cpickle_module()
 
 inline std::string cpickle_dumps(PyObject* obj)
 {
-  PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					     PyUnicode_FromString("dumps"),
-					     obj, NULL);
+  static PyObject* dumps_name = 0;
+  if(!dumps_name)
+    dumps_name = PyUnicode_FromString("dumps");
+  PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(), dumps_name, obj, NULL);
   if(PyErr_Occurred()) {
     throw PythonException();
   }
   char *buf;
   Py_ssize_t len;
   PyBytes_AsStringAndSize(res, &buf, &len);
-  return std::string(buf, len);
+  std::string result(buf, len);
+  Py_DECREF(res);
+  return result;
 }
 
 inline PyObject* cpickle_loads(const std::string& S)
 {
-  PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					     PyUnicode_FromString("loads"),
-					     PyBytes_FromStringAndSize(S.c_str(), S.size()), 
-					     NULL);
+  static PyObject* loads_name = 0;
+  if(!loads_name)
+    loads_name = PyUnicode_FromString("loads");
+  PyObject* data = PyBytes_FromStringAndSize(S.c_str(), S.size());
+  PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(), loads_name, data, NULL);
+  Py_DECREF(data);
   if(PyErr_Occurred()) {
     throw PythonException();
   }
