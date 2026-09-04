@@ -9,7 +9,15 @@
 %{
 #include "fp_exception.h"
 #include <boost/algorithm/string.hpp>
-  
+
+// Python 2 and 3 do strings differently. See python_lib_init.h for the
+// same pattern used elsewhere in the SWIG wrapper code.
+#if PY_MAJOR_VERSION > 2
+#define FpLogger_TextFromUTF8(str) PyUnicode_FromString(str)
+#else
+#define FpLogger_TextFromUTF8(str) PyString_FromString(str)
+#endif
+
 namespace FullPhysics {
 class PythonFpLogger : public LogImp {
 public:
@@ -29,24 +37,24 @@ public:
     os.str("");
     switch(l) {
     case LogImp::DEBUG:
-      PyObject_CallMethodObjArgs(logger, PyString_FromString("debug"),
-				 PyString_FromString(s.c_str()), NULL);
+      PyObject_CallMethodObjArgs(logger, FpLogger_TextFromUTF8("debug"),
+				 FpLogger_TextFromUTF8(s.c_str()), NULL);
       break;
     case LogImp::INFO:
-      PyObject_CallMethodObjArgs(logger, PyString_FromString("info"),
-				 PyString_FromString(s.c_str()), NULL);
+      PyObject_CallMethodObjArgs(logger, FpLogger_TextFromUTF8("info"),
+				 FpLogger_TextFromUTF8(s.c_str()), NULL);
       break;
     case LogImp::WARNING:
-      PyObject_CallMethodObjArgs(logger, PyString_FromString("warning"),
-				 PyString_FromString(s.c_str()), NULL);
+      PyObject_CallMethodObjArgs(logger, FpLogger_TextFromUTF8("warning"),
+				 FpLogger_TextFromUTF8(s.c_str()), NULL);
       break;
     case LogImp::ERROR:
-      PyObject_CallMethodObjArgs(logger, PyString_FromString("error"),
-				 PyString_FromString(s.c_str()), NULL);
+      PyObject_CallMethodObjArgs(logger, FpLogger_TextFromUTF8("error"),
+				 FpLogger_TextFromUTF8(s.c_str()), NULL);
       break;
     case LogImp::FATAL:
-      PyObject_CallMethodObjArgs(logger, PyString_FromString("critical"),
-				 PyString_FromString(s.c_str()), NULL);
+      PyObject_CallMethodObjArgs(logger, FpLogger_TextFromUTF8("critical"),
+				 FpLogger_TextFromUTF8(s.c_str()), NULL);
       break;
     default:
       throw Exception("Unknown log level");
