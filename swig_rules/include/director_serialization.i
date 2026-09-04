@@ -45,12 +45,24 @@
 			      const SwigDirector_ ## TYPE* d, 
 			      const unsigned int version)
      {
+       static PyObject* swig_this_name = PyUnicode_FromString("this");
        PyObject* pobj = d->swig_get_self();
-       PyObject* this_save = PyObject_GetAttr(pobj, PyString_FromString("this"));
-       PyObject_SetAttr(pobj, PyString_FromString("this"), Py_None);
-       std::string python_object = cpickle_dumps(pobj);
-       ar & BOOST_SERIALIZATION_NVP(python_object);
-       PyObject_SetAttr(pobj, PyString_FromString("this"), this_save);
+       PyObject* this_save = PyObject_GetAttr(pobj, swig_this_name);
+       PyObject_SetAttr(pobj, swig_this_name, Py_None);
+       // If cpickle_dumps or the archive write throws (e.g., the python
+       // object has an unpicklable attribute), we still need to restore
+       // "this" before letting the exception propagate. Otherwise pobj is
+       // left permanently with this=None, breaking it for the rest of its
+       // lifetime.
+       try {
+         std::string python_object = cpickle_dumps(pobj);
+         ar & BOOST_SERIALIZATION_NVP(python_object);
+       } catch (...) {
+         PyObject_SetAttr(pobj, swig_this_name, this_save);
+         Py_DECREF(this_save);
+         throw;
+       }
+       PyObject_SetAttr(pobj, swig_this_name, this_save);
        Py_DECREF(this_save);
      }
      template<class Archive>
@@ -60,12 +72,20 @@
        std::string python_object;
        ar & BOOST_SERIALIZATION_NVP(python_object);
        PyObject* pobj = cpickle_loads(python_object);
-       ::new(d)SwigDirector_ ## TYPE(pobj);
-       boost::shared_ptr<NAMESPACE::TYPE> *smartresult = d ? new boost::shared_ptr<NAMESPACE::TYPE>(d) : 0;
-       PyObject* thisobj = SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIG_TypeQuery("boost::shared_ptr<NAMESPACE::TYPE>*"), SWIG_POINTER_NEW | SWIG_POINTER_OWN);
-       // Transfer ownership of SwigDirector_ ## TYPE to pobj.
-       SWIG_Python_SetSwigThis(pobj, thisobj);
-       Py_DECREF(thisobj);
+       try {
+         ::new(d)SwigDirector_ ## TYPE(pobj);
+         boost::shared_ptr<NAMESPACE::TYPE> *smartresult = d ? new boost::shared_ptr<NAMESPACE::TYPE>(d) : 0;
+         PyObject* thisobj = SWIG_NewPointerObj(SWIG_as_voidptr(smartresult), SWIG_TypeQuery("boost::shared_ptr<NAMESPACE::TYPE>*"), SWIG_POINTER_NEW | SWIG_POINTER_OWN);
+         // Transfer ownership of SwigDirector_ ## TYPE to pobj.
+         SWIG_Python_SetSwigThis(pobj, thisobj);
+         Py_DECREF(thisobj);
+       } catch (...) {
+         // Construction never completed, so pobj's new reference (from
+         // cpickle_loads) was never handed off to anything -- release it
+         // before propagating the exception.
+         Py_DECREF(pobj);
+         throw;
+       }
      }
    }
 }

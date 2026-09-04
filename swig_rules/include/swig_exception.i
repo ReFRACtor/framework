@@ -16,13 +16,20 @@
 %exception {
   try {
     $action
-  } catch (Swig::DirectorException &e) { 
-    SWIG_fail; 
+  } catch (Swig::DirectorException &e) {
+    SWIG_fail;
   } catch (const PythonException& e) {
     e.restore_python_exception();
-    SWIG_fail; 
+    SWIG_fail;
   } catch (const std::exception& e) {
     SWIG_exception(SWIG_RuntimeError, e.what());
+  } catch (...) {
+    // Anything not derived from std::exception (a raw type, a
+    // third-party exception hierarchy that doesn't inherit
+    // std::exception, etc.) would otherwise propagate across the
+    // extern "C" boundary into CPython -- undefined behavior, in
+    // practice a process abort rather than a clean Python exception.
+    SWIG_exception(SWIG_RuntimeError, "unknown C++ exception");
   }
 }
 

@@ -42,7 +42,7 @@ public:
     boost::shared_ptr<Swig::Director> v2 =
       boost::dynamic_pointer_cast<Swig::Director>(V);
     if(!v2)
-      return boost::shared_ptr<GenericObject>(V.get());
+      return V;
     PyObject* pobj = v2->swig_get_self();
     // Transfer ownership of pobj to r.
     boost::shared_ptr<GenericObject> r(V.get(), PythonRefPtrCleanup(pobj));
@@ -72,23 +72,28 @@ private:
   }
   inline std::string cpickle_dumps(PyObject* obj) const
   {
-    PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					       PyString_FromString("dumps"),
-					       obj, NULL);
+    static PyObject* dumps_name = 0;
+    if(!dumps_name)
+      dumps_name = PyUnicode_FromString("dumps");
+    PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(), dumps_name, obj, NULL);
     if(PyErr_Occurred()) {
       throw PythonException();
     }
     char *buf;
     Py_ssize_t len;
     PyBytes_AsStringAndSize(res, &buf, &len);
-    return std::string(buf, len);
+    std::string result(buf, len);
+    Py_DECREF(res);
+    return result;
   }
   inline PyObject* cpickle_loads(const std::string& S) const
   {
-    PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(),
-					       PyString_FromString("loads"),
-					       PyBytes_FromStringAndSize(S.c_str(), S.size()), 
-					       NULL);
+    static PyObject* loads_name = 0;
+    if(!loads_name)
+      loads_name = PyUnicode_FromString("loads");
+    PyObject* data = PyBytes_FromStringAndSize(S.c_str(), S.size());
+    PyObject* res = PyObject_CallMethodObjArgs(cpickle_module(), loads_name, data, NULL);
+    Py_DECREF(data);
     if(PyErr_Occurred()) {
       throw PythonException();
     }
