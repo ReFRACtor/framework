@@ -167,8 +167,9 @@ install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink _swig_w
 # Install swig python
 install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install ${_pip_args} ${CMAKE_CURRENT_BINARY_DIR})")
 
-# Expose Python install path to parent scope
+# Expose Python install path and interpreter to parent scope
 set(PYTHON_INSTALL_DIR ${PYTHON_INSTALL_DIR} PARENT_SCOPE)
+set(Python3_EXECUTABLE ${Python3_EXECUTABLE} PARENT_SCOPE)
 
 # Make a custom target to allow doing: make python
 # Make sure it gets called during the all target
