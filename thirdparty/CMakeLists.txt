@@ -57,9 +57,40 @@ if(GSL_VERSION VERSION_LESS 2.2.1)
     message(FATAL_ERROR "GSL version >= 2.2.1 required, found ${GSL_VERSION}")
 endif()
 
+# Some thirdparty packages (e.g. HDF5, Boost) ship their own CMake package
+# config when installed via conda-forge. Instead of setting their "_LIBRARIES"
+# variable to library file paths, these configs set it to the names of
+# IMPORTED targets (e.g. "hdf5-shared", "Boost::regex"). Those imported
+# targets are only visible in this directory scope and its subdirectories by
+# default, so sibling directories (e.g. lib/, test/) that consume
+# THIRDPARTY_LIBRARIES via PARENT_SCOPE can't see them. For targets with no
+# "::" in the name, CMake silently falls back to passing the name as a
+# literal -l flag instead of erroring, which fails to link since e.g. there's
+# no libhdf5-shared.so. Promote all such targets (and anything they
+# transitively link against) to global so they resolve everywhere.
+function(_promote_import_target_global target_name)
+    if(TARGET ${target_name})
+        get_target_property(_is_global ${target_name} IMPORTED_GLOBAL)
+        if(NOT _is_global)
+            set_target_properties(${target_name} PROPERTIES IMPORTED_GLOBAL TRUE)
+        endif()
+        get_target_property(_link_libs ${target_name} INTERFACE_LINK_LIBRARIES)
+        if(_link_libs)
+            foreach(_dep ${_link_libs})
+                _promote_import_target_global(${_dep})
+            endforeach()
+        endif()
+    endif()
+endfunction()
+
 # Set up HDF5 using the C and C++ bindings
 find_package(HDF5 REQUIRED COMPONENTS C CXX)
-# Different versionso of FindHDF5 may use one or the other of these variable naems, with 
+
+foreach(_hdf5_lib ${HDF5_LIBRARIES})
+    _promote_import_target_global(${_hdf5_lib})
+endforeach()
+
+# Different versionso of FindHDF5 may use one or the other of these variable naems, with
 # newer versions saying that HDF5_C_INCLUDE_DIRS deprecates the other
 if(HDF5_C_INCLUDE_DIRS)
     list(APPEND THIRDPARTY_INCLUDES ${HDF5_C_INCLUDE_DIRS})
@@ -90,6 +121,9 @@ if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
 find_package(Boost 1.72 REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization timer)
+foreach(_boost_lib ${Boost_LIBRARIES})
+    _promote_import_target_global(${_boost_lib})
+endforeach()
 list(APPEND THIRDPARTY_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND THIRDPARTY_LIBRARIES ${Boost_LIBRARIES})
 

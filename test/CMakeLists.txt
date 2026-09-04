@@ -41,12 +41,6 @@ endif()
 
 #####
 # Create unit test binary, do not include it in the make all target
-# Boost >= 1.70 ships its own CMake package config; use that instead of
-# CMake's bundled (and now removed-in-a-future-version) FindBoost module.
-if(POLICY CMP0167)
-  cmake_policy(SET CMP0167 NEW)
-endif()
-find_package(Boost REQUIRED COMPONENTS regex date_time iostreams filesystem system serialization timer)
 add_executable(test_all EXCLUDE_FROM_ALL ${FP_TEST_FILES} unit/test_all.cc)
 target_link_libraries(test_all refractor ${FP_LIBRARIES} ${THIRDPARTY_LIBRARIES})
 target_include_directories(test_all PRIVATE ${SWIG_INCLUDE_DIR})
