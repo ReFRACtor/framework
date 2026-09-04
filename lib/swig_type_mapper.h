@@ -42,7 +42,7 @@ public:
     boost::shared_ptr<Swig::Director> v2 =
       boost::dynamic_pointer_cast<Swig::Director>(V);
     if(!v2)
-      return boost::shared_ptr<GenericObject>(V.get());
+      return V;
     PyObject* pobj = v2->swig_get_self();
     // Transfer ownership of pobj to r.
     boost::shared_ptr<GenericObject> r(V.get(), PythonRefPtrCleanup(pobj));

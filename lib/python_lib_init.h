@@ -80,16 +80,21 @@ PythonException::PythonException()
     type(NULL), value(NULL), tb(NULL), desc("Python error that I can't parse")
 {
   PyErr_Fetch((PyObject**) &type, (PyObject**)&value, (PyObject**)&tb);
-  PyObject * val_str = PyObject_Str((PyObject*) value);
-  PyObject * temp_bytes = PyUnicode_AsEncodedString(val_str, "ASCII", 
-						      "ignore");
-  Py_DECREF(val_str);
+  // Normalize before touching value -- PyErr_Fetch can hand back a NULL
+  // value (e.g. an exception set via PyErr_SetNone/PyErr_SetObject with
+  // no instance yet), and PyObject_Str(NULL) below would be undefined
+  // behavior. Normalizing first guarantees value is a real instance
+  // (assuming type is non-NULL, i.e. an exception was actually pending).
+  PyErr_NormalizeException((PyObject**)&type, (PyObject**)&value, (PyObject**)&tb);
+  PyObject * val_str = value ? PyObject_Str((PyObject*) value) : NULL;
+  PyObject * temp_bytes = val_str ? PyUnicode_AsEncodedString(val_str, "ASCII",
+						      "ignore") : NULL;
+  Py_XDECREF(val_str);
   if(temp_bytes) {
     desc = PyBytes_AS_STRING(temp_bytes); // Borrowed pointer
     Py_DECREF(temp_bytes);
   }
   // Try to get a traceback if we can
-  PyErr_NormalizeException((PyObject**)&type, (PyObject**)&value, (PyObject**)&tb);
   PyObject* mod = PyImport_ImportModule("traceback");
   PyObject* err_str_list = NULL;
   if(tb) {

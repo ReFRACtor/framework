@@ -320,7 +320,6 @@
   if(dp) {
     $result.reset($result.get(), PythonRefPtrCleanup(dp->swig_get_self()));
     }
-  if (newmem & SWIG_CAST_NEW_MEMORY) %delete(%reinterpret_cast(swig_argp, $&ltype));
 }
 
 // shared_ptr by reference
@@ -397,7 +396,11 @@
   
   Swig::Director* dp = dynamic_cast<Swig::Director*>($1->get());
   if(dp) {
-    PyObject* this_pobj = PyObject_GetAttr($input, PyUnicode_FromString("this"));
+    static PyObject* swig_this_name = PyUnicode_FromString("this");
+    PyObject* this_pobj = PyObject_GetAttr($input, swig_this_name);
+    if (!this_pobj) {
+      %argument_fail(SWIG_ERROR, "$type", $symname, $argnum);
+    }
     res = SWIG_ConvertPtrAndOwn(this_pobj, &argp, $descriptor(SWIG_SHARED_PTR_QNAMESPACE::shared_ptr< TYPE > *), %convertptr_flags, &newmem);
     Py_DECREF(this_pobj);
     if (!SWIG_IsOK(res)) {

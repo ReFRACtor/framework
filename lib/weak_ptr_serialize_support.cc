@@ -1,9 +1,11 @@
 #include "weak_ptr_serialize_support.h"
 #include <set>
+#include <mutex>
 
 using namespace SWIG_MAPPER_NAMESPACE;
 
 static std::set<const GenericObject*> ptr_referenced;
+static std::mutex ptr_referenced_mutex;
 
 void SWIG_MAPPER_NAMESPACE::clear_ptr_serialized_reference()
 {
@@ -18,4 +20,14 @@ void SWIG_MAPPER_NAMESPACE::add_ptr_serialized_reference(const GenericObject* P)
 bool SWIG_MAPPER_NAMESPACE::is_ptr_serialized(const GenericObject* P)
 {
   return ptr_referenced.find(P) != ptr_referenced.end();
+}
+
+SWIG_MAPPER_NAMESPACE::PtrSerializeLock::PtrSerializeLock()
+{
+  ptr_referenced_mutex.lock();
+}
+
+SWIG_MAPPER_NAMESPACE::PtrSerializeLock::~PtrSerializeLock()
+{
+  ptr_referenced_mutex.unlock();
 }
