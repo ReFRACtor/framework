@@ -74,28 +74,36 @@ public:
 %define %boost_array_template(NAME,TYPE, LEN, PRECEDENCE)
 %template(NAME) boost::array<TYPE, LEN>;
 
-%typemap(in) const boost::array<TYPE, LEN>& (boost::array<TYPE, LEN> a, PythonObject numpy) 
+%typemap(in) const boost::array<TYPE, LEN>& (boost::array<TYPE, LEN> a, PythonObject numpy)
 {
   numpy.obj = to_numpy<TYPE >($input);
   if(!numpy.obj)
     return NULL;
-  a = to_boost_array<TYPE, LEN>(numpy);
+  try {
+    a = to_boost_array<TYPE, LEN>(numpy);
+  } catch (const std::exception& exc) {
+    SWIG_exception_fail(SWIG_ValueError, exc.what());
+  }
   $1 = &a;
 }
 
-%typemap(in) boost::array<TYPE, LEN> (PythonObject numpy) 
+%typemap(in) boost::array<TYPE, LEN> (PythonObject numpy)
 {
   numpy.obj = to_numpy<TYPE >($input);
   if(!numpy.obj)
     return NULL;
-  $1 = to_boost_array<TYPE, LEN>(numpy);
+  try {
+    $1 = to_boost_array<TYPE, LEN>(numpy);
+  } catch (const std::exception& exc) {
+    SWIG_exception_fail(SWIG_ValueError, exc.what());
+  }
 }
 
 %typecheck(PRECEDENCE) boost::array<TYPE, LEN>, const boost::array<TYPE, LEN>& {
   PythonObject t(to_numpy<TYPE >($input));
   if(!t.obj || PyArray_NDIM((PyArrayObject*) t.obj) != 1)
     return 0;
-  blitz::Array<T, 1> b = to_blitz_array<TYPE, 1>(t.obj);
+  blitz::Array<TYPE, 1> b = to_blitz_array<TYPE, 1>(t.obj);
   return (b.rows() == LEN ? 1 : 0);
 }
   

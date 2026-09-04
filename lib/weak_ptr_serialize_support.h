@@ -66,7 +66,25 @@
 namespace SWIG_MAPPER_NAMESPACE {
   void clear_ptr_serialized_reference();
   void add_ptr_serialized_reference(const GenericObject* P);
-  bool is_ptr_serialized(const GenericObject* P);  
+  bool is_ptr_serialized(const GenericObject* P);
+
+  /// The pointer-tracking state above is process-global and unguarded.
+  /// A serialize_write* call is really a two-pass sequence -- a mark
+  /// pass that populates this state, followed by the real archive
+  /// write that reads it back -- so it isn't enough to lock each
+  /// individual call above; the whole mark+write sequence for one
+  /// object needs to be atomic with respect to other threads doing the
+  /// same. Construct one of these (and hold it for that whole
+  /// sequence) to make concurrent serialize_write* calls from
+  /// different threads safe. RAII: locks in the constructor, unlocks
+  /// in the destructor.
+  class PtrSerializeLock {
+  public:
+    PtrSerializeLock();
+    ~PtrSerializeLock();
+    PtrSerializeLock(const PtrSerializeLock&) = delete;
+    PtrSerializeLock& operator=(const PtrSerializeLock&) = delete;
+  };
 }
 
 namespace boost {

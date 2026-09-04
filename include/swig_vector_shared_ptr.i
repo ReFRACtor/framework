@@ -121,6 +121,14 @@ namespace swig {
 	  Swig::Director* dp = dynamic_cast<Swig::Director*>(p->get());
 	  if(dp) {
 	    boost::shared_ptr<T> *p2 = new boost::shared_ptr<T>(p->get(), PythonRefPtrCleanup(dp->swig_get_self()));
+	    // If p was itself a heap allocation from the cast above (newmem
+	    // & SWIG_CAST_NEW_MEMORY), we're about to replace it with p2 --
+	    // free it first rather than leaking it. If newmem wasn't set, p
+	    // points at a shared_ptr swig still owns elsewhere, so leave it
+	    // alone.
+	    if (newmem & SWIG_CAST_NEW_MEMORY) {
+	      delete p;
+	    }
 	    p = p2;
             res |= SWIG_NEWOBJMASK;
 	  }

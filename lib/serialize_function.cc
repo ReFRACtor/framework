@@ -155,15 +155,19 @@ public:
     if(dirhandle == -1)
       throw std::runtime_error("Open failed");
     int status = chdir(newdir.c_str());
-    if(status != 0)
+    if(status != 0) {
+      close(dirhandle);
       throw std::runtime_error("Could not change to directory");
+    }
   }
   ~DirChange()
   {
     int status = fchdir(dirhandle);
     if(status != 0) {
-      close(dirhandle);
-      // Don't throw, because this terminates.
+      // Don't throw, because this terminates. Note we still need to
+      // close dirhandle below, so just fall through rather than
+      // closing here too -- closing the same fd number twice risks
+      // closing an unrelated fd that another thread has since reused.
       //      throw std::runtime_error("Call to fchdir failed");
     }
     close(dirhandle);
@@ -247,10 +251,11 @@ static void mark_pointer(const boost::shared_ptr<GenericObject>& Obj)
 /// objects (e.g., can have a std::map if we end up needing it).
 //-----------------------------------------------------------------------
 
-void SWIG_MAPPER_NAMESPACE::serialize_write(const std::string& Fname, 
+void SWIG_MAPPER_NAMESPACE::serialize_write(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  PtrSerializeLock lock;
   mark_pointer(Obj);
   OstreamCompress os(Fname.c_str());
   boost::archive::polymorphic_xml_oarchive oa(os);
@@ -260,10 +265,11 @@ void SWIG_MAPPER_NAMESPACE::serialize_write(const std::string& Fname,
 #endif
 }
 
-void SWIG_MAPPER_NAMESPACE::serialize_write_binary(const std::string& Fname, 
+void SWIG_MAPPER_NAMESPACE::serialize_write_binary(const std::string& Fname,
 			     const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  PtrSerializeLock lock;
   mark_pointer(Obj);
   OstreamCompress os(Fname.c_str());
   boost::archive::polymorphic_binary_oarchive oa(os);
@@ -281,6 +287,7 @@ std::string SWIG_MAPPER_NAMESPACE::serialize_write_string
 (const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  PtrSerializeLock lock;
   mark_pointer(Obj);
   std::ostringstream os;
   {
@@ -302,6 +309,7 @@ std::string SWIG_MAPPER_NAMESPACE::serialize_write_binary
 (const boost::shared_ptr<GenericObject>& Obj)
 {
 #ifdef SWIG_HAVE_BOOST_SERIALIZATION
+  PtrSerializeLock lock;
   mark_pointer(Obj);
   std::ostringstream os;
   {

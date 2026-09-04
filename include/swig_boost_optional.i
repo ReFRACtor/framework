@@ -98,17 +98,27 @@
 %}
 
 %typemap(out) boost::optional<blitz::Range> %{
-    if (&$1) {
-        $result = SWIG_NewPointerObj(new blitz::Range((&$1)->get()), $descriptor(blitz::Range*), SWIG_POINTER_OWN | 0);
-    } else {
+    // $1 may be a SwigValueWrapper<boost::optional<blitz::Range> > here,
+    // which only provides one implicit conversion (to
+    // boost::optional<blitz::Range>&) -- chaining that with optional's own
+    // operator bool() isn't allowed implicitly, so force the first
+    // conversion explicitly via a named local. Scoped in its own block
+    // so it doesn't cross the "fail:" label SWIG's argument-checking
+    // macros jump to earlier in the wrapper function.
+    {
+      boost::optional<blitz::Range> swig_opt_range = $1;
+      if (swig_opt_range) {
+        $result = SWIG_NewPointerObj(new blitz::Range(swig_opt_range.get()), $descriptor(blitz::Range*), SWIG_POINTER_OWN | 0);
+      } else {
         $result = Py_None;
         Py_INCREF(Py_None);
+      }
     }
 %}
 
 %typemap(out) const boost::optional<blitz::Range>& %{
-    if (&$1) {
-        $result = SWIG_NewPointerObj(new blitz::Range((&$1)->get()), $descriptor(blitz::Range*), SWIG_POINTER_OWN | 0);
+    if ($1) {
+        $result = SWIG_NewPointerObj(new blitz::Range($1.get()), $descriptor(blitz::Range*), SWIG_POINTER_OWN | 0);
     } else {
         $result = Py_None;
         Py_INCREF(Py_None);
