@@ -3,12 +3,6 @@
 #include <mutex>
 #include <iostream>
 
-using namespace SWIG_MAPPER_NAMESPACE;
-
-static std::set<const GenericObject*> ptr_referenced;
-static std::recursive_mutex ptr_referenced_mutex;
-static thread_local int ptr_serialize_depth = 0;
-
 void SWIG_MAPPER_NAMESPACE::clear_ptr_serialized_reference()
 {
   // Only the outermost PtrSerializeLock for this thread should reset
@@ -47,10 +41,5 @@ SWIG_MAPPER_NAMESPACE::PtrSerializeLock::PtrSerializeLock()
 {
   ptr_referenced_mutex.lock();
   ++ptr_serialize_depth;
-}
-
-SWIG_MAPPER_NAMESPACE::PtrSerializeLock::~PtrSerializeLock()
-{
-  --ptr_serialize_depth;
   ptr_referenced_mutex.unlock();
 }
