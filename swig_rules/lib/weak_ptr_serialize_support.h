@@ -77,7 +77,12 @@ namespace SWIG_MAPPER_NAMESPACE {
   /// same. Construct one of these (and hold it for that whole
   /// sequence) to make concurrent serialize_write* calls from
   /// different threads safe. RAII: locks in the constructor, unlocks
-  /// in the destructor.
+  /// in the destructor. Backed by a recursive_mutex because
+  /// serialize_write* can itself recurse on the same thread (e.g. a
+  /// SWIG director object being pickled can trigger another
+  /// serialize_write_binary call on a framework object it holds
+  /// before the outer call finishes); only the outermost lock clears
+  /// the mark state, see clear_ptr_serialized_reference().
   class PtrSerializeLock {
   public:
     PtrSerializeLock();
