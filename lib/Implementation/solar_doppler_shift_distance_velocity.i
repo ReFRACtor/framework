@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
 %{
 #include "solar_doppler_shift_distance_velocity.h"

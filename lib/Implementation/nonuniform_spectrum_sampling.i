@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 %include "fp_common.i"
 %{
 #include "nonuniform_spectrum_sampling.h"

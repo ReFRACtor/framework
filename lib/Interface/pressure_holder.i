@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 // This is a simple test class used to test the SWIG interface.
 
 %include "fp_common.i"

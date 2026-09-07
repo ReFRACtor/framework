@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 // This file was auto-generated
 
 %include "fp_common.i"
