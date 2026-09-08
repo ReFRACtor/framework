@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 // This defines some classes for making python objects look like
 // ostream or istream objects.
 #ifndef SWIG_MODULE_ALREADY_DONE

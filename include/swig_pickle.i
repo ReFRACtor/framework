@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 //--------------------------------------------------------------
 // Support for writing the __reduce__ function needed for pickling.
 //--------------------------------------------------------------
