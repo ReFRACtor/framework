@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 // This wraps a shared_ptr up for a given namespace. In particular, we use
 // RTTI to make sure that the most specific type is returned in
 // python, rather than the most general type. This maps better to the

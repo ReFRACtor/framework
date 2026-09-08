@@ -1,5 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
 #ifndef SWIG_MODULE_ALREADY_DONE
 #if SWIG_VERSION < 0x040000
 %module(directors="1", allprotected="1") swig_boost_array

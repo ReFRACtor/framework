@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 // Stuff to include everywhere for using std::ostream. We also have 
 // swig_iostream.i which includes stuff compiled in one spot.
 

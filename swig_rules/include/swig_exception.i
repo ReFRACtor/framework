@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 //--------------------------------------------------------------
 // Translate exceptions into the appropriate language exception type
 //--------------------------------------------------------------

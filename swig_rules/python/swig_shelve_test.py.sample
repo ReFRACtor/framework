@@ -1,6 +1,5 @@
 from .sqlite_shelf import *
 import time
-from test_support import *
 
 def test_sqlite_shelf(isolated_dir):
     try:

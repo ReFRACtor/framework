@@ -1,6 +1,3 @@
-// -*- mode: c++; -*-
-// (Not really c++, but closest emacs mode)
-
 //--------------------------------------------------------------
 // This provides common functions etc. used throughout our SWIG
 // code. This should get included at the top of each swig file.
