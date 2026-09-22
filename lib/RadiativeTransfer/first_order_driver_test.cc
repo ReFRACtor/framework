@@ -270,7 +270,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   }
 
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay, 0), jac_atm_fo(rjac,rlay, 0), 3e-4);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay, 0), jac_atm_fd(rjac,rlay, 0), 5e-4);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay, 0), jac_atm_fd(rjac,rlay), 5e-4);
 
   if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
@@ -301,7 +301,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
     } 
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf, 0), jac_surf_param_fo(rsurf, 0), 1e-7);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo(rsurf, 0), jac_surf_param_fd, 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_fo(all, 0), jac_surf_param_fd, 1e-7);
   }
 
 }

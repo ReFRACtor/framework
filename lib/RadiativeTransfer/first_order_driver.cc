@@ -342,7 +342,7 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     // Set phase moments, FO storage is transpose of ReFRACtor ordering
     Array<double, 2> phasmoms(solar_interface_->phasmoms());
-    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim)(r_all, r_mom, 0);
+    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, 0);
 
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());

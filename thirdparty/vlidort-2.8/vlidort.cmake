@@ -1,5 +1,6 @@
 ExternalProject_Add(vlidort
     URL ${CMAKE_CURRENT_SOURCE_DIR}/vlidort-2.8
+    BUILD_BYPRODUCTS ${THIRDPARTY_LIB_DIR}/libvlidort${CMAKE_SHARED_LIBRARY_SUFFIX}
     CONFIGURE_COMMAND cmake
         -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
         -DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}

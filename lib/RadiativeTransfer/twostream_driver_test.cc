@@ -237,7 +237,7 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
     }
 
     BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf, 0), jac_surf_param_ts(rsurf, 0), 1e-7);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_ts(rsurf, 0), jac_surf_param_fd, 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_ts(all, 0), jac_surf_param_fd, 1e-7);
   }
 }
 

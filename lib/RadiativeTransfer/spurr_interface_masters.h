@@ -12,7 +12,7 @@
 
 namespace FullPhysics {
 
-class Spurr_Brdf_Lin_Sup_Masters_Base : public virtual Printable<Spurr_Brdf_Lin_Sup_Masters_Base> {
+class Spurr_Brdf_Lin_Sup_Masters_Base : public Printable<Spurr_Brdf_Lin_Sup_Masters_Base> {
 
 public:
 
@@ -49,7 +49,7 @@ public:
 
 };
 
-class Spurr_Brdf_Sup_Masters_Base : public virtual Printable<Spurr_Brdf_Sup_Masters_Base> {
+class Spurr_Brdf_Sup_Masters_Base : public Printable<Spurr_Brdf_Sup_Masters_Base> {
 
 public:
 
@@ -80,7 +80,7 @@ public:
 
 };
 
-class Spurr_Inputs_Base : public virtual Printable<Spurr_Inputs_Base> {
+class Spurr_Inputs_Base : public Printable<Spurr_Inputs_Base> {
 
 public:
 
@@ -110,7 +110,7 @@ public:
 
 };
 
-class Spurr_Masters_Base : public virtual Printable<Spurr_Masters_Base> {
+class Spurr_Masters_Base : public Printable<Spurr_Masters_Base> {
 
 public:
 
@@ -140,7 +140,7 @@ public:
 
 };
 
-class Spurr_L_Inputs_Base : public virtual Printable<Spurr_L_Inputs_Base> {
+class Spurr_L_Inputs_Base : public Printable<Spurr_L_Inputs_Base> {
 
 public:
 
@@ -176,7 +176,7 @@ public:
 
 };
 
-class Spurr_Lcs_Masters_Base : public virtual Printable<Spurr_Lcs_Masters_Base> {
+class Spurr_Lcs_Masters_Base : public Printable<Spurr_Lcs_Masters_Base> {
 
 public:
 
@@ -218,7 +218,7 @@ public:
 
 };
 
-class Spurr_Lps_Masters_Base : public virtual Printable<Spurr_Lps_Masters_Base> {
+class Spurr_Lps_Masters_Base : public Printable<Spurr_Lps_Masters_Base> {
 
 public:
 
@@ -260,7 +260,7 @@ public:
 
 };
 
-class Spurr_Brdf_Sup_Accessories_Base : public virtual Printable<Spurr_Brdf_Sup_Accessories_Base> {
+class Spurr_Brdf_Sup_Accessories_Base : public Printable<Spurr_Brdf_Sup_Accessories_Base> {
 
 public:
 

@@ -674,9 +674,10 @@ public:
   }
 
   void bs_do_kernel_factor_wfs(const blitz::Array<bool, 1>& bs_do_kernel_factor_wfs_in) {
-    blitz::Array<int,1> as_int(bs_do_kernel_factor_wfs_.shape());
+    blitz::Array<int,1> as_int(bs_do_kernel_factor_wfs_in.shape());
     as_int = blitz::where(bs_do_kernel_factor_wfs_in == true, FORTRAN_TRUE_INT, 0);
-    bs_do_kernel_factor_wfs_ = as_int;
+    blitz::Range rdata(0,as_int.rows()-1);
+    bs_do_kernel_factor_wfs_(rdata) = as_int;
   }
 
   
@@ -700,9 +701,10 @@ public:
   }
 
   void bs_do_kparams_derivs(const blitz::Array<bool, 1>& bs_do_kparams_derivs_in) {
-    blitz::Array<int,1> as_int(bs_do_kparams_derivs_.shape());
+    blitz::Array<int,1> as_int(bs_do_kparams_derivs_in.shape());
     as_int = blitz::where(bs_do_kparams_derivs_in == true, FORTRAN_TRUE_INT, 0);
-    bs_do_kparams_derivs_ = as_int;
+    blitz::Range rdata(0,as_int.rows()-1);
+    bs_do_kparams_derivs_(rdata) = as_int;
   }
 
   
@@ -1437,9 +1439,10 @@ public:
   }
 
   void bs_lambertian_kernel_flag(const blitz::Array<bool, 1>& bs_lambertian_kernel_flag_in) {
-    blitz::Array<int,1> as_int(bs_lambertian_kernel_flag_.shape());
+    blitz::Array<int,1> as_int(bs_lambertian_kernel_flag_in.shape());
     as_int = blitz::where(bs_lambertian_kernel_flag_in == true, FORTRAN_TRUE_INT, 0);
-    bs_lambertian_kernel_flag_ = as_int;
+    blitz::Range rdata(0,as_int.rows()-1);
+    bs_lambertian_kernel_flag_(rdata) = as_int;
   }
 
   
@@ -3026,9 +3029,10 @@ public:
   }
 
   void ts_layer_vary_flag(const blitz::Array<bool, 1>& ts_layer_vary_flag_in) {
-    blitz::Array<int,1> as_int(ts_layer_vary_flag_.shape());
+    blitz::Array<int,1> as_int(ts_layer_vary_flag_in.shape());
     as_int = blitz::where(ts_layer_vary_flag_in == true, FORTRAN_TRUE_INT, 0);
-    ts_layer_vary_flag_ = as_int;
+    blitz::Range rdata(0,as_int.rows()-1);
+    ts_layer_vary_flag_(rdata) = as_int;
   }
 
   
@@ -7464,9 +7468,10 @@ public:
   }
 
   void ts_do_albtrn_media(const blitz::Array<bool, 1>& ts_do_albtrn_media_in) {
-    blitz::Array<int,1> as_int(ts_do_albtrn_media_.shape());
+    blitz::Array<int,1> as_int(ts_do_albtrn_media_in.shape());
     as_int = blitz::where(ts_do_albtrn_media_in == true, FORTRAN_TRUE_INT, 0);
-    ts_do_albtrn_media_ = as_int;
+    blitz::Range rdata(0,as_int.rows()-1);
+    ts_do_albtrn_media_(rdata) = as_int;
   }
 
   
