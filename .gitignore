@@ -57,6 +57,7 @@ core.*
 graphify-out/cost.json
 graphify-out/cache/
 lib/graphify-out/cache/
+graphify-out/2???-??-??/
 
 # User settings
 .vscode

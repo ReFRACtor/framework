@@ -7,6 +7,9 @@
 
 %import "double_with_unit.i"
 %import "auto_derivative_with_unit.i"
+%import "array_ad.i"
+%import "array_with_unit.i"
+%import "array_ad_with_unit.i"
 
 %base_import(gas_absorption)
 
@@ -17,6 +20,7 @@
 // We also need the shared ptr after the templates, so we override the
 // output type maps for std::vector<boost::shared_ptr<T> >
 %fp_shared_ptr(FullPhysics::Absco);
+%fp_shared_ptr(FullPhysics::AbscoInterpolator);
 
 namespace FullPhysics {
 
@@ -52,6 +56,21 @@ public:
   virtual blitz::Array<float, 4> read_float_2b(double wn) const;
 
   %pickle_serialization();
+};
+
+// Helper class that calculates the absorption cross section for a
+// fixed set of Pressure, Temperature, and Broadener VMR. Needs to be
+// declared after Absco since its constructor references it.
+class AbscoInterpolator : public GenericObject {
+public:
+  AbscoInterpolator(const boost::shared_ptr<Absco>& A,
+		    const ArrayWithUnit<double, 1>& Press,
+		    const ArrayAdWithUnit<double, 1>& Temp,
+		    const ArrayAdWithUnit<double, 2>& Broadener_vmr);
+  std::string print_to_string() const;
+  std::string print_parent() const;
+  blitz::Array<double, 1> absorption_cross_section_noderiv(double wn) const;
+  ArrayAd<double, 1> absorption_cross_section_deriv(double wn) const;
 };
 }
 

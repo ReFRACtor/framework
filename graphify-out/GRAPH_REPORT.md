@@ -1,13 +1,18 @@
-# Graph Report - .  (2026-07-06)
+# Graph Report - framework  (2026-07-28)
 
 ## Corpus Check
-- 1155 files · ~1,803,998 words
+- 1214 files · ~1,932,338 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 14382 nodes · 27562 edges · 634 communities (570 shown, 64 thin omitted)
-- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 2301 edges (avg confidence: 0.76)
-- Token cost: 17,148 input · 4,438 output
+- 14866 nodes · 28702 edges · 701 communities (616 shown, 85 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 2359 edges (avg confidence: 0.76)
+- Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `3c58c3c4`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - [[_COMMUNITY_Lua|Lua]]
@@ -36,7 +41,6 @@
 - [[_COMMUNITY_Radiativetransfer|Radiativetransfer]]
 - [[_COMMUNITY_Radiativetransfer|Radiativetransfer]]
 - [[_COMMUNITY_Radiativetransfer|Radiativetransfer]]
-- [[_COMMUNITY_Aerosol|Aerosol]]
 - [[_COMMUNITY_Atmosphere|Atmosphere]]
 - [[_COMMUNITY_Radiativetransfer|Radiativetransfer]]
 - [[_COMMUNITY_Community 29|Community 29]]
@@ -367,7 +371,6 @@
 - [[_COMMUNITY_Community 354|Community 354]]
 - [[_COMMUNITY_Test|Test]]
 - [[_COMMUNITY_Test|Test]]
-- [[_COMMUNITY_Cloud|Cloud]]
 - [[_COMMUNITY_Support|Support]]
 - [[_COMMUNITY_Interface|Interface]]
 - [[_COMMUNITY_Ils|Ils]]
@@ -617,30 +620,78 @@
 - [[_COMMUNITY_Test|Test]]
 - [[_COMMUNITY_Test|Test]]
 - [[_COMMUNITY_Test|Test]]
+- [[_COMMUNITY_Test|Test]]
+- [[_COMMUNITY_InitialGuessBuilderTest|InitialGuessBuilderTest]]
+- [[_COMMUNITY_RadiativeTransferImpBase|RadiativeTransferImpBase]]
+- [[_COMMUNITY_linear_algebra.cc|linear_algebra.cc]]
+- [[_COMMUNITY_uv_atmosphere.py|uv_atmosphere.py]]
+- [[_COMMUNITY_function_or_simple_value|function_or_simple_value]]
+- [[_COMMUNITY_.~AtmosphereLegacy|.~AtmosphereLegacy]]
+- [[_COMMUNITY_.~AtmosphereStandard|.~AtmosphereStandard]]
+- [[_COMMUNITY_BardNLLSProblem|BardNLLSProblem]]
+- [[_COMMUNITY_FreudensteinRothNLLSProblem|FreudensteinRothNLLSProblem]]
+- [[_COMMUNITY_.GroundBrdf|.GroundBrdf]]
+- [[_COMMUNITY_.~MerraAerosol|.~MerraAerosol]]
+- [[_COMMUNITY_NLLSSolverGSLLMSDER|NLLSSolverGSLLMSDER]]
+- [[_COMMUNITY_OssRetrievalFlags|OssRetrievalFlags]]
+- [[_COMMUNITY_planck.h|planck.h]]
+- [[_COMMUNITY_.instance|.instance]]
+- [[_COMMUNITY_brdf_sup_inputs_f_read|brdf_sup_inputs_f_read]]
+- [[_COMMUNITY_module_name|module_name]]
+- [[_COMMUNITY_l2_fp.py|l2_fp.py]]
+- [[_COMMUNITY_activate.sh|activate.sh]]
+- [[_COMMUNITY_ConfigCommon.create_flag|ConfigCommon.create_flag]]
+- [[_COMMUNITY_PrintNotify|PrintNotify]]
+- [[_COMMUNITY_offline_ils.py|offline_ils.py]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_ConfigCommon.calculate_albedo_from_radiance_polynomial|ConfigCommon.calculate_albedo_from_radiance_polynomial]]
+- [[_COMMUNITY_ConfigCommon.brdf_weight|ConfigCommon.brdf_weight]]
+- [[_COMMUNITY_ConfigCommon.to_VectorDouble|ConfigCommon.to_VectorDouble]]
+- [[_COMMUNITY_check_cost_func|check_cost_func]]
+- [[_COMMUNITY_lidort_fixed_inputs_c_init_only|lidort_fixed_inputs_c_init_only]]
+- [[_COMMUNITY_lidort_fixed_optical_c_init_only|lidort_fixed_optical_c_init_only]]
+- [[_COMMUNITY_interface_masters.f90|interface_masters.f90]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_framework-post-link.sh script|framework-post-link.sh script]]
+- [[_COMMUNITY_deactivate.sh|deactivate.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_build.sh|build.sh]]
+- [[_COMMUNITY_configure.sh|configure.sh]]
+- [[_COMMUNITY_ConfigCommon.lua_to_blitz_double_2d|ConfigCommon.lua_to_blitz_double_2d]]
+- [[_COMMUNITY_link-absco.sh|link-absco.sh]]
+- [[_COMMUNITY_h5diff_git_wrap|h5diff_git_wrap]]
+- [[_COMMUNITY_interface_file_with_doc.sh|interface_file_with_doc.sh]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Array` - 1453 edges
-2. `lidort_interface_types` - 249 edges
-3. `ArrayAd` - 222 edges
-4. `lidort_interface_types_io` - 183 edges
-5. `Creator` - 176 edges
-6. `Printable` - 171 edges
-7. `Unit` - 136 edges
-8. `Fo_Scalarss_Rtcalcs_Ilps` - 126 edges
-9. `Observer` - 123 edges
-10. `AutoDerivative` - 116 edges
+1. `Array` - 1456 edges
+2. `shared_ptr` - 683 edges
+3. `lidort_interface_types` - 249 edges
+4. `ArrayAd` - 222 edges
+5. `lidort_interface_types_io` - 183 edges
+6. `Creator` - 178 edges
+7. `Printable` - 171 edges
+8. `Unit` - 136 edges
+9. `Fo_Scalarss_Rtcalcs_Ilps` - 126 edges
+10. `Observer` - 123 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `test_subobj()` --indirect_call--> `IlsInstrument`  [INFERRED]
-  python/test/generic_object_extend_test.py → lib/Implementation/ils_instrument.h
-- `black_sky_albedo_simple_veg()` --references--> `Array`  [EXTRACTED]
-  lib/Implementation/ground_brdf.cc → python/refractor/framework/factory/param.py
-- `black_sky_albedo_simple_soil()` --references--> `Array`  [EXTRACTED]
-  lib/Implementation/ground_brdf.cc → python/refractor/framework/factory/param.py
-- `exact_brdf_value_simple_veg()` --references--> `Array`  [EXTRACTED]
-  lib/Implementation/ground_brdf.cc → python/refractor/framework/factory/param.py
-- `exact_brdf_value_simple_soil()` --references--> `Array`  [EXTRACTED]
-  lib/Implementation/ground_brdf.cc → python/refractor/framework/factory/param.py
+- `add_creator_nodes()` --indirect_call--> `Creator`  [INFERRED]
+  bin/construct_config_diagram.py → python/refractor/framework/factory/creator/base.py
+- `add_parameter_edges()` --indirect_call--> `Creator`  [INFERRED]
+  bin/construct_config_diagram.py → python/refractor/framework/factory/creator/base.py
+- `write_config_diagram()` --calls--> `find_config_function()`  [INFERRED]
+  bin/construct_config_diagram.py → python/refractor/framework/executor/config.py
+- `main()` --calls--> `StrategyExecutor`  [INFERRED]
+  bin/construct_config_diagram.py → python/refractor/framework/executor/strategy_executor.py
+- `main()` --calls--> `StrategyExecutor`  [INFERRED]
+  bin/run_rf_config.py → python/refractor/framework/executor/strategy_executor.py
 
 ## Import Cycles
 - None detected.
@@ -650,15 +701,15 @@
 - **Third-party Library Build Configuration** — thirdparty_2stream_cmakelists, thirdparty_lidort_3_8_cmakelists, thirdparty_luabind_cmakelists [EXTRACTED 1.00]
 - **Connor Solver Expected Test Outputs** — test_unit_data_expected_connor_solver_connor_nondiagonal_cov, test_unit_data_expected_connor_solver_connor_save [INFERRED 0.95]
 
-## Communities (634 total, 64 thin omitted)
+## Communities (701 total, 85 thin omitted)
 
 ### Community 0 - "Lua"
 Cohesion: 0.02
-Nodes (234): PassThroughNoiseModel, blitz_bool_array_1d_read(), blitz_bool_array_1d_set_i(), blitz_bool_array_1d_set_r(), blitz_bool_array_1d_tostring(), blitz_bool_array_2d_read(), blitz_bool_array_2d_set_arr_ir(), blitz_bool_array_2d_set_arr_ri() (+226 more)
+Nodes (236): Absco::read<double, 4>(), Absco::read<float, 4>(), PassThroughNoiseModel, blitz_bool_array_1d_read(), blitz_bool_array_1d_set_i(), blitz_bool_array_1d_set_r(), blitz_bool_array_1d_tostring(), blitz_bool_array_2d_read() (+228 more)
 
 ### Community 1 - "Level"
 Cohesion: 0.02
-Nodes (75): interp_plus_log, Archive, ConnorSolverMAP::serialize(), Archive, InstrumentDoppler::serialize(), Archive, Level1bCache::serialize(), Archive (+67 more)
+Nodes (70): Archive, connor_solver_map_create(), ConnorSolverMAP::serialize(), BOOST_AUTO_TEST_CASE(), basic, Archive, ScatteringMomentInterpolate2Point::serialize(), ScatteringMomentInterpolate::serialize() (+62 more)
 
 ### Community 2 - "Radiativetransfer"
 Cohesion: 0.04
@@ -666,15 +717,15 @@ Nodes (30): Fo_Thermal_Rtcalcs_Ilps, intensity_dta_dn_, intensity_dta_up_, inten
 
 ### Community 3 - "Nlls"
 Cohesion: 0.03
-Nodes (42): Archive, ostream, SpectralDomain, string, string, SolarAbsorptionGfitFile, line_list_file_, print (+34 more)
+Nodes (39): vector, list, Archive, Level1bCache::serialize(), Archive, ArrayWithUnit, ostream, SpectralDomain (+31 more)
 
 ### Community 4 - "Radiativetransfer"
 Cohesion: 0.02
 Nodes (104): init_interfaces, init, LidortBrdfDriver::load(), setup_geometry, brdf_sup_inputs, bs_beam_szas_, bs_beam_szas__f_byte_size, bs_beam_szas__f_shapes (+96 more)
 
 ### Community 5 - "Bard"
-Cohesion: 0.03
-Nodes (49): BardNLLSProblem, jacobian, residual, BardNLLSProblem::serialize(), Archive, ostream, BrownNLLSProblem, jacobian (+41 more)
+Cohesion: 0.05
+Nodes (37): jacobian, residual, BardNLLSProblem::serialize(), Archive, jacobian, residual, ostream, JennrichSampsonNLLSProblem (+29 more)
 
 ### Community 6 - "Radiativetransfer"
 Cohesion: 0.02
@@ -685,32 +736,32 @@ Cohesion: 0.06
 Nodes (96): brdf_lin_sup_masters_m_io, brdf_lin_sup_masters_m_read(), brdf_lin_sup_masters_m_read_wrap(), brdf_lin_sup_masters_m_write(), brdf_lin_sup_masters_m_write_wrap(), brdf_sup_accessories_m_read_wrap(), brdf_sup_accessories_m_write_wrap(), brdf_sup_masters_m_io (+88 more)
 
 ### Community 8 - "Absco"
-Cohesion: 0.03
-Nodes (84): check_jacobians, comments, config_file, full_initial_guess, full_wn_range, generate_finite_diff_jac, gosat, interpolation (+76 more)
+Cohesion: 0.04
+Nodes (62): all_pixels, comments, full_initial_guess, full_wn_range, interpolation, BOOST_AUTO_TEST_CASE(), basic, serialization (+54 more)
 
 ### Community 9 - "Radiativetransfer"
 Cohesion: 0.02
 Nodes (20): Fo_Scalarss_Rtcalcs_I, cumsource_dn_, cumsource_up_, cumtrans_, intensity_db_, intensity_dn_, intensity_up_, lostrans_dn_ (+12 more)
 
 ### Community 10 - "Interface"
-Cohesion: 0.04
-Nodes (61): extinction_optical_depth_each_layer, scattering_optical_depth_each_layer, shared_ptr, initialize_with_jacobians, AerosolPhaseFunctionComputeHelper, aerosol_, phase_function_moments_per_particle, AerosolPhaseFunctionComputeHelper::serialize() (+53 more)
+Cohesion: 0.06
+Nodes (42): vector, AerosolPhaseFunctionComputeHelper, aerosol_, phase_function_moments_per_particle, AerosolPhaseFunctionComputeHelper::serialize(), AerosolPhaseFunctionHelper, phase_function_moments_per_particle, AerosolPhaseFunctionHelper::serialize() (+34 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.04
-Nodes (45): OrderedDict, Create a ConfigurationCreator. You can either pass in a          config_func whi, Cloud3dEffect, FixedSpacingSpectrumSampling, FluorescenceEffect, MicroWindowRanges, NonuniformSpectrumSampling, OssForwardModel (+37 more)
+Cohesion: 0.09
+Nodes (20): dict, ConfigDict, Simple replacement for the attrdict, which has been depracated, AprioriFromIG, ConnorSolverMAP, CovarianceByComponent, InitialGuessFromSV, LegacyConnorSolver (+12 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.04
-Nodes (54): dict, AerosolDefinition, AerosolOptical, AerosolProfileExtinction, AerosolPropertyHdf, AerosolShapeGaussian, Defines the interface expected for aerosol config defnition blocks, values are p, Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber (+46 more)
+Cohesion: 0.06
+Nodes (35): AerosolDefinition, AerosolOptical, AerosolProfileExtinction, AerosolPropertyHdf, AerosolShapeGaussian, Defines the interface expected for aerosol config defnition blocks, values are p, Creates an AbsorberAbsco object that statisfies the AtmosphereCreato;rs absorber, AltitudeHydrostatic (+27 more)
 
 ### Community 13 - "Interface"
 Cohesion: 0.04
-Nodes (71): iostreams::filtering_ostream, ostream, print, Archive, ostream, OpticalProperties, aerosol_extinction_optical_depth_per_layer, aerosol_extinction_optical_depth_per_particle (+63 more)
+Nodes (53): iostreams::filtering_ostream, iostreams::output_filter, ostream, print, Archive, ostream, PsMode, SpectralDomain (+45 more)
 
 ### Community 14 - "Interface"
-Cohesion: 0.03
-Nodes (30): shared_ptr, Pressure, PrintNotify, Altitude, clone, gravity, ostream, Archive (+22 more)
+Cohesion: 0.07
+Nodes (8): PrintSpectrum, ostream, SpectralDomain, string, NamedSpectrum, name_, Observer, this_obj
 
 ### Community 15 - "Radiativetransfer"
 Cohesion: 0.02
@@ -718,15 +769,15 @@ Nodes (87): sleave_sup_inputs, sl_azimuthdep_, sl_azimuthdep__f_byte_size, sl_be
 
 ### Community 16 - "Absorber"
 Cohesion: 0.04
-Nodes (50): gas_column_thickness, optical_depth_each_layer_direct_integrate, Altitude, Pressure, StateVector, Temperature, BOOST_AUTO_TEST_CASE(), jacobian (+42 more)
+Nodes (28): Altitude, Pressure, StateVector, Temperature, BOOST_AUTO_TEST_CASE(), basic, BOOST_AUTO_TEST_CASE(), basic (+20 more)
 
 ### Community 17 - "Radiativetransfer"
 Cohesion: 0.04
 Nodes (28): max_brdf_kernels, max_brdf_parameters, max_geometries, max_sleavewfs, max_user_obsgeoms, max_user_relazms, max_user_streams, maxbeams (+20 more)
 
 ### Community 18 - "Atmosphere"
-Cohesion: 0.03
-Nodes (66): AtmosphereFixture, atm, attach_atmosphere_to_sv, set_surface_pressure, statev, shared_ptr, StateVector, shared_ptr (+58 more)
+Cohesion: 0.05
+Nodes (49): reset_timer, AtmosphereStandard, absorber, aerosol, alt, altitude, atmosphere_blackbody, attach_children_to_sv (+41 more)
 
 ### Community 19 - "Radiativetransfer"
 Cohesion: 0.04
@@ -737,32 +788,28 @@ Cohesion: 0.02
 Nodes (30): Fo_Scalarss_Rtcalcs_Ilps, cumtrans_, intensity_db_, intensity_dn_, intensity_up_, lostrans_dn_, lostrans_up_, lp_cumtrans_ (+22 more)
 
 ### Community 21 - "Ground"
-Cohesion: 0.05
-Nodes (62): black_sky_albedo_simple_soil(), black_sky_albedo_simple_veg(), Archive, ArrayWithUnit, ostream, shared_ptr, string, vector (+54 more)
+Cohesion: 0.07
+Nodes (46): black_sky_albedo_simple_soil(), black_sky_albedo_simple_veg(), Archive, ostream, exact_brdf_value_simple_soil(), exact_brdf_value_simple_veg(), GroundBrdf, anisotropy_parameter (+38 more)
 
 ### Community 22 - "Radiativetransfer"
-Cohesion: 0.07
-Nodes (78): iso_c_binding, lidort_fixed_boolean, lidort_fixed_chapman, lidort_fixed_control, lidort_fixed_inputs, lidort_fixed_optical, lidort_fixed_sunrays, lidort_fixed_uservalues (+70 more)
+Cohesion: 0.05
+Nodes (76): lidort_fixed_boolean, lidort_fixed_chapman, lidort_fixed_control, lidort_fixed_inputs, lidort_fixed_optical, lidort_fixed_sunrays, lidort_fixed_uservalues, lidort_fixed_write (+68 more)
 
 ### Community 23 - "Radiativetransfer"
 Cohesion: 0.03
 Nodes (76): Lidort_Pars, bigexp, bpdfndvi_idx, bpdfsoil_idx, bpdfvegn_idx, coxmunk_idx, deg_to_rad, dnidx (+68 more)
 
 ### Community 24 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (54): CoxmunkConfigurationFixture, CoxmunkPlusLambertianConfigurationFixture, LambertianConfigurationFixture, setup_optical_inputs, Fixture1, LidortRt, shared_ptr, string (+46 more)
+Cohesion: 0.10
+Nodes (13): CoxmunkConfigurationFixture, LambertianConfigurationFixture, Fixture1, LidortCoxmunkFixture, LidortCoxmunkPlusLambertianFixture, LidortDriverBrdfVegFixture, LidortDriverCoxmunkFixture, LidortDriverLambertianFixture (+5 more)
 
 ### Community 25 - "Radiativetransfer"
 Cohesion: 0.07
 Nodes (73): brdf_lin_sup_masters_m_brdf_lin_inputmaster_wrap(), brdf_lin_sup_masters_m_brdf_lin_mainmaster_wrap(), brdf_lin_sup_masters_m_wrap, brdf_sup_accessories_m_brdf_input_check_error_wrap(), brdf_sup_accessories_m_brdf_input_check_wrap(), brdf_sup_accessories_m_set_brdf_inputs_wrap(), brdf_sup_masters_m_brdf_inputmaster_wrap(), brdf_sup_masters_m_brdf_mainmaster_wrap() (+65 more)
 
-### Community 26 - "Aerosol"
-Cohesion: 0.04
-Nodes (24): shared_ptr, vector, BOOST_AUTO_TEST_CASE(), basic, list, MetDataFixture::MetDataFixture(), AerosolExtinction::serialize(), Archive (+16 more)
-
 ### Community 27 - "Atmosphere"
-Cohesion: 0.04
-Nodes (56): AtmosphereLegacy, absorber, aerosol, alt, altitude, atmosphere_blackbody, attach_children_to_sv, calc_intermediate_variable (+48 more)
+Cohesion: 0.05
+Nodes (46): AtmosphereLegacy, absorber, aerosol, alt, altitude, atmosphere_blackbody, attach_children_to_sv, calc_intermediate_variable (+38 more)
 
 ### Community 28 - "Radiativetransfer"
 Cohesion: 0.04
@@ -770,7 +817,7 @@ Nodes (29): BOOST_AUTO_TEST_CASE(), c_nmessages_, status_execution_, status_inpu
 
 ### Community 29 - "Community 29"
 Cohesion: 0.04
-Nodes (33): Creator, PickChild, Process config definition, create nested Creators, Gather class parameter types and ensure config_def has necessary items, Retrieve a parameter from the configuration definition, Called when the creator's object has been created to be sent to other creators w, Recieves a dispatched object, needs to be implemented in inheriting class, Implements the action to create the object referred to by the Creator class. Sho (+25 more)
+Nodes (41): Creator, Process config definition, create nested Creators, Gather class parameter types and ensure config_def has necessary items, Implements the action to create the object referred to by the Creator class. Sho, Base creator object that handles ensuring the contract of creators parameters is, ApplyInstrumentUnits, DispersionPolynomial, EmpiricalOrthogonalFunction (+33 more)
 
 ### Community 30 - "Radiativetransfer"
 Cohesion: 0.03
@@ -782,15 +829,15 @@ Nodes (64): lidort_main_outputs, transfer_struct_c, ts_albmed_fluxes_, ts_albmed
 
 ### Community 32 - "Test"
 Cohesion: 0.04
-Nodes (23): BaseForTesting, TestArrayAd, TestArrayAdWithUnit, TestArrayWithUnit, TestBardMLProblem, TestBardNLSSProblem, TestCompositeInitialGuess, TestMeyerMLProblem (+15 more)
+Nodes (27): DoubleWithUnit, Short cut for the DoubleWithUnit type to parallel the ArrayWithUnit type paramet, BaseForTesting, TestArrayAd, TestArrayAdWithUnit, TestArrayWithUnit, TestAutoDerivative, TestAutoDerivativeWithUnit (+19 more)
 
 ### Community 33 - "Configuration"
 Cohesion: 0.04
-Nodes (53): epsilon_check, ConfigurationFixture, config_absorber, config_aerosol, config_atmosphere, config_forward_model, config_ground, config_initial_guess (+45 more)
+Nodes (54): epsilon_check, ConfigurationFixture, config_absorber, config_aerosol, config_atmosphere, config_forward_model, config_ground, config_initial_guess (+46 more)
 
 ### Community 34 - "Solar"
-Cohesion: 0.04
-Nodes (45): ostream, SpectralDomain, shared_ptr, vector, SolarReferenceSpectrum, doppler_shift_, print, ref_spec_interp (+37 more)
+Cohesion: 0.08
+Nodes (19): Archive, ForwardModelSpectralGrid, ostream, string, SolarModel, apply_solar_model, SolarModel::serialize(), solar_spectrum (+11 more)
 
 ### Community 35 - "Radiativetransfer"
 Cohesion: 0.04
@@ -798,31 +845,31 @@ Nodes (37): brdf_input_exception_handling, bs_inputactions__f_len, bs_inputactio
 
 ### Community 36 - "Absco"
 Cohesion: 0.04
-Nodes (50): absco_4d, cache_boundary, AbscoHdf, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound (+42 more)
+Nodes (49): absco_4d, cache_boundary, AbscoHdf, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound (+41 more)
 
 ### Community 37 - "Radiativetransfer"
 Cohesion: 0.06
-Nodes (53): PCAEigenSolver, data_mean, eof_properties, principal_components, Archive, Method, ostream, shared_ptr (+45 more)
+Nodes (49): PCAEigenSolver, data_mean, eof_properties, principal_components, Archive, ostream, SpectralDomain, AerosolOptical (+41 more)
 
 ### Community 38 - "Radiativetransfer"
 Cohesion: 0.07
 Nodes (63): c_ptr, lidort_inputs_def_m, fixed_write_ts_fourier_write_filename_get(), fixed_write_ts_input_write_filename_get(), fixed_write_ts_results_write_filename_get(), fixed_write_ts_scenario_write_filename_get(), lidort_fixed_boolean_c, lidort_fixed_boolean_c_alloc_init() (+55 more)
 
 ### Community 39 - "Lua"
-Cohesion: 0.06
-Nodes (33): iterator, BridgeLuabindAndGeneric, BridgeLuabindAndGenericBase, luabind_object, set_index, set_value, value, LuabindObject (+25 more)
+Cohesion: 0.03
+Nodes (67): iterator, object, ostream, LuaCallback, call, ls, LuabindObject, string (+59 more)
 
 ### Community 40 - "Aerosol"
-Cohesion: 0.05
-Nodes (43): AerosolExtinctionLevel, calc_aerosol_extinction, clone, print, AerosolExtinctionLevel::serialize(), Archive, ostream, shared_ptr (+35 more)
+Cohesion: 0.04
+Nodes (46): AerosolExtinctionLevel, calc_aerosol_extinction, clone, print, AerosolExtinctionLevel::serialize(), Archive, ostream, Pressure (+38 more)
 
 ### Community 41 - "Aerosol"
-Cohesion: 0.04
-Nodes (47): AerosolOptical, aerosol_optical_depth, aerosol_optical_depth_total, aext, aprop, cache_is_stale, clone, fill_cache (+39 more)
+Cohesion: 0.06
+Nodes (36): AerosolOptical, aerosol_optical_depth, aerosol_optical_depth_total, aext, aprop, cache_is_stale, fill_cache, nlay (+28 more)
 
 ### Community 42 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (58): initialize_rt, ts_do_brdf_surface_, ts_do_dnwelling_, ts_do_surface_emission_, ts_do_thermal_emission_, ts_do_upwelling_, ts_asymtx_tolerance_, ts_lidort_accuracy_ (+50 more)
+Cohesion: 0.03
+Nodes (78): initialize_rt, ts_do_brdf_surface_, ts_do_dnwelling_, ts_do_surface_emission_, ts_do_thermal_emission_, ts_do_upwelling_, lidort_fixed_control, transfer_struct_c (+70 more)
 
 ### Community 43 - "Radiativetransfer"
 Cohesion: 0.04
@@ -830,115 +877,115 @@ Nodes (47): BOOST_AUTO_TEST_CASE(), brdf_input_exception_handling, brdf_linsup_i
 
 ### Community 44 - "Lua"
 Cohesion: 0.04
-Nodes (52): compare_with_fortran, correction, blitz_exp(), blitz_log(), blitz_max(), blitz_mean(), blitz_min(), blitz_oper_add_array() (+44 more)
+Nodes (51): compare_with_fortran, correction, blitz_exp(), blitz_log(), blitz_max(), blitz_mean(), blitz_min(), blitz_oper_add_array() (+43 more)
 
 ### Community 45 - "Absco"
-Cohesion: 0.04
-Nodes (45): AbscoAer, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound, cache_float_ubound, cache_nline (+37 more)
+Cohesion: 0.05
+Nodes (44): AbscoAer, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound, cache_float_ubound, cache_nline (+36 more)
 
 ### Community 46 - "Pressure"
-Cohesion: 0.04
-Nodes (36): Archive, FluorescenceEffect::serialize(), BOOST_AUTO_TEST_CASE(), basic, serialization, Archive, IlsGrating::serialize(), Archive (+28 more)
+Cohesion: 0.10
+Nodes (13): BOOST_AUTO_TEST_CASE(), basic, serialization, BOOST_AUTO_TEST_CASE(), basic, serialization, Archive, PressureWithCloudHandling::serialize() (+5 more)
 
 ### Community 47 - "Oss"
-Cohesion: 0.04
-Nodes (53): DoubleWithUnit, GroundPiecewise, Pressure, shared_ptr, SpectralDomain, string, SurfaceTemperature, Temperature (+45 more)
+Cohesion: 0.05
+Nodes (40): ArrayWithUnit, DoubleWithUnit, GroundPiecewise, ostream, Pressure, SpectralDomain, string, SurfaceTemperature (+32 more)
 
 ### Community 48 - "Radiativetransfer"
 Cohesion: 0.07
-Nodes (45): Archive, shared_ptr, LidortBrdfDriver, calculate_brdf, do_kparams_derivs, do_shadow_effect, n_brdf_kernels, n_kernel_factor_wfs (+37 more)
+Nodes (44): Archive, LidortBrdfDriver, calculate_brdf, do_kparams_derivs, do_shadow_effect, n_brdf_kernels, n_kernel_factor_wfs, n_kernel_params_wfs (+36 more)
 
 ### Community 49 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (35): lidort_modified_chapman, transfer_struct_c, ts_earth_radius_, ts_earth_radius__f_byte_size, lidort_modified_control, transfer_struct_c, ts_nmoments_input_, ts_nmoments_input__f_byte_size (+27 more)
+Cohesion: 0.03
+Nodes (41): lidort_linsup_ss_surf, transfer_struct_c, ts_surfacewf_db_, ts_surfacewf_db__f_byte_size, ts_surfacewf_db__f_shapes, lidort_modified_chapman, transfer_struct_c, ts_earth_radius_ (+33 more)
 
 ### Community 50 - "Absorber"
 Cohesion: 0.05
-Nodes (50): AbsorberAbsco, absco_interp, absco_nonzero_column, alt, average_vmr, c, cache_tau_gas_stale, create_sublayer (+42 more)
+Nodes (41): AbsorberAbsco, absco_interp, absco_nonzero_column, absorber_vmr, alt, average_vmr, c, cache_tau_gas_stale (+33 more)
 
 ### Community 51 - "Absco"
-Cohesion: 0.05
-Nodes (42): AbscoCoeff, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound, cache_float_ubound, cache_nline (+34 more)
+Cohesion: 0.06
+Nodes (38): AbscoCoeff, bname, bvmr, cache_double_lbound, cache_double_ubound, cache_float_lbound, cache_float_ubound, cache_nline (+30 more)
 
 ### Community 52 - "Support"
 Cohesion: 0.10
-Nodes (50): CommonFG, ArrayWithUnit, Mode, ostream, string, vector, Mode, shared_ptr (+42 more)
+Nodes (49): CommonFG, ArrayWithUnit, Mode, ostream, string, vector, Mode, hdf_file_apriori() (+41 more)
 
 ### Community 53 - "Community 53"
 Cohesion: 0.06
 Nodes (36): Enum, Formatter, AbscoAer, AbscoCreator, AbscoInterpolationOption, AbscoLegacy, AbsorberAbsco, AbsorberBase (+28 more)
 
 ### Community 54 - "Interface"
-Cohesion: 0.04
-Nodes (25): string, map, BOOST_AUTO_TEST_CASE(), CalcData, d, read, string, OutputTest (+17 more)
+Cohesion: 0.06
+Nodes (17): string, num_total_flags, DirChange, dirhandle, string, AsciiTableFile, print, read_data (+9 more)
 
 ### Community 55 - "Radiativetransfer"
 Cohesion: 0.06
-Nodes (36): Archive, shared_ptr, shared_ptr, vector, hres_wrapper_create(), HresWrapper, HresWrapper::serialize(), stokes_and_jacobian_single_wn (+28 more)
+Nodes (36): Archive, ostream, OpticalProperties, aerosol_extinction_optical_depth_per_layer, aerosol_extinction_optical_depth_per_particle, aerosol_fraction, aerosol_phase_function_moments_per_particle, aerosol_phase_function_moments_portion (+28 more)
 
 ### Community 56 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (31): lidort_fixed_inputs, bool_, bool__f_byte_size, chapman_, chapman__f_byte_size, cont_, cont__f_byte_size, optical_ (+23 more)
+Cohesion: 0.06
+Nodes (22): lidort_fixed_inputs, bool_, bool__f_byte_size, chapman__f_byte_size, cont_, cont__f_byte_size, optical_, optical__f_byte_size (+14 more)
 
 ### Community 57 - "Community 57"
 Cohesion: 0.06
 Nodes (13): MUSES_File, PressureOSP, Filename used for accessing the forward model pressure levels, Forward model pressure grid, Forward model pressure grid, Filename used for accessing the pressure grid associated with a species, The pressure grid associated with a species converted into the format acceptable, Filename with the species climatology values matching the object's time and loca (+5 more)
 
 ### Community 58 - "Absorber"
-Cohesion: 0.07
-Nodes (43): AbsorberXSec, AbsorberXSec, absorber_vmr, alt, cache, clone, gas_number_density_layer, gas_number_density_level (+35 more)
+Cohesion: 0.06
+Nodes (41): AbsorberXSec, AbsorberXSec, absorber_vmr, alt, cache, clone, gas_number_density_layer, gas_number_density_level (+33 more)
 
 ### Community 59 - "Altitude"
-Cohesion: 0.09
-Nodes (36): array_assignment, altitude_calc, gravity_calc, AltitudeHydrostatic::serialize(), AltitudeHydrostaticCache::serialize(), Archive, sqr(), uncert (+28 more)
+Cohesion: 0.12
+Nodes (34): array_assignment, gravity_calc, ArrayWithUnit, DoubleWithUnit, fit, residual, FullPhysics::refractive_bending(), FullPhysics::straightline_geometry() (+26 more)
 
 ### Community 60 - "Support"
-Cohesion: 0.05
-Nodes (45): dividable<Unit>, dividable<Unit, double>, equality_comparable<Unit>, equality_test, grammar<iterator_type, Unit()>, iterator_type, BOOST_AUTO_TEST_CASE(), basic (+37 more)
+Cohesion: 0.06
+Nodes (37): dividable<Unit>, dividable<Unit, double>, equality_comparable<Unit>, equality_test, BOOST_AUTO_TEST_CASE(), basic, DoubleWithUnit, SpectralDomain (+29 more)
 
 ### Community 61 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (38): clear_linear_inputs, lidort_fixed_lincontrol, transfer_struct_c, ts_columnwf_names__f_len, ts_columnwf_names__f_shapes, ts_layer_vary_flag_, ts_layer_vary_flag__f_byte_size, ts_layer_vary_flag__f_shapes (+30 more)
+Cohesion: 0.06
+Nodes (24): clear_linear_inputs, lidort_fixed_lincontrol, transfer_struct_c, ts_columnwf_names__f_len, ts_columnwf_names__f_shapes, ts_layer_vary_flag_, ts_layer_vary_flag__f_byte_size, ts_layer_vary_flag__f_shapes (+16 more)
 
 ### Community 62 - "Statemapping"
 Cohesion: 0.05
-Nodes (24): shared_ptr, string, vector, StateMappingComposite, mappings, ostream, string, Pressure (+16 more)
+Nodes (18): string, vector, StateMappingComposite, mappings, ostream, string, Pressure, string (+10 more)
 
 ### Community 63 - "Apply"
-Cohesion: 0.06
-Nodes (35): ApplyInstrumentUnits, apply_correction, clone, print, scaling, spectral_units, ostream, shared_ptr (+27 more)
+Cohesion: 0.07
+Nodes (24): Archive, ostream, vector, DoubleWithUnit, SpectralDomain, vector, IlsInstrument, apply_instrument_model (+16 more)
 
 ### Community 64 - "Connor"
 Cohesion: 0.07
-Nodes (34): Archive, istream, ostream, string, ConnorSolver, aposteriori_covariance, aposteriori_covariance_scaled, apriori_cov_scaled (+26 more)
+Nodes (33): Archive, istream, ostream, string, ConnorSolver, aposteriori_covariance, aposteriori_covariance_scaled, apriori_cov_scaled (+25 more)
 
 ### Community 65 - "Radiativetransfer"
 Cohesion: 0.04
 Nodes (14): Fo_Dtwpgeometry_Master, fail_, losp_paths_, losw_paths_, maxfine_, maxgeoms_, maxlayers_, maxpartials_ (+6 more)
 
 ### Community 66 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (31): shared_ptr, lidort_linsup_inout, brdf_, brdf__f_byte_size, sleave_, sleave__f_byte_size, ss_, ss__f_byte_size (+23 more)
+Cohesion: 0.05
+Nodes (26): lidort_linsup_inout, brdf_, brdf__f_byte_size, sleave_, sleave__f_byte_size, ss_, ss__f_byte_size, transfer_struct_c (+18 more)
 
 ### Community 67 - "Interface"
-Cohesion: 0.05
-Nodes (30): BOOST_AUTO_TEST_CASE(), Archive, OpticalPropertiesWrtInput, OpticalPropertiesWrtInput::serialize(), Absorber::serialize(), Altitude, Archive, Pressure (+22 more)
+Cohesion: 0.04
+Nodes (31): Altitude, Pressure, Temperature, AbsorberVmr, clone, gas_name, AbsorberVmr::serialize(), state_used (+23 more)
 
 ### Community 68 - "Standard"
-Cohesion: 0.05
-Nodes (33): ostream, shared_ptr, vector, ForwardModelSpectralGrid, shared_ptr, SpectralDomain, TypePreference, vector (+25 more)
+Cohesion: 0.06
+Nodes (27): basic_static_different_units_test, basic_static_test, BOOST_AUTO_TEST_CASE(), basic, timing, ostream, string, ForwardModelSpectralGrid (+19 more)
 
 ### Community 69 - "Support"
-Cohesion: 0.09
-Nodes (42): Attribute, DataSpace, H5File, hsize_t, Exception, s_, scratch_, ostream (+34 more)
+Cohesion: 0.08
+Nodes (46): Attribute, DataSpace, H5File, hsize_t, Exception, s_, scratch_, ostream (+38 more)
 
 ### Community 70 - "Ground"
-Cohesion: 0.07
-Nodes (26): Archive, ostream, shared_ptr, GroundWithCloudHandling, clone, print, GroundWithCloudHandling::serialize(), surface_parameter (+18 more)
+Cohesion: 0.13
+Nodes (13): Archive, ostream, GroundWithCloudHandling, clone, print, GroundWithCloudHandling::serialize(), surface_parameter, SpurrBrdfType (+5 more)
 
 ### Community 71 - "Radiativetransfer"
-Cohesion: 0.06
-Nodes (38): Archive, ostream, shared_ptr, SpurrBrdfDriver, brdf_factors, brdf_params, calculate_brdf, do_kparams_derivs (+30 more)
+Cohesion: 0.07
+Nodes (37): Archive, ostream, SpurrBrdfDriver, brdf_factors, brdf_params, calculate_brdf, do_kparams_derivs, do_shadow_effect (+29 more)
 
 ### Community 72 - "Community 72"
 Cohesion: 0.06
@@ -946,95 +993,95 @@ Nodes (19): BaseException, ArrayWithUnit, Choice, ConfigParam, Dict, InstanceOf,
 
 ### Community 73 - "Forward"
 Cohesion: 0.06
-Nodes (27): Archive, ForwardModel, ostream, shared_ptr, string, vector, CloudFraction, clone (+19 more)
+Nodes (26): Archive, ForwardModel, ostream, string, vector, CloudFraction, clone, cloud_fraction (+18 more)
 
 ### Community 74 - "Interface"
 Cohesion: 0.05
 Nodes (23): parameters, parameters, Archive, CostFuncDiffState, G, CostFuncDiffState::serialize(), set, ostream (+15 more)
 
 ### Community 75 - "Interface"
-Cohesion: 0.05
-Nodes (26): AbsorberVmr, clone, gas_name, state_used, volume_mixing_ratio, ostream, Archive, Observation::serialize() (+18 more)
+Cohesion: 0.11
+Nodes (10): Archive, ostream, Archive, ostream, ObservationSvImpBase, clone, ObservationSvImpBase::serialize(), ObservationSv (+2 more)
 
 ### Community 76 - "Radiativetransfer"
-Cohesion: 0.04
-Nodes (33): lidort_sup_inout, brdf_, brdf__f_byte_size, sleave_, sleave__f_byte_size, ss_, ss__f_byte_size, transfer_struct_c (+25 more)
+Cohesion: 0.11
+Nodes (14): lidort_sup_sleave, transfer_struct_c, ts_slterm_f_0_, ts_slterm_f_0__f_byte_size, ts_slterm_f_0__f_shapes, ts_slterm_isotropic_, ts_slterm_isotropic__f_byte_size, ts_slterm_isotropic__f_shapes (+6 more)
 
 ### Community 77 - "Aerosol"
-Cohesion: 0.06
-Nodes (34): res, AerosolPropertyRhHdf, clone, extinction_coefficient_each_layer, extinction_coefficient_each_layer_not_used, hdf_file, hdf_group, pf (+26 more)
+Cohesion: 0.09
+Nodes (29): res, AerosolPropertyRhHdf, clone, extinction_coefficient_each_layer, extinction_coefficient_each_layer_not_used, hdf_file, hdf_group, pf (+21 more)
 
 ### Community 78 - "Refractive"
 Cohesion: 0.08
-Nodes (32): value, FullPhysics::planck(), AtmRefractiveIndex, at_layer, at_level, number_level, FullPhysics::calc_Dair(), FullPhysics::calc_nw() (+24 more)
+Nodes (29): DataRow, row, value, AtmRefractiveIndex, at_layer, at_level, number_level, FullPhysics::calc_Dair() (+21 more)
 
 ### Community 79 - "Solar"
-Cohesion: 0.06
-Nodes (27): ostream, SpectralDomain, shared_ptr, vector, SolarAbsorptionAndContinuum, absorption_spectrum_, continuum_spectrum_, doppler_shift_ (+19 more)
+Cohesion: 0.08
+Nodes (18): ostream, SpectralDomain, SolarAbsorptionAndContinuum, absorption_spectrum_, continuum_spectrum_, doppler_shift_, print, solar_spectrum (+10 more)
 
 ### Community 80 - "Stokes"
-Cohesion: 0.05
-Nodes (28): Archive, ostream, shared_ptr, StokesCoefficientConstant, clone, print, StokesCoefficientConstant::serialize(), stokes_coeff (+20 more)
+Cohesion: 0.13
+Nodes (12): stokes_coeff, Archive, ostream, string, StokesCoefficientFraction, calc_stokes_coeff, clone, print (+4 more)
 
 ### Community 81 - "Interface"
-Cohesion: 0.07
-Nodes (24): gsl_multifit_function_fdf, gsl_multifit_nlinear_fdf, gsl_get_lsp_fdf(), gsl_sm_get_lsp_fdf(), CostFuncDiff, cost_gradient, d_count, gradient (+16 more)
+Cohesion: 0.06
+Nodes (27): gsl_multifit_function_fdf, gsl_multifit_nlinear_fdf, gsl_get_lsp_fdf(), gsl_sm_get_lsp_fdf(), gsl_sm_lsp_f(), gsl_multifit_fdfsolver_type, ostream, gsl_multifit_fdfsolver_type (+19 more)
 
 ### Community 82 - "Interface"
-Cohesion: 0.06
-Nodes (23): Archive, Ils::serialize(), Archive, DoubleWithUnit, ostream, shared_ptr, SpectralDomain, string (+15 more)
+Cohesion: 0.10
+Nodes (16): DoubleWithUnit, string, IlsFastApply::IlsFastApply(), DoubleWithUnit, ostream, SpectralDomain, string, IlsImpBase (+8 more)
 
 ### Community 83 - "Interface"
-Cohesion: 0.07
-Nodes (41): Archive, ArrayWithUnit, DoubleWithUnit, shared_ptr, vector, ostream, l1b_signal_no_indexes(), Level1b (+33 more)
+Cohesion: 0.08
+Nodes (40): Archive, ArrayWithUnit, DoubleWithUnit, vector, ostream, l1b_signal_no_indexes(), Level1b, altitude (+32 more)
 
 ### Community 84 - "Lua"
-Cohesion: 0.08
-Nodes (32): object, ostream, shared_ptr, LuaCallback, call, ls, LuabindObject, shared_ptr (+24 more)
+Cohesion: 0.05
+Nodes (34): base_unit_, runtime_error, string, PythonException, desc, restore_python_exception, tb, type (+26 more)
 
 ### Community 85 - "Support"
 Cohesion: 0.07
-Nodes (37): shared_ptr, state, AerosolOptical, Archive, ostream, Pressure, shared_ptr, StateVector (+29 more)
+Nodes (35): state, AerosolOptical, Archive, ostream, Pressure, StateVector, string, Temperature (+27 more)
 
 ### Community 86 - "Radiativetransfer"
 Cohesion: 0.08
-Nodes (32): Archive, shared_ptr, TwostreamBrdfDriver, calculate_brdf, do_kparams_derivs, do_shadow_effect, initialize_kernel_parameters, TwostreamBrdfDriver::load() (+24 more)
+Nodes (31): Archive, TwostreamBrdfDriver, calculate_brdf, do_kparams_derivs, do_shadow_effect, initialize_kernel_parameters, TwostreamBrdfDriver::load(), n_brdf_kernels (+23 more)
 
 ### Community 87 - "Support"
-Cohesion: 0.06
-Nodes (33): Archive, StateVectorObserver::serialize(), Archive, StateVector, string, StateVector, string, SubStateVectorObserver (+25 more)
+Cohesion: 0.08
+Nodes (29): Archive, StateVector, string, StateVector, string, SubStateVectorObserver, SubStateVectorObserver::load(), notify_update (+21 more)
 
 ### Community 88 - "Radiativetransfer"
-Cohesion: 0.09
-Nodes (36): err_est, err_est_jac, refl, Archive, ostream, shared_ptr, SpectralDomain, string (+28 more)
+Cohesion: 0.12
+Nodes (28): err_est, Archive, ostream, SpectralDomain, string, string, vector, lsi_rt_create() (+20 more)
 
 ### Community 89 - "Level"
-Cohesion: 0.09
+Cohesion: 0.10
 Nodes (17): DoubleWithUnit, ostream, SpectralDomain, vector, Level1bCache, alt, lat, lon (+9 more)
 
 ### Community 90 - "Radiativetransfer"
-Cohesion: 0.07
-Nodes (35): wavelength_in_bounds, wn, Archive, ostream, shared_ptr, SpectralDomain, chapman_boa_rt_create(), ChapmanBoaRT (+27 more)
+Cohesion: 0.04
+Nodes (48): wavelength_in_bounds, wn, Archive, ostream, SpectralDomain, chapman_boa_rt_create(), ChapmanBoaRT, atm (+40 more)
 
 ### Community 91 - "Community 91"
-Cohesion: 0.07
-Nodes (16): object, ParameterAccessor, Proxy class to stand in place of ConfigParam defitions in Creator instances, to, Retrieve a parameter from the configuration definition, GMAOFinder, GMAOReader, GMAOSupplier, Find a GMAO filename from a directory structure based on time (+8 more)
+Cohesion: 0.10
+Nodes (6): GMAOFinder, GMAOReader, GMAOSupplier, Find a GMAO filename from a directory structure based on time, Loads GMAO values given latitude, longitude and time. Ensures that the pressure, Directly read the indicated GMAO files
 
 ### Community 92 - "Test"
-Cohesion: 0.05
-Nodes (20): dummy_env_var(), Set up dummy paths for environment variables only for the duration of a function, Compare Matt's original python test with our code.     Matt had code at /home/mt, test_absco_coeff(), test_scenerio_from_l1b(), test_subobj(), # TODO: This requires setting abscodir to refractor_test_data/framework/absco, Test RayleighGreekMoment (+12 more)
+Cohesion: 0.04
+Nodes (23): dummy_env_var(), Set up dummy paths for environment variables only for the duration of a function, Compare Matt's original python test with our code.     Matt had code at /home/mt, test_absco_coeff(), test_scenerio_from_l1b(), This test is an example of using the nlopt package. We ended up     *not* using, This is from the tutorial, test_nlopt() (+15 more)
 
 ### Community 93 - "Observation"
-Cohesion: 0.06
-Nodes (32): basic_static_different_units_test, basic_static_test, BOOST_AUTO_TEST_CASE(), basic, timing, Archive, ForwardModelSpectralGrid, shared_ptr (+24 more)
+Cohesion: 0.15
+Nodes (13): Archive, ForwardModelSpectralGrid, SpectralDomain, ForwardModelSpectralGrid, ostream, ObservationLevel1b, grids, inst (+5 more)
 
 ### Community 94 - "Interface"
-Cohesion: 0.07
-Nodes (38): creation, legacy, BOOST_AUTO_TEST_CASE(), basic, optical_depth_jac, serialization, BOOST_AUTO_TEST_CASE(), timing (+30 more)
+Cohesion: 0.06
+Nodes (40): creation, legacy, BOOST_AUTO_TEST_CASE(), basic, optical_depth_jac, serialization, DoubleWithUnit, BOOST_AUTO_TEST_CASE() (+32 more)
 
 ### Community 95 - "Nlls"
-Cohesion: 0.05
-Nodes (29): gsl_multifit_fdfsolver_type, ostream, shared_ptr, gsl_multifit_fdfsolver_type, ostream, shared_ptr, NLLSSolverGSLLMDER, gsl_multifit_fdfsolver_type (+21 more)
+Cohesion: 0.14
+Nodes (14): BOOST_AUTO_TEST_CASE(), bard, bard_ml, brown, freudenstein_roth__a, freudenstein_roth__b, helical_valley, jennrich_sampson (+6 more)
 
 ### Community 96 - "Lidort"
 Cohesion: 0.06
@@ -1045,44 +1092,44 @@ Cohesion: 0.06
 Nodes (38): lidort_lp_bvproblem_m, lidort_lp_mediaprops_m, lidort_lp_wfatmos_m, lidort_bvproblem_m, lidort_converge_m, lidort_fixed_inputs, lidort_fixed_lininputs, lidort_geometry_m (+30 more)
 
 ### Community 98 - "Community 98"
-Cohesion: 0.08
-Nodes (25): DictMixin, from_db_type(), Compare the update time on 2 shelve objects, return if f1 update time     >= f2, This handles writing a value to a shelve file, possibly creating the     file is, Shelf implementation using an SQLite3 database., Open an existing file, or create a new one if it doesn't exist.         The mode, Return updated time as a string., Return updated time as Julian day, including fraction (+17 more)
+Cohesion: 0.06
+Nodes (32): DictMixin, from_db_type(), Compare the update time on 2 shelve objects, return if f1 update time     >= f2, This handles writing a value to a shelve file, possibly creating the     file is, Shelf implementation using an SQLite3 database., Open an existing file, or create a new one if it doesn't exist.         The mode, Return updated time as a string., Return updated time as Julian day, including fraction (+24 more)
 
 ### Community 99 - "Example"
 Cohesion: 0.11
-Nodes (23): Archive, ArrayWithUnit, DoubleWithUnit, shared_ptr, string, ExampleLevel1b, group_name, input_ (+15 more)
+Nodes (25): Archive, ArrayWithUnit, DoubleWithUnit, string, ExampleLevel1b, group_name, input_, number_sample (+17 more)
 
 ### Community 100 - "Temperature"
-Cohesion: 0.07
-Nodes (27): Archive, ostream, Pressure, shared_ptr, string, Temperature, ArrayWithUnit, string (+19 more)
+Cohesion: 0.13
+Nodes (13): Archive, ostream, Pressure, string, Temperature, ArrayWithUnit, string, TemperatureLevel (+5 more)
 
 ### Community 101 - "Absorber"
 Cohesion: 0.06
-Nodes (24): AbsorberVmrLevel, AbsorberVmrLevelScaled, clone, AbsorberVmrLevelScaled::serialize(), state_vector_name_i, Archive, Pressure, shared_ptr (+16 more)
+Nodes (24): AbsorberVmrLevel, AbsorberVmrLevelScaled, clone, scale_factor, AbsorberVmrLevelScaled::serialize(), state_vector_name_i, Archive, Pressure (+16 more)
 
 ### Community 102 - "Planck"
-Cohesion: 0.07
-Nodes (29): brdf_serialization, coxmunk_serialization, gas_surface, gas_surface_aerosol, lambertian_solar, lambertian_solar_serialization, lambertian_thermal, lambertian_thermal_serialization (+21 more)
+Cohesion: 0.12
+Nodes (12): brdf_serialization, coxmunk_serialization, lambertian_solar, lambertian_solar_serialization, lambertian_thermal, lambertian_thermal_serialization, iso_c_binding, planck_m (+4 more)
 
 ### Community 103 - "Radiativetransfer"
-Cohesion: 0.09
-Nodes (29): density, BOOST_AUTO_TEST_CASE(), Archive, FirstOrderDriver, calculate_rt, clear_linear_inputs, copy_geometry_flags, copy_jacobians (+21 more)
+Cohesion: 0.07
+Nodes (38): density, gas_surface, gas_surface_aerosol, BOOST_AUTO_TEST_CASE(), Archive, FirstOrderDriver, calculate_rt, clear_linear_inputs (+30 more)
 
 ### Community 104 - "Connor"
 Cohesion: 0.06
-Nodes (21): effect, interpol, ostream, CostFunctionRankDegenerate, CostFunctionTest, BOOST_AUTO_TEST_CASE(), basic, BOOST_AUTO_TEST_CASE() (+13 more)
+Nodes (23): effect, interpol, BOOST_AUTO_TEST_CASE(), basic, Archive, IlsGrating::serialize(), BOOST_AUTO_TEST_CASE(), basic (+15 more)
 
 ### Community 105 - "Nlls"
 Cohesion: 0.08
-Nodes (21): do_inversion, ostream, shared_ptr, NLLSMaxAPosteriori, MAP, parameters, Archive, ostream (+13 more)
+Nodes (20): do_inversion, ostream, NLLSMaxAPosteriori, MAP, parameters, Archive, ostream, MaxAPosteriori (+12 more)
 
 ### Community 106 - "Interface"
-Cohesion: 0.08
-Nodes (19): radiance_from_fm, radiance_from_fm, Archive, ostream, ModelMeasure, assert_jacobian_correct, assert_model_correct, jacobian_eval (+11 more)
+Cohesion: 0.09
+Nodes (15): Archive, ostream, ModelMeasure, jacobian_eval, model_eval, model_measure_diff_jacobian, msrmnt, msrmnt_does_not_change (+7 more)
 
 ### Community 107 - "Rayleigh"
-Cohesion: 0.07
-Nodes (31): Altitude, Archive, DoubleWithUnit, Pressure, shared_ptr, vector, ostream, RayleighBodhaine (+23 more)
+Cohesion: 0.12
+Nodes (18): Altitude, Archive, Pressure, vector, Altitude, ostream, Pressure, vector (+10 more)
 
 ### Community 108 - "Radiativetransfer"
 Cohesion: 0.11
@@ -1093,8 +1140,8 @@ Cohesion: 0.08
 Nodes (18): AlbedoFromSignalLevel, BrdfIndexes, BrdfTypeOption, BrdfWeightFromContinuum, BrdfWeightFromSignalBase, BrdfWeightFromSignalSoil, BrdfWeightFromSignalVeg, GroundBrdf (+10 more)
 
 ### Community 110 - "Test"
-Cohesion: 0.07
-Nodes (12): TestAutoDerivative, TestAutoDerivativeWithUnit, TestExampleLevelL1b, TestExampleLevelL1bInfo, TestHdfFile, TestLevelL1bCache, TestNamedSpectrum, TestRelativeHumidity (+4 more)
+Cohesion: 0.05
+Nodes (19): RayleighBodhaine, RayleighYoung, TestAerosolExtinctionLinear, TestAltitudeHydrostatic, TestDefaultConstant, TestExampleLevelL1b, TestExampleLevelL1bInfo, TestExampleMetFile (+11 more)
 
 ### Community 111 - "Lidort"
 Cohesion: 0.13
@@ -1102,55 +1149,55 @@ Nodes (33): asymtx(), dcopy(), dgbtf2(), dgbtrf(), dgbtrs(), dgemm(), dgemv(), d
 
 ### Community 112 - "Merra"
 Cohesion: 0.07
-Nodes (35): dateline, dateline2, dejian_example, DoubleWithUnit, ostream, Pressure, RelativeHumidity, shared_ptr (+27 more)
+Nodes (26): dateline, dateline2, dejian_example, ostream, DoubleWithUnit, Pressure, RelativeHumidity, string (+18 more)
 
 ### Community 113 - "Absco"
-Cohesion: 0.12
-Nodes (33): fill_pgrid_tgrid_and_bgrid, interpol, Absco::serialize(), AbscoInterpolator, absco, absorption_cross_section_deriv, AbscoInterpolator::absorption_cross_section_deriv_calc(), absorption_cross_section_noderiv (+25 more)
+Cohesion: 0.13
+Nodes (31): fill_pgrid_tgrid_and_bgrid, interpol, Absco::serialize(), AbscoInterpolator, absco, absorption_cross_section_deriv, AbscoInterpolator::absorption_cross_section_deriv_calc(), absorption_cross_section_noderiv (+23 more)
 
 ### Community 114 - "Support"
-Cohesion: 0.07
-Nodes (20): CacheInvalidatedObserver, cache_valid, this_obj_, list, shared_ptr, vector, weak_ptr, Observable (+12 more)
+Cohesion: 0.09
+Nodes (14): CacheInvalidatedObserver, cache_valid, this_obj_, list, T, vector, weak_ptr, Observable (+6 more)
 
 ### Community 115 - "Oss"
-Cohesion: 0.06
-Nodes (31): string, DoubleWithUnit, GroundPiecewise, Pressure, shared_ptr, SurfaceTemperature, Temperature, vector (+23 more)
+Cohesion: 0.09
+Nodes (25): string, DoubleWithUnit, GroundPiecewise, Pressure, SurfaceTemperature, Temperature, vector, OssConfigurationFixture (+17 more)
 
 ### Community 116 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (16): Lidort_Fixed_Inputs, Lidort_Fixed_Lininputs, Lidort_Linoutputs, Lidort_Linsup_Inout, Lidort_Modified_Inputs, Lidort_Modified_Lininputs, Lidort_Outputs, Lidort_Sup_Inout (+8 more)
+Cohesion: 0.04
+Nodes (32): check_brdf_inputs(), Brdf_Sup_Inputs, Lidort_Exception_Handling, Lidort_Fixed_Inputs, Lidort_Fixed_Lininputs, Lidort_Input_Exception_Handling, Lidort_Linsup_Inout, Lidort_Modified_Inputs (+24 more)
 
 ### Community 117 - "Radiativetransfer"
 Cohesion: 0.05
 Nodes (34): lidort_fixed_boolean, transfer_struct_c, ts_do_albtrn_media_, ts_do_albtrn_media__f_byte_size, ts_do_albtrn_media__f_shapes, ts_do_boa_illumination_, ts_do_boa_illumination__f_byte_size, ts_do_brdf_surface__f_byte_size (+26 more)
 
 ### Community 118 - "Nlls"
-Cohesion: 0.10
-Nodes (30): AlgParams, Options, ostream, shared_ptr, status_t, VectorXd, givens(), Options (+22 more)
+Cohesion: 0.11
+Nodes (30): AlgParams, Options, ostream, status_t, VectorXd, givens(), Options, ostream (+22 more)
 
 ### Community 119 - "Support"
-Cohesion: 0.07
-Nodes (23): compressed_test, filtering_istreambuf, filtering_ostreambuf, ifstream, istream, FilteringIstream, f, sb (+15 more)
+Cohesion: 0.13
+Nodes (13): istream, FilteringIstream, f, sb, FilteringOstream, f, sb, filtering_istreambuf (+5 more)
 
 ### Community 120 - "Interface"
-Cohesion: 0.07
-Nodes (22): gsl_multimin_fminimizer, gsl_multimin_function, Archive, shared_ptr, cost_minimizer_gsl_create(), CostMinimizerGSL::serialize(), print_state(), gsl_get_mdm() (+14 more)
+Cohesion: 0.06
+Nodes (21): gsl_multifit_fdfsolver, gsl_multimin_function, gsl_get_mdm(), gsl_mdm_c(), create_nlls_problem_scaled(), Archive, nlls_solver_gsl_create(), NLLSSolverGSL::serialize() (+13 more)
 
 ### Community 121 - "Aerosol"
 Cohesion: 0.07
-Nodes (28): AerosolPropertyHdf, clone, extinction_coefficient_each_layer, hdf_file, hdf_group, pf, phase_function_moment_each_layer, press (+20 more)
+Nodes (26): AerosolPropertyHdf, clone, extinction_coefficient_each_layer, hdf_file, hdf_group, pf, phase_function_moment_each_layer, press (+18 more)
 
 ### Community 122 - "Sample"
 Cohesion: 0.07
-Nodes (24): spectral_index, Archive, ostream, shared_ptr, SpectralDomain, string, SpectralDomain, string (+16 more)
+Nodes (23): spectral_index, Archive, ostream, SpectralDomain, string, SpectralDomain, string, SampleGridSpectralDomain (+15 more)
 
 ### Community 123 - "Max"
-Cohesion: 0.06
-Nodes (28): Archive, ForwardModel, shared_ptr, StateVector, vector, ostream, MaxAPosterioriStandard, MaxAPosterioriStandard::serialize() (+20 more)
+Cohesion: 0.05
+Nodes (39): Archive, ForwardModel, StateVector, vector, ostream, MaxAPosterioriSqrtConstraint, get_state, K_x (+31 more)
 
 ### Community 124 - "Relative"
 Cohesion: 0.08
-Nodes (24): Archive, ostream, Pressure, RelativeHumidity, shared_ptr, Temperature, Pressure, shared_ptr (+16 more)
+Nodes (22): Archive, ostream, Pressure, RelativeHumidity, Temperature, Pressure, Temperature, RelativeHumidity (+14 more)
 
 ### Community 125 - "Radiativetransfer"
 Cohesion: 0.11
@@ -1161,105 +1208,104 @@ Cohesion: 0.10
 Nodes (16): I1, I2, ostream, string, TX, TY, LinearLogInterpolate, LinearLogInterpolate<AutoDerivative<double>, AutoDerivative<double> > (+8 more)
 
 ### Community 127 - "Community 127"
-Cohesion: 0.06
-Nodes (24): Composite, Gaussian, InterpolateLinearLinear, InterpolateLinearLog, InterpolateLogLinear, InterpolateLogLog, Linear, Log (+16 more)
+Cohesion: 0.09
+Nodes (13): Doxy2SWIG, main(), my_open_read(), my_open_write(), Parse an `ELEMENT_NODE`.  This calls specific         `do_<tagName>` handers for, Adds text corresponding to `value` into `self.pieces`., Given a node and a sequence of strings in `names`, return a         dictionary c, A Generic parser for arbitrary tags in a node.          Parameters:           - (+5 more)
 
 ### Community 128 - "Interface"
-Cohesion: 0.08
-Nodes (19): shared_ptr, PrintSpectrum, Archive, ostream, stokes_coefficient_value(), StokesCoefficient, clone, StokesCoefficient::serialize() (+11 more)
+Cohesion: 0.04
+Nodes (32): comparison, Archive, ostream, StokesCoefficientConstant, clone, print, StokesCoefficientConstant::serialize(), BOOST_AUTO_TEST_CASE() (+24 more)
 
 ### Community 129 - "Nlls"
-Cohesion: 0.06
-Nodes (17): Archive, ostream, MeyerMLProblem, MeyerMLProblem::serialize(), ostream, shared_ptr, NLLSMaxLikelihood, ML (+9 more)
+Cohesion: 0.05
+Nodes (19): ostream, NLLSMaxLikelihood, ML, parameters, BOOST_AUTO_TEST_CASE(), MaxLikelihoodTest, Mdl, Mdl_jac (+11 more)
 
 ### Community 130 - "Model"
 Cohesion: 0.07
 Nodes (19): BardMLProblem, BardMLProblem::serialize(), Archive, ostream, Archive, ostream, ModelMeasureBard, jacobian_eval (+11 more)
 
 ### Community 131 - "Ils"
-Cohesion: 0.08
-Nodes (26): complex, gsl_fft_complex_wavetable, gsl_fft_complex_workspace, DoubleWithUnit, ostream, shared_ptr, string, vector (+18 more)
+Cohesion: 0.10
+Nodes (21): complex, gsl_fft_complex_wavetable, gsl_fft_complex_workspace, ostream, vector, DoubleWithUnit, SpectralDomain, string (+13 more)
 
 ### Community 132 - "Gsl"
-Cohesion: 0.11
-Nodes (21): fortran_order, fp_gsl_vector, gsl_lsp_f(), gsl_lsp_fj(), gsl_lsp_j(), gsl_sm_lsp_f(), gsl_sm_lsp_j(), GslMatrix (+13 more)
+Cohesion: 0.12
+Nodes (20): fortran_order, fp_gsl_vector, gsl_lsp_f(), gsl_lsp_fj(), gsl_lsp_j(), gsl_sm_lsp_j(), GslMatrix, blitz_array_ (+12 more)
 
 ### Community 133 - "Ground"
-Cohesion: 0.09
-Nodes (26): Archive, ArrayWithUnit, DoubleWithUnit, ostream, shared_ptr, string, vector, GroundLambertian (+18 more)
+Cohesion: 0.08
+Nodes (30): black_sky_albedo, kernel_value, BOOST_AUTO_TEST_CASE(), basic, Archive, ArrayWithUnit, DoubleWithUnit, ostream (+22 more)
 
 ### Community 134 - "Radiativetransfer"
-Cohesion: 0.12
-Nodes (33): brdf_sup_inputs_c_read(), brdf_sup_inputs_c_write(), brdf_sup_inputs_f_read(), brdf_sup_inputs_f_write(), brdf_sup_inputs, brdf_sup_inputs_def_m, lidort_fixed_lincontrol, lidort_fixed_lininputs (+25 more)
+Cohesion: 0.17
+Nodes (28): iso_c_binding, lidort_fixed_lincontrol, lidort_fixed_lininputs, lidort_fixed_linoptical, lidort_lin_inputs_def_m, lidort_modified_lincontrol, lidort_modified_lininputs, lidort_fixed_lincontrol_c_read() (+20 more)
 
 ### Community 135 - "Support"
-Cohesion: 0.07
-Nodes (21): BehaviorOutOfRange, I1, I2, ostream, shared_ptr, string, InterpolatePoint<AutoDerivative<double>, 
-				  AutoDerivative<double> >, interpolate (+13 more)
+Cohesion: 0.06
+Nodes (31): AutoDerivative, grad, val, AutoDerivativeRef, grad, ostream, T, jacobian() (+23 more)
 
 ### Community 136 - "Support"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (20): addable<Time, double>, equality_comparable<Time>, less_than_comparable<Time>, ReferenceVmrApriori::ReferenceVmrApriori(), Archive, string, ostream, operator-() (+12 more)
 
 ### Community 137 - "Error"
-Cohesion: 0.10
-Nodes (29): firstIndex, fourthIndex, ForwardModel, shared_ptr, ErrorAnalysis, aposteriori_covariance, apriori_covariance, atm (+21 more)
+Cohesion: 0.11
+Nodes (27): firstIndex, fourthIndex, ForwardModel, ErrorAnalysis, aposteriori_covariance, apriori_covariance, atm, averaging_kernel (+19 more)
 
 ### Community 138 - "Oss"
-Cohesion: 0.07
-Nodes (29): FloatWithUnit, ArrayWithUnit, OssFixedOutputs, full_spectral_point, num_chan, sensor_spectral_point, OssModifiedInputs, cld_grid (+21 more)
+Cohesion: 0.12
+Nodes (16): FloatWithUnit, OssModifiedInputs, cld_grid, emis, ext_cld, lambertian, lat, obs_zen_ang (+8 more)
 
 ### Community 139 - "Interface"
-Cohesion: 0.08
-Nodes (25): DoubleWithUnit, optical_depth_each_layer_unweighted, Archive, ostream, Archive, ArrayWithUnit, DoubleWithUnit, shared_ptr (+17 more)
+Cohesion: 0.09
+Nodes (23): DoubleWithUnit, optical_depth_each_layer_unweighted, Archive, ostream, Archive, ArrayWithUnit, DoubleWithUnit, vector (+15 more)
 
 ### Community 140 - "Radiativetransfer"
 Cohesion: 0.08
 Nodes (19): fo_dtwpgeometry_master_m, fo_scalarss_rtcalcs_i_m, fo_scalarss_rtcalcs_ilps_m, fo_scalarss_spherfuncs_m, fo_sswpgeometry_master_m, fo_thermal_rtcalcs_i_m, fo_thermal_rtcalcs_ilps_m, fo_wpgeometry_routines_m (+11 more)
 
 ### Community 141 - "Support"
-Cohesion: 0.09
-Nodes (20): BehaviorOutOfRange, I1, I2, ostream, shared_ptr, string, TX, TY (+12 more)
+Cohesion: 0.10
+Nodes (19): BehaviorOutOfRange, I1, I2, ostream, string, TX, TY, InterpolatePoint (+11 more)
 
 ### Community 142 - "Spectral"
 Cohesion: 0.08
-Nodes (25): apply_multi, bad_sample_mask_constructor_1, bad_sample_mask_constructor_2, bounds_ordering, empty_spectral_bounds, grid_indexes, hdf_read, ArrayWithUnit (+17 more)
+Nodes (24): apply_multi, bad_sample_mask_constructor_1, bad_sample_mask_constructor_2, bounds_ordering, empty_spectral_bounds, grid_indexes, hdf_read, ArrayWithUnit (+16 more)
 
 ### Community 143 - "Support"
-Cohesion: 0.11
-Nodes (12): Base, shared_ptr, string, SubStateVectorArray, SubStateVectorArray2, coeff, cov, mapping (+4 more)
+Cohesion: 0.10
+Nodes (11): Base, string, SubStateVectorArray, SubStateVectorArray2, coeff, cov, mapping, coeff (+3 more)
 
 ### Community 144 - "Empirical"
 Cohesion: 0.09
-Nodes (22): Archive, ArrayWithUnit, ostream, shared_ptr, SpectralDomain, string, vector, EmpiricalOrthogonalFunction (+14 more)
+Nodes (21): Archive, ArrayWithUnit, ostream, SpectralDomain, string, vector, EmpiricalOrthogonalFunction, apply_correction (+13 more)
 
 ### Community 145 - "Ground"
-Cohesion: 0.10
-Nodes (23): Archive, ArrayWithUnit, DoubleWithUnit, ostream, shared_ptr, string, vector, GroundEmissivityPolynomial (+15 more)
+Cohesion: 0.09
+Nodes (24): Archive, ArrayWithUnit, DoubleWithUnit, ostream, string, vector, GroundEmissivityPolynomial, clone (+16 more)
 
 ### Community 146 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (12): Lidort_Input_Exception_Handling, string, Lidort_Inputs, lidort_fixin_, lidort_inputstatus_, lidort_modin_, Lidort_L_Inputs, lidort_fixin_ (+4 more)
+Cohesion: 0.07
+Nodes (25): Cloud3dEffect, FixedSpacingSpectrumSampling, FluorescenceEffect, MicroWindowRanges, NonuniformSpectrumSampling, PerChannelMixin, RamanSiorisEffect, Returns the array with unit value for spacing specified regardless if it was spe (+17 more)
 
 ### Community 147 - "Radiativetransfer"
-Cohesion: 0.06
-Nodes (28): brdf_sup_outputs, bs_brdf_f_0__f_byte_size, bs_brdf_f_0__f_shapes, bs_brdf_f__f_byte_size, bs_brdf_f__f_shapes, bs_bsa_calculated_, bs_bsa_calculated__f_byte_size, bs_bsa_kernels_ (+20 more)
+Cohesion: 0.05
+Nodes (47): setup_optical_inputs, Brdf_Sup_Masters, brdf_sup_in_, brdf_sup_inputstatus_, brdf_sup_out_, brdf_sup_outputstatus_, BOOST_AUTO_TEST_CASE(), brdf_sup_outputs (+39 more)
 
 ### Community 148 - "Radiativetransfer"
-Cohesion: 0.07
-Nodes (22): lidort_outputs, main_, main__f_byte_size, status_, status__f_byte_size, transfer_struct_c, wlout_, wlout__f_byte_size (+14 more)
+Cohesion: 0.11
+Nodes (14): lidort_wladjusted_outputs, transfer_struct_c, ts_wladjusted_direct_, ts_wladjusted_direct__f_byte_size, ts_wladjusted_direct__f_shapes, ts_wladjusted_f_ords_0_, ts_wladjusted_f_ords_0__f_byte_size, ts_wladjusted_f_ords_0__f_shapes (+6 more)
 
 ### Community 149 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (25): Archive, ostream, shared_ptr, shared_ptr, vector, SpurrRt, alt_spec_index_cache, azm (+17 more)
+Cohesion: 0.09
+Nodes (24): Archive, ostream, vector, SpurrRt, alt_spec_index_cache, azm, do_solar_sources, do_thermal_emission (+16 more)
 
 ### Community 150 - "Support"
-Cohesion: 0.10
-Nodes (12): DoubleWithUnit, scattering_angle(), BOOST_AUTO_TEST_CASE(), basic, ArrayAd<T, D>::serialize(), Archive, ArrayAdWithUnit<T, D>::serialize(), Archive (+4 more)
+Cohesion: 0.06
+Nodes (28): ArrayAd<T, D>::serialize(), Archive, ArrayAdWithUnit<T, D>::serialize(), Archive, Archive, ceil(), DoubleWithUnit, DoubleWithUnit::serialize() (+20 more)
 
 ### Community 151 - "Support"
-Cohesion: 0.11
-Nodes (14): DirectorExample, name_, DirectorExampleUser, t_, t2_, value_, value_vec_, value_vec2_ (+6 more)
+Cohesion: 0.08
+Nodes (19): Archive, ostream, DirectorExample, name_, print, DirectorExample::serialize(), DirectorExampleUser, DirectorExampleUser::serialize() (+11 more)
 
 ### Community 152 - "Community 152"
 Cohesion: 0.11
@@ -1267,7 +1313,7 @@ Nodes (5): MusesCaseDirectoryConfig, MusesSimConfig, MusesThermalCaseDirectoryCo
 
 ### Community 153 - "Bad"
 Cohesion: 0.08
-Nodes (23): BadSampleNoiseModel, bad_sample_mask_, bad_sample_uncer_, print, uncertainty, underlying_noise_model_, ostream, shared_ptr (+15 more)
+Nodes (21): BadSampleNoiseModel, bad_sample_mask_, bad_sample_uncer_, print, uncertainty, underlying_noise_model_, ostream, T (+13 more)
 
 ### Community 154 - "Support"
 Cohesion: 0.14
@@ -1282,76 +1328,76 @@ Cohesion: 0.07
 Nodes (26): setup_geometry, ts_beam_szas_, lidort_modified_uservalues, transfer_struct_c, ts_geometry_specheight__f_byte_size, ts_n_user_doublets_, ts_n_user_doublets__f_byte_size, ts_n_user_obsgeoms_ (+18 more)
 
 ### Community 157 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (18): Brdf_Lin_Sup_Masters, brdf_linsup_in_, brdf_linsup_out_, brdf_sup_in_, brdf_sup_inputstatus_, brdf_sup_out_, brdf_sup_outputstatus_, Brdf_Input_Exception_Handling (+10 more)
+Cohesion: 0.10
+Nodes (12): Brdf_Lin_Sup_Masters, brdf_linsup_in_, brdf_linsup_out_, brdf_sup_in_, brdf_sup_inputstatus_, brdf_sup_out_, brdf_sup_outputstatus_, Brdf_Input_Exception_Handling (+4 more)
 
 ### Community 158 - "Support"
-Cohesion: 0.09
-Nodes (22): Archive, DoubleWithUnit, SpectralDomain, string, ceil(), double_with_unit_unit_get(), double_with_unit_unit_set(), DoubleWithUnit (+14 more)
+Cohesion: 0.06
+Nodes (22): lidort_linoutputs, atmos_, atmos__f_byte_size, surf_, surf__f_byte_size, transfer_struct_c, lidort_outputs, main_ (+14 more)
 
 ### Community 159 - "Test"
 Cohesion: 0.07
 Nodes (24): A forward model example., A solar model sample example object, Sample Absorber, to use in tests that need one., Sample temperature, to use in tests that need one., Sample atmosphere, to use in tests that need one., Sample pressure, to use in tests that need one., Sample aerosol, to use in tests that need one., Sample instrument, to use in tests that need one. (+16 more)
 
 ### Community 160 - "Nlls"
-Cohesion: 0.07
-Nodes (26): brown_gsl_sm__ddogleg_more_svd, brown_gsl_sm__default, brown_gsl_sm__lm_more_svd, brown_gsl_sm__lmaccel_more_svd, brown_gsl_sm__subspace2D_more_svd, gsl_multifit_nlinear_parameters, BOOST_AUTO_TEST_CASE(), ostream (+18 more)
+Cohesion: 0.03
+Nodes (69): brown_gsl_sm__ddogleg_more_svd, brown_gsl_sm__default, brown_gsl_sm__lm_more_svd, brown_gsl_sm__lmaccel_more_svd, brown_gsl_sm__subspace2D_more_svd, freudenstein_roth_a_gsl_sm__ddogleg_more_svd, freudenstein_roth_a_gsl_sm__default, freudenstein_roth_a_gsl_sm__lm_more_svd (+61 more)
 
 ### Community 161 - "Absorber"
-Cohesion: 0.13
-Nodes (19): field_operators<AutoDerivativeWithUnit<T> >, fill_tau_gas_cache, gravity_sublayer, h2o_vmr_sublayer, integrand, integrand_independent_wn, o2_vmr_sublayer, psub (+11 more)
+Cohesion: 0.10
+Nodes (30): field_operators<AutoDerivativeWithUnit<T> >, clone, create_sublayer, fill_tau_gas_cache, gravity_sublayer, h2o_vmr_sublayer, integrand, integrand_independent_wn (+22 more)
 
 ### Community 162 - "Lua"
 Cohesion: 0.08
 Nodes (19): hello_world, BOOST_AUTO_TEST_CASE(), lua_State, object, FuncWrap, LuaFixture, ls, TestClass (+11 more)
 
 ### Community 163 - "Support"
-Cohesion: 0.11
-Nodes (18): subset_broadener, wet_air_number_density_layer, altitude, ArrayAdWithUnit, units, value, D, ostream (+10 more)
+Cohesion: 0.12
+Nodes (16): total_air_number_density_layer, ArrayAdWithUnit, units, value, D, ostream, Range, rank (+8 more)
 
 ### Community 164 - "Connor"
 Cohesion: 0.09
-Nodes (15): ConnorSolverMAP, dx, fname_test_data, fstat, gamma, gamma_initial, rcond, scaled_p (+7 more)
+Nodes (13): ConnorSolverMAP, dx, fname_test_data, fstat, gamma, gamma_initial, rcond, scaled_p (+5 more)
 
 ### Community 165 - "Level"
-Cohesion: 0.13
-Nodes (26): DoubleWithUnit, ostream, SpectralDomain, T, shared_ptr, vector, Level1bAverage, altitude (+18 more)
+Cohesion: 0.14
+Nodes (24): DoubleWithUnit, ostream, SpectralDomain, T, vector, Level1bAverage, altitude, Level1bAverage::assert_field_equal() (+16 more)
 
 ### Community 166 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (25): setup_linear_inputs, ts_layer_vary_number_, ts_l_deltau_vert_input_, ts_l_omega_total_input_, ts_l_phasmoms_total_input_, lidort_modified_lincontrol, transfer_struct_c, ts_do_atmos_lbbf_ (+17 more)
+Cohesion: 0.04
+Nodes (43): setup_linear_inputs, ts_layer_vary_number_, lidort_fixed_linoptical, transfer_struct_c, ts_l_deltau_vert_input_, ts_l_deltau_vert_input__f_byte_size, ts_l_deltau_vert_input__f_shapes, ts_l_omega_total_input_ (+35 more)
 
 ### Community 167 - "Test"
 Cohesion: 0.13
 Nodes (10): ApproxBase, approx(), ApproxArrayAd, ApproxArrayAdWithUnit, ApproxArrayWithUnit, ApproxAutoDerivative, ApproxAutoDerivativeWithUnit, ApproxDoubleWithUnit (+2 more)
 
 ### Community 168 - "Nlls"
-Cohesion: 0.07
-Nodes (24): bad_param, cholesky_fortran_order_test, cholesky_test, generalized_inverse_fortran_order_test, gsl_test_examples, BOOST_AUTO_TEST_CASE(), MaxAPosterioriTest, Mdl (+16 more)
+Cohesion: 0.20
+Nodes (10): cholesky_fortran_order_test, cholesky_test, generalized_inverse_fortran_order_test, gsl_test_examples, BOOST_AUTO_TEST_CASE(), multifit_covar_test, solve_least_squares_test, svd_test (+2 more)
 
 ### Community 169 - "Interface"
-Cohesion: 0.09
-Nodes (21): comparison, fexcept_t, Archive, ArrayWithUnit, SpectralDomain, ostream, Level1bSampleCoefficient, number_sample (+13 more)
+Cohesion: 0.10
+Nodes (16): fexcept_t, Archive, ArrayWithUnit, SpectralDomain, ostream, Level1bSampleCoefficient, number_sample, sample_grid (+8 more)
 
 ### Community 170 - "Absco"
-Cohesion: 0.09
-Nodes (19): Absco, bgrid, broadener_vmr_grid, is_float, pgrid, pressure_grid, read_double, Absco::read<double, 3>() (+11 more)
+Cohesion: 0.06
+Nodes (23): Absco, absorption_cross_section, bgrid, broadener_vmr_grid, is_float, pgrid, pressure_grid, read_double (+15 more)
 
 ### Community 171 - "Support"
-Cohesion: 0.10
-Nodes (22): IlsTable<Lint>::create_delta_lambda_to_response(), BOOST_AUTO_TEST_CASE(), Archive, ArrayWithUnit, DoubleWithUnit, SpectralDomain, string, ostream (+14 more)
+Cohesion: 0.08
+Nodes (24): IlsTable<Lint>::create_delta_lambda_to_response(), BOOST_AUTO_TEST_CASE(), lua_State, register_lua_OldConstant(), Archive, ArrayWithUnit, DoubleWithUnit, SpectralDomain (+16 more)
 
 ### Community 172 - "Optical"
-Cohesion: 0.10
-Nodes (20): Archive, shared_ptr, vector, OpticalPropertiesWrtRt, aerosol_phase_function_moments_per_particle, gas_optical_depth_per_layer, initialize_with_jacobians, OpticalPropertiesWrtRt::serialize() (+12 more)
+Cohesion: 0.19
+Nodes (11): AerosolOptical, Archive, OpticalPropertiesLsi, compute_aerosol_scattering, gas_optical_depth_per_particle, pack, OpticalPropertiesLsi::serialize(), BOOST_AUTO_TEST_CASE() (+3 more)
 
 ### Community 173 - "Oss"
-Cohesion: 0.09
-Nodes (25): shared_ptr, shared_ptr, SpectralDomain, string, vector, OssFixedInputs, ch_sel_file, channel_domains (+17 more)
+Cohesion: 0.12
+Nodes (18): SpectralDomain, string, vector, OssFixedInputs, ch_sel_file, channel_domains, fix_file, gas_jacobian_names (+10 more)
 
 ### Community 174 - "Solar"
-Cohesion: 0.08
-Nodes (17): DoubleWithUnit, ostream, SpectralDomain, DoubleWithUnit, SolarDopplerShiftDistanceVelocity, apply_doppler_shift_, doppler_stretch, print (+9 more)
+Cohesion: 0.20
+Nodes (8): DoubleWithUnit, ostream, SpectralDomain, DoubleWithUnit, SolarDopplerShiftDistanceVelocity, apply_doppler_shift_, doppler_stretch, print
 
 ### Community 175 - "Radiativetransfer"
 Cohesion: 0.10
@@ -1362,52 +1408,52 @@ Cohesion: 0.13
 Nodes (27): iso_c_binding, twostream_brdf_supplement_m, twostream_bvproblem_m, twostream_inputs_m, twostream_intensity_m, twostream_l_inputs_m, twostream_l_writemodules_m, twostream_la_solutions_m (+19 more)
 
 ### Community 177 - "Altitude"
-Cohesion: 0.08
-Nodes (24): Altitude, AltitudeHydrostatic, AltitudeHydrostatic, cache, clone, latitude, num_sublayer, p (+16 more)
+Cohesion: 0.06
+Nodes (31): Altitude, AltitudeHydrostatic, AltitudeHydrostatic, altitude_calc, cache, clone, latitude, num_sublayer (+23 more)
 
 ### Community 178 - "Serialized"
-Cohesion: 0.08
-Nodes (19): FluorescenceEffect, FluorescenceFixture, config_fluor, shared_ptr, BOOST_AUTO_TEST_CASE(), radiance_and_jacobian, RayleighOnlyConfigurationFixture, BrdfSoilConfigurationFixture (+11 more)
+Cohesion: 0.07
+Nodes (19): FluorescenceEffect, FluorescenceFixture, config_fluor, CalcData, d, BOOST_AUTO_TEST_CASE(), radiance_and_jacobian, RayleighOnlyConfigurationFixture (+11 more)
 
 ### Community 179 - "Fluorescence"
 Cohesion: 0.09
-Nodes (19): DoubleWithUnit, ForwardModelSpectralGrid, ostream, shared_ptr, FluorescenceEffect, apply_effect, atm_oco, clone (+11 more)
+Nodes (16): uncert, ForwardModelSpectralGrid, ostream, FluorescenceEffect, apply_effect, atm_oco, f_contrib_ad, lza (+8 more)
 
 ### Community 180 - "Ground"
-Cohesion: 0.10
-Nodes (19): Archive, GroundCoxmunk, GroundLambertian, ostream, shared_ptr, ground_cm_plus_lamb_output_create(), GroundCoxmunkPlusLambertian, clone (+11 more)
+Cohesion: 0.04
+Nodes (42): T, shared_ptr, dummy, GroundCoxmunk, GroundLambertian, ostream, GroundCoxmunkPlusLambertian, print (+34 more)
 
 ### Community 181 - "Interface"
-Cohesion: 0.09
-Nodes (18): Archive, ostream, ConvergenceCheck::serialize(), FitStatistic, chisq_apriori, chisq_apriori_fc, chisq_measured, chisq_measured_fc (+10 more)
+Cohesion: 0.10
+Nodes (14): FitStatistic, chisq_apriori, chisq_apriori_fc, chisq_measured, chisq_measured_fc, d_sigma_sq, d_sigma_sq_scaled, fit_succeeded (+6 more)
 
 ### Community 182 - "Interface"
-Cohesion: 0.10
-Nodes (21): Archive, GroundImpBase::serialize(), Archive, ArrayWithUnit, DoubleWithUnit, shared_ptr, GroundPiecewise, clone (+13 more)
+Cohesion: 0.14
+Nodes (17): Archive, ArrayWithUnit, DoubleWithUnit, GroundPiecewise, clone, ground_interp, GroundPiecewise::load(), GroundPiecewise::save() (+9 more)
 
 ### Community 183 - "Radiativetransfer"
-Cohesion: 0.09
-Nodes (25): LRadDriver, calculate_first_order, calculate_second_order, check_rt_inputs, enhanced_ps, fscale_f, jac_atm_f, jac_surf_f (+17 more)
+Cohesion: 0.06
+Nodes (42): Archive, ostream, PsMode, PsMode, LRadDriver, atmospheric_jacobian, calculate_first_order, calculate_second_order (+34 more)
 
 ### Community 184 - "Test"
 Cohesion: 0.15
 Nodes (16): config(), config(), config(), config(), base_config(), ils_delta_lambda(), ils_relative_response(), SampleGridIndexes (+8 more)
 
 ### Community 185 - "Example"
-Cohesion: 0.13
-Nodes (14): Archive, shared_ptr, string, ExampleMetFile, group_name, input_, read_array, read_scalar (+6 more)
+Cohesion: 0.14
+Nodes (12): Archive, string, ExampleMetFile, group_name, input_, read_array, read_scalar, ExampleMetFile::serialize() (+4 more)
 
 ### Community 186 - "Support"
-Cohesion: 0.14
-Nodes (21): noise_level, radiance, radiance, BOOST_AUTO_TEST_CASE(), basic, measurement_eval, SpectralDomain, vector (+13 more)
+Cohesion: 0.09
+Nodes (30): radiance, radiance, BOOST_AUTO_TEST_CASE(), basic, measurement_eval, SpectralDomain, Archive, ostream (+22 more)
 
 ### Community 187 - "Initial"
 Cohesion: 0.14
 Nodes (17): Archive, ostream, initial_guess_value_apriori_cov_double_get(), initial_guess_value_apriori_cov_double_set(), initial_guess_value_apriori_double_get(), initial_guess_value_apriori_double_set(), initial_guess_value_initial_guess_double_get(), initial_guess_value_initial_guess_double_set() (+9 more)
 
 ### Community 188 - "Interface"
-Cohesion: 0.13
-Nodes (22): BOOST_AUTO_TEST_CASE(), basic, Archive, ostream, shared_ptr, composite_initial_guess_add_builder(), composite_initial_guess_add_builder2(), CompositeInitialGuess (+14 more)
+Cohesion: 0.14
+Nodes (20): BOOST_AUTO_TEST_CASE(), basic, Archive, ostream, composite_initial_guess_add_builder2(), CompositeInitialGuess, apriori, apriori_covariance (+12 more)
 
 ### Community 189 - "Radiativetransfer"
 Cohesion: 0.08
@@ -1419,10 +1465,10 @@ Nodes (23): brdf_linsup_outputs, bs_ls_brdf_f_, bs_ls_brdf_f_0_, bs_ls_brdf_f_0_
 
 ### Community 191 - "Radiativetransfer"
 Cohesion: 0.14
-Nodes (26): lidort_exception_handling, lidort_input_exception_handling, lidort_main_outputs, lidort_outputs, lidort_outputs_def_m, lidort_wladjusted_outputs, lidort_exception_handling_c_read(), lidort_exception_handling_c_write() (+18 more)
+Nodes (30): brdf_sup_outputs_f_read(), brdf_sup_outputs_f_write(), brdf_sup_outputs, lidort_exception_handling, lidort_input_exception_handling, lidort_main_outputs, lidort_outputs, lidort_outputs_def_m (+22 more)
 
 ### Community 192 - "Radiativetransfer"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (23): lidort_linsup_brdf, transfer_struct_c, ts_ls_brdf_f_, ts_ls_brdf_f_0_, ts_ls_brdf_f_0__f_byte_size, ts_ls_brdf_f_0__f_shapes, ts_ls_brdf_f__f_byte_size, ts_ls_brdf_f__f_shapes (+15 more)
 
 ### Community 193 - "Radiativetransfer"
@@ -1435,79 +1481,80 @@ Nodes (25): bpdfndvi_function(), bpdfsoil_function(), bpdfvegn_function(), brdf_
 
 ### Community 195 - "Connor"
 Cohesion: 0.08
-Nodes (12): all_pixels, Archive, ConnorCostFunction::serialize(), BOOST_AUTO_TEST_CASE(), serialization, Archive, FmNLLSProblem::serialize(), BOOST_AUTO_TEST_CASE() (+4 more)
+Nodes (3): fix_var_init(), VariableWrapper, Variable
 
 ### Community 196 - "Support"
-Cohesion: 0.12
-Nodes (17): E, ostream, backtrace, default_stack_size, frames_, ostream, string, get_symbol() (+9 more)
+Cohesion: 0.10
+Nodes (20): E, ostream, backtrace, default_stack_size, frames_, ostream, string, get_symbol() (+12 more)
 
 ### Community 197 - "Fd"
-Cohesion: 0.10
-Nodes (15): ForwardModel, ForwardModel, shared_ptr, StateVector, FdForwardModel, perturb, radiance, real_fm (+7 more)
+Cohesion: 0.12
+Nodes (11): ForwardModel, StateVector, FdForwardModel, perturb, radiance, real_fm, statev, ostream (+3 more)
 
 ### Community 198 - "Interface"
-Cohesion: 0.10
-Nodes (16): shared_ptr, connor_solver_map_create(), Archive, ostream, status_t, vector, IterativeSolver, max_cost_f_calls (+8 more)
+Cohesion: 0.06
+Nodes (23): Archive, nlls_solver_gsl_lmder_create(), NLLSSolverGSLLMDER::serialize(), Archive, nlls_solver_gsl_lmsder_create(), NLLSSolverGSLLMSDER::serialize(), ostream, StateVector (+15 more)
 
 ### Community 199 - "Dispersion"
-Cohesion: 0.12
-Nodes (19): Archive, ArrayWithUnit, ostream, shared_ptr, SpectralDomain, string, disp_poly_flagged_create(), DispersionPolynomial (+11 more)
+Cohesion: 0.10
+Nodes (18): Archive, ArrayWithUnit, ostream, SpectralDomain, string, disp_poly_flagged_create(), DispersionPolynomial, band_name_ (+10 more)
 
 ### Community 200 - "Ils"
 Cohesion: 0.10
-Nodes (18): DoubleWithUnit, ostream, shared_ptr, vector, shared_ptr, IlsGrating, apply_ils, clone (+10 more)
+Nodes (17): DoubleWithUnit, ostream, vector, IlsGrating, apply_ils, clone, ils_func, integrate (+9 more)
 
 ### Community 201 - "Interface"
 Cohesion: 0.12
-Nodes (16): AerosolExtinctionImpBase, aerosol_extinction, aext, cache_stale, calc_aerosol_extinction, clone, extinction_for_layer, model_short_name (+8 more)
+Nodes (15): AerosolExtinctionImpBase, aerosol_extinction, aext, cache_stale, calc_aerosol_extinction, clone, extinction_for_layer, model_short_name (+7 more)
 
 ### Community 202 - "Radiativetransfer"
-Cohesion: 0.17
-Nodes (24): Archive, Fo_Dtwpgeometry_Master::load(), Fo_Dtwpgeometry_Master::save(), Fo_Dtwpgeometry_Master::serialize(), Fo_Scalarss_Rtcalcs_I::load(), Fo_Scalarss_Rtcalcs_I::save(), Fo_Scalarss_Rtcalcs_I::serialize(), Fo_Scalarss_Rtcalcs_Ilps::load() (+16 more)
+Cohesion: 0.18
+Nodes (23): Archive, Fo_Dtwpgeometry_Master::load(), Fo_Dtwpgeometry_Master::save(), Fo_Dtwpgeometry_Master::serialize(), Fo_Scalarss_Rtcalcs_I::load(), Fo_Scalarss_Rtcalcs_I::save(), Fo_Scalarss_Rtcalcs_I::serialize(), Fo_Scalarss_Rtcalcs_Ilps::load() (+15 more)
 
 ### Community 203 - "Support"
-Cohesion: 0.13
-Nodes (17): l_rad_rt_create(), initialize, Archive, ArrayWithUnit, DoubleWithUnit, ostream, vector, DoubleWithUnit (+9 more)
+Cohesion: 0.19
+Nodes (13): Archive, ArrayWithUnit, DoubleWithUnit, ostream, vector, DoubleWithUnit, vector, SpectralBound (+5 more)
 
 ### Community 204 - "Radiativetransfer"
-Cohesion: 0.10
-Nodes (20): setup_optical_inputs, Brdf_Sup_Masters, brdf_sup_in_, brdf_sup_inputstatus_, brdf_sup_out_, brdf_sup_outputstatus_, Brdf_Output_Exception_Handling, BOOST_AUTO_TEST_CASE() (+12 more)
+Cohesion: 0.08
+Nodes (21): BOOST_AUTO_TEST_CASE(), Archive, OpticalPropertiesWrtInput, initialize_with_jacobians, OpticalPropertiesWrtInput::serialize(), Archive, vector, OpticalPropertiesWrtRt (+13 more)
 
 ### Community 205 - "Radiativetransfer"
 Cohesion: 0.09
-Nodes (16): lidort_fixed_write, transfer_struct_c, ts_do_debug_write_, ts_do_debug_write__f_byte_size, ts_do_write_fourier_, ts_do_write_fourier__f_byte_size, ts_do_write_input_, ts_do_write_input__f_byte_size (+8 more)
+Nodes (17): write_, lidort_fixed_write, transfer_struct_c, ts_do_debug_write_, ts_do_debug_write__f_byte_size, ts_do_write_fourier_, ts_do_write_fourier__f_byte_size, ts_do_write_input_ (+9 more)
 
 ### Community 206 - "Radiativetransfer"
-Cohesion: 0.10
-Nodes (20): Pressure, Pressure, shared_ptr, SpectralDomain, StateVector, string, vector, RamanSiorisEffect (+12 more)
+Cohesion: 0.08
+Nodes (33): Archive, DoubleWithUnit, ForwardModelSpectralGrid, ostream, Pressure, SpectralDomain, FullPhysics::compute_raman_sioris(), Pressure (+25 more)
 
 ### Community 207 - "Radiativetransfer"
-Cohesion: 0.09
-Nodes (7): brdf, ostream, lidort_linsup_ss_surf, transfer_struct_c, ts_surfacewf_db_, ts_surfacewf_db__f_byte_size, ts_surfacewf_db__f_shapes
+Cohesion: 0.08
+Nodes (15): clone, Archive, Observation::serialize(), Archive, ostream, Perturbation, Perturbation::serialize(), ostream (+7 more)
 
 ### Community 208 - "Radiativetransfer"
 Cohesion: 0.13
 Nodes (23): calc_geom_first_enh_m, calc_geom_second_m, constants, l_calc_phase_first_m, l_rad_first_enh_m, l_rad_first_pp_m, l_rad_first_reg_m, l_rad_second_ionly_m (+15 more)
 
 ### Community 209 - "Solar"
-Cohesion: 0.11
-Nodes (19): check_edge_cases, compare_horizons, DoubleWithUnit, ostream, SpectralDomain, Vector, DoubleWithUnit, Poly() (+11 more)
+Cohesion: 0.05
+Nodes (33): bad_param, check_edge_cases, compare_horizons, BOOST_AUTO_TEST_CASE(), MaxAPosterioriTest, Mdl, Mdl_jac, BOOST_AUTO_TEST_CASE() (+25 more)
 
 ### Community 210 - "Radiativetransfer"
-Cohesion: 0.12
-Nodes (16): check_los, check_ps, compare_sphericity, wn_arr, Archive, ostream, shared_ptr, shared_ptr (+8 more)
+Cohesion: 0.23
+Nodes (7): Archive, ostream, LidortRt, LidortRt::load(), print, LidortRt::save(), LidortRt::serialize()
 
 ### Community 211 - "Support"
-Cohesion: 0.12
-Nodes (15): const_iterator, It, BinMap, val, iterator, T, vector, GenericObjectMap (+7 more)
+Cohesion: 0.21
+Nodes (7): GenericObjectMap, get(), ostream, string, T, vector, map<std::string,
+					 boost::shared_ptr<GenericObject> >
 
 ### Community 212 - "Interface"
 Cohesion: 0.09
-Nodes (17): absorber_vmr, clone, gas_absorption_ptr, Altitude, Pressure, shared_ptr, Temperature, vector (+9 more)
+Nodes (16): gas_absorption_ptr, Altitude, Pressure, Temperature, vector, gas_index, Absorber::serialize(), Archive (+8 more)
 
 ### Community 213 - "Max"
-Cohesion: 0.10
-Nodes (17): Archive, ForwardModel, shared_ptr, StateVector, vector, ostream, shared_ptr, MaxAPosterioriSqrtConstraint (+9 more)
+Cohesion: 0.08
+Nodes (14): ParameterAccessor, PickChild, Retrieve a parameter from the configuration definition, Called when the creator's object has been created to be sent to other creators w, Recieves a dispatched object, needs to be implemented in inheriting class, This is syntactic sugar to make a creator act like it can directly         creat, Turns creators into callables so that they can be evaluated by ConfigParam as an, Evaluates parameters and saves them into the common store, creator has no return (+6 more)
 
 ### Community 214 - "Reference"
 Cohesion: 0.19
@@ -1518,20 +1565,16 @@ Cohesion: 0.16
 Nodes (24): lidort_sup_brdf, lidort_sup_brdf_def_m, lidort_sup_inout, lidort_sup_inout_def_m, lidort_sup_sleave, lidort_sup_sleave_def_m, lidort_sup_ss, lidort_sup_ss_def_m (+16 more)
 
 ### Community 216 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (20): lidort_fixed_control, transfer_struct_c, ts_asymtx_tolerance__f_byte_size, ts_boa_illumination_, ts_boa_illumination__f_byte_size, ts_lidort_accuracy__f_byte_size, ts_n_thermal_coeffs__f_byte_size, ts_nfinelayers_ (+12 more)
+Cohesion: 0.09
+Nodes (14): Archive, ostream, SurfaceTemperature, clone, SurfaceTemperature::serialize(), surface_temperature, Archive, ostream (+6 more)
 
 ### Community 217 - "Radiativetransfer"
-Cohesion: 0.08
-Nodes (19): lidort_fixed_optical, transfer_struct_c, ts_atmos_wavelength_, ts_atmos_wavelength__f_byte_size, ts_deltau_vert_input__f_byte_size, ts_deltau_vert_input__f_shapes, ts_lambertian_albedo_, ts_lambertian_albedo__f_byte_size (+11 more)
+Cohesion: 0.05
+Nodes (21): brdf, ostream, lidort_fixed_optical, transfer_struct_c, ts_atmos_wavelength_, ts_atmos_wavelength__f_byte_size, ts_deltau_vert_input__f_byte_size, ts_deltau_vert_input__f_shapes (+13 more)
 
 ### Community 218 - "Support"
 Cohesion: 0.14
 Nodes (17): SpectralDomain, T, ceil(), floor(), ostream, string, T, max() (+9 more)
-
-### Community 219 - "Test"
-Cohesion: 0.10
-Nodes (8): RayleighBodhaine, RayleighYoung, TestAerosolExtinctionLinear, TestAltitudeHydrostatic, TestDefaultConstant, TestExampleMetFile, TestPressureSigma, TestTemperatureMet
 
 ### Community 220 - "2Stream"
 Cohesion: 0.09
@@ -1542,8 +1585,8 @@ Cohesion: 0.09
 Nodes (21): twostream_bvproblem_m, twostream_inputs_m, twostream_intensity_m, twostream_l_inputs_m, twostream_l_writemodules_m, twostream_la_solutions_m, twostream_lp_bvproblem_m, twostream_lp_jacobians_m (+13 more)
 
 ### Community 222 - "Output"
-Cohesion: 0.15
-Nodes (14): D, shared_ptr, string, T, OutputHdfIteration::write_data_t(), OutputHdfIterationHelper, d, data (+6 more)
+Cohesion: 0.18
+Nodes (12): D, string, T, OutputHdfIteration::write_data_t(), OutputHdfIterationHelper, d, data, h (+4 more)
 
 ### Community 223 - "Radiativetransfer"
 Cohesion: 0.12
@@ -1558,48 +1601,48 @@ Cohesion: 0.21
 Nodes (22): lidort_aux_m, lidort_fixed_inputs, lidort_fixed_lininputs, lidort_input_exception_handling, lidort_inputs_def_m, lidort_inputs_m, lidort_lin_inputs_def_m, lidort_lin_sup_inout_def_m (+14 more)
 
 ### Community 226 - "Example"
-Cohesion: 0.10
-Nodes (18): close_obs_distance, close_obs_time, closest_obs_distance, closest_obs_n_distance, closest_obs_n_time, level1b_list, Archive, shared_ptr (+10 more)
+Cohesion: 0.11
+Nodes (16): close_obs_distance, close_obs_time, closest_obs_distance, closest_obs_n_distance, closest_obs_n_time, level1b_list, Archive, string (+8 more)
 
 ### Community 227 - "Nlls"
-Cohesion: 0.13
-Nodes (16): gsl_multifit_fdfsolver, gsl_multifit_nlinear_type, gsl_multifit_nlinear_workspace, solve, solve, Archive, shared_ptr, nlls_solver_gsl_create() (+8 more)
+Cohesion: 0.14
+Nodes (12): object, ConvolveSpecFft, ConvolveSpecL2, FileInstrumentInfo, HighResSpectrumFile, IlsSvdInfo, main(), Loads high resolution spectrum from a L2 file with the high res output flag turn (+4 more)
 
 ### Community 228 - "Cost"
-Cohesion: 0.09
-Nodes (19): gsl_multimin_fminimizer_type, CostMinimizerGSL, Initial_step_size, Size_tol, ostream, BOOST_AUTO_TEST_CASE(), bard, bard_ml (+11 more)
+Cohesion: 0.08
+Nodes (25): gsl_multimin_fminimizer, gsl_multimin_fminimizer_type, Archive, cost_minimizer_gsl_create(), CostMinimizerGSL, Initial_step_size, CostMinimizerGSL::serialize(), Size_tol (+17 more)
 
 ### Community 229 - "Absorber"
-Cohesion: 0.14
-Nodes (19): absorber_vmr_level_create(), AbsorberVmrLevel, calc_vmr, clone, coeff_pressure, coeff_pressure_profile, pressure_profile, print (+11 more)
+Cohesion: 0.15
+Nodes (17): absorber_vmr_level_create(), AbsorberVmrLevel, calc_vmr, clone, coeff_pressure, coeff_pressure_profile, pressure_profile, print (+9 more)
 
 ### Community 230 - "Support"
-Cohesion: 0.16
-Nodes (15): BOOST_AUTO_TEST_CASE(), basic, AccumulatedTimer, log_level, shared_ptr, T, Logger, imp_ (+7 more)
+Cohesion: 0.15
+Nodes (14): BOOST_AUTO_TEST_CASE(), basic, AccumulatedTimer, log_level, T, Logger, imp_, timer_ (+6 more)
 
 ### Community 231 - "Gas"
 Cohesion: 0.13
-Nodes (18): Altitude, Pressure, shared_ptr, string, GasVmrApriori, apriori_vmr, gas_name, GasVmrApriori::GasVmrApriori() (+10 more)
+Nodes (16): Altitude, Pressure, string, GasVmrApriori, apriori_vmr, gas_name, GasVmrApriori::GasVmrApriori(), initialize (+8 more)
 
 ### Community 232 - "Nlls"
-Cohesion: 0.15
-Nodes (14): Archive, shared_ptr, create_nlls_problem_scaled(), ostream, shared_ptr, NLLSProblemScaled, jacobian, P (+6 more)
+Cohesion: 0.18
+Nodes (10): Archive, ostream, NLLSProblemScaled, jacobian, P, parameters, residual, scale_parameters (+2 more)
 
 ### Community 233 - "Interface"
-Cohesion: 0.15
-Nodes (18): BOOST_AUTO_TEST_CASE(), Archive, string, ostream, Meteorology, h2o_vmr, interpolate_to_grid, pressure_levels (+10 more)
+Cohesion: 0.11
+Nodes (23): Pressure, MetDataFixture, met_data, pressure, pressure_reverse, BOOST_AUTO_TEST_CASE(), Archive, string (+15 more)
 
 ### Community 234 - "Interface"
-Cohesion: 0.14
-Nodes (17): D, function, shared_ptr, string, T, LevelPad, LevelPad2, f (+9 more)
+Cohesion: 0.21
+Nodes (11): function, T, LevelPad, LevelPad2, f, fill, fullsize, f (+3 more)
 
 ### Community 235 - "Lua"
-Cohesion: 0.14
-Nodes (10): shared_ptr, ForwardModel, ostream, shared_ptr, StateVector, string, L2FpConfigurationLua, ls (+2 more)
+Cohesion: 0.08
+Nodes (17): ostream, L2FpConfiguration, forward_model, initial_guess, iterative_solver, logger, max_a_posteriori, output (+9 more)
 
 ### Community 236 - "Community 236"
-Cohesion: 0.15
-Nodes (7): ObserverPtrNamedSpectrum, Instructs the configuration instance to attach logging classes. Present here to, Instructs the configuration instance to attach output classes. Present here to b, StrategyExecutor, CaptureRadiance, ComparisonExecutor, Executor that will store produced radiances internally for later comparison agai
+Cohesion: 0.11
+Nodes (11): main(), main(), write_optical_properties(), write_scene_optical_depth(), ObserverPtrNamedSpectrum, Instructs the configuration instance to attach logging classes. Present here to, Instructs the configuration instance to attach output classes. Present here to b, StrategyExecutor (+3 more)
 
 ### Community 237 - "Community 237"
 Cohesion: 0.09
@@ -1618,28 +1661,28 @@ Cohesion: 0.12
 Nodes (20): lidort_bvproblem_m, lidort_converge_m, lidort_fixed_inputs, lidort_geometry_m, lidort_inputs_m, lidort_intensity_m, lidort_io_defs_m, lidort_mediaprops_m (+12 more)
 
 ### Community 241 - "Nonuniform"
-Cohesion: 0.14
-Nodes (16): Archive, DoubleWithUnit, ostream, shared_ptr, SpectralDomain, DoubleWithUnit, shared_ptr, SpectralDomain (+8 more)
+Cohesion: 0.16
+Nodes (14): Archive, DoubleWithUnit, ostream, SpectralDomain, DoubleWithUnit, SpectralDomain, vector, NonuniformSpectrumSampling (+6 more)
 
 ### Community 242 - "Interface"
-Cohesion: 0.16
-Nodes (16): Archive, SpectralDomain, vector, ForwardModelSpectralGrid, high_resolution_grid, high_resolution_interpolated_grid, inst, interpolate_spectrum (+8 more)
+Cohesion: 0.14
+Nodes (24): Archive, SpectralDomain, vector, ForwardModelSpectralGrid, high_resolution_grid, high_resolution_interpolated_grid, inst, interpolate_spectrum (+16 more)
 
 ### Community 243 - "Interface"
 Cohesion: 0.18
-Nodes (17): Archive, DoubleWithUnit, shared_ptr, vector, ostream, Level1bInfo, close_obs, closest_obs (+9 more)
+Nodes (16): Archive, DoubleWithUnit, vector, ostream, Level1bInfo, close_obs, closest_obs, closest_obs_n (+8 more)
 
 ### Community 244 - "Interface"
 Cohesion: 0.12
 Nodes (14): Archive, PressureGridType, ostream, Pressure, TypePreference, PressureImpBase, cache, calc_pressure_grid (+6 more)
 
 ### Community 245 - "Interface"
-Cohesion: 0.12
-Nodes (16): Archive, ostream, Pressure, shared_ptr, string, ArrayWithUnit, string, TemperatureOffset (+8 more)
+Cohesion: 0.08
+Nodes (22): ostream, Pressure, Temperature, TemperatureMet, clone, met, print, Archive (+14 more)
 
 ### Community 246 - "Support"
-Cohesion: 0.13
-Nodes (17): boost::serialization::load(), boost::serialization::save(), Archive, T, fortran_resize(), FullPhysics::cholesky_decomposition(), FullPhysics::multifit_covar(), FullPhysics::multifit_test_delta() (+9 more)
+Cohesion: 0.26
+Nodes (10): boost::serialization::load(), boost::serialization::save(), Archive, T, fortran_resize(), D, T, to_c_order() (+2 more)
 
 ### Community 247 - "Lidort"
 Cohesion: 0.12
@@ -1655,47 +1698,47 @@ Nodes (12): field_operators<ArrayWithUnit<T, D> >, I, ArrayWithUnit, units, valu
 
 ### Community 250 - "Composite"
 Cohesion: 0.15
-Nodes (13): ostream, CompositePerturbation, blist, number_element, perturbation, print, ostream, shared_ptr (+5 more)
+Nodes (12): ostream, CompositePerturbation, blist, number_element, perturbation, print, ostream, PerturbationBuilder (+4 more)
 
 ### Community 251 - "Fm"
 Cohesion: 0.11
-Nodes (16): ForwardModel, shared_ptr, StateVector, FmNLLSProblem, fm, jacobian, rad, residual (+8 more)
+Nodes (16): Archive, ForwardModel, StateVector, FmNLLSProblem, fm, jacobian, rad, residual (+8 more)
 
 ### Community 252 - "Ground"
-Cohesion: 0.16
-Nodes (15): Archive, ostream, shared_ptr, string, GroundCoxmunk, clone, print, refractive_index (+7 more)
+Cohesion: 0.12
+Nodes (17): Archive, ostream, string, GroundCoxmunk, clone, print, refractive_index, GroundCoxmunk::serialize() (+9 more)
 
 ### Community 253 - "Level"
-Cohesion: 0.14
-Nodes (8): ostream, DoubleWithUnit, shared_ptr, SpectralDomain, Level1bScaleRadiance, l1b, print, scaling
+Cohesion: 0.15
+Nodes (7): ostream, DoubleWithUnit, SpectralDomain, Level1bScaleRadiance, l1b, print, scaling
 
 ### Community 254 - "Output"
-Cohesion: 0.14
-Nodes (17): shared_ptr, string, T, ostream, shared_ptr, OutputHdf, end_because_of_error, h (+9 more)
+Cohesion: 0.16
+Nodes (15): string, T, ostream, OutputHdf, end_because_of_error, h, initialize, num_aerosol (+7 more)
 
 ### Community 255 - "Xsec"
-Cohesion: 0.15
-Nodes (16): Archive, ArrayWithUnit, DoubleWithUnit, shared_ptr, vector, BOOST_AUTO_TEST_CASE(), basic, serialization (+8 more)
+Cohesion: 0.16
+Nodes (14): Archive, ArrayWithUnit, DoubleWithUnit, vector, BOOST_AUTO_TEST_CASE(), basic, serialization, string (+6 more)
 
 ### Community 256 - "Interface"
 Cohesion: 0.13
-Nodes (11): Archive, string, GenericState, clone, GenericState::serialize(), GenericStateImpBase, GenericStateImpBase::serialize(), state_vector_name_i (+3 more)
+Nodes (10): Archive, string, GenericState, clone, GenericState::serialize(), GenericStateImpBase, GenericStateImpBase::serialize(), state_vector_name_i (+2 more)
 
 ### Community 257 - "Radiativetransfer"
 Cohesion: 0.10
-Nodes (15): lidort_fixed_chapman, transfer_struct_c, ts_finegrid_, ts_finegrid__f_byte_size, ts_finegrid__f_shapes, ts_height_grid__f_byte_size, ts_height_grid__f_shapes, ts_pressure_grid_ (+7 more)
+Nodes (16): lidort_fixed_chapman, transfer_struct_c, ts_finegrid_, ts_finegrid__f_byte_size, ts_finegrid__f_shapes, ts_height_grid__f_byte_size, ts_height_grid__f_shapes, ts_pressure_grid_ (+8 more)
 
 ### Community 258 - "Statemapping"
-Cohesion: 0.13
-Nodes (13): Archive, Pressure, shared_ptr, Pressure, shared_ptr, string, StateMappingGaussian, linear_total (+5 more)
+Cohesion: 0.14
+Nodes (11): Archive, Pressure, Pressure, string, StateMappingGaussian, linear_total, map_name, mapped_state (+3 more)
 
 ### Community 259 - "Community 259"
 Cohesion: 0.23
 Nodes (6): AbsorberVmrMUSES, CovarianceMUSES, CreatorMUSES, PressureGridMUSES, SurfaceTemperatureMUSES, TemperatureMUSES
 
 ### Community 260 - "Community 260"
-Cohesion: 0.12
-Nodes (10): Create a solar reference spectrum where all bands are specified in one file wher, Ensure we always have an array of ArrayWithUnit classes whether only one is supp, SolarAbsorptionAndContinuum, SolarAbsorptionTable, SolarContinuumTable, SolarDopplerShiftDistanceVelocity, SolarDopplerShiftPolynomial, SolarDopplerShiftPolynomialFromL1b (+2 more)
+Cohesion: 0.33
+Nodes (4): Create a solar reference spectrum where all bands are specified in one file wher, Ensure we always have an array of ArrayWithUnit classes whether only one is supp, SolarReferenceSpectrum, SolarReferenceSpectrumAsciiFile
 
 ### Community 261 - "Test"
 Cohesion: 0.11
@@ -1706,60 +1749,60 @@ Cohesion: 0.17
 Nodes (18): average_solar_cosine(), sleave_sup_aux_m, fresnel_complex(), general_sunglint(), get_fluorescence_755(), interpolate_foq_bs1(), interpolate_foq_bs2(), interpolate_foq_bs3() (+10 more)
 
 ### Community 263 - "Radiativetransfer"
-Cohesion: 0.12
-Nodes (15): compare_with_offline, taug, Method, shared_ptr, vector, Method, shared_ptr, vector (+7 more)
+Cohesion: 0.09
+Nodes (18): compare_with_offline, taug, Method, vector, Method, vector, PCABinning, bin_method_ (+10 more)
 
 ### Community 264 - "Fmodel"
 Cohesion: 0.11
 Nodes (5): BaseConfig, ConfigSolar, my_cached_property, Python 3.8 introduced a cached_property decorator in functools.     That is a li, This has a few pieces, so we group it together
 
 ### Community 265 - "Cloud"
-Cohesion: 0.17
-Nodes (15): Archive, ForwardModelSpectralGrid, ostream, shared_ptr, string, Cloud3dEffect, apply_effect, band_name (+7 more)
+Cohesion: 0.09
+Nodes (23): Cloud3dEffect, init, Archive, ForwardModelSpectralGrid, ostream, string, Cloud3dEffect, apply_effect (+15 more)
 
 ### Community 266 - "Ground"
-Cohesion: 0.15
-Nodes (14): Archive, ArrayWithUnit, ostream, shared_ptr, string, GroundEmissivityPiecewise, clone, print (+6 more)
+Cohesion: 0.14
+Nodes (14): GroundPiecewise, Archive, ArrayWithUnit, ostream, string, GroundEmissivityPiecewise, clone, print (+6 more)
 
 ### Community 267 - "Hdf"
-Cohesion: 0.13
-Nodes (7): shared_ptr, array, DoubleWithUnit, ostream, HdfConstant, BOOST_AUTO_TEST_CASE(), basic
+Cohesion: 0.14
+Nodes (6): array, DoubleWithUnit, ostream, HdfConstant, BOOST_AUTO_TEST_CASE(), basic
 
 ### Community 268 - "Log"
 Cohesion: 0.13
 Nodes (15): string, cpu_timer, ostream, string, LogTiming, cpu_factor, cpu_model, cpu_reference_speed (+7 more)
 
 ### Community 269 - "Radiance"
-Cohesion: 0.12
-Nodes (15): ostream, shared_ptr, SpectralDomain, string, vector, DoubleWithUnit, StateVector, string (+7 more)
+Cohesion: 0.13
+Nodes (15): Archive, ostream, SpectralDomain, string, vector, DoubleWithUnit, StateVector, string (+7 more)
 
 ### Community 270 - "Surface"
-Cohesion: 0.13
-Nodes (14): Archive, ArrayWithUnit, shared_ptr, string, SurfaceTemperature, ostream, string, SurfaceTemperature (+6 more)
+Cohesion: 0.14
+Nodes (13): Archive, ArrayWithUnit, string, SurfaceTemperature, ostream, string, SurfaceTemperature, SurfaceTemperatureDirect (+5 more)
 
 ### Community 271 - "Interface"
-Cohesion: 0.13
-Nodes (9): DoubleWithUnit, ostream, shared_ptr, SpectralDomain, vector, IdentitySpectrumSampling, SpectrumSampling, nspectrometer (+1 more)
+Cohesion: 0.12
+Nodes (10): Archive, DoubleWithUnit, ostream, SpectralDomain, IdentitySpectrumSampling, IdentitySpectrumSampling::serialize(), SpectrumSampling, nspectrometer (+2 more)
 
 ### Community 272 - "Radiativetransfer"
 Cohesion: 0.11
 Nodes (14): lidort_linsup_ss_atmos, transfer_struct_c, ts_columnwf_db_, ts_columnwf_db__f_byte_size, ts_columnwf_db__f_shapes, ts_columnwf_ss_, ts_columnwf_ss__f_byte_size, ts_columnwf_ss__f_shapes (+6 more)
 
 ### Community 273 - "Community 273"
-Cohesion: 0.16
-Nodes (8): Extracts the surface pressure value from the attached meterological file, RelativeAzimuthFromLevel1b, SignalLevelFromL1b, SolarDistanceFromL1b, UncertaintyFromL1b, ValueFromLevel1b, Extracts necessary scenario values from a L1B file object, ScenarioFromL1b
+Cohesion: 0.04
+Nodes (32): ParamIterateCreator, Base class for creators that iterate over their parameters, # TODO: Add spectral_grid to forward model interface or move out to its own Crea, DefaultConstants, Extracts the surface pressure value from the attached meterological file, RelativeAzimuthFromLevel1b, SignalLevelFromL1b, SolarDistanceFromL1b (+24 more)
 
 ### Community 274 - "Test"
-Cohesion: 0.15
-Nodes (11): DirectorPythonExample, Description to print for this object., Print a list of active DirectorPythonExample, and the first one if it         ex, test_director_example(), test_director_example_weak_ptr(), test_director_lifetime_shelve(), test_director_pickle_shelve(), This test is an example of using the nlopt package. We ended up     *not* using (+3 more)
+Cohesion: 0.10
+Nodes (17): create_from_l1b(), Archive, ostream, SpectralDomain, SolarReferenceSpectrum, doppler_shift_, print, ref_spec_interp (+9 more)
 
 ### Community 275 - "Lidort"
 Cohesion: 0.13
 Nodes (18): brdf_sup_aux_m, brdf_sup_inputs, brdf_sup_inputs_def_m, brdf_sup_outputs, brdf_sup_outputs_def_m, lidort_exception_handling, lidort_fixed_inputs, lidort_inputs_def_m (+10 more)
 
 ### Community 276 - "Absorber"
-Cohesion: 0.16
-Nodes (15): scale_factor, AbsorberVmrMet, clone, met, pressure_profile, print, AbsorberVmrMet::serialize(), specific_humidity (+7 more)
+Cohesion: 0.19
+Nodes (12): AbsorberVmrMet, clone, met, pressure_profile, print, AbsorberVmrMet::serialize(), specific_humidity, vmr_profile (+4 more)
 
 ### Community 277 - "Connor"
 Cohesion: 0.11
@@ -1770,8 +1813,8 @@ Cohesion: 0.15
 Nodes (16): Archive, ostream, SpectralDomain, string, string, SolarAbsorptionTable, domain_unit, hdf_file_name (+8 more)
 
 ### Community 279 - "Interface"
-Cohesion: 0.13
-Nodes (13): AbsorberVmrScaled, calc_vmr, clone, pressure_profile, print, AbsorberVmrScaled::serialize(), vmr_profile, Archive (+5 more)
+Cohesion: 0.10
+Nodes (14): AbsorberVmrImpBase::serialize(), Archive, AbsorberVmrScaled, calc_vmr, clone, pressure_profile, print, AbsorberVmrScaled::serialize() (+6 more)
 
 ### Community 280 - "Interface"
 Cohesion: 0.18
@@ -1790,20 +1833,20 @@ Cohesion: 0.21
 Nodes (18): lidort_lin_sup_brdf_def_m, lidort_lin_sup_inout_def_m, lidort_lin_sup_sleave_def_m, lidort_linsup_brdf, lidort_linsup_inout, lidort_linsup_sleave, lidort_linsup_brdf_c_read(), lidort_linsup_brdf_c_write() (+10 more)
 
 ### Community 284 - "Radiativetransfer"
-Cohesion: 0.16
-Nodes (16): Archive, DoubleWithUnit, ForwardModelSpectralGrid, ostream, shared_ptr, SpectralDomain, FullPhysics::compute_raman_sioris(), apply_effect (+8 more)
+Cohesion: 0.11
+Nodes (15): Archive, function, ostream, Pressure, Temperature, TemperatureImpBase, cache, calc_temperature_grid (+7 more)
 
 ### Community 285 - "Support"
-Cohesion: 0.16
-Nodes (12): AccumulatedTimer, desc, function_timer, FunctionTimer, p, FunctionTimerR, auto_log, t (+4 more)
+Cohesion: 0.18
+Nodes (11): AccumulatedTimer, desc, function_timer, FunctionTimer, p, FunctionTimerR, auto_log, t (+3 more)
 
 ### Community 286 - "Test"
-Cohesion: 0.19
+Cohesion: 0.18
 Nodes (13): find_config_function(), find_marked_uniq_function(), find_strategy_function(), load_config_module(), MultipleConfigFoundError, NoConfigFoundError, Loads in a Python module by filename in a manner expected of      ReFRACtor conf, Finds a function marked with a certain attribute in a named module and returns t (+5 more)
 
 ### Community 287 - "Community 287"
-Cohesion: 0.16
-Nodes (4): OutputBase, ForwardModelRadianceOutput, Notifies output classes the current retrieval iteration number when it changes, SolverIterationOutput
+Cohesion: 0.11
+Nodes (12): Attach output for the given step index, AtmosphereOutputBase, AtmosphereOutputRetrieval, AtmosphereOutputSimulation, OutputBase, ForwardModelRadianceOutput, Notifies output classes the current retrieval iteration number when it changes, SolverIterationOutput (+4 more)
 
 ### Community 288 - "2Stream"
 Cohesion: 0.14
@@ -1826,24 +1869,24 @@ Cohesion: 0.24
 Nodes (17): bpdfndvi_function_plus(), bpdfsoil_function_plus(), bpdfvegn_function_plus(), brdf_generalized_glint_plus(), brdf_lin_sup_kernels_m, brdf_whitecap_reflectance_plus(), coxmunk_function_msr_plus(), coxmunk_function_plus() (+9 more)
 
 ### Community 293 - "Statemapping"
-Cohesion: 0.15
-Nodes (12): flags, Archive, shared_ptr, string, StateMappingAtIndexes, full_state, mapped_state, retrieval_state (+4 more)
+Cohesion: 0.16
+Nodes (11): flags, Archive, string, StateMappingAtIndexes, full_state, mapped_state, retrieval_state, StateMappingAtIndexes::serialize() (+3 more)
 
 ### Community 294 - "Ground"
-Cohesion: 0.17
-Nodes (13): GroundPiecewise, Archive, ArrayWithUnit, ostream, shared_ptr, string, GroundLambertianPiecewise, clone (+5 more)
+Cohesion: 0.15
+Nodes (13): Archive, ArrayWithUnit, ostream, string, GroundLambertianPiecewise, clone, print, GroundLambertianPiecewise::serialize() (+5 more)
 
 ### Community 295 - "Ils"
-Cohesion: 0.15
-Nodes (11): string, IlsTable, create_delta_lambda_to_response, delta_lambda_to_response, from_hdf_file, hdf_file_name, hdf_group, ils (+3 more)
+Cohesion: 0.09
+Nodes (23): Archive, ostream, string, FullPhysics::IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >, FullPhysics::IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >, string, IlsTable, create_delta_lambda_to_response (+15 more)
 
 ### Community 296 - "Output"
-Cohesion: 0.13
-Nodes (10): ostream, shared_ptr, string, OutputHdfIteration, close, data, h, iteration_group (+2 more)
+Cohesion: 0.15
+Nodes (9): ostream, string, OutputHdfIteration, close, data, h, iteration_group, OutputHdfIterationHelperBase (+1 more)
 
 ### Community 297 - "Pcloud"
-Cohesion: 0.15
-Nodes (12): Archive, ArrayWithUnit, shared_ptr, string, ostream, string, PcloudDirect, clone (+4 more)
+Cohesion: 0.09
+Nodes (17): Archive, ArrayWithUnit, string, ostream, string, PcloudDirect, clone, pressure_cloud (+9 more)
 
 ### Community 298 - "Simple"
 Cohesion: 0.14
@@ -1851,35 +1894,35 @@ Nodes (14): Archive, ostream, DoubleWithUnit, SpectralDomain, vector, SimpleFixe
 
 ### Community 299 - "Interface"
 Cohesion: 0.20
-Nodes (10): AbsorberVmrImpBase, cache_stale, calc_vmr, clone, mapped_pressure, vmr, ostream, Pressure (+2 more)
+Nodes (9): AbsorberVmrImpBase, cache_stale, calc_vmr, clone, mapped_pressure, vmr, ostream, Pressure (+1 more)
 
 ### Community 300 - "Interface"
-Cohesion: 0.12
-Nodes (9): ostream, InitialGuessBuilder, build_apriori, build_apriori_covariance, build_initial_value, number_element, InitialGuessBuilderTest, n (+1 more)
+Cohesion: 0.20
+Nodes (7): add_aerosol, ostream, InitialGuessBuilder, build_apriori, build_apriori_covariance, build_initial_value, number_element
 
 ### Community 301 - "Radiativetransfer"
 Cohesion: 0.18
-Nodes (14): Archive, shared_ptr, vector, ChapmanBOA, chapmanfactors_, ChapmanBOA::serialize(), toa_entry_szangles_, toa_nadir_szangles_ (+6 more)
+Nodes (13): Archive, vector, ChapmanBOA, chapmanfactors_, ChapmanBOA::serialize(), toa_entry_szangles_, toa_nadir_szangles_, transmittance (+5 more)
 
 ### Community 302 - "Radiativetransfer"
-Cohesion: 0.15
+Cohesion: 0.18
 Nodes (7): Fo_Scalarss_Spherfuncs, maxgeoms_, maxmoments_, ngeoms_, nmoments_, ss_pleg_, maxmoments
 
 ### Community 303 - "Radiativetransfer"
 Cohesion: 0.12
-Nodes (15): shared_ptr, LRadCoxmunkFixture, check_tol, rt_first_order, rt_lrad_only, rt_lrad_only_second, rt_second_order, LRadLambertianFixture (+7 more)
+Nodes (14): LRadCoxmunkFixture, check_tol, rt_first_order, rt_lrad_only, rt_lrad_only_second, rt_second_order, LRadLambertianFixture, check_tol (+6 more)
 
 ### Community 304 - "Radiativetransfer"
-Cohesion: 0.22
-Nodes (17): brdf_input_exception_handling_c_read(), brdf_input_exception_handling_c_write(), brdf_input_exception_handling_f_read(), brdf_input_exception_handling_f_write(), brdf_output_exception_handling_c_read(), brdf_output_exception_handling_c_write(), brdf_output_exception_handling_f_read(), brdf_output_exception_handling_f_write() (+9 more)
+Cohesion: 0.26
+Nodes (14): brdf_input_exception_handling_c_read(), brdf_input_exception_handling_c_write(), brdf_input_exception_handling_f_read(), brdf_input_exception_handling_f_write(), brdf_output_exception_handling_c_read(), brdf_output_exception_handling_c_write(), brdf_output_exception_handling_f_read(), brdf_output_exception_handling_f_write() (+6 more)
 
 ### Community 305 - "Radiativetransfer"
-Cohesion: 0.18
-Nodes (12): AerosolOptical, Archive, shared_ptr, OpticalPropertiesPca, compute_aerosol_scattering, gas_optical_depth_per_particle, pack, OpticalPropertiesPca::serialize() (+4 more)
+Cohesion: 0.19
+Nodes (11): AerosolOptical, Archive, OpticalPropertiesPca, compute_aerosol_scattering, gas_optical_depth_per_particle, pack, OpticalPropertiesPca::serialize(), BOOST_AUTO_TEST_CASE() (+3 more)
 
 ### Community 306 - "Statemapping"
-Cohesion: 0.12
-Nodes (12): shared_ptr, StateMappingInterpFixture, press_from, press_to, vals_from_ad, BOOST_AUTO_TEST_CASE(), serialize, linear_linear (+4 more)
+Cohesion: 0.03
+Nodes (40): interp_plus_log, Archive, Archive, StateMappingComposite::serialize(), BOOST_AUTO_TEST_CASE(), serialize, StateMappingInterpFixture, press_from (+32 more)
 
 ### Community 307 - "Support"
 Cohesion: 0.21
@@ -1894,44 +1937,44 @@ Cohesion: 0.16
 Nodes (15): sleave_lin_sup_routines_m, sleave_lin_sup_inputs_def_m, sleave_linsup_inputs, lidort_pars_m, sleave_findpar_m, sleave_lin_sup_inputs_def_m, sleave_lin_sup_outputs_def_m, sleave_sup_aux_m (+7 more)
 
 ### Community 310 - "Support"
-Cohesion: 0.19
-Nodes (15): A, append_array(), T, array_with_unit_tostring(), array_with_unit_unit_get(), array_with_unit_unit_set(), ArrayWithUnit<T, D>::serialize(), awu_double_1d_read() (+7 more)
+Cohesion: 0.23
+Nodes (13): A, array_with_unit_tostring(), array_with_unit_unit_get(), array_with_unit_unit_set(), ArrayWithUnit<T, D>::serialize(), awu_double_1d_read(), awu_double_2d_read(), awu_double_3d_read() (+5 more)
 
 ### Community 311 - "Solver"
-Cohesion: 0.12
-Nodes (14): averaging_kernel_test, do_inversion_test, kt_se_m1_k, BOOST_AUTO_TEST_CASE(), basic, shared_ptr, SolverFinishedFixture, apriori_cov (+6 more)
+Cohesion: 0.25
+Nodes (6): SolverFinishedFixture, apriori_cov, apriori_sv, error_analysis, initial_sv, solver
 
 ### Community 313 - "Statemapping"
-Cohesion: 0.15
-Nodes (12): b, ostream, print, Archive, shared_ptr, string, StateMappingBasisMatrix, basis_matrix_ (+4 more)
+Cohesion: 0.12
+Nodes (14): b, ostream, print, Archive, string, StateMappingBasisMatrix, basis_matrix_, inverse_basis_matrix_ (+6 more)
 
 ### Community 314 - "Chisq"
 Cohesion: 0.17
 Nodes (12): ostream, ChisqConvergence, boostf_, convergence_check, dropf_, evaluate_quality, max_iteration_, min_chisq_ (+4 more)
 
 ### Community 315 - "Connor"
-Cohesion: 0.12
-Nodes (14): ForwardModel, ostream, shared_ptr, ConnorConvergence, convergence_check, evaluate_quality, fm, max_chisq (+6 more)
+Cohesion: 0.11
+Nodes (18): Archive, ForwardModel, ostream, ConnorConvergence, convergence_check, evaluate_quality, fm, max_chisq (+10 more)
 
 ### Community 316 - "Ils"
 Cohesion: 0.16
 Nodes (9): Archive, ostream, string, IlsGaussian, gamma, ils, IlsGaussian::serialize(), BOOST_AUTO_TEST_CASE() (+1 more)
 
 ### Community 317 - "Instrument"
-Cohesion: 0.17
-Nodes (12): DoubleWithUnit, ForwardModelSpectralGrid, ostream, shared_ptr, string, string, instrument_doppler_create(), InstrumentDoppler (+4 more)
+Cohesion: 0.15
+Nodes (13): Archive, DoubleWithUnit, ForwardModelSpectralGrid, ostream, string, string, instrument_doppler_create(), InstrumentDoppler (+5 more)
 
 ### Community 318 - "Radiance"
-Cohesion: 0.17
-Nodes (12): ostream, SpectralDomain, DoubleWithUnit, string, RadianceScaling, apply_scaling, band_name, band_ref (+4 more)
+Cohesion: 0.20
+Nodes (10): ostream, DoubleWithUnit, string, RadianceScaling, band_name, band_ref, offset, print (+2 more)
 
 ### Community 319 - "Scattering"
-Cohesion: 0.15
-Nodes (10): I1, I2, ostream, shared_ptr, ScatteringMomentInterpolate, ScatteringMomentInterpolate2Point, delta_pf0, pf0 (+2 more)
+Cohesion: 0.16
+Nodes (9): I1, I2, ostream, ScatteringMomentInterpolate, ScatteringMomentInterpolate2Point, delta_pf0, pf0, wn0 (+1 more)
 
 ### Community 320 - "Interface"
-Cohesion: 0.12
-Nodes (11): Archive, ForwardModel, num_channels, radiance, ForwardModel::serialize(), setup_grid, spectral_domain, spectral_domain_type_preference (+3 more)
+Cohesion: 0.15
+Nodes (9): Archive, ForwardModel, num_channels, radiance, ForwardModel::serialize(), setup_grid, spectral_domain, spectral_domain_type_preference (+1 more)
 
 ### Community 321 - "Radiativetransfer"
 Cohesion: 0.17
@@ -1962,48 +2005,48 @@ Cohesion: 0.12
 Nodes (15): lidort_fixed_inputs, lidort_fixed_lininputs, lidort_io_defs_m, lidort_lin_io_defs_m, lidort_lin_sup_inout_def_m, lidort_linsup_inout, lidort_modified_inputs, lidort_modified_lininputs (+7 more)
 
 ### Community 328 - "Support"
-Cohesion: 0.19
-Nodes (10): gsl_integration_workspace, function, vector, GslIntegrate, integrate, integrate_err_est, max_ninterval, w (+2 more)
+Cohesion: 0.17
+Nodes (11): gsl_integration_workspace, function, function, vector, GslIntegrate, integrate, integrate_err_est, max_ninterval (+3 more)
 
 ### Community 329 - "Connor"
-Cohesion: 0.17
-Nodes (12): ConnorCostFunction, forward_model, meas, statev, ForwardModel, ostream, shared_ptr, StateVector (+4 more)
+Cohesion: 0.11
+Nodes (14): Archive, ConnorCostFunction, forward_model, meas, ConnorCostFunction::serialize(), statev, ForwardModel, ostream (+6 more)
 
 ### Community 330 - "Pressure"
 Cohesion: 0.17
-Nodes (10): Pressure, shared_ptr, TypePreference, string, PressureSigma, a_, b_, calc_pressure_grid (+2 more)
+Nodes (11): Archive, Pressure, TypePreference, string, PressureSigma, a_, b_, calc_pressure_grid (+3 more)
 
 ### Community 331 - "Radiance"
-Cohesion: 0.15
-Nodes (11): Archive, ostream, shared_ptr, DoubleWithUnit, string, RadianceScalingLinearFit, clone, do_offset (+3 more)
+Cohesion: 0.14
+Nodes (9): Master_Routine, MasterClass, RoutineWrapper, TypeClass, WrapperClass, parse_master_files(), get_c_wrap_routine_name(), get_class_name() (+1 more)
 
 ### Community 332 - "Rayleigh"
-Cohesion: 0.17
-Nodes (11): Altitude, Archive, DoubleWithUnit, Pressure, shared_ptr, vector, ostream, RayleighYoung (+3 more)
+Cohesion: 0.18
+Nodes (10): Altitude, Archive, DoubleWithUnit, Pressure, vector, ostream, RayleighYoung, clone (+2 more)
 
 ### Community 333 - "Scale"
-Cohesion: 0.18
-Nodes (10): Archive, shared_ptr, string, ostream, string, ScaleCloudDirect, clone, scale_cloud (+2 more)
+Cohesion: 0.19
+Nodes (9): Archive, string, ostream, string, ScaleCloudDirect, clone, scale_cloud, ScaleCloudDirect::serialize() (+1 more)
 
 ### Community 334 - "Xsec"
-Cohesion: 0.20
-Nodes (12): ArrayWithUnit, shared_ptr, vector, BOOST_AUTO_TEST_CASE(), basic, serialization, shared_ptr, string (+4 more)
+Cohesion: 0.17
+Nodes (11): Archive, ArrayWithUnit, vector, BOOST_AUTO_TEST_CASE(), basic, serialization, string, construct_xsec_temp_dep() (+3 more)
 
 ### Community 335 - "Radiativetransfer"
 Cohesion: 0.22
 Nodes (14): black_sky_albedo_f(), black_sky_albedo_soil_f(), black_sky_albedo_veg_f(), brdf_functions_m, exact_brdf_value_f(), exact_brdf_value_soil_f(), exact_brdf_value_veg_f(), brdf_sup_aux_m (+6 more)
 
 ### Community 336 - "Radiativetransfer"
-Cohesion: 0.20
-Nodes (9): Archive, ostream, shared_ptr, FirstOrderRt, FirstOrderRt::load(), print, FirstOrderRt::save(), FirstOrderRt::serialize() (+1 more)
+Cohesion: 0.23
+Nodes (7): Archive, ostream, FirstOrderRt, FirstOrderRt::load(), print, FirstOrderRt::save(), FirstOrderRt::serialize()
 
 ### Community 337 - "Radiativetransfer"
-Cohesion: 0.15
-Nodes (8): BOOST_AUTO_TEST_CASE(), no_aerosol, shared_ptr, SpectralDomain, test_pca_rt(), Archive, RadiativeTransferFixedStokesCoefficient::serialize(), with_aerosol
+Cohesion: 0.16
+Nodes (4): CharAttributeWrapper, CharWrapper, Type exposed to C++ for use in accessors or through a C++ function call, When wrapping a character type stored as a class attribute     where the space a
 
 ### Community 338 - "Radiativetransfer"
-Cohesion: 0.15
-Nodes (13): Archive, ostream, atmospheric_jacobian, clear_linear_inputs, LRadDriver::load(), print, LRadDriver::save(), LRadDriver::serialize() (+5 more)
+Cohesion: 0.09
+Nodes (22): Adding a New Implementation, AGENTS.md — Coding Agent Guidelines for ReFRACtor Framework, Architecture, Build System, C++ Unit Tests, CMake Build, Common Development Tasks, Core Design Principles (+14 more)
 
 ### Community 339 - "Radiativetransfer"
 Cohesion: 0.24
@@ -2014,12 +2057,12 @@ Cohesion: 0.24
 Nodes (14): chi(), endfou(), l_surface_fourier_m, l_avsecant(), l_chi(), l_newfou(), l_ord1m(), l_ord2m() (+6 more)
 
 ### Community 341 - "Radiativetransfer"
-Cohesion: 0.18
-Nodes (9): Archive, ostream, shared_ptr, shared_ptr, TwostreamRt, TwostreamRt::load(), print, TwostreamRt::save() (+1 more)
+Cohesion: 0.24
+Nodes (7): Archive, ostream, TwostreamRt, TwostreamRt::load(), print, TwostreamRt::save(), TwostreamRt::serialize()
 
 ### Community 342 - "Support"
-Cohesion: 0.18
-Nodes (6): grad, AutoDerivativeRef, grad, ostream, T, operator+()
+Cohesion: 0.13
+Nodes (12): val, D, Range, rank, T, T1, T2, T3 (+4 more)
 
 ### Community 343 - "Support"
 Cohesion: 0.15
@@ -2034,8 +2077,8 @@ Cohesion: 0.23
 Nodes (14): sleave_sup_aux_m, sleave_sup_routines_m, interpolate_lin_foq_bs1(), interpolate_lin_foq_bs2(), interpolate_lin_foq_bs3(), interpolate_lin_foq_bsf(), lin_general_sunglint(), lin_ocean_reflectance_basic() (+6 more)
 
 ### Community 346 - "Radiativetransfer"
-Cohesion: 0.14
-Nodes (14): jac_first_order, jac_second_order, l_rad_timing, regular_ps, BOOST_AUTO_TEST_CASE(), plane_parallel_ps, plane_parallel_ps_serialization, reflectance_first_order (+6 more)
+Cohesion: 0.04
+Nodes (57): check_jacobians, config_file, err_est_jac, gas_column_thickness, generate_finite_diff_jac, gosat, jac_first_order, jac_second_order (+49 more)
 
 ### Community 347 - "Example"
 Cohesion: 0.14
@@ -2046,8 +2089,8 @@ Cohesion: 0.14
 Nodes (14): BOOST_AUTO_TEST_CASE(), bard, bard_ml, brown, freudenstein_roth__a, freudenstein_roth__b, helical_valley, jennrich_sampson (+6 more)
 
 ### Community 349 - "Radiance"
-Cohesion: 0.15
-Nodes (10): ostream, shared_ptr, string, DoubleWithUnit, StateVector, string, RadianceScalingSvFit, clone (+2 more)
+Cohesion: 0.12
+Nodes (15): Archive, ostream, SpectralDomain, string, vector, DoubleWithUnit, StateVector, string (+7 more)
 
 ### Community 350 - "Solar"
 Cohesion: 0.14
@@ -2062,7 +2105,7 @@ Cohesion: 0.15
 Nodes (8): brdf_output_exception_handling, bs_noutputmessages_, bs_noutputmessages__f_byte_size, bs_outputmessages__f_len, bs_outputmessages__f_shapes, bs_status_output_, bs_status_output__f_byte_size, transfer_struct_c
 
 ### Community 353 - "Radiativetransfer"
-Cohesion: 0.21
+Cohesion: 0.22
 Nodes (11): BOOST_AUTO_TEST_CASE(), stokes, stokes_and_jacobian, string, jac_compare(), refl_compare(), closest_point(), T1 (+3 more)
 
 ### Community 354 - "Community 354"
@@ -2070,44 +2113,40 @@ Cohesion: 0.18
 Nodes (3): OSSForwardModel, Applies the OSS algorithm to model radiances., # TODO: Confirm conversion from highres to uniform highres for spectrum correcti
 
 ### Community 355 - "Test"
-Cohesion: 0.16
-Nodes (9): DoubleWithUnit, Short cut for the DoubleWithUnit type to parallel the ArrayWithUnit type paramet, IlsInPython, A dummy class to test that we serialize this correctly, Test where the ILS is a python derived from director class, Base test with ILS serialization, where class is all C++, test_cxx_serialization(), test_director_serialization() (+1 more)
+Cohesion: 0.32
+Nodes (6): IlsInPython, A dummy class to test that we serialize this correctly, Test where the ILS is a python derived from director class, Base test with ILS serialization, where class is all C++, test_cxx_serialization(), test_director_serialization()
 
 ### Community 356 - "Test"
 Cohesion: 0.23
 Nodes (7): Serialized objects into an output file, Loads config definition and processes it into an instantiated config, Copy objects from Python config into a serializable object in the form, serialize_config(), serialize_fluor_config(), SerializeConfigObjects, SerializeWithFluorescence
-
-### Community 357 - "Cloud"
-Cohesion: 0.15
-Nodes (10): Cloud3dEffect, init, BOOST_AUTO_TEST_CASE(), shared_ptr, string, Cloud3dFixture, band_name, cloud_3d (+2 more)
 
 ### Community 358 - "Support"
 Cohesion: 0.24
 Nodes (9): increasing_order, ostream, Poly1d, coeffs_, decreasing_order_, eval_indexes, operator(), print (+1 more)
 
 ### Community 359 - "Interface"
-Cohesion: 0.17
-Nodes (6): shared_ptr, Archive, CostFunction, cost_function, CostFunction::serialize(), ostream
+Cohesion: 0.12
+Nodes (8): ostream, CostFunctionRankDegenerate, CostFunctionTest, Archive, CostFunction, cost_function, CostFunction::serialize(), ostream
 
 ### Community 360 - "Ils"
-Cohesion: 0.19
-Nodes (12): Archive, ostream, string, FullPhysics::IlsTable<FullPhysics::LinearInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >, FullPhysics::IlsTable<FullPhysics::LinearLogInterpolate<FullPhysics::AutoDerivative<double>, FullPhysics::AutoDerivative<double> > >, init_from_file, IlsTable<Lint>::ils(), IlsTable<Lint>::IlsTable() (+4 more)
+Cohesion: 0.11
+Nodes (19): check_los, check_ps, compare_sphericity, LidortRt, string, LidortRtCommonFixture, azm, lidort_rt (+11 more)
 
 ### Community 361 - "Pressure"
 Cohesion: 0.17
 Nodes (10): BOOST_AUTO_TEST_CASE(), Archive, basic, Pressure, serialization, serialize(), TestObserver, data (+2 more)
 
 ### Community 362 - "Spectrum"
-Cohesion: 0.18
-Nodes (9): Archive, DoubleWithUnit, SpectralDomain, ArrayWithUnit, ostream, SpectrumSamplingFixedSpacing, SpectrumSamplingFixedSpacing::serialize(), spec_spacing (+1 more)
+Cohesion: 0.25
+Nodes (7): DoubleWithUnit, SpectralDomain, ArrayWithUnit, ostream, SpectrumSamplingFixedSpacing, spec_spacing, spectral_domain
 
 ### Community 363 - "Temperature"
-Cohesion: 0.22
-Nodes (11): BOOST_AUTO_TEST_CASE(), basic, Pressure, reversed, serialization, shared_ptr, TemperatureLevelTest, pressure (+3 more)
+Cohesion: 0.21
+Nodes (10): BOOST_AUTO_TEST_CASE(), basic, Pressure, reversed, serialization, TemperatureLevelTest, pressure, temp_lev (+2 more)
 
 ### Community 364 - "Temperature"
-Cohesion: 0.17
-Nodes (9): ostream, Pressure, shared_ptr, Temperature, shared_ptr, TemperatureMet, clone, met (+1 more)
+Cohesion: 0.14
+Nodes (14): element_type, shared_ptr<T>, Archive, T, load(), null_deleter, our_shared_ptr, save() (+6 more)
 
 ### Community 365 - "Interface"
 Cohesion: 0.21
@@ -2117,13 +2156,17 @@ Nodes (6): ostream, Pressure, clone, pressure_grid, surface_pressure, type_prefe
 Cohesion: 0.23
 Nodes (9): findsun(), findsunpaths_d(), findsunpaths_t(), gauleg_ng(), geometry_pool_m, sd_incoming_findcritlayer(), sd_incoming_sphergeom(), std_outgoing_sphergeom_qadjusted() (+1 more)
 
+### Community 367 - "Radiativetransfer"
+Cohesion: 0.18
+Nodes (6): Lidort_Linoutputs, Lidort_Modified_Lininputs, ostream, Lidort_Lps_Masters, lidort_linout_, lidort_out_
+
 ### Community 368 - "Support"
 Cohesion: 0.26
 Nodes (12): string, vector, string, vector, StringVectorToChar, c_str, components, max_substrlen (+4 more)
 
 ### Community 369 - "Community 369"
-Cohesion: 0.21
-Nodes (6): FirstOrderRt, LidortRt, LRadRt, LsiRt, PCARt, TwostreamRt
+Cohesion: 0.13
+Nodes (18): setup_optical_inputs, LidortDriverCommonFixture, azm, do_multiple_scattering_only, heights, lidort_driver, nlayer, nmoms (+10 more)
 
 ### Community 370 - "Test"
 Cohesion: 0.19
@@ -2146,24 +2189,24 @@ Cohesion: 0.24
 Nodes (12): lidort_aux_m, lidort_pars_m, lidort_taylor_m, lidort_deltamscale(), lidort_directradiance(), lidort_emult_master(), lidort_legendre_setup(), lidort_miscsetups_m (+4 more)
 
 ### Community 375 - "Dispersion"
-Cohesion: 0.18
-Nodes (9): ostream, shared_ptr, DispersionFit, DispersionFit::DispersionFit(), l1b, print, shared_ptr, BOOST_AUTO_TEST_CASE() (+1 more)
+Cohesion: 0.22
+Nodes (7): ostream, DispersionFit, DispersionFit::DispersionFit(), l1b, print, BOOST_AUTO_TEST_CASE(), basic
 
 ### Community 376 - "Reference"
-Cohesion: 0.20
-Nodes (9): BOOST_AUTO_TEST_CASE(), apriori_calc, shared_ptr, string, vector, RefVmrFixture, gas_names, ref_ap (+1 more)
+Cohesion: 0.22
+Nodes (8): BOOST_AUTO_TEST_CASE(), apriori_calc, string, vector, RefVmrFixture, gas_names, ref_ap, ref_vmr
 
 ### Community 377 - "Uniform"
 Cohesion: 0.20
 Nodes (10): Archive, DoubleWithUnit, ostream, SpectralDomain, ArrayWithUnit, UniformSpectrumSampling, print, UniformSpectrumSampling::serialize() (+2 more)
 
 ### Community 378 - "Interface"
-Cohesion: 0.17
-Nodes (6): ostream, shared_ptr, SpectrumEffectImpBase, clone, Class to hold a SpectrumEffect which passes through original Spectrum      Spect, SpectrumEffectNone
+Cohesion: 0.18
+Nodes (5): ostream, SpectrumEffectImpBase, clone, Class to hold a SpectrumEffect which passes through original Spectrum      Spect, SpectrumEffectNone
 
 ### Community 379 - "Radiativetransfer"
-Cohesion: 0.18
-Nodes (10): BOOST_AUTO_TEST_CASE(), serialization, shared_ptr, simple, check_brdf_inputs(), surface_params, lidort_brdfcheck_status_, ts_status_inputcheck_ (+2 more)
+Cohesion: 0.15
+Nodes (10): lambertian_first_order, frac_ray, BOOST_AUTO_TEST_CASE(), BOOST_AUTO_TEST_CASE(), serialization, simple, surface_params, simple_brdf (+2 more)
 
 ### Community 380 - "Radiativetransfer"
 Cohesion: 0.24
@@ -2178,8 +2221,8 @@ Cohesion: 0.20
 Nodes (5): create_bin_uvvswir_v2(), create_bin_uvvswir_v6(), iso_c_binding, midval(), uvvswir_eofpc_createbin_m
 
 ### Community 383 - "Support"
-Cohesion: 0.24
-Nodes (9): ostream, shared_ptr, string, HdfFileGenerating, abandon, close, fname, hdf_file_ (+1 more)
+Cohesion: 0.27
+Nodes (8): ostream, string, HdfFileGenerating, abandon, close, fname, hdf_file_, print
 
 ### Community 384 - "2Stream"
 Cohesion: 0.21
@@ -2214,32 +2257,32 @@ Cohesion: 0.24
 Nodes (10): fo_scalarss_rtcalcs_ilcs_m, fo_thermal_rtcalcs_ilcs_m, fo_dtwpgeometry_master_m, fo_scalarss_rtcalcs_ilps_m, fo_scalarss_spherfuncs_m, fo_sswpgeometry_master_m, fo_thermal_rtcalcs_ilps_m, sfo_lcs_master() (+2 more)
 
 ### Community 392 - "Support"
-Cohesion: 0.20
-Nodes (7): absorption_cross_section, ArrayWithUnit, DoubleWithUnit, shared_ptr, T, null_deleter, to_ptr()
+Cohesion: 0.14
+Nodes (14): abscodir, REFRACTOR_INPUT_PATH, python.sh script, error_out(), PyObject, init_extension_module2(), init_extension_module3(), module_state (+6 more)
 
 ### Community 393 - "Connor"
 Cohesion: 0.24
-Nodes (8): ConnorIterationLog, notify_update, sv_obj, SV_PRINT_WIDTH, ostream, shared_ptr, StateVector, iter_log_add_as_observer()
+Nodes (7): ConnorIterationLog, notify_update, sv_obj, SV_PRINT_WIDTH, ostream, StateVector, iter_log_add_as_observer()
 
 ### Community 394 - "L2"
-Cohesion: 0.18
-Nodes (9): ostream, L2FpConfiguration, forward_model, initial_guess, iterative_solver, logger, max_a_posteriori, output (+1 more)
+Cohesion: 0.15
+Nodes (3): get_decl_mapping(), LogicalIntWrapper, LogicalWrapper
 
 ### Community 395 - "Meyer"
-Cohesion: 0.20
-Nodes (5): Archive, ostream, MeyerNLLSProblem, jacobian, MeyerNLLSProblem::serialize()
+Cohesion: 0.13
+Nodes (11): ForwardModel, Create a ConfigurationCreator. You can either pass in a          config_func whi, AtmosphereWithCloudHandling, ForwardModelWithCloudHandling, GroundWithCloudHandling, PressureWithCloudHandling, Creates a PressureWithCloudHandling object that encapsulates another Pressure ob, Creates a GroundWithCloudHandling object that encapsulates another Ground object (+3 more)
 
 ### Community 396 - "Solver"
-Cohesion: 0.24
-Nodes (7): ostream, shared_ptr, StateVector, SolverIterationLog, notify_update, sv_obj, SV_PRINT_WIDTH
+Cohesion: 0.12
+Nodes (14): DoubleWithUnit, GroundPiecewise, Pressure, SpectralDomain, string, SurfaceTemperature, Temperature, vector (+6 more)
 
 ### Community 397 - "Interface"
-Cohesion: 0.36
-Nodes (10): BOOST_AUTO_TEST_CASE(), ostream, SpectralDomain, string, vector, check_expected_grid(), check_expected_pixel_list(), print_grid() (+2 more)
+Cohesion: 0.14
+Nodes (12): averaging_kernel_test, do_inversion_test, kt_se_m1_k, BOOST_AUTO_TEST_CASE(), basic, Archive, ostream, ConvergenceCheck::serialize() (+4 more)
 
 ### Community 398 - "Radiativetransfer"
-Cohesion: 0.18
-Nodes (11): BOOST_AUTO_TEST_CASE(), no_aerosol, shared_ptr, StateVector, compare_lidort_fo(), line_of_sight_no_deltam, line_of_sight_with_deltam, plane_parallel_no_deltam (+3 more)
+Cohesion: 0.20
+Nodes (10): BOOST_AUTO_TEST_CASE(), no_aerosol, StateVector, compare_lidort_fo(), line_of_sight_no_deltam, line_of_sight_with_deltam, plane_parallel_no_deltam, plane_parallel_with_deltam (+2 more)
 
 ### Community 399 - "Radiativetransfer"
 Cohesion: 0.29
@@ -2250,12 +2293,12 @@ Cohesion: 0.25
 Nodes (8): brdf_fourier(), l_surface_m, gisscoxmunk_fourier(), gisscoxmunk_fourier_plus(), l_surface_fourier_m, landbrdf_fourier(), landbrdf_fourier_plus(), ls_brdf_fourier()
 
 ### Community 401 - "Statemapping"
-Cohesion: 0.22
-Nodes (5): shared_ptr, string, StateMappingScale, map_name, scalee_
+Cohesion: 0.24
+Nodes (4): string, StateMappingScale, map_name, scalee_
 
 ### Community 402 - "Community 402"
-Cohesion: 0.29
-Nodes (5): Attach output for the given step index, Notifies output classes the current retrieval iteration number when it changes, StateVectorOutputBase, StateVectorOutputRetrieval, StateVectorOutputSimulation
+Cohesion: 0.12
+Nodes (14): CoxmunkPlusLambertianConfigurationFixture, LidortLowHighCommon, azm, high_rt, low_rt, nmoms_high, nmoms_low, nstreams_high (+6 more)
 
 ### Community 403 - "Community 403"
 Cohesion: 0.31
@@ -2274,32 +2317,32 @@ Cohesion: 0.25
 Nodes (10): lidort_pars_m, sleave_findpar_m, sleave_sup_aux_m, sleave_sup_inputs, sleave_sup_inputs_def_m, sleave_sup_outputs_def_m, sleave_sup_routines_m, sleave_inputmaster() (+2 more)
 
 ### Community 408 - "Example"
-Cohesion: 0.20
-Nodes (7): shared_ptr, string, T, ExampleObservationId, ExampleObservationId<T>::ExampleObservationId(), FullPhysics::ExampleObservationId<int>, FullPhysics::ExampleObservationId<std::string>
+Cohesion: 0.22
+Nodes (6): string, T, ExampleObservationId, ExampleObservationId<T>::ExampleObservationId(), FullPhysics::ExampleObservationId<int>, FullPhysics::ExampleObservationId<std::string>
 
 ### Community 409 - "Connor"
-Cohesion: 0.22
-Nodes (7): Archive, ConnorConvergence::serialize(), BOOST_AUTO_TEST_CASE(), basic, serialization, shared_ptr, check_conv()
+Cohesion: 0.15
+Nodes (6): CostFuncDiff, cost_gradient, d_count, gradient, ostream, parameters
 
 ### Community 410 - "Output"
-Cohesion: 0.20
-Nodes (5): BOOST_AUTO_TEST_CASE(), CalcData, d, basic, test_error
+Cohesion: 0.18
+Nodes (9): io_test, BOOST_AUTO_TEST_CASE(), basic, BOOST_AUTO_TEST_CASE(), basic, BOOST_AUTO_TEST_CASE(), basic_test, string (+1 more)
 
 ### Community 411 - "Interface"
-Cohesion: 0.20
-Nodes (10): vmr_grid, Pressure, PressureGridType, altitude_grid, Pressure, PressureGridType, pgrid, Pressure (+2 more)
+Cohesion: 0.14
+Nodes (9): Archive, Pressure, PressureGridType, ArrayWithUnit, ostream, Temperature, clone, Temperature::serialize() (+1 more)
 
 ### Community 412 - "Radiativetransfer"
 Cohesion: 0.24
 Nodes (4): create_bin_thermal_v2(), create_bin_thermal_v6(), midval(), thermal_eofpc_createbin_m
 
 ### Community 413 - "Support"
-Cohesion: 0.29
-Nodes (6): AsciiTableFile, print, read_data, istream, ostream, string
+Cohesion: 0.12
+Nodes (11): lidort_sup_ss, transfer_struct_c, ts_contribs_ss_, ts_contribs_ss__f_byte_size, ts_contribs_ss__f_shapes, ts_intensity_db_, ts_intensity_db__f_byte_size, ts_intensity_db__f_shapes (+3 more)
 
 ### Community 414 - "Support"
 Cohesion: 0.24
-Nodes (6): string, null_type, type_index, id, totally_ordered<type_index>, type_info
+Nodes (6): string, type_info, null_type, type_index, id, totally_ordered<type_index>
 
 ### Community 415 - "Lidort"
 Cohesion: 0.42
@@ -2326,16 +2369,16 @@ Cohesion: 0.22
 Nodes (9): i1, i2, i3, BOOST_AUTO_TEST_CASE(), out_of_range, serialize, linear_interpolate_2_point, no_value (+1 more)
 
 ### Community 421 - "Temperature"
-Cohesion: 0.25
-Nodes (6): Pressure, shared_ptr, Temperature, TemperatureLevelOffset, clone, temp_levels
+Cohesion: 0.33
+Nodes (3): Pressure, TemperatureLevelOffset, temp_levels
 
 ### Community 422 - "Interface"
 Cohesion: 0.28
 Nodes (5): CalculationCache, fill_cache, CalculationCacheIndexed, fill_cache, T
 
 ### Community 423 - "Lua"
-Cohesion: 0.22
-Nodes (9): call(), T1, T2, T3, T4, T5, T6, T7 (+1 more)
+Cohesion: 0.15
+Nodes (13): ArrayWithUnit, OssFixedOutputs, full_spectral_point, num_chan, sensor_spectral_point, OssModifiedOutputs, xk_cldln_ext, xk_cldln_pres (+5 more)
 
 ### Community 425 - "Lidort"
 Cohesion: 0.36
@@ -2349,10 +2392,6 @@ Nodes (8): lidort_lp_postprocessing_m, dnuser_profilewf(), lidort_pars_m, get_lp
 Cohesion: 0.36
 Nodes (8): lidort_postprocessing_m, dnuser_intensity(), lidort_pars_m, get_boasource(), get_toasource(), lidort_intensity_m, miflux_intensity(), upuser_intensity()
 
-### Community 428 - "Community 428"
-Cohesion: 0.42
-Nodes (3): AtmosphereOutputBase, AtmosphereOutputRetrieval, AtmosphereOutputSimulation
-
 ### Community 429 - "Lidort"
 Cohesion: 0.42
 Nodes (8): brdf_function_plus(), brdf_lin_fourier(), brdf_lin_maker(), brdf_lin_newcm_maker(), brdf_lin_sup_routines_m, brdf_lin_sup_kernels_m, lidort_pars_m, lin_scaling_fourier_zero()
@@ -2362,8 +2401,8 @@ Cohesion: 0.42
 Nodes (8): brdf_fourier(), brdf_function(), brdf_maker(), brdf_newcm_maker(), brdf_sup_routines_m, brdf_sup_kernels_m, lidort_pars_m, scaling_fourier_zero()
 
 ### Community 431 - "Support"
-Cohesion: 0.29
-Nodes (6): iostreams::output_filter, ostream, string, OstreamPadFilter, need_pad, pad
+Cohesion: 0.18
+Nodes (10): Altitude, Archive, DoubleWithUnit, Pressure, vector, ostream, RayleighBodhaine, clone (+2 more)
 
 ### Community 433 - "Radiativetransfer"
 Cohesion: 0.39
@@ -2374,8 +2413,8 @@ Cohesion: 0.43
 Nodes (7): Archive, Twostream_Lps_Master::load(), Twostream_Lps_Master::save(), Twostream_Lps_Master::serialize(), Twostream_Ls_Brdf_Supplement::load(), Twostream_Ls_Brdf_Supplement::save(), Twostream_Ls_Brdf_Supplement::serialize()
 
 ### Community 435 - "Support"
-Cohesion: 0.36
-Nodes (6): boost::serialization::load(), boost::serialization::save(), Archive, rational, T, rational
+Cohesion: 0.14
+Nodes (11): boost::serialization::load(), boost::serialization::save(), Archive, rational, T, access, Archive, GenericObject::serialize() (+3 more)
 
 ### Community 436 - "Community 436"
 Cohesion: 0.43
@@ -2422,8 +2461,8 @@ Cohesion: 0.33
 Nodes (5): log_level, FpLogger, flush, verbosity_level_, ostream
 
 ### Community 452 - "Interface"
-Cohesion: 0.29
-Nodes (5): ostream, InitialGuess, apriori, apriori_covariance, initial_guess
+Cohesion: 0.22
+Nodes (6): composite_initial_guess_add_builder(), ostream, InitialGuess, apriori, apriori_covariance, initial_guess
 
 ### Community 453 - "Interface"
 Cohesion: 0.33
@@ -2446,15 +2485,15 @@ Cohesion: 0.33
 Nodes (3): create_bin_crossover_v2(), crossover_eofpc_createbin_m, midval()
 
 ### Community 458 - "Support"
-Cohesion: 0.38
-Nodes (6): Archive, ostream, print, DirectorExample::serialize(), DirectorExampleUser::serialize(), DirectorExampleWeakPtr::serialize()
+Cohesion: 0.18
+Nodes (10): Archive, ostream, SpectralDomain, string, string, SolarAbsorptionGfitFile, line_list_file_, print (+2 more)
 
 ### Community 459 - "Support"
-Cohesion: 0.29
-Nodes (4): BOOST_AUTO_TEST_CASE(), bad_data, read, write
+Cohesion: 0.15
+Nodes (10): clone, Aerosol, clone, extinction_optical_depth_each_layer, number_particle, pf_mom, scattering_optical_depth_each_layer, timer (+2 more)
 
 ### Community 460 - "Support"
-Cohesion: 0.29
+Cohesion: 0.25
 Nodes (4): log_level, ostream, string, LogImpTest
 
 ### Community 461 - "Community 461"
@@ -2498,12 +2537,12 @@ Cohesion: 0.33
 Nodes (6): bard_gsl_sm__ddogleg_more_svd, bard_gsl_sm__default, bard_gsl_sm__lm_more_svd, bard_gsl_sm__lmaccel_more_svd, bard_gsl_sm__subspace2D_more_svd, BOOST_AUTO_TEST_CASE()
 
 ### Community 477 - "Nlls"
-Cohesion: 0.33
-Nodes (6): freudenstein_roth_a_gsl_sm__ddogleg_more_svd, freudenstein_roth_a_gsl_sm__default, freudenstein_roth_a_gsl_sm__lm_more_svd, freudenstein_roth_a_gsl_sm__lmaccel_more_svd, freudenstein_roth_a_gsl_sm__subspace2D_more_svd, BOOST_AUTO_TEST_CASE()
+Cohesion: 0.22
+Nodes (7): ostream, Pressure, Pressure, PressureWithCloudHandling, calc_pressure_grid, clone, print
 
 ### Community 478 - "Nlls"
-Cohesion: 0.33
-Nodes (6): helical_valley_gsl_sm__ddogleg_more_svd, helical_valley_gsl_sm__default, helical_valley_gsl_sm__lm_more_svd, helical_valley_gsl_sm__lmaccel_more_svd, helical_valley_gsl_sm__subspace2D_more_svd, BOOST_AUTO_TEST_CASE()
+Cohesion: 0.18
+Nodes (7): BOOST_AUTO_TEST_CASE(), CalcData, d, read, string, OutputTest, val
 
 ### Community 479 - "Nlls"
 Cohesion: 0.33
@@ -2514,32 +2553,32 @@ Cohesion: 0.33
 Nodes (3): PerturbationBuilderTest, n, s
 
 ### Community 481 - "Met"
-Cohesion: 0.33
-Nodes (6): Pressure, shared_ptr, MetDataFixture, met_data, pressure, pressure_reverse
+Cohesion: 0.24
+Nodes (6): BOOST_AUTO_TEST_CASE(), CacheInvalidatedObserverTest, basic, ObservableTest, ObserverTest, proper_cleanup
 
 ### Community 482 - "Nlls"
-Cohesion: 0.33
-Nodes (6): BOOST_AUTO_TEST_CASE(), freudenstein_roth_b_gsl_sm__ddogleg_more_svd, freudenstein_roth_b_gsl_sm__default, freudenstein_roth_b_gsl_sm__lm_more_svd, freudenstein_roth_b_gsl_sm__lmaccel_more_svd, freudenstein_roth_b_gsl_sm__subspace2D_more_svd
+Cohesion: 0.23
+Nodes (3): main(), Creates solar table data for a configuration, SolarTablesFile
 
 ### Community 483 - "Nlls"
-Cohesion: 0.33
-Nodes (6): BOOST_AUTO_TEST_CASE(), freudenstein_roth_b_gsl_sm__ddogleg_more_svd, freudenstein_roth_b_gsl_sm__default, freudenstein_roth_b_gsl_sm__lm_more_svd, freudenstein_roth_b_gsl_sm__lmaccel_more_svd, freudenstein_roth_b_gsl_sm__subspace2D_more_svd
+Cohesion: 0.26
+Nodes (11): add_creator_nodes(), add_parameter_edges(), creator_node_attrs_record(), creator_node_attrs_simple(), creator_node_attrs_table(), main(), Node attributes to represent a Creator with the Graphviz record shape, Node attributes to represent a Creator with HTML like tables (+3 more)
 
 ### Community 484 - "Nlls"
-Cohesion: 0.33
-Nodes (6): BOOST_AUTO_TEST_CASE(), meyer_gsl_sm__ddogleg_more_svd, meyer_gsl_sm__default, meyer_gsl_sm__lm_more_svd, meyer_gsl_sm__lmaccel_more_svd, meyer_gsl_sm__subspace2D_more_svd
+Cohesion: 0.18
+Nodes (7): compressed_test, FilteringIstream, IstreamCompress, string, IfstreamCs, BOOST_AUTO_TEST_CASE(), basic_test
 
 ### Community 485 - "Nlls"
-Cohesion: 0.33
-Nodes (6): BOOST_AUTO_TEST_CASE(), powell_gsl_sm__ddogleg_more_svd, powell_gsl_sm__default, powell_gsl_sm__lm_more_svd, powell_gsl_sm__lmaccel_more_svd, powell_gsl_sm__subspace2D_more_svd
+Cohesion: 0.21
+Nodes (9): ApplyInstrumentUnits, apply_correction, clone, print, scaling, spectral_units, ostream, SpectralDomain (+1 more)
 
 ### Community 486 - "Solar"
 Cohesion: 0.47
 Nodes (5): iso_c_binding, lnbc(), posnall(), solar_absorption_gfit_file_wrap, solar_pts()
 
 ### Community 487 - "Interface"
-Cohesion: 0.33
-Nodes (3): GroundImpBase, clone, ostream
+Cohesion: 0.27
+Nodes (7): const_iterator, It, BinMap, val, iterator, T, vector
 
 ### Community 488 - "Radiativetransfer"
 Cohesion: 0.47
@@ -2566,8 +2605,8 @@ Cohesion: 0.53
 Nodes (6): sleave_sup_inputs, sleave_sup_inputs_def_m, sleave_sup_inputs_c_read(), sleave_sup_inputs_c_write(), sleave_sup_inputs_f_read(), sleave_sup_inputs_f_write()
 
 ### Community 495 - "Support"
-Cohesion: 0.40
-Nodes (4): BOOST_AUTO_TEST_CASE(), basic_test, ostream, Test
+Cohesion: 0.22
+Nodes (5): FilteringOstream, string, OstreamCompress, BOOST_AUTO_TEST_CASE(), basic_test
 
 ### Community 496 - "Support"
 Cohesion: 0.40
@@ -2610,8 +2649,8 @@ Cohesion: 0.33
 Nodes (5): brdf_input_exception_handling, brdf_output_exception_handling, brdf_sup_outputs, brdf_sup_outputs_def_m, lidort_pars_m
 
 ### Community 506 - "Ground"
-Cohesion: 0.40
-Nodes (5): black_sky_albedo, kernel_value, BOOST_AUTO_TEST_CASE(), basic, load_from_config
+Cohesion: 0.18
+Nodes (10): grammar<iterator_type, Unit()>, iterator_type, unit_parser, exp, prefixunit, subexp, term, unit (+2 more)
 
 ### Community 507 - "Radiativetransfer"
 Cohesion: 0.40
@@ -2625,17 +2664,13 @@ Nodes (3): l_sscorr_outgoing_m, l_surface_m, l_rad_first_enh_m
 Cohesion: 0.40
 Nodes (3): l_sscorr_pp_m, l_surface_m, l_rad_first_pp_m
 
-### Community 510 - "Error"
-Cohesion: 0.40
-Nodes (3): DataRow, row, DataRowCompare
-
 ### Community 511 - "Nlls"
-Cohesion: 0.40
-Nodes (4): Archive, shared_ptr, nlls_solver_gsl_lmder_create(), NLLSSolverGSLLMDER::serialize()
+Cohesion: 0.18
+Nodes (7): Archive, ForwardModel, StateVector, vector, ostream, MaxAPosterioriStandard, MaxAPosterioriStandard::serialize()
 
 ### Community 512 - "Nlls"
-Cohesion: 0.40
-Nodes (4): Archive, shared_ptr, nlls_solver_gsl_lmsder_create(), NLLSSolverGSLLMSDER::serialize()
+Cohesion: 0.18
+Nodes (6): Archive, ostream, ScaleCloud, clone, scale_cloud, ScaleCloud::serialize()
 
 ### Community 513 - "Output"
 Cohesion: 0.40
@@ -2646,16 +2681,16 @@ Cohesion: 0.50
 Nodes (4): iso_c_binding, raylei(), rayleigh_wrap(), rayleigh_wrap_m
 
 ### Community 515 - "Radiativetransfer"
-Cohesion: 0.40
-Nodes (3): PsMode, PsMode, initialize
+Cohesion: 0.22
+Nodes (6): ostream, StokesCoefficientImpBase, cache_stale, calc_stokes_coeff, clone, stokes_coeff
 
 ### Community 516 - "Radiativetransfer"
 Cohesion: 0.50
 Nodes (4): calc_geom_first_reg(), calc_geom_first_reg_m, geometry_pool_m, regularps_sphergeom()
 
 ### Community 518 - "Support"
-Cohesion: 0.60
-Nodes (4): CacheInvalidatedObserver::load(), CacheInvalidatedObserver::save(), CacheInvalidatedObserver::serialize(), Archive
+Cohesion: 0.24
+Nodes (7): AtmosphereFixture, atm, attach_atmosphere_to_sv, set_surface_pressure, statev, StateVector, StateVector
 
 ### Community 520 - "Community 520"
 Cohesion: 0.40
@@ -2746,12 +2781,12 @@ Cohesion: 0.40
 Nodes (4): brdf_sup_mod_m, brdf_sup_inputs_def_m, brdf_sup_masters_m, brdf_sup_outputs_def_m
 
 ### Community 548 - "Interface"
-Cohesion: 0.50
-Nodes (3): Archive, NLLSProblemState::serialize(), set
+Cohesion: 0.24
+Nodes (4): BrownNLLSProblem, jacobian, residual, ostream
 
 ### Community 549 - "Interface"
-Cohesion: 0.67
-Nodes (3): Archive, IdentitySpectrumSampling::serialize(), SpectrumSampling::serialize()
+Cohesion: 0.24
+Nodes (4): string, StateMappingOffset, map_name, offsetee_
 
 ### Community 552 - "Radiativetransfer"
 Cohesion: 0.67
@@ -2805,13 +2840,33 @@ Nodes (3): lidort_pars_m, sleave_lin_sup_outputs_def_m, sleave_linsup_outputs
 Cohesion: 0.50
 Nodes (3): lidort_pars_m, sleave_sup_inputs, sleave_sup_inputs_def_m
 
+### Community 578 - "Interface"
+Cohesion: 0.04
+Nodes (44): vector, vector, vector, vector, vector, vector, vector, vector (+36 more)
+
+### Community 580 - "Interface"
+Cohesion: 0.15
+Nodes (11): S, D, string, OutputBlitz1d, f, OutputBlitz2d, OutputDouble, f (+3 more)
+
+### Community 581 - "Interface"
+Cohesion: 0.24
+Nodes (7): ils_band_error(), parse_absco_case_name(), Loops over all gas types and perturbed tables, calculating using the table, then, Modifies the ILS delta lambda and rebuilds ILS table object to perform perturbat, Helper for parsing table filename into something that can be used as a case name, register_spectroscopy_errors(), spectroscopy_error_case()
+
+### Community 582 - "Interface"
+Cohesion: 0.22
+Nodes (8): Archive, ground_cm_plus_lamb_output_create(), clone, GroundCoxmunkPlusLambertian::serialize(), surface_parameter, BOOST_AUTO_TEST_CASE(), basic, jacobian
+
+### Community 583 - "Interface"
+Cohesion: 0.25
+Nodes (3): ostream, HelicalValleyNLLSProblem, jacobian
+
 ### Community 586 - "Radiativetransfer"
-Cohesion: 1.00
-Nodes (3): lidort_fixed_control_c, lidort_fixed_control_c_alloc_init(), lidort_fixed_control_c_init_only()
+Cohesion: 0.25
+Nodes (7): module, endfor, iso_c_binding, type, module_name, write(), type_name
 
 ### Community 587 - "Radiativetransfer"
-Cohesion: 1.00
-Nodes (3): lidort_fixed_write_c, lidort_fixed_write_c_alloc_init(), lidort_fixed_write_c_init_only()
+Cohesion: 0.25
+Nodes (7): GroundFixture, brdf_soil, brdf_veg, coxmunk, lambertian, GroundCoxmunk, GroundLambertian
 
 ### Community 588 - "Radiativetransfer"
 Cohesion: 1.00
@@ -2825,25 +2880,121 @@ Nodes (3): lidort_modified_optical_c, lidort_modified_optical_c_alloc_init(), li
 Cohesion: 1.00
 Nodes (3): lidort_modified_uservalues_c, lidort_modified_uservalues_c_alloc_init(), lidort_modified_uservalues_c_init_only()
 
+### Community 623 - "Test"
+Cohesion: 0.25
+Nodes (4): Archive, ostream, MeyerMLProblem, MeyerMLProblem::serialize()
+
+### Community 634 - "InitialGuessBuilderTest"
+Cohesion: 0.25
+Nodes (3): InitialGuessBuilderTest, n, s
+
+### Community 635 - "RadiativeTransferImpBase"
+Cohesion: 0.29
+Nodes (5): ostream, SpectralDomain, RadiativeTransferImpBase, clone, reflectance_ptr
+
+### Community 636 - "linear_algebra.cc"
+Cohesion: 0.25
+Nodes (7): FullPhysics::cholesky_decomposition(), FullPhysics::multifit_covar(), FullPhysics::multifit_test_delta(), FullPhysics::multifit_test_gradient(), FullPhysics::solve_least_squares(), FullPhysics::solve_least_squares_qr(), FullPhysics::svd()
+
+### Community 637 - "uv_atmosphere.py"
+Cohesion: 0.39
+Nodes (6): pressure_levels(), ProfileReader, surface_pressure(), temperature_levels(), uv_atmosphere_definition(), vmr_profile()
+
+### Community 638 - "function_or_simple_value"
+Cohesion: 0.29
+Nodes (7): ConfigCommon.vmr_level_scaled:apriori_v(), ConfigCommon.vmr_level_scaled:covariance_v(), ConfigCommon.vmr_level_scaled:create_vmr(), ConfigCommon.vmr_met:apriori_v(), ConfigCommon.vmr_met:covariance_v(), ConfigCommon.vmr_met:create_vmr(), function_or_simple_value()
+
+### Community 639 - ".~AtmosphereLegacy"
+Cohesion: 0.29
+Nodes (6): Altitude, Pressure, RelativeHumidity, SurfaceTemperature, Temperature, vector
+
+### Community 640 - ".~AtmosphereStandard"
+Cohesion: 0.29
+Nodes (6): Altitude, Pressure, RelativeHumidity, SurfaceTemperature, Temperature, vector
+
+### Community 643 - ".GroundBrdf"
+Cohesion: 0.48
+Nodes (6): ArrayWithUnit, string, vector, ground_brdf_soil_create(), ground_brdf_veg_create(), state_vector_name_i
+
+### Community 644 - ".~MerraAerosol"
+Cohesion: 0.43
+Nodes (6): DoubleWithUnit, Pressure, RelativeHumidity, string, merra_aerosol_create(), file_index
+
+### Community 645 - "NLLSSolverGSLLMSDER"
+Cohesion: 0.29
+Nodes (3): gsl_multifit_fdfsolver_type, ostream, NLLSSolverGSLLMSDER
+
+### Community 647 - "planck.h"
+Cohesion: 0.29
+Nodes (4): FullPhysics::planck(), BOOST_AUTO_TEST_CASE(), basic, jacobian
+
+### Community 648 - ".instance"
+Cohesion: 0.29
+Nodes (3): CharInTypeWrapper, When wrapping a character type stored as in a user defined type     Where the al, Dispatch the appropriate wrapper class
+
+### Community 649 - "brdf_sup_inputs_f_read"
+Cohesion: 0.53
+Nodes (6): brdf_sup_inputs_c_read(), brdf_sup_inputs_c_write(), brdf_sup_inputs_f_read(), brdf_sup_inputs_f_write(), brdf_sup_inputs, brdf_sup_inputs_def_m
+
+### Community 650 - "module_name"
+Cohesion: 0.40
+Nodes (3): endfor, iso_c_binding, module_name
+
+### Community 651 - "l2_fp.py"
+Cohesion: 0.40
+Nodes (4): Runs a python configurations which is expected to load a Lua configuration itsel, Runs a Lua configuration as is, run_lua_config(), run_python_config()
+
+### Community 652 - "activate.sh"
+Cohesion: 0.50
+Nodes (3): REFRACTOR_INPUT_PATH, REFRACTOR_TEMPLATE_PATH, activate.sh script
+
+### Community 653 - "ConfigCommon.create_flag"
+Cohesion: 0.50
+Nodes (4): ConfigCommon.create_flag(), ConfigCommon.dispersion_polynomial:retrieval_flag(), ConfigCommon.merra_aerosol_creator:initial_guess(), CreatorApriori:retrieval_flag()
+
+### Community 657 - "ConfigCommon.calculate_albedo_from_radiance_polynomial"
+Cohesion: 0.67
+Nodes (3): ConfigCommon:albedo_from_radiance(), ConfigCommon.calculate_albedo_from_radiance_constant(), ConfigCommon.calculate_albedo_from_radiance_polynomial()
+
+### Community 658 - "ConfigCommon.brdf_weight"
+Cohesion: 0.67
+Nodes (3): ConfigCommon.brdf_soil_apriori(), ConfigCommon.brdf_veg_apriori(), ConfigCommon.brdf_weight()
+
+### Community 659 - "ConfigCommon.to_VectorDouble"
+Cohesion: 0.67
+Nodes (3): ConfigCommon.open_absco_aer_byspecindex(), ConfigCommon.open_absco_byspecindex(), ConfigCommon.to_VectorDouble()
+
+### Community 661 - "check_cost_func"
+Cohesion: 0.67
+Nodes (3): StateVector, string, check_cost_func()
+
+### Community 662 - "lidort_fixed_inputs_c_init_only"
+Cohesion: 1.00
+Nodes (3): lidort_fixed_inputs_c, lidort_fixed_inputs_c_alloc_init(), lidort_fixed_inputs_c_init_only()
+
+### Community 663 - "lidort_fixed_optical_c_init_only"
+Cohesion: 1.00
+Nodes (3): lidort_fixed_optical_c, lidort_fixed_optical_c_alloc_init(), lidort_fixed_optical_c_init_only()
+
 ## Knowledge Gaps
-- **2544 isolated node(s):** `input_`, `group_name`, `input_`, `group_name`, `input_` (+2539 more)
+- **2612 isolated node(s):** `build.sh script`, `build.sh script`, `build.sh script`, `build.sh script`, `CXXFLAGS` (+2607 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **64 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **85 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Array` connect `Lua` to `Output`, `Level`, `Nlls`, `Radiativetransfer`, `Bard`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Interface`, `Community 12`, `Interface`, `Radiativetransfer`, `Absorber`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Ground`, `Radiativetransfer`, `Aerosol`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Configuration`, `Solar`, `Absco`, `Radiativetransfer`, `Lua`, `Aerosol`, `Aerosol`, `Lua`, `Absco`, `Radiativetransfer`, `Radiativetransfer`, `Absorber`, `Absco`, `Support`, `Interface`, `Radiativetransfer`, `Altitude`, `Radiativetransfer`, `Statemapping`, `Connor`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Community 72`, `Interface`, `Interface`, `Radiativetransfer`, `Aerosol`, `Refractive`, `Solar`, `Stokes`, `Interface`, `Interface`, `Interface`, `Support`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Level`, `Radiativetransfer`, `Interface`, `Example`, `Temperature`, `Absorber`, `Planck`, `Radiativetransfer`, `Connor`, `Nlls`, `Interface`, `Merra`, `Absco`, `Oss`, `Radiativetransfer`, `Interface`, `Aerosol`, `Sample`, `Max`, `Interface`, `Nlls`, `Model`, `Ils`, `Gsl`, `Ground`, `Support`, `Error`, `Oss`, `Spectral`, `Support`, `Empirical`, `Ground`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Bad`, `Radiativetransfer`, `Radiativetransfer`, `Connor`, `Level`, `Radiativetransfer`, `Nlls`, `Interface`, `Absco`, `Support`, `Optical`, `Solar`, `Serialized`, `Fluorescence`, `Interface`, `Interface`, `Radiativetransfer`, `Example`, `Support`, `Initial`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Connor`, `Fd`, `Interface`, `Dispersion`, `Ils`, `Interface`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Max`, `Reference`, `Radiativetransfer`, `Output`, `Nlls`, `Cost`, `Absorber`, `Gas`, `Nlls`, `Interface`, `Interface`, `Interface`, `Support`, `Support`, `Composite`, `Fm`, `Ground`, `Level`, `Output`, `Radiativetransfer`, `Radiativetransfer`, `Ground`, `Radiance`, `Interface`, `Radiativetransfer`, `Absorber`, `Connor`, `Radiativetransfer`, `Statemapping`, `Ground`, `Ils`, `Output`, `Interface`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Support`, `Solver`, `Statemapping`, `Chisq`, `Connor`, `Ils`, `Radiance`, `Scattering`, `Pressure`, `Radiance`, `Scale`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiance`, `Radiativetransfer`, `Support`, `Interface`, `Ils`, `Temperature`, `Temperature`, `Dispersion`, `Reference`, `Interface`, `Meyer`, `Radiativetransfer`, `Statemapping`, `Support`, `Temperature`, `Interface`, `Composite`, `Interface`, `Support`?**
-  _High betweenness centrality (0.404) - this node is a cross-community bridge._
-- **Why does `Printable` connect `Solar` to `Level`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Interface`, `Interface`, `Absorber`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Aerosol`, `Radiativetransfer`, `Radiativetransfer`, `Solar`, `Lua`, `Aerosol`, `Pressure`, `Radiativetransfer`, `Support`, `Interface`, `Support`, `Statemapping`, `Apply`, `Connor`, `Radiativetransfer`, `Interface`, `Standard`, `Support`, `Ground`, `Radiativetransfer`, `Forward`, `Interface`, `Interface`, `Refractive`, `Interface`, `Interface`, `Lua`, `Support`, `Observation`, `Interface`, `Merra`, `Absco`, `Radiativetransfer`, `Relative`, `Support`, `Interface`, `Support`, `Support`, `Error`, `Interface`, `Support`, `Radiativetransfer`, `Support`, `Support`, `Bad`, `Radiativetransfer`, `Support`, `Absorber`, `Support`, `Connor`, `Support`, `Solar`, `Interface`, `Radiativetransfer`, `Support`, `Connor`, `Interface`, `Ils`, `Support`, `Radiativetransfer`, `Support`, `Interface`, `Reference`, `Support`, `Support`, `Gas`, `Interface`, `Interface`, `Interface`, `Support`, `Composite`, `Interface`, `Log`, `Interface`, `Connor`, `Interface`, `Support`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiance`, `Scattering`, `Interface`, `Support`, `Support`, `Support`, `Interface`, `Interface`, `Dispersion`, `Support`, `Connor`, `L2`, `Solver`, `Support`, `Interface`, `Support`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
-- **Why does `ArrayAd` connect `Interface` to `Lua`, `Statemapping`, `Ils`, `Ground`, `Support`, `Absco`, `Interface`, `Support`, `Ground`, `Atmosphere`, `Statemapping`, `Ground`, `Support`, `Radiativetransfer`, `Support`, `Atmosphere`, `Interface`, `Support`, `Radiativetransfer`, `Radiativetransfer`, `Statemapping`, `Lua`, `Aerosol`, `Support`, `Optical`, `Radiativetransfer`, `Absorber`, `Fluorescence`, `Ground`, `Statemapping`, `Interface`, `Radiativetransfer`, `Statemapping`, `Absorber`, `Support`, `Ils`, `Radiance`, `Statemapping`, `Interface`, `Ground`, `Radiativetransfer`, `Ils`, `Interface`, `Radiativetransfer`, `Aerosol`, `Refractive`, `Stokes`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Planck`, `Radiativetransfer`, `Ils`, `Support`, `Rayleigh`, `Relative`, `Absco`, `Aerosol`, `Ground`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
-- **What connects `input_`, `group_name`, `input_` to the rest of the system?**
-  _2775 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `Array` connect `Lua` to `Output`, `Level`, `Nlls`, `Radiativetransfer`, `Bard`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Support`, `Interface`, `Radiativetransfer`, `Absorber`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Ground`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Configuration`, `Solar`, `Absco`, `Interface`, `Radiativetransfer`, `Lua`, `Aerosol`, `Aerosol`, `Interface`, `Lua`, `Absco`, `Radiativetransfer`, `Radiativetransfer`, `Absorber`, `Absco`, `Support`, `Interface`, `Radiativetransfer`, `Altitude`, `Radiativetransfer`, `Statemapping`, `Connor`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Support`, `Interface`, `Radiativetransfer`, `Community 72`, `Interface`, `Interface`, `Radiativetransfer`, `Aerosol`, `Refractive`, `Stokes`, `Interface`, `Interface`, `Interface`, `Support`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Level`, `Radiativetransfer`, `Interface`, `Example`, `Temperature`, `Absorber`, `Planck`, `Radiativetransfer`, `Connor`, `Nlls`, `Interface`, `Test`, `Absco`, `Oss`, `Radiativetransfer`, `Radiativetransfer`, `Interface`, `Aerosol`, `InitialGuessBuilderTest`, `Max`, `Sample`, `RadiativeTransferImpBase`, `linear_algebra.cc`, `Interface`, `Nlls`, `Model`, `.GroundBrdf`, `Ils`, `Ground`, `.~MerraAerosol`, `OssRetrievalFlags`, `planck.h`, `Error`, `Oss`, `Support`, `Support`, `Gsl`, `Spectral`, `Support`, `Empirical`, `Ground`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Bad`, `Radiativetransfer`, `Radiativetransfer`, `Nlls`, `Absorber`, `Connor`, `Level`, `Radiativetransfer`, `Interface`, `Absco`, `Support`, `Optical`, `Solar`, `Serialized`, `Fluorescence`, `Ground`, `Interface`, `Interface`, `Radiativetransfer`, `Example`, `Support`, `Initial`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Fd`, `Interface`, `Dispersion`, `Ils`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Solar`, `Radiativetransfer`, `Interface`, `Reference`, `Radiativetransfer`, `Radiativetransfer`, `Output`, `Cost`, `Absorber`, `Gas`, `Nlls`, `Interface`, `Interface`, `Interface`, `Interface`, `Support`, `Support`, `Composite`, `Fm`, `Ground`, `Level`, `Output`, `Radiativetransfer`, `Radiativetransfer`, `Ground`, `Log`, `Radiance`, `Interface`, `Radiativetransfer`, `Community 273`, `Test`, `Absorber`, `Connor`, `Radiativetransfer`, `Statemapping`, `Ground`, `Ils`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Statemapping`, `Support`, `Support`, `Solver`, `Statemapping`, `Chisq`, `Connor`, `Ils`, `Radiance`, `Scattering`, `Pressure`, `Scale`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Radiance`, `Radiativetransfer`, `Support`, `Interface`, `Ils`, `Temperature`, `Community 369`, `Dispersion`, `Reference`, `Interface`, `Radiativetransfer`, `Solver`, `Interface`, `Radiativetransfer`, `Statemapping`, `Community 402`, `Connor`, `Support`, `Temperature`, `Lua`, `Interface`, `Nlls`, `Composite`, `Support`, `Nlls`?**
+  _High betweenness centrality (0.300) - this node is a cross-community bridge._
+- **Why does `shared_ptr` connect `Ground` to `Level`, `Nlls`, `Support`, `Absco`, `Interface`, `Interface`, `Interface`, `Absorber`, `Atmosphere`, `Ground`, `Atmosphere`, `Configuration`, `Absco`, `Radiativetransfer`, `Interface`, `Lua`, `Aerosol`, `Aerosol`, `Lua`, `Absco`, `Oss`, `Radiativetransfer`, `Radiativetransfer`, `Absorber`, `Absco`, `Support`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Absorber`, `Radiativetransfer`, `Statemapping`, `Apply`, `Connor`, `Interface`, `Interface`, `Standard`, `Interface`, `Interface`, `Ground`, `Radiativetransfer`, `Forward`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Aerosol`, `Refractive`, `Solar`, `Stokes`, `Interface`, `Interface`, `Interface`, `Lua`, `Support`, `Radiativetransfer`, `Support`, `Radiativetransfer`, `Radiativetransfer`, `Observation`, `Interface`, `Example`, `Temperature`, `Absorber`, `Planck`, `Radiativetransfer`, `Connor`, `Nlls`, `Rayleigh`, `Merra`, `Absco`, `Support`, `Oss`, `Radiativetransfer`, `Nlls`, `Interface`, `Aerosol`, `Sample`, `Max`, `Relative`, `.~AtmosphereLegacy`, `.~AtmosphereStandard`, `Nlls`, `Interface`, `.GroundBrdf`, `Ils`, `Ground`, `.~MerraAerosol`, `NLLSSolverGSLLMSDER`, `Support`, `Error`, `Interface`, `Support`, `Spectral`, `Support`, `Empirical`, `Ground`, `Radiativetransfer`, `check_cost_func`, `Radiativetransfer`, `Support`, `Support`, `Bad`, `Radiativetransfer`, `Support`, `Nlls`, `Absorber`, `Lua`, `Connor`, `Level`, `Radiativetransfer`, `Absco`, `Optical`, `Oss`, `Altitude`, `Serialized`, `Fluorescence`, `Interface`, `Example`, `Support`, `Interface`, `Fd`, `Interface`, `Dispersion`, `Ils`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Interface`, `Output`, `Example`, `Cost`, `Absorber`, `Support`, `Gas`, `Nlls`, `Interface`, `Lua`, `Nonuniform`, `Interface`, `Interface`, `Interface`, `Composite`, `Fm`, `Ground`, `Level`, `Output`, `Xsec`, `Interface`, `Statemapping`, `Radiativetransfer`, `Cloud`, `Ground`, `Hdf`, `Log`, `Radiance`, `Surface`, `Interface`, `Test`, `Absorber`, `Interface`, `Radiativetransfer`, `Support`, `Statemapping`, `Ground`, `Output`, `Pcloud`, `Interface`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Statemapping`, `Solver`, `Statemapping`, `Connor`, `Instrument`, `Scattering`, `Connor`, `Pressure`, `Rayleigh`, `Scale`, `Xsec`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiance`, `Interface`, `Ils`, `Temperature`, `Temperature`, `Radiativetransfer`, `Community 369`, `Dispersion`, `Reference`, `Interface`, `Radiativetransfer`, `Support`, `Connor`, `Solver`, `Radiativetransfer`, `Statemapping`, `Community 402`, `Example`, `Temperature`, `Support`, `Interface`, `Support`, `Nlls`, `Nlls`, `Nlls`?**
+  _High betweenness centrality (0.139) - this node is a cross-community bridge._
+- **Why does `Printable` connect `Radiativetransfer` to `Nlls`, `Level`, `Radiativetransfer`, `Nlls`, `Radiativetransfer`, `Interface`, `Absorber`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Radiativetransfer`, `Solar`, `Lua`, `Aerosol`, `Radiativetransfer`, `Support`, `Interface`, `Radiativetransfer`, `Support`, `Statemapping`, `Apply`, `Connor`, `Radiativetransfer`, `Interface`, `Interface`, `Standard`, `Interface`, `Ground`, `Radiativetransfer`, `Support`, `Forward`, `Interface`, `Solar`, `Interface`, `Interface`, `Support`, `Radiativetransfer`, `Interface`, `Connor`, `Merra`, `Absco`, `Radiativetransfer`, `Relative`, `Support`, `Interface`, `Support`, `Support`, `Error`, `Interface`, `Support`, `Radiativetransfer`, `Support`, `Support`, `Bad`, `Radiativetransfer`, `Absorber`, `Support`, `Connor`, `Interface`, `Support`, `Ground`, `Interface`, `Radiativetransfer`, `Support`, `Interface`, `Ils`, `Support`, `Support`, `Interface`, `Reference`, `Radiativetransfer`, `Support`, `Support`, `Gas`, `Interface`, `Lua`, `Interface`, `Interface`, `Support`, `Composite`, `Interface`, `Log`, `Interface`, `Test`, `Connor`, `Interface`, `Support`, `Pcloud`, `Interface`, `Radiativetransfer`, `Radiativetransfer`, `Support`, `Radiance`, `Scattering`, `Interface`, `Support`, `Radiativetransfer`, `Support`, `Interface`, `Interface`, `Radiativetransfer`, `Dispersion`, `Support`, `Connor`, `Interface`, `Interface`, `Interface`, `Support`, `Nlls`?**
+  _High betweenness centrality (0.066) - this node is a cross-community bridge._
+- **What connects `Node attributes to represent a Creator with the Graphviz record shape`, `Node attributes to represent a Creator with HTML like tables`, `Recursively connects edges between creators` to the rest of the system?**
+  _2872 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Lua` be split into smaller, more focused modules?**
-  _Cohesion score 0.02363584352427948 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.022941600082301703 - nodes in this community are weakly interconnected._
 - **Should `Level` be split into smaller, more focused modules?**
-  _Cohesion score 0.0171374166931133 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.01750645269891146 - nodes in this community are weakly interconnected._
 - **Should `Radiativetransfer` be split into smaller, more focused modules?**
   _Cohesion score 0.04204345273047563 - nodes in this community are weakly interconnected._
