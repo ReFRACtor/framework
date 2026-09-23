@@ -1,6 +1,8 @@
 #include "vlidort_rt_driver.h"
 #include "unit_test_support.h"
 #include "vlidort_fixture.h"
+#include "lidort_rt_driver.h"
+#include "lidort_fixture.h"
 #include "old_constant.h"
 #include "fe_disable_exception.h"
 #include "planck.h"
@@ -284,6 +286,50 @@ BOOST_AUTO_TEST_CASE(blackbody_jacobian_fd)
       double jac_fd = (refl_pert(s) - refl(s)) / pert;
       BOOST_CHECK_CLOSE(jac_atm_temp(lev, s), jac_fd, 1e-2);
     }
+  }
+}
+
+// Cross-solver consistency: for the scalar (nstokes = 1) thermal problem
+// VLIDORT and LIDORT wrap equivalent discrete-ordinate physics, so the VLIDORT
+// Stokes-I radiance must match the LIDORT reflectance for the same
+// configuration. Both fixtures share geometry, streams, layering and surface.
+BOOST_AUTO_TEST_CASE(lidort_consistency)
+{
+  Fixture1 vt;                                 // VLIDORT nstokes=1 thermal
+  LidortDriverLambertianThermalFixture lt;     // LIDORT thermal, same config
+
+  double wn = 568.69;
+  double temperature = 290.0;
+  double bb_surface = planck(wn, temperature);
+  Array<double, 1> bb_atm(vt.nlayer + 1);
+  bb_atm = planck(wn, temperature);
+
+  // (surface albedo, taur, taug) for the three thermal scenarios.
+  double scen[3][3] = { {0.1, 1.0e-6, 1.0e-6},
+                        {0.1, 1.0e-6, 1.0},
+                        {0.9, 2.0e-2, 1.0e-6} };
+
+  for(int i = 0; i < 3; ++i) {
+    double albedo = scen[i][0];
+    double taur = scen[i][1]/vt.nlayer;
+    double taug = scen[i][2]/vt.nlayer;
+    double od_v = taur + taug;
+    double ssa_v = taur / od_v;
+
+    Array<double, 1> od1(1), ssa1(1);
+    od1 = od_v; ssa1 = ssa_v;
+
+    vt.surface_params(0) = albedo;
+    Array<double, 1> refl_v(vt.vlidort_driver->reflectance_calculate(
+        vt.heights, vt.sza(0), vt.azm(0), vt.zen(0), vt.surface_type,
+        vt.surface_params, od1, ssa1, vt.pf.value(), bb_surface, bb_atm));
+
+    lt.surface_params(0) = albedo;
+    Array<double, 1> refl_l(lt.lidort_driver->reflectance_calculate(
+        lt.heights, lt.sza(0), lt.zen(0), lt.azm(0), lt.surface_type,
+        lt.surface_params, od1, ssa1, lt.pf.value(), bb_surface, bb_atm));
+
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_l, refl_v, 1e-7);
   }
 }
 
