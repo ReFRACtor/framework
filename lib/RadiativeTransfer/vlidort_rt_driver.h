@@ -20,6 +20,10 @@ public:
   /// Number of Stokes parameters computed by this driver (1, 3 or 4)
   int number_stokes() const { return nstokes_; }
 
+  /// Vector RT needs the full 6-element de-Rooij scattering matrix when
+  /// nstokes > 1; scalar (nstokes == 1) needs only the phase function moment.
+  virtual int number_scattering_matrix_elements() const { return nstokes_ > 1 ? 6 : 1; }
+
   /// Abstract versions of interfaces
   const boost::shared_ptr<Spurr_Lps_Masters_Base> rt_interface() const 
   { return boost::dynamic_pointer_cast<Spurr_Lps_Masters_Base>(vlidort_interface_); }

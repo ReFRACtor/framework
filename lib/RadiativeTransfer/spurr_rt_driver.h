@@ -99,6 +99,12 @@ public:
   /// setup by setup_optical_inputs and setup_linear_inputs
   virtual void calculate_rt() const = 0;
 
+  /// Number of scattering-matrix (de-Rooij) elements the driver needs from
+  /// the phase function. Scalar codes (LIDORT, 2stream) use only the phase
+  /// function moment (1); vector codes (VLIDORT with nstokes > 1) use the
+  /// full set of 6.
+  virtual int number_scattering_matrix_elements() const { return 1; }
+
   /// Retrieve the intensity value calculated
   virtual const blitz::Array<double, 1> get_intensity() const = 0;
 

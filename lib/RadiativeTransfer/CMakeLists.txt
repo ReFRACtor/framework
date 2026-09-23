@@ -103,6 +103,7 @@ set(TEST_SOURCES
     twostream_rt_test.cc
     vlidort_driver_test.cc
     vlidort_fixture.cc
+    vlidort_rt_test.cc
     vlidort_interface_types_test.cc
 )
 

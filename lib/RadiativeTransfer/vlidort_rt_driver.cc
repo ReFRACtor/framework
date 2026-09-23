@@ -149,10 +149,17 @@ void VLidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)
 
   Array<double, 3> greekmat( foptical_inputs.ts_phasmoms_total_input() );
 
+  int n_avail = pf.extent(thirdDim);
   int n_entries = num_greek_entries(nstokes_);
   for(int k = 0; k < n_entries; ++k) {
     int gk = greek_slot[k];
     int rk = derooij_elem[k];
+    // The atmosphere may supply fewer scattering-matrix elements than the 6
+    // de-Rooij coefficients (e.g. a scalar-only atmosphere provides just the
+    // phase function moment). Skip any element it does not provide; those
+    // greek slots stay zero.
+    if(rk >= n_avail)
+      continue;
     Array<double, 2> src( pf(rmom, rlay, rk) );
     // b1 (de-Rooij element index 4) uses the opposite sign convention from
     // the VLIDORT greek off-diagonal (1,2)/(2,1) slots.
@@ -180,6 +187,8 @@ void VLidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
   VLidort_Fixed_Linoptical& lin_optical = vlidort_interface_->vlidort_linfixin().optical();
   Array<double, 4> l_greekmat( lin_optical.ts_l_phasmoms_total_input() );
 
+  int n_avail = pf.value().extent(thirdDim);
+
   if(pf.is_constant()) {
     int n_entries = num_greek_entries(nstokes_);
     for(int k = 0; k < n_entries; ++k)
@@ -191,6 +200,8 @@ void VLidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
   for(int k = 0; k < n_entries; ++k) {
     int gk = greek_slot[k];
     int rk = derooij_elem[k];
+    if(rk >= n_avail)
+      continue;
     double sign = (rk == 4) ? -1.0 : 1.0;
 
     Array<double, 2> pf_val( pf.value()(rall, rall, rk) );

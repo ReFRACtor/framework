@@ -134,18 +134,19 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const boost
   // Obtain Wn and Spec_index dependent inputs
   Range ra(Range::all());
 
+  int nscatt = rt_driver_->number_scattering_matrix_elements();
   Array<double, 1> od_in, ssa_in;
   Array<double, 3> pf;
   if(Opt_prop) {
     od_in.reference( Opt_prop->total_optical_depth().value() );
     ssa_in.reference( Opt_prop->total_single_scattering_albedo().value() );
     if (number_moment() > 0)
-      pf.reference( Opt_prop->total_phase_function_moments(number_moment(), 1).value() );
+      pf.reference( Opt_prop->total_phase_function_moments(number_moment(), nscatt).value() );
   } else {
     od_in.reference( atm->optical_depth_wrt_rt(Wn, Spec_index).value() );
     ssa_in.reference( atm->single_scattering_albedo_wrt_rt(Wn, Spec_index).value() );
     if (number_moment() > 0)
-      pf.reference( atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), 1).value() );
+      pf.reference( atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), nscatt).value() );
   }
 
   // Update user levels if necessary
@@ -194,6 +195,7 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
 
   // Obtain Wn and Spec_index dependent inputs
   Range ra(Range::all());
+  int nscatt = rt_driver_->number_scattering_matrix_elements();
   ArrayAd<double, 1> od, ssa;
   ArrayAd<double, 3> pf;
   Array<double, 3> jac_iv(0,0,0);
@@ -201,13 +203,13 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
     od.reference(Opt_prop->total_optical_depth());
     ssa.reference(Opt_prop->total_single_scattering_albedo());
     if (number_moment() > 0)
-      pf.reference(Opt_prop->total_phase_function_moments(number_moment(), 1));
+      pf.reference(Opt_prop->total_phase_function_moments(number_moment(), nscatt));
     jac_iv.reference(Opt_prop->intermediate_jacobian());
   } else {
     od.reference(atm->optical_depth_wrt_rt(Wn, Spec_index));
     ssa.reference(atm->single_scattering_albedo_wrt_rt(Wn, Spec_index));
     if (number_moment() > 0)
-      pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), 1));
+      pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), nscatt));
     jac_iv.reference(atm->intermediate_jacobian(Wn, Spec_index));
   }
 
