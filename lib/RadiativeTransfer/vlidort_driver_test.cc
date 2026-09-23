@@ -116,3 +116,112 @@ BOOST_AUTO_TEST_CASE(serialization)
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+//=======================================================================
+// nstokes = 1, 3 and 4 (vector) in an off-nadir polarizing geometry. The
+// full Stokes vector is checked against the offline VLIDORT reference
+// driver (test_vlidort_refractor.f90 in
+// reference/rt/vlidort_2p8p3_lin_tester), for each sphericity mode
+// (plane-parallel, pseudo-spherical, line-of-sight). Pure Rayleigh over a
+// black surface so the comparison isolates the vector scattering /
+// greek-matrix mapping.
+//=======================================================================
+
+BOOST_FIXTURE_TEST_SUITE(vlidort_driver_vector, GlobalFixture)
+
+enum Sphericity { PLANE_PARALLEL, PSEUDO_SPHERICAL, LINE_OF_SIGHT };
+
+void set_sphericity(boost::shared_ptr<VLidortRtDriver>& driver, Sphericity mode) {
+  switch(mode) {
+  case PLANE_PARALLEL:   driver->set_plane_parallel(); break;
+  case PSEUDO_SPHERICAL: driver->set_pseudo_spherical(); break;
+  case LINE_OF_SIGHT:    driver->set_line_of_sight(); break;
+  }
+}
+
+void run_vector_test(VLidortDriverVectorFixture& t, Sphericity mode,
+                     const blitz::Array<double, 1>& stokes_expected, double tol) {
+  set_sphericity(t.vlidort_driver, mode);
+
+  // Pure Rayleigh atmosphere, black surface (albedo 0).
+  t.surface_params(0) = 0.0;
+
+  t.taur = 2.0e-2/t.nlayer;
+  t.taug = 1.0e-6/t.nlayer;
+
+  t.od = t.taur + t.taug;
+  t.ssa.value() = t.taur / t.od.value();
+
+  // reflectance_calculate signature is (height, sza, azm, zen, ...)
+  Array<double, 1> stokes_calc(t.vlidort_driver->reflectance_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0),
+      t.surface_type, t.surface_params,
+      t.od.value(), t.ssa.value(), t.pf.value()));
+
+  BOOST_CHECK_EQUAL(stokes_calc.rows(), stokes_expected.rows());
+  BOOST_CHECK_MATRIX_CLOSE_TOL(stokes_expected, stokes_calc, tol);
+}
+
+// ---- Plane-parallel (reference mode 0) ----
+
+BOOST_AUTO_TEST_CASE(plane_parallel_nstokes_1)
+{
+  VLidortDriverVectorFixture t(1);
+  Array<double, 1> e(1);
+  e = 1.6883136744104341e-03;
+  run_vector_test(t, PLANE_PARALLEL, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(plane_parallel_nstokes_3)
+{
+  VLidortDriverVectorFixture t(3);
+  Array<double, 1> e(3);
+  e = 1.6821888550733900e-03, -1.5663936555950202e-04, -1.2398207619582417e-03;
+  run_vector_test(t, PLANE_PARALLEL, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(plane_parallel_nstokes_4)
+{
+  VLidortDriverVectorFixture t(4);
+  Array<double, 1> e(4);
+  e = 1.6821888550731530e-03, -1.5663936556101861e-04, -1.2398207619582389e-03, 0.0;
+  run_vector_test(t, PLANE_PARALLEL, e, 1e-7);
+}
+
+// ---- Pseudo-spherical (reference mode 1) ----
+
+BOOST_AUTO_TEST_CASE(pseudo_spherical_nstokes_1)
+{
+  VLidortDriverVectorFixture t(1);
+  Array<double, 1> e(1);
+  e = 1.6884936368769267e-03;
+  run_vector_test(t, PSEUDO_SPHERICAL, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(pseudo_spherical_nstokes_3)
+{
+  VLidortDriverVectorFixture t(3);
+  Array<double, 1> e(3);
+  e = 1.6823681621588628e-03, -1.5665606058624514e-04, -1.2399529087074581e-03;
+  run_vector_test(t, PSEUDO_SPHERICAL, e, 1e-7);
+}
+
+// ---- Line-of-sight / outgoing (reference mode 2) ----
+
+BOOST_AUTO_TEST_CASE(line_of_sight_nstokes_1)
+{
+  VLidortDriverVectorFixture t(1);
+  Array<double, 1> e(1);
+  e = 1.6823529986010875e-03;
+  run_vector_test(t, LINE_OF_SIGHT, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_CASE(line_of_sight_nstokes_3)
+{
+  VLidortDriverVectorFixture t(3);
+  Array<double, 1> e(3);
+  e = 1.6762275238830235e-03, -1.5607360168268711e-04, -1.2353734844838193e-03;
+  run_vector_test(t, LINE_OF_SIGHT, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

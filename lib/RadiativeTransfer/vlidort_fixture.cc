@@ -83,3 +83,24 @@ VLidortDriverCoxmunkFixture::VLidortDriverCoxmunkFixture(int Nstokes)
   // Plane-parallel
   vlidort_driver->set_plane_parallel();
 }
+
+VLidortDriverVectorFixture::VLidortDriverVectorFixture(int Nstokes)
+  : VLidortDriverCommonFixture(Nstokes)
+{
+  // Off-nadir, non-zero azimuth geometry so Q and U are non-trivial.
+  // Must match test_vlidort_refractor.f90 in the offline tester.
+  sza = 45.0;
+  zen = 35.0;
+  azm = 60.0;
+
+  surface_params.resize(1);
+  surface_type = LAMBERTIAN;
+
+  vlidort_driver.reset(new VLidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir, nstokes));
+
+  // Turn off delta-m scaling
+  vlidort_driver->vlidort_interface()->vlidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  vlidort_driver->set_plane_parallel();
+}

@@ -128,6 +128,11 @@ void VLidortRtDriver::initialize_rt(int nstream, int nmoment, bool do_solar_sour
   // Special Fourier convergence acceleration when nstokes == 2, harmless
   // otherwise. Matches the VLIDORT 2.8.3 tester configuration.
   fboolean_inputs.ts_do_fourier0_nstokes2(true);
+
+  // The Green's function solution (VLIDORT's default) is not valid for
+  // nstokes == 4; VLIDORT requires the classical solution in that case.
+  VLidort_Modified_Boolean& mboolean_inputs = vlidort_interface_->vlidort_modin().mbool();
+  mboolean_inputs.ts_do_classical_solution(nstokes_ == 4);
 }
 
 void VLidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)

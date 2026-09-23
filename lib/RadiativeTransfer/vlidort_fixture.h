@@ -66,5 +66,18 @@ public:
   virtual ~VLidortDriverCoxmunkFixture() {};
 };
 
+/****************************************************************//**
+ Fixture for VLidortRtDriver in a polarizing off-nadir geometry with a
+ Lambertian surface, used to validate the vector (nstokes = 3, 4) Stokes
+ output against the offline VLIDORT reference driver
+ (reference/rt/vlidort_2p8p3_lin_tester test_vlidort_refractor.f90).
+*******************************************************************/
+
+class VLidortDriverVectorFixture : public VLidortDriverCommonFixture {
+public:
+  VLidortDriverVectorFixture(int nstokes = 3);
+  virtual ~VLidortDriverVectorFixture() {};
+};
+
 }
 #endif
