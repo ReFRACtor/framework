@@ -114,6 +114,11 @@ void VLidortRtDriver::initialize_rt(int nstream, int nmoment, bool do_solar_sour
   VLidort_Fixed_Control& fcontrol_inputs = vlidort_interface_->vlidort_fixin().cont();
   fcontrol_inputs.ts_nstokes(nstokes_);
 
+  // The VBRDF supplement needs to know the number of Stokes parameters so
+  // it computes the full polarized surface reflectance matrix. Without this
+  // it defaults to zero and no surface contribution is produced.
+  vlidort_brdf_interface()->vbrdf_sup_in().bs_nstokes(nstokes_);
+
   // Always use the BRDF supplement, don't use the specialized
   // lambertian_albedo mode (matches the LIDORT driver's use of
   // ts_do_brdf_surface(true))

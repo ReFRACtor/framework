@@ -72,11 +72,10 @@ set(DIR_SOURCES
     vlidort_interface_types_io.F90
 )
 
-# rt_driver_compare.cc/.h, rt_driver_scenario.cc/.h, and vlidort_driver_test.cc
-# (from the "In progress changes working towards a unit test for VLIDORT"
-# commit) are unfinished WIP scaffolding that has never compiled and is not
+# rt_driver_compare.cc/.h and rt_driver_scenario.cc/.h are unfinished WIP
+# scaffolding for a generalized RT-driver comparison harness that is not yet
 # referenced by anything else in the tree. Left out of the build until that
-# unit test work is picked back up.
+# work is picked back up.
 
 set(TEST_SOURCES
     pca_fortran/pca_correction.f90
@@ -102,6 +101,8 @@ set(TEST_SOURCES
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
+    vlidort_driver_test.cc
+    vlidort_fixture.cc
     vlidort_interface_types_test.cc
 )
 
