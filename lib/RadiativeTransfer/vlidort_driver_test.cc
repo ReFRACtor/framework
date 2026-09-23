@@ -3,6 +3,7 @@
 #include "vlidort_fixture.h"
 #include "old_constant.h"
 #include "fe_disable_exception.h"
+#include "planck.h"
 
 #include "spurr_brdf_types.h"
 
@@ -102,6 +103,125 @@ BOOST_AUTO_TEST_CASE(solar_sources)
   Fixture1 t;
   t.run_test(t.vlidort_driver);
 }
+
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  Fixture1 t;
+  std::string d = serialize_write_string(t.vlidort_driver);
+  if(false)
+    std::cerr << d;
+  boost::shared_ptr<VLidortRtDriver> driver_r =
+    serialize_read_string<VLidortRtDriver>(d);
+  t.run_test(driver_r);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+//=======================================================================
+// Thermal emission only (no solar source), nstokes = 1. The Stokes-I
+// radiance is checked against the offline VLIDORT thermal reference
+// (reference/rt/vlidort_thermal_test, results.1.log) for the same three
+// scenarios used by the scalar LIDORT thermal test. The blackbody
+// weighting-function Jacobians (jac_surf_temp, jac_atm_temp) are checked
+// against finite differences.
+//=======================================================================
+
+BOOST_FIXTURE_TEST_SUITE(vlidort_driver_lambertian_thermal, GlobalFixture)
+
+class Fixture1 : public VLidortDriverLambertianThermalFixture
+{
+public:
+  Fixture1() : VLidortDriverLambertianThermalFixture(1) {}
+
+  void run_test(boost::shared_ptr<VLidortRtDriver>& driver) {
+    Array<double, 1> refl_calc(1);
+    Array<double, 1> refl_expt(1);
+
+    /////////////////////////////////////////////
+    // Thermal setup
+
+    // Just some nominal values to calculate the planck function. These
+    // match the scalar LIDORT thermal test and the offline VLIDORT
+    // reference driver.
+    double wn = 568.69;
+    double temperature = 290.0;
+    double bb_surface = planck(wn, temperature);
+    Array<double, 1> bb_atm(nlayer + 1);
+    bb_atm = planck(wn, temperature);
+
+    ////////////////////////
+    // Thermal surface only
+    surface_params(0) = 0.1;
+
+    taur = 1.0e-6/nlayer;
+    taug = 1.0e-6/nlayer;
+
+    od = taur + taug;
+    ssa.value() = taur / od.value();
+
+    refl_calc = driver->reflectance_calculate(heights, sza(0), azm(0), zen(0),
+                                              surface_type, surface_params,
+                                              od.value(), ssa.value(), pf.value(),
+                                              bb_surface, bb_atm);
+
+    // Expected values calculated offline in VLIDORT (results.1.log)
+    refl_expt = 0.12476970639470732;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+
+    ////////////////////////
+    // Thermal gas + surface
+    surface_params(0) = 0.1;
+
+    taur = 1.0e-6/nlayer;
+    taug = 1.0/nlayer;
+
+    od = taur + taug;
+    ssa.value() = taur / od.value();
+
+    refl_calc = driver->reflectance_calculate(heights, sza(0), azm(0), zen(0),
+                                              surface_type, surface_params,
+                                              od.value(), ssa.value(), pf.value(),
+                                              bb_surface, bb_atm);
+
+    refl_expt = 0.13751414471789294;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+
+    /////////////////////////////////////////////
+    // Thermal rayleigh only, no surface, no gas
+    surface_params(0) = 0.9;
+
+    taur = 2.0e-2/nlayer;
+    taug = 1.0e-6/nlayer;
+
+    od = taur + taug;
+    ssa.value() = taur / od.value();
+
+    refl_calc = driver->reflectance_calculate(heights, sza(0), azm(0), zen(0),
+                                              surface_type, surface_params,
+                                              od.value(), ssa.value(), pf.value(),
+                                              bb_surface, bb_atm);
+
+    refl_expt = 1.3966249402729437e-2;
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
+  }
+};
+
+BOOST_AUTO_TEST_CASE(thermal_emission)
+{
+  Fixture1 t;
+  t.run_test(t.vlidort_driver);
+}
+
+// NOTE: A VLIDORT blackbody-Jacobian finite-difference test (analogous to the
+// LIDORT lidort_driver_lambertian_thermal/blackbody_jacobian_fd case) is not
+// included here yet because VLIDORT's linearized thermal profile-weighting-
+// function path (GET_LP_BOASOURCE in vlidort_lp_wfatmos.f90) reads an
+// uninitialized beam index in thermal-only mode, so any VLIDORT
+// reflectance_and_jacobian_calculate in thermal mode currently faults
+// (lp_trans_atmos_final out-of-bounds). The scalar LIDORT test exercises the
+// shared MultiScattRtDriver LBBF copy logic in the meantime.
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
