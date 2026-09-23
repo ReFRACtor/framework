@@ -36,6 +36,32 @@ BOOST_AUTO_TEST_CASE(scalar_parity_with_lidort)
   BOOST_CHECK_MATRIX_CLOSE_TOL(lidort_refl, vlidort_refl, 1e-6);
 }
 
+BOOST_AUTO_TEST_CASE(serialization)
+{
+  if(!have_serialize_supported())
+    return;
+  int nstreams = 4;
+  int nmoms = 2*nstreams;
+  boost::shared_ptr<VlidortRt> vlidort_rt(new VlidortRt(
+      config_atmosphere, stokes_coefs, sza, zen, azm, pure_nadir,
+      nstreams, nmoms, false, 3));
+
+  std::string d = serialize_write_string(vlidort_rt);
+  boost::shared_ptr<VlidortRt> vlidort_rt_r =
+    serialize_read_string<VlidortRt>(d);
+  BOOST_CHECK(vlidort_rt_r);
+  BOOST_CHECK_EQUAL(vlidort_rt_r->number_stream(), vlidort_rt->number_stream());
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+// Separate suite (hence a separate ctest process) for the full vector run.
+// VLIDORT is built non-re-entrant (-fno-openmp, static local arrays), so
+// mixing an nstokes=1 and an nstokes=3 calculation in one process corrupts
+// its internal state. Production uses a single fixed nstokes, so isolating
+// the vector case in its own suite reflects supported usage.
+BOOST_FIXTURE_TEST_SUITE(vlidort_rt_lambertian_vector, LidortLambertianFixture)
+
 BOOST_AUTO_TEST_CASE(vector_runs_and_matches_intensity)
 {
   int nstreams = 8;
@@ -66,23 +92,6 @@ BOOST_AUTO_TEST_CASE(vector_runs_and_matches_intensity)
     BOOST_CHECK(vlidort_refl(i) > 0.0);
     BOOST_CHECK(!std::isnan(vlidort_refl(i)));
   }
-}
-
-BOOST_AUTO_TEST_CASE(serialization)
-{
-  if(!have_serialize_supported())
-    return;
-  int nstreams = 4;
-  int nmoms = 2*nstreams;
-  boost::shared_ptr<VlidortRt> vlidort_rt(new VlidortRt(
-      config_atmosphere, stokes_coefs, sza, zen, azm, pure_nadir,
-      nstreams, nmoms, false, 3));
-
-  std::string d = serialize_write_string(vlidort_rt);
-  boost::shared_ptr<VlidortRt> vlidort_rt_r =
-    serialize_read_string<VlidortRt>(d);
-  BOOST_CHECK(vlidort_rt_r);
-  BOOST_CHECK_EQUAL(vlidort_rt_r->number_stream(), vlidort_rt->number_stream());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

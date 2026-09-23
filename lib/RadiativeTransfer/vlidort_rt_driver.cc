@@ -228,13 +228,14 @@ void VLidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
 
     // l_greekmat and pf carry jacobian data in different dimensions, so loop
     // over the jacobian index. VLIDORT stores the linearization as the
-    // relative derivative (dGreek/dx)/Greek.
+    // relative derivative (dGreek/dx)/Greek. Where a greek element is zero
+    // (common for the higher scattering-matrix elements at many moments) the
+    // relative derivative is taken to be zero to avoid a 0/0 -> NaN.
     Array<double, 3> pf_jac( pf.jacobian()(rall, rall, rk, rall) );
     for (int jidx = 0; jidx < natm_jac; ++jidx) {
-      if(gk == 0)
-        l_greekmat(jidx, rmom, rlay, gk) = pf_jac(rmom, rlay, jidx) / pf_in(rmom, rlay)(i1, i2);
-      else
-        l_greekmat(jidx, rmom, rlay, gk) = sign * pf_jac(rmom, rlay, jidx) / pf_in(rmom, rlay)(i1, i2);
+      Array<double, 2> num( pf_jac(rmom, rlay, jidx) );
+      l_greekmat(jidx, rmom, rlay, gk) =
+        where(abs(pf_in) > 1e-11, sign * num / pf_in, 0.0);
     }
   }
 }
