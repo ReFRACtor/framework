@@ -2795,8 +2795,15 @@ MODULE vbrdf_LinSup_masters_m
          VBRDF_Sup_Out%BS_EMISSIVITY      = ZERO
          VBRDF_Sup_Out%BS_USER_EMISSIVITY = ZERO
       else
-         VBRDF_Sup_Out%BS_EMISSIVITY      = ONE
-         VBRDF_Sup_Out%BS_USER_EMISSIVITY = ONE
+!  ReFRACtor fix: Kirchhoff emissivity is (identity - reflectance); the
+!  blackbody identity is non-zero only for the I (Stokes 1) component. The
+!  original code initialized every Stokes component to ONE, leaving the Q/U/V
+!  emissivity at 1 for a Lambertian surface (LOCAL_EMISSIVITY is only built for
+!  Stokes 1), so vector thermal emission leaked the full blackbody into Q and U.
+         VBRDF_Sup_Out%BS_EMISSIVITY      = ZERO
+         VBRDF_Sup_Out%BS_USER_EMISSIVITY = ZERO
+         VBRDF_Sup_Out%BS_EMISSIVITY(1,:)      = ONE
+         VBRDF_Sup_Out%BS_USER_EMISSIVITY(1,:) = ONE
       endif
 
 !  initialize linearized quantities
