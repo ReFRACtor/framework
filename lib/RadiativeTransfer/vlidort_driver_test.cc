@@ -2,6 +2,7 @@
 #include "unit_test_support.h"
 #include "vlidort_fixture.h"
 #include "old_constant.h"
+#include "fe_disable_exception.h"
 
 #include "spurr_brdf_types.h"
 
@@ -222,6 +223,102 @@ BOOST_AUTO_TEST_CASE(line_of_sight_nstokes_3)
   Array<double, 1> e(3);
   e = 1.6762275238830235e-03, -1.5607360168268711e-04, -1.2353734844838193e-03;
   run_vector_test(t, LINE_OF_SIGHT, e, 1e-7);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+//=======================================================================
+// Analytic jacobians (the linearized greek / copy_jacobians path) checked
+// against finite differences of the intensity for the full Stokes vector.
+//=======================================================================
+
+BOOST_FIXTURE_TEST_SUITE(vlidort_driver_vector_jacobian, GlobalFixture)
+
+// Atmospheric (optical depth) profile jacobian versus finite difference.
+BOOST_AUTO_TEST_CASE(atmospheric_jacobian_fd)
+{
+  FeDisableException disable_fp;
+  VLidortDriverVectorFixture t(3);
+  t.vlidort_driver->set_plane_parallel();
+
+  double taur = 2.0e-2, taug = 1.0e-6;
+
+  // od carries a single derivative d(od)/dx = 1; ssa and pf held fixed so
+  // the analytic jacobian is d(stokes)/d(od).
+  ArrayAd<double, 1> od(1, 1), ssa(1, 1);
+  od.value()(0) = taur + taug;
+  od.jacobian()(0, 0) = 1.0;
+  ssa.value()(0) = taur / od.value()(0);
+  ssa.jacobian()(0, 0) = 0.0;
+
+  ArrayAd<double, 3> pf(t.pf);
+  pf.jacobian() = 0.0;
+
+  ArrayAd<double, 1> surface(1, 1);
+  surface.value()(0) = 0.0;   // black surface
+  surface.jacobian()(0, 0) = 0.0;
+
+  Array<double, 1> refl;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param, jac_atm_temp;
+  Array<double, 1> jac_surf_temp;
+
+  t.vlidort_driver->reflectance_and_jacobian_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface,
+      od, ssa, pf, refl, jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
+
+  // Finite difference: perturb od value only.
+  double pert = 1e-7;
+  Array<double, 1> od_pert(od.value().copy());
+  od_pert(0) += pert;
+  Array<double, 1> refl_pert(t.vlidort_driver->reflectance_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface.value(),
+      od_pert, ssa.value(), pf.value()));
+
+  for(int s = 0; s < refl.rows(); ++s) {
+    double jac_fd = (refl_pert(s) - refl(s)) / pert;
+    // Absolute tolerance: the tiny Q/U components sit near finite-difference
+    // roundoff, where a relative check is meaningless.
+    BOOST_CHECK_SMALL(jac_atm(0, 0, s) - jac_fd, 1e-5);
+  }
+}
+
+// Surface (Lambertian albedo) jacobian versus finite difference.
+BOOST_AUTO_TEST_CASE(surface_jacobian_fd)
+{
+  FeDisableException disable_fp;
+  VLidortDriverVectorFixture t(3);
+  t.vlidort_driver->set_plane_parallel();
+
+  double taur = 2.0e-2, taug = 1.0e-6;
+  t.od = taur + taug;
+  t.ssa.value() = taur / t.od.value();
+
+  ArrayAd<double, 1> surface(1, 1);
+  surface.value()(0) = 0.1;
+  surface.jacobian()(0, 0) = 1.0;
+
+  Array<double, 1> refl;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param, jac_atm_temp;
+  Array<double, 1> jac_surf_temp;
+
+  t.vlidort_driver->reflectance_and_jacobian_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface,
+      t.od, t.ssa, t.pf, refl, jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
+
+  // Finite difference: perturb the albedo.
+  double pert = 1e-7;
+  Array<double, 1> surface_pert(surface.value().copy());
+  surface_pert(0) += pert;
+  Array<double, 1> refl_pert(t.vlidort_driver->reflectance_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface_pert,
+      t.od.value(), t.ssa.value(), t.pf.value()));
+
+  for(int s = 0; s < refl.rows(); ++s) {
+    double jac_fd = (refl_pert(s) - refl(s)) / pert;
+    BOOST_CHECK_SMALL(jac_surf_param(0, s) - jac_fd, 1e-5);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()

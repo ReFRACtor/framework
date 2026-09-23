@@ -175,7 +175,23 @@ void VLidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)
 
 void VLidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
 {
+  // VLIDORT needs its master linearization switches turned on explicitly.
+  // The shared base only sets do_profile_linearization (which is enough for
+  // LIDORT); VLIDORT additionally gates all weighting functions on
+  // do_linearization / do_atmos_linearization, so without these the profile
+  // and surface Jacobians come back as zero.
+  VLidort_Modified_Lincontrol& mlincontrol = vlidort_interface_->vlidort_linmodin().mcont();
+  mlincontrol.ts_do_simulation_only(false);
+  mlincontrol.ts_do_linearization(true);
+  mlincontrol.ts_do_atmos_linearization(pf.number_variable() > 0);
+  mlincontrol.ts_do_column_linearization(false);
+
   int natm_jac = pf.number_variable();
+
+  // VLIDORT gates the number of profile weighting functions it computes on
+  // TS_N_TOTALPROFILE_WFS (the base only sets the per-layer vary number and
+  // the surface WF count), so without this the profile Jacobians are zero.
+  vlidort_interface_->vlidort_linfixin().cont().ts_n_totalprofile_wfs(natm_jac);
 
   // Ranges for copying inputs to method
   Range rall = Range::all();
