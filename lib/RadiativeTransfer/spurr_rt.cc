@@ -134,18 +134,19 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const boost
   // Obtain Wn and Spec_index dependent inputs
   Range ra(Range::all());
 
+  int nscatt = rt_driver_->number_scattering_matrix_elements();
   Array<double, 1> od_in, ssa_in;
-  Array<double, 2> pf;
+  Array<double, 3> pf;
   if(Opt_prop) {
     od_in.reference( Opt_prop->total_optical_depth().value() );
     ssa_in.reference( Opt_prop->total_single_scattering_albedo().value() );
     if (number_moment() > 0)
-      pf.reference( Opt_prop->total_phase_function_moments(number_moment(), 1)(ra, ra, 0).value() );
+      pf.reference( Opt_prop->total_phase_function_moments(number_moment(), nscatt).value() );
   } else {
     od_in.reference( atm->optical_depth_wrt_rt(Wn, Spec_index).value() );
     ssa_in.reference( atm->single_scattering_albedo_wrt_rt(Wn, Spec_index).value() );
     if (number_moment() > 0)
-      pf.reference( atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), 1)(ra, ra, 0).value() );
+      pf.reference( atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), nscatt).value() );
   }
 
   // Update user levels if necessary
@@ -169,14 +170,23 @@ Array<double,1> SpurrRt::stokes_single_wn(double Wn, int Spec_index, const boost
   rt_driver_->clear_linear_inputs();
   rt_driver_->calculate_rt();
 
-  // Copy values from LIDORT
-  Array<double, 1> stokes(number_stokes());
-  stokes = 0;
-  stokes(0) = rt_driver_->get_intensity();
-  // Check for NaN from lidort
-  if(std::isnan(stokes(0)))
-    throw Exception("SpurrRt encountered a NaN in the radiance");
-  return stokes;
+  // Copy values from RT driver
+  // Number of stokes returned from driver may be less than configuration of RT module
+  Array<double, 1> stokes_in(rt_driver_->get_intensity());
+  Array<double, 1> stokes_out(number_stokes());
+  stokes_out = 0;
+  stokes_out(Range(0, stokes_in.rows()-1)) = stokes_in;
+
+  // Check for NaN values
+  for (int sidx = 0; sidx < stokes_in.rows(); sidx++) {
+      if(std::isnan(stokes_out(sidx))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the radiance for stokes index: " << sidx;
+        throw err_msg;
+      }
+  }
+
+  return stokes_out;
 }
 
 // See base class for description of this
@@ -185,20 +195,21 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
 
   // Obtain Wn and Spec_index dependent inputs
   Range ra(Range::all());
+  int nscatt = rt_driver_->number_scattering_matrix_elements();
   ArrayAd<double, 1> od, ssa;
-  ArrayAd<double, 2> pf;
+  ArrayAd<double, 3> pf;
   Array<double, 3> jac_iv(0,0,0);
   if(Opt_prop) {
     od.reference(Opt_prop->total_optical_depth());
     ssa.reference(Opt_prop->total_single_scattering_albedo());
     if (number_moment() > 0)
-      pf.reference(Opt_prop->total_phase_function_moments(number_moment(), 1)(ra, ra, 0));
+      pf.reference(Opt_prop->total_phase_function_moments(number_moment(), nscatt));
     jac_iv.reference(Opt_prop->intermediate_jacobian());
   } else {
     od.reference(atm->optical_depth_wrt_rt(Wn, Spec_index));
     ssa.reference(atm->single_scattering_albedo_wrt_rt(Wn, Spec_index));
     if (number_moment() > 0)
-      pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), 1)(ra, ra, 0));
+      pf.reference(atm->phase_function_moments_wrt_rt(Wn, Spec_index, number_moment(), nscatt));
     jac_iv.reference(atm->intermediate_jacobian(Wn, Spec_index));
   }
 
@@ -238,12 +249,12 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   rt_driver_->calculate_rt();
 
   // Copy values from LIDORT
-  double rad = rt_driver_->get_intensity();
+  Array<double, 1> rad_driver(rt_driver_->get_intensity());
 
-  Array<double, 2> jac_atm;
-  Array<double, 1> jac_surf_param;
-  double jac_surf_temp;
-  Array<double, 1> jac_atm_temp;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param;
+  Array<double, 1> jac_surf_temp;
+  Array<double, 2> jac_atm_temp;
   rt_driver_->copy_jacobians(jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
 
   //-----------------------------------------------------------------------
@@ -255,51 +266,66 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
   /// the layers and add in the surface Jacobian to give us the total
   /// Jacobian to the reflectance with respect to the state vector.
   //-----------------------------------------------------------------------
-  Array<double, 1> jac(jac_iv.depth());
-  for(int st_idx = 0; st_idx < jac.rows(); ++st_idx) {
-    double val = 0;
 
-    // dimensions swapped on jac_iv and jac_atm
-    // jac_atm is njac x nlayer 
-    // jac_iv  is nlayer x njac
-    for(int lay_idx = 0; lay_idx < jac_iv.rows(); ++lay_idx) {
-      for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
-        val += jac_atm(var_idx, lay_idx) * jac_iv(lay_idx, var_idx, st_idx);
+  ArrayAd<double, 1> rad_jac(number_stokes(), jac_iv.depth());
+  rad_jac = 0;
+
+  for (int stokes_idx = 0; stokes_idx < rad_driver.rows(); stokes_idx++) {
+
+      Array<double, 1> jac(jac_iv.depth());
+      for(int st_idx = 0; st_idx < jac.rows(); ++st_idx) {
+        double val = 0;
+
+        // dimensions swapped on jac_iv and jac_atm
+        // jac_atm is njac x nlayer 
+        // jac_iv  is nlayer x njac
+        for(int lay_idx = 0; lay_idx < jac_iv.rows(); ++lay_idx) {
+          for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
+            val += jac_atm(var_idx, lay_idx, stokes_idx) * jac_iv(lay_idx, var_idx, st_idx);
+          }
+
+          if(do_thermal_emission and !atmos_bb.is_constant()) {
+            val += jac_atm_temp(lay_idx, stokes_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
+          }
+        }
+
+        if(do_surface_pd) {
+          // The min() here ensures that we only loop over the number of parameters that
+          // either the RT or source parameters both have
+          // LIDORT will have a jac_surf_param larger insize (hardcoded allocation) than 
+          // lidort_surface.jacobian()
+          // 2stream has a jac_surf_param smaller than lidort_surface because due to the way
+          // it is set up no parameter index is available for shadowing when using
+          // coxmunk mode
+          for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
+            val += jac_surf_param(m, stokes_idx) * lidort_surface.jacobian()(m, st_idx);
+          }
+        }
+
+        if(do_thermal_emission and !surface_bb.is_constant()) {
+          val += surface_bb.gradient()(st_idx) * jac_surf_temp(stokes_idx);
+        }
+
+        jac(st_idx) = val;
       }
 
-      if(do_thermal_emission and !atmos_bb.is_constant()) {
-        val += jac_atm_temp(lay_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
+      // Assign value for each stokes index
+      rad_jac(stokes_idx) = AutoDerivative<double>(rad_driver(stokes_idx), jac);
+
+      // Check for NaN from lidort
+      if(std::isnan(rad_driver(stokes_idx))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the radiance for stokes index: " << stokes_idx;
+        throw err_msg;
       }
-    }
 
-    if(do_surface_pd) {
-      // The min() here ensures that we only loop over the number of parameters that
-      // either the RT or source parameters both have
-      // LIDORT will have a jac_surf_param larger insize (hardcoded allocation) than 
-      // lidort_surface.jacobian()
-      // 2stream has a jac_surf_param smaller than lidort_surface because due to the way
-      // it is set up no parameter index is available for shadowing when using
-      // coxmunk mode
-      for(int m = 0; m < min(jac_surf_param.rows(), lidort_surface.jacobian().rows()); ++m) {
-        val += jac_surf_param(m) * lidort_surface.jacobian()(m, st_idx);
+      if(any(blitz_isnan(jac))) {
+        Exception err_msg;
+        err_msg << "SpurrRt encountered a NaN in the jacobian for stokes index" << stokes_idx;
+        throw err_msg;
       }
-    }
-
-    if(do_thermal_emission and !surface_bb.is_constant()) {
-      val += surface_bb.gradient()(st_idx) * jac_surf_temp;
-    }
-
-    jac(st_idx) = val;
   }
 
-  ArrayAd<double, 1> rad_jac(number_stokes(), jac.rows());
-  rad_jac = 0;
-  rad_jac(0) = AutoDerivative<double>(rad, jac);
-  // Check for NaN from lidort
-  if(std::isnan(rad))
-    throw Exception("SpurrRt encountered a NaN in the radiance");
-  if(any(blitz_isnan(jac)))
-    throw Exception("SpurrRt encountered a NaN in the jacobian");
   return rad_jac;
 }
 

@@ -1,7 +1,7 @@
 #ifndef SPURR_RT_H
 #define SPURR_RT_H
 
-#include "spurr_driver.h"
+#include "spurr_rt_driver.h"
 #include "radiative_transfer_single_wn.h"
 #include "rt_atmosphere.h"
 #include <boost/noncopyable.hpp>

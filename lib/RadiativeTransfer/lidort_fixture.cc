@@ -21,7 +21,7 @@ LidortDriverCommonFixture::LidortDriverCommonFixture() : sza(3), zen(3), azm(3)
   heights.resize(nlayer+1);
   od.resize(nlayer, 1);
   ssa.resize(nlayer, 1);
-  pf.resize(nmoms, nlayer, 1);
+  pf.resize(nmoms, nlayer, 1, 1);
 
   // Simple height grid evenly spaced
   heights(0) = 100;
@@ -29,12 +29,12 @@ LidortDriverCommonFixture::LidortDriverCommonFixture() : sza(3), zen(3), azm(3)
     heights(hidx) = heights(hidx-1) - heights(0)/nlayer;
   }
 
-  // No aerosols, and depolization factor = 0 
+  // No aerosols, and depolization factor = 0
   // so simplified phase function moments:
   Range all = Range::all();
   pf = 0.0;
-  pf(0, all) = 1.0;
-  pf(2, all) = 0.5; 
+  pf(0, all, 0) = 1.0;
+  pf(2, all, 0) = 0.5;
 
   surface_params = 0.0;
   surface_type = -1;
@@ -195,7 +195,7 @@ LidortLowHighCommon::LidortLowHighCommon()
   nmoms_low = 2*nstreams_low;
 
   nstreams_high = 8;
-  nmoms_high = Lidort_Pars::instance().maxmoments_input;
+  nmoms_high = Lidort_Pars::instance().maxmoments_input();
 
 }
 

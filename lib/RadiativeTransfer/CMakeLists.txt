@@ -27,7 +27,8 @@ set(DIR_SOURCES
     l_rad_fortran/l_surface.F90
     l_rad_fortran/l_surface_fourier.F90
     l_rad_rt.cc
-    lidort_driver.cc
+    lidort_brdf_driver.cc
+    lidort_rt_driver.cc
     lidort_interface_masters.F90
     lidort_interface_masters_serialization.cc
     lidort_interface_masters_io.F90
@@ -35,6 +36,8 @@ set(DIR_SOURCES
     lidort_interface_types_io.F90
     lidort_rt.cc
     lsi_rt.cc
+    multiscatt_brdf_driver.cc
+    multiscatt_rt_driver.cc
     optical_properties_lsi.cc
     optical_properties_pca.cc
     pca_binning.cc
@@ -52,13 +55,27 @@ set(DIR_SOURCES
     radiative_transfer_single_wn.cc
     raman_sioris.cc
     raman_sioris.f90
-    spurr_driver.cc
+    spurr_brdf_driver.cc
+    spurr_rt_driver.cc
     spurr_rt.cc
     twostream_driver.cc
     twostream_interface.F90
     twostream_interface_serialization.cc
     twostream_rt.cc
+    vlidort_brdf_driver.cc
+    vlidort_rt.cc
+    vlidort_rt_driver.cc
+    vlidort_interface_masters.F90
+    vlidort_interface_masters_io.F90
+    vlidort_interface_masters_serialization.cc
+    vlidort_interface_types.F90
+    vlidort_interface_types_io.F90
 )
+
+# rt_driver_compare.cc/.h and rt_driver_scenario.cc/.h are unfinished WIP
+# scaffolding for a generalized RT-driver comparison harness that is not yet
+# referenced by anything else in the tree. Left out of the build until that
+# work is picked back up.
 
 set(TEST_SOURCES
     pca_fortran/pca_correction.f90
@@ -84,6 +101,10 @@ set(TEST_SOURCES
     twostream_driver_test.cc
     twostream_interface_test.cc
     twostream_rt_test.cc
+    vlidort_driver_test.cc
+    vlidort_fixture.cc
+    vlidort_rt_test.cc
+    vlidort_interface_types_test.cc
 )
 
 # Full path already included

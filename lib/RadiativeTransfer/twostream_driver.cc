@@ -88,8 +88,8 @@ TwostreamBrdfDriver::TwostreamBrdfDriver(int UNUSED(surface_type))
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
   twostream_brdf_.reset( new Twostream_Ls_Brdf_Supplement(
-    lid_pars.maxbeams, lid_pars.max_user_streams, lid_pars.max_user_obsgeoms, lid_pars.maxstreams_brdf,
-    lid_pars.max_brdf_kernels, lid_pars.max_brdf_parameters, lid_pars.max_surfacewfs,
+    lid_pars.maxbeams(), lid_pars.max_user_streams(), lid_pars.max_user_obsgeoms(), lid_pars.maxstreams_brdf(),
+    lid_pars.max_brdf_kernels(), lid_pars.max_brdf_parameters(), lid_pars.max_surfacewfs(),
     nbeams, n_user_streams, nstreams_brdf) );
 
   brdf_params.reference( twostream_brdf_->brdf_parameters() );
@@ -238,10 +238,10 @@ TwostreamRtDriver::TwostreamRtDriver(int nlayers, int surface_type, bool do_full
   Lidort_Pars lid_pars = Lidort_Pars::instance();
 
   twostream_interface_.reset( new Twostream_Lps_Master( 
-    lid_pars.maxlayers, lid_pars.maxtotal, lid_pars.max_messages,
-    lid_pars.maxbeams, lid_pars.max_geometries, 
-    lid_pars.max_user_streams, lid_pars.max_user_relazms, lid_pars.max_user_obsgeoms, 
-    lid_pars.max_atmoswfs, lid_pars.max_surfacewfs, lid_pars.max_sleavewfs, 
+    lid_pars.maxlayers(), lid_pars.maxtotal(), lid_pars.max_messages(),
+    lid_pars.maxbeams(), lid_pars.max_geometries(), 
+    lid_pars.max_user_streams(), lid_pars.max_user_relazms(), lid_pars.max_user_obsgeoms(), 
+    lid_pars.max_atmoswfs(), lid_pars.max_surfacewfs(), lid_pars.max_sleavewfs(), 
     nlayers, ntotal, n_user_streams, n_user_relazms, nbeams, earth_radius, n_geometries) );
 
   // Initialize BRDF data structure
@@ -362,7 +362,7 @@ void TwostreamRtDriver::setup_thermal_inputs(double surface_bb, const blitz::Arr
 
 void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                              const blitz::Array<double, 1>& ssa,
-                                             const blitz::Array<double, 2>& pf) 
+                                             const blitz::Array<double, 3>& pf) 
 {
   // Ranges for copying inputs to method
   Range rlay(0, od.extent(firstDim) - 1);
@@ -378,13 +378,13 @@ void TwostreamRtDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
   // Assymetry factor
   // Equal to one third of the first phase function moment
   Array<double, 1> asymm_input( twostream_interface_->asymm_input() );
-  asymm_input(rlay) = pf(1, rlay) / 3.0;
+  asymm_input(rlay) = pf(1, rlay, 0) / 3.0;
 
   // Delta-m scaling factor for 2-stream
   // Equal to one fifth of the second  phase function moment
   if (twostream_interface_->do_d2s_scaling()) {
     Array<double, 1> d2s_scaling( twostream_interface_->d2s_scaling() );
-    d2s_scaling(rlay) = pf(2, rlay) / 5.0;
+    d2s_scaling(rlay) = pf(2, rlay, 0) / 5.0;
   }
 }
 
@@ -397,7 +397,7 @@ void TwostreamRtDriver::clear_linear_inputs()
 
 void TwostreamRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od, 
                                             const ArrayAd<double, 1>& ssa,
-                                            const ArrayAd<double, 2>& pf,
+                                            const ArrayAd<double, 3>& pf,
                                             bool do_surface_linearization) 
 {
   // Number of profile weighting functions in layer n
@@ -457,8 +457,8 @@ void TwostreamRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,
   l_deltau = od.jacobian();
   l_omega  = ssa.jacobian();
   
-  l_asymm_input = pf.jacobian()(1, all, all) / 3.0;
-  l_d2s_scaling = pf.jacobian()(2, all, all) / 5.0;
+  l_asymm_input = pf.jacobian()(1, all, 0, all) / 3.0;
+  l_d2s_scaling = pf.jacobian()(2, all, 0, all) / 5.0;
 }
 
 void TwostreamRtDriver::calculate_rt() const
@@ -486,19 +486,26 @@ void TwostreamRtDriver::calculate_rt() const
 
 }
 
-double TwostreamRtDriver::get_intensity() const
+const Array<double, 1> TwostreamRtDriver::get_intensity() const
 {
-  return twostream_interface_->intensity_toa()(0);
+  Array<double, 1> intensity(1);
+  intensity(0) = twostream_interface_->intensity_toa()(0);
+  return intensity;
 }
 
-void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& UNUSED(jac_surf_temp), blitz::Array<double, 1>& UNUSED(jac_atm_temp) ) const
+void TwostreamRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, Array<double, 1>& UNUSED(jac_surf_temp), blitz::Array<double, 2>& UNUSED(jac_atm_temp) ) const
 {
   // Copy out jacobian values
   Range ra(Range::all());
-  jac_atm.reference( twostream_interface_->profilewf_toa()(0, ra, ra).copy() );
-  jac_atm.transposeSelf(secondDim, firstDim); // swap to same ordering as lidort
-    
-  jac_surf_param.reference( twostream_interface_->surfacewf_toa()(0, ra).copy() );
+
+  Array<double, 2> jac_atm_interface(twostream_interface_->profilewf_toa()(0, ra, ra));
+  jac_atm_interface.transposeSelf(secondDim, firstDim); // swap to same ordering as lidort
+  jac_atm.resize(jac_atm_interface.rows(), jac_atm_interface.cols(), 1);
+  jac_atm(ra, ra, 0) = jac_atm_interface;
+
+  Array<double, 1> jac_surf_param_interface(twostream_interface_->surfacewf_toa()(0, ra));
+  jac_surf_param.resize(jac_surf_param_interface.rows(), 1);
+  jac_surf_param(ra, 0) = jac_surf_param_interface;
 
   // jac_surf_temp, jac_atm_temp not available yet
 }

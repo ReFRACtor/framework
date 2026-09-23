@@ -1,4 +1,5 @@
 #include "first_order_driver.h"
+
 #include "fp_serialize_support.h"
 #include "wgs84_constant.h"
 
@@ -11,7 +12,7 @@ using namespace blitz;
 #ifdef FP_HAVE_BOOST_SERIALIZATION
 template<class Archive>
 void FirstOrderDriver::serialize(Archive & ar,
-				 const unsigned int UNUSED(version))
+                                 const unsigned int UNUSED(version))
 {
   ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SpurrRtDriver)
     & FP_NVP_(num_layers)
@@ -51,18 +52,18 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
 
   // Use LIDORT parameters to have consistent sizes for maximum values
   Lidort_Pars lid_pars = Lidort_Pars::instance();
-  int max_geoms = lid_pars.max_geometries;
-  int max_szas = lid_pars.maxbeams;
-  int max_vzas = lid_pars.max_user_streams;
-  int max_azms = lid_pars.max_user_relazms;
-  int max_layers = lid_pars.maxlayers;
-  int max_partials = lid_pars.max_partlayers;
-  int max_fine = lid_pars.maxfinelayers;
-  int max_moments_input = lid_pars.maxmoments_input;
-  int max_user_levels = lid_pars.max_user_levels;
-  int max_atmoswfs = lid_pars.max_atmoswfs;
-  int max_surfacewfs = lid_pars.max_surfacewfs; 
-  int max_sleavewfs = lid_pars.max_sleavewfs;
+  int max_geoms = lid_pars.max_geometries();
+  int max_szas = lid_pars.maxbeams();
+  int max_vzas = lid_pars.max_user_streams();
+  int max_azms = lid_pars.max_user_relazms();
+  int max_layers = lid_pars.maxlayers();
+  int max_partials = lid_pars.max_partlayers();
+  int max_fine = lid_pars.maxfinelayers();
+  int max_moments_input = lid_pars.maxmoments_input();
+  int max_user_levels = lid_pars.max_user_levels();
+  int max_atmoswfs = lid_pars.max_atmoswfs();
+  int max_surfacewfs = lid_pars.max_surfacewfs();
+  int max_sleavewfs = lid_pars.max_sleavewfs();
 
   // Store the surface type being used, this value is only used for the surface_type() accessor
   surface_type_ = surface_type;
@@ -118,7 +119,7 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // Recommended value by manual of 50 in case we use cox-munk
   int n_brdf_stream = 50;
   l_brdf_driver.reset(new LidortBrdfDriver(n_brdf_stream, num_moments_));
-  Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->brdf_interface()->brdf_sup_in();
+  Brdf_Sup_Inputs& brdf_inputs = l_brdf_driver->lidort_brdf_interface()->brdf_sup_in();
   
   // Only use 1 beam meaning only one set of sza, azm
   brdf_inputs.bs_nbeams(1);
@@ -284,7 +285,7 @@ void FirstOrderDriver::setup_thermal_inputs(double UNUSED(surface_bb), const bli
 }
 
 /// Compute truncation factor for use in deltam scaling
-const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 2>& pf) const
+const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz::Array<double, 3>& pf) const
 {
     Array<double, 1> truncfac(pf.cols());
 
@@ -296,7 +297,7 @@ const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz:
         truncfac = 0;
     } else {
         double dnm1 = 4 * (num_streams_) + 1;
-        truncfac = pf(2*num_streams_, Range::all()) / dnm1;
+        truncfac = pf(2*num_streams_, Range::all(), 0) / dnm1;
     }
 
     return truncfac;
@@ -304,7 +305,7 @@ const blitz::Array<double, 1> FirstOrderDriver::deltam_trunc_factor(const blitz:
 
 void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od, 
                                             const blitz::Array<double, 1>& ssa,
-                                            const blitz::Array<double, 2>& pf) 
+                                            const blitz::Array<double, 3>& pf) 
 {
     int nlay = od.rows();
     Range r_all = Range::all();
@@ -341,11 +342,11 @@ void FirstOrderDriver::setup_optical_inputs(const blitz::Array<double, 1>& od,
 
     // Set phase moments, FO storage is transpose of ReFRACtor ordering
     Array<double, 2> phasmoms(solar_interface_->phasmoms());
-    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim)(r_all, r_mom);
+    phasmoms(r_lay, r_mom) = pf.transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, 0);
 
     // Use direct bounce BRDF from LIDORT BRDF supplement for first order reflection
     Array<double, 1> reflectance(solar_interface_->reflec());
-    reflectance(0) = l_brdf_driver->brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
+    reflectance(0) = l_brdf_driver->lidort_brdf_interface()->brdf_sup_out().bs_dbounce_brdfunc()(0, 0, 0);
 }
 
 void FirstOrderDriver::clear_linear_inputs() 
@@ -356,8 +357,10 @@ void FirstOrderDriver::clear_linear_inputs()
 }
 
 /// Compute truncation factor for use in deltam scaling
-const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const
+const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const
 {
+    Range r_all = Range::all();
+
     Array<double, 2> l_truncfac(pf.cols(), pf.number_variable());
 
     if(pf.rows() < 2*num_streams_+1) {
@@ -369,8 +372,7 @@ const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const
     } else {
         double dnm1 = 4 * (num_streams_) + 1;
         firstIndex i1; secondIndex i2;
-        Range r_all = Range::all();
-        l_truncfac = pf.jacobian()(2*num_streams_, r_all, r_all)(i1, i2) / dnm1;
+        l_truncfac = pf.jacobian()(2*num_streams_, r_all, 0, r_all)(i1, i2) / dnm1;
     }
 
     return l_truncfac;
@@ -380,7 +382,7 @@ const blitz::Array<double, 2> FirstOrderDriver::deltam_linear_trunc_factor(const
 void FirstOrderDriver::setup_linear_inputs
 (const ArrayAd<double, 1>& od, 
  const ArrayAd<double, 1>& ssa,
- const ArrayAd<double, 2>& pf,
+ const ArrayAd<double, 3>& pf,
  bool do_surface_linearization) 
 {
     // Set which profile layer jacobians are computed
@@ -432,7 +434,7 @@ void FirstOrderDriver::setup_linear_inputs
 
     // Set phasmoms jacobian and set correct ordering in copy
     Array<double, 3> l_phasmoms(solar_interface_->l_phasmoms());
-    l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian().transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
+    l_phasmoms(r_lay, r_mom, r_jac) = pf.jacobian()(r_all, r_all, 0, r_all).transpose(secondDim, firstDim, thirdDim)(r_all, r_mom, r_all);
 
 
     // Check for variation of PHASMOMS associated with Jacobian wrt current atmospheric parameter
@@ -442,7 +444,7 @@ void FirstOrderDriver::setup_linear_inputs
     Array<bool, 2> layer_jac_moms( solar_interface_->lvarymoms() );
     for(int mom_idx = 0; mom_idx < num_moments_; mom_idx++) {
         Array<double, 2> l_mom_vals(l_phasmoms(r_all, mom_idx, r_all));
-        layer_jac_moms = where(abs(l_mom_vals) >= 1000.0 * lid_pars.smallnum, true, layer_jac_moms);
+        layer_jac_moms = where(abs(l_mom_vals) >= 1000.0 * lid_pars.smallnum(), true, layer_jac_moms);
     }
 
     // Set up solar linear inputs
@@ -457,7 +459,7 @@ void FirstOrderDriver::setup_linear_inputs
         Array<double, 1> reflectance(solar_interface_->reflec());
         Array<double, 2> ls_reflec( solar_interface_->ls_reflec() );
 
-        ls_reflec(0, r_surf_wfs) = l_brdf_driver->brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
+        ls_reflec(0, r_surf_wfs) = l_brdf_driver->lidort_brdf_interface()->brdf_linsup_out().bs_ls_dbounce_brdfunc()(r_surf_wfs, 0, 0, 0);
     }
  
 }
@@ -469,16 +471,18 @@ void FirstOrderDriver::calculate_rt() const
     solar_interface_->ss_integral_ilps_up();
 }
 
-double FirstOrderDriver::get_intensity() const
+const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
 {
-    return solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
+    Array<double, 1> intensity(1);
+    intensity(0) = solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
+    return intensity;
 }
 
 void FirstOrderDriver::copy_jacobians
-(blitz::Array<double, 2>& jac_atm,
- blitz::Array<double, 1>& jac_surf_param,
- double& UNUSED(jac_surf_temp),
- blitz::Array<double, 1>& UNUSED(jac_atm_temp)) const
+(blitz::Array<double, 3>& jac_atm,
+ blitz::Array<double, 2>& jac_surf_param,
+ blitz::Array<double, 1>& UNUSED(jac_surf_temp),
+ blitz::Array<double, 2>& UNUSED(jac_atm_temp)) const
 {
     Range ra(Range::all());
 
@@ -487,10 +491,11 @@ void FirstOrderDriver::copy_jacobians
     Array<double, 2> jac_total(solar_interface_->lp_jacobians_up()(0, 0, ra, ra) + solar_interface_->lp_jacobians_db()(0, 0, ra, ra));
     // Need to transpose output to be in the expected order of njac, nlay
     jac_total.transposeSelf(secondDim, firstDim);
-    jac_atm.reference(jac_total);
+    jac_atm.resize(jac_total.rows(), jac_total.cols(), 1);
+    jac_atm(ra, ra, 0) = jac_total;
 
-    jac_surf_param.resize(solar_interface_->max_surfacewfs());
+    jac_surf_param.resize(solar_interface_->max_surfacewfs(), 1);
 
     // Output array size is: max_user_levels, maxgeoms, max_surfacewfs
-    jac_surf_param = solar_interface_->ls_jacobians_db()(0, 0, ra);
+    jac_surf_param(ra, 0) = solar_interface_->ls_jacobians_db()(0, 0, ra);
 }

@@ -2,7 +2,8 @@
 %{
 #include "twostream_driver.h"
 %}
-%base_import(spurr_driver)
+
+%base_import(spurr_rt_driver)
 %import "twostream_interface.i"
 %import "array_ad.i"
 %fp_shared_ptr(FullPhysics::TwostreamBrdfDriver);
@@ -36,16 +37,16 @@ public:
   void setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1> atmosphere_bb);
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf);
+                            const blitz::Array<double, 3>& pf);
   void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
-                           const ArrayAd<double, 2>& pf,
+                           const ArrayAd<double, 3>& pf,
                            bool do_surface_linearization);
 
   void calculate_rt() const;
-  double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  const blitz::Array<double, 1> get_intensity() const;
+  void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
   %python_attribute(twostream_brdf_driver, boost::shared_ptr<TwostreamBrdfDriver>)
   %python_attribute(brdf_interface, boost::shared_ptr<Twostream_Ls_Brdf_Supplement>)

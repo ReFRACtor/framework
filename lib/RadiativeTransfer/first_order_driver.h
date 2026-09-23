@@ -1,11 +1,11 @@
 #ifndef FO_DRIVER_H
 #define FO_DRIVER_H
 
-#include "spurr_driver.h"
+#include "spurr_rt_driver.h"
 #include "first_order_interface.h"
 
 // Include BRDF driver interface from LIDORT driver
-#include "lidort_driver.h"
+#include "lidort_brdf_driver.h"
 
 /****************************************************************//**
   Driver for optimized first order of scattering RT
@@ -36,17 +36,17 @@ public:
   
   void setup_optical_inputs(const blitz::Array<double, 1>& od, 
                             const blitz::Array<double, 1>& ssa,
-                            const blitz::Array<double, 2>& pf);
+                            const blitz::Array<double, 3>& pf);
   
   void clear_linear_inputs();
   void setup_linear_inputs(const ArrayAd<double, 1>& od,
                            const ArrayAd<double, 1>& ssa,
-                           const ArrayAd<double, 2>& pf,
+                           const ArrayAd<double, 3>& pf,
                            bool do_surface_linearization);
   
   void calculate_rt() const;
-  double get_intensity() const;
-  void copy_jacobians(blitz::Array<double, 2>& jac_atm, blitz::Array<double, 1>& jac_surf_param, double& jac_surf_temp, blitz::Array<double, 1>& jac_atm_temp) const;
+  const blitz::Array<double, 1> get_intensity() const;
+  void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
   const boost::shared_ptr<Fo_Sswpgeometry_Master> geometry_interface() const { return geometry; }
   const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
@@ -59,8 +59,8 @@ private:
   void init_interfaces(int nlayers, int surface_type);
   void copy_geometry_flags();
 
-  const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 2>& pf) const;
-  const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 2>& pf) const;
+  const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 3>& pf) const;
+  const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const;
 
   int num_layers_;
   int num_moments_;
@@ -85,4 +85,5 @@ private:
 }
 
 FP_EXPORT_KEY(FirstOrderDriver);
+
 #endif

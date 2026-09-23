@@ -2,7 +2,7 @@
 #include "unit_test_support.h"
 #include "ground.h"
 #include "old_constant.h"
-#include "lidort_driver.h"
+#include "lidort_rt_driver.h"
 #include "spurr_brdf_types.h"
 #include "planck.h"
 
@@ -34,18 +34,18 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   Range rjac(0,nparam-1);
   Range rlay(0,nlayer-1);
   Range rsurf(0,surface_params.number_variable()-1);
-  double refl_ts;
-  double refl_lid;
+  Array<double, 1> refl_ts(1);
+  Array<double, 1> refl_lid(1);
 
-  blitz::Array<double, 2> jac_atm_ts;
-  blitz::Array<double, 1> jac_surf_param_ts;
-  double jac_surf_temp_ts;
-  blitz::Array<double, 1> jac_atm_temp_ts;
+  blitz::Array<double, 3> jac_atm_ts;
+  blitz::Array<double, 2> jac_surf_param_ts;
+  blitz::Array<double, 1> jac_surf_temp_ts;
+  blitz::Array<double, 2> jac_atm_temp_ts;
 
-  blitz::Array<double, 2> jac_atm_lid;
-  blitz::Array<double, 1> jac_surf_param_lid;
-  double jac_surf_temp_lid;
-  blitz::Array<double, 1> jac_atm_temp_lid;
+  blitz::Array<double, 3> jac_atm_lid;
+  blitz::Array<double, 2> jac_surf_param_lid;
+  blitz::Array<double, 1> jac_surf_temp_lid;
+  blitz::Array<double, 2> jac_atm_temp_lid;
 
   // Use LIDORT for comparison
   int lid_nstreams = 1;
@@ -90,15 +90,15 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
   } 
 
   // Compute phase function
-  ArrayAd<double, 2> pf(nmoms+1, nlayer, nparam);
+  ArrayAd<double, 3> pf(nmoms+1, nlayer, 1, nparam);
   pf = 0.0;
 
   for(int lay_idx = 0; lay_idx < nlayer; lay_idx++) {
-      pf(0, lay_idx) = 1.0;
-      pf(2, lay_idx) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
+      pf(0, lay_idx, 0) = 1.0;
+      pf(2, lay_idx, 0) = ray_wt(lay_idx) * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf(mom_idx, lay_idx) = pf(mom_idx, lay_idx) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf(mom_idx, lay_idx, 0) = pf(mom_idx, lay_idx, 0) + aer_wt(lay_idx) * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
   }
 
@@ -142,12 +142,12 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
               << "refl_ts  = " << refl_ts << std::endl;
   }
 
-  BOOST_CHECK_CLOSE(refl_lid, refl_ts, 7e-5);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_lid, refl_ts, 7e-5);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
   jac_atm_fd = 0.0;
 
-  double refl_fd;
+  Array<double, 1> refl_fd(1);
 
   for(int l_idx = 0; l_idx < nlayer; l_idx++) {
     for(int p_idx = 0; p_idx < pert_atm.rows(); p_idx++) {
@@ -157,7 +157,7 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
 
       blitz::Array<double,1> od_pert( od.value().shape() );
       blitz::Array<double,1> ssa_pert( ssa.value().shape() );
-      blitz::Array<double,2> pf_pert( pf.value().copy() );
+      blitz::Array<double,3> pf_pert( pf.value().copy() );
    
      switch (p_idx) {
       case 0:
@@ -177,12 +177,12 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
       double ray_wt_pert = taur_pert(l_idx) / (taur_pert(l_idx) + aer_prop_ssa * taua_pert(l_idx));
       double aer_wt_pert = 1.0 - ray_wt_pert;
 
-      pf_pert(all, l_idx) = 0;
-      pf_pert(0, l_idx) = 1.0;
-      pf_pert(2, l_idx) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
+      pf_pert(all, l_idx, 0) = 0;
+      pf_pert(0, l_idx, 0) = 1.0;
+      pf_pert(2, l_idx, 0) = ray_wt_pert * ( (1.0 - depol) / (2.0 - depol) );
 
       for(int mom_idx = 1; mom_idx <= nmoms; mom_idx++) {
-          pf_pert(mom_idx, l_idx) = pf_pert(mom_idx, l_idx) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
+          pf_pert(mom_idx, l_idx, 0) = pf_pert(mom_idx, l_idx, 0) + aer_wt_pert * (2*mom_idx+1) * pow(aer_prop_asym, mom_idx);
       }
 
       refl_fd = twostream_driver->reflectance_calculate
@@ -192,20 +192,20 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
          bb_surface, bb_atm);
 
       if (pert_atm(p_idx) != 0.0) {
-        jac_atm_fd(p_idx, l_idx) = (refl_fd - refl_ts) / pert_atm(p_idx);
+        jac_atm_fd(p_idx, l_idx) = (refl_fd(0) - refl_ts(0)) / pert_atm(p_idx);
       }
     }
   }
 
   if(debug_output) {
     std::cerr << setprecision(8)
-              << "jac_atm_lid = " << jac_atm_lid(rjac,rlay).transpose(1,0)
+              << "jac_atm_lid = " << jac_atm_lid(rjac,rlay, 0).transpose(1,0)
               << "jac_atm_fd = " << jac_atm_fd(rjac, rlay).transpose(1,0)
-              << "jac_atm_ts = " << jac_atm_ts(rjac,rlay).transpose(1,0) << std::endl;
+              << "jac_atm_ts = " << jac_atm_ts(rjac,rlay, 0).transpose(1,0) << std::endl;
   }
 
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay), jac_atm_ts(rjac,rlay), 1e-6);
-  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_ts(rjac,rlay), jac_atm_fd(rjac,rlay), 5e-4);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay, 0), jac_atm_ts(rjac,rlay, 0), 1e-6);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_ts(rjac,rlay, 0), jac_atm_fd(rjac,rlay), 5e-4);
 
   if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
@@ -223,11 +223,11 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
          od.value(), ssa.value(), pf.value(),
          bb_surface, bb_atm);
 
-      jac_surf_param_fd(p_idx) = (refl_fd - refl_ts) / pert_surf(p_idx);
+      jac_surf_param_fd(p_idx) = (refl_fd(0) - refl_ts(0)) / pert_surf(p_idx);
 
       // Adjust analytic jacobians to have same meaning as finite difference one
-      jac_surf_param_lid(p_idx) *= lid_surface_params.jacobian()(p_idx, 0);
-      jac_surf_param_ts(p_idx) *= ts_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_lid(p_idx, 0) *= lid_surface_params.jacobian()(p_idx, 0);
+      jac_surf_param_ts(p_idx, 0) *= ts_surface_params.jacobian()(p_idx, 0);
     }
 
     if(debug_output) {
@@ -236,8 +236,8 @@ void test_twostream(boost::shared_ptr<TwostreamRtDriver>& twostream_driver, Arra
                 << "jac_surf_param_ts = " << jac_surf_param_ts << std::endl;
     }
 
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf), jac_surf_param_ts(rsurf), 1e-7);
-    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_ts, jac_surf_param_fd, 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_lid(rsurf, 0), jac_surf_param_ts(rsurf, 0), 1e-7);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(jac_surf_param_ts(all, 0), jac_surf_param_fd, 1e-7);
   }
 }
 
@@ -640,31 +640,39 @@ BOOST_AUTO_TEST_CASE(valgrind_problem)
                  >> do_fullquadrature;
   TwostreamRtDriver d(nlayer, surface_type, (do_fullquadrature == 1));
                       
-  double refl;
-  Array<double, 2> jac_atm;
-  Array<double, 1> jac_surf_param;
-  double jac_surf_temp;
-  blitz::Array<double, 1> jac_atm_temp;
+  Array<double, 1> refl;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param;
+  Array<double, 1> jac_surf_temp;
+  Array<double, 2> jac_atm_temp;
   Array<double, 1> height;
   ArrayAd<double, 1> surface_param, od, ssa;
-  ArrayAd<double, 2> pf;
+  ArrayAd<double, 2> pf_in;
   double sza, zen, azm;
+
   captured_input >> height >> sza >> azm >> zen >> surface_type
-                 >> surface_param >> od >> ssa >> pf;
+                 >> surface_param >> od >> ssa >> pf_in;
+
+  // Resize pf data for interface
+  ArrayAd<double, 3> pf_full;
+  pf_full.resize(pf_in.rows(), pf_in.cols(), 1, pf_in.number_variable());
+  pf_full(Range::all(), Range::all(), 0) = pf_in;
+
   d.reflectance_and_jacobian_calculate(height, sza, azm, zen, 
                                        surface_type, surface_param,
-                                       od, ssa, pf, refl,
+                                       od, ssa, pf_full, refl,
                                        jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp);
+
   // This will trigger an error when we run with valgrind. Note that
   // we *don't* actually see a NaN here, rather this conditional
   // triggers the unitialized value error
   for(int i = 0; i < od.jacobian().rows(); ++i)
     for(int j = 0; j < od.jacobian().cols(); ++j) {
-      if(std::isnan(jac_atm(j,i)))
+      if(std::isnan(jac_atm(j,i, 0)))
         std::cerr << "Nan at jac_atm(" << j << ", " << i << ")\n";
     }
   for(int i = 0; i < jac_surf_param.rows(); ++i)
-    if(std::isnan(jac_surf_param(i)))
+    if(std::isnan(jac_surf_param(i, 0)))
       std::cerr << "Nan at jac_surf_param(" << i << ")\n";
 }
 BOOST_AUTO_TEST_SUITE_END()

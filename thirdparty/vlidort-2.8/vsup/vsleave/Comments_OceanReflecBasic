@@ -1,0 +1,7 @@
+!  Updated for Version 2.8a, 18 March 2019 as follows
+!    (1) The formula for CDOM absorption a_cdom was changed to the commonly accepted equation from
+!        Morel and Maritorena, JGR, 2001, in which the value of pure water absorption at 440 nm
+!        (aw=0.0065) is taken from Morel et al., Limnol. Oceanogr, 2007
+!    (2) The b_wat value is now taken from Morel et al., Limonol. Oceanogr, 2007
+!    (3) The basic reflectance formula is R2 = b_tot/a_tot. ==>IT IS NOT not b_tot/(a_tot+b_tot)
+ 
