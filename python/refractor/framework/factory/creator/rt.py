@@ -35,6 +35,36 @@ class LidortRt(Creator):
                 self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only(),
                 self.use_solar_sources(), self.use_thermal_emission(), self.use_thermal_scattering())
 
+class VlidortRt(Creator):
+
+    atmosphere = param.InstanceOf(rf.RtAtmosphere)
+    stokes_coefficient = param.Array(dims=2)
+    solar_zenith = param.ArrayWithUnit(dims=1)
+    observation_zenith = param.ArrayWithUnit(dims=1)
+    relative_azimuth = param.ArrayWithUnit(dims=1)
+
+    num_streams = param.Scalar(int)
+    num_mom = param.Scalar(int)
+    num_stokes = param.Scalar(int, default=3)
+
+    pure_nadir = param.Scalar(bool, default=False)
+    multiple_scattering_only = param.Scalar(bool, default=False)
+
+    use_solar_sources = param.Scalar(bool, default=True)
+    use_thermal_emission = param.Scalar(bool, default=False)
+    use_thermal_scattering = param.Scalar(bool, default=True)
+
+    def create(self, **kwargs):
+        stokes_object = rf.StokesCoefficientConstant(self.stokes_coefficient())
+
+        return rf.VlidortRt(self.atmosphere(), stokes_object,
+                self.solar_zenith().convert("deg").value,
+                self.observation_zenith().convert("deg").value,
+                self.relative_azimuth().convert("deg").value,
+                self.pure_nadir(), self.num_streams(), self.num_mom(), self.multiple_scattering_only(),
+                self.num_stokes(),
+                self.use_solar_sources(), self.use_thermal_emission(), self.use_thermal_scattering())
+
 class FirstOrderRt(Creator):
 
     atmosphere = param.InstanceOf(rf.RtAtmosphere)

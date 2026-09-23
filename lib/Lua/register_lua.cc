@@ -250,6 +250,7 @@ void RegisterLua::register_lua(lua_State* ls)
   REGISTER_LUA_LIST(AtmosphereStandard);
   REGISTER_LUA_LIST(AtmosphereLegacy);
   REGISTER_LUA_LIST(LidortRt);
+  REGISTER_LUA_LIST(VlidortRt);
   REGISTER_LUA_LIST(SpectralWindowRange);
   REGISTER_LUA_LIST(LRadRt);
   REGISTER_LUA_LIST(LsiRt);

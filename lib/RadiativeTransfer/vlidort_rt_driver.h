@@ -13,9 +13,12 @@ namespace FullPhysics {
 
 class VLidortRtDriver : public MultiScattRtDriver {
 public:
-  VLidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type, 
-                const blitz::Array<double, 1>& zen, bool pure_nadir, 
+  VLidortRtDriver(int nstream, int nmoment, bool do_multi_scatt_only, int surface_type,
+                const blitz::Array<double, 1>& zen, bool pure_nadir, int nstokes = 3,
                 bool do_solar_sources = true, bool do_thermal_emission = false, bool do_thermal_scattering = true);
+
+  /// Number of Stokes parameters computed by this driver (1, 3 or 4)
+  int number_stokes() const { return nstokes_; }
 
   /// Abstract versions of interfaces
   const boost::shared_ptr<Spurr_Lps_Masters_Base> rt_interface() const 
@@ -38,14 +41,18 @@ public:
 
 protected:
 
+  void initialize_rt(int nstream, int nmoment, bool do_solar_sources, bool do_thermal_emission, bool do_thermal_scattering);
   void copy_brdf_sup_outputs() const;
   void setup_phase_function(const blitz::Array<double, 3>& pf);
   void setup_linear_phase_function(const ArrayAd<double, 3>& pf);
 
   boost::shared_ptr<VLidort_Lps_Masters> vlidort_interface_;
 
+  /// Number of Stokes parameters (1, 3 or 4)
+  int nstokes_;
+
 private:
-  VLidortRtDriver() {}
+  VLidortRtDriver() : nstokes_(3) {}
   void initialize_interface(int nstream, int nmoment);
 
   friend class boost::serialization::access;
