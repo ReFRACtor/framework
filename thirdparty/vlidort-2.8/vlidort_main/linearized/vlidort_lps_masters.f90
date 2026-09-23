@@ -6628,7 +6628,7 @@
 !  4/9/19. Additional code to set the LP derivative of TRANS_ATMOS_FINAL
 !     Here in the thermal-regime, there is no water-leaving, so initialize to zero          
 
-                  LP_TRANS_ATMOS_FINAL(IBEAM,LAYER_TO_VARY,1:N_LAYER_WFS) = ZERO
+                  LP_TRANS_ATMOS_FINAL(IPARTIC,LAYER_TO_VARY,1:N_LAYER_WFS) = ZERO ! ReFRACtor fix: thermal-only beam index is IPARTIC, not (unset) IBEAM
           
 !  Solve the Regular BVP linearization
 
@@ -6818,7 +6818,7 @@
 !  4/9/19. Additional code to set the LS derivative of TRANS_ATMOS_FINAL
 !     Here in the thermal-regime, there is no water-leaving, so initialize to zero          
 
-            LS_TRANS_ATMOS_FINAL(IBEAM,1:N_SURFACE_WFS) = ZERO
+            LS_TRANS_ATMOS_FINAL(IPARTIC,1:N_SURFACE_WFS) = ZERO ! ReFRACtor fix: thermal-only beam index is IPARTIC, not (unset) IBEAM
           
 !  Surface WFs; Solve boundary value problem
 !mick fix 9/19/2017 - replaced DO_REFLECTED_DIRECTBEAM(IBEAM) with DO_LOCALBEAM(IBEAM)

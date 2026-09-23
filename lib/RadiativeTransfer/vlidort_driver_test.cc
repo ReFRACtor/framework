@@ -214,14 +214,78 @@ BOOST_AUTO_TEST_CASE(thermal_emission)
   t.run_test(t.vlidort_driver);
 }
 
-// NOTE: A VLIDORT blackbody-Jacobian finite-difference test (analogous to the
-// LIDORT lidort_driver_lambertian_thermal/blackbody_jacobian_fd case) is not
-// included here yet because VLIDORT's linearized thermal profile-weighting-
-// function path (GET_LP_BOASOURCE in vlidort_lp_wfatmos.f90) reads an
-// uninitialized beam index in thermal-only mode, so any VLIDORT
-// reflectance_and_jacobian_calculate in thermal mode currently faults
-// (lp_trans_atmos_final out-of-bounds). The scalar LIDORT test exercises the
-// shared MultiScattRtDriver LBBF copy logic in the meantime.
+// Blackbody weighting-function Jacobians (jac_surf_temp = d(stokes)/d(surface
+// blackbody), jac_atm_temp = d(stokes)/d(per-level atmosphere blackbody))
+// versus finite differences. Thermal emission is linear in the blackbody
+// inputs, so the finite differences are effectively exact.
+BOOST_AUTO_TEST_CASE(blackbody_jacobian_fd)
+{
+  FeDisableException disable_fp;
+  Fixture1 t;
+
+  double wn = 568.69;
+  double temperature = 290.0;
+  double bb_surface = planck(wn, temperature);
+  Array<double, 1> bb_atm(t.nlayer + 1);
+  bb_atm = planck(wn, temperature);
+
+  // Gas + (near-black, fully emitting) surface. The surface albedo is set
+  // ~0 so its emissivity is ~1 and there is no reflection of downwelling
+  // atmospheric emission back up: this isolates the surface and atmospheric
+  // blackbody weighting functions so each analytic Jacobian can be compared
+  // against a clean finite difference.
+  double taur = 1.0e-6/t.nlayer;
+  double taug = 1.0/t.nlayer;
+
+  ArrayAd<double, 1> od(t.nlayer, 1), ssa(t.nlayer, 1);
+  od.value() = taur + taug;
+  od.jacobian() = 0.0;
+  ssa.value() = taur / od.value();
+  ssa.jacobian() = 0.0;
+
+  ArrayAd<double, 3> pf(t.pf);
+  pf.jacobian() = 0.0;
+
+  ArrayAd<double, 1> surface(1, 1);
+  surface.value()(0) = 1.0e-6;
+  surface.jacobian()(0, 0) = 0.0;
+
+  Array<double, 1> refl;
+  Array<double, 3> jac_atm;
+  Array<double, 2> jac_surf_param, jac_atm_temp;
+  Array<double, 1> jac_surf_temp;
+
+  t.vlidort_driver->reflectance_and_jacobian_calculate(
+      t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface,
+      od, ssa, pf, refl, jac_atm, jac_surf_param, jac_surf_temp, jac_atm_temp,
+      bb_surface, bb_atm);
+
+  double pert = 1e-3;
+
+  // Surface blackbody jacobian
+  {
+    Array<double, 1> refl_pert(t.vlidort_driver->reflectance_calculate(
+        t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface.value(),
+        od.value(), ssa.value(), pf.value(), bb_surface + pert, bb_atm));
+    for(int s = 0; s < refl.rows(); ++s) {
+      double jac_fd = (refl_pert(s) - refl(s)) / pert;
+      BOOST_CHECK_CLOSE(jac_surf_temp(s), jac_fd, 1e-2);
+    }
+  }
+
+  // Per-level atmosphere blackbody jacobian
+  for(int lev = 0; lev < bb_atm.rows(); ++lev) {
+    Array<double, 1> bb_atm_pert(bb_atm.copy());
+    bb_atm_pert(lev) += pert;
+    Array<double, 1> refl_pert(t.vlidort_driver->reflectance_calculate(
+        t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, surface.value(),
+        od.value(), ssa.value(), pf.value(), bb_surface, bb_atm_pert));
+    for(int s = 0; s < refl.rows(); ++s) {
+      double jac_fd = (refl_pert(s) - refl(s)) / pert;
+      BOOST_CHECK_CLOSE(jac_atm_temp(lev, s), jac_fd, 1e-2);
+    }
+  }
+}
 
 BOOST_AUTO_TEST_CASE(serialization)
 {
