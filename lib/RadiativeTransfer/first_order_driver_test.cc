@@ -272,11 +272,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay, 0), jac_atm_fo(rjac,rlay, 0), 3e-4);
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay, 0), jac_atm_fd(rjac,rlay), 5e-4);
 
-  // The surface-parameter Jacobian is only validated for solar sources. In
-  // thermal mode the surface contributes through its (Kirchhoff) emissivity,
-  // and the First Order driver does not yet wire the linearized surface
-  // emissivity weighting function, so its surface Jacobian is not compared here.
-  if(blitz::any(surface_params.value() > 0.0) && !do_thermal) {
+  if(blitz::any(surface_params.value() > 0.0)) {
     // Check surface jacobians against finite difference
     blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param_fo.rows() );
     jac_surf_param_fd = 0.0;
