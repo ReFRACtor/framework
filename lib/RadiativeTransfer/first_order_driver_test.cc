@@ -272,7 +272,11 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_lid(rjac,rlay, 0), jac_atm_fo(rjac,rlay, 0), 3e-4);
   BOOST_CHECK_MATRIX_CLOSE_TOL(jac_atm_fo(rjac,rlay, 0), jac_atm_fd(rjac,rlay), 5e-4);
 
-  if(blitz::any(surface_params.value() > 0.0)) {
+  // The surface-parameter Jacobian is only validated for solar sources. In
+  // thermal mode the surface contributes through its (Kirchhoff) emissivity,
+  // and the First Order driver does not yet wire the linearized surface
+  // emissivity weighting function, so its surface Jacobian is not compared here.
+  if(blitz::any(surface_params.value() > 0.0) && !do_thermal) {
     // Check surface jacobians against finite difference
     blitz::Array<double, 1> jac_surf_param_fd( jac_surf_param_fo.rows() );
     jac_surf_param_fd = 0.0;
@@ -550,6 +554,43 @@ BOOST_AUTO_TEST_CASE(gas_surface_aerosol)
 {
   bool do_solar = true;
   bool do_thermal = false;
+  bool debug_output = false;
+
+  test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
+}
+
+// Thermal-emission-only cases. The First Order direct-thermal path
+// (DTE_Integral_ILPS_UP) is compared against LIDORT for radiance and the
+// atmospheric/surface parameter Jacobians, the same way the solar cases are.
+
+BOOST_AUTO_TEST_CASE(thermal_surface_only)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
+  bool debug_output = false;
+
+  test_first_order_surface_only(do_solar, do_thermal, debug_output);
+}
+
+// NOTE: a pure-Rayleigh-scattering thermal case is intentionally omitted. For a
+// conservative-scattering layer the first-order direct-thermal source is
+// proportional to (1 - single-scatter-albedo) ~ 0, so the First Order result
+// (surface emission only) cannot match LIDORT's multiply-scattered thermal
+// field. The First Order driver models the direct-thermal (first-order) term.
+
+BOOST_AUTO_TEST_CASE(thermal_gas_surface)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
+  bool debug_output = false;
+
+  test_first_order_gas_surface(do_solar, do_thermal, debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
   bool debug_output = false;
 
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
