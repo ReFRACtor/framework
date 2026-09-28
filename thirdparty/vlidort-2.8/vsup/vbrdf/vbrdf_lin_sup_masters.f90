@@ -2795,8 +2795,15 @@ MODULE vbrdf_LinSup_masters_m
          VBRDF_Sup_Out%BS_EMISSIVITY      = ZERO
          VBRDF_Sup_Out%BS_USER_EMISSIVITY = ZERO
       else
-         VBRDF_Sup_Out%BS_EMISSIVITY      = ONE
-         VBRDF_Sup_Out%BS_USER_EMISSIVITY = ONE
+!  ReFRACtor fix: Kirchhoff emissivity is (identity - reflectance); the
+!  blackbody identity is non-zero only for the I (Stokes 1) component. The
+!  original code initialized every Stokes component to ONE, leaving the Q/U/V
+!  emissivity at 1 for a Lambertian surface (LOCAL_EMISSIVITY is only built for
+!  Stokes 1), so vector thermal emission leaked the full blackbody into Q and U.
+         VBRDF_Sup_Out%BS_EMISSIVITY      = ZERO
+         VBRDF_Sup_Out%BS_USER_EMISSIVITY = ZERO
+         VBRDF_Sup_Out%BS_EMISSIVITY(1,:)      = ONE
+         VBRDF_Sup_Out%BS_USER_EMISSIVITY(1,:) = ONE
       endif
 
 !  initialize linearized quantities
@@ -4099,9 +4106,15 @@ MODULE vbrdf_LinSup_masters_m
                 ENDDO
                 IF ( DO_USER_STREAMS ) THEN
                   DO UI = 1, N_USER_STREAMS
+! ReFRACtor fix: LOCAL_USER_EMISSIVITY already includes the kernel factor
+! (VBRDF_FOURIER returns FACTOR for a Lambertian kernel, and
+! HELP_EMISS*FACTOR*SUM(EMISS) otherwise), exactly like LOCAL_EMISSIVITY on
+! the quadrature line above. Multiplying by FF here applied the kernel factor
+! a second time, giving a user-stream emissivity of 1-albedo**2 instead of
+! 1-albedo. Drop the extra FF so the user-stream and quadrature emissivities
+! are consistent (matches the non-linearized VBRDF master).
                     VBRDF_Sup_Out%BS_USER_EMISSIVITY(Q,UI) = &
-                    VBRDF_Sup_Out%BS_USER_EMISSIVITY(Q,UI) - FF*LOCAL_USER_EMISSIVITY(Q,UI)
-! former            VBRDF_Sup_Out%BS_USER_EMISSIVITY(Q,UI) - LOCAL_USER_EMISSIVITY(Q,UI)
+                    VBRDF_Sup_Out%BS_USER_EMISSIVITY(Q,UI) - LOCAL_USER_EMISSIVITY(Q,UI)
                   ENDDO
                 ENDIF
               ENDDO

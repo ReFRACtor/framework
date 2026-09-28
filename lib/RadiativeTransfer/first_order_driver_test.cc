@@ -555,4 +555,41 @@ BOOST_AUTO_TEST_CASE(gas_surface_aerosol)
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
 }
 
+// Thermal-emission-only cases. The First Order direct-thermal path
+// (DTE_Integral_ILPS_UP) is compared against LIDORT for radiance and the
+// atmospheric/surface parameter Jacobians, the same way the solar cases are.
+
+BOOST_AUTO_TEST_CASE(thermal_surface_only)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
+  bool debug_output = false;
+
+  test_first_order_surface_only(do_solar, do_thermal, debug_output);
+}
+
+// NOTE: a pure-Rayleigh-scattering thermal case is intentionally omitted. For a
+// conservative-scattering layer the first-order direct-thermal source is
+// proportional to (1 - single-scatter-albedo) ~ 0, so the First Order result
+// (surface emission only) cannot match LIDORT's multiply-scattered thermal
+// field. The First Order driver models the direct-thermal (first-order) term.
+
+BOOST_AUTO_TEST_CASE(thermal_gas_surface)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
+  bool debug_output = false;
+
+  test_first_order_gas_surface(do_solar, do_thermal, debug_output);
+}
+
+BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol)
+{
+  bool do_solar = false;
+  bool do_thermal = true;
+  bool debug_output = false;
+
+  test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

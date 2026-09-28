@@ -50,6 +50,8 @@ public:
 
   const boost::shared_ptr<Fo_Sswpgeometry_Master> geometry_interface() const { return geometry; }
   const boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface() const { return solar_interface_; }
+  const boost::shared_ptr<Fo_Dtwpgeometry_Master> thermal_geometry_interface() const { return dt_geometry; }
+  const boost::shared_ptr<Fo_Thermal_Rtcalcs_Ilps> thermal_interface() const { return thermal_interface_; }
 
   bool do_deltam_scaling() const { return do_deltam_scaling_; }
   void do_deltam_scaling(bool do_scaling) { do_deltam_scaling_ = do_scaling; }
@@ -73,6 +75,11 @@ private:
   boost::shared_ptr<Fo_Sswpgeometry_Master> geometry;
   boost::shared_ptr<Fo_Scalarss_Spherfuncs> legendre;
   boost::shared_ptr<Fo_Scalarss_Rtcalcs_Ilps> solar_interface_;
+
+  // Direct-thermal-emission geometry and RT (only allocated when thermal
+  // emission is enabled).
+  boost::shared_ptr<Fo_Dtwpgeometry_Master> dt_geometry;
+  boost::shared_ptr<Fo_Thermal_Rtcalcs_Ilps> thermal_interface_;
 
   // Specific implementation cast version of brdf_driver()
   boost::shared_ptr<LidortBrdfDriver> l_brdf_driver;

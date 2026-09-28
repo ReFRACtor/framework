@@ -69,6 +69,47 @@ VLidortDriverLambertianFixture::VLidortDriverLambertianFixture(int Nstokes)
   vlidort_driver->set_plane_parallel();
 }
 
+VLidortDriverLambertianThermalFixture::VLidortDriverLambertianThermalFixture(int Nstokes)
+  : VLidortDriverCommonFixture(Nstokes)
+{
+  surface_params.resize(1);
+  surface_type = LAMBERTIAN;
+
+  bool do_solar = false;
+  bool do_thermal = true;
+
+  vlidort_driver.reset(new VLidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir, nstokes, do_solar, do_thermal));
+
+  // Turn off delta-m scaling
+  vlidort_driver->vlidort_interface()->vlidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  vlidort_driver->set_plane_parallel();
+}
+
+VLidortDriverVectorThermalFixture::VLidortDriverVectorThermalFixture(int Nstokes)
+  : VLidortDriverCommonFixture(Nstokes)
+{
+  // Off-nadir viewing so Rayleigh scattering of the thermal field induces a
+  // non-zero Q. Matches the offline reference (viewing zenith = 35 deg). The
+  // solar zenith / azimuth are irrelevant for a thermal (m=0) problem.
+  zen = 35.0;
+
+  surface_params.resize(1);
+  surface_type = LAMBERTIAN;
+
+  bool do_solar = false;
+  bool do_thermal = true;
+
+  vlidort_driver.reset(new VLidortRtDriver(nstreams, nmoms, do_multiple_scattering_only, surface_type, zen, pure_nadir, nstokes, do_solar, do_thermal));
+
+  // Turn off delta-m scaling
+  vlidort_driver->vlidort_interface()->vlidort_modin().mbool().ts_do_deltam_scaling(false);
+
+  // Plane-parallel
+  vlidort_driver->set_plane_parallel();
+}
+
 VLidortDriverCoxmunkFixture::VLidortDriverCoxmunkFixture(int Nstokes)
   : VLidortDriverCommonFixture(Nstokes)
 {

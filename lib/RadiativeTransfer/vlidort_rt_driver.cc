@@ -130,9 +130,11 @@ void VLidortRtDriver::initialize_rt(int nstream, int nmoment, bool do_solar_sour
   fboolean_inputs.ts_do_fourier0_nstokes2(true);
 
   // The Green's function solution (VLIDORT's default) is not valid for
-  // nstokes == 4; VLIDORT requires the classical solution in that case.
+  // nstokes == 4, and VLIDORT rejects it for thermal emission entirely
+  // ("Greens function solution cannot be used for thermal emission"), so the
+  // classical solution must be used in either case.
   VLidort_Modified_Boolean& mboolean_inputs = vlidort_interface_->vlidort_modin().mbool();
-  mboolean_inputs.ts_do_classical_solution(nstokes_ == 4);
+  mboolean_inputs.ts_do_classical_solution(nstokes_ == 4 || do_thermal_emission);
 }
 
 void VLidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)

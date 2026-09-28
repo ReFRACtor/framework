@@ -57,6 +57,35 @@ public:
 };
 
 /****************************************************************//**
+ Fixture for VLidortRtDriver lambertian mode, thermal emission only
+ (no solar source). Mirrors LidortDriverLambertianThermalFixture and
+ is used to validate the scalar (nstokes = 1) thermal radiance and the
+ blackbody weighting-function Jacobians against the offline VLIDORT
+ thermal reference (reference/rt/vlidort_thermal_test).
+*******************************************************************/
+
+class VLidortDriverLambertianThermalFixture : public VLidortDriverCommonFixture {
+public:
+  VLidortDriverLambertianThermalFixture(int nstokes = 1);
+  virtual ~VLidortDriverLambertianThermalFixture() {};
+};
+
+/****************************************************************//**
+ Fixture for VLidortRtDriver thermal emission (no solar) in an off-nadir
+ geometry with a Lambertian surface, used to validate the vector Stokes
+ (I,Q,U) thermal output against the offline VLIDORT thermal reference
+ (reference/rt/vlidort_thermal_test with the viewing zenith set to 35 deg
+ and nstokes = 3). Thermal emission is azimuthally symmetric, so U = 0 and
+ Q is non-zero only where Rayleigh multiple scattering is present.
+*******************************************************************/
+
+class VLidortDriverVectorThermalFixture : public VLidortDriverCommonFixture {
+public:
+  VLidortDriverVectorThermalFixture(int nstokes = 3);
+  virtual ~VLidortDriverVectorThermalFixture() {};
+};
+
+/****************************************************************//**
  Fixture for VLidortRtDriver coxmunk mode
 *******************************************************************/
 

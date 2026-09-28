@@ -256,7 +256,7 @@
 !  Column vectors for solving BCs
 
       DOUBLE PRECISION  :: COL2_SWF    (MAXTOTAL,MAX_SURFACEWFS)
-      DOUBLE PRECISION  :: SCOL2_SWF   (MAXSTREAMS_2,MAX_SURFACEWFS)
+      DOUBLE PRECISION  :: SCOL2_SWF   (MAXSTRMSTKS_2,MAX_SURFACEWFS) ! ReFRACtor fix: was MAXSTREAMS_2; single-layer vector case indexes to NSTKS_NSTRMS_2
 
 !  error tracing variables
 
@@ -905,7 +905,7 @@
 !  Column vectors for solving BCs
 
       DOUBLE PRECISION  :: COLTEL2_SWF    (MAXTOTAL,MAX_SURFACEWFS)
-      DOUBLE PRECISION  :: SCOL2_SWF      (MAXSTREAMS_2,MAX_SURFACEWFS)
+      DOUBLE PRECISION  :: SCOL2_SWF      (MAXSTRMSTKS_2,MAX_SURFACEWFS) ! ReFRACtor fix: was MAXSTREAMS_2; single-layer vector case indexes to NSTKS_NSTRMS_2
 
 !  error tracing variables
 

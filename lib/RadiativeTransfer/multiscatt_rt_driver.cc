@@ -167,9 +167,10 @@ void MultiScattRtDriver::initialize_rt(int nstream, int nmoment, bool do_solar_s
       // Enable solar sources in the BRDF driver
       brdf_interface()->brdf_sup_inputs_base().bs_do_surface_emission(true);
 
-      if(!do_thermal_scattering) {
-        mboolean_inputs.ts_do_thermal_transonly(true);
-      }
+      // Set the transmittance-only flag explicitly for both cases. Only ever
+      // setting it true (never false) left it at the interface default, which
+      // could suppress thermal multiple scattering even when it was requested.
+      mboolean_inputs.ts_do_thermal_transonly(!do_thermal_scattering);
   }
 
   // Number of solar beams
