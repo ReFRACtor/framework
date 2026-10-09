@@ -237,7 +237,8 @@
 
 !  Maximum number of surface property weighting functions
 
-      INTEGER, PARAMETER :: MAX_SURFACEWFS = 1
+! ReFRACtor fix: was 1, too small for Cox-Munk (3 WFs); match LIDORT
+      INTEGER, PARAMETER :: MAX_SURFACEWFS = 7
 
 !  Maximum number of surface-leaving weighting functions
 

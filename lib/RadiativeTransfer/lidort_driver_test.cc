@@ -346,7 +346,22 @@ BOOST_AUTO_TEST_CASE(thermal_downwelling)
 BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
 {
   Fixture1 t;
-  check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type);
+  check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+}
+
+// Thermal emission over a Cox-Munk surface: the emissivity (and its
+// Jacobian) comes from Kirchhoff's law applied to the BRDF in the BRDF
+// supplement, rather than 1 - albedo.
+BOOST_AUTO_TEST_CASE(thermal_coxmunk_jacobian_fd)
+{
+  Fixture1 t;
+  Array<double, 1> zen(1);
+  zen = 0.0;
+  LidortRtDriver d(t.nstreams, t.nmoms, false, COXMUNK, zen, false, false, true);
+  d.lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+  d.set_plane_parallel();
+  check_thermal_jacobians_fd(d, t.pf.value(), COXMUNK, coxmunk_test_surfaces(), {0, 1, 2});
 }
 
 BOOST_AUTO_TEST_SUITE_END()

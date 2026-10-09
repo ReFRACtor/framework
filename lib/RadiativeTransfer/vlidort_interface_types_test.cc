@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(vlidort_pars)
   BOOST_CHECK_EQUAL(tst_obj.max_psols(), 2);
   BOOST_CHECK_EQUAL(tst_obj.max_scatpsols(), tst_obj.max_psols());
   BOOST_CHECK_EQUAL(tst_obj.max_sleavewfs(), 1);
-  BOOST_CHECK_EQUAL(tst_obj.max_surfacewfs(), 1);
+  BOOST_CHECK_EQUAL(tst_obj.max_surfacewfs(), 7);
   BOOST_CHECK_EQUAL(tst_obj.max_szangles(), 8);
   BOOST_CHECK_EQUAL(tst_obj.max_tau_qpath(), 32.0e0);
   BOOST_CHECK_EQUAL(tst_obj.max_tau_spath(), 32.0e0);

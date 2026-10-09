@@ -135,7 +135,11 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   // Number of quadtrature streams for BRDF calculation
   brdf_inputs.bs_nstreams_brdf(n_brdf_stream);
   
-  brdf_inputs.bs_do_directbounce_only(true);
+  // Direct bounce is all the solar first-order term needs, but in that mode
+  // the supplement skips the Kirchhoff emissivity integration (leaving the
+  // emissivity at 1 for every surface), so do the full calculation when
+  // thermal emission is on.
+  brdf_inputs.bs_do_directbounce_only(!do_thermal_emission);
   brdf_inputs.bs_do_brdf_surface(true);
   brdf_inputs.bs_do_user_streams(true);
   brdf_inputs.bs_do_solar_sources(do_solar_sources);
@@ -385,15 +389,6 @@ void FirstOrderDriver::setup_thermal_inputs(double surface_bb, const blitz::Arra
     user_emissivity(0) =
         l_brdf_driver->lidort_brdf_interface()->brdf_sup_out().bs_user_emissivity()(0);
 
-    // For a Lambertian surface the LIDORT BRDF supplement, as configured for the
-    // First Order path, does not track the (small) albedo dependence of the
-    // emissivity, so set the exact Kirchhoff value e = 1 - albedo here. This
-    // keeps the emissivity consistent with its analytic derivative (-1, set in
-    // setup_linear_inputs) and with finite differences of the surface albedo.
-    if (surface_type_ == LAMBERTIAN)
-        user_emissivity(0) = 1.0 -
-            l_brdf_driver->lidort_brdf_interface()->brdf_sup_in().bs_brdf_factors()(0);
-
     // Recompute the thermal coefficient setup (TCOM1) on every call since the
     // optical properties change per spectral point.
     thermal_interface_->do_thermset(true);
@@ -616,18 +611,10 @@ void FirstOrderDriver::setup_linear_inputs
             Range r_surf_wfs = Range(0, n_surf_wfs-1);
             thermal_interface_->do_surfacewfs(true);
 
-            // Linearized surface emissivity at the viewing direction. The
-            // LIDORT BRDF supplement provides the (Kirchhoff) linearized
-            // emissivity for general BRDF kernels, but for a Lambertian kernel
-            // it leaves BS_LS_USER_EMISSIVITY = 0 (the emissivity value is set
-            // through a shortcut that is not linearized). For a Lambertian
-            // surface the Kirchhoff emissivity is e = 1 - albedo, so its
-            // derivative with respect to the (single) surface parameter is -1.
+            // Linearized (Kirchhoff) surface emissivity at the viewing direction.
             Array<double, 2> ls_user_emissivity(thermal_interface_->ls_user_emissivity());
             ls_user_emissivity(0, r_surf_wfs) =
                 l_brdf_driver->lidort_brdf_interface()->brdf_linsup_out().bs_ls_user_emissivity()(r_surf_wfs, 0);
-            if (surface_type_ == LAMBERTIAN)
-                ls_user_emissivity(0, 0) = -1.0;
         }
     }
 }

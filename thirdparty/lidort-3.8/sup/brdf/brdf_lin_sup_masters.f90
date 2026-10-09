@@ -3306,14 +3306,22 @@
               Q  = WOFFSET(K)
               IF ( DO_KERNEL_FACTOR_WFS(K) ) THEN
                 Q = Q + 1
+! ReFRACtor fix: LOCAL_EMISSIVITY is linear in FF, but dividing by FF gives
+! NaN when FF = 0 (e.g. a zero Lambertian component added to Cox-Munk).
+! For the Lambertian kernel LOCAL = FF exactly, so the derivative is -1.
+                IF ( LAMBERTIAN_KERNEL_FLAG(K) ) THEN
+                  LS_EMISSIVITY(Q,1:NSTREAMS) = - ONE
+                  IF ( DO_USER_STREAMS ) LS_USER_EMISSIVITY(Q,1:N_USER_STREAMS) = - ONE
+                ELSE IF ( FF .NE. ZERO ) THEN
                 DO I = 1, NSTREAMS
-                  LS_EMISSIVITY(Q,I) = - LOCAL_EMISSIVITY(I) / FF
-                ENDDO
-                IF ( DO_USER_STREAMS ) THEN
-                  DO UI = 1, N_USER_STREAMS
-                    LS_USER_EMISSIVITY(Q,UI) = &
-                      - LOCAL_USER_EMISSIVITY(UI) / FF
+                    LS_EMISSIVITY(Q,I) = - LOCAL_EMISSIVITY(I) / FF
                   ENDDO
+                  IF ( DO_USER_STREAMS ) THEN
+                    DO UI = 1, N_USER_STREAMS
+                      LS_USER_EMISSIVITY(Q,UI) = &
+                        - LOCAL_USER_EMISSIVITY(UI) / FF
+                    ENDDO
+                  ENDIF
                 ENDIF
               ENDIF
 

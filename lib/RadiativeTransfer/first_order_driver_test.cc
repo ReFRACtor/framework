@@ -1,5 +1,6 @@
 #include "first_order_driver.h"
 #include "unit_test_support.h"
+#include "thermal_jacobian_check.h"
 
 #include "spurr_brdf_types.h"
 #include "planck.h"
@@ -212,7 +213,8 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
 
   }
   
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_lid, refl_fo, 6e-3);
+  // The thermal first-order term has no approximation relative to LIDORT's
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_lid, refl_fo, (do_thermal && !do_solar) ? 1e-7 : 6e-3);
 
   blitz::Array<double, 2> jac_atm_fd(nparam, nlayer);
   jac_atm_fd = 0;
@@ -358,6 +360,32 @@ void test_first_order_surface_only(bool do_solar, bool do_thermal, bool debug_ou
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+}
+
+// Thermal emission over a Cox-Munk surface (gas absorbing atmosphere):
+// FO radiance and surface-emissivity Jacobians vs LIDORT's first-order term
+// and finite differences. Parameters: windspeed, refractive index,
+// Lambertian component (shadowing flag not differentiated).
+void test_first_order_coxmunk_thermal(bool debug_output)
+{
+  int nlayer = 2;
+  int nparam = 2;
+  ArrayAd<double, 1> surface_params(4, 1);
+  ArrayAd<double, 1> taug(nlayer, nparam);
+  ArrayAd<double, 1> taur(nlayer, nparam);
+  ArrayAd<double, 1> taua(nlayer, nparam);
+  blitz::Array<double, 1> pert_atm(nparam);
+  Array<double, 1> pert_surf(3);
+  for(double lamb : {0.0, 0.05}) {
+    surface_params.value() = 7.0, 1.334, lamb, 0.0;
+    taur = 1.0e-6/nlayer;
+    taug = 0.5/nlayer;
+    taua = 0.0;
+    pert_atm = 1e-4, 1e-4;
+    pert_surf = 1e-6, 1e-7, 1e-7;
+    for(int sph = 0; sph < 3; ++sph)
+      test_first_order(COXMUNK, surface_params, taug, taur, taua, pert_atm, pert_surf, false, true, sph, false, debug_output);
+  }
 }
 
 void test_first_order_rayleigh_only(bool do_solar, bool do_thermal, bool debug_output)
@@ -594,6 +622,54 @@ BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol)
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
 }
 
+// Surface-only thermal radiance over a Cox-Munk surface gives the
+// Kirchhoff emissivity directly. FirstOrderDriver must agree with LIDORT
+// (both its first-order term and the full calculation). Regression: with the
+// BRDF supplement in direct-bounce-only mode the FO emissivity was 1.
+BOOST_AUTO_TEST_CASE(thermal_coxmunk_emissivity)
+{
+  Array<double, 1> heights(3);
+  heights = 100, 50, 0;
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(3);
+  bb_atm = bb;
+  Array<double, 1> od(2), ssa(2);
+  od = 1e-8;
+  ssa = 1e-6;
+  Array<double, 3> pf(3, 2, 1);
+  pf = 0;
+  pf(0, Range::all(), 0) = 1;
+  pf(2, Range::all(), 0) = 0.5;
+  Array<double, 1> zen(1);
+  zen = 1e-5;
+  for(double lamb : {0.0, 0.05}) {
+    Array<double, 1> sp(4);
+    sp = 7.0, 1.334, lamb, 0.0;
+    FirstOrderDriver fo(2, COXMUNK, 4, 8, false, true);
+    LidortRtDriver full(4, 8, false, COXMUNK, zen, false, false, true);
+    LidortRtDriver fo_only(4, 8, false, COXMUNK, zen, false, false, true);
+    fo.set_plane_parallel();
+    full.set_plane_parallel();
+    fo_only.set_plane_parallel();
+    fo_only.lidort_interface()->lidort_modin().mbool().ts_do_focorr_nadir(true);
+    fo_only.lidort_interface()->lidort_fixin().f_bool().ts_do_fullrad_mode(false);
+    fo_only.lidort_interface()->lidort_modin().mbool().ts_do_focorr(true);
+    fo_only.lidort_interface()->lidort_modin().mbool().ts_do_no_azimuth(false);
+    double e_fo = fo.reflectance_calculate(heights, 1e-5, 1e-5, 1e-5, COXMUNK, sp, od, ssa, pf, bb, bb_atm)(0) / bb;
+    double e_full = full.reflectance_calculate(heights, 1e-5, 1e-5, 1e-5, COXMUNK, sp, od, ssa, pf, bb, bb_atm)(0) / bb;
+    double e_lfo = fo_only.reflectance_calculate(heights, 1e-5, 1e-5, 1e-5, COXMUNK, sp, od, ssa, pf, bb, bb_atm)(0) / bb;
+    BOOST_CHECK_CLOSE(e_fo, e_lfo, 1e-6);
+    BOOST_CHECK_CLOSE(e_fo, e_full, 1e-5);
+    // Nadir water emissivity ~0.98, reduced by the Lambertian component
+    BOOST_CHECK_CLOSE(e_fo, 0.9794901623 - lamb, 1e-5);
+  }
+}
+
+BOOST_AUTO_TEST_CASE(thermal_coxmunk)
+{
+  test_first_order_coxmunk_thermal(false);
+}
+
 // Downwelling (up-looking observer at the surface) direct-thermal radiance and
 // atmospheric Jacobians (DTE_Integral_ILPS_DN), compared against LIDORT's
 // first-order downwelling thermal term and finite differences.
@@ -605,6 +681,28 @@ BOOST_AUTO_TEST_CASE(thermal_gas_surface_downwelling)
 BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol_downwelling)
 {
   test_first_order_gas_surface_aerosol(false, true, false, true);
+}
+
+// Direct-thermal radiance and atmospheric/surface Jacobians vs finite
+// differences over Lambertian and Cox-Munk surfaces (non-isothermal, two
+// layers, up and downwelling). For Cox-Munk the surface-emissivity Jacobian
+// comes from the LIDORT BRDF supplement's linearized Kirchhoff emissivity.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Array<double, 3> pf(3, 1, 1);
+  pf = 0;
+  pf(0, 0, 0) = 1.0;
+  pf(2, 0, 0) = 0.5;
+  for(int stype : {LAMBERTIAN, COXMUNK}) {
+    BOOST_TEST_CONTEXT("surface type " << stype) {
+    FirstOrderDriver fo(2, stype, 1, 2, false, true);
+    fo.do_deltam_scaling(false);
+    check_thermal_jacobians_fd(fo, pf, stype,
+        stype == LAMBERTIAN ? lambertian_test_surfaces() : coxmunk_test_surfaces(),
+        stype == LAMBERTIAN ? std::vector<int>{0} : std::vector<int>{0, 1, 2},
+        true, false);
+    }
+  }
 }
 
 BOOST_AUTO_TEST_CASE(downwelling_requires_thermal_only)

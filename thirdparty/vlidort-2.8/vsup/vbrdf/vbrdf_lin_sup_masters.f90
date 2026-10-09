@@ -4124,11 +4124,16 @@ MODULE vbrdf_LinSup_masters_m
               W  = WOFFSET(K)
               IF ( DO_KERNEL_FACTOR_WFS(K) ) THEN
                 W = W + 1
-                DO Q = 1, NSTOKES
-                  DO I = 1, NSTREAMS
 ! ReFRACtor fix: LOCAL_EMISSIVITY includes the kernel factor FF (see the
 ! user-emissivity fix above), so d(emissivity)/d(FF) = -LOCAL_EMISSIVITY/FF
-! (the "former" form, also used by the LIDORT BRDF supplement)
+! (the "former" form, also used by the LIDORT BRDF supplement). For the
+! Lambertian kernel this is exactly -1 on Stokes 1 (avoids 0/0 when FF = 0).
+                IF ( LAMBERTIAN_KERNEL_FLAG(K) ) THEN
+                  VBRDF_LinSup_Out%BS_LS_EMISSIVITY(W,1,1:NSTREAMS) = - ONE
+                  IF ( DO_USER_STREAMS ) VBRDF_LinSup_Out%BS_LS_USER_EMISSIVITY(W,1,1:N_USER_STREAMS) = - ONE
+                ELSE IF ( FF .NE. ZERO ) THEN
+                DO Q = 1, NSTOKES
+                  DO I = 1, NSTREAMS
                     VBRDF_LinSup_Out%BS_LS_EMISSIVITY(W,Q,I) = - LOCAL_EMISSIVITY(Q,I) / FF
 ! former            VBRDF_LinSup_Out%BS_LS_EMISSIVITY(W,Q,I) = - LOCAL_EMISSIVITY(Q,I)
                   ENDDO
@@ -4139,6 +4144,7 @@ MODULE vbrdf_LinSup_masters_m
                     ENDDO
                   ENDIF
                 ENDDO
+                ENDIF
               ENDIF
 
 !  Linearization w.r.t Kernel parameters

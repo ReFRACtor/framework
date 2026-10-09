@@ -387,7 +387,41 @@ BOOST_AUTO_TEST_CASE(thermal_downwelling)
 BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
 {
   Fixture1 t;
-  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type);
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+}
+
+// Thermal emission over a Cox-Munk surface, and LIDORT/VLIDORT agreement
+// for it; see the LIDORT thermal_coxmunk_jacobian_fd test.
+BOOST_AUTO_TEST_CASE(thermal_coxmunk_jacobian_fd)
+{
+  Fixture1 t;
+  Array<double, 1> zen(1);
+  zen = 0.0;
+  VLidortRtDriver d(t.nstreams, t.nmoms, false, COXMUNK, zen, false, 1, false, true);
+  d.vlidort_interface()->vlidort_modin().mbool().ts_do_deltam_scaling(false);
+  d.set_plane_parallel();
+  check_thermal_jacobians_fd(d, t.pf.value(), COXMUNK, coxmunk_test_surfaces(), {0, 1, 2});
+
+  LidortDriverLambertianThermalFixture lt;
+  LidortRtDriver l(lt.nstreams, lt.nmoms, false, COXMUNK, zen, false, false, true);
+  l.lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+  l.set_plane_parallel();
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(2);
+  bb_atm = bb;
+  Array<double, 1> od(1), ssa(1);
+  od = 0.5;
+  ssa = 0.02;
+  for(auto& sp : coxmunk_test_surfaces()) {
+    Array<double, 1> rv(d.reflectance_calculate(t.heights, t.sza(0), t.azm(0), t.zen(0),
+        COXMUNK, sp, od, ssa, t.pf.value(), bb, bb_atm));
+    Array<double, 1> rl(l.reflectance_calculate(lt.heights, lt.sza(0), lt.zen(0), lt.azm(0),
+        COXMUNK, sp, od, ssa, lt.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(rv(0), rl(0), 1e-4);
+    // Thermal radiance must lie between the black-surface limits
+    BOOST_CHECK(rv(0) > 0 && rv(0) < bb);
+  }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
@@ -505,7 +539,8 @@ BOOST_AUTO_TEST_CASE(thermal_downwelling_iqu)
 BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
 {
   Fixture1 t;
-  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type);
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
 }
 
 BOOST_AUTO_TEST_SUITE_END()
