@@ -67,6 +67,7 @@ private:
 
   void init_interfaces(int nlayers, int surface_type);
   void copy_geometry_flags();
+  void setup_thermal_geometry();
 
   const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 3>& pf) const;
   const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const;

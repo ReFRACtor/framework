@@ -80,6 +80,12 @@ void MultiScattRtDriver::set_downwelling(bool do_downwelling)
   Spurr_Fixed_Boolean_Base& fboolean_inputs = rt_interface()->fixed_inputs_base().fixed_boolean_base();
   fboolean_inputs.ts_do_upwelling(!do_downwelling);
   fboolean_inputs.ts_do_dnwelling(do_downwelling);
+
+  // Also move the output level now; callers such as SpurrRt only set up the
+  // height grid when the altitudes change
+  int nlayer = rt_interface()->fixed_inputs_base().fixed_control_base().ts_nlayers();
+  Array<double, 1> user_levels( rt_interface()->modified_inputs_base().modified_uservalues_base().ts_user_levels() );
+  user_levels(0) = do_downwelling ? nlayer : 0;
 }
 
 void MultiScattRtDriver::notify_update(const RtAtmosphere& atm)
@@ -247,15 +253,17 @@ void MultiScattRtDriver::setup_sphericity(blitz::Array<double, 1> UNUSED(zen), b
     fboolean_inputs.ts_do_plane_parallel(false);
 
     // Pseudo-spherical + Line of Sight correction
-    mboolean_inputs.ts_do_focorr(true);
     mboolean_inputs.ts_do_focorr_nadir(false);
+    mboolean_inputs.ts_do_focorr_outgoing(true);
 
-    if (do_solar_sources) {
-        mboolean_inputs.ts_do_focorr_outgoing(true);
-    } else {
-        // This must be disabled for thermal only mode
-        mboolean_inputs.ts_do_focorr_outgoing(false);
-    }
+    // Thermal only: no FO correction. The FO direct-thermal code has no
+    // blackbody Jacobians, so with it on the BB Jacobians would miss the
+    // direct emission term; the discrete-ordinate solution includes it.
+    // (Previously FO correction was left on with neither FO type selected
+    // for thermal, which LIDORT rejects.)
+    mboolean_inputs.ts_do_focorr(do_solar_sources);
+    if (!do_solar_sources)
+      mboolean_inputs.ts_do_focorr_outgoing(false);
 
     // Number of fine layers subdividing coarse layering
     // Only used during LOS correction

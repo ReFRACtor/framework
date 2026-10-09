@@ -221,6 +221,11 @@ void FirstOrderDriver::set_downwelling(bool do_downwelling)
   thermal_interface_->do_dnwelling(do_downwelling);
   Array<bool, 2> t_do_sources_dn(thermal_interface_->do_sources_dn());
   t_do_sources_dn = do_downwelling;
+  Array<int, 1> t_user_levels(thermal_interface_->user_levels());
+  t_user_levels(0) = do_downwelling ? num_layers_ : 0;
+  // Redo the (direction dependent) thermal geometry if it was already set up
+  if (height_diffs.rows() > 0)
+    setup_thermal_geometry();
 }
 
 /// Set plane parallel sphericity
@@ -347,7 +352,14 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
   if (do_thermal_emission) {
     Array<double, 1> t_alpha_boa(dt_geometry->alpha_boa());
     t_alpha_boa(0) = zen;
+    setup_thermal_geometry();
+  }
+}
 
+/// Run the direct-thermal geometry and copy it into the thermal interface.
+/// The quadrature depends on the viewing direction (up or down).
+void FirstOrderDriver::setup_thermal_geometry()
+{
     dt_geometry->run();
 
     if (dt_geometry->fail()) {
@@ -370,7 +382,6 @@ void FirstOrderDriver::setup_geometry(double sza, double azm, double zen)
     // The LIDORT-3.8 FO passes the fine-layer radii into the thermal
     // integrator's "hfine" slot (SFO_LinMasters/DTE_Integral_ILPS_UP).
     thermal_interface_->hfine(dt_geometry->radiifine());
-  }
 }
 
 void FirstOrderDriver::setup_thermal_inputs(double surface_bb, const blitz::Array<double, 1>& atmosphere_bb)
@@ -382,12 +393,6 @@ void FirstOrderDriver::setup_thermal_inputs(double surface_bb, const blitz::Arra
 
     // Surface blackbody emission.
     thermal_interface_->surfbb(surface_bb);
-
-    // Surface emissivity at the viewing direction, from the BRDF supplement
-    // (Kirchhoff, 1 - albedo for a Lambertian surface).
-    Array<double, 1> user_emissivity(thermal_interface_->user_emissivity());
-    user_emissivity(0) =
-        l_brdf_driver->lidort_brdf_interface()->brdf_sup_out().bs_user_emissivity()(0);
 
     // Recompute the thermal coefficient setup (TCOM1) on every call since the
     // optical properties change per spectral point.
@@ -626,6 +631,14 @@ void FirstOrderDriver::calculate_rt() const
     if (do_solar_sources)
         solar_interface_->ss_integral_ilps_up();
     if (do_thermal_emission) {
+        // Surface emissivity at the viewing direction, from the BRDF supplement
+        // (Kirchhoff, 1 - albedo for a Lambertian surface). Read here rather
+        // than in setup_thermal_inputs, which SpurrRt calls before the BRDF
+        // supplement is run for the current surface.
+        Array<double, 1> user_emissivity(thermal_interface_->user_emissivity());
+        user_emissivity(0) =
+            l_brdf_driver->lidort_brdf_interface()->brdf_sup_out().bs_user_emissivity()(0);
+
         if (downwelling())
             thermal_interface_->dte_integral_ilps_dn();
         else
@@ -654,8 +667,8 @@ const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
 void FirstOrderDriver::copy_jacobians
 (blitz::Array<double, 3>& jac_atm,
  blitz::Array<double, 2>& jac_surf_param,
- blitz::Array<double, 1>& UNUSED(jac_surf_temp),
- blitz::Array<double, 2>& UNUSED(jac_atm_temp)) const
+ blitz::Array<double, 1>& jac_surf_temp,
+ blitz::Array<double, 2>& jac_atm_temp) const
 {
     Range ra(Range::all());
 
@@ -686,4 +699,47 @@ void FirstOrderDriver::copy_jacobians
         jac_surf_param(ra, 0) += solar_interface_->ls_jacobians_db()(0, 0, ra);
     if (do_thermal_emission && !downwelling())
         jac_surf_param(ra, 0) += thermal_interface_->ls_jacobians_dts()(0, 0, ra);
+
+    // Blackbody Jacobians. The FO direct-thermal code does not provide them,
+    // but its radiance is linear in the blackbody inputs, so evaluate it for
+    // unit blackbody inputs (without the other weighting functions), then
+    // restore the inputs and outputs.
+    if (do_thermal_emission) {
+        bool dn = downwelling();
+        auto run = [&]() {
+            thermal_interface_->do_thermset(true);
+            if (dn) {
+                thermal_interface_->dte_integral_ilps_dn();
+                return thermal_interface_->intensity_dta_dn()(0, 0);
+            }
+            thermal_interface_->dte_integral_ilps_up();
+            return thermal_interface_->intensity_dta_up()(0, 0) + thermal_interface_->intensity_dts()(0, 0);
+        };
+        Range rlev(0, num_layers_);
+        Array<double, 1> bb_input(thermal_interface_->bb_input());
+        Array<double, 1> bb_save(bb_input(rlev).copy());
+        double surfbb_save = thermal_interface_->surfbb();
+        bool prof_save = thermal_interface_->do_profilewfs();
+        bool surf_save = thermal_interface_->do_surfacewfs();
+        thermal_interface_->do_profilewfs(false);
+        thermal_interface_->do_surfacewfs(false);
+
+        bb_input(rlev) = 0.0;
+        thermal_interface_->surfbb(1.0);
+        jac_surf_temp.resize(1);
+        jac_surf_temp(0) = run();
+        thermal_interface_->surfbb(0.0);
+        jac_atm_temp.resize(num_layers_ + 1, 1);
+        for (int lev = 0; lev <= num_layers_; ++lev) {
+            bb_input(rlev) = 0.0;
+            bb_input(lev) = 1.0;
+            jac_atm_temp(lev, 0) = run();
+        }
+
+        bb_input(rlev) = bb_save;
+        thermal_interface_->surfbb(surfbb_save);
+        thermal_interface_->do_profilewfs(prof_save);
+        thermal_interface_->do_surfacewfs(surf_save);
+        run();
+    }
 }

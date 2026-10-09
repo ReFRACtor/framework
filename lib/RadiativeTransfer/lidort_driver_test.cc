@@ -348,6 +348,14 @@ BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
   Fixture1 t;
   check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type,
                              lambertian_test_surfaces(), {0});
+  // nlayers > 2 takes the general-case BVP setup paths
+  check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0}, true, true,
+                             1e-2, 1e-6, 1e-6, 5);
+  // Anisotropic scattering exercises the higher moments in the thermal
+  // particular solution (VLIDORT was passed the wrong Pi matrix there)
+  check_thermal_jacobians_fd(*t.lidort_driver, hg_phase_function(t.pf.value()), t.surface_type,
+                             lambertian_test_surfaces(), {0});
 }
 
 // Thermal emission over a Cox-Munk surface: the emissivity (and its

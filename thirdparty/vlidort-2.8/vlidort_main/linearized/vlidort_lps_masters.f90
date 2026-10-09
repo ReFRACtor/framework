@@ -6907,7 +6907,8 @@
                  EMISSIVITY, USER_EMISSIVITY, FLUX_MULT,                    & ! input
                  DELTAU_VERT, PARTAU_VERT, OMEGA_GREEK,                     & ! Input
                  T_DELT_DISORDS, T_UTDN_DISORDS, T_UTUP_DISORDS,            & ! input
-                 PI_XQP, PI_XQP_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
+                 ! ReFRACtor fix: LBBF expects PI_XQM_PRE here (was PI_XQP_PRE)
+                 PI_XQP, PI_XQM_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
                  K_REAL, K_COMPLEX, SOLA_XPOS, SOLB_XNEG,                   & ! input
                  T_DELT_EIGEN, T_UTDN_EIGEN, T_UTUP_EIGEN,                  & ! input
                  T_DELT_USERM, T_UTDN_USERM, T_UTUP_USERM,                  & ! Input
@@ -6933,7 +6934,8 @@
                  EMISSIVITY, USER_EMISSIVITY,                               & ! input
                  FLUX_MULT, DELTAU_VERT, OMEGA_GREEK,                       & ! Input
                  T_DELT_DISORDS, T_DELT_USERM,                              & ! input
-                 PI_XQP, PI_XQP_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
+                 ! ReFRACtor fix: LBBF expects PI_XQM_PRE here (was PI_XQP_PRE)
+                 PI_XQP, PI_XQM_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
                  K_REAL, K_COMPLEX, T_DELT_EIGEN, SOLA_XPOS, SOLB_XNEG,     & ! input
                  BANDMAT2, IPIVOT, SMAT2, SIPIVOT, HMULT_1, HMULT_2,        & ! Input
                  UHOM_DNDN, UHOM_DNUP, UHOM_UPDN, UHOM_UPUP,                & ! input
@@ -7991,7 +7993,8 @@
                   EMISSIVITY, USER_EMISSIVITY, FLUX_MULT,                    & ! input
                   DELTAU_VERT, PARTAU_VERT, OMEGA_GREEK,                     & ! Input
                   T_DELT_DISORDS, T_UTDN_DISORDS, T_UTUP_DISORDS,            & ! input
-                  PI_XQP, PI_XQP_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
+                  ! ReFRACtor fix: LBBF expects PI_XQM_PRE here (was PI_XQP_PRE)
+                  PI_XQP, PI_XQM_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
                   K_REAL, K_COMPLEX, SOLA_XPOS, SOLB_XNEG,                   & ! input
                   T_DELT_EIGEN, T_UTDN_EIGEN, T_UTUP_EIGEN,                  & ! input
                   T_DELT_USERM, T_UTDN_USERM, T_UTUP_USERM,                  & ! Input
@@ -8017,7 +8020,8 @@
                   EMISSIVITY, USER_EMISSIVITY,                               & ! input
                   FLUX_MULT, DELTAU_VERT, OMEGA_GREEK,                       & ! Input
                   T_DELT_DISORDS, T_DELT_USERM,                              & ! input
-                  PI_XQP, PI_XQP_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
+                  ! ReFRACtor fix: LBBF expects PI_XQM_PRE here (was PI_XQP_PRE)
+                  PI_XQP, PI_XQM_PRE, PI_XUP, PI_XUM, SAB, DAB,              & ! input
                   K_REAL, K_COMPLEX, T_DELT_EIGEN, SOLA_XPOS, SOLB_XNEG,     & ! input
                   BANDMAT2, IPIVOT, SMAT2, SIPIVOT, HMULT_1, HMULT_2,        & ! Input
                   UHOM_DNDN, UHOM_DNUP, UHOM_UPDN, UHOM_UPUP,                & ! input

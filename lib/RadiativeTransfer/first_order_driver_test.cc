@@ -683,9 +683,9 @@ BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol_downwelling)
   test_first_order_gas_surface_aerosol(false, true, false, true);
 }
 
-// Direct-thermal radiance and atmospheric/surface Jacobians vs finite
-// differences over Lambertian and Cox-Munk surfaces (non-isothermal, two
-// layers, up and downwelling). For Cox-Munk the surface-emissivity Jacobian
+// Direct-thermal radiance and atmospheric/surface/blackbody Jacobians vs
+// finite differences over Lambertian and Cox-Munk surfaces (non-isothermal,
+// two layers, up and downwelling). For Cox-Munk the surface-emissivity Jacobian
 // comes from the LIDORT BRDF supplement's linearized Kirchhoff emissivity.
 BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
 {
@@ -699,8 +699,7 @@ BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
     fo.do_deltam_scaling(false);
     check_thermal_jacobians_fd(fo, pf, stype,
         stype == LAMBERTIAN ? lambertian_test_surfaces() : coxmunk_test_surfaces(),
-        stype == LAMBERTIAN ? std::vector<int>{0} : std::vector<int>{0, 1, 2},
-        true, false);
+        stype == LAMBERTIAN ? std::vector<int>{0} : std::vector<int>{0, 1, 2});
     }
   }
 }

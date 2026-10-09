@@ -11,7 +11,7 @@ namespace FullPhysics {
 
 //-----------------------------------------------------------------------
 /// Check the thermal Jacobians of a LIDORT/VLIDORT/FO driver against
-/// finite differences for a non-isothermal two-layer atmosphere, for each
+/// finite differences for a non-isothermal nlayer atmosphere, for each
 /// of the given surfaces, with an absorbing and a scattering atmosphere,
 /// and (if do_downwelling) both upwelling and downwelling output.
 /// Thermal emission is linear in the blackbody inputs, so the blackbody
@@ -27,19 +27,20 @@ inline void check_thermal_jacobians_fd
  const std::vector<blitz::Array<double, 1> >& surfaces,
  const std::vector<int>& surf_fd_index, bool do_downwelling = true,
  bool check_bb = true, double atm_tol = 1e-2, double surf_tol = 1e-6,
- double surf_eps = 1e-6)
+ double surf_eps = 1e-6, int nlayer = 2)
 {
   using namespace blitz;
   FeDisableException disable_fp;
-  const int nlayer = 2;
-  Array<double, 1> heights(nlayer + 1);
-  heights = 100, 50, 0;
+  Array<double, 1> heights(nlayer + 1), bb_atm(nlayer + 1);
+  Array<double, 1> taug(nlayer), taur(nlayer);
+  for(int i = 0; i <= nlayer; ++i) {
+    heights(i) = 100.0 * (nlayer - i) / nlayer;
+    bb_atm(i) = planck(568.69, 250.0 + 40.0 * i / nlayer);
+  }
+  for(int l = 0; l < nlayer; ++l)
+    taug(l) = 0.3 * (l + 1) * 2.0 / nlayer;
   double sza = 0.001, azm = 0.0, zen = 0.0;
   double bb = planck(568.69, 290.0);
-  Array<double, 1> bb_atm(nlayer + 1);
-  bb_atm = planck(568.69, 250.0), planck(568.69, 270.0), planck(568.69, 290.0);
-  Array<double, 1> taug(nlayer), taur(nlayer);
-  taug = 0.3, 0.6;
 
   ArrayAd<double, 3> pf(pf_layer.rows(), nlayer, pf_layer.extent(thirdDim), 1);
   for(int l = 0; l < nlayer; ++l)
@@ -114,6 +115,16 @@ inline void check_thermal_jacobians_fd
   }
   if(do_downwelling)
     driver.set_downwelling(false);
+}
+
+/// Copy of pf_layer with the phase function (a1) replaced by
+/// Henyey-Greenstein moments, (2l+1) g^l, for an anisotropic scatterer
+inline blitz::Array<double, 3> hg_phase_function(const blitz::Array<double, 3>& pf_layer, double g = 0.7)
+{
+  blitz::Array<double, 3> pf(pf_layer.copy());
+  for(int l = 0; l < pf.rows(); ++l)
+    pf(l, 0, 0) = (2 * l + 1) * std::pow(g, l);
+  return pf;
 }
 
 /// Lambertian black and reflecting surfaces

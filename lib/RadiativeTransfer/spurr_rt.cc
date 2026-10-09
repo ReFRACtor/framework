@@ -283,10 +283,13 @@ ArrayAd<double, 1> SpurrRt::stokes_and_jacobian_single_wn(double Wn, int Spec_in
           for(int var_idx = 0; var_idx < jac_iv.cols(); ++var_idx) {
             val += jac_atm(var_idx, lay_idx, stokes_idx) * jac_iv(lay_idx, var_idx, st_idx);
           }
+        }
 
-          if(do_thermal_emission and !atmos_bb.is_constant()) {
-            val += jac_atm_temp(lay_idx, stokes_idx) * atmos_bb.jacobian()(lay_idx, st_idx);
-          }
+        // Blackbody is on levels (nlayer + 1), not layers; looping over
+        // layers above dropped the surface-level atmospheric emission term.
+        if(do_thermal_emission and !atmos_bb.is_constant()) {
+          for(int lev_idx = 0; lev_idx < atmos_bb.rows(); ++lev_idx)
+            val += jac_atm_temp(lev_idx, stokes_idx) * atmos_bb.jacobian()(lev_idx, st_idx);
         }
 
         if(do_surface_pd) {
