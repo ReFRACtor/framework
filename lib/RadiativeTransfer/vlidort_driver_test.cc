@@ -170,7 +170,7 @@ public:
 
     // Expected values calculated offline in VLIDORT (results.1.log)
     refl_expt = 0.12476970639470732;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
     ////////////////////////
     // Thermal gas + surface
@@ -188,7 +188,7 @@ public:
                                               bb_surface, bb_atm);
 
     refl_expt = 0.13751414471789294;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
     /////////////////////////////////////////////
     // Thermal rayleigh only, no surface, no gas
@@ -206,7 +206,7 @@ public:
                                               bb_surface, bb_atm);
 
     refl_expt = 1.3966249402729437e-2;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
   }
 };
 
@@ -353,8 +353,7 @@ BOOST_AUTO_TEST_SUITE_END()
 // 35 deg. Thermal emission is azimuthally symmetric (Fourier m = 0 only), so
 // U is identically zero and Q is non-zero only where Rayleigh multiple
 // scattering redistributes the thermal field. The full Stokes vector is
-// checked against the offline VLIDORT thermal reference
-// (reference/rt/vlidort_thermal_test, nstokes=3, viewing zenith 35 deg).
+// checked against an independent successive-orders solution (see below).
 //=======================================================================
 
 BOOST_FIXTURE_TEST_SUITE(vlidort_driver_vector_thermal, GlobalFixture)
@@ -371,21 +370,22 @@ public:
     Array<double, 1> bb_atm(nlayer + 1);
     bb_atm = planck(wn, temperature);
 
-    // (albedo, taur, taug, I_expected, Q_expected) per scenario; U is 0.
-    // Reference values from reference/rt/vlidort_thermal_test (nstokes=3,
-    // viewing zenith 35 deg, 4 half-space streams).
+    // (albedo, taur, taug, I_expected) per scenario. I_expected comes from an
+    // independent vector (I,Q) successive-orders-of-scattering solution
+    // (reference/rt/vlidort_thermal_test/sos_thermal_check.py: m=0 Rayleigh
+    // Chandrasekhar matrix, 24 Gauss angles/hemisphere, 4000 sublayers).
     //
-    // NOTE: the third (Rayleigh-scattering) scenario is a direct-emission-only
-    // check here. Refractor's VLIDORT vector thermal path does not reproduce
-    // the reference's small multiple-scattering contribution to I (~0.0008)
-    // and the associated Q (~-8e-4); it returns essentially the transmitted
-    // surface emission with Q ~ 0. That thermal multiple-scattering
-    // shortfall is tracked separately, so scenario 3 only asserts the
-    // azimuthal-symmetry invariant (U == 0) rather than the scattered I/Q.
-    double scen[3][5] = {
-      {0.1, 1.0e-6, 1.0e-6, 0.12476973854342058,  -4.1758401791492343e-08},
-      {0.1, 1.0e-6, 1.0,    0.13773679247543238,  -6.8117637217938599e-09},
-      {0.9, 2.0e-2, 1.0e-6, 0.014753387283653522, -8.1514089431632055e-04} };
+    // The older offline 2.7-based vector tester (TIQU_Tester) gives
+    // I=0.014753, Q=-8.15e-4 for the Rayleigh scenario. That value is
+    // unphysical: the same tester at nstokes=1 gives I=0.0139377, a
+    // conservative thin layer cannot brighten the surface emission by 6%, and
+    // single scattering of a hemispherically isotropic field produces zero Q
+    // at m=0. The SOS solution agrees with refractor to ~1e-4 relative in I
+    // (residual is the 4-stream discretization) and gives |Q| ~ 1e-9.
+    double scen[3][4] = {
+      {0.1, 1.0e-6, 1.0e-6, 1.2476969568e-01},
+      {0.1, 1.0e-6, 1.0,    1.3773578071e-01},
+      {0.9, 2.0e-2, 1.0e-6, 1.3935331446e-02} };
 
     for(int i = 0; i < 3; ++i) {
       surface_params(0) = scen[i][0];
@@ -404,12 +404,10 @@ public:
       // (Fourier m = 0 only), in every scenario.
       BOOST_CHECK_SMALL(s(2), 1e-8);
 
-      // The negligibly-scattering scenarios validate the vector direct thermal
-      // emission and the Kirchhoff (Stokes-I-only) surface emissivity.
-      if(i < 2) {
-        BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.5);   // I, relative
-        BOOST_CHECK_SMALL(s(1) - scen[i][4], 5e-6); // Q ~ 0
-      }
+      // I includes the multiply-scattered thermal field in the Rayleigh
+      // scenario (~3% above direct transmission alone).
+      BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.05);   // I, percent
+      BOOST_CHECK_SMALL(s(1), 1e-8);               // Q ~ 0 (see above)
     }
   }
 };

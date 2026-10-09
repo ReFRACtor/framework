@@ -151,7 +151,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
 
   // Expected values calculated offline in VLIDORT
   refl_expt = 0.12476970639470732;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
   ////////////////////////
   // Thermal gas + surface
@@ -169,7 +169,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    bb_surface, bb_atm);
 
   refl_expt = 0.13751414471789294;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
   /////////////////////////////////////////////
   // Thermal rayleigh only, no surface, no gas
@@ -186,8 +186,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  refl_expt = 1.3967e-002;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
+  refl_expt = 1.3966249402729437e-2;
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
 }
 };
