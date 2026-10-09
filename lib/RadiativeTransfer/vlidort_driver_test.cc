@@ -6,6 +6,7 @@
 #include "old_constant.h"
 #include "fe_disable_exception.h"
 #include "planck.h"
+#include "thermal_jacobian_check.h"
 
 #include "spurr_brdf_types.h"
 
@@ -346,6 +347,49 @@ BOOST_AUTO_TEST_CASE(serialization)
   t.run_test(driver_r);
 }
 
+// Downwelling (BOA, up-looking) thermal radiance at nadir zenith; expected
+// values from the independent successive-orders solution, see the LIDORT
+// thermal_downwelling test. Also must match LIDORT.
+BOOST_AUTO_TEST_CASE(thermal_downwelling)
+{
+  Fixture1 vt;
+  LidortDriverLambertianThermalFixture lt;
+  vt.vlidort_driver->set_downwelling(true);
+  lt.lidort_driver->set_downwelling(true);
+  BOOST_CHECK(vt.vlidort_driver->downwelling());
+
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(vt.nlayer + 1);
+  bb_atm = bb;
+  double scen[3][4] = {
+    {0.1, 1.0e-6, 1.0e-6, 2.0101793968e-07},
+    {0.1, 1.0e-6, 1.0,    8.7632813980e-02},
+    {0.9, 2.0e-2, 1.0e-6, 1.3981092762e-04} };
+  for(int i = 0; i < 3; ++i) {
+    Array<double, 1> od1(1), ssa1(1);
+    od1 = scen[i][1] + scen[i][2];
+    ssa1 = scen[i][1] / od1(0);
+    vt.surface_params(0) = scen[i][0];
+    lt.surface_params(0) = scen[i][0];
+    Array<double, 1> refl_v(vt.vlidort_driver->reflectance_calculate(
+        vt.heights, vt.sza(0), vt.azm(0), vt.zen(0), vt.surface_type,
+        vt.surface_params, od1, ssa1, vt.pf.value(), bb, bb_atm));
+    Array<double, 1> refl_l(lt.lidort_driver->reflectance_calculate(
+        lt.heights, lt.sza(0), lt.zen(0), lt.azm(0), lt.surface_type,
+        lt.surface_params, od1, ssa1, lt.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(refl_v(0), scen[i][3], 0.5);
+    BOOST_CHECK_CLOSE(refl_v(0), refl_l(0), 1e-4);
+  }
+}
+
+// See the LIDORT thermal_jacobian_matrix_fd test; the 2-layer BOA-level BVP
+// fix applies to VLIDORT's LBBF code as well.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Fixture1 t;
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //=======================================================================
@@ -427,6 +471,41 @@ BOOST_AUTO_TEST_CASE(serialization)
   boost::shared_ptr<VLidortRtDriver> driver_r =
     serialize_read_string<VLidortRtDriver>(d);
   t.run_test(driver_r);
+}
+
+// Downwelling (BOA, up-looking) Stokes vector at 35 deg zenith. Expected I
+// from the independent successive-orders solution; Q is ~1e-9 there and U
+// is zero by azimuthal symmetry.
+BOOST_AUTO_TEST_CASE(thermal_downwelling_iqu)
+{
+  Fixture1 t;
+  t.vlidort_driver->set_downwelling(true);
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(t.nlayer + 1);
+  bb_atm = bb;
+  double scen[3][4] = {
+    {0.1, 1.0e-6, 1.0e-6, 2.4539755368e-07},
+    {0.1, 1.0e-6, 1.0,    9.7736091015e-02},
+    {0.9, 2.0e-2, 1.0e-6, 1.7031009666e-04} };
+  for(int i = 0; i < 3; ++i) {
+    t.surface_params(0) = scen[i][0];
+    t.od = (scen[i][1] + scen[i][2]) / t.nlayer;
+    t.ssa.value() = scen[i][1] / (scen[i][1] + scen[i][2]);
+    Array<double, 1> s(t.vlidort_driver->reflectance_calculate(
+        t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, t.surface_params,
+        t.od.value(), t.ssa.value(), t.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.5);
+    BOOST_CHECK_SMALL(s(1), 1e-8);
+    BOOST_CHECK_SMALL(s(2), 1e-8);
+  }
+}
+
+// Stokes-I thermal Jacobians for the vector (nstokes = 3) solver; see
+// vlidort_driver_lambertian_thermal/thermal_jacobian_matrix_fd.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Fixture1 t;
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -69,6 +69,19 @@ bool MultiScattRtDriver::do_thermal_scattering() const
   return do_thermal_emission && !mboolean_inputs.ts_do_thermal_transonly();
 }
 
+// Stored only in the RT interface flags, which are serialized with it.
+bool MultiScattRtDriver::downwelling() const
+{
+  return rt_interface()->fixed_inputs_base().fixed_boolean_base().ts_do_dnwelling();
+}
+
+void MultiScattRtDriver::set_downwelling(bool do_downwelling)
+{
+  Spurr_Fixed_Boolean_Base& fboolean_inputs = rt_interface()->fixed_inputs_base().fixed_boolean_base();
+  fboolean_inputs.ts_do_upwelling(!do_downwelling);
+  fboolean_inputs.ts_do_dnwelling(do_downwelling);
+}
+
 void MultiScattRtDriver::notify_update(const RtAtmosphere& atm)
 {
   int stype = atm.ground()->spurr_brdf_type();
@@ -344,6 +357,10 @@ void MultiScattRtDriver::setup_height_grid(const blitz::Array<double, 1>& in_hei
   // Tell LIDORT number of layers
   Spurr_Fixed_Control_Base& fcontrol_inputs = rt_interface()->fixed_inputs_base().fixed_control_base();
   fcontrol_inputs.ts_nlayers(nlayer);
+
+  // Single output level: TOA (0) for upwelling, BOA (nlayer) for downwelling
+  Array<double, 1> user_levels( muser_inputs.ts_user_levels() );
+  user_levels(0) = downwelling() ? nlayer : 0;
 }
 
 void MultiScattRtDriver::setup_geometry(double sza, double azm, double zen)
@@ -413,6 +430,10 @@ void MultiScattRtDriver::clear_linear_inputs()
 
   // Flag for output of surface Jacobians
   mlincontrol.ts_do_surface_linearization(false);
+
+  // Blackbody Jacobians are enabled by setup_linear_inputs, turn them off too
+  mlincontrol.ts_do_surface_lbbf(false);
+  mlincontrol.ts_do_atmos_lbbf(false);
 }
 
 void MultiScattRtDriver::setup_linear_inputs(const ArrayAd<double, 1>& od,

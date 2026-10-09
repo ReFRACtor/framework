@@ -23,6 +23,8 @@ public:
   %python_attribute(do_multi_scatt_only, bool)
   %python_attribute(do_thermal_scattering, bool)
   %python_attribute(pure_nadir, bool)
+  %python_attribute(downwelling, bool)
+  void set_downwelling(bool do_downwelling);
 
   virtual void notify_update(const RtAtmosphere& atm);
 

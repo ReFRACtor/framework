@@ -175,6 +175,18 @@ void VLidortRtDriver::setup_phase_function(const blitz::Array<double, 3>& pf)
   }
 }
 
+void VLidortRtDriver::clear_linear_inputs()
+{
+  MultiScattRtDriver::clear_linear_inputs();
+
+  // Undo the master linearization switches set in setup_linear_phase_function.
+  // Leaving do_atmos_linearization on with profile linearization off makes
+  // VLIDORT run its linearized solution with uninitialized layer controls.
+  VLidort_Modified_Lincontrol& mlincontrol = vlidort_interface_->vlidort_linmodin().mcont();
+  mlincontrol.ts_do_linearization(false);
+  mlincontrol.ts_do_atmos_linearization(false);
+}
+
 void VLidortRtDriver::setup_linear_phase_function(const ArrayAd<double, 3>& pf)
 {
   // VLIDORT needs its master linearization switches turned on explicitly.
@@ -265,7 +277,7 @@ const blitz::Array<double, 1> VLidortRtDriver::get_intensity() const
   Array<double, 1> stokes(nstokes_);
   const Array<double, 4>& ts_stokes = vlidort_interface_->vlidort_out().main().ts_stokes();
   for(int s = 0; s < nstokes_; ++s)
-    stokes(s) = ts_stokes(0, 0, s, rt_pars_->upidx()-1);
+    stokes(s) = ts_stokes(0, 0, s, output_direction_index());
   return stokes;
 }
 
@@ -276,7 +288,7 @@ void VLidortRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Ar
   VLidort_Linsurf& lsoutputs = vlidort_interface_->vlidort_linout().surf();
 
   Range ra(Range::all());
-  int upidx = rt_pars_->upidx()-1;
+  int didx = output_direction_index();
 
   // Surface Jacobians KR(r,t,v,stokes,d) with respect to surface variable r
   // at output level t, geometry v, direction d
@@ -284,7 +296,7 @@ void VLidortRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Ar
   int n_surf = surfacewf.extent(firstDim);
   jac_surf_param.resize(n_surf, nstokes_);
   for(int s = 0; s < nstokes_; ++s)
-    jac_surf_param(ra, s) = surfacewf(ra, 0, 0, s, upidx);
+    jac_surf_param(ra, s) = surfacewf(ra, 0, 0, s, didx);
 
   // Profile jacobians K(q,n,t,v,stokes,d) with respect to profile
   // atmospheric variable q in layer n, at output level t, geometry v,
@@ -294,7 +306,7 @@ void VLidortRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Ar
   int n_lay = profilewf.extent(secondDim);
   jac_atm.resize(n_jac, n_lay, nstokes_);
   for(int s = 0; s < nstokes_; ++s)
-    jac_atm(ra, ra, s) = profilewf(ra, ra, 0, 0, s, upidx);
+    jac_atm(ra, ra, s) = profilewf(ra, ra, 0, 0, s, didx);
 
   // Get thermal temperature jacobians if thermal emission is enabled
   if(do_thermal_emission) {
@@ -304,8 +316,8 @@ void VLidortRtDriver::copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Ar
       jac_surf_temp.resize(nstokes_);
       jac_atm_temp.resize(abbwfs.extent(thirdDim), nstokes_);
       for(int s = 0; s < nstokes_; ++s) {
-          jac_surf_temp(s) = sbbwfs(0, 0, s, upidx);
-          jac_atm_temp(ra, s) = abbwfs(0, 0, ra, s, upidx);
+          jac_surf_temp(s) = sbbwfs(0, 0, s, didx);
+          jac_atm_temp(ra, s) = abbwfs(0, 0, ra, s, didx);
       }
   }
 }

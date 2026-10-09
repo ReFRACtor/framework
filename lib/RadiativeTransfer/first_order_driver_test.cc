@@ -11,7 +11,7 @@ using namespace blitz;
 
 BOOST_FIXTURE_TEST_SUITE(first_order_driver, GlobalFixture)
 
-void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, ArrayAd<double, 1> taua, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, int sphericity_mode, bool do_deltam_scaling, bool debug_output)
+void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, ArrayAd<double, 1>& taug, ArrayAd<double, 1>& taur, ArrayAd<double, 1> taua, Array<double, 1>& pert_atm, Array<double, 1>& pert_surf, bool do_solar, bool do_thermal, int sphericity_mode, bool do_deltam_scaling, bool debug_output, bool downwelling = false)
 {
   blitz::Array<double, 1> sza, zen, azm;
   sza.resize(1); zen.resize(1); azm.resize(1);
@@ -74,6 +74,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   }
 
   fo_driver.do_deltam_scaling(do_deltam_scaling);
+  fo_driver.set_downwelling(downwelling);
 
   // Use LIDORT for comparison
   bool do_multiple_scattering_only = false;
@@ -111,6 +112,7 @@ void test_first_order(int surface_type, ArrayAd<double, 1>& surface_params, Arra
   fbool.ts_do_fullrad_mode(false);
   mbool.ts_do_focorr(true);
   mbool.ts_do_no_azimuth(false);
+  lidort_driver.set_downwelling(downwelling);
 
   // Simple height grid evenly spaced
   Array<double, 1> heights(nlayer+1);
@@ -413,7 +415,7 @@ void test_first_order_rayleigh_only(bool do_solar, bool do_thermal, bool debug_o
   test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
 }
 
-void test_first_order_gas_surface(bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order_gas_surface(bool do_solar, bool do_thermal, bool debug_output, bool downwelling = false)
 {
   int nlayer = 2;
   int nparam = 2;
@@ -455,17 +457,17 @@ void test_first_order_gas_surface(bool do_solar, bool do_thermal, bool debug_out
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output, downwelling);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output, downwelling);
 }
 
-void test_first_order_gas_surface_aerosol(bool do_solar, bool do_thermal, bool debug_output)
+void test_first_order_gas_surface_aerosol(bool do_solar, bool do_thermal, bool debug_output, bool downwelling = false)
 {
   int nlayer = 2;
   int nparam = 3;
@@ -508,14 +510,14 @@ void test_first_order_gas_surface_aerosol(bool do_solar, bool do_thermal, bool d
   pert_surf = 1e-8;
 
   // Each sphericity option, delta-m = false
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, false, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, false, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, false, debug_output, downwelling);
 
   // Each sphericity option, delta-m = true
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output);
-  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 0, true, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 1, true, debug_output, downwelling);
+  test_first_order(surface_type, surface_params, taug, taur, taua, pert_atm, pert_surf, do_solar, do_thermal, 2, true, debug_output, downwelling);
  
 }
 
@@ -590,6 +592,29 @@ BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol)
   bool debug_output = false;
 
   test_first_order_gas_surface_aerosol(do_solar, do_thermal, debug_output);
+}
+
+// Downwelling (up-looking observer at the surface) direct-thermal radiance and
+// atmospheric Jacobians (DTE_Integral_ILPS_DN), compared against LIDORT's
+// first-order downwelling thermal term and finite differences.
+BOOST_AUTO_TEST_CASE(thermal_gas_surface_downwelling)
+{
+  test_first_order_gas_surface(false, true, false, true);
+}
+
+BOOST_AUTO_TEST_CASE(thermal_gas_surface_aerosol_downwelling)
+{
+  test_first_order_gas_surface_aerosol(false, true, false, true);
+}
+
+BOOST_AUTO_TEST_CASE(downwelling_requires_thermal_only)
+{
+  FirstOrderDriver solar_driver(2, LAMBERTIAN, 1, 2, true, false);
+  BOOST_CHECK_THROW(solar_driver.set_downwelling(true), Exception);
+  FirstOrderDriver thermal_driver(2, LAMBERTIAN, 1, 2, false, true);
+  BOOST_CHECK(!thermal_driver.downwelling());
+  thermal_driver.set_downwelling(true);
+  BOOST_CHECK(thermal_driver.downwelling());
 }
 
 BOOST_AUTO_TEST_SUITE_END()

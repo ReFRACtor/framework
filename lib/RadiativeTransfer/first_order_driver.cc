@@ -206,6 +206,19 @@ void FirstOrderDriver::init_interfaces(int nlayers, int surface_type)
   do_deltam_scaling_ = true;
 }
 
+void FirstOrderDriver::set_downwelling(bool do_downwelling)
+{
+  if (do_downwelling && (do_solar_sources || !do_thermal_emission))
+    throw Exception("FirstOrderDriver downwelling output is only supported for thermal-only calculations");
+  if (!do_thermal_emission)
+    return;
+  dt_geometry->do_upwelling(!do_downwelling);
+  thermal_interface_->do_upwelling(!do_downwelling);
+  thermal_interface_->do_dnwelling(do_downwelling);
+  Array<bool, 2> t_do_sources_dn(thermal_interface_->do_sources_dn());
+  t_do_sources_dn = do_downwelling;
+}
+
 /// Set plane parallel sphericity
 void FirstOrderDriver::set_plane_parallel()
 {
@@ -259,6 +272,10 @@ void FirstOrderDriver::setup_height_grid(const blitz::Array<double, 1>& height_g
 
   if (do_thermal_emission) {
     dt_geometry->heights()(Range(0, nlayers)) = height_grid;
+
+    // Single output level: TOA (0) for upwelling, BOA (nlayers) for downwelling
+    Array<int, 1> t_user_levels(thermal_interface_->user_levels());
+    t_user_levels(0) = downwelling() ? nlayers : 0;
   }
 
   // Used for computing extincts value
@@ -621,8 +638,12 @@ void FirstOrderDriver::calculate_rt() const
     // Run RT calculation
     if (do_solar_sources)
         solar_interface_->ss_integral_ilps_up();
-    if (do_thermal_emission)
-        thermal_interface_->dte_integral_ilps_up();
+    if (do_thermal_emission) {
+        if (downwelling())
+            thermal_interface_->dte_integral_ilps_dn();
+        else
+            thermal_interface_->dte_integral_ilps_up();
+    }
 }
 
 const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
@@ -634,7 +655,10 @@ const blitz::Array<double, 1> FirstOrderDriver::get_intensity() const
         intensity(0) += solar_interface_->intensity_db()(0, 0) + solar_interface_->intensity_up()(0, 0);
 
     // Direct-thermal emission: atmospheric (dta) + surface (dts) contributions.
-    if (do_thermal_emission)
+    // Downwelling at BOA has only the atmospheric contribution.
+    if (downwelling())
+        intensity(0) += thermal_interface_->intensity_dta_dn()(0, 0);
+    else if (do_thermal_emission)
         intensity(0) += thermal_interface_->intensity_dta_up()(0, 0) + thermal_interface_->intensity_dts()(0, 0);
 
     return intensity;
@@ -657,7 +681,9 @@ void FirstOrderDriver::copy_jacobians
     if (do_solar_sources)
         jac_lay += solar_interface_->lp_jacobians_up()(0, 0, ra, ra) +
                    solar_interface_->lp_jacobians_db()(0, 0, ra, ra);
-    if (do_thermal_emission)
+    if (downwelling())
+        jac_lay += thermal_interface_->lp_jacobians_dta_dn()(0, 0, ra, ra);
+    else if (do_thermal_emission)
         jac_lay += thermal_interface_->lp_jacobians_dta_up()(0, 0, ra, ra) +
                    thermal_interface_->lp_jacobians_dts_up()(0, 0, ra, ra);
 
@@ -671,6 +697,6 @@ void FirstOrderDriver::copy_jacobians
     jac_surf_param = 0.0;
     if (do_solar_sources)
         jac_surf_param(ra, 0) += solar_interface_->ls_jacobians_db()(0, 0, ra);
-    if (do_thermal_emission)
+    if (do_thermal_emission && !downwelling())
         jac_surf_param(ra, 0) += thermal_interface_->ls_jacobians_dts()(0, 0, ra);
 }

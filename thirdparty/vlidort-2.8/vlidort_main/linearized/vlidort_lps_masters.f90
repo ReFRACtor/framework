@@ -6005,6 +6005,8 @@
 
 !  Parameter control
 
+            ! ReFRACtor fix: initialize; undefined when atmos (e.g. LBBF) but not profile linearization is on
+            DO_RTSOL_VARY = .FALSE. ; NPARAMS_VARY = 0
             IF ( DO_PROFILE_LINEARIZATION ) THEN
               DO_RTSOL_VARY = LAYER_VARY_FLAG(LAYER)
               NPARAMS_VARY  = LAYER_VARY_NUMBER(LAYER)
@@ -6986,6 +6988,8 @@
 !  Parameter control for the linearization
 
             IF ( DO_ATMOS_LINEARIZATION ) THEN
+              ! ReFRACtor fix: initialize; undefined when atmos (e.g. LBBF) but not profile linearization is on
+              DO_RTSOL_VARY = .FALSE. ; NPARAMS_VARY = 0
               IF ( DO_PROFILE_LINEARIZATION ) THEN
                 DO_RTSOL_VARY = LAYER_VARY_FLAG(LAYER)
                 NPARAMS_VARY  = LAYER_VARY_NUMBER(LAYER)

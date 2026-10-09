@@ -1976,6 +1976,11 @@
 
       IF ( DO_SURFEMISS .AND. M .EQ. 0 ) THEN
 
+!  ReFRACtor fix: the Lambertian branch below only sets Stokes component 1,
+!  leaving components 2..NSTOKES uninitialized; callers subtract them from
+!  the vector emissivity, injecting garbage into thermal Q/U.
+        D_L_EMISSIVITY = ZERO ; D_L_USER_EMISSIVITY = ZERO
+
 !  Lambertian case
 
         IF ( LAMBERTIAN_FLAG .AND. M .EQ. 0 ) THEN

@@ -548,7 +548,8 @@ subroutine DTE_Integral_ILCS_UP &
                 do q = 1, Qnums(n)
                   L_kn = L_extinction(n,q) ; zjL_kn = zj * L_kn
                   L_solutionsfine = L_tcom1(n,1,q) + zjkn * L_tcom1(n,2,q) + zjL_kn*tcom1(n,2)
-                  L_sum(q)  = L_sum(q) + tran * wfine(n,j,v) * ( L_solutionsfine - zjL_kn * solutionsfine )
+                  ! ReFRACtor fix: d(tran)/dq uses the LOS distance dj (tran = exp(-dj*kn)), not the vertical zj
+                  L_sum(q)  = L_sum(q) + tran * wfine(n,j,v) * ( L_solutionsfine - dj * L_kn * solutionsfine )
                 enddo
               endif
             enddo
@@ -581,7 +582,8 @@ subroutine DTE_Integral_ILCS_UP &
                 do q = 1, Qnums(np)
                   L_kn = L_extinction(np,q) ; zjL_kn = zj * L_kn
                   L_solutionsfine_p = L_tcom1(np,1,q) + zjkn*L_tcom1(np,2,q) + zjL_kn*tcom1(np,2)
-                  L_sum(q)  = L_sum(q) + tran * wfine_p(ut,j,v) * ( L_solutionsfine_p - zjL_kn * solutionsfine_p )
+                  ! ReFRACtor fix: d(tran)/dq uses the LOS distance dj (tran = exp(-dj*kn)), not the vertical zj
+                  L_sum(q)  = L_sum(q) + tran * wfine_p(ut,j,v) * ( L_solutionsfine_p - dj * L_kn * solutionsfine_p )
                 enddo
               endif
             enddo
@@ -1180,7 +1182,8 @@ subroutine DTE_Integral_ILCS_DN &
                 do q = 1, Qnums(n)
                   L_kn = L_extinction(n,q) ; zjL_kn = zj * L_kn
                   L_solutionsfine = L_tcom1(n,1,q) + zjkn * L_tcom1(n,2,q) + zjL_kn * tcom1(n,2)
-                  L_sum(q)  = L_sum(q) + tran * wfine(n,j,v) * ( L_solutionsfine - zjL_kn * solutionsfine )
+                  ! ReFRACtor fix: d(tran)/dq uses the LOS distance dj (tran = exp(-dj*kn)), not the vertical zj
+                  L_sum(q)  = L_sum(q) + tran * wfine(n,j,v) * ( L_solutionsfine - dj * L_kn * solutionsfine )
                 enddo
               endif
             enddo
@@ -1215,7 +1218,8 @@ subroutine DTE_Integral_ILCS_DN &
                 do q = 1, Qnums(np)
                   L_kn = L_extinction(np,q) ; zjL_kn = zj * L_kn
                   L_solutionsfine_p = L_tcom1(np,1,q) + zjkn * L_tcom1(np,2,q) + zjL_kn * tcom1(np,2)
-                  L_sum(q)  = L_sum(q) + tran * wfine_p(ut,j,v) * ( L_solutionsfine_p - zjL_kn * solutionsfine_p )
+                  ! ReFRACtor fix: d(tran)/dq uses the LOS distance dj (tran = exp(-dj*kn)), not the vertical zj
+                  L_sum(q)  = L_sum(q) + tran * wfine_p(ut,j,v) * ( L_solutionsfine_p - dj * L_kn * solutionsfine_p )
                 enddo
               endif
             enddo

@@ -22,6 +22,8 @@ public:
   %python_attribute(number_stream, int);
   %python_attribute(number_layers, int);
   %python_attribute(surface_type, int);
+  %python_attribute(downwelling, bool);
+  void set_downwelling(bool do_downwelling);
 
   virtual void set_plane_parallel();
   virtual void set_pseudo_spherical();
