@@ -199,3 +199,13 @@ Rules:
 - Conda environment recommended for dependencies (HDF5, GSL, Boost, etc.)
 - The framework is designed to be extended by instrument-specific adaptations in separate repositories.
 - Forked from NASA's RtRetrievalFramework (OCO/OCO-2 heritage)
+
+## Local build/test notes (muses-work debug build)
+
+- Debug build tree: `../build/muses-work/framework-build/build_conda_debug` (ninja); env: `../build/muses-work/muses-env/.pixi/envs/default`.
+  `test_all` loads the *installed* `librefractor.so`, so after `ninja lib/librefractor.so test/test_all` copy `lib/librefractor.so` into the env `lib/`.
+  Run a suite: `./test/test_all --run_test=suite/case` with `srcdir`, `abscodir` set (see `test/ctest_wrap.sh`); full C++ suite: `cd test && bash ctest_wrap.sh -R ^unit/`.
+- VLIDORT is built as an ExternalProject copy under `thirdparty/vlidort-prefix/src/vlidort`; sync edited `thirdparty/vlidort-2.8` files there, then `make && make install` in `vlidort-build`.
+  Changing `vlidort_pars.f90.in` also requires rebuilding refractor's `vlidort_interface_*.F90` objects.
+- LIDORT is NOT built from `thirdparty/lidort-3.8` by default: CMake finds the env's prebuilt `liblidort.so`. Fixes to the LIDORT Fortran need `BUILD_LIDORT=ON` (or a standalone cmake build of `thirdparty/lidort-3.8` copied into the env lib).
+- Python tests: `ABSCODIR=<test_data>/framework/absco pytest python/test` using the env python.

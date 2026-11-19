@@ -2265,7 +2265,9 @@
                   DO LUM = 1, N_PPSTREAMS
                      UM = PPSTREAM_MASK(LUM,IB)
                      DO O1 = 1, NSTOKES
-                        LS_BOA_SOURCE(Q,UM,O1) = LS_BOA_SOURCE(Q,UM,O1) - SURFBB * LS_USER_EMISSIVITY(Q,O1,UM)
+! ReFRACtor fix: LS_USER_EMISSIVITY is d(emissivity)/d(param), so add (was '-'; the
+! BVP term above and LIDORT both add it)
+                        LS_BOA_SOURCE(Q,UM,O1) = LS_BOA_SOURCE(Q,UM,O1) + SURFBB * LS_USER_EMISSIVITY(Q,O1,UM)
                      ENDDO
                   ENDDO
                ENDDO
@@ -2306,7 +2308,8 @@
           DO Q = 1, N_SURFACE_WFS
             DO O1 = 1, NSTOKES
               DO I = 1, NSTREAMS
-                LS_BOA_THTONLY_SOURCE(Q,I,O1) = LS_BOA_THTONLY_SOURCE(Q,I,O1) - SURFBB * LS_EMISSIVITY(Q,O1,I)
+! ReFRACtor fix: add d(emissivity)/d(param) term (was '-'), as in LIDORT
+                LS_BOA_THTONLY_SOURCE(Q,I,O1) = LS_BOA_THTONLY_SOURCE(Q,I,O1) + SURFBB * LS_EMISSIVITY(Q,O1,I)
               ENDDO
             ENDDO
           ENDDO

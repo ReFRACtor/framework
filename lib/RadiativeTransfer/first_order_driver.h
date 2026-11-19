@@ -55,11 +55,19 @@ public:
 
   bool do_deltam_scaling() const { return do_deltam_scaling_; }
   void do_deltam_scaling(bool do_scaling) { do_deltam_scaling_ = do_scaling; }
+
+  /// When true, output is the downwelling direct-thermal radiance at the
+  /// bottom of the atmosphere instead of the upwelling radiance at the top.
+  /// Only supported for thermal-only (no solar sources) drivers.
+  bool downwelling() const
+  { return do_thermal_emission && thermal_interface_->do_dnwelling(); }
+  void set_downwelling(bool do_downwelling);
  
 private:
 
   void init_interfaces(int nlayers, int surface_type);
   void copy_geometry_flags();
+  void setup_thermal_geometry();
 
   const blitz::Array<double, 1> deltam_trunc_factor(const blitz::Array<double, 3>& pf) const;
   const blitz::Array<double, 2> deltam_linear_trunc_factor(const ArrayAd<double, 3>& pf) const;

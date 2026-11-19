@@ -6,6 +6,7 @@
 #include "old_constant.h"
 #include "fe_disable_exception.h"
 #include "planck.h"
+#include "thermal_jacobian_check.h"
 
 #include "spurr_brdf_types.h"
 
@@ -170,7 +171,7 @@ public:
 
     // Expected values calculated offline in VLIDORT (results.1.log)
     refl_expt = 0.12476970639470732;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
     ////////////////////////
     // Thermal gas + surface
@@ -188,7 +189,7 @@ public:
                                               bb_surface, bb_atm);
 
     refl_expt = 0.13751414471789294;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
     /////////////////////////////////////////////
     // Thermal rayleigh only, no surface, no gas
@@ -206,7 +207,7 @@ public:
                                               bb_surface, bb_atm);
 
     refl_expt = 1.3966249402729437e-2;
-    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
+    BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
   }
 };
 
@@ -346,6 +347,91 @@ BOOST_AUTO_TEST_CASE(serialization)
   t.run_test(driver_r);
 }
 
+// Downwelling (BOA, up-looking) thermal radiance at nadir zenith; expected
+// values from the independent successive-orders solution, see the LIDORT
+// thermal_downwelling test. Also must match LIDORT.
+BOOST_AUTO_TEST_CASE(thermal_downwelling)
+{
+  Fixture1 vt;
+  LidortDriverLambertianThermalFixture lt;
+  vt.vlidort_driver->set_downwelling(true);
+  lt.lidort_driver->set_downwelling(true);
+  BOOST_CHECK(vt.vlidort_driver->downwelling());
+
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(vt.nlayer + 1);
+  bb_atm = bb;
+  double scen[3][4] = {
+    {0.1, 1.0e-6, 1.0e-6, 2.0101793968e-07},
+    {0.1, 1.0e-6, 1.0,    8.7632813980e-02},
+    {0.9, 2.0e-2, 1.0e-6, 1.3981092762e-04} };
+  for(int i = 0; i < 3; ++i) {
+    Array<double, 1> od1(1), ssa1(1);
+    od1 = scen[i][1] + scen[i][2];
+    ssa1 = scen[i][1] / od1(0);
+    vt.surface_params(0) = scen[i][0];
+    lt.surface_params(0) = scen[i][0];
+    Array<double, 1> refl_v(vt.vlidort_driver->reflectance_calculate(
+        vt.heights, vt.sza(0), vt.azm(0), vt.zen(0), vt.surface_type,
+        vt.surface_params, od1, ssa1, vt.pf.value(), bb, bb_atm));
+    Array<double, 1> refl_l(lt.lidort_driver->reflectance_calculate(
+        lt.heights, lt.sza(0), lt.zen(0), lt.azm(0), lt.surface_type,
+        lt.surface_params, od1, ssa1, lt.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(refl_v(0), scen[i][3], 0.5);
+    BOOST_CHECK_CLOSE(refl_v(0), refl_l(0), 1e-4);
+  }
+}
+
+// See the LIDORT thermal_jacobian_matrix_fd test; the 2-layer BOA-level BVP
+// fix applies to VLIDORT's LBBF code as well.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Fixture1 t;
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+  // nlayers > 2 takes the general-case BVP setup paths
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0}, true, true,
+                             1e-2, 1e-6, 1e-6, 5);
+  // Anisotropic scattering exercises the higher moments in the thermal
+  // particular solution (VLIDORT was passed the wrong Pi matrix there)
+  check_thermal_jacobians_fd(*t.vlidort_driver, hg_phase_function(t.pf.value()), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+}
+
+// Thermal emission over a Cox-Munk surface, and LIDORT/VLIDORT agreement
+// for it; see the LIDORT thermal_coxmunk_jacobian_fd test.
+BOOST_AUTO_TEST_CASE(thermal_coxmunk_jacobian_fd)
+{
+  Fixture1 t;
+  Array<double, 1> zen(1);
+  zen = 0.0;
+  VLidortRtDriver d(t.nstreams, t.nmoms, false, COXMUNK, zen, false, 1, false, true);
+  d.vlidort_interface()->vlidort_modin().mbool().ts_do_deltam_scaling(false);
+  d.set_plane_parallel();
+  check_thermal_jacobians_fd(d, t.pf.value(), COXMUNK, coxmunk_test_surfaces(), {0, 1, 2});
+
+  LidortDriverLambertianThermalFixture lt;
+  LidortRtDriver l(lt.nstreams, lt.nmoms, false, COXMUNK, zen, false, false, true);
+  l.lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+  l.set_plane_parallel();
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(2);
+  bb_atm = bb;
+  Array<double, 1> od(1), ssa(1);
+  od = 0.5;
+  ssa = 0.02;
+  for(auto& sp : coxmunk_test_surfaces()) {
+    Array<double, 1> rv(d.reflectance_calculate(t.heights, t.sza(0), t.azm(0), t.zen(0),
+        COXMUNK, sp, od, ssa, t.pf.value(), bb, bb_atm));
+    Array<double, 1> rl(l.reflectance_calculate(lt.heights, lt.sza(0), lt.zen(0), lt.azm(0),
+        COXMUNK, sp, od, ssa, lt.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(rv(0), rl(0), 1e-4);
+    // Thermal radiance must lie between the black-surface limits
+    BOOST_CHECK(rv(0) > 0 && rv(0) < bb);
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 //=======================================================================
@@ -353,8 +439,7 @@ BOOST_AUTO_TEST_SUITE_END()
 // 35 deg. Thermal emission is azimuthally symmetric (Fourier m = 0 only), so
 // U is identically zero and Q is non-zero only where Rayleigh multiple
 // scattering redistributes the thermal field. The full Stokes vector is
-// checked against the offline VLIDORT thermal reference
-// (reference/rt/vlidort_thermal_test, nstokes=3, viewing zenith 35 deg).
+// checked against an independent successive-orders solution (see below).
 //=======================================================================
 
 BOOST_FIXTURE_TEST_SUITE(vlidort_driver_vector_thermal, GlobalFixture)
@@ -371,21 +456,22 @@ public:
     Array<double, 1> bb_atm(nlayer + 1);
     bb_atm = planck(wn, temperature);
 
-    // (albedo, taur, taug, I_expected, Q_expected) per scenario; U is 0.
-    // Reference values from reference/rt/vlidort_thermal_test (nstokes=3,
-    // viewing zenith 35 deg, 4 half-space streams).
+    // (albedo, taur, taug, I_expected) per scenario. I_expected comes from an
+    // independent vector (I,Q) successive-orders-of-scattering solution
+    // (reference/rt/vlidort_thermal_test/sos_thermal_check.py: m=0 Rayleigh
+    // Chandrasekhar matrix, 24 Gauss angles/hemisphere, 4000 sublayers).
     //
-    // NOTE: the third (Rayleigh-scattering) scenario is a direct-emission-only
-    // check here. Refractor's VLIDORT vector thermal path does not reproduce
-    // the reference's small multiple-scattering contribution to I (~0.0008)
-    // and the associated Q (~-8e-4); it returns essentially the transmitted
-    // surface emission with Q ~ 0. That thermal multiple-scattering
-    // shortfall is tracked separately, so scenario 3 only asserts the
-    // azimuthal-symmetry invariant (U == 0) rather than the scattered I/Q.
-    double scen[3][5] = {
-      {0.1, 1.0e-6, 1.0e-6, 0.12476973854342058,  -4.1758401791492343e-08},
-      {0.1, 1.0e-6, 1.0,    0.13773679247543238,  -6.8117637217938599e-09},
-      {0.9, 2.0e-2, 1.0e-6, 0.014753387283653522, -8.1514089431632055e-04} };
+    // The older offline 2.7-based vector tester (TIQU_Tester) gives
+    // I=0.014753, Q=-8.15e-4 for the Rayleigh scenario. That value is
+    // unphysical: the same tester at nstokes=1 gives I=0.0139377, a
+    // conservative thin layer cannot brighten the surface emission by 6%, and
+    // single scattering of a hemispherically isotropic field produces zero Q
+    // at m=0. The SOS solution agrees with refractor to ~1e-4 relative in I
+    // (residual is the 4-stream discretization) and gives |Q| ~ 1e-9.
+    double scen[3][4] = {
+      {0.1, 1.0e-6, 1.0e-6, 1.2476969568e-01},
+      {0.1, 1.0e-6, 1.0,    1.3773578071e-01},
+      {0.9, 2.0e-2, 1.0e-6, 1.3935331446e-02} };
 
     for(int i = 0; i < 3; ++i) {
       surface_params(0) = scen[i][0];
@@ -404,12 +490,10 @@ public:
       // (Fourier m = 0 only), in every scenario.
       BOOST_CHECK_SMALL(s(2), 1e-8);
 
-      // The negligibly-scattering scenarios validate the vector direct thermal
-      // emission and the Kirchhoff (Stokes-I-only) surface emissivity.
-      if(i < 2) {
-        BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.5);   // I, relative
-        BOOST_CHECK_SMALL(s(1) - scen[i][4], 5e-6); // Q ~ 0
-      }
+      // I includes the multiply-scattered thermal field in the Rayleigh
+      // scenario (~3% above direct transmission alone).
+      BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.05);   // I, percent
+      BOOST_CHECK_SMALL(s(1), 1e-8);               // Q ~ 0 (see above)
     }
   }
 };
@@ -429,6 +513,50 @@ BOOST_AUTO_TEST_CASE(serialization)
   boost::shared_ptr<VLidortRtDriver> driver_r =
     serialize_read_string<VLidortRtDriver>(d);
   t.run_test(driver_r);
+}
+
+// Downwelling (BOA, up-looking) Stokes vector at 35 deg zenith. Expected I
+// from the independent successive-orders solution; Q is ~1e-9 there and U
+// is zero by azimuthal symmetry.
+BOOST_AUTO_TEST_CASE(thermal_downwelling_iqu)
+{
+  Fixture1 t;
+  t.vlidort_driver->set_downwelling(true);
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(t.nlayer + 1);
+  bb_atm = bb;
+  double scen[3][4] = {
+    {0.1, 1.0e-6, 1.0e-6, 2.4539755368e-07},
+    {0.1, 1.0e-6, 1.0,    9.7736091015e-02},
+    {0.9, 2.0e-2, 1.0e-6, 1.7031009666e-04} };
+  for(int i = 0; i < 3; ++i) {
+    t.surface_params(0) = scen[i][0];
+    t.od = (scen[i][1] + scen[i][2]) / t.nlayer;
+    t.ssa.value() = scen[i][1] / (scen[i][1] + scen[i][2]);
+    Array<double, 1> s(t.vlidort_driver->reflectance_calculate(
+        t.heights, t.sza(0), t.azm(0), t.zen(0), t.surface_type, t.surface_params,
+        t.od.value(), t.ssa.value(), t.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(s(0), scen[i][3], 0.5);
+    BOOST_CHECK_SMALL(s(1), 1e-8);
+    BOOST_CHECK_SMALL(s(2), 1e-8);
+  }
+}
+
+// Stokes-I thermal Jacobians for the vector (nstokes = 3) solver; see
+// vlidort_driver_lambertian_thermal/thermal_jacobian_matrix_fd.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Fixture1 t;
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+  // nlayers > 2 takes the general-case BVP setup paths
+  check_thermal_jacobians_fd(*t.vlidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0}, true, true,
+                             1e-2, 1e-6, 1e-6, 5);
+  // Anisotropic scattering exercises the higher moments in the thermal
+  // particular solution (VLIDORT was passed the wrong Pi matrix there)
+  check_thermal_jacobians_fd(*t.vlidort_driver, hg_phase_function(t.pf.value()), t.surface_type,
+                             lambertian_test_surfaces(), {0});
 }
 
 BOOST_AUTO_TEST_SUITE_END()

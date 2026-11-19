@@ -41,6 +41,7 @@ public:
   const boost::shared_ptr<VLidort_Lps_Masters> vlidort_interface() const { return vlidort_interface_; }
 
   const blitz::Array<double, 1> get_intensity() const;
+  void clear_linear_inputs();
   void copy_jacobians(blitz::Array<double, 3>& jac_atm, blitz::Array<double, 2>& jac_surf_param, blitz::Array<double, 1>& jac_surf_temp, blitz::Array<double, 2>& jac_atm_temp) const;
 
 protected:

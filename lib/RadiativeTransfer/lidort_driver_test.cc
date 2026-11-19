@@ -4,6 +4,7 @@
 #include "old_constant.h"
 #include "planck.h"
 #include "fe_disable_exception.h"
+#include "thermal_jacobian_check.h"
 
 #include "spurr_brdf_types.h"
 
@@ -151,7 +152,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
 
   // Expected values calculated offline in VLIDORT
   refl_expt = 0.12476970639470732;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
   ////////////////////////
   // Thermal gas + surface
@@ -169,7 +170,7 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    bb_surface, bb_atm);
 
   refl_expt = 0.13751414471789294;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-3);
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
   /////////////////////////////////////////////
   // Thermal rayleigh only, no surface, no gas
@@ -186,8 +187,8 @@ void run_test(boost::shared_ptr<LidortRtDriver>& ldriver) {
                                                    od.value(), ssa.value(), pf.value(),
                                                    bb_surface, bb_atm);
 
-  refl_expt = 1.3967e-002;
-  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 7e-3);
+  refl_expt = 1.3966249402729437e-2;
+  BOOST_CHECK_MATRIX_CLOSE_TOL(refl_expt, refl_calc, 1e-5);
 
 }
 };
@@ -278,6 +279,97 @@ BOOST_AUTO_TEST_CASE(serialization)
   boost::shared_ptr<LidortRtDriver> ldriver_r =
     serialize_read_string<LidortRtDriver>(d);
   t.run_test(ldriver_r);
+}
+
+//-----------------------------------------------------------------------
+// Downwelling thermal radiance at the bottom of the atmosphere (an
+// up-looking observer at the surface, nadir-zenith view). Expected values
+// are from the independent successive-orders solution
+// (reference/rt/vlidort_thermal_test/sos_thermal_check.py). The gas case is
+// also analytic: B (1 - exp(-tau)). The Rayleigh case is purely the
+// multiply-scattered surface emission, so it directly tests the diffuse
+// thermal field.
+//-----------------------------------------------------------------------
+
+void check_lidort_thermal_downwelling(boost::shared_ptr<LidortRtDriver>& ldriver,
+                                      LidortDriverLambertianThermalFixture& t)
+{
+  BOOST_CHECK(ldriver->downwelling());
+  double bb = planck(568.69, 290.0);
+  Array<double, 1> bb_atm(t.nlayer + 1);
+  bb_atm = bb;
+
+  // (albedo, taur, taug, I_expected)
+  double scen[3][4] = {
+    {0.1, 1.0e-6, 1.0e-6, 2.0101793968e-07},
+    {0.1, 1.0e-6, 1.0,    8.7632813980e-02},
+    {0.9, 2.0e-2, 1.0e-6, 1.3981092762e-04} };
+  for(int i = 0; i < 3; ++i) {
+    t.surface_params(0) = scen[i][0];
+    t.od = (scen[i][1] + scen[i][2]) / t.nlayer;
+    t.ssa.value() = scen[i][1] / (scen[i][1] + scen[i][2]);
+    Array<double, 1> refl(ldriver->reflectance_calculate(
+        t.heights, t.sza(0), t.zen(0), t.azm(0), t.surface_type,
+        t.surface_params, t.od.value(), t.ssa.value(), t.pf.value(), bb, bb_atm));
+    BOOST_CHECK_CLOSE(refl(0), scen[i][3], 0.5);
+  }
+  // Gas case against the closed form as well
+  BOOST_CHECK_CLOSE(scen[1][3], bb * (1 - exp(-1.0 - 1.0e-6)), 1e-4);
+}
+
+BOOST_AUTO_TEST_CASE(thermal_downwelling)
+{
+  Fixture1 t;
+  BOOST_CHECK(!t.lidort_driver->downwelling());
+  t.lidort_driver->set_downwelling(true);
+  check_lidort_thermal_downwelling(t.lidort_driver, t);
+
+  // The direction is carried in the serialized RT interface
+  if(have_serialize_supported()) {
+    boost::shared_ptr<LidortRtDriver> ldriver_r =
+      serialize_read_string<LidortRtDriver>(serialize_write_string(t.lidort_driver));
+    check_lidort_thermal_downwelling(ldriver_r, t);
+  }
+
+  // Switching back restores the upwelling (TOA) result
+  t.lidort_driver->set_downwelling(false);
+  t.run_test(t.lidort_driver);
+}
+
+// Atmospheric/surface blackbody, optical-depth and surface Jacobians vs
+// finite differences for up/downwelling, black/reflecting surface and
+// absorbing/scattering atmosphere. Regression test for two LIDORT LBBF bugs:
+// the user-stream BRDF array was declared with transposed dimensions
+// (missing most of the surface-reflected term in upwelling atmospheric BB
+// Jacobians), and the 2-layer BVP used the wrong (upper) linear coefficient
+// for the BOA level.
+BOOST_AUTO_TEST_CASE(thermal_jacobian_matrix_fd)
+{
+  Fixture1 t;
+  check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+  // nlayers > 2 takes the general-case BVP setup paths
+  check_thermal_jacobians_fd(*t.lidort_driver, t.pf.value(), t.surface_type,
+                             lambertian_test_surfaces(), {0}, true, true,
+                             1e-2, 1e-6, 1e-6, 5);
+  // Anisotropic scattering exercises the higher moments in the thermal
+  // particular solution (VLIDORT was passed the wrong Pi matrix there)
+  check_thermal_jacobians_fd(*t.lidort_driver, hg_phase_function(t.pf.value()), t.surface_type,
+                             lambertian_test_surfaces(), {0});
+}
+
+// Thermal emission over a Cox-Munk surface: the emissivity (and its
+// Jacobian) comes from Kirchhoff's law applied to the BRDF in the BRDF
+// supplement, rather than 1 - albedo.
+BOOST_AUTO_TEST_CASE(thermal_coxmunk_jacobian_fd)
+{
+  Fixture1 t;
+  Array<double, 1> zen(1);
+  zen = 0.0;
+  LidortRtDriver d(t.nstreams, t.nmoms, false, COXMUNK, zen, false, false, true);
+  d.lidort_interface()->lidort_modin().mbool().ts_do_deltam_scaling(false);
+  d.set_plane_parallel();
+  check_thermal_jacobians_fd(d, t.pf.value(), COXMUNK, coxmunk_test_surfaces(), {0, 1, 2});
 }
 
 BOOST_AUTO_TEST_SUITE_END()

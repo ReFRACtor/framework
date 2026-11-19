@@ -254,7 +254,8 @@ subroutine lidort_lbbf_jacobians_whole &
 
       REAL(fpk), INTENT(IN)   :: SURFACE_FACTOR, ALBEDO
       REAL(fpk), intent(in)   :: BRDF_F  ( MAXSTREAMS, MAXSTREAMS )
-      REAL(fpk), INTENT(IN)   :: UBRDF_F ( MAXSTREAMS, MAX_USER_STREAMS )
+! ReFRACtor fix: was ( MAXSTREAMS, MAX_USER_STREAMS ), transposed w.r.t. the caller's USER_BRDF_F
+      REAL(fpk), INTENT(IN)   :: UBRDF_F ( MAX_USER_STREAMS, MAXSTREAMS )
 
       REAL(fpk), intent(in)   :: EMISSIVITY      ( MAXSTREAMS )
       REAL(fpk), intent(in)   :: USER_EMISSIVITY ( MAX_USER_STREAMS )
@@ -697,7 +698,8 @@ subroutine lidort_lbbf_jacobians_whole &
             cm = JB * nstreams_2 - 3 * nstreams ; cmp = cm + nstreams_2
             do i = 1, nstreams_2
                ic = cm + i
-               COL2_BWF(ic)  = + L_T_WUPPER_Gp1(i,n1)
+               ! ReFRACtor fix: BOA-level BB enters layer n1 through its lower (Gp2) coefficient; was Gp1
+               COL2_BWF(ic)  = + L_T_WUPPER_Gp2(i,n1)
             enddo
             do i = 1, nstreams
                i1 = i + nstreams ; ic = cmp + i
@@ -1689,7 +1691,8 @@ subroutine lidort_lbbf_jacobians_wpartials &
 
       REAL(fpk), INTENT(IN)   :: SURFACE_FACTOR, ALBEDO
       REAL(fpk), intent(in)   :: BRDF_F  ( MAXSTREAMS, MAXSTREAMS )
-      REAL(fpk), INTENT(IN)   :: UBRDF_F ( MAXSTREAMS, MAX_USER_STREAMS )
+! ReFRACtor fix: was ( MAXSTREAMS, MAX_USER_STREAMS ), transposed w.r.t. the caller's USER_BRDF_F
+      REAL(fpk), INTENT(IN)   :: UBRDF_F ( MAX_USER_STREAMS, MAXSTREAMS )
 
       REAL(fpk), intent(in)   :: EMISSIVITY      ( MAXSTREAMS )
       REAL(fpk), intent(in)   :: USER_EMISSIVITY ( MAX_USER_STREAMS )
@@ -2367,7 +2370,8 @@ subroutine lidort_lbbf_jacobians_wpartials &
             cm = JB * nstreams_2 - 3 * nstreams ; cmp = cm + nstreams_2
             do i = 1, nstreams_2
                ic = cm + i
-               COL2_BWF(ic)  = + L_T_WUPPER_Gp1(i,n1)
+               ! ReFRACtor fix: BOA-level BB enters layer n1 through its lower (Gp2) coefficient; was Gp1
+               COL2_BWF(ic)  = + L_T_WUPPER_Gp2(i,n1)
             enddo
             do i = 1, nstreams
                i1 = i + nstreams ; ic = cmp + i

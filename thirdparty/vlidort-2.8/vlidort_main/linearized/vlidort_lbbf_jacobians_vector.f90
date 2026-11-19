@@ -855,7 +855,8 @@ subroutine vlidort_lbbf_jacobians_whole &
            cm = JB * nstks_nstrms_2 - 3 * nstks_nstrms ; cmp = cm + nstks_nstrms_2
            do i = 1, nstreams_2
              ir = nstokes*(i-1) + 1 ; ic = cm + ir
-             COL2_BWF(ic)  = + L_T_WUPPER_Gp1(i,n1)
+             ! ReFRACtor fix: BOA-level BB enters layer n1 through its lower (Gp2) coefficient; was Gp1
+             COL2_BWF(ic)  = + L_T_WUPPER_Gp2(i,n1)
            enddo
            do i = 1, nstreams
              ir = nstokes*(i-1) + 1 ; ic = cmp + ir ; i1 = i + nstreams
@@ -2903,7 +2904,8 @@ subroutine vlidort_lbbf_jacobians_wpartials &
             cm = JB * nstks_nstrms_2 - 3 * nstks_nstrms ; cmp = cm + nstks_nstrms_2
             do i = 1, nstreams_2
                ir = nstokes*(i-1) + 1 ; ic = cm + ir
-               COL2_BWF(ic)  = + L_T_WUPPER_Gp1(i,n1)
+               ! ReFRACtor fix: BOA-level BB enters layer n1 through its lower (Gp2) coefficient; was Gp1
+               COL2_BWF(ic)  = + L_T_WUPPER_Gp2(i,n1)
             enddo
             do i = 1, nstreams
                ir = nstokes*(i-1) + 1 ; ic = cmp + ir ; i1 = i + nstreams

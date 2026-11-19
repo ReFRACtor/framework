@@ -32,6 +32,12 @@ public:
   virtual bool do_thermal_scattering() const;
   virtual bool pure_nadir() const { return pure_nadir_; }
 
+  /// When true, output is the downwelling radiance at the bottom of the
+  /// atmosphere (an up-looking observer at the surface) rather than the
+  /// upwelling radiance at the top of the atmosphere.
+  bool downwelling() const;
+  void set_downwelling(bool do_downwelling);
+
   virtual void notify_update(const RtAtmosphere& atm);
 
   void setup_sphericity(blitz::Array<double, 1> zen, bool do_multi_scatt_only, bool pure_nadir);
@@ -70,6 +76,10 @@ protected:
   virtual void copy_brdf_sup_outputs() const = 0;
   virtual void setup_phase_function(const blitz::Array<double, 3>& pf) = 0;
   virtual void setup_linear_phase_function(const ArrayAd<double, 3>& pf) = 0;
+
+  /// 0-based index of the output direction (up or down) in RT outputs
+  int output_direction_index() const
+  { return (downwelling() ? rt_pars_->dnidx() : rt_pars_->upidx()) - 1; }
 
   boost::shared_ptr<Spurr_Pars_Base> rt_pars_;
 
