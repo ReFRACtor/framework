@@ -3,7 +3,11 @@ ExternalProject_Add(vlidort
     BUILD_BYPRODUCTS ${THIRDPARTY_LIB_DIR}/libvlidort${CMAKE_SHARED_LIBRARY_SUFFIX}
     CONFIGURE_COMMAND cmake
         -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-        -DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}
+        # Search our own module directory before any -I in the flags: an
+        # installed copy of this library's .mod files (e.g. a conda package
+        # under the prefix) would otherwise be found first, since -J is
+        # searched after -I, and the build would use stale parameters.
+        -DCMAKE_Fortran_FLAGS=-I${THIRDPARTY_MODULE_DIR}\ ${CMAKE_Fortran_FLAGS}
         -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
