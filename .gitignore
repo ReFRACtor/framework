@@ -53,11 +53,9 @@ lib/Implementation/*.mod
 # crash core dumps
 core.*
 
-# graphify local files
-graphify-out/cost.json
-graphify-out/cache/
-lib/graphify-out/cache/
-graphify-out/2???-??-??/
+# graphify local files (the knowledge graph holds absolute paths of the machine it was made on)
+graphify-out/
+lib/graphify-out/
 
 # User settings
 .vscode
