@@ -33,6 +33,7 @@ public:
   Unit operator*=(const Unit& Dunit);
   Unit operator*=(double Scale_factor);
   Unit operator/=(const Unit& Dunit);
+  %rename(_eq) operator==;
   bool operator==(const Unit& U) const;
   %extend {
     Unit __mul__(const Unit& Y) 
@@ -53,6 +54,13 @@ public:
     { return FullPhysics::pow(*$self,  X);}
   }
   %pickle_serialization();
+  %pythoncode {
+def __eq__(self, other):
+    """Comparing with None, or anything else that is not a Unit, gives NotImplemented."""
+    if not isinstance(other, Unit):
+        return NotImplemented
+    return self._eq(other)
+  }
 };
 
 double conversion(const Unit& Dunit_from, const Unit& Dunit_to);
