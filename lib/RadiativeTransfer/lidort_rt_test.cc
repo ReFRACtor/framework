@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_CASE(check_ps)
   // (vza, ps, pp) = Fpar("ps_compare.out").parse()
   // subplot(211);cla();plot(vza,ps);plot(vza,pp);title("LIDORT 3.5 PS vs PP -  8 streams, 180 moments");ylabel("Intensity");legend(["PS", "PP"], "lower left");#ylim([0.08,0.14]);
   // subplot(212);cla();plot(vza,(ps-pp)/ps);title("LIDORT 3.5 (PS - PP) / PP for VZA = 0.0001, AZM = 0");ylabel("Fractional difference");xlabel("Solar Angle");#ylim([0,0.0005])
-  // savefig("/home/mcduffie/Desktop/lidort_35_ps_pp_compare.png")
+  // savefig("lidort_35_ps_pp_compare.png")
   // show()
 
 }
