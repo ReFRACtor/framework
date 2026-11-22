@@ -138,6 +138,8 @@ private:
   template<class T> blitz::Array<T, 5>& read_cache() const;
   template<class T> void swap(int i) const;
   std::string field_name;
+  // valid_range attribute of the table, values outside it are read as 0
+  double valid_min, valid_max;
   std::vector<std::string> bname;
   blitz::Array<double, 1> pgrid;
   blitz::Array<double, 2> tgrid;
