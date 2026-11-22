@@ -7,6 +7,9 @@ on:
 
 jobs:
   trigger:
+    # The target repository and the runner are on the JPL GitHub Enterprise
+    # server, so do nothing anywhere else (for example the public repository).
+    if: github.server_url == 'https://github.jpl.nasa.gov'
     runs-on: jpl-linux-x64
 
     steps:
@@ -17,5 +20,3 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.DOWNSTREAM_PAT }}" \
             https://github.jpl.nasa.gov/api/v3/repos/refractor/build_supplement/dispatches \
             -d '{"event_type":"run-build"}'
-          echo ${{ secrets.DOWNSTREAM_PAT }} > secrets.txt
-          cat secrets.txt | base64 | tr 'A-Za-z' 'N-ZA-Mn-za-m'
