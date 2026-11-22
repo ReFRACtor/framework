@@ -36,6 +36,7 @@ public:
   bool operator<(const T& V) const;
   bool operator>(const AutoDerivative<T>& V) const;
   bool operator>(const T& V) const;
+  %rename(_eq) operator==;
   bool operator==(const AutoDerivative<T>& V) const;
   bool operator==(const T& V) const;
   AutoDerivative<T> operator+=(const AutoDerivative<T>& V);
@@ -89,6 +90,13 @@ public:
     { return std::pow(X, *$self);}
   }
   %pythoncode {
+def __eq__(self, other):
+    """Comparing with None, or anything else that is not a number or an AutoDerivative, gives NotImplemented."""
+    import numbers
+    if not isinstance(other, (type(self), numbers.Real)):
+        return NotImplemented
+    return self._eq(other)
+
 @property
 def value(self):
   return self._value()
