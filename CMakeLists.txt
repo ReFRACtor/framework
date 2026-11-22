@@ -8,7 +8,7 @@ set(CMAKE_BUILD_TYPE Release CACHE STRING "Type of build to create, Release (opt
 project(refractor)
 
 # Version number
-set(REFRACTOR_MAJOR_VERSION "8.0.0")
+set(REFRACTOR_MAJOR_VERSION "1.12.0")
 
 # Mark that we are using
 enable_language(Fortran)
