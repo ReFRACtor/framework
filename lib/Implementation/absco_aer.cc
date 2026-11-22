@@ -2,6 +2,8 @@
 #include "fp_serialize_support.h"
 #include "fp_exception.h"
 #include <iomanip>
+#include <cmath>
+#include <limits>
 using namespace FullPhysics;
 using namespace blitz;
 
@@ -201,6 +203,18 @@ void AbscoAer::load_file()
     is_float_ = true;
   else
     is_float_ = false;
+  // The generator records the range of valid absorption coefficients
+  // in the table. No range means no check.
+  valid_min = -std::numeric_limits<double>::infinity();
+  valid_max = std::numeric_limits<double>::infinity();
+  if(hfile->has_attribute(field_name + "/valid_range")) {
+    Array<double, 1> vr =
+      hfile->read_attribute<double, 1>(field_name + "/valid_range");
+    if(vr.rows() == 2) {
+      valid_min = vr(0);
+      valid_max = vr(1);
+    }
+  }
   if(hfile->has_object("H2O_VMR")) {
     bname.push_back("h2o");
     bvmr.push_back(hfile->read_field<double, 1>("H2O_VMR").copy());
@@ -550,6 +564,20 @@ template<class T> void AbscoAer::swap(int i) const
     read_cache<T>()(Range(0, size(0) - 1), Range::all(), Range::all(), 0, 0) =
       hfile->read_field<T, 3>(field_name, start, size);
   }
+  // Values outside the valid_range of the table are read as zero.
+  // LBLRTM writes small negative optical depths in the far wings of
+  // some lines (about 1e-10 or less of the table maximum), and
+  // without this the interpolation would carry a negative absorption
+  // coefficient into the optical depth. NaN marks pressure and
+  // temperature combinations that the table does not cover and is left
+  // as it is; isless and isgreater do not raise a floating point
+  // exception for NaN.
+  T* p = read_cache<T>().data();
+  for(int i = 0; i < sz0 * tgrid.cols() * tgrid.rows() *
+	(number_broadener() >= 1 ? number_broadener_vmr(0) : 1) *
+	(number_broadener() >= 2 ? number_broadener_vmr(1) : 1); ++i)
+    if(std::isless(p[i], valid_min) || std::isgreater(p[i], valid_max))
+      p[i] = T(0);
 }
 
 void AbscoAer::print(std::ostream& Os) const
